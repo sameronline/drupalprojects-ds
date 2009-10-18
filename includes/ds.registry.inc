@@ -25,7 +25,8 @@ function _ds_menu() {
   // Display layout menu item.
   $items['admin/ds/layout'] = array(
     'title' => 'Layout',
-    'page callback' => 'ds_display_overview',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_settings'),
     'access arguments' => array('administer content types'),
     'file' => 'includes/ds.display.inc',
     'weight' => 2,

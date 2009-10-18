@@ -8,22 +8,22 @@
 /**
  * Constants for field types.
  */
-define('ND_FIELD_THEME', 1);
-define('ND_FIELD_FUNCTION', 2);
-define('ND_FIELD_PREPROCESS', 3);
-define('ND_FIELD_IGNORE', 4);
-define('ND_FIELD_CUSTOM', 5);
-define('ND_FIELD_OVERRIDABLE', 6);
-define('ND_FIELD_OVERRIDDEN', 7);
-define('ND_FIELD_BLOCK', 8);
+define('DS_FIELD_THEME', 1);
+define('DS_FIELD_FUNCTION', 2);
+define('DS_FIELD_PREPROCESS', 3);
+define('DS_FIELD_IGNORE', 4);
+define('DS_FIELD_CUSTOM', 5);
+define('DS_FIELD_OVERRIDABLE', 6);
+define('DS_FIELD_OVERRIDDEN', 7);
+define('DS_FIELD_BLOCK', 8);
 
 /**
  * Constants for content field default values
  */
-define('ND_DEFAULT_REGION', 'disabled');
-define('ND_DEFAULT_FORMAT', 'default');
-define('ND_DEFAULT_LABEL_FORMAT', 'hidden');
-define('ND_DEFAULT_WEIGHT', -19);
+define('DS_DEFAULT_REGION', 'disabled');
+define('DS_DEFAULT_FORMAT', 'default');
+define('DS_DEFAULT_LABEL_FORMAT', 'hidden');
+define('DS_DEFAULT_WEIGHT', -19);
 
 /**
  * Constants for block fields rendering.
@@ -31,6 +31,15 @@ define('ND_DEFAULT_WEIGHT', -19);
 define('BLOCK_TEMPLATE', 1);
 define('BLOCK_TITLE_CONTENT', 2);
 define('BLOCK_CONTENT', 3);
+
+/**
+ * Implementation of hook_init().
+ */
+function ds_init() {
+  if (variable_get('ds_regions_css', TRUE)) {
+    drupal_add_css(drupal_get_path('module', 'ds') .'/css/regions.css');
+  }
+}
 
 /**
  * Implementation of hook_menu().

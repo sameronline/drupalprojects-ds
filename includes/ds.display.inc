@@ -7,6 +7,42 @@
  */
 
 /**
+ * Settings page.
+ */
+function ds_settings($form_state) {
+  $form = array();
+
+  $form['regions_css'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Regions css'),
+  );
+  $form['regions_css']['ds_regions_css'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Load region css.'),
+    '#description' => t('Load the default region css that comes with this module. For inspiration, look into css/regions.css. Note, do not make any changes in that file as module upgrades will overwrite your changes.'),
+    '#default_value' => variable_get('ds_regions_css', TRUE),
+  );
+
+  // One button to save them all.
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save settings'),
+    '#weight' => 10,
+  );
+
+  return $form;
+}
+
+/**
+ * Settings submit.
+ */
+function ds_settings_submit($form, &$form_state) {
+  variable_set('ds_regions_css', $form_state['values']['ds_regions_css']);
+  drupal_set_message(t('The configuration options have been saved.'));
+  menu_rebuild();
+}
+
+/**
  * Menu callback; presents a listing of fields display settings for a content type.
  *
  * Form includes form widgets to select which fields appear for teaser, full node
@@ -18,7 +54,7 @@
 function ds_display_overview_form(&$form_state, $node_type, $build_mode = 'full', $module = 'nd') {
   // Gather information.
   $type = node_get_types('type', $node_type);
-  $nd_display_settings = variable_get($module .'_display_settings_'. $node_type, array());
+  $display_settings = variable_get($module .'_display_settings_'. $node_type, array());
 
   $form = array(
     '#tree' => TRUE,
@@ -58,11 +94,11 @@ function ds_display_overview_form(&$form_state, $node_type, $build_mode = 'full'
     $form['#submit'] = array('nd_display_submit');
 
     // Add the fields.
-    ds_add_fields($form, $nd_display_settings, $module);
+    ds_add_fields($form, $display_settings, $module);
 
     // Plugins.
     if ($build_mode != NODE_BUILD_RSS)
-    ds_plugins_display_form($form, $nd_display_settings);
+    ds_plugins_display_form($form, $display_settings);
   }
 
 
@@ -72,7 +108,7 @@ function ds_display_overview_form(&$form_state, $node_type, $build_mode = 'full'
 /**
  * Add fields to display overview form.
  */
-function ds_add_fields(&$form, $nd_display_settings, $ds_type) {
+function ds_add_fields(&$form, $display_settings, $ds_type) {
 
   $build_mode = $form['#build_mode'];
   $node_type = $form['#node_type'];
@@ -85,17 +121,17 @@ function ds_add_fields(&$form, $nd_display_settings, $ds_type) {
       $form['#fields'][] = $field;
       $form[$field] = (!empty($form[$form['#fields'][0]])) ? $form[$form['#fields'][0]] : ds_field_default_form_properties($build_mode);
       $form[$field]['human_name']['#value'] = $value['title'];
-      $form[$field]['weight']['#default_value'] = ds_default_value($nd_display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
-      $form[$field]['ds_weight']['#default_value'] = ds_default_value($nd_display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
-      $form[$field][$build_mode]['label']['format']['#default_value'] = isset($value['display_settings'][$build_mode]['label']['format']) ? $value['display_settings'][$build_mode]['label']['format'] : ds_default_value($nd_display_settings, $build_mode, 'fields', $field, 'labelformat', DS_DEFAULT_LABEL_FORMAT);
+      $form[$field]['weight']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
+      $form[$field]['ds_weight']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
+      $form[$field][$build_mode]['label']['format']['#default_value'] = isset($value['display_settings'][$build_mode]['label']['format']) ? $value['display_settings'][$build_mode]['label']['format'] : ds_default_value($display_settings, $build_mode, 'fields', $field, 'labelformat', DS_DEFAULT_LABEL_FORMAT);
       $form[$field][$build_mode]['format']['#options'] = isset($value['formatters']) ? $value['formatters'] : array();
-      $format = ds_default_value($nd_display_settings, $build_mode, 'fields', $field, 'format', '');
+      $format = ds_default_value($display_settings, $build_mode, 'fields', $field, 'format', '');
       if (empty($format) && isset($value['formatters'])) {
         $format = key($value['formatters']);
       }
       $form[$field][$build_mode]['format']['#default_value'] = $format;
       $form[$field][$build_mode]['format']['#access'] = (count($form[$field][$build_mode]['format']['#options']) == 1 || count($form[$field][$build_mode]['format']['#options']) == 0) ? FALSE : TRUE;
-      $form[$field][$build_mode]['region']['#default_value'] = ds_default_value($nd_display_settings, $build_mode, 'fields', $field, 'region', ND_DEFAULT_REGION);
+      $form[$field][$build_mode]['region']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'region', ND_DEFAULT_REGION);
     }
   }
 }
@@ -104,9 +140,9 @@ function ds_add_fields(&$form, $nd_display_settings, $ds_type) {
  * Add plugins to display overview form.
  *
  * @param array $form The display form.
- * @param array $nd_display_settings Current display settings.
+ * @param array $display_settings Current display settings.
  */
-function ds_plugins_display_form(&$form, $nd_display_settings) {
+function ds_plugins_display_form(&$form, $display_settings) {
 
   $plugins = variable_get('ds_plugin_settings', array());
   if (!empty($plugins)) {
@@ -119,7 +155,7 @@ function ds_plugins_display_form(&$form, $nd_display_settings) {
       require_once($plugin['filename']);
     }
     $function = $plugin['form_callback'];
-    $plugin_form = $function($form, $nd_display_settings);
+    $plugin_form = $function($form, $display_settings);
     $form['#plugin_keys'][] = $key;
   }
 }
@@ -138,17 +174,17 @@ function ds_display_submit($form, &$form_state) {
   $exclude_build_modes[$node_type][$build_mode] = $exclude_build_mode;
   variable_set('nd_buildmodes_exclude', $exclude_build_modes);
 
-  $nd_display_settings = variable_get('nd_display_settings_'. $node_type, array());
-  unset($nd_display_settings[$build_mode]);
+  $display_settings = variable_get('nd_display_settings_'. $node_type, array());
+  unset($display_settings[$build_mode]);
 
   // Fields.
   $fields = nd_get_fields($form['#node_type'], $form['#has_body'], $build_mode);
   if (!empty($fields)) {
     foreach ($fields as $key => $field) {
-      $nd_display_settings[$build_mode]['fields'][$key]['weight'] = $form_state['values'][$key]['nd_weight'];
-      $nd_display_settings[$build_mode]['fields'][$key]['format'] = $form_state['values'][$key][$build_mode]['format'];
-      $nd_display_settings[$build_mode]['fields'][$key]['region'] = $form_state['values'][$key][$build_mode]['region'];
-      $nd_display_settings[$build_mode]['fields'][$key]['labelformat'] = $form_state['values'][$key][$build_mode]['label']['format'];
+      $display_settings[$build_mode]['fields'][$key]['weight'] = $form_state['values'][$key]['nd_weight'];
+      $display_settings[$build_mode]['fields'][$key]['format'] = $form_state['values'][$key][$build_mode]['format'];
+      $display_settings[$build_mode]['fields'][$key]['region'] = $form_state['values'][$key][$build_mode]['region'];
+      $display_settings[$build_mode]['fields'][$key]['labelformat'] = $form_state['values'][$key][$build_mode]['label']['format'];
 
       // Ditch this field, unless it has its storage in another module (ie CCK)
       if (!isset($field['storage']))
@@ -158,10 +194,10 @@ function ds_display_submit($form, &$form_state) {
 
   // Plugins
   if ($build_mode != NODE_BUILD_RSS)
-  nd_plugins_display_submit($form, $form_state, $nd_display_settings);
+  nd_plugins_display_submit($form, $form_state, $display_settings);
 
   // Save all these settings.
-  variable_set('nd_display_settings_'. $node_type, $nd_display_settings);
+  variable_set('nd_display_settings_'. $node_type, $display_settings);
 
   drupal_set_message(t('Your settings have been saved.'));
 }
@@ -171,9 +207,9 @@ function ds_display_submit($form, &$form_state) {
  *
  * @param array $form The display form.
  * @param array $form_state The submitted values of the form.
- * @param array $nd_display_settings Current display settings being saved.
+ * @param array $display_settings Current display settings being saved.
  */
-function ds_plugins_display_submit($form, $form_state, &$nd_display_settings) {
+function ds_plugins_display_submit($form, $form_state, &$display_settings) {
   $plugins = variable_get('nd_plugin_settings', array());
 
   foreach ($plugins as $key => $plugin) {
@@ -181,7 +217,7 @@ function ds_plugins_display_submit($form, $form_state, &$nd_display_settings) {
       require_once($plugin['filename']);
     }
     $function = $plugin['submit_callback'];
-    $function($form, $form_state, $nd_display_settings);
+    $function($form, $form_state, $display_settings);
   }
 }
 

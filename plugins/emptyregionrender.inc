@@ -9,7 +9,7 @@
 /**
  * Implementation of nd_pluginname_form().
  */
-function nd_emptyregionrender_form(&$form, $nd_display_settings) {
+function ds_emptyregionrender_form(&$form, $nd_display_settings) {
 
   $form['emptyregionrender'] = array(
     '#type' => 'fieldset',
@@ -20,7 +20,7 @@ function nd_emptyregionrender_form(&$form, $nd_display_settings) {
   );
 
   $build_mode = $form['#build_mode'];
-  $regions = nd_regions();
+  $regions = ds_regions();
   foreach ($regions as $region => $title) {
     if ($region != 'disabled') {
       $form['emptyregionrender']['region-render-'. $region] = array(
@@ -35,8 +35,8 @@ function nd_emptyregionrender_form(&$form, $nd_display_settings) {
 /**
  * Implementation of nd_pluginname_submit().
  */
-function nd_emptyregionrender_submit($form, $form_state, &$nd_display_settings) {
-  $regions = nd_regions();
+function ds_emptyregionrender_submit($form, $form_state, &$nd_display_settings) {
+  $regions = ds_regions();
   $regions_save = array();
   $build_mode = $form['#build_mode'];
   foreach ($regions as $region => $title) {
@@ -48,7 +48,7 @@ function nd_emptyregionrender_submit($form, $form_state, &$nd_display_settings) 
 /**
  * Implementation of nd_pluginname_process().
  */
-function nd_emptyregionrender_process(&$vars, &$node_display, $nd_display_settings) {
+function ds_emptyregionrender_process(&$vars, &$node_display, $nd_display_settings) {
   foreach ($node_display->all_regions as $region_name => $region_title) {
     $render = ds_default_value($nd_display_settings, $vars['node']->build_mode, 'emptyregionrender', 'render', $region_name, FALSE);
     if ($render == TRUE && !isset($node_display->themed_regions[$region_name])) {
