@@ -1,0 +1,72 @@
+/* $Id$ */
+
+.nd-region-header {
+  clear: both;
+}
+
+.nd-region-left {
+  clear: left;
+  float: left; 
+}
+
+.nd-region-middle {
+  float: left;
+  clear: none;
+}
+
+.nd-region-right {
+  float: right;
+}
+
+.nd-region-footer {
+  clear: both;
+}
+
+/* default region dimensions */
+
+.nd-region-left {
+  width: 25%;
+}
+
+.nd-region-right {
+  width: 25%;
+}
+
+/* middle region */
+
+div.no-sidebars {
+  width: 100%;
+  float: none;
+  clear: left;
+}
+
+div.sidebar-left {
+  width: 75%;
+}
+
+div.sidebar-right {
+  width: 75%;
+  clear: left;
+}
+
+div.two-sidebars {
+  width: 50%;
+  float: left;
+}
+
+/* Region inner divs. Add borders, padding and margin here */
+
+.nd-region-header .nd-region-inner {
+}
+
+.nd-region-left .nd-region-inner { 
+}
+
+.nd-region-middle .nd-region-inner { 
+}
+
+.nd-region-right .nd-region-inner { 
+}
+
+.nd-region-footer .nd-region-inner { 
+}

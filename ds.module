@@ -1,0 +1,267 @@
+<?php
+// $Id$
+
+/**
+ * Core functions for the Display Suite module.
+ */
+
+/**
+ * Constants for field types.
+ */
+define('ND_FIELD_THEME', 1);
+define('ND_FIELD_FUNCTION', 2);
+define('ND_FIELD_PREPROCESS', 3);
+define('ND_FIELD_IGNORE', 4);
+define('ND_FIELD_CUSTOM', 5);
+define('ND_FIELD_OVERRIDABLE', 6);
+define('ND_FIELD_OVERRIDDEN', 7);
+define('ND_FIELD_BLOCK', 8);
+
+/**
+ * Constants for content field default values
+ */
+define('ND_DEFAULT_REGION', 'disabled');
+define('ND_DEFAULT_FORMAT', 'default');
+define('ND_DEFAULT_LABEL_FORMAT', 'hidden');
+define('ND_DEFAULT_WEIGHT', -19);
+
+/**
+ * Constants for block fields rendering.
+ */
+define('BLOCK_TEMPLATE', 1);
+define('BLOCK_TITLE_CONTENT', 2);
+define('BLOCK_CONTENT', 3);
+
+/**
+ * Implementation of hook_menu().
+ */
+function ds_menu() {
+  require_once('includes/ds.registry.inc');
+  return _ds_menu();
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function ds_theme() {
+  require_once('includes/ds.registry.inc');
+  return _ds_theme();
+}
+
+/**
+ * Implementation of hook_ds_plugins().
+ */
+function ds_ds_plugins() {
+  require_once('includes/ds.registry.inc');
+  return _ds_plugins();
+}
+
+/**
+ * Function to return a value or return the default if empty.
+ *
+ * @param array $settings The settings loaded for a type.
+ * @param string $build_mode The name of the build mode.
+ * @param string $type The name of the type to search (ie fields, regions)
+ * @param string $key The name of the key to search in $type.
+ * @param string $search_key The name of the key to search in $key.
+ * @param string $default The default value.
+ */
+function ds_default_value($settings, $build_mode, $type, $key, $search_key, $default) {
+  return (isset($settings[$build_mode][$type][$key][$search_key])) ? $settings[$build_mode][$type][$key][$search_key] : $default;
+}
+
+/**
+ * API function to get all fields.
+ */
+function ds_get_fields($node_type, $has_body, $build_mode, $module) {
+  static $static_fields = array();
+  if (!isset($static_fields[$node_type][$build_mode])) {
+
+    // Fields in code.
+    $fields = module_invoke_all($module .'_fields', $node_type, $has_body, $build_mode);
+    // Fields via the UI.
+    $db_fields = variable_get($module .'_fields', array());
+    if (!empty($db_fields)) {
+      foreach ($db_fields as $key => $field) {
+        $fields[$key] = array(
+          'title' => check_plain($field['title']),
+          'code' => isset($field['block']) ? $field['block'] : $field['code'],
+          'type' => $field['type'],
+          'render' => isset($field['render']) ? $field['render'] : '',
+        );
+        $exclude = (isset($field['exclude'][$node_type]) && $field['exclude'][$node_type] === $node_type) ? TRUE : FALSE;
+        if ($exclude) {
+          unset($fields[$key]);
+        }
+      }
+    }
+
+    // Give modules a change to alter fields.
+    drupal_alter($type .'_fields', $fields);
+
+    $static_fields[$node_type][$build_mode] = $fields;
+  }
+  return $static_fields[$node_type][$build_mode];
+}
+
+/**
+ * Api function to return all build modes.
+ *
+ * @param string $module Return build modes from a module.
+ * @param boolean $reset Whether to reset the build modes.
+ * @return array Collection of build modes.
+ */
+function ds_get_build_modes($module = NULL, $reset = FALSE) {
+
+  $build_modes = variable_get('ds_all_build_modes', array());
+
+  if (empty($build_modes) || $reset) {
+    require_once('includes/ds.registry.inc');
+    $build_modes = _ds_register_build_modes();
+  }
+
+  if ($module != NULL) {
+    return $build_modes[$module];
+  }
+  else {
+    return $build_modes;
+  }
+}
+
+/**
+ * Process plugins.
+ *
+ * @param array $vars The variables currently processed.
+ * @param stdClass $node_display Collection of arrays with node data.
+ * @param array $nd_display_settings Display settings.
+ * @param string $module The module to process for.
+ */
+function ds_plugins_process(&$vars, &$node_display, $nd_display_settings, $module) {
+  $plugins = variable_get($module .'_plugin_settings', array());
+  if (!empty($plugins)) {
+    foreach ($plugins as $key => $plugin) {
+      if (isset($plugin['filename'])) {
+        require_once($plugin['filename']);
+      }
+      $function = $plugin['process_callback'];
+      $function($vars, $node_display, $nd_display_settings);
+    }
+  }
+}
+
+/**
+ * Evaluate custom code.
+ *
+ * @param string $key The name of the key to create.
+ * @param array $value The field array.
+ * @param stdClass The node object.
+ */
+function ds_eval_code($key, $field, &$node) {
+  if (isset($field['code'])) {
+    $node_key = $key .'_rendered';
+    $value = ds_eval($field['code'], $node);
+    // Token support.
+    if (module_exists('token')) {
+      $value = token_replace($value, 'node', $node);
+    }
+    $node->{$node_key} = $value;
+  }
+}
+
+/**
+ * Evaluate block field.
+ *
+ * @param string $key The name of the key to create.
+ * @param array $field The field array.
+ * @param stdClass The node object.
+ */
+function ds_eval_block($key, $field, &$node) {
+  if (isset($field['code'])) {
+    list($module, $delta) = explode('|', $field['code']);
+    $block = module_invoke($module, 'block', 'view', $delta);
+    if (!empty($block)) {
+      switch ($field['render']) {
+        case BLOCK_TEMPLATE:
+          global $theme_key;
+          $block = (object) $block;
+          $block->module = $module;
+          $block->delta = $delta;
+          $block_title = db_result(db_query("SELECT title FROM {blocks} WHERE module = '%s' AND delta = '%s' AND theme = '%s'", $module, $delta, $theme_key));
+          if (!empty($block_title)) {
+            $block->subject = $block_title == '<none>' ? '' : check_plain($block_title);
+          }
+          $content = theme('block', $block);
+          break;
+        case BLOCK_TITLE_CONTENT:
+          $content = '<h2 class="block-title">'. $block['subject'] .'</h2>';
+          $content .= $block['content'];
+          break;
+        case BLOCK_CONTENT:
+          $content = $block['content'];
+          break;
+      }
+      $node_key = $key .'_rendered';
+      $node->{$node_key} = $content;
+    }
+  }
+}
+
+/**
+ * Wrapper function around PHP eval(). We don't use drupal_eval
+ * because custom fields might need properties from the current
+ * object.
+ *
+ * @param string $code The code to evaluate from the custom field.
+ * @param stdClass $object An object passed through (ie node, user, comment ..)
+ * @return string $output The output from eval.
+ */
+function ds_eval($code, $object) {
+  global $theme_path, $theme_info, $conf;
+
+  // Store current theme path.
+  $old_theme_path = $theme_path;
+
+  // Restore theme_path to the theme, as long as drupal_eval() executes,
+  // so code evaluted will not see the caller module as the current theme.
+  // If theme info is not initialized get the path from theme_default.
+  if (!isset($theme_info)) {
+    $theme_path = drupal_get_path('theme', $conf['theme_default']);
+  }
+  else {
+    $theme_path = dirname($theme_info->filename);
+  }
+
+  ob_start();
+  print eval('?>'. $code);
+  $output = ob_get_contents();
+  ob_end_clean();
+
+  // Recover original theme path.
+  $theme_path = $old_theme_path;
+
+  return $output;
+}
+
+/**
+ * Return array of available regions.
+ *
+ * @param string $regions Whether to return all regions or not.
+ */
+function ds_regions($regions = 'all') {
+  if ($regions == 'all') {
+    return array(
+      'header' => t('Header'),
+      'left' => t('Left'),
+      'middle' => t('Middle'),
+      'right' => t('Right'),
+      'footer' => t('Footer'),
+      'disabled' => t('Disabled')
+    );
+  }
+  else {
+    return array(
+      'middle' => t('Enabled'),
+      'disabled' => t('Disabled')
+    );
+  }
+}

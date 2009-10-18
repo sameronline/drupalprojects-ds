@@ -1,0 +1,16 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Display suite install file.
+ */
+
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function ds_uninstall() {
+  db_query("DELETE FROM {variable} WHERE name LIKE 'ds_%%'");
+  cache_clear_all('variables', 'cache');
+}
