@@ -11,8 +11,8 @@
  */
 function ds_fields($module) {
   $output = '';
-  $action = arg(5);
-  $field = arg(6);
+  $action = arg(4);
+  $field = arg(5);
 
   // Get fields.
   $db_fields = variable_get($module .'_fields', array());
@@ -30,12 +30,12 @@ function ds_fields($module) {
 
   // Delete form.
   if (in_array($field, array_keys($db_fields)) && $action == 'delete') {
-    $output .= drupal_get_form('ds_field_delete_form', $field, $db_fields[$field]);
+    $output .= drupal_get_form('ds_field_delete_form', $module, $field, $db_fields[$field]);
   }
   // Edit form.
   elseif (in_array($field, array_keys($db_fields)) && $action == 'edit') {
-    $form_id = ($db_fields[$field]['type'] == ND_FIELD_BLOCK) ? 'ds_block_field_form' : 'ds_code_field_form';
-    $output .= drupal_get_form($form_id, $field, $db_fields[$field]);
+    $form_id = ($db_fields[$field]['type'] == DS_FIELD_BLOCK) ? 'ds_block_field_form' : 'ds_code_field_form';
+    $output .= drupal_get_form($form_id, $module, $field, $db_fields[$field]);
   }
   // Custom fields overview form
   else {
@@ -55,10 +55,10 @@ function ds_fields($module) {
         $type = ($value['type'] == DS_FIELD_OVERRIDABLE) ? t('Default') : (($value['type'] == DS_FIELD_OVERRIDDEN) ? t('Overridden') : t('Custom'));
         if ($value['type'] == DS_FIELD_BLOCK) $type = t('Block field');
         $row[] = $type;
-        $operations = l(t('Edit'), 'admin/content/types/nd/fields/edit/'. $key);
+        $operations = l(t('Edit'), 'admin/ds/'. $module .'/fields/edit/'. $key);
         if ($value['type'] != DS_FIELD_OVERRIDABLE) {
           $text = ($value['type'] == DS_FIELD_OVERRIDDEN) ? 'Reset' : 'Delete';
-          $operations .= ' - '. l(t($text), 'admin/content/types/nd/fields/delete/'. $key);
+          $operations .= ' - '. l(t($text), 'admin/ds/'. $module .'/fields/delete/'. $key);
         }
         $row[] = $operations;
         $rows[] = $row;
@@ -68,8 +68,8 @@ function ds_fields($module) {
     }
 
     // New fields form.
-    $output .= drupal_get_form('ds_code_field_form');
-    $output .= drupal_get_form('ds_block_field_form');
+    $output .= drupal_get_form('ds_code_field_form', $module);
+    $output .= drupal_get_form('ds_block_field_form', $module);
   }
 
   return $output;
@@ -81,7 +81,7 @@ function ds_fields($module) {
  * @param string $key The key of the field.
  * @param array $field The field with title and code keys.
  */
-function ds_code_field_form($form_state, $key = '', $field = array()) {
+function ds_code_field_form($form_state, $module, $key = '', $field = array()) {
   $form = array();
 
   if (empty($field)) {
@@ -137,6 +137,7 @@ function ds_code_field_form($form_state, $key = '', $field = array()) {
 
   $form['#field_type'] = ($field['type'] == DS_FIELD_OVERRIDABLE) ? DS_FIELD_OVERRIDDEN : (($field['type'] == DS_FIELD_OVERRIDDEN) ? DS_FIELD_OVERRIDDEN : DS_FIELD_CUSTOM);
   $form['#form_type'] = (empty($key)) ? 'insert' : 'update';
+  $form['#module'] = $module;
 
   return $form;
 }
@@ -200,17 +201,18 @@ function ds_code_field_form_submit($form, &$form_state) {
     'type' => $form['#field_type'],
   );
   variable_set('ds_fields', $fields);
-  $form_state['redirect'] = 'admin/content/types/nd/fields';
+  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
   drupal_set_message(t('Field %field has been saved.', array('%field' => $form_state['values']['title'])));
 }
 
 /**
  * Block field form.
  *
+ * @param string $module The module the fields are for.
  * @param string $key The key of the field.
  * @param array $field The field with title and code keys.
  */
-function ds_block_field_form($form_state, $key = '', $field = array()) {
+function ds_block_field_form($form_state, $module, $key = '', $field = array()) {
   $form = array();
 
   if (empty($field)) {
@@ -288,6 +290,7 @@ function ds_block_field_form($form_state, $key = '', $field = array()) {
 
   $form['#field_type'] = DS_FIELD_BLOCK;
   $form['#form_type'] = (empty($key)) ? 'insert' : 'update';
+  $form['#module'] = $module;
 
   return $form;
 }
@@ -324,17 +327,18 @@ function ds_block_field_form_submit($form, &$form_state) {
     'type' => $form['#field_type'],
   );
   variable_set('ds_fields', $fields);
-  $form_state['redirect'] = 'admin/content/types/nd/fields';
+  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
   drupal_set_message(t('Field %field has been saved.', array('%field' => $form_state['values']['title'])));
 }
 
 /**
  * Field delete form.
  *
+ * @param string $module The module the fields are for.
  * @param string $key The key of the field.
  * @param array $field The field with title and code keys.
  */
-function ds_field_delete_form($form_state, $key, $field) {
+function ds_field_delete_form($form_state, $module, $key, $field) {
   $form = array();
 
   $action = ($field['type'] == DS_FIELD_OVERRIDDEN) ? t('reset') : t('delete');
@@ -354,8 +358,9 @@ function ds_field_delete_form($form_state, $key, $field) {
   $form['buttons']['cancel'] = array(
     '#suffix' => '</div>',
     '#type' => 'markup',
-    '#value' => l('cancel', 'admin/content/types/nd/fields'),
+    '#value' => l('cancel', 'admin/ds/'. $module .'/fields'),
   );
+  $form['#module'] = $module;
   return $form;
 }
 
@@ -370,5 +375,5 @@ function ds_field_delete_form_submit($form, &$form_state) {
   unset($fields[$form_state['values']['field']]);
   variable_set('ds_fields', $fields);
   drupal_set_message(t('Field %field has been !action.', array('%field' => $form_state['values']['field'], '!action' => $action)));
-  $form_state['redirect'] = 'admin/content/types/nd/fields';
+  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
 }
