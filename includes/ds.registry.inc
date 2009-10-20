@@ -125,16 +125,11 @@ function _ds_register_build_modes() {
     // We need to do some fiddling existing build modes.
     foreach ($temp_data as $key => $value) {
       // Sane build modes.
-      $type = isset($value['module']) ? $value['module'] : 'nd';
-      $build_modes[$type][$key] = array(
+      $module_name = isset($value['module']) ? $value['module'] : 'nd';
+      $build_modes[$module_name][$key] = array(
         'weight' => isset($value['weight']) ? $value['weight'] : $weight++,
         'title' => $value['title'],
       );
-
-      // Check on Full node for its weight.
-      if ($value['title'] == t('Full node')) {
-        $build_modes[$type][$key]['weight'] = -1;
-      }
     }
   }
 

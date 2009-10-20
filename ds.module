@@ -74,20 +74,27 @@ function ds_ds_plugins() {
  * @param string $key The name of the key to search in $type.
  * @param string $search_key The name of the key to search in $key.
  * @param string $default The default value.
+ * @param mixed default value.
  */
 function ds_default_value($settings, $build_mode, $type, $key, $search_key, $default) {
   return (isset($settings[$build_mode][$type][$key][$search_key])) ? $settings[$build_mode][$type][$key][$search_key] : $default;
 }
 
 /**
- * API function to get all fields.
+ * API function to get fields.
+ *
+ * @param string $module The name of the module. 
+ * @param string $type_name The name of object (ie, page or story for node types, profile for users)
+ * @param string $build_mode The build mode.
+ * @param array $extra Extra properties we might want to check on (ie has_body property).
+ * @return array of fields.
  */
-function ds_get_fields($node_type, $has_body, $build_mode, $module) {
+function ds_get_fields($module, $type_name, $build_mode, $extra = array()) {
   static $static_fields = array();
-  if (!isset($static_fields[$node_type][$build_mode])) {
+  if (!isset($static_fields[$type_name][$build_mode])) {
 
     // Fields in code.
-    $fields = module_invoke_all($module .'_fields', $node_type, $has_body, $build_mode);
+    $fields = module_invoke_all('ds_fields', $type_name, $build_mode, $extra);
     // Fields via the UI.
     $db_fields = variable_get($module .'_fields', array());
     if (!empty($db_fields)) {
@@ -98,7 +105,7 @@ function ds_get_fields($node_type, $has_body, $build_mode, $module) {
           'type' => $field['type'],
           'render' => isset($field['render']) ? $field['render'] : '',
         );
-        $exclude = (isset($field['exclude'][$node_type]) && $field['exclude'][$node_type] === $node_type) ? TRUE : FALSE;
+        $exclude = (isset($field['exclude'][$type_name]) && $field['exclude'][$type_name] === $type_name) ? TRUE : FALSE;
         if ($exclude) {
           unset($fields[$key]);
         }
@@ -106,17 +113,17 @@ function ds_get_fields($node_type, $has_body, $build_mode, $module) {
     }
 
     // Give modules a change to alter fields.
-    drupal_alter($type .'_fields', $fields);
+    drupal_alter($module .'_fields', $fields);
 
-    $static_fields[$node_type][$build_mode] = $fields;
+    $static_fields[$module][$type_name][$build_mode] = $fields;
   }
-  return $static_fields[$node_type][$build_mode];
+  return $static_fields[$type_name][$build_mode];
 }
 
 /**
  * Api function to return all build modes.
  *
- * @param string $module Return build modes from a module.
+ * @param string $module Return build modes for a module.
  * @param boolean $reset Whether to reset the build modes.
  * @return array Collection of build modes.
  */
@@ -140,12 +147,12 @@ function ds_get_build_modes($module = NULL, $reset = FALSE) {
 /**
  * Process plugins.
  *
- * @param array $vars The variables currently processed.
- * @param stdClass $node_display Collection of arrays with node data.
- * @param array $nd_display_settings Display settings.
  * @param string $module The module to process for.
+ * @param array $display_settings Display settings.
+ * @param array $vars The variables currently processed.
+ * @param stdClass $display Collection of arrays with object data.
  */
-function ds_plugins_process(&$vars, &$node_display, $nd_display_settings, $module) {
+function ds_plugins_process($module, $display_settings, &$vars, &$display) {
   $plugins = variable_get($module .'_plugin_settings', array());
   if (!empty($plugins)) {
     foreach ($plugins as $key => $plugin) {
@@ -153,7 +160,7 @@ function ds_plugins_process(&$vars, &$node_display, $nd_display_settings, $modul
         require_once($plugin['filename']);
       }
       $function = $plugin['process_callback'];
-      $function($vars, $node_display, $nd_display_settings);
+      $function($vars, $display, $display_settings);
     }
   }
 }
@@ -163,17 +170,18 @@ function ds_plugins_process(&$vars, &$node_display, $nd_display_settings, $modul
  *
  * @param string $key The name of the key to create.
  * @param array $value The field array.
- * @param stdClass The node object.
+ * @param string $object_type Type of object for token support.
+ * @param stdClass $object The object.
  */
-function ds_eval_code($key, $field, &$node) {
+function ds_eval_code($key, $field, $object_type, &$object) {
   if (isset($field['code'])) {
-    $node_key = $key .'_rendered';
-    $value = ds_eval($field['code'], $node);
+    $key = $key .'_rendered';
+    $value = ds_eval($field['code'], $object);
     // Token support.
     if (module_exists('token')) {
-      $value = token_replace($value, 'node', $node);
+      $value = token_replace($value, $object_type, $object);
     }
-    $node->{$node_key} = $value;
+    $object->{$key} = $value;
   }
 }
 
@@ -182,9 +190,9 @@ function ds_eval_code($key, $field, &$node) {
  *
  * @param string $key The name of the key to create.
  * @param array $field The field array.
- * @param stdClass The node object.
+ * @param stdClass $object The object on which we'll add new data.
  */
-function ds_eval_block($key, $field, &$node) {
+function ds_eval_block($key, $field, &$object) {
   if (isset($field['code'])) {
     list($module, $delta) = explode('|', $field['code']);
     $block = module_invoke($module, 'block', 'view', $delta);
@@ -209,8 +217,8 @@ function ds_eval_block($key, $field, &$node) {
           $content = $block['content'];
           break;
       }
-      $node_key = $key .'_rendered';
-      $node->{$node_key} = $content;
+      $key = $key .'_rendered';
+      $object->{$key} = $content;
     }
   }
 }
@@ -221,7 +229,7 @@ function ds_eval_block($key, $field, &$node) {
  * object.
  *
  * @param string $code The code to evaluate from the custom field.
- * @param stdClass $object An object passed through (ie node, user, comment ..)
+ * @param stdClass $object An object to use for evaluation.
  * @return string $output The output from eval.
  */
 function ds_eval($code, $object) {
@@ -255,6 +263,7 @@ function ds_eval($code, $object) {
  * Return array of available regions.
  *
  * @param string $regions Whether to return all regions or not.
+ * @return array $regions Collection of regions.
  */
 function ds_regions($regions = 'all') {
   if ($regions == 'all') {

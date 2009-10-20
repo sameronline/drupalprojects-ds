@@ -91,7 +91,7 @@ function ds_display_overview_form(&$form_state, $node_type, $build_mode = 'full'
   // If global exclude is true, no point in rendering.
   if ($global_exclude == FALSE) {
     $form['submit'] = array('#type' => 'submit', '#value' => t('Save'));
-    $form['#submit'] = array('nd_display_submit');
+    $form['#submit'] = array('ds_display_submit');
 
     // Add the fields.
     ds_add_fields($form, $display_settings, $module);
