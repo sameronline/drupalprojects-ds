@@ -3,13 +3,13 @@
 
 /**
  * @file
- *   Template file for the content display settings overview form
+ *   Template file for the display settings overview form
  *
  * @var
  * $build_mode String
- *   Current selected node display mode
+ *   Current selected display mode
  * $rows Array of field objects
- *   Fields declared in drupal core and custom content fields
+ *   Fields declared in drupal core and custom fields
  *   Properties (human_name, weight, stickyorder, build_mode, class, label_class)
  */
 
@@ -59,7 +59,7 @@ if ($rows): ?>
               <td><?php print $row->{$build_mode}->label; ?></td>
               <td><?php print $row->{$build_mode}->format; ?></td>
               <td><?php print $row->{$build_mode}->region; ?></td>
-              <td><?php print $row->nd_weight; ?></td>
+              <td><?php print $row->ds_weight; ?></td>
             </tr>
             <?php
             $count++;

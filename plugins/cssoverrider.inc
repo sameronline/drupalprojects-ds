@@ -9,7 +9,7 @@
 /**
  * Implementation of ds_pluginname_form().
  */
-function ds_cssoverrider_form(&$form, $ds_display_settings) {
+function ds_cssoverrider_form(&$form, $display_settings) {
 
   $form['cssoverrider'] = array(
     '#type' => 'fieldset',
@@ -27,13 +27,13 @@ function ds_cssoverrider_form(&$form, $ds_display_settings) {
         '#title' => $title .' class',
         '#type' => 'textfield',
         '#description' => t('Enter extra classes, seperated by comma.'),
-        '#default_value' => ds_default_value($ds_display_settings, $build_mode, 'cssoverrider', 'class', $region, ''),
+        '#default_value' => ds_default_value($display_settings, $build_mode, 'cssoverrider', 'class', $region, ''),
       );
       $form['cssoverrider']['region-inline-'. $region] = array(
         '#title' => $title .' inline css',
         '#type' => 'textfield',
         '#description' => t('Enter inline css. Note, you only need to enter the css rules, the plugin will add style="" for you.'),
-        '#default_value' => ds_default_value($ds_display_settings, $build_mode, 'cssoverrider', 'inline', $region, ''),
+        '#default_value' => ds_default_value($display_settings, $build_mode, 'cssoverrider', 'inline', $region, ''),
       );
     }
   }
@@ -42,7 +42,7 @@ function ds_cssoverrider_form(&$form, $ds_display_settings) {
 /**
  * Implementation of ds_pluginname_submit().
  */
-function nd_cssoverrider_submit($form, $form_state, &$ds_display_settings) {
+function nd_cssoverrider_submit($form, $form_state, &$display_settings) {
   $regions = ds_regions();
   $css_save = array();
   $build_mode = $form['#build_mode'];
@@ -50,16 +50,16 @@ function nd_cssoverrider_submit($form, $form_state, &$ds_display_settings) {
     $css_save['class'][$region] = $form_state['values']['cssoverrider']['region-class-'. $region];
     $css_save['inline'][$region] = $form_state['values']['cssoverrider']['region-inline-'. $region];
   }
-  $ds_display_settings[$build_mode]['cssoverrider'] = $css_save;
+  $display_settings[$build_mode]['cssoverrider'] = $css_save;
 }
 
 /**
  * Implementation of ds_pluginname_process().
  */
-function ds_cssoverrider_process(&$vars, &$display, $ds_display_settings) {
-  foreach ($node_display->themed_regions as $region_name => $region_data) {
-    $classes = ds_default_value($ds_display_settings, $vars['node']->build_mode, 'cssoverrider', 'class', $region_name, '');
-    $inline = ds_default_value($ds_display_settings, $vars['node']->build_mode, 'cssoverrider', 'inline', $region_name, '');
+function ds_cssoverrider_process(&$vars, &$display, $display_settings, $object_type) {
+  foreach ($display->themed_regions as $region_name => $region_data) {
+    $classes = ds_default_value($display_settings, $vars[$object_type]->build_mode, 'cssoverrider', 'class', $region_name, '');
+    $inline = ds_default_value($display_settings, $vars[$object_type]->build_mode, 'cssoverrider', 'inline', $region_name, '');
     if (!empty($classes)) {
       $display->themed_regions[$region_name]['extra_class'] = ' '. $classes;
     }

@@ -11,8 +11,8 @@
  */
 function ds_build_modes($module) {
   $output = '';
-  $action = arg(5);
-  $build_mode = arg(6);
+  $action = arg(4);
+  $build_mode = arg(5);
   $build_modes = variable_get($module .'_build_modes', array());
 
   // Delete form.
@@ -38,7 +38,7 @@ function ds_build_modes($module) {
         $row = array();
         $row[] = check_plain($name);
         $row[] = $key;
-        $row[] = l(t('Edit'), 'admin/content/types/nd/buildmodes/edit/'. $key) .' - '. l(t('Delete'), 'admin/content/types/nd/buildmodes/delete/'. $key);
+        $row[] = l(t('Edit'), 'admin/ds/'. $module .'/buildmodes/edit/'. $key) .' - '. l(t('Delete'), 'admin/ds/'. $module .'/buildmodes/delete/'. $key);
         $rows[] = $row;
       }
 
@@ -70,6 +70,7 @@ function ds_buildmodes_matrix_form($form_state, $module) {
 
   $form['#build_modes'] = $build_modes;
   $form['#content_types'] = $content_types;
+  $form['#module'] = $module;
 
   foreach ($content_types as $ckey => $type) {
 
@@ -103,7 +104,7 @@ function ds_buildmodes_matrix_form($form_state, $module) {
   $form['exclude']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save settings'),
-    '#submit' => array('nd_build_modes_matrix_submit'),
+    '#submit' => array('ds_build_modes_matrix_submit'),
   );
 
   return $form;
@@ -169,7 +170,7 @@ function ds_build_modes_matrix_submit($form, &$form_state) {
       }
     }
   }
-  variable_set('nd_buildmodes_exclude', $exclude_build_modes);
+  variable_set($form['#module'] .'_buildmodes_exclude', $exclude_build_modes);
   menu_rebuild();
 }
 
@@ -216,7 +217,7 @@ function ds_build_mode_form($form_state, $module, $build_mode = '') {
   $form['identity']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save display'),
-    '#submit' => array('nd_build_mode_form_submit'),
+    '#submit' => array('ds_build_mode_form_submit'),
   );
   $form['#form_type'] = (empty($build_mode)) ? 'insert' : 'update';
 
@@ -229,7 +230,7 @@ function ds_build_mode_form($form_state, $module, $build_mode = '') {
 function ds_build_mode_form_validate($form, &$form_state) {
   if ($form['#form_type'] == 'insert') {
 
-    $existing = array_keys(nd_get_build_modes($form['#module']));
+    $existing = array_keys(ds_get_build_modes($form['#module']));
     if (in_array($form_state['values']['key'], $existing)) {
       form_set_error('key', t('This display mode already exists.'));
     }
@@ -248,7 +249,7 @@ function ds_build_mode_form_submit($form, &$form_state) {
   $build_modes[$form_state['values']['key']] = $form_state['values']['name'];
   variable_set($form['#module'] .'_build_modes', $build_modes);
   drupal_set_message(t('Build mode %build_mode has been saved.', array('%build_mode' => $build_modes[$form_state['values']['key']])));
-  $form_state['redirect'] = 'admin/content/types/nd/buildmodes';
+  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/buildmodes';
   menu_rebuild();
 }
 

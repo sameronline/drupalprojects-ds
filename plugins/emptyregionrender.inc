@@ -48,13 +48,13 @@ function ds_emptyregionrender_submit($form, $form_state, &$nd_display_settings) 
 /**
  * Implementation of nd_pluginname_process().
  */
-function ds_emptyregionrender_process(&$vars, &$node_display, $nd_display_settings) {
-  foreach ($node_display->all_regions as $region_name => $region_title) {
-    $render = ds_default_value($nd_display_settings, $vars['node']->build_mode, 'emptyregionrender', 'render', $region_name, FALSE);
-    if ($render == TRUE && !isset($node_display->themed_regions[$region_name])) {
-      $node_display->themed_regions[$region_name] = array('content' => '&nbsp;');
+function ds_emptyregionrender_process(&$vars, &$display, $display_settings, $object_type) {
+  foreach ($display->all_regions as $region_name => $region_title) {
+    $render = ds_default_value($display_settings, $vars[$object_type]->build_mode, 'emptyregionrender', 'render', $region_name, FALSE);
+    if ($render == TRUE && !isset($display->themed_regions[$region_name])) {
+      $display->themed_regions[$region_name] = array('content' => '&nbsp;');
       if ($region_name == 'left' || $region_name == 'right') {
-        $node_display->region_classes[$region_name] = $region_name;
+        $display->region_classes[$region_name] = $region_name;
       }
     }
   }

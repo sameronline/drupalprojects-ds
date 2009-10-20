@@ -83,7 +83,7 @@ function ds_default_value($settings, $build_mode, $type, $key, $search_key, $def
 /**
  * API function to get fields.
  *
- * @param string $module The name of the module. 
+ * @param string $module The name of the module.
  * @param string $type_name The name of object (ie, page or story for node types, profile for users)
  * @param string $build_mode The build mode.
  * @param array $extra Extra properties we might want to check on (ie has_body property).
@@ -91,7 +91,7 @@ function ds_default_value($settings, $build_mode, $type, $key, $search_key, $def
  */
 function ds_get_fields($module, $type_name, $build_mode, $extra = array()) {
   static $static_fields = array();
-  if (!isset($static_fields[$type_name][$build_mode])) {
+  if (!isset($static_fields[$module][$type_name][$build_mode])) {
 
     // Fields in code.
     $fields = module_invoke_all('ds_fields', $type_name, $build_mode, $extra);
@@ -113,11 +113,11 @@ function ds_get_fields($module, $type_name, $build_mode, $extra = array()) {
     }
 
     // Give modules a change to alter fields.
-    drupal_alter($module .'_fields', $fields);
+    drupal_alter('ds_fields', $fields);
 
     $static_fields[$module][$type_name][$build_mode] = $fields;
   }
-  return $static_fields[$type_name][$build_mode];
+  return $static_fields[$module][$type_name][$build_mode];
 }
 
 /**
@@ -148,11 +148,12 @@ function ds_get_build_modes($module = NULL, $reset = FALSE) {
  * Process plugins.
  *
  * @param string $module The module to process for.
+ * @param string $object_type The type of object (node, user, comment).
  * @param array $display_settings Display settings.
  * @param array $vars The variables currently processed.
  * @param stdClass $display Collection of arrays with object data.
  */
-function ds_plugins_process($module, $display_settings, &$vars, &$display) {
+function ds_plugins_process($module, $object_type, $display_settings, &$vars, &$display) {
   $plugins = variable_get($module .'_plugin_settings', array());
   if (!empty($plugins)) {
     foreach ($plugins as $key => $plugin) {
@@ -160,7 +161,7 @@ function ds_plugins_process($module, $display_settings, &$vars, &$display) {
         require_once($plugin['filename']);
       }
       $function = $plugin['process_callback'];
-      $function($vars, $display, $display_settings);
+      $function($vars, $display, $display_settings, $type_name);
     }
   }
 }
@@ -170,10 +171,10 @@ function ds_plugins_process($module, $display_settings, &$vars, &$display) {
  *
  * @param string $key The name of the key to create.
  * @param array $value The field array.
- * @param string $object_type Type of object for token support.
  * @param stdClass $object The object.
+ * @param string $object_type Type of object for token support.
  */
-function ds_eval_code($key, $field, $object_type, &$object) {
+function ds_eval_code($key, $field, &$object, $object_type) {
   if (isset($field['code'])) {
     $key = $key .'_rendered';
     $value = ds_eval($field['code'], $object);
@@ -266,6 +267,7 @@ function ds_eval($code, $object) {
  * @return array $regions Collection of regions.
  */
 function ds_regions($regions = 'all') {
+  $regions = 'all';
   if ($regions == 'all') {
     return array(
       'header' => t('Header'),

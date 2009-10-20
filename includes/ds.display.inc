@@ -115,7 +115,7 @@ function ds_add_fields(&$form, $display_settings, $ds_type) {
   $has_body = $form['#has_body'];
 
   // Get extra fields.
-  $fields = ds_get_fields($node_type, $has_body, $build_mode, $ds_type);
+  $fields = ds_get_fields($ds_type, $node_type, $build_mode);
   if (!empty($fields)) {
     foreach ($fields as $field => $value) {
       $form['#fields'][] = $field;
@@ -178,7 +178,7 @@ function ds_display_submit($form, &$form_state) {
   unset($display_settings[$build_mode]);
 
   // Fields.
-  $fields = nd_get_fields($form['#node_type'], $form['#has_body'], $build_mode);
+  $fields = ds_get_fields($form['#node_type'], $form['#has_body'], $build_mode);
   if (!empty($fields)) {
     foreach ($fields as $key => $field) {
       $display_settings[$build_mode]['fields'][$key]['weight'] = $form_state['values'][$key]['nd_weight'];
@@ -194,7 +194,7 @@ function ds_display_submit($form, &$form_state) {
 
   // Plugins
   if ($build_mode != NODE_BUILD_RSS)
-  nd_plugins_display_submit($form, $form_state, $display_settings);
+  ds_plugins_display_submit($form, $form_state, $display_settings);
 
   // Save all these settings.
   variable_set('nd_display_settings_'. $node_type, $display_settings);
