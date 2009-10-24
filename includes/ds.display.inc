@@ -240,35 +240,25 @@ function ds_plugins_display_submit($form, $form_state, &$display_settings) {
 
 /**
  * Return array of available label options.
- *
- * @param string $build_mode The build mode. Needed for a check on RSS build mode.
  */
-function ds_label_options($build_mode = 'anything') {
-  if ($build_mode != NODE_BUILD_RSS) {
-    return array(
-      'above' => t('Above'),
-      'inline' => t('Inline'),
-      'hidden' => t('<Hidden>'),
-    );
-  }
-  else {
-    return array(
-      'inline' => t('Show'),
-      'hidden' => t('<Hidden>'),
-    );
-  }
+function ds_label_options() {
+  return array(
+    'above' => t('Above'),
+    'inline' => t('Inline'),
+    'hidden' => t('<Hidden>'),
+  );
 }
 
 /**
  * Function to load default form properties for a field in a context
  */
-function ds_field_default_form_properties($build_mode = NULL) {
+function ds_field_default_form_properties($build_mode) {
 
   $field = array(
     'label' => array(
       'format' => array(
         '#type' => 'select',
-        '#options' => ds_label_options($build_mode),
+        '#options' => ds_label_options(),
         '#default_value' => DS_DEFAULT_LABEL_FORMAT,
       ),
     ),
@@ -279,7 +269,7 @@ function ds_field_default_form_properties($build_mode = NULL) {
     ),
     'region' => array(
       '#type' => 'select',
-      '#options' => ds_regions($build_mode),
+      '#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
       '#default_value' => DS_DEFAULT_REGION,
       '#attributes' => array(
         'class' => 'field-region-select field-region-'. DS_DEFAULT_REGION,
@@ -289,7 +279,7 @@ function ds_field_default_form_properties($build_mode = NULL) {
 
   // If build mode is not empty, this means we're looking at
   // a content type which has no cck fields defined. Add
-  // nd_weight and build mode key to the default field array
+  // ds_weight and build mode key to the default field array
   // so the draghandling & formatters start working.
   if (!empty($build_mode)) {
     $field['ds_weight'] = array(
@@ -301,7 +291,7 @@ function ds_field_default_form_properties($build_mode = NULL) {
       'label' => array(
         'format' => array(
           '#type' => 'select',
-          '#options' => ds_label_options($build_mode),
+          '#options' => ds_label_options(),
           '#default_value' => 'hidden',
         ),
       ),
@@ -312,7 +302,7 @@ function ds_field_default_form_properties($build_mode = NULL) {
       ),
       'region' => array(
         '#type' => 'select',
-        '#options' => ds_regions($build_mode),
+        '#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
         '#default_value' => '',
         '#attributes' => array(
           'class' => 'field-region-select field-region-disabled',

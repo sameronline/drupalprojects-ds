@@ -267,7 +267,6 @@ function ds_eval($code, $object) {
  * @return array $regions Collection of regions.
  */
 function ds_regions($regions = 'all') {
-  $regions = 'all';
   if ($regions == 'all') {
     return array(
       'header' => t('Header'),

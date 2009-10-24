@@ -11,6 +11,7 @@
  */
 function _ds_menu() {
   $items = array();
+  $all_build_modes = ds_get_build_modes();
 
   // Display suite main menu block.
   $items['admin/ds'] = array(
@@ -40,7 +41,7 @@ function _ds_menu() {
 
     // Info.
     $items['admin/ds/'. $module] = array(
-      'title' => 'Info',
+      'title' => $title,
       'page callback' => 'ds_info',
       'page arguments' => array($module),
       'access arguments' => array('administer content types'),
@@ -84,6 +85,39 @@ function _ds_menu() {
       'type' => MENU_LOCAL_TASK,
       'weight' => 3,
     );
+
+    // Displays.
+    $build_modes = $all_build_modes[$module];
+    if (!empty($build_modes)) {
+      foreach ($info['types']() as $tkey => $type) {
+        $type_name = $type->type;
+        $type_url_str = str_replace('_', '-', $type_name);
+
+        $items['admin/ds/layout/'. $type_url_str] = array(
+          'title' => ucfirst($type_url_str),
+          'page callback' => 'drupal_get_form',
+          'page arguments' => array('ds_display_overview_form', $type_name, 'full', $module),
+          'access arguments' => array('administer content types'),
+          'file' => 'includes/ds.display.inc',
+          'file path' => $ds_path,
+          'weight' => 2,
+        );
+
+        $weight = 20;
+        foreach ($build_modes as $key => $value) {
+          $items['admin/ds/layout/'. $type_url_str .'/'. $key] = array(
+            'title' => $value['title'],
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('ds_display_overview_form', $type_name, "$key", $module),
+            'access arguments' => array('administer content types'),
+            'type' => $key == 'full' ? MENU_DEFAULT_LOCAL_TASK : MENU_LOCAL_TASK,
+            'file' => 'includes/ds.display.inc',
+            'file path' => $ds_path,
+            'weight' => (isset($value['weight']) && !empty($value['weight'])) ? $value['weight'] : $weight++,
+          );
+        }
+      }
+    }
   }
 
   return $items;
