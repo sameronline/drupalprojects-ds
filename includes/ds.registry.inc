@@ -11,7 +11,8 @@
  */
 function _ds_menu() {
   $items = array();
-  $all_build_modes = ds_get_build_modes();
+  $ds_path = drupal_get_path('module', 'ds');
+  $all_build_modes = ds_get_build_modes(NULL, TRUE);
 
   // Display suite main menu block.
   $items['admin/ds'] = array(

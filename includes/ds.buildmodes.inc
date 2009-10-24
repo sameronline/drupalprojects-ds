@@ -62,6 +62,126 @@ function ds_build_modes($module) {
 }
 
 /**
+ * Build mode form.
+ */
+function ds_build_mode_form($form_state, $module, $build_mode = '') {
+  $form = array();
+
+  if (!empty($build_mode)) {
+    $build_modes = variable_get($module .'_build_modes', array());
+    $title = $build_modes[$build_mode];
+  }
+  else {
+    $title = '';
+  }
+
+  $form['identity'] = array(
+    '#type' => 'fieldset',
+    '#title' => (empty($build_mode)) ? t('Add new build mode'): t('Update build mode'),
+    '#collapsible' => (empty($build_mode)) ? TRUE : FALSE,
+    '#collapsed' => (empty($build_mode)) ? TRUE : FALSE,
+  );
+  $form['identity']['key'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Key name',
+    '#description' => t('The machine-readable name of this build mode.'),
+    '#required' => TRUE,
+  );
+  if (!empty($build_mode)) {
+    $form['identity']['key']['#disabled'] = TRUE;
+    $form['identity']['key']['#value'] = $build_mode;
+    $form['identity']['key']['#description'] = t('The machine-readable name of this build mode. Note: you can not edit this field.');
+  }
+  $form['identity']['name'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Display name',
+    '#description' => t('The name of this build mode which will be used for every type on the display fields page.'),
+    '#required' => TRUE,
+    '#default_value' => $title,
+  );
+  $form['identity']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save display'),
+    '#submit' => array('ds_build_mode_form_submit'),
+  );
+
+  $form['#module'] = $module;
+  $form['#form_type'] = (empty($build_mode)) ? 'insert' : 'update';
+
+  return $form;
+}
+
+/**
+ * Validate new custom display submission.
+ */
+function ds_build_mode_form_validate($form, &$form_state) {
+  if ($form['#form_type'] == 'insert') {
+
+    $existing = array_keys(ds_get_build_modes($form['#module']));
+    if (in_array($form_state['values']['key'], $existing)) {
+      form_set_error('key', t('This display mode already exists.'));
+    }
+
+    if (!preg_match('!^[a-z_]+$!', $form_state['values']['key'])) {
+      form_set_error('key', t('The machine-readable name must contain only lowercase letters and underscores.'));
+    }
+  }
+}
+
+/**
+ * Save new build mode.
+ */
+function ds_build_mode_form_submit($form, &$form_state) {
+  $build_modes = variable_get($form['#module'] .'_build_modes', array());
+  $build_modes[$form_state['values']['key']] = $form_state['values']['name'];
+  variable_set($form['#module'] .'_build_modes', $build_modes);
+  drupal_set_message(t('Build mode %build_mode has been saved.', array('%build_mode' => $build_modes[$form_state['values']['key']])));
+  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/buildmodes';
+  menu_rebuild();
+}
+
+/**
+ * Build mode delete form.
+ */
+function ds_build_mode_delete_form($form_state, $module, $build_mode) {
+  $form = array();
+  $form['question'] = array(
+    '#type' => 'markup',
+    '#value' => '<p>'. t('Are you sure you want to delete the build mode type %build_mode ?', array('%build_mode' => $build_mode)) .'</p>',
+  );
+  $form['display'] = array(
+    '#type' => 'value',
+    '#value' => $build_mode,
+  );
+  $form['button']['submit'] = array(
+    '#prefix' => '<div>',
+    '#type' => 'submit',
+    '#value' => t('Delete'),
+  );
+  $form['buttons']['cancel'] = array(
+    '#suffix' => '</div>',
+    '#type' => 'markup',
+    '#value' => l('cancel', 'admin/ds/'. $module .'/buildmodes'),
+  );
+
+  $form['#module'] = $module;
+  return $form;
+}
+
+/**
+ * Delete display.
+ */
+function ds_build_mode_delete_form_submit($form, &$form_state) {
+  $module = $form['#module'];
+  $build_modes = variable_get($module .'_build_modes', array());
+  unset($build_modes[$form_state['values']['display']]);
+  variable_set($module .'_build_modes', $build_modes);
+  drupal_set_message(t('Custom build mode %build_mode has been removed.', array('%build_mode' => $form_state['values']['display'])));
+  $form_state['redirect'] = 'admin/ds/'. $module .'/buildmodes';
+  menu_rebuild();
+}
+
+/**
  * Build modes matrix form.
  *
  * @param string $module The name of the module.
@@ -178,124 +298,4 @@ function ds_build_modes_matrix_submit($form, &$form_state) {
     }
   }
   variable_set($form['#module'] .'_buildmodes_exclude', $exclude_build_modes);
-}
-
-/**
- * Build mode form.
- */
-function ds_build_mode_form($form_state, $module, $build_mode = '') {
-  $form = array();
-
-  if (!empty($build_mode)) {
-    $build_modes = variable_get($module .'_build_modes', array());
-    $title = $build_modes[$build_mode];
-  }
-  else {
-    $title = '';
-  }
-
-  $form['#module'] = $module;
-
-  $form['identity'] = array(
-    '#type' => 'fieldset',
-    '#title' => (empty($build_mode)) ? t('Add new build mode'): t('Update build mode'),
-    '#collapsible' => (empty($build_mode)) ? TRUE : FALSE,
-    '#collapsed' => (empty($build_mode)) ? TRUE : FALSE,
-  );
-  $form['identity']['key'] = array(
-    '#type' => 'textfield',
-    '#title' => 'Key name',
-    '#description' => t('The machine-readable name of this build mode.'),
-    '#required' => TRUE,
-  );
-  if (!empty($build_mode)) {
-    $form['identity']['key']['#disabled'] = TRUE;
-    $form['identity']['key']['#value'] = $build_mode;
-    $form['identity']['key']['#description'] = t('The machine-readable name of this build mode. Note: you can not edit this field.');
-  }
-  $form['identity']['name'] = array(
-    '#type' => 'textfield',
-    '#title' => 'Display name',
-    '#description' => t('The name of this build mode which will be used for every type on the display fields page.'),
-    '#required' => TRUE,
-    '#default_value' => $title,
-  );
-  $form['identity']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save display'),
-    '#submit' => array('ds_build_mode_form_submit'),
-  );
-  $form['#form_type'] = (empty($build_mode)) ? 'insert' : 'update';
-
-  return $form;
-}
-
-/**
- * Validate new custom display submission.
- */
-function ds_build_mode_form_validate($form, &$form_state) {
-  if ($form['#form_type'] == 'insert') {
-
-    $existing = array_keys(ds_get_build_modes($form['#module']));
-    if (in_array($form_state['values']['key'], $existing)) {
-      form_set_error('key', t('This display mode already exists.'));
-    }
-
-    if (!preg_match('!^[a-z_]+$!', $form_state['values']['key'])) {
-      form_set_error('key', t('The machine-readable name must contain only lowercase letters and underscores.'));
-    }
-  }
-}
-
-/**
- * Save new build mode.
- */
-function ds_build_mode_form_submit($form, &$form_state) {
-  $build_modes = variable_get($form['#module'] .'_build_modes', array());
-  $build_modes[$form_state['values']['key']] = $form_state['values']['name'];
-  variable_set($form['#module'] .'_build_modes', $build_modes);
-  drupal_set_message(t('Build mode %build_mode has been saved.', array('%build_mode' => $build_modes[$form_state['values']['key']])));
-  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/buildmodes';
-  menu_rebuild();
-}
-
-/**
- * Build mode delete form.
- */
-function ds_build_mode_delete_form($form_state, $module, $build_mode) {
-  $form = array();
-  $form['question'] = array(
-    '#type' => 'markup',
-    '#value' => '<p>'. t('Are you sure you want to delete the build mode type %build_mode ?', array('%build_mode' => $build_mode)) .'</p>',
-  );
-  $form['display'] = array(
-    '#type' => 'value',
-    '#value' => $build_mode,
-  );
-  $form['button']['submit'] = array(
-    '#prefix' => '<div>',
-    '#type' => 'submit',
-    '#value' => t('Delete'),
-  );
-  $form['buttons']['cancel'] = array(
-    '#suffix' => '</div>',
-    '#type' => 'markup',
-    '#value' => l('cancel', 'admin/ds/'. $module .'/buildmodes'),
-  );
-
-  $form['#module'] = $module;
-  return $form;
-}
-
-/**
- * Delete display.
- */
-function ds_build_mode_delete_form_submit($form, &$form_state) {
-  $module = $form['#module'];
-  $build_modes = variable_get($module .'_build_modes', array());
-  unset($build_modes[$form_state['values']['display']]);
-  variable_set($module .'_build_modes', $build_modes);
-  drupal_set_message(t('Custom build mode %build_mode has been removed.', array('%build_mode' => $form_state['values']['display'])));
-  $form_state['redirect'] = 'admin/ds/'. $module .'/buildmodes';
-  menu_rebuild();
 }
