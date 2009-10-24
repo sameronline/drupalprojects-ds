@@ -161,7 +161,7 @@ function ds_plugins_process($module, $object_type, $display_settings, &$vars, &$
         require_once($plugin['filename']);
       }
       $function = $plugin['process_callback'];
-      $function($vars, $display, $display_settings, $type_name);
+      $function($vars, $display, $display_settings, $object_type);
     }
   }
 }

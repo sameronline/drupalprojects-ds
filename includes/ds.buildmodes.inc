@@ -48,54 +48,61 @@ function ds_build_modes($module) {
     // New build mode form.
     $output .= drupal_get_form('ds_build_mode_form', $module);
 
-    // Build modes matrix form.
-    $output .= drupal_get_form('ds_buildmodes_matrix_form', $module);
+    // See if this module has the matrix key in hook_ds_api().
+    $function = $module .'_ds_api';
+    $api_data = $function();
+    if (isset($api_data['types'])) {
+      $types = $api_data['types']();
+      if (count($types) > 1)
+      $output .= drupal_get_form('ds_buildmodes_matrix_form', $module, $types);
+    }
   }
-
 
   return $output;
 }
 
 /**
  * Build modes matrix form.
+ *
+ * @param string $module The name of the module.
+ * @param array $types A list of types.
  */
-function ds_buildmodes_matrix_form($form_state, $module) {
+function ds_buildmodes_matrix_form($form_state, $module, $types) {
 
-  drupal_add_js(drupal_get_path('module', 'ds') .'/js/ds_buildmodes.js');
+  drupal_add_js(drupal_get_path('module', 'ds') .'/js/buildmodes.js');
 
   // Exclude build mode matrix.
   $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
-  $build_modes = array('nd_block_all' => array('title' => t('Toggle all'))) + ds_get_build_modes($module);
-  $content_types = node_get_types();
+  $build_modes = array('ds_block_all' => array('title' => t('Toggle all'))) + ds_get_build_modes($module);
 
   $form['#build_modes'] = $build_modes;
-  $form['#content_types'] = $content_types;
+  $form['#types'] = $types;
   $form['#module'] = $module;
 
-  foreach ($content_types as $ckey => $type) {
+  foreach ($types as $tkey => $type) {
 
-    $row_exluded = variable_get('nd_contenttype_'. $ckey, FALSE);
+    $row_exluded = variable_get($module .'_type_'. $tkey, FALSE);
     foreach ($build_modes as $bkey => $mode) {
 
       // We create 2 form keys here. The first one is the checkbox,
       // the second is a hidden value to store the default value in.
-      $form['exclude'][$ckey][$ckey .'-'. $bkey] = array(
+      $form['exclude'][$tkey][$tkey .'-'. $bkey] = array(
         '#type' => 'checkbox',
         '#attributes' => array('class' => 'checkbox-instance')
       );
-      $form['exclude'][$ckey][$ckey .'-'. $bkey .'-disabled'] = array(
+      $form['exclude'][$tkey][$tkey .'-'. $bkey .'-disabled'] = array(
         '#type' => 'value',
-        '#value' => $exclude_build_modes[$ckey][$bkey],
+        '#value' => $exclude_build_modes[$tkey][$bkey],
       );
 
-      if ($bkey == 'nd_block_all') {
-        $form['exclude'][$ckey][$ckey .'-'. $bkey]['#attributes']['class'] .= ' block-all';
-        $form['exclude'][$ckey][$ckey .'-'. $bkey]['#default_value'] = $row_exluded;
+      if ($bkey == 'ds_block_all') {
+        $form['exclude'][$tkey][$tkey .'-'. $bkey]['#attributes']['class'] .= ' block-all';
+        $form['exclude'][$tkey][$tkey .'-'. $bkey]['#default_value'] = $row_exluded;
       }
       else {
-        $form['exclude'][$ckey][$ckey .'-'. $bkey]['#default_value'] = $exclude_build_modes[$ckey][$bkey];
+        $form['exclude'][$tkey][$tkey .'-'. $bkey]['#default_value'] = $exclude_build_modes[$tkey][$bkey];
         if ($row_exluded) {
-          $form['exclude'][$ckey][$ckey .'-'. $bkey]['#disabled'] = 'disabled';
+          $form['exclude'][$tkey][$tkey .'-'. $bkey]['#disabled'] = 'disabled';
         }
       }
     }
@@ -124,7 +131,7 @@ function theme_ds_buildmodes_matrix_form($form) {
 
   // Checkboxes.
   $rows = array();
-  foreach ($form['#content_types'] as $key => $type) {
+  foreach ($form['#types'] as $key => $type) {
     $row = array();
     $row[] = array('data' => $type->name);
     foreach ($form['#build_modes'] as $bkey => $mode) {
@@ -139,7 +146,7 @@ function theme_ds_buildmodes_matrix_form($form) {
 
   $fieldset = array(
     '#title' => t('Exclude matrix'),
-    '#description' => t('Toggle per content type which build modes you want to exclude from rendering by Node Displays. <br />The "Toggle all" checkbox will exclude/include all build modes at once.'),
+    '#description' => t('Toggle per type which build modes you want to exclude from rendering. The "Toggle all" checkbox will exclude/include all build modes at once.'),
     '#children' => $table,
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
@@ -155,13 +162,13 @@ function theme_ds_buildmodes_matrix_form($form) {
  */
 function ds_build_modes_matrix_submit($form, &$form_state) {
   $exclude_build_modes = array();
-  foreach ($form['#content_types'] as $ckey => $type) {
+  foreach ($form['#types'] as $ckey => $type) {
     $global_exclude = FALSE;
     foreach ($form['#build_modes'] as $bkey => $mode) {
       // Global exclude.
-      if ($bkey == 'nd_block_all') {
+      if ($bkey == 'ds_block_all') {
         $global_exclude = $form_state['values'][$ckey .'-'. $bkey];
-        variable_set('nd_contenttype_'. $ckey, $form_state['values'][$ckey .'-'. $bkey]);
+        variable_set($form['#module'] .'_type_'. $ckey, $form_state['values'][$ckey .'-'. $bkey]);
         $exclude_build_modes[$ckey][$bkey] = $form_state['values'][$ckey .'-'. $bkey];
       }
       else {
@@ -171,7 +178,6 @@ function ds_build_modes_matrix_submit($form, &$form_state) {
     }
   }
   variable_set($form['#module'] .'_buildmodes_exclude', $exclude_build_modes);
-  menu_rebuild();
 }
 
 /**
@@ -210,7 +216,7 @@ function ds_build_mode_form($form_state, $module, $build_mode = '') {
   $form['identity']['name'] = array(
     '#type' => 'textfield',
     '#title' => 'Display name',
-    '#description' => t('The name of this build mode which will be used for every content type on the display fields page.'),
+    '#description' => t('The name of this build mode which will be used for every type on the display fields page.'),
     '#required' => TRUE,
     '#default_value' => $title,
   );

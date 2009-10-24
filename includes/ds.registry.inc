@@ -38,18 +38,28 @@ function _ds_menu() {
     $module = $info['module'];
     $title = $info['title'];
 
-    // Fields.
+    // Info.
     $items['admin/ds/'. $module] = array(
-      'title' => $title,
+      'title' => 'Info',
+      'page callback' => 'ds_info',
+      'page arguments' => array($module),
+      'access arguments' => array('administer content types'),
+      'file' => 'includes/ds.info.inc',
+    );
+    $items['admin/ds/'. $module .'/info'] = array(
+      'title' => 'Info',
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+      'weight' => 0,
+    );
+
+    // Fields.
+    $items['admin/ds/'. $module .'/fields'] = array(
+      'title' => 'Fields',
       'page callback' => 'ds_fields',
       'page arguments' => array($module),
       'access arguments' => array('administer content types'),
       'file' => 'includes/ds.fields.inc',
-    );
-
-    $items['admin/ds/'. $module .'/fields'] = array(
-      'title' => 'Fields',
-      'type' => MENU_DEFAULT_LOCAL_TASK,
+      'type' => MENU_LOCAL_TASK,
       'weight' => 1,
     );
 

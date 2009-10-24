@@ -1,8 +1,8 @@
 // $Id$
 
-Drupal.behaviors.nd_buildmodes = function(context) {
+Drupal.behaviors.ds_buildmodes = function(context) {
 
-  $('.block-all').bind('click', function() {
+	$('.block-all').bind('click', function() {
     var excluder = this;
     $(excluder).parents('tr').find('.checkbox-instance').not('.block-all').each(function() {
       if(excluder.checked) {

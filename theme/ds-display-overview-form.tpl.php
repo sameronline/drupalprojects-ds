@@ -17,7 +17,7 @@ print $exclude_build_mode;
 
 if ($rows): ?>
 
-<div id="nd-display-content" <?php print $extra_style; ?>>
+<div id="ds-display-content" <?php print $extra_style; ?>>
   <?php if ($plugins): ?>
     <div id="display-tabs">
       <div id="field-tab"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('fields-content', 'plugins-content');"><?php print t('Fields'); ?></a></div>

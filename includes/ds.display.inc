@@ -43,64 +43,77 @@ function ds_settings_submit($form, &$form_state) {
 }
 
 /**
- * Menu callback; presents a listing of fields display settings for a content type.
+ * Menu callback; presents a listing of fields display settings for an object type.
  *
  * Form includes form widgets to select which fields appear for teaser, full node
  * etc and how the field labels should be rendered.
  *
  * This function is based on content_display_overview_form from
- * content.admin.inc, but altered to have weights and regions.
+ * content.admin.inc of cck, but altered to have weights and regions.
  */
-function ds_display_overview_form(&$form_state, $node_type, $build_mode = 'full', $module = 'nd') {
+function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $module = 'nd') {
+
   // Gather information.
-  $type = node_get_types('type', $node_type);
-  $display_settings = variable_get($module .'_display_settings_'. $node_type, array());
+  $function = $module .'_ds_api';
+  $api_data = $function();
+  $display_settings = variable_get($module .'_display_settings_'. $type, array());
 
   $form = array(
     '#tree' => TRUE,
-    '#node_type' => $node_type,
-    '#has_body' => $type->has_body,
+    '#module' => $module,
+    '#dstype' => $type,
     '#fields' => array(),
     '#build_mode' => $build_mode,
+    '#plugins' => FALSE,
+    '#extra' => array(),
   );
 
+  // Extra info.
+  if (isset($api_data['extra'])) {
+    $types = $api_data['types']();
+    $type_info = $types[$type];
+    foreach ($api_data['extra'] as $key) {
+      $form['#extra'][$key] = $type_info->{$key};
+    }
+  }
+
   // Exclude build mode.
-  $exclude_build_modes = variable_get('nd_buildmodes_exclude', array());
+  $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
   $excluded = ((isset($exclude_build_modes[$node_type][$build_mode])
     && $exclude_build_modes[$node_type][$build_mode] == TRUE) ||
-    variable_get('nd_contenttype_'. $node_type, FALSE) == TRUE) ? TRUE : FALSE;
+    variable_get($module .'_type_'. $node_type, FALSE) == TRUE) ? TRUE : FALSE;
   $form['exclude_build_mode'] = array(
     '#type' => 'checkbox',
     '#title' => t('Exclude this build mode from rendering.'),
-    '#description' => t('The node object will still have this build mode property, so you can make exceptions in your template file. You can also change this setting at <a href="@url">the exclude matrix</a>.<br />You can also create a file called <strong>@template.tpl.php</strong> or <strong>@template-nid.tpl.php</strong> to use for templating.', array('@url' => url('admin/content/types/nd'), '@template' => 'node-'. $type->type .'-'. $build_mode)),
     '#default_value' => $excluded,
     '#attributes' => array('onClick' => 'toggleFieldOverviewForm()'),
   );
-  // RSS support.
-  if ($build_mode == NODE_BUILD_RSS) {
-    $form['exclude_build_mode']['#description'] = t('If you exclude the RSS build mode, the default node feed is generated, but might render strange content. Make sure you do not choose the "Titles only" as your feed content setting, otherwhise, this screen will not have any effect. Choosing either "Full text" or "Titles + teaser" does not matter, this screen will have effect on both settings, apart from the read more link. Remember that some fields like upload and terms are added automatically to the feed and that this manipulates the $description variable, it does not add extra keys to the feed.');
-  }
 
-  $global_exclude = variable_get('nd_contenttype_'. $node_type, FALSE);
+  $global_exclude = variable_get($module .'_type_'. $type, FALSE);
   $form['exclude_build_mode']['#disabled'] = $global_exclude;
   if ($global_exclude == TRUE) {
-    $description = t('The checkbox has been disabled because the complete content type has been excluded from rendering.') .'<br />';
+    $description = t('The checkbox has been disabled because the complete type has been excluded from rendering.') .'<br />';
     $form['exclude_build_mode']['#description'] = $description .' '. $form['exclude_build_mode']['#description'];
   }
 
   // If global exclude is true, no point in rendering.
   if ($global_exclude == FALSE) {
-    $form['submit'] = array('#type' => 'submit', '#value' => t('Save'));
-    $form['#submit'] = array('ds_display_submit');
-
     // Add the fields.
-    ds_add_fields($form, $display_settings, $module);
+    ds_fields_display_form($form, $display_settings);
 
     // Plugins.
-    if ($build_mode != NODE_BUILD_RSS)
+    $plugins = TRUE;
+    if (isset($api_data['plugins_exclude']) && in_array($build_mode, $api_data['plugins_exclude'])) {
+      $plugins = FALSE;
+    }
+    if ($plugins)
     ds_plugins_display_form($form, $display_settings);
-  }
 
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save'),
+    );
+  }
 
   return $form;
 }
@@ -108,14 +121,14 @@ function ds_display_overview_form(&$form_state, $node_type, $build_mode = 'full'
 /**
  * Add fields to display overview form.
  */
-function ds_add_fields(&$form, $display_settings, $ds_type) {
+function ds_fields_display_form(&$form, $display_settings) {
 
+  $module = $form['#module'];
   $build_mode = $form['#build_mode'];
-  $node_type = $form['#node_type'];
-  $has_body = $form['#has_body'];
+  $type = $form['#dstype'];
+  $extra = $form['#extra'];
 
-  // Get extra fields.
-  $fields = ds_get_fields($ds_type, $node_type, $build_mode);
+  $fields = ds_get_fields($module, $type, $build_mode, $extra);
   if (!empty($fields)) {
     foreach ($fields as $field => $value) {
       $form['#fields'][] = $field;
@@ -143,8 +156,8 @@ function ds_add_fields(&$form, $display_settings, $ds_type) {
  * @param array $display_settings Current display settings.
  */
 function ds_plugins_display_form(&$form, $display_settings) {
-
-  $plugins = variable_get('ds_plugin_settings', array());
+  $module = $form['#module'];
+  $plugins = variable_get($module .'_plugin_settings', array());
   if (!empty($plugins)) {
     $form['#plugins'] = TRUE;
     $form['#plugin_keys'] = array();
@@ -161,24 +174,26 @@ function ds_plugins_display_form(&$form, $display_settings) {
 }
 
 /**
- * Save fields per context.
+ * Save fields & plugins for a build mode.
  */
-function ds_display_submit($form, &$form_state) {
+function ds_display_overview_form_submit($form, &$form_state) {
 
-  $node_type = $form['#node_type'];
+  $module = $form['#module'];
   $build_mode = $form['#build_mode'];
+  $type = $form['#dstype'];
+  $extra = $form['#extra'];
 
   // Exclude build mode checkbox.
   $exclude_build_mode = $form_state['values']['exclude_build_mode'];
-  $exclude_build_modes = variable_get('nd_buildmodes_exclude', array());
+  $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
   $exclude_build_modes[$node_type][$build_mode] = $exclude_build_mode;
-  variable_set('nd_buildmodes_exclude', $exclude_build_modes);
+  variable_set($module .'_buildmodes_exclude', $exclude_build_modes);
 
-  $display_settings = variable_get('nd_display_settings_'. $node_type, array());
+  $display_settings = variable_get($module .'_display_settings_'. $type, array());
   unset($display_settings[$build_mode]);
 
   // Fields.
-  $fields = ds_get_fields($form['#node_type'], $form['#has_body'], $build_mode);
+  $fields = ds_get_fields($module, $type, $build_mode, $extra);
   if (!empty($fields)) {
     foreach ($fields as $key => $field) {
       $display_settings[$build_mode]['fields'][$key]['weight'] = $form_state['values'][$key]['nd_weight'];
@@ -193,11 +208,11 @@ function ds_display_submit($form, &$form_state) {
   }
 
   // Plugins
-  if ($build_mode != NODE_BUILD_RSS)
+  if ($form['#plugins'] == TRUE)
   ds_plugins_display_submit($form, $form_state, $display_settings);
 
   // Save all these settings.
-  variable_set('nd_display_settings_'. $node_type, $display_settings);
+  variable_set($module .'_display_settings_'. $type, $display_settings);
 
   drupal_set_message(t('Your settings have been saved.'));
 }
@@ -210,7 +225,9 @@ function ds_display_submit($form, &$form_state) {
  * @param array $display_settings Current display settings being saved.
  */
 function ds_plugins_display_submit($form, $form_state, &$display_settings) {
-  $plugins = variable_get('nd_plugin_settings', array());
+  $module = $form['#module'];
+
+  $plugins = variable_get($module .'_plugin_settings', array());
 
   foreach ($plugins as $key => $plugin) {
     if (isset($plugin['filename'])) {

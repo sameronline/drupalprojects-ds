@@ -7,9 +7,9 @@
  */
 
 /**
- * Implementation of nd_pluginname_form().
+ * Implementation of ds_pluginname_form().
  */
-function ds_emptyregionrender_form(&$form, $nd_display_settings) {
+function ds_emptyregionrender_form(&$form, $display_settings) {
 
   $form['emptyregionrender'] = array(
     '#type' => 'fieldset',
@@ -26,27 +26,27 @@ function ds_emptyregionrender_form(&$form, $nd_display_settings) {
       $form['emptyregionrender']['region-render-'. $region] = array(
         '#title' => $title,
         '#type' => 'checkbox',
-        '#default_value' => ds_default_value($nd_display_settings, $build_mode, 'emptyregionrender', 'render', $region, ''),
+        '#default_value' => ds_default_value($display_settings, $build_mode, 'emptyregionrender', 'render', $region, ''),
       );
     }
   }
 }
 
 /**
- * Implementation of nd_pluginname_submit().
+ * Implementation of ds_pluginname_submit().
  */
-function ds_emptyregionrender_submit($form, $form_state, &$nd_display_settings) {
+function ds_emptyregionrender_submit($form, $form_state, &$display_settings) {
   $regions = ds_regions();
   $regions_save = array();
   $build_mode = $form['#build_mode'];
   foreach ($regions as $region => $title) {
     $regions_save['render'][$region] = $form_state['values']['emptyregionrender']['region-render-'. $region];
   }
-  $nd_display_settings[$build_mode]['emptyregionrender'] = $regions_save;
+  $display_settings[$build_mode]['emptyregionrender'] = $regions_save;
 }
 
 /**
- * Implementation of nd_pluginname_process().
+ * Implementation of ds_pluginname_process().
  */
 function ds_emptyregionrender_process(&$vars, &$display, $display_settings, $object_type) {
   foreach ($display->all_regions as $region_name => $region_title) {

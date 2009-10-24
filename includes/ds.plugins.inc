@@ -3,14 +3,15 @@
 
 /**
  * @file
- * Administration functions for ND plugins.
+ * Administration functions for DS plugins.
  */
 
 /**
- * Menu callback. Registers all plugins for ND.
+ * Menu callback. Registers plugins for a module.
  */
 function ds_plugins($form_state, $module) {
   $form = array();
+  $form['#module'] = $module;
 
   $plugins = ds_plugins_retrieve($module);
   $plugin_settings = variable_get($module .'_plugin_settings', array());
@@ -23,8 +24,6 @@ function ds_plugins($form_state, $module) {
       );
     }
   }
-
-  $form['#module'] = $module;
 
   $form['submit'] = array(
     '#type' => 'submit',
