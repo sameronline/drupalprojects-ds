@@ -59,7 +59,7 @@ function template_preprocess_ds_row_object(&$vars) {
     return;
   }
 
-  $vars['object'] = node_view($node, FALSE, FALSE, $options['show_links']);
+  $vars['object'] = node_view($node, FALSE, FALSE, FALSE);
 }
 
 /**
