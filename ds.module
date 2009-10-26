@@ -58,6 +58,16 @@ function ds_theme() {
 }
 
 /**
+ * Implementation of hook_views_api().
+ */
+function ds_views_api() {
+  return array(
+    'api' => 2,
+    'path' => drupal_get_path('module', 'ds') .'/views',
+  );
+}
+
+/**
  * Implementation of hook_ds_plugins().
  */
 function ds_ds_plugins() {
@@ -66,7 +76,223 @@ function ds_ds_plugins() {
 }
 
 /**
- * Function to return a value or return the default if empty.
+ * Get fields and regions for an object.
+ *
+ * @param stdClass $object The object to manipulate.
+ * @param string $module The module that is requesting.
+ */
+function ds_build_fields_and_regions(&$object, $module) {
+
+  // @todo make following static.
+
+  // Gather information.
+  $function = $module .'_ds_api';
+  $api_data = $function();
+  $display_settings = variable_get($module .'_display_settings_'. $object->type, array());
+
+  // Extra info.
+  if (isset($api_data['extra'])) {
+    $extra = array();
+    $types = $api_data['types']();
+    $type_info = $types[$type];
+    foreach ($api_data['extra'] as $key) {
+      $extra[$key] = $type_info->{$key};
+    }
+  }
+
+  // See if rendering is needed later on.
+  // There are two ways of excluding: global exclude on content type
+  // or per build mode per content type.
+  // We don't return here, because we want to add all fields on the object
+  // so themers can use it in their template.
+  $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
+  $object->render_by_ds = ((isset($exclude_build_modes[$object->type][$object->build_mode])
+    && $exclude_build_modes[$object->type][$object->build_mode] == TRUE) ||
+    variable_get($module .'_type_'. $object->type, FALSE) == TRUE) ? FALSE : TRUE;
+
+  $regions = array();
+  $ds_fields = array();
+  $ds_preprocess_fields = array();
+  $display_settings = variable_get($module .'_display_settings_'. $object->type, array());
+
+  // Get all fields.
+  $fields = ds_get_fields($module, $object->type, $object->build_mode, $extra);
+  if (!empty($fields)) {
+    foreach ($fields as $key => $field) {
+
+      // Exclude now depends on the region, previous it was an exclude property.
+      $region = ds_default_value($display_settings, $object->build_mode, 'fields', $key, 'region', DS_DEFAULT_REGION);
+
+      if ($region != 'disabled') {
+        $weight = ds_default_value($display_settings, $object->build_mode, 'fields', $key, 'weight', DS_DEFAULT_WEIGHT);
+        $object->content[$key]['#weight'] = $weight;
+        $regions[$region][$key] = $weight;
+        $ds_fields[$key] = array(
+          'key' => $key,
+          'title' => $field['title'],
+          'labelformat' => ds_default_value($display_settings, $object->build_mode, 'fields', $key, 'labelformat', DS_DEFAULT_LABEL_FORMAT),
+          'type' => isset($field['display_settings']) ? 'cck' : 'nd',
+        );
+
+        // If the field has the storage key, it means the theming is done in that module.
+        if (isset($field['storage'])) {
+          continue;
+        }
+
+        // Theming can either be done in preprocess, or with a custom funtion or an
+        // existing formatter theming function. For a custom function we'll pass
+        // on the $object object, the field name and the complete field array.
+        switch ($field['type']) {
+          case DS_FIELD_PREPROCESS:
+            $ds_preprocess_fields[$key] = $ds_fields[$key];
+            break;
+          case DS_FIELD_IGNORE:
+            break;
+          case DS_FIELD_CUSTOM:
+          case DS_FIELD_OVERRIDABLE:
+          case DS_FIELD_OVERRIDDEN:
+            ds_eval_code($key, $field, $object, 'node');
+            break;
+          case DS_FIELD_BLOCK:
+            ds_eval_block($key, $field, $object, 'node');
+            break;
+          case DS_FIELD_FUNCTION:
+            if (isset($field['file'])) {
+              include_once($field['file']);
+            }
+            $function = ds_default_value($display_settings, $object->build_mode, 'fields', $key, 'format', key($field['formatters']));
+            $function($object, $key, $field);
+            break;
+          case DS_FIELD_THEME:
+            $format = ds_default_value($display_settings, $object->build_mode, 'fields', $key, 'format', key($field['formatters']));
+            theme($format, $object);
+            break;
+        }
+      }
+    }
+  }
+
+  // Add fields and regions to the object.
+  // Also reset render_by_ds property if needed.
+  $object->ds_fields = $ds_fields;
+  $object->regions = $regions;
+  $object->preprocess_fields = $ds_preprocess_fields;
+  if (empty($regions)) {
+    $object->render_by_ds = FALSE;
+  }
+}
+
+/**
+ * Render content for an object.
+ *
+ * @param stdClass $object The object to manipulate.
+ * @param string $module The module that is requesting.
+ * @param array $vars The variables need for rendering.
+ * @param $theme_function The theming function for a field.
+ */
+function ds_render_content($object, $module, $vars, $theme_function = 'ds_field') {
+
+  // @todo make following static.
+
+  // Gather information.
+  $function = $module .'_ds_api';
+  $api_data = $function();
+  $display_settings = variable_get($module .'_display_settings_'. $object->type, array());
+
+  // Extra info.
+  if (isset($api_data['extra'])) {
+    $extra = array();
+    $types = $api_data['types']();
+    $type_info = $types[$type];
+    foreach ($api_data['extra'] as $key) {
+      $extra[$key] = $type_info->{$key};
+    }
+  }
+
+  $all_regions = ds_regions();
+  $regions = $vars['regions'];
+  $themed_regions = array();
+
+  // Create key_rendered fields from DS_FIELD_PREPROCESS types.
+  if (!empty($object->preprocess_fields)) {
+    foreach ($object->preprocess_fields as $key => $field) {
+      $field_key = $key .'_rendered';
+      $vars[$field_key] = $vars[$key];
+      unset($vars[$key]);
+    }
+  }
+
+  // Loop through all regions and content and classes.
+  $region_classes = array();
+  foreach ($all_regions as $region_name => $region_title) {
+
+    if (isset($regions[$region_name])) {
+
+      $region_content = '';
+      $region = $regions[$region_name];
+
+      // Loop through all fields after ordering on weight.
+      foreach ($region as $key => $weight) {
+        $field_content = isset($vars[$key .'_rendered']) ? $vars[$key .'_rendered'] : '';
+        if (!empty($field_content)) {
+          $field_key = strtr($key, '_', '-');
+          $region_content .= theme($theme_function, $field_content, $field_key, $object->ds_fields[$key]);
+        }
+        unset($object->content[$key]);
+      }
+
+      // Render region.
+      if (!empty($region_content)) {
+        if ($region_name == 'left' || $region_name == 'right') {
+          $region_classes[$region_name] = $region_name;
+        }
+        $themed_regions[$region_name] = array('content' => $region_content);
+      }
+    }
+  }
+
+  $object_display = new stdClass();
+  $object_display->all_regions = $all_regions;
+  $object_display->themed_regions = $themed_regions;
+  $object_display->region_classes = $region_classes;
+
+  // Plugins.
+  ds_plugins_process($module, $api_data['object'], $display_settings, $vars, $object_display);
+
+  // Add classes based on regions.
+  $nd_middle_classes = 'no-sidebars';
+  if (isset($object_display->region_classes['left']) && isset($object_display->region_classes['right'])) {
+    $nd_middle_classes = 'two-sidebars';
+  }
+  elseif (isset($object_display->region_classes['left'])) {
+    $nd_middle_classes = 'one-sidebar sidebar-left';
+  }
+  elseif (isset($object_display->region_classes['right'])) {
+    $nd_middle_classes = 'one-sidebar sidebar-right';
+  }
+
+  // Build the $content variable.
+  $content = '';
+  foreach ($object_display->themed_regions as $region_name => $region_data) {
+    $content .= '<div class="ds-region-'. $region_name;
+    if ($region_name == 'middle') {
+      $content .= ' '. $nd_middle_classes;
+    }
+    if (isset($region_data['extra_class'])) {
+      $content .= $region_data['extra_class'];
+    }
+    $content .= '" ';
+    if (isset($region_data['inline_css'])) {
+      $content .= $region_data['inline_css'];
+    }
+    $content .= '><div class="ds-region-inner">'. $region_data['content'] .'</div></div>';
+  }
+
+  return $content;
+}
+
+/**
+ * Return a value or return the default if empty.
  *
  * @param array $settings The settings loaded for a type.
  * @param string $build_mode The name of the build mode.

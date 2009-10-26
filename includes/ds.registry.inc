@@ -11,17 +11,15 @@
  */
 function _ds_menu() {
   $items = array();
-  $ds_path = drupal_get_path('module', 'ds');
   $all_build_modes = ds_get_build_modes(NULL, TRUE);
 
   // Display suite main menu block.
   $items['admin/ds'] = array(
     'title' => 'Display suite',
     'description' => 'Manage your site display.',
-    'page callback' => 'system_admin_menu_block_page',
-    'access arguments' => array('access administration pages'),
-    'file' => 'system.admin.inc',
-    'file path' => drupal_get_path('module', 'system'),
+    'page callback' => 'ds_general_page',
+    'access arguments' => array('administer content types'),
+    'file' => 'includes/ds.admin.inc',
   );
 
   // Display layout menu item.
@@ -100,7 +98,6 @@ function _ds_menu() {
           'page arguments' => array('ds_display_overview_form', $type_name, 'full', $module),
           'access arguments' => array('administer content types'),
           'file' => 'includes/ds.display.inc',
-          'file path' => $ds_path,
           'weight' => 2,
         );
 
@@ -113,7 +110,6 @@ function _ds_menu() {
             'access arguments' => array('administer content types'),
             'type' => $key == 'full' ? MENU_DEFAULT_LOCAL_TASK : MENU_LOCAL_TASK,
             'file' => 'includes/ds.display.inc',
-            'file path' => $ds_path,
             'weight' => (isset($value['weight']) && !empty($value['weight'])) ? $value['weight'] : $weight++,
           );
         }
@@ -149,6 +145,16 @@ function _ds_theme() {
       'file' => 'ds.plugins.inc',
       'path' => $path .'/includes',
       'arguments' => array('form' => NULL),
+    ),
+    // Field
+    'ds_field' => array(
+      'arguments' => array(
+        'content' => NULL,
+        'field_key' => NULL,
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
     ),
   );
 
