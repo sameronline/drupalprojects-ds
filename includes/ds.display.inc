@@ -61,7 +61,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
   $form = array(
     '#tree' => TRUE,
     '#module' => $module,
-    '#dstype' => $type,
+    '#type_name' => $type,
     '#fields' => array(),
     '#build_mode' => $build_mode,
     '#plugins' => FALSE,
@@ -125,7 +125,7 @@ function ds_fields_display_form(&$form, $display_settings) {
 
   $module = $form['#module'];
   $build_mode = $form['#build_mode'];
-  $type = $form['#dstype'];
+  $type = $form['#type_name'];
   $extra = $form['#extra'];
 
   $fields = ds_get_fields($module, $type, $build_mode, $extra);
@@ -180,7 +180,7 @@ function ds_display_overview_form_submit($form, &$form_state) {
 
   $module = $form['#module'];
   $build_mode = $form['#build_mode'];
-  $type = $form['#dstype'];
+  $type = $form['#type_name'];
   $extra = $form['#extra'];
 
   // Exclude build mode checkbox.
@@ -196,7 +196,7 @@ function ds_display_overview_form_submit($form, &$form_state) {
   $fields = ds_get_fields($module, $type, $build_mode, $extra);
   if (!empty($fields)) {
     foreach ($fields as $key => $field) {
-      $display_settings[$build_mode]['fields'][$key]['weight'] = $form_state['values'][$key]['nd_weight'];
+      $display_settings[$build_mode]['fields'][$key]['weight'] = $form_state['values'][$key]['ds_weight'];
       $display_settings[$build_mode]['fields'][$key]['format'] = $form_state['values'][$key][$build_mode]['format'];
       $display_settings[$build_mode]['fields'][$key]['region'] = $form_state['values'][$key][$build_mode]['region'];
       $display_settings[$build_mode]['fields'][$key]['labelformat'] = $form_state['values'][$key][$build_mode]['label']['format'];

@@ -235,6 +235,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
       $region = $regions[$region_name];
 
       // Loop through all fields after ordering on weight.
+      asort($region);
       foreach ($region as $key => $weight) {
         $field_content = isset($vars[$key .'_rendered']) ? $vars[$key .'_rendered'] : '';
         if (!empty($field_content)) {
@@ -323,7 +324,17 @@ function ds_get_fields($module, $type_name, $build_mode, $extra = array()) {
   if (!isset($static_fields[$module][$type_name][$build_mode])) {
 
     // Fields in code.
-    $fields = module_invoke_all('ds_fields', $type_name, $build_mode, $extra);
+    $fields = array();
+    foreach (module_implements('ds_fields') as $prefix) {
+      $function = $prefix .'_ds_fields';
+      $all_fields = $function($type_name, $build_mode, $extra);
+      foreach ($all_fields as $key => $field_results) {
+        if ($key === $module) {
+          $fields = array_merge($field_results, $fields);
+        }
+      }
+    }
+
     // Fields via the UI.
     $db_fields = variable_get($module .'_fields', array());
     if (!empty($db_fields)) {
@@ -344,8 +355,10 @@ function ds_get_fields($module, $type_name, $build_mode, $extra = array()) {
     // Give modules a change to alter fields.
     drupal_alter('ds_fields', $fields);
 
+    // Store the fields.
     $static_fields[$module][$type_name][$build_mode] = $fields;
   }
+
   return $static_fields[$module][$type_name][$build_mode];
 }
 
