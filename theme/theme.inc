@@ -39,6 +39,20 @@ function theme_ds_field($content, $field_key, $field) {
 }
 
 /**
+ * Theme author name.
+ */
+function theme_ds_author_nolink(&$object) {
+  $object->author_rendered = $object->name;
+}
+
+/**
+ * Theme author name linked.
+ */
+function theme_ds_author_link(&$object) {
+  $object->author_rendered = theme('username', $object);
+}
+
+/**
  * Template helper for theme_views_view_row_object
  *
  * @todo support for users & comments.

@@ -146,13 +146,27 @@ function _ds_theme() {
       'path' => $path .'/includes',
       'arguments' => array('form' => NULL),
     ),
-    // Field
+
+    // General theming field.
     'ds_field' => array(
       'arguments' => array(
         'content' => NULL,
         'field_key' => NULL,
         'field' => NULL,
       ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+    ),
+
+
+    // Theming for fields which are shared across objects (name, picture etc).
+    'ds_author_link' => array(
+      'arguments' => array('object' => NULL),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+    ),
+    'ds_author_nolink' => array(
+      'arguments' => array('object' => NULL),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
     ),
