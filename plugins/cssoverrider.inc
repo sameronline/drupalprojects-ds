@@ -42,7 +42,7 @@ function ds_cssoverrider_form(&$form, $display_settings) {
 /**
  * Implementation of ds_pluginname_submit().
  */
-function nd_cssoverrider_submit($form, $form_state, &$display_settings) {
+function ds_cssoverrider_submit($form, $form_state, &$display_settings) {
   $regions = ds_regions();
   $css_save = array();
   $build_mode = $form['#build_mode'];
