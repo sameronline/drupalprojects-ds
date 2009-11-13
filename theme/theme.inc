@@ -53,27 +53,69 @@ function theme_ds_author_link(&$object) {
 }
 
 /**
- * Template helper for theme_views_view_row_object
- *
- * @todo support for users & comments.
+ * Template helper for theme_views_view_row_object().
  */
 function template_preprocess_ds_row_object(&$vars) {
 
   $options = $vars['options'];
   $vars['object'] = ''; // make sure var is defined.
-  $nid = $vars['row']->nid;
-  if (!is_numeric($nid)) {
-    return;
+
+  switch ($vars['view']->base_table) {
+
+    // Node support.
+    case 'node':
+      $nid = $vars['row']->nid;
+      if (!is_numeric($nid)) {
+        return;
+      }
+
+      $node = node_load($nid);
+      if (empty($node)) {
+        return;
+      }
+
+      $node->build_mode = $options['build_mode'];
+      $vars['object'] = node_view($node, FALSE, FALSE, FALSE);
+      break;
+
+    // Comment support.
+    // @todo fix this a bit more (option to theme with or without node
+    // maybe even use our 'famous' threaded comments block.
+    case 'comments':
+      $cid = $vars['row']->cid;
+      if (!is_numeric($nid)) {
+        return;
+      }
+
+      $comment = _comment_load($cid);
+      if (empty($comment)) {
+        return;
+      }
+
+      $comment->build_mode = $options['build_mode'];
+      //$vars['object'] = comment_view($comment);
+      break;
+
+    // User support.
+    case 'users':
+      $uid = $vars['row']->uid;
+      if (!is_numeric($uid)) {
+        return;
+      }
+
+      $account = user_load($uid);
+      if (empty($account)) {
+        return;
+      }
+
+      $account->build_mode = $options['build_mode'];
+      user_build_content($account);
+
+      // To theme user profiles, copy modules/user/user_profile.tpl.php
+      // to your theme directory, and edit it as instructed in that file's comments.
+      $vars['object'] = theme('user_profile', $account);
+      break;
   }
-
-  $node = node_load($nid);
-  $node->build_mode = $options['build_mode'];
-
-  if (empty($node)) {
-    return;
-  }
-
-  $vars['object'] = node_view($node, FALSE, FALSE, FALSE);
 }
 
 /**
