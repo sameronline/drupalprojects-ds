@@ -310,43 +310,61 @@ function ds_default_value($settings, $build_mode, $type, $key, $search_key, $def
  * @param string $type_name The name of object (ie, page or story for node types, profile for users)
  * @param string $build_mode The build mode.
  * @param array $extra Extra properties we might want to check on (ie has_body property).
+ * @param array $reset Whether we need to reset the fields cache or not.
  * @return array of fields.
  */
-function ds_get_fields($module, $type_name, $build_mode, $extra = array()) {
+function ds_get_fields($module, $type_name, $build_mode, $extra = array(), $reset = FALSE) {
   static $static_fields = array();
   if (!isset($static_fields[$module][$type_name][$build_mode])) {
 
-    // Fields in code.
-    $fields = array();
-    foreach (module_implements('ds_fields') as $prefix) {
-      $function = $prefix .'_ds_fields';
-      $all_fields = $function($type_name, $build_mode, $extra);
-      foreach ($all_fields as $key => $field_results) {
-        if ($key === $module) {
-          $fields = array_merge($field_results, $fields);
+    // Do we have them cached or not ?
+    $ds_fields_cached = variable_get('ds_fields_cached', array());
+    if (!isset($ds_fields_cached[$module][$type_name][$build_mode]) || $reset) {
+
+      // Fields in code.
+      $fields = array();
+      foreach (module_implements('ds_fields') as $prefix) {
+        $function = $prefix .'_ds_fields';
+        $all_fields = $function($type_name, $build_mode, $extra);
+        foreach ($all_fields as $key => $field_results) {
+          if ($key === $module) {
+            $fields = array_merge($field_results, $fields);
+          }
         }
       }
-    }
 
-    // Fields via the UI.
-    $db_fields = variable_get($module .'_fields', array());
-    if (!empty($db_fields)) {
-      foreach ($db_fields as $key => $field) {
-        $fields[$key] = array(
-          'title' => check_plain($field['title']),
-          'code' => isset($field['block']) ? $field['block'] : $field['code'],
-          'type' => $field['type'],
-          'render' => isset($field['render']) ? $field['render'] : '',
-        );
-        $exclude = (isset($field['exclude'][$type_name]) && $field['exclude'][$type_name] === $type_name) ? TRUE : FALSE;
-        if ($exclude) {
-          unset($fields[$key]);
+      // Fields via the UI.
+      $db_fields = variable_get($module .'_fields', array());
+      if (!empty($db_fields)) {
+        foreach ($db_fields as $key => $field) {
+          $fields[$key] = array(
+            'title' => check_plain($field['title']),
+            'code' => isset($field['block']) ? $field['block'] : $field['code'],
+            'type' => $field['type'],
+            'render' => isset($field['render']) ? $field['render'] : '',
+          );
+          $exclude = (isset($field['exclude'][$type_name]) && $field['exclude'][$type_name] === $type_name) ? TRUE : FALSE;
+          if ($exclude) {
+            unset($fields[$key]);
+          }
         }
       }
-    }
 
-    // Give modules a change to alter fields.
-    drupal_alter('ds_fields', $fields);
+      // Give modules a change to alter fields.
+      drupal_alter('ds_fields', $fields);
+
+      // If we reset, remove the old settings, otherwhise, save the new ones.
+      if ($reset) {
+        unset($ds_fields_cached[$module][$type_name][$build_mode]);
+      }
+      else {
+        $ds_fields_cached[$module][$type_name][$build_mode] = $fields;
+      }
+      variable_set('ds_fields_cached', $ds_fields_cached);
+    }
+    else {
+      $fields = $ds_fields_cached[$module][$type_name][$build_mode];
+    }
 
     // Store the fields.
     $static_fields[$module][$type_name][$build_mode] = $fields;

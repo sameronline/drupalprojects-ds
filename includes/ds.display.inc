@@ -128,7 +128,7 @@ function ds_fields_display_form(&$form, $display_settings) {
   $type = $form['#type_name'];
   $extra = $form['#extra'];
 
-  $fields = ds_get_fields($module, $type, $build_mode, $extra);
+  $fields = ds_get_fields($module, $type, $build_mode, $extra, TRUE);
   if (!empty($fields)) {
     foreach ($fields as $field => $value) {
       $form['#fields'][] = $field;

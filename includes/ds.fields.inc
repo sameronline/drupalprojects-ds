@@ -30,7 +30,7 @@ function ds_fields($module) {
 
   // Get fields.
   $db_fields = variable_get($module .'_fields', array());
-  $all_fields = ds_get_fields($module, NULL, NULL, $extra);
+  $all_fields = ds_get_fields($module, NULL, NULL, $extra, TRUE);
 
   // Compare with db_fields.
   foreach ($all_fields as $key => $db_field) {
