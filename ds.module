@@ -147,9 +147,8 @@ function ds_build_fields_and_regions(&$object, $module) {
         // on the $object object, the field name and the complete field array.
         switch ($field['type']) {
           case DS_FIELD_PREPROCESS:
-            $ds_preprocess_fields[$key] = $ds_fields[$key];
-            break;
           case DS_FIELD_IGNORE:
+            $ds_preprocess_fields[$key] = $field['type'];
             break;
           case DS_FIELD_CUSTOM:
           case DS_FIELD_OVERRIDABLE:
@@ -209,12 +208,20 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
   $regions = $vars['regions'];
   $themed_regions = array();
 
-  // Create key_rendered fields from DS_FIELD_PREPROCESS types.
+  // Create key_rendered fields from DS_FIELD_PREPROCESS and DS_FIELD_IGNORE types.
   if (!empty($object->preprocess_fields)) {
-    foreach ($object->preprocess_fields as $key => $field) {
-      $field_key = $key .'_rendered';
-      $vars[$field_key] = $vars[$key];
-      unset($vars[$key]);
+    foreach ($object->preprocess_fields as $key => $type) {
+      switch ($type) {
+        case DS_FIELD_PREPROCESS:
+          $field_key = $key .'_rendered';
+          $vars[$field_key] = $vars[$key];
+          unset($vars[$key]);
+          break;
+        case DS_FIELD_IGNORE:
+          $field_key = $key .'_rendered';
+          $vars[$field_key] = $object->content[$key]['#value'];
+          break;
+      }
     }
   }
 
