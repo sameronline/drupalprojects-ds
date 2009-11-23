@@ -18,15 +18,9 @@ function ds_fields($module) {
   $function = $module .'_ds_api';
   $api_data = $function();
   $object = $api_data['object'];
+
   // Extra info.
   $extra = array();
-  if (isset($api_data['extra'])) {
-    $types = $api_data['types']();
-    $type_info = $types[$type];
-    foreach ($api_data['extra'] as $key) {
-      $extra[$key] = $type_info->{$key};
-    }
-  }
 
   // Get fields.
   $db_fields = variable_get($module .'_fields', array());

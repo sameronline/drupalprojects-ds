@@ -79,9 +79,9 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
 
   // Exclude build mode.
   $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
-  $excluded = ((isset($exclude_build_modes[$node_type][$build_mode])
-    && $exclude_build_modes[$node_type][$build_mode] == TRUE) ||
-    variable_get($module .'_type_'. $node_type, FALSE) == TRUE) ? TRUE : FALSE;
+  $excluded = ((isset($exclude_build_modes[$type][$build_mode])
+    && $exclude_build_modes[$type][$build_mode] == TRUE) ||
+    variable_get($module .'_type_'. $type, FALSE) == TRUE) ? TRUE : FALSE;
   $form['exclude_build_mode'] = array(
     '#type' => 'checkbox',
     '#title' => t('Exclude this build mode from rendering.'),
@@ -186,7 +186,7 @@ function ds_display_overview_form_submit($form, &$form_state) {
   // Exclude build mode checkbox.
   $exclude_build_mode = $form_state['values']['exclude_build_mode'];
   $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
-  $exclude_build_modes[$node_type][$build_mode] = $exclude_build_mode;
+  $exclude_build_modes[$type][$build_mode] = $exclude_build_mode;
   variable_set($module .'_buildmodes_exclude', $exclude_build_modes);
 
   $display_settings = variable_get($module .'_display_settings_'. $type, array());
