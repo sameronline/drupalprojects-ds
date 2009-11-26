@@ -9,37 +9,19 @@
 /**
  * Settings page.
  */
-function ds_settings($form_state) {
-  $form = array();
-
-  $form['regions_css'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Regions css'),
-  );
-  $form['regions_css']['ds_regions_css'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Load region css.'),
-    '#description' => t('Load the default region css that comes with this module. For inspiration, look into css/regions.css. Note, do not make any changes in that file as module upgrades will overwrite your changes.'),
-    '#default_value' => variable_get('ds_regions_css', TRUE),
-  );
-
-  // One button to save them all.
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save settings'),
-    '#weight' => 10,
-  );
-
-  return $form;
-}
-
-/**
- * Settings submit.
- */
-function ds_settings_submit($form, &$form_state) {
-  variable_set('ds_regions_css', $form_state['values']['ds_regions_css']);
-  drupal_set_message(t('The configuration options have been saved.'));
-  menu_rebuild();
+function ds_layout_general() {
+  $item = menu_get_item('admin/ds/layout');
+  if ($content = system_admin_menu_block($item)) {
+    $childs = theme('admin_block_content', $content);
+  }
+  else {
+    $childs = t('You do not have any administrative items.');
+  }
+  $fieldset = array();
+  $fieldset['#title'] = 'Object types';
+  $fieldset['#children'] = $childs;
+  $output = theme('fieldset', $fieldset);
+  return $output;
 }
 
 /**

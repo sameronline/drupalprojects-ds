@@ -6,11 +6,10 @@
 
 .ds-region-left {
   clear: left;
-  float: left; 
+  float: left;
 }
 
 .ds-region-middle {
-  float: left;
   clear: none;
 }
 
@@ -35,23 +34,21 @@
 /* middle region */
 
 div.no-sidebars {
-  width: 100%;
-  float: none;
   clear: left;
 }
 
 div.sidebar-left {
-  width: 75%;
+  margin-left: 25%;
 }
 
 div.sidebar-right {
-  width: 75%;
+  margin-right: 25%;
   clear: left;
 }
 
 div.two-sidebars {
-  width: 50%;
-  float: left;
+  margin-left: 25%;
+  margin-right: 25%;
 }
 
 /* Region inner divs. Add borders, padding and margin here */
@@ -59,14 +56,14 @@ div.two-sidebars {
 .ds-region-header .ds-region-inner {
 }
 
-.ds-region-left .ds-region-inner { 
+.ds-region-left .ds-region-inner {
 }
 
-.ds-region-middle .ds-region-inner { 
+.ds-region-middle .ds-region-inner {
 }
 
-.ds-region-right .ds-region-inner { 
+.ds-region-right .ds-region-inner {
 }
 
-.ds-region-footer .ds-region-inner { 
+.ds-region-footer .ds-region-inner {
 }

@@ -204,7 +204,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
   }
   $display_settings = variable_get($module .'_display_settings_'. $object->type, array());
 
-  $all_regions = ds_regions();
+  $all_regions = ds_regions('all', TRUE);
   $regions = $vars['regions'];
   $themed_regions = array();
 
@@ -523,19 +523,35 @@ function ds_eval($code, $object) {
 /**
  * Return array of available regions.
  *
+ * This is a multi dimensional array because when ordering fields on the
+ * display, we want them to order in a logical order. However, when
+ * rendering the HTML, we want left-right-middle for easy css practice.
+ *
  * @param string $regions Whether to return all regions or not.
  * @return array $regions Collection of regions.
  */
-function ds_regions($regions = 'all') {
+function ds_regions($regions = 'all', $render = FALSE) {
   if ($regions == 'all') {
-    return array(
-      'header' => t('Header'),
-      'left' => t('Left'),
-      'middle' => t('Middle'),
-      'right' => t('Right'),
-      'footer' => t('Footer'),
-      'disabled' => t('Disabled')
-    );
+    if ($render == FALSE) {
+      return array(
+        'header' => t('Header'),
+        'left' => t('Left'),
+        'middle' => t('Middle'),
+        'right' => t('Right'),
+        'footer' => t('Footer'),
+        'disabled' => t('Disabled')
+      );
+    }
+    else {
+      return array(
+        'header' => t('Header'),
+        'left' => t('Left'),
+        'right' => t('Right'),
+        'middle' => t('Middle'),
+        'footer' => t('Footer'),
+        'disabled' => t('Disabled'),
+      );
+    }
   }
   else {
     return array(

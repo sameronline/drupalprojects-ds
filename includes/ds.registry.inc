@@ -22,11 +22,20 @@ function _ds_menu() {
     'file' => 'includes/ds.admin.inc',
   );
 
+  // Settings page.
+  $items['admin/ds/settings'] = array(
+    'title' => 'Settings',
+    'description' => 'Manage your site display.',
+    'page callback' => 'ds_general_page',
+    'access arguments' => array('administer content types'),
+    'file' => 'includes/ds.admin.inc',
+    'weight' => -1,
+  );
+
   // Display layout menu item.
   $items['admin/ds/layout'] = array(
     'title' => 'Layout',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_settings'),
+    'page callback' => 'ds_layout_general',
     'access arguments' => array('administer content types'),
     'file' => 'includes/ds.display.inc',
     'weight' => 2,

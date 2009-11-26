@@ -10,7 +10,14 @@ function ds_general_page() {
 
   // Child pages.
   module_load_include('inc', 'system', 'system.admin');
-  $childs = system_admin_menu_block_page();
+  $item = menu_get_item('admin/ds');
+  if ($content = system_admin_menu_block($item)) {
+    $childs = theme('admin_block_content', $content);
+  }
+  else {
+    $childs = t('You do not have any administrative items.');
+  }
+
   $fieldset = array();
   $fieldset['#title'] = 'General';
   $fieldset['#children'] = $childs;
