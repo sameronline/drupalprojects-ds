@@ -6,7 +6,7 @@ For a full description of the module, visit the project page:
   http://drupal.org/project/ds
   
 For documentation of the module, visit the handbook pages:
-  http://drupal.org/node/
+  http://drupal.org/node/644662
 
 To submit bug reports and feature suggestions, or to track changes:
   http://drupal.org/project/issues/ds

@@ -499,7 +499,7 @@ function ds_eval($code, $object) {
   // Store current theme path.
   $old_theme_path = $theme_path;
 
-  // Restore theme_path to the theme, as long as drupal_eval() executes,
+  // Restore theme_path to the theme, as long as ds_eval() executes,
   // so code evaluted will not see the caller module as the current theme.
   // If theme info is not initialized get the path from theme_default.
   if (!isset($theme_info)) {
