@@ -17,7 +17,7 @@ function theme_ds_field($content, $field_key, $field) {
 
   $output = '';
   if (!empty($content)) {
-    if ($field['type'] == 'nd') {
+    if ($field['type'] == 'ds') {
       $output .= '<div class="field field-'. $field_key .'">';
       // Above label.
       if ($field['labelformat'] == 'above') {

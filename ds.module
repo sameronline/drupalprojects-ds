@@ -36,9 +36,7 @@ define('BLOCK_CONTENT', 3);
  * Implementation of hook_init().
  */
 function ds_init() {
-  if (variable_get('ds_regions_css', TRUE)) {
-    drupal_add_css(drupal_get_path('module', 'ds') .'/css/regions.css');
-  }
+  drupal_add_css(drupal_get_path('module', 'ds') .'/css/regions.css');
 }
 
 /**
@@ -120,21 +118,23 @@ function ds_build_fields_and_regions(&$object, $module) {
 
   // Get all fields.
   $fields = ds_get_fields($module, $object->type, $object->build_mode, $extra);
+  $field_settings = ds_default_value($display_settings, $object->build_mode, 'fields');
+
   if (!empty($fields)) {
     foreach ($fields as $key => $field) {
 
       // Exclude now depends on the region, previous it was an exclude property.
-      $region = ds_default_value($display_settings, $object->build_mode, 'fields', $key, 'region', DS_DEFAULT_REGION);
+      $region = (isset($field_settings[$key]['region'])) ? $field_settings[$key]['region'] : DS_DEFAULT_REGION;
 
       if ($region != 'disabled') {
-        $weight = ds_default_value($display_settings, $object->build_mode, 'fields', $key, 'weight', DS_DEFAULT_WEIGHT);
+        $weight = (isset($field_settings[$key]['weight'])) ? $field_settings[$key]['weight'] : DS_DEFAULT_WEIGHT;
         $object->content[$key]['#weight'] = $weight;
         $regions[$region][$key] = $weight;
         $ds_fields[$key] = array(
           'key' => $key,
           'title' => $field['title'],
-          'labelformat' => ds_default_value($display_settings, $object->build_mode, 'fields', $key, 'labelformat', DS_DEFAULT_LABEL_FORMAT),
-          'type' => isset($field['display_settings']) ? 'cck' : 'nd',
+          'labelformat' => (isset($field_settings[$key]['labelformat'])) ? $field_settings[$key]['labelformat'] : DS_DEFAULT_LABEL_FORMAT,
+          'type' => isset($field['display_settings']) ? 'other' : 'ds',
         );
 
         // If the field has the storage key, it means the theming is done in that module.
@@ -162,11 +162,11 @@ function ds_build_fields_and_regions(&$object, $module) {
             if (isset($field['file'])) {
               include_once($field['file']);
             }
-            $function = ds_default_value($display_settings, $object->build_mode, 'fields', $key, 'format', key($field['formatters']));
+            $function = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : key($field['formatters']);
             $function($object, $key, $field);
             break;
           case DS_FIELD_THEME:
-            $format = ds_default_value($display_settings, $object->build_mode, 'fields', $key, 'format', key($field['formatters']));
+            $format = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : key($field['formatters']);
             theme($format, $object);
             break;
         }
@@ -306,7 +306,10 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
  * @param string $default The default value.
  * @param mixed default value.
  */
-function ds_default_value($settings, $build_mode, $type, $key, $search_key, $default) {
+function ds_default_value($settings, $build_mode, $type, $key = NULL, $search_key = NULL, $default = NULL) {
+  if ($key == NULL)
+  return (isset($settings[$build_mode][$type])) ? $settings[$build_mode][$type] : NULL;
+  else
   return (isset($settings[$build_mode][$type][$key][$search_key])) ? $settings[$build_mode][$type][$key][$search_key] : $default;
 }
 
