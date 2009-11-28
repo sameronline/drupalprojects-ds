@@ -29,7 +29,7 @@ function _ds_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_import'),
     'access arguments' => array('administer content types'),
-    'file' => 'includes/ds.admin.inc',
+    'file' => 'includes/ds.tools.inc',
     'weight' => -1,
   );
   $items['admin/ds/tools/import'] = array(
@@ -42,7 +42,7 @@ function _ds_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_export'),
     'access arguments' => array('administer content types'),
-    'file' => 'includes/ds.admin.inc',
+    'file' => 'includes/ds.tools.inc',
     'type' => MENU_LOCAL_TASK,
     'weight' => 1,
   );

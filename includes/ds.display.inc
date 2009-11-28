@@ -7,21 +7,16 @@
  */
 
 /**
- * Settings page.
+ * General page.
  */
 function ds_layout_general() {
-  $item = menu_get_item('admin/ds/layout');
-  if ($content = system_admin_menu_block($item)) {
-    $childs = theme('admin_block_content', $content);
+
+  $path = db_result(db_query("SELECT path FROM {menu_router} WHERE path LIKE 'admin/ds/layout/%%' AND number_parts = 4 ORDER BY weight DESC"));
+  if ($path != FALSE) {
+    drupal_goto($path);
   }
-  else {
-    $childs = t('You do not have any administrative items.');
-  }
-  $fieldset = array();
-  $fieldset['#title'] = 'Object types';
-  $fieldset['#children'] = $childs;
-  $output = theme('fieldset', $fieldset);
-  return $output;
+
+  return t('You have no object types.');
 }
 
 /**

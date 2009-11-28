@@ -74,6 +74,14 @@ function ds_ds_plugins() {
 }
 
 /**
+ * Implementation of hook_features_api().
+ */
+function ds_features_api() {
+  require_once('includes/ds.features.inc');
+  return _ds_features_api();
+}
+
+/**
  * Get fields and regions for an object.
  *
  * @param stdClass $object The object to manipulate.
