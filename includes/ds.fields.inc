@@ -268,7 +268,7 @@ function ds_block_field_form($form_state, $module, $key = '', $field = array()) 
   foreach (module_list() as $module) {
     $module_blocks = module_invoke($module, 'block', 'list');
     if ($module_blocks) {
-      foreach($module_blocks as $key => $info) {
+      foreach ($module_blocks as $key => $info) {
         $blocks[ucfirst($module)][$module .'|'. $key] = $info['info'];
       }
     }

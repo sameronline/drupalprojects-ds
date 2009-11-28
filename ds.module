@@ -116,7 +116,7 @@ function ds_build_fields_and_regions(&$object, $module) {
   $ds_preprocess_fields = array();
   $display_settings = variable_get($module .'_display_settings_'. $object->type, array());
 
-  // Get all fields.
+  // Get all fields and settings for this build mode.
   $fields = ds_get_fields($module, $object->type, $object->build_mode, $extra);
   $field_settings = ds_default_value($display_settings, $object->build_mode, 'fields');
 
@@ -230,7 +230,6 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
   foreach ($all_regions as $region_name => $region_title) {
 
     if (isset($regions[$region_name])) {
-
       $region_content = '';
       $region = $regions[$region_name];
 
@@ -291,7 +290,6 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
     }
     $content .= '><div class="ds-region-inner">'. $region_data['content'] .'</div></div>';
   }
-
   return $content;
 }
 

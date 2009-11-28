@@ -227,7 +227,7 @@ function ds_label_options() {
   return array(
     'above' => t('Above'),
     'inline' => t('Inline'),
-    'hidden' => t('<Hidden>'),
+    'hidden' => t('Hidden'),
   );
 }
 

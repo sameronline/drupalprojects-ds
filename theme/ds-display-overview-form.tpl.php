@@ -65,8 +65,8 @@ if ($rows): ?>
             $count++;
           endforeach;
         endif;
-       endforeach;
-       ?>
+      endforeach;
+      ?>
       </tbody>
     </table>
   </div>

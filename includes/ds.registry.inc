@@ -22,6 +22,31 @@ function _ds_menu() {
     'file' => 'includes/ds.admin.inc',
   );
 
+  // Import / Export
+  $items['admin/ds/tools'] = array(
+    'title' => 'Tools',
+    'description' => 'Tools for Display suite',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_import'),
+    'access arguments' => array('administer content types'),
+    'file' => 'includes/ds.admin.inc',
+    'weight' => -1,
+  );
+  $items['admin/ds/tools/import'] = array(
+    'title' => 'Import',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 0,
+  );
+  $items['admin/ds/tools/export'] = array(
+    'title' => 'Export',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_export'),
+    'access arguments' => array('administer content types'),
+    'file' => 'includes/ds.admin.inc',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+  );
+
   // Display layout menu item.
   $items['admin/ds/layout'] = array(
     'title' => 'Layout',
@@ -92,7 +117,7 @@ function _ds_menu() {
         $type_url_str = str_replace('_', '-', $type_name);
 
         $items['admin/ds/layout/'. $type_url_str] = array(
-          'title' => ucfirst($type_url_str),
+          'title' => drupal_ucfirst($type_url_str),
           'page callback' => 'drupal_get_form',
           'page arguments' => array('ds_display_overview_form', $type_name, 'full', $module),
           'access arguments' => array('administer content types'),
@@ -123,7 +148,7 @@ function _ds_menu() {
  * Return theme functions.
  */
 function _ds_theme() {
- $path = drupal_get_path('module', 'ds');
+  $path = drupal_get_path('module', 'ds');
 
   $theme_functions = array(
     // Display overview form.
