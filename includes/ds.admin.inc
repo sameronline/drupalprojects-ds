@@ -37,7 +37,7 @@ function ds_import($form_state) {
 
   $form['import'] = array(
     '#title' => t('Import data'),
-    '#description' => t('Paste DS to import field settings. Do not include the function declaration from the export. <strong>Warning: existing data will be overwritten!</strong>'),
+    '#description' => t('Paste data to import field settings. Do not include the function declaration from the export. <strong>Warning: existing data will be overwritten!</strong>'),
     '#type' => 'textarea',
     '#cols' => 60,
     '#default_value' => '',
@@ -139,14 +139,17 @@ function ds_export(&$form_state) {
       if (!empty($export)) {
         foreach ($export as $module => $value) {
           $export_value = var_export(array($module => $value), TRUE);
+          // @todo need to come up with a file convention so we can use default imports
+          // without having to use the import form all the time. Will be integrated with
+          // features also (for inspiration, let's look at views and content).
           $form['export-'. $module] = array(
             '#title' => t('@module export data', array('@module' => drupal_strtoupper($module))),
             //'#description' => t('You can paste this data into @path. If you only want to store this data to import later, omit the function declaration.', array('@path' => drupal_get_path('module', $module) .'/'. $module .'.ds.default.inc')),
-            '#type' => 'textarea',
-            '#cols' => 60,
             //'#value' => "<?php\n/**\n * @file\n * Display suite export data for $module\n */\n\nfunction {$module}_ds_default() {\n\$data = ". $export_value .";\nreturn \$data;\n}",
             '#value' => "\$data = ". $export_value .";",
-          '#rows' => 5,
+            '#type' => 'textarea',
+            '#cols' => 60,
+            '#rows' => 5,
           );
         }
       }
