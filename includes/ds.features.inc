@@ -55,7 +55,7 @@ function ds_features_export($data, &$export, $module_name = '') {
   foreach ($data as $type) {
     list($module, $dstype) = explode('-', $type);
     $export['dependencies'][$module] = $module;
-    $export['features']['ds'][$module] = $module;
+    $export['features']['ds'][$module] = $module .'-'. $dstype;
   }
 
   return $pipe;
@@ -71,6 +71,6 @@ function ds_features_export_render($module = 'foo', $data) {
     $settings = variable_get($module .'_display_settings_'. $dstype, array());
     $export[$module][$dstype] = $settings;
   }
-  $export_value = var_export($export, TRUE) .";";
+  $export_value = '$data = '. var_export($export, TRUE) .";";
   return array('ds_default_settings' => $export_value);
 }
