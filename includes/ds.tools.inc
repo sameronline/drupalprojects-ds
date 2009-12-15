@@ -51,7 +51,7 @@ function ds_import_submit($form_id, &$form_state) {
     $data = $data;
     foreach ($data as $module => $value) {
       foreach ($value as $type => $settings) {
-        dsm(t('Saved display settings for @module and @type', array('@module' => $module, '@type' => $type)));
+        //dsm(t('Saved display settings for @module and @type', array('@module' => $module, '@type' => $type)));
         variable_set($module .'_display_settings_'. $type, $settings);
       }
     }
