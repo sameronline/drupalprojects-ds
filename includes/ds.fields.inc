@@ -122,14 +122,22 @@ function ds_code_field_form($form_state, $module, $object, $key = '', $field = a
     '#required' => TRUE,
     '#default_value' => $field['title']
   );
-  $ctypes = node_get_types('names');
-  $form['code_identity']['code_exclude'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Field exclude'),
-    '#options' => $ctypes,
-    '#description' => t('Toggle content types which you don\'t want the field to appear in.'),
-    '#default_value' => $field['exclude']
-  );
+  $api_info = ds_api_info($module);
+  if (isset($api_info['types']) && count($api_info['types']) > 1) {
+    $form['code_identity']['code_exclude'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Field exclude'),
+      '#options' => $api_info['types'],
+      '#description' => t('Toggle types which you don\'t want the field to appear in.'),
+      '#default_value' => $field['exclude']
+    );
+  }
+  else {
+    $form['code_identity']['code_exclude'] = array(
+      '#type' => 'value',
+      '#value' => array(),
+    );
+  }
   $form['code_identity']['code_code'] = array(
     '#type' => 'textarea',
     '#title' => t('Field code'),
@@ -255,21 +263,29 @@ function ds_block_field_form($form_state, $module, $key = '', $field = array()) 
     '#required' => TRUE,
     '#default_value' => $field['title']
   );
-  $ctypes = node_get_types('names');
-  $form['block_identity']['block_exclude'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Field exclude'),
-    '#options' => $ctypes,
-    '#description' => t('Toggle content types which you don\'t want the field to appear in.'),
-    '#default_value' => $field['exclude']
-  );
+  $api_info = ds_api_info($module);
+  if (isset($api_info['types']) && count($api_info['types']) > 1) {
+    $form['block_identity']['block_exclude'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Field exclude'),
+      '#options' => $api_info['types'],
+      '#description' => t('Toggle types which you don\'t want the field to appear in.'),
+      '#default_value' => $field['exclude']
+    );
+  }
+  else {
+    $form['code_identity']['code_exclude'] = array(
+      '#type' => 'value',
+      '#value' => array(),
+    );
+  }
 
   $blocks = array();
-  foreach (module_list() as $module) {
-    $module_blocks = module_invoke($module, 'block', 'list');
+  foreach (module_list() as $drupal_module) {
+    $module_blocks = module_invoke($drupal_module, 'block', 'list');
     if ($module_blocks) {
-      foreach ($module_blocks as $key => $info) {
-        $blocks[ucfirst($module)][$module .'|'. $key] = $info['info'];
+      foreach ($module_blocks as $module_key => $info) {
+        $blocks[ucfirst($drupal_module)][$drupal_module .'|'. $module_key] = $info['info'];
       }
     }
   }

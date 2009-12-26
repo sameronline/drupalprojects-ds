@@ -82,6 +82,23 @@ function ds_features_api() {
 }
 
 /**
+ * Get API information about a module.
+ *
+ * @param string $module The name of the module.
+ * @return unknown_type
+ */
+function ds_api_info($module) {
+  static $api_info = array();
+
+  if (!isset($api_info[$module])) {
+    $function = $module .'_ds_api';
+    $api_info[$module] = $function();
+  }
+
+  return $api_info[$module];
+}
+
+/**
  * Get fields and regions for an object.
  *
  * @param stdClass $object The object to manipulate.
@@ -91,6 +108,7 @@ function ds_build_fields_and_regions(&$object, $module) {
 
   static $api_info = array();
 
+  // todo get it from helper funtion
   if (!isset($api_info[$module])) {
     // Gather information.
     $function = $module .'_ds_api';
@@ -204,6 +222,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
 
   static $api_info = array();
 
+  // @todo get if from helper function.
   if (!isset($api_info[$module])) {
     // Gather information.
     $function = $module .'_ds_api';
