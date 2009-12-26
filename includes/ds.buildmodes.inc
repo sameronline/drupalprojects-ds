@@ -52,7 +52,7 @@ function ds_build_modes($module) {
     $function = $module .'_ds_api';
     $api_data = $function();
     if (isset($api_data['types'])) {
-      $types = $api_data['types']();
+      $types = $api_data['types'];
       if (count($types) > 1)
       $output .= drupal_get_form('ds_buildmodes_matrix_form', $module, $types);
     }

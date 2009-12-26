@@ -112,9 +112,8 @@ function _ds_menu() {
     // Displays.
     $build_modes = $all_build_modes[$module];
     if (!empty($build_modes)) {
-      foreach ($info['types']() as $tkey => $type) {
-        $type_name = $type->type;
-        $type_url_str = str_replace('_', '-', $type_name);
+      foreach ($info['types'] as $type_key => $type_name) {
+        $type_url_str = str_replace('_', '-', $type_key);
 
         $items['admin/ds/layout/'. $type_url_str] = array(
           'title' => drupal_ucfirst($type_url_str),
