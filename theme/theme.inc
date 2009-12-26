@@ -67,9 +67,6 @@ function template_preprocess_ds_row_object(&$vars) {
 
       static $i = 0;
 
-      $i++;
-      dsm($i);
-
       $nid = $vars['row']->nid;
       if (!is_numeric($nid)) {
         return;
