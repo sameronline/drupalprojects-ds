@@ -122,12 +122,18 @@ function ds_code_field_form($form_state, $module, $object, $key = '', $field = a
     '#required' => TRUE,
     '#default_value' => $field['title']
   );
-  $api_info = ds_api_info($module);
-  if (isset($api_info['types']) && count($api_info['types']) > 1) {
+  // @todo try to get it from helper funtion.
+  $function = $module .'_ds_api';
+  $api_info = $function();
+  if (isset($api_info['types']) && count($api_info['types']()) > 1) {
+    $types = array();
+    foreach ($api_info['types']() as $tkey => $type) {
+      $types[$tkey] = $type->name;
+    }
     $form['code_identity']['code_exclude'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Field exclude'),
-      '#options' => $api_info['types'],
+      '#options' => $types,
       '#description' => t('Toggle types which you don\'t want the field to appear in.'),
       '#default_value' => $field['exclude']
     );
@@ -263,12 +269,18 @@ function ds_block_field_form($form_state, $module, $key = '', $field = array()) 
     '#required' => TRUE,
     '#default_value' => $field['title']
   );
-  $api_info = ds_api_info($module);
-  if (isset($api_info['types']) && count($api_info['types']) > 1) {
+  // @todo try to get it from helper funtion.
+  $function = $module .'_ds_api';
+  $api_info = $function();
+  if (isset($api_info['types']) && count($api_info['types']()) > 1) {
+    $types = array();
+    foreach ($api_info['types']() as $tkey => $type) {
+      $types[$tkey] = $type->name;
+    }
     $form['block_identity']['block_exclude'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Field exclude'),
-      '#options' => $api_info['types'],
+      '#options' => $types,
       '#description' => t('Toggle types which you don\'t want the field to appear in.'),
       '#default_value' => $field['exclude']
     );

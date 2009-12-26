@@ -64,6 +64,12 @@ function template_preprocess_ds_row_object(&$vars) {
 
     // Node support.
     case 'node':
+
+      static $i = 0;
+
+      $i++;
+      dsm($i);
+
       $nid = $vars['row']->nid;
       if (!is_numeric($nid)) {
         return;

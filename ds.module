@@ -82,23 +82,6 @@ function ds_features_api() {
 }
 
 /**
- * Get API information about a module.
- *
- * @param string $module The name of the module.
- * @return unknown_type
- */
-function ds_api_info($module) {
-  static $api_info = array();
-
-  if (!isset($api_info[$module])) {
-    $function = $module .'_ds_api';
-    $api_info[$module] = $function();
-  }
-
-  return $api_info[$module];
-}
-
-/**
  * Get fields and regions for an object.
  *
  * @param stdClass $object The object to manipulate.
@@ -108,7 +91,7 @@ function ds_build_fields_and_regions(&$object, $module) {
 
   static $api_info = array();
 
-  // todo get it from helper funtion
+  // @todo try to get it from helper funtion.
   if (!isset($api_info[$module])) {
     // Gather information.
     $function = $module .'_ds_api';
@@ -116,7 +99,7 @@ function ds_build_fields_and_regions(&$object, $module) {
     // Extra info.
     if (isset($api_data['extra'])) {
       $extra = array();
-      $types = $api_data['types']();
+      $types = $api_data['types'];
       $type_info = $types[$object->type];
       foreach ($api_data['extra'] as $key) {
         $extra[$key] = $type_info->{$key};
