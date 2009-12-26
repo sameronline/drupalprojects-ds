@@ -19,7 +19,6 @@ function ds_views_plugins() {
         'help' => t('Display the object through the Display suite module.'),
         'handler' => 'views_plugin_ds_object_view',
         'theme' => 'ds_row_object',
-        'base' => array('node', 'users', 'comments'), // only works with 'node' as base.
         'path' => $path .'/views',
         'theme path' => $path .'/theme',
         'theme file' => 'theme.inc',
