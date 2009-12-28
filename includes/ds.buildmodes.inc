@@ -48,11 +48,10 @@ function ds_build_modes($module) {
     // New build mode form.
     $output .= drupal_get_form('ds_build_mode_form', $module);
 
-    // See if this module has the matrix key in hook_ds_api().
-    $function = $module .'_ds_api';
-    $api_data = $function();
-    if (isset($api_data['types'])) {
-      $types = $api_data['types']();
+    // Matrix form.
+    $api_info = ds_api_info($module);
+    if (isset($api_info['types'])) {
+      $types = $api_info['types']();
       if (count($types) > 1)
       $output .= drupal_get_form('ds_buildmodes_matrix_form', $module, $types);
     }

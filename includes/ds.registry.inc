@@ -57,10 +57,9 @@ function _ds_menu() {
   );
 
   foreach (module_implements('ds_api') as $module) {
-    $function = $module .'_ds_api';
-    $info = $function();
-    $module = $info['module'];
-    $title = $info['title'];
+    $api_info = ds_api_info($module);
+    $module = $api_info['module'];
+    $title = $api_info['title'];
 
     // Info.
     $items['admin/ds/'. $module] = array(
@@ -112,7 +111,7 @@ function _ds_menu() {
     // Displays.
     $build_modes = $all_build_modes[$module];
     if (!empty($build_modes)) {
-      foreach ($info['types']() as $tkey => $type) {
+      foreach ($api_info['types']() as $tkey => $type) {
         $type_name = $type->type;
         $type_url_str = str_replace('_', '-', $type_name);
 

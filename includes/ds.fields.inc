@@ -14,10 +14,8 @@ function ds_fields($module) {
   $action = arg(4);
   $field = arg(5);
 
-  // Gather API information.
-  $function = $module .'_ds_api';
-  $api_data = $function();
-  $object = $api_data['object'];
+  // Get API information.
+  $api_info = ds_api_info($module);
 
   // Extra info.
   $extra = array();
@@ -45,7 +43,7 @@ function ds_fields($module) {
   // Edit form.
   elseif (in_array($field, array_keys($db_fields)) && $action == 'edit') {
     $form_id = ($db_fields[$field]['type'] == DS_FIELD_BLOCK) ? 'ds_block_field_form' : 'ds_code_field_form';
-    $output .= drupal_get_form($form_id, $module, $object, $field, $db_fields[$field]);
+    $output .= drupal_get_form($form_id, $module, $api_info['object'], $field, $db_fields[$field]);
   }
   // Custom fields overview form
   else {
@@ -78,7 +76,7 @@ function ds_fields($module) {
     }
 
     // New fields form.
-    $output .= drupal_get_form('ds_code_field_form', $module, $object);
+    $output .= drupal_get_form('ds_code_field_form', $module, $api_info['object']);
     $output .= drupal_get_form('ds_block_field_form', $module);
   }
 
@@ -122,9 +120,7 @@ function ds_code_field_form($form_state, $module, $object, $key = '', $field = a
     '#required' => TRUE,
     '#default_value' => $field['title']
   );
-  // @todo try to get it from helper funtion.
-  $function = $module .'_ds_api';
-  $api_info = $function();
+  $api_info = ds_api_info($module);
   if (isset($api_info['types']) && count($api_info['types']()) > 1) {
     $types = array();
     foreach ($api_info['types']() as $tkey => $type) {
@@ -174,7 +170,7 @@ function ds_code_field_form($form_state, $module, $object, $key = '', $field = a
 function _ds_field_object_info(&$form, $object) {
   $form['code_identity']['help'] = array(
     '#type' => 'item',
-    '#value' => t('Every field will be wrapped in &lt;div class="field field-key"&gt;VALUE&lt;/div&gt;. Enter PHP code between &lt;?php ?&gt;. Note that executing incorrect PHP-code can break your Drupal site.'),
+    '#value' => t('Every field will be wrapped in &lt;div class="field field-key"&gt;VALUE&lt;/div&gt;.<br/>Enter PHP code between &lt;?php ?&gt;. If you are using PHP, the variable for the '. $object .' is called $object.<br/>Note that executing incorrect PHP-code can break your Drupal site.'),
   );
 
   if (module_exists('token')) {
@@ -269,9 +265,7 @@ function ds_block_field_form($form_state, $module, $key = '', $field = array()) 
     '#required' => TRUE,
     '#default_value' => $field['title']
   );
-  // @todo try to get it from helper funtion.
-  $function = $module .'_ds_api';
-  $api_info = $function();
+  $api_info = ds_api_info($module);
   if (isset($api_info['types']) && count($api_info['types']()) > 1) {
     $types = array();
     foreach ($api_info['types']() as $tkey => $type) {

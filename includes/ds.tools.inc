@@ -71,10 +71,9 @@ function ds_export(&$form_state) {
     // Show selection form.
     case 1:
       foreach (module_implements('ds_api') as $module) {
-        $function = $module .'_ds_api';
-        $info = $function();
-        $module = $info['module'];
-        foreach ($info['types']() as $tkey => $type) {
+        $api_info = ds_api_info($module);
+        $module = $api_info['module'];
+        foreach ($api_info['types']() as $tkey => $type) {
           $options[$module .'-'. $tkey] = $type->name;
         }
       }

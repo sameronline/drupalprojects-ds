@@ -14,6 +14,7 @@ class views_plugin_ds_object_view extends views_plugin_row {
   function option_definition() {
     $options = parent::option_definition();
     $options['build_mode'] = array('default' => 'teaser');
+    $options['advanced'] = FALSE;
     return $options;
   }
 
@@ -30,12 +31,21 @@ class views_plugin_ds_object_view extends views_plugin_row {
         }
       }
     }
+
     $form['build_mode'] = array(
       '#type' => 'select',
       '#title' => t('Select the build mode'),
       '#default_value' => $this->options['build_mode'],
       '#options' => $build_mode_options,
-      '#description' => t('Make sure you select a build mode which is compatible with the base table of this view which is %base_table.', array('%base_table' => $this->view->base_table))
+      '#description' => t('Make sure you select a build mode which is compatible with the base table of this view which is %base_table. <br />Also note that if you excluded build modes, you will still see them listed here as it\'s possible to list different types in a view.', array('%base_table' => $this->view->base_table))
     );
+
+    $form['advanced'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use the advanced build mode selector'),
+      '#description' => t('This gives you the opportunity to have more control in a list, eg the first build mode on the object is A and the rest B.<br /> There is no UI for this, you need to create a function named like this: ds_views_row_adv_VIEWSNAME. All logic is in that function.<br/>Note: the build mode selected above is not passed in that function, only the variables.'),
+      '#default_value' => $this->options['advanced'],
+    );
+
   }
 }

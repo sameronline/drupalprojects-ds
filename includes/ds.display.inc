@@ -31,8 +31,7 @@ function ds_layout_general() {
 function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $module = 'nd') {
 
   // Gather information.
-  $function = $module .'_ds_api';
-  $api_data = $function();
+  $api_info = ds_api_info($module);
   $display_settings = variable_get($module .'_display_settings_'. $type, array());
 
   $form = array(
@@ -46,10 +45,10 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
   );
 
   // Extra info.
-  if (isset($api_data['extra'])) {
+  if (isset($api_info['extra'])) {
     $types = $api_data['types']();
     $type_info = $types[$type];
-    foreach ($api_data['extra'] as $key) {
+    foreach ($api_info['extra'] as $key) {
       $form['#extra'][$key] = $type_info->{$key};
     }
   }
@@ -80,7 +79,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
 
     // Plugins.
     $plugins = TRUE;
-    if (isset($api_data['plugins_exclude']) && in_array($build_mode, $api_data['plugins_exclude'])) {
+    if (isset($api_info['plugins_exclude']) && in_array($build_mode, $api_info['plugins_exclude'])) {
       $plugins = FALSE;
     }
     if ($plugins)

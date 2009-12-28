@@ -34,8 +34,7 @@ function ds_features_export_options() {
 function _ds_features_get_types() {
   $types = array();
   foreach (module_implements('ds_api') as $module) {
-    $function = $module .'_ds_api';
-    $info = $function();
+    $api_info = ds_api_info($module);
     foreach ($info['types']() as $tkey => $type) {
       $types[$module .'-'. $tkey] = $type->name;
     }

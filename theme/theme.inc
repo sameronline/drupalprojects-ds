@@ -62,9 +62,20 @@ function template_preprocess_ds_row_object(&$vars) {
 
   // We delegate the manipulation of the object to a function
   // which every module implementing the ds_api should define.
-  $row_function = 'ds_views_row_'. $vars['view']->base_table;
-  $build_mode = $options['build_mode'];
-  $row_function($vars, $build_mode);
+  // This can either be the simple selector or the advanced selector.
+  // The advanced selector searches for a function build like this:
+  // ds_views_row_adv_VIEWSNAME.
+  if ($options['advanced']) {
+    $row_function = 'ds_views_row_adv_'. $vars['view']->name;
+    $build_mode = $options['build_mode'];
+    $row_function($vars);
+  }
+  // Simple selector.
+  else {
+    $row_function = 'ds_views_row_'. $vars['view']->base_table;
+    $build_mode = $options['build_mode'];
+    $row_function($vars, $build_mode);
+  }
 }
 
 /**
