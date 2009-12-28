@@ -29,6 +29,8 @@ function ds_build_modes($module) {
       $output .= '<p>'. t('You have not defined any custom build modes.') .'</p>';
     }
     else {
+      $output .= '<p>'. t('This is a list of custom build modes defined via the UI.') .'</p>';
+
       $header = array(
         t('Name'), t('Key'), t('Operations'),
       );

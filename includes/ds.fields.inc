@@ -51,6 +51,8 @@ function ds_fields($module) {
       $output .= '<p>'. t('You have not defined any custom fields.') .'</p>';
     }
     else {
+      $output .= '<p>'. t('This is a list of custom fields either defined in code or via the UI.') .'</p>';
+
       $header = array(
         t('Title'), t('Key'), t('Type'), t('Operations'),
       );

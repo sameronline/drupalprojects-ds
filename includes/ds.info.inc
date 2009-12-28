@@ -14,13 +14,13 @@ function ds_info($module) {
   $help = isset($api_info['help']) ? $api_info['help'] : array();
 
   // Let other modules add info.
-  drupal_alter('ds_info', $module, $help);
+  drupal_alter('ds_info', $help, $module);
 
   // General info (if any).
-  if (isset($help)) {
-    $fieldset['#title'] = t('General info');
-    $fieldset['#value'] = $help;
-    $info .= theme('fieldset', $fieldset);
+  if (!empty($help)) {
+    //$fieldset['#title'] = t('General info');
+    $info = theme('item_list', $help);
+    //$info .= theme('fieldset', $fieldset);
   }
 
   if (!empty($info)) {
