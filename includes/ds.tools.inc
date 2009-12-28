@@ -103,7 +103,7 @@ function ds_export(&$form_state) {
           list($module, $type) = explode('-', $value);
           $settings = variable_get($module .'_display_settings_'. $type, array());
           if (!empty($settings)) {
-            $export[$module][$type] = $settings;
+            $export[$type] = $settings;
           }
         }
       }
@@ -114,7 +114,7 @@ function ds_export(&$form_state) {
         // without having to use the import form all the time. Will be integrated with
         // features also (for inspiration, let's look at views and content).
         $form['export'] = array(
-          '#title' => t('@module export data', array('@module' => drupal_strtoupper($module))),
+          '#title' => t('Display suite export data'),
           //'#description' => t('You can paste this data into @path. If you only want to store this data to import later, omit the function declaration.', array('@path' => drupal_get_path('module', $module) .'/'. $module .'.ds.default.inc')),
           //'#value' => "<?php\n/**\n * @file\n * Display suite export data for $module\n */\n\nfunction {$module}_ds_default() {\n\$data = ". $export_value .";\nreturn \$data;\n}",
           '#value' => "\$data = ". $export_value .";",
