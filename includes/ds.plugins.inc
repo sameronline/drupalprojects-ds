@@ -13,6 +13,11 @@ function ds_plugins($form_state, $module) {
   $form = array();
   $form['#module'] = $module;
 
+  $form['info'] = array(
+    '#type' => 'item',
+    '#value' => t('Enable or disable plugins for this module.'),
+  );
+
   $plugins = ds_plugins_retrieve($module);
   $plugin_settings = variable_get($module .'_plugin_settings', array());
   if (is_array($plugins)) {
@@ -51,7 +56,8 @@ function ds_plugins_submit($form, &$form_state) {
  * Theme the form.
  */
 function theme_ds_plugins($form) {
-  $output = '';
+
+  $output = drupal_render($form['info']);
 
   $header = array(
     t('Status'),
