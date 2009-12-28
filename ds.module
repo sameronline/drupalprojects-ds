@@ -6,6 +6,13 @@
  */
 
 /**
+ * Constants for settings status.
+ */
+define('DS_SETTINGS_UI', 1);
+define('DS_SETTINGS_DEFAULT', 2);
+define('DS_SETTINGS_OVERRIDDEN', 3);
+
+/**
  * Constants for field types.
  */
 define('DS_FIELD_THEME', 1);

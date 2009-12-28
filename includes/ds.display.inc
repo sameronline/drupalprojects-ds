@@ -33,6 +33,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
   // Gather information.
   $api_info = ds_api_info($module);
   $display_settings = variable_get($module .'_display_settings_'. $type, array());
+  $settings_status = isset($display_settings[$build_mode]['status']) ? $display_settings[$build_mode]['status'] : DS_SETTINGS_UI;
 
   $form = array(
     '#tree' => TRUE,
@@ -52,6 +53,17 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
       $form['#extra'][$key] = $type_info->{$key};
     }
   }
+
+  // Settings status.
+  $settings_status_descriptions = array(
+    DS_SETTINGS_UI => t('Status: using settings via the UI.'),
+    DS_SETTINGS_DEFAULT => t('Status: using default settings.'),
+    DS_SETTINGS_OVERRIDDEN => t('Status: using overridden settings. <a href="@url">Click here</a> to revert to default settings.', array('@url' => url('admin/ds/layout/revert/'.$module .'/'. $type .'/'. $build_mode)))
+  );
+  $form['settings_status'] = array(
+    '#type' => 'item',
+    '#value' => $settings_status_descriptions[$settings_status],
+  );
 
   // Exclude build mode.
   $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());

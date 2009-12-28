@@ -35,7 +35,7 @@ function _ds_features_get_types() {
   $types = array();
   foreach (module_implements('ds_api') as $module) {
     $api_info = ds_api_info($module);
-    foreach ($info['types']() as $tkey => $type) {
+    foreach ($api_info['types']() as $tkey => $type) {
       $types[$module .'-'. $tkey] = $type->name;
     }
   }
@@ -70,6 +70,6 @@ function ds_features_export_render($module = 'foo', $data) {
     $settings = variable_get($module .'_display_settings_'. $dstype, array());
     $export[$module][$dstype] = $settings;
   }
-  $export_value = '$data = '. var_export($export, TRUE) .";";
+  $export_value = '$data = '. ds_var_export($export) .";";
   return array('ds_default_settings' => $export_value);
 }

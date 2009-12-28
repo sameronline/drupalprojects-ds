@@ -93,6 +93,9 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   }
   asort($order);
 
+  // Status.
+  $vars['settings_status'] = drupal_render($form['settings_status']);
+
   // Render exclude build mode checkbox.
   $vars['exclude_build_mode'] = drupal_render($form['exclude_build_mode']);
 
