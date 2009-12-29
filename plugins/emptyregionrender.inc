@@ -16,7 +16,7 @@ function ds_emptyregionrender_form(&$form, $display_settings) {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
     '#title' => t('Empty region render'),
-    '#description' => t('Toggle regions you want to render when there are no fields in it or when field values are empty'),
+    '#description' => t('Toggle regions you want to render when there are no fields in it or when field values are empty.'),
   );
 
   $build_mode = $form['#build_mode'];

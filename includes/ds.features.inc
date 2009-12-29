@@ -71,6 +71,6 @@ function ds_features_export_render($module = 'foo', $data) {
     $settings = variable_get($module .'_display_settings_'. $dstype, array());
     $export[$module][$dstype] = $settings;
   }
-  $export_value = '$data = '. ds_var_export($export) .";";
+  $export_value = '  $data = '. ds_var_export($export) .";\n  return \$data;";
   return array('ds_default_settings' => $export_value);
 }
