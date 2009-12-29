@@ -48,7 +48,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
 
   // Extra info.
   if (isset($api_info['extra'])) {
-    $types = $api_data['types']();
+    $types = $api_info['types']();
     $type_info = $types[$type];
     foreach ($api_info['extra'] as $key) {
       $form['#extra'][$key] = $type_info->{$key};

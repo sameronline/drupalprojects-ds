@@ -112,8 +112,8 @@ function ds_api_info($module, $type_name = 'all') {
       foreach ($api_data['extra'] as $key) {
         $extra[$key] = $type_info->{$key};
       }
+      $api_info[$module][$type_name]['extra'] = $extra;
     }
-    $api_info[$module][$type_name]['extra'] = $extra;
   }
 
   return $api_info[$module][$type_name];
