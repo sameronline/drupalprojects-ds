@@ -7,9 +7,16 @@
  */
 
 /**
- * Return menu items.
+ * Return menu items and import default settings.
  */
 function _ds_menu() {
+
+  $data = module_invoke_all('ds_default_settings');
+  if (!empty($data)) {
+    module_load_include('inc', 'ds', 'includes/ds.tools');
+    ds_import_data($data, FALSE, FALSE);
+  }
+
   $items = array();
   $all_build_modes = ds_get_build_modes(NULL, TRUE);
 
@@ -45,6 +52,14 @@ function _ds_menu() {
     'file' => 'includes/ds.tools.inc',
     'type' => MENU_LOCAL_TASK,
     'weight' => 1,
+  );
+  $items['admin/ds/tools/revert'] = array(
+    'title' => 'Revert',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_revert_form'),
+    'access arguments' => array('administer content types'),
+    'file' => 'includes/ds.tools.inc',
+    'type' => MENU_CALLBACK,
   );
 
   // Display layout menu item.

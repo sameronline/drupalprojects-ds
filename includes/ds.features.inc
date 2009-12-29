@@ -64,6 +64,7 @@ function ds_features_export($data, &$export, $module_name = '') {
  * Implementation of hook_features_export_render().
  */
 function ds_features_export_render($module = 'foo', $data) {
+  module_load_include('inc', 'ds', 'includes/ds.tools');
   $export = array();
   foreach ($data as $type) {
     list($module, $dstype) = explode('-', $type);

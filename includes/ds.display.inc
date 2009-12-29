@@ -43,6 +43,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
     '#build_mode' => $build_mode,
     '#plugins' => FALSE,
     '#extra' => array(),
+    '#status' => $settings_status,
   );
 
   // Extra info.
@@ -58,7 +59,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
   $settings_status_descriptions = array(
     DS_SETTINGS_UI => t('Status: using settings via the UI.'),
     DS_SETTINGS_DEFAULT => t('Status: using default settings.'),
-    DS_SETTINGS_OVERRIDDEN => t('Status: using overridden settings. <a href="@url">Click here</a> to revert to default settings.', array('@url' => url('admin/ds/layout/revert/'.$module .'/'. $type .'/'. $build_mode)))
+    DS_SETTINGS_OVERRIDDEN => t('Status: using overridden settings. <a href="@url">Click to revert to default settings</a>.', array('@url' => url('admin/ds/tools/revert/'.$module .'/'. $type .'/'. $build_mode)))
   );
   $form['settings_status'] = array(
     '#type' => 'item',
@@ -198,6 +199,10 @@ function ds_display_overview_form_submit($form, &$form_state) {
   // Plugins
   if ($form['#plugins'] == TRUE)
   ds_plugins_display_submit($form, $form_state, $display_settings);
+
+  // Status.
+  $status = ($form['#status'] == DS_SETTINGS_DEFAULT) ? DS_SETTINGS_OVERRIDDEN : $form['#status'];
+  $display_settings[$build_mode]['status'] = $status;
 
   // Save all these settings.
   variable_set($module .'_display_settings_'. $type, $display_settings);
