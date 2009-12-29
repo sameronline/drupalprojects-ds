@@ -83,9 +83,11 @@ function ds_import_data($data, $dsm = TRUE, $override = TRUE) {
         }
       }
       // Keep old settings which aren't in the imported ones.
-      foreach ($old_settings as $build_mode => $setting) {
-        if (!isset($settings[$build_mode])) {
-          $settings[$build_mode] = $old_settings[$build_mode];
+      if (!empty($old_settings)) {
+        foreach ($old_settings as $build_mode => $setting) {
+          if (!isset($settings[$build_mode])) {
+            $settings[$build_mode] = $old_settings[$build_mode];
+          }
         }
       }
       variable_set($module .'_display_settings_'. $type, $settings);

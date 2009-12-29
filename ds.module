@@ -585,3 +585,14 @@ function ds_regions($regions = 'all', $render = FALSE) {
     );
   }
 }
+
+/**
+ * Import default data from modules.
+ */
+function ds_import_default_data() {
+  $data = module_invoke_all('ds_default_settings');
+  if (!empty($data)) {
+    module_load_include('inc', 'ds', 'includes/ds.tools');
+    ds_import_data($data, FALSE, FALSE);
+  }
+}

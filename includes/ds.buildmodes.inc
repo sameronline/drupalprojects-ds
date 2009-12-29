@@ -170,7 +170,7 @@ function ds_build_mode_delete_form($form_state, $module, $build_mode) {
 }
 
 /**
- * Delete display.
+ * Delete build mode.
  */
 function ds_build_mode_delete_form_submit($form, &$form_state) {
   $module = $form['#module'];

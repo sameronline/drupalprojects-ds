@@ -11,11 +11,7 @@
  */
 function _ds_menu() {
 
-  $data = module_invoke_all('ds_default_settings');
-  if (!empty($data)) {
-    module_load_include('inc', 'ds', 'includes/ds.tools');
-    ds_import_data($data, FALSE, FALSE);
-  }
+  ds_import_default_data();
 
   $items = array();
   $all_build_modes = ds_get_build_modes(NULL, TRUE);
