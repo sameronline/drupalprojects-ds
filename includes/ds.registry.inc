@@ -119,19 +119,6 @@ function _ds_menu() {
       'weight' => 3,
     );
 
-    // Single object
-    if (isset($api_info['single'])) {
-      $items[$api_info['single']['menu'] .'/ds'] = array(
-        'title' => 'Displays',
-        'page callback' => 'ds_single_object',
-        'page arguments' => array($api_info['single']['arguments']),
-        'access arguments' => array('administer content types'),
-        'file' => 'includes/ds.display_single.inc',
-        'type' => MENU_LOCAL_TASK,
-        'weight' => 3,
-      );
-    }
-
     // Displays.
     $build_modes = $all_build_modes[$module];
     if (!empty($build_modes)) {
