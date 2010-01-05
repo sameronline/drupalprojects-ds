@@ -48,8 +48,7 @@ function _ds_features_get_types() {
 function ds_features_export($data, &$export, $module_name = '') {
   $pipe = array();
 
-  // Display suite is always dependant.
-  $export['dependencies']['ds'] = 'ds';
+  // @todo need to find out if we need to include nd_contrib (probably via ds_get_fields);
 
   foreach ($data as $type) {
     list($module, $dstype) = explode('-', $type);
