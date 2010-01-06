@@ -33,20 +33,20 @@
 
 /* middle region */
 
-div.no-sidebars {
+.node .no-sidebars {
   clear: left;
 }
 
-div.sidebar-left {
+.node .sidebar-left {
   margin-left: 25%;
 }
 
-div.sidebar-right {
+.node .sidebar-right {
   margin-right: 25%;
   clear: left;
 }
 
-div.two-sidebars {
+.node .two-sidebars {
   margin-left: 25%;
   margin-right: 25%;
 }
