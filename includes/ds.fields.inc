@@ -236,7 +236,7 @@ function ds_code_field_form_submit($form, &$form_state) {
  * @param string $key The key of the field.
  * @param array $field The field with title and code keys.
  */
-function ds_block_field_form($form_state, $module, $object, $key = '', $field = array()) {
+function ds_block_field_form($form_state, $module, $object = '', $key = '', $field = array()) {
   $form = array();
 
   if (empty($field)) {
