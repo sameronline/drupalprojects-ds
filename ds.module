@@ -358,9 +358,11 @@ function ds_get_fields($module, $type_name, $build_mode, $extra = array(), $rese
       foreach (module_implements('ds_fields') as $prefix) {
         $function = $prefix .'_ds_fields';
         $all_fields = $function($type_name, $build_mode, $extra);
-        foreach ($all_fields as $key => $field_results) {
-          if ($key === $module) {
-            $fields = array_merge($field_results, $fields);
+        if (is_array($all_fields) && !empty($all_fields)) {
+          foreach ($all_fields as $key => $field_results) {
+            if ($key === $module) {
+              $fields = array_merge($field_results, $fields);
+            }
           }
         }
       }
