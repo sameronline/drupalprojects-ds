@@ -40,7 +40,7 @@ function ds_import_submit($form_id, &$form_state) {
   eval($form_state['values']['import']);
   ob_end_clean();
 
-  // Validate the data.
+  // Validate the data. $data variable comes from the eval() function above.
   if (!is_array($data)) {
     $error = TRUE;
     drupal_set_message(t('Data string is not an array.'), 'error');

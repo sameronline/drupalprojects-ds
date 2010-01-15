@@ -222,13 +222,15 @@ function _ds_register_build_modes() {
     $function = $module .'_content_build_modes';
     $temp_data = $function();
     // We need to do some fiddling existing build modes.
-    foreach ($temp_data as $key => $value) {
-      // Sane build modes.
-      $module_name = isset($value['module']) ? $value['module'] : 'nd';
-      $build_modes[$module_name][$key] = array(
-        'weight' => isset($value['weight']) ? $value['weight'] : $weight++,
-        'title' => $value['title'],
-      );
+    if (!empty($temp_data)) {
+      foreach ($temp_data as $key => $value) {
+        // Sane build modes.
+        $module_name = isset($value['module']) ? $value['module'] : 'nd';
+        $build_modes[$module_name][$key] = array(
+          'weight' => isset($value['weight']) ? $value['weight'] : $weight++,
+          'title' => $value['title'],
+        );
+      }
     }
   }
 
