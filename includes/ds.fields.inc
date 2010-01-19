@@ -4,6 +4,9 @@
 /**
  * @file
  * Manage fields.
+ * @todo
+ * - all validations aren't good because they don't look at the DS_FIELD_OVERRIDABLE type.
+ * - try to make validations & submits only use one function.
  */
 
 /**
@@ -42,8 +45,9 @@ function ds_fields($module) {
   }
   // Edit form.
   elseif (in_array($field, array_keys($db_fields)) && $action == 'edit') {
-    $form_id = ($db_fields[$field]['type'] == DS_FIELD_BLOCK) ? 'ds_block_field_form' : 'ds_code_field_form';
-    $output .= drupal_get_form($form_id, $module, $api_info['object'], $field, $db_fields[$field]);
+    if ($db_fields[$field]['type'] == DS_FIELD_BLOCK) $form_id = 'ds_block_field_form';
+    else $form_id = 'ds_code_field_form';
+    $output .= drupal_get_form($form_id, $module, $all_fields, $api_info['object'], $field, $db_fields[$field]);
   }
   // Custom fields overview form
   else {
@@ -78,8 +82,9 @@ function ds_fields($module) {
     }
 
     // New fields form.
-    $output .= drupal_get_form('ds_code_field_form', $module, $api_info['object']);
-    $output .= drupal_get_form('ds_block_field_form', $module);
+    $output .= drupal_get_form('ds_code_field_form', $module, $all_fields, $api_info['object']);
+    // Block field form.
+    $output .= drupal_get_form('ds_block_field_form', $module, $all_fields);
   }
 
   return $output;
@@ -88,10 +93,13 @@ function ds_fields($module) {
 /**
  * Code field form.
  *
+ * @param string $module The module the field is for.
+ * @param array $all_fields All fields for this module.
+ * @param string $object The object name (ie node, user, comment).
  * @param string $key The key of the field.
  * @param array $field The field with title and code keys.
  */
-function ds_code_field_form($form_state, $module, $object, $key = '', $field = array()) {
+function ds_code_field_form($form_state, $module, $all_fields, $object = '', $key = '', $field = array()) {
   $form = array();
 
   if (empty($field)) {
@@ -232,11 +240,13 @@ function ds_code_field_form_submit($form, &$form_state) {
 /**
  * Block field form.
  *
- * @param string $module The module the fields are for.
+ * @param string $module The module the field is for.
+ * @param array $all_fields All fields for this module.
+ * @param string $object The object name (ie node, user, comment).
  * @param string $key The key of the field.
  * @param array $field The field with title and code keys.
  */
-function ds_block_field_form($form_state, $module, $object = '', $key = '', $field = array()) {
+function ds_block_field_form($form_state, $module, $all_fields, $object = '', $key = '', $field = array()) {
   $form = array();
 
   if (empty($field)) {
@@ -373,6 +383,7 @@ function ds_block_field_form_submit($form, &$form_state) {
  * Field delete form.
  *
  * @param string $module The module the fields are for.
+ * @param string $object The object name (ie node, user, comment).
  * @param string $key The key of the field.
  * @param array $field The field with title and code keys.
  */
@@ -416,3 +427,4 @@ function ds_field_delete_form_submit($form, &$form_state) {
   drupal_set_message(t('Field %field has been !action.', array('%field' => $form_state['values']['field'], '!action' => $action)));
   $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
 }
+

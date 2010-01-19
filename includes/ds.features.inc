@@ -48,8 +48,6 @@ function _ds_features_get_types() {
 function ds_features_export($data, &$export, $module_name = '') {
   $pipe = array();
 
-  // @todo need to find out if we need to include nd_contrib (probably via ds_get_fields);
-
   foreach ($data as $type) {
     list($module, $dstype) = explode('-', $type);
     $export['dependencies'][$module] = $module;

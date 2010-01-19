@@ -342,10 +342,11 @@ function ds_default_value($settings, $build_mode, $type, $key = NULL, $search_ke
  * @param string $type_name The name of object (ie, page or story for node types, profile for users)
  * @param string $build_mode The build mode.
  * @param array $extra Extra properties we might want to check on (ie has_body property).
- * @param array $reset Whether we need to reset the fields cache or not.
+ * @param boolean $reset Whether we need to reset the fields cache or not.
+ * @param boolean $cache Whether we need to cache the the fields or not.
  * @return array of fields.
  */
-function ds_get_fields($module, $type_name, $build_mode, $extra = array(), $reset = FALSE) {
+function ds_get_fields($module, $type_name, $build_mode, $extra = array(), $reset = FALSE, $cache = TRUE) {
   static $static_fields = array();
   if (!isset($static_fields[$module][$type_name][$build_mode])) {
 
@@ -394,7 +395,10 @@ function ds_get_fields($module, $type_name, $build_mode, $extra = array(), $rese
       else {
         $ds_fields_cached[$module][$type_name][$build_mode] = $fields;
       }
-      variable_set('ds_fields_cached', $ds_fields_cached);
+      // Do we cache or not ?
+      if ($cache) {
+        variable_set('ds_fields_cached', $ds_fields_cached);
+      }
     }
     else {
       $fields = $ds_fields_cached[$module][$type_name][$build_mode];
@@ -590,11 +594,14 @@ function ds_regions($regions = 'all', $render = FALSE) {
 
 /**
  * Import default data from modules.
+ *
+ * @param string $module The module to import.
+ * @param string $build_mode The build mode to import.
  */
-function ds_import_default_data() {
+function ds_import_default_data($module = '', $build_mode = '') {
   $data = module_invoke_all('ds_default_settings');
   if (!empty($data)) {
     module_load_include('inc', 'ds', 'includes/ds.tools');
-    ds_import_data($data, FALSE, FALSE);
+    ds_import_data($data, FALSE, FALSE, $module, $build_mode);
   }
 }

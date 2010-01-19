@@ -58,8 +58,10 @@ function ds_import_submit($form_id, &$form_state) {
  * @param array $data A complete data array with settings.
  * @param boolean $dsm Whether to output drupal messages.
  * @param boolean $override Whether to override existing settings or not.
+ * @param string $revert_module The module to revert.
+ * @param string $revert_build_mode The build mode to revert.
  */
-function ds_import_data($data, $dsm = TRUE, $override = TRUE) {
+function ds_import_data($data, $dsm = TRUE, $override = TRUE, $revert_module = '', $revert_build_mode = '') {
   foreach ($data as $module => $value) {
     foreach ($value as $type => $settings) {
       if ($dsm) {
@@ -71,11 +73,15 @@ function ds_import_data($data, $dsm = TRUE, $override = TRUE) {
         if ($override) {
           $settings[$build_mode]['status'] = DS_SETTINGS_UI;
         }
-        // We are importing from hook_ds_default_settings(). We need
-        // to check if we have old settings and keep them if they are overridden.
+        // We are importing from hook_ds_default_settings(). We need to
+        // a) check if we have old settings and keep them if they are overridden.
+        // b) check if $module or $build_mode are set, if so and when overridden, reverting back.
         else {
           if (isset($old_settings[$build_mode]['status']) && $old_settings[$build_mode]['status'] == DS_SETTINGS_OVERRIDDEN) {
-            $settings[$build_mode] = $old_settings[$build_mode];
+            // Need to recheck tomorrow at work :)
+            if ($module != $revert_module && $build_mode != $revert_module) {
+              $settings[$build_mode] = $old_settings[$build_mode];
+            }
           }
           else {
             $settings[$build_mode]['status'] = DS_SETTINGS_DEFAULT;
@@ -238,6 +244,7 @@ function ds_revert_form($form_state, $module = '', $type = '', $build_mode = '')
  */
 function ds_revert_form_submit($form, &$form_state) {
   drupal_set_message(t('Settings are reverted'));
+  ds_import_default_data($form['#module'], $form['#build_mode']);
   $form_state['redirect'] = $form['#path'];
 }
 
