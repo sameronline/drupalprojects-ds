@@ -59,9 +59,10 @@ function ds_import_submit($form_id, &$form_state) {
  * @param boolean $dsm Whether to output drupal messages.
  * @param boolean $override Whether to override existing settings or not.
  * @param string $revert_module The module to revert.
+ * @param string $revert_type The object type to revert.
  * @param string $revert_build_mode The build mode to revert.
  */
-function ds_import_data($data, $dsm = TRUE, $override = TRUE, $revert_module = '', $revert_build_mode = '') {
+function ds_import_data($data, $dsm = TRUE, $override = TRUE, $revert_module = '', $revert_type = '', $revert_build_mode = '') {
   foreach ($data as $module => $value) {
     foreach ($value as $type => $settings) {
       if ($dsm) {
@@ -75,11 +76,13 @@ function ds_import_data($data, $dsm = TRUE, $override = TRUE, $revert_module = '
         }
         // We are importing from hook_ds_default_settings(). We need to
         // a) check if we have old settings and keep them if they are overridden.
-        // b) check if $module or $build_mode are set, if so and when overridden, reverting back.
+        // b) compare $revert_module, $revert_type and $revert_build_mode and revert if necessary.
         else {
           if (isset($old_settings[$build_mode]['status']) && $old_settings[$build_mode]['status'] == DS_SETTINGS_OVERRIDDEN) {
-            // Need to recheck tomorrow at work :)
-            if ($module != $revert_module && $build_mode != $revert_module) {
+            if ($module == $revert_module && $type == $revert_type && $build_mode == $revert_build_mode) {
+              $settings[$build_mode]['status'] = DS_SETTINGS_DEFAULT;
+            }
+            else {
               $settings[$build_mode] = $old_settings[$build_mode];
             }
           }
@@ -170,7 +173,7 @@ function ds_export(&$form_state) {
         $form['export_settings'] = array(
           '#title' => t('Display suite export data'),
           '#description' => t('You can paste this data into @module_name/@module_name.ds_default.inc. If you only want to store this data to import later, omit the function declaration.', array('@module_name' => $module_name)),
-          '#value' => "<?php\n/**\n * @file\n * Display suite export data.\n */\nfunction _". $module_name ."_ds_default_settings() {\n  \$data = ". $export_value .";\n  return \$data;\n}",
+          '#value' => "<?php\n/**\n * @file\n * Display suite default settings.\n */\nfunction _". $module_name ."_ds_default_settings() {\n  \$data = ". $export_value .";\n  return \$data;\n}",
           '#type' => 'textarea',
           '#cols' => 60,
           '#rows' => 15,
@@ -213,7 +216,7 @@ function ds_export_submit($form, &$form_state) {
  * Revert form.
  *
  * @param string $module The name of the module.
- * @param string $type The object type name.
+ * @param string $object_type The object type name.
  * @param string $build_mode The build mode.
  */
 function ds_revert_form($form_state, $module = '', $type = '', $build_mode = '') {
@@ -225,10 +228,10 @@ function ds_revert_form($form_state, $module = '', $type = '', $build_mode = '')
     $display_settings[$build_mode]['status'] == DS_SETTINGS_OVERRIDDEN
     ) {
 
-    $question = t('Are you sure you want to revert the settings for %type and %build_mode. This will bring back the default settings and any changes you have done will be lost.', array('%type' => $type, '%build_mode' => $build_mode));
+    $question = t('Are you sure you want to revert the display settings for %module, %type and %build_mode. This will bring back the default settings and any changes you have done will be lost.', array('%module' => $module, '%type' => $type, '%build_mode' => $build_mode));
     $path = 'admin/ds/layout/'. $type .'/'. $build_mode;
     $form['#module'] = $module;
-    $form['#type'] = $type;
+    $form['#object_type'] = $type;
     $form['#build_mode'] = $build_mode;
     $form['#path'] = $path;
     return confirm_form($form, $question, $path);
@@ -243,8 +246,8 @@ function ds_revert_form($form_state, $module = '', $type = '', $build_mode = '')
  * Revert form submit.
  */
 function ds_revert_form_submit($form, &$form_state) {
-  drupal_set_message(t('Settings are reverted'));
-  ds_import_default_data($form['#module'], $form['#build_mode']);
+  drupal_set_message(t('Display settings for %module, %type and %build_mode have been reverted.', array('%module' => $form['#module'], '%type' => $form['#object_type'], '%build_mode' => $form['#build_mode'])));
+  ds_import_default_data($form['#module'], $form['#object_type'], $form['#build_mode']);
   $form_state['redirect'] = $form['#path'];
 }
 

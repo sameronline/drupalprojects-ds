@@ -596,12 +596,13 @@ function ds_regions($regions = 'all', $render = FALSE) {
  * Import default data from modules.
  *
  * @param string $module The module to import.
+ * @param string $type The object type to import.
  * @param string $build_mode The build mode to import.
  */
-function ds_import_default_data($module = '', $build_mode = '') {
+function ds_import_default_data($module = '', $type = '', $build_mode = '') {
   $data = module_invoke_all('ds_default_settings');
   if (!empty($data)) {
     module_load_include('inc', 'ds', 'includes/ds.tools');
-    ds_import_data($data, FALSE, FALSE, $module, $build_mode);
+    ds_import_data($data, FALSE, FALSE, $module, $type, $build_mode);
   }
 }
