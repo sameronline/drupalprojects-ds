@@ -36,7 +36,8 @@ span.label-field, span.label-edit {
   line-height:24px;
 }
 span.label-field {
-  font-size: 13px;  
+  font-size: 13px; 
+  float: left; 
 }
 span.label-edit {
   font-size: 11px;
