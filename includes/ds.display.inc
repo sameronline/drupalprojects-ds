@@ -118,23 +118,36 @@ function ds_fields_display_form(&$form, $display_settings) {
   $extra = $form['#extra'];
 
   $fields = ds_get_fields($module, $type, $build_mode, $extra, TRUE);
-  if (!empty($fields)) {
-    foreach ($fields as $field => $value) {
-      $form['#fields'][] = $field;
-      $form[$field] = (!empty($form[$form['#fields'][0]])) ? $form[$form['#fields'][0]] : ds_field_default_form_properties($build_mode);
-      $form[$field]['human_name']['#value'] = $value['title'];
-      $form[$field]['weight']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
-      $form[$field]['ds_weight']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
-      $form[$field][$build_mode]['label']['format']['#default_value'] = isset($value['display_settings'][$build_mode]['label']['format']) ? $value['display_settings'][$build_mode]['label']['format'] : ds_default_value($display_settings, $build_mode, 'fields', $field, 'labelformat', DS_DEFAULT_LABEL_FORMAT);
-      $form[$field][$build_mode]['format']['#options'] = isset($value['formatters']) ? $value['formatters'] : array();
-      $format = ds_default_value($display_settings, $build_mode, 'fields', $field, 'format', '');
-      if (empty($format) && isset($value['formatters'])) {
-        $format = key($value['formatters']);
-      }
-      $form[$field][$build_mode]['format']['#default_value'] = $format;
-      $form[$field][$build_mode]['format']['#access'] = (count($form[$field][$build_mode]['format']['#options']) == 1 || count($form[$field][$build_mode]['format']['#options']) == 0) ? FALSE : TRUE;
-      $form[$field][$build_mode]['region']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'region', DS_DEFAULT_REGION);
+
+  // Break form build in case no fields
+  if (empty($fields)) {
+    return;
+  }
+
+  $default_properties = ds_field_default_form_properties($build_mode);
+  $default = (!empty($form[key($fields)])) ? $form[key($fields)] : $default_properties;
+
+  foreach ($fields as $field => $value) {
+
+    // Add form variable to let the template system know about the fields
+    $form['#fields'][] = $field;
+
+    // Every field starts with the default value
+    $form[$field] = $default;
+
+    // Populate/override the fields with the saved values
+    $form[$field]['human_name']['#value'] = $value['title'];
+    $form[$field]['weight']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
+    $form[$field]['ds_weight']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
+    $form[$field][$build_mode]['label']['format']['#default_value'] = isset($value['display_settings'][$build_mode]['label']['format']) ? $value['display_settings'][$build_mode]['label']['format'] : ds_default_value($display_settings, $build_mode, 'fields', $field, 'labelformat', DS_DEFAULT_LABEL_FORMAT);
+    $form[$field][$build_mode]['format']['#options'] = isset($value['formatters']) ? $value['formatters'] : array();
+    $format = ds_default_value($display_settings, $build_mode, 'fields', $field, 'format', '');
+    if (empty($format) && isset($value['formatters'])) {
+      $format = key($value['formatters']);
     }
+    $form[$field][$build_mode]['format']['#default_value'] = $format;
+    $form[$field][$build_mode]['format']['#access'] = (count($form[$field][$build_mode]['format']['#options']) == 1 || count($form[$field][$build_mode]['format']['#options']) == 0) ? FALSE : TRUE;
+    $form[$field][$build_mode]['region']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'region', DS_DEFAULT_REGION);
   }
 }
 
