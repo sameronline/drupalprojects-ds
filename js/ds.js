@@ -132,3 +132,21 @@ function toggleFieldPluginsLink(div_show, div_hide) {
   $('#' + div_show).show();  
   $('#' + div_hide).hide();
 }
+
+/**
+ * Drupal ds object.
+ */
+ Drupal.DisplaySuite = Drupal.DisplaySuite || {};
+ 
+/**
+ * Change the label of a field instance in a build mode.
+ */
+ Drupal.DisplaySuite.changeLabel = function(element, title) {
+ 
+   var changed = prompt(Drupal.t("Edit label"), title);
+   
+   var labelcell = $(element).parents(".ds-label");
+   labelcell.find(".label-field").text(changed);
+   labelcell.find("input").val(changed);
+   
+ }

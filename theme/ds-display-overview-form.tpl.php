@@ -56,7 +56,7 @@ if ($rows): ?>
           $count = 0;
           foreach ($rows[$region] as $row): ?>
             <tr class="<?php print $count % 2 == 0 ? 'odd' : 'even'; ?> <?php print $row->class ?>">
-              <td><span class="<?php print $row->label_class; ?>"><?php print $row->human_name; ?></span></td>
+              <td class="ds-label"><span class="<?php print $row->label_class; ?>"><?php print $row->human_name; ?></span><span class="label-edit"><?php print $row->{$build_mode}->label_edit; ?></span><?php print $row->{$build_mode}->label_value; ?></td>
               <td><?php print $row->{$build_mode}->label; ?></td>
               <td><?php print $row->{$build_mode}->format; ?></td>
               <td><?php print $row->{$build_mode}->region; ?></td>

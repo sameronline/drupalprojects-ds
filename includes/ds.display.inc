@@ -112,6 +112,8 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
  */
 function ds_fields_display_form(&$form, $display_settings) {
 
+  global $base_url;
+
   $module = $form['#module'];
   $build_mode = $form['#build_mode'];
   $type = $form['#type_name'];
@@ -136,10 +138,23 @@ function ds_fields_display_form(&$form, $display_settings) {
     $form[$field] = $default;
 
     // Populate/override the fields with the saved values
-    $form[$field]['human_name']['#value'] = $value['title'];
-    $form[$field]['weight']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
-    $form[$field]['ds_weight']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
     $form[$field][$build_mode]['label']['format']['#default_value'] = isset($value['display_settings'][$build_mode]['label']['format']) ? $value['display_settings'][$build_mode]['label']['format'] : ds_default_value($display_settings, $build_mode, 'fields', $field, 'labelformat', DS_DEFAULT_LABEL_FORMAT);
+
+    $form[$field][$build_mode]['label_edit']['#value'] = l(t('Edit'), $base_url . request_uri(), array(
+      'attributes' => array('onclick' => 'javascript: Drupal.DisplaySuite.changeLabel(this, "' . $value['title']. '"); return false;')
+    ));
+    $label_value = ds_default_value($display_settings, $build_mode, 'fields', $field, 'label_value', $value['title']);
+    $form[$field][$build_mode]['label_value'] = array(
+      '#type' => 'hidden',
+      '#default_value' => $label_value,
+    );
+
+    $form[$field]['human_name']['#value'] = $label_value; //$value['title'];
+
+    $form[$field]['weight']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
+
+    $form[$field]['ds_weight']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
+
     $form[$field][$build_mode]['format']['#options'] = isset($value['formatters']) ? $value['formatters'] : array();
     $format = ds_default_value($display_settings, $build_mode, 'fields', $field, 'format', '');
     if (empty($format) && isset($value['formatters'])) {
@@ -147,6 +162,7 @@ function ds_fields_display_form(&$form, $display_settings) {
     }
     $form[$field][$build_mode]['format']['#default_value'] = $format;
     $form[$field][$build_mode]['format']['#access'] = (count($form[$field][$build_mode]['format']['#options']) == 1 || count($form[$field][$build_mode]['format']['#options']) == 0) ? FALSE : TRUE;
+
     $form[$field][$build_mode]['region']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'region', DS_DEFAULT_REGION);
   }
 }
@@ -201,6 +217,7 @@ function ds_display_overview_form_submit($form, &$form_state) {
       $display_settings[$build_mode]['fields'][$key]['weight'] = $form_state['values'][$key]['ds_weight'];
       $display_settings[$build_mode]['fields'][$key]['format'] = $form_state['values'][$key][$build_mode]['format'];
       $display_settings[$build_mode]['fields'][$key]['region'] = $form_state['values'][$key][$build_mode]['region'];
+      $display_settings[$build_mode]['fields'][$key]['label_value'] = $form_state['values'][$key][$build_mode]['label_value'];
       $display_settings[$build_mode]['fields'][$key]['labelformat'] = $form_state['values'][$key][$build_mode]['label']['format'];
 
       // Ditch this field, unless it has its storage in another module (ie CCK)

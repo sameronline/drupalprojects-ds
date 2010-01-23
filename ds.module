@@ -264,6 +264,10 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
         $field_content = isset($vars[$key .'_rendered']) ? $vars[$key .'_rendered'] : '';
         if (!empty($field_content)) {
           $field_key = strtr($key, '_', '-');
+          // Try to change the title if this is configured.
+          if (isset($display_settings[$object->build_mode]['fields'][$field_key]['label_value'])) {
+            $object->ds_fields[$key]['title'] = t(check_plain($display_settings[$object->build_mode]['fields'][$field_key]['label_value']));
+          }
           $region_content .= theme($theme_function, $field_content, $field_key, $object->ds_fields[$key]);
         }
       }
