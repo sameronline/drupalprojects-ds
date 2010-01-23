@@ -26,6 +26,22 @@ tr.region-css-disabled  {
 	margin-top: 0;
 	margin-bottom: 0;
 }
+span.label-field, span.label-edit {
+  padding:2px;
+  font-size-adjust:none;
+  font-stretch:normal;
+  font-style:normal;
+  font-variant:normal;
+  font-weight:normal;
+  line-height:24px;
+}
+span.label-field {
+  font-size: 13px;  
+}
+span.label-edit {
+  font-size: 11px;
+  float: right;
+}
 #fields-content {
 	display: block;
 }
