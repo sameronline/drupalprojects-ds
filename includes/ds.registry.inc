@@ -78,7 +78,7 @@ function _ds_menu() {
   // Display layout menu item.
   $items['admin/ds/layout'] = array(
     'title' => 'Layout',
-    'page callback' => 'ds_layout_general',
+    'page callback' => 'ds_layout_overview',
     'access arguments' => array('access display suite'),
     'file' => 'includes/ds.display.inc',
     'weight' => 2,

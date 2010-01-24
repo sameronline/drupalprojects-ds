@@ -7,16 +7,75 @@
  */
 
 /**
- * General page.
+ * General overview page.
  */
-function ds_layout_general() {
+function ds_layout_overview() {
+  $content = '';
 
-  $path = db_result(db_query("SELECT path FROM {menu_router} WHERE path LIKE 'admin/ds/layout/%%' AND number_parts = 4 ORDER BY weight DESC"));
-  if ($path != FALSE) {
-    drupal_goto($path);
+  drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
+
+  foreach (module_implements('ds_api') as $module) {
+    if (user_access('configure layout for '. $module)) {
+      $api_info = ds_api_info($module);
+
+      $content .= '<fieldset><legend><span class="ds-big-title">'. $api_info['title'] .'</span></legend>';
+
+      // Build modes.
+      $rows = array();
+      $build_modes = ds_get_build_modes($module);
+
+      foreach ($api_info['types']() as $tkey => $type) {
+
+        $type_name = $type->type;
+        $type = $type_name;
+        $type_url_str = str_replace('_', '-', $type_name);
+
+        foreach ($build_modes as $bkey => $build_mode) {
+
+          // Settings en status.
+          $display_settings = variable_get($module .'_display_settings_'. $type, array());
+          $settings_status = isset($display_settings[$bkey]['status']) ? $display_settings[$bkey]['status'] : DS_SETTINGS_UI;
+
+          $row = array();
+          $row[] = $type .' - '. $build_mode['title'];
+          $row[] = ds_settings_status($settings_status);
+
+          $operations = l('Edit', 'admin/ds/layout/'. $type .'/'. $bkey);
+          if (user_access('revert overridden settings') && $settings_status == DS_SETTINGS_OVERRIDDEN) {
+            $operations .= ' - '.l('Revert', 'admin/ds/tools/revert/'.$module .'/'. $type .'/'. $bkey);
+          }
+          $row[] = $operations;
+          $rows[] = $row;
+        }
+      }
+      if (!empty($rows)) {
+        $content .= theme('table', array(), $rows);
+      }
+
+      $content .= '</fieldset>';
+    }
   }
 
-  return t('You have no object types.');
+  if (empty($content)) {
+    $content = t('No items found.');
+  }
+
+  return $content;
+}
+
+/**
+ * Helper function to return readable name of status.
+ *
+ * @param boolean $status The status.
+ */
+function ds_settings_status($status) {
+  $settings_status_descriptions = array(
+    DS_SETTINGS_UI => t('Normal'),
+    DS_SETTINGS_DEFAULT => t('Default'),
+    DS_SETTINGS_OVERRIDDEN => t('Overridden'),
+  );
+
+  return $settings_status_descriptions[$status];
 }
 
 /**
@@ -53,19 +112,6 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
     foreach ($api_info['extra'] as $key) {
       $form['#extra'][$key] = $type_info->{$key};
     }
-  }
-
-  // Settings status.
-  if (user_access('revert overridden settings')) {
-    $settings_status_descriptions = array(
-      DS_SETTINGS_UI => t('Status: using settings via the UI.'),
-      DS_SETTINGS_DEFAULT => t('Status: using default settings.'),
-      DS_SETTINGS_OVERRIDDEN => t('Status: using overridden settings. <a href="@url">Click to revert to default settings</a>.', array('@url' => url('admin/ds/tools/revert/'.$module .'/'. $type .'/'. $build_mode)))
-    );
-    $form['settings_status'] = array(
-      '#type' => 'item',
-      '#value' => $settings_status_descriptions[$settings_status],
-    );
   }
 
   // Exclude build mode.

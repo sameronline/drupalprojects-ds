@@ -59,3 +59,6 @@ span.label-edit {
   float: left;
   margin-left: 20px;
 }
+.ds-big-title {
+  font-weight: strong;
+  font-size: 18px;

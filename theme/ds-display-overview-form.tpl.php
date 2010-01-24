@@ -13,7 +13,6 @@
  *   Properties (human_name, weight, stickyorder, build_mode, class, label_class)
  */
 
-print $settings_status;
 print $exclude_build_mode;
 
 if ($rows): ?>

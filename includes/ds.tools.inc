@@ -229,7 +229,7 @@ function ds_revert_form($form_state, $module = '', $type = '', $build_mode = '')
     ) {
 
     $question = t('Are you sure you want to revert the display settings for %module, %type and %build_mode. This will bring back the default settings and any changes you have done will be lost.', array('%module' => $module, '%type' => $type, '%build_mode' => $build_mode));
-    $path = 'admin/ds/layout/'. $type .'/'. $build_mode;
+    $path = 'admin/ds/layout';
     $form['#module'] = $module;
     $form['#object_type'] = $type;
     $form['#build_mode'] = $build_mode;
