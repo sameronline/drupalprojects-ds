@@ -7,6 +7,23 @@
  */
 
 /**
+ * Return permissions.
+ */
+function _ds_perm() {
+  $perms = array(
+    'access display suite',
+    'use PHP in custom fields',
+    'revert overridden settings',
+    'export and import settings',
+  );
+  foreach (module_implements('ds_api') as $module) {
+    $perms[] = 'administer '. $module;
+    $perms[] = 'configure layout for '. $module;
+  }
+  return $perms;
+}
+
+/**
  * Return menu items and import default settings.
  */
 function _ds_menu() {
@@ -21,7 +38,7 @@ function _ds_menu() {
     'title' => 'Display suite',
     'description' => 'Manage your site display.',
     'page callback' => 'ds_general_page',
-    'access arguments' => array('administer content types'),
+    'access arguments' => array('access display suite'),
     'file' => 'includes/ds.admin.inc',
   );
 
@@ -31,7 +48,7 @@ function _ds_menu() {
     'description' => 'Tools for Display suite',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_import'),
-    'access arguments' => array('administer content types'),
+    'access arguments' => array('export and import settings'),
     'file' => 'includes/ds.tools.inc',
     'weight' => -1,
   );
@@ -44,7 +61,7 @@ function _ds_menu() {
     'title' => 'Export',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_export'),
-    'access arguments' => array('administer content types'),
+    'access arguments' => array('export and import settings'),
     'file' => 'includes/ds.tools.inc',
     'type' => MENU_LOCAL_TASK,
     'weight' => 1,
@@ -53,7 +70,7 @@ function _ds_menu() {
     'title' => 'Revert',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_revert_form'),
-    'access arguments' => array('administer content types'),
+    'access arguments' => array('revert overridden settings'),
     'file' => 'includes/ds.tools.inc',
     'type' => MENU_CALLBACK,
   );
@@ -62,7 +79,7 @@ function _ds_menu() {
   $items['admin/ds/layout'] = array(
     'title' => 'Layout',
     'page callback' => 'ds_layout_general',
-    'access arguments' => array('administer content types'),
+    'access arguments' => array('access display suite'),
     'file' => 'includes/ds.display.inc',
     'weight' => 2,
   );
@@ -77,7 +94,7 @@ function _ds_menu() {
       'title' => $title,
       'page callback' => 'ds_info',
       'page arguments' => array($module),
-      'access arguments' => array('administer content types'),
+      'access arguments' => array('administer '. $module),
       'file' => 'includes/ds.info.inc',
     );
     $items['admin/ds/'. $module .'/info'] = array(
@@ -91,7 +108,8 @@ function _ds_menu() {
       'title' => 'Fields',
       'page callback' => 'ds_fields',
       'page arguments' => array($module),
-      'access arguments' => array('administer content types'),
+      'access callback' => '_ds_menu_access',
+      'access arguments' => array('administer '. $module, 'use PHP in custom fields'),
       'file' => 'includes/ds.fields.inc',
       'type' => MENU_LOCAL_TASK,
       'weight' => 1,
@@ -102,7 +120,7 @@ function _ds_menu() {
       'title' => 'Build modes',
       'page callback' => 'ds_build_modes',
       'page arguments' => array($module),
-      'access arguments' => array('administer content types'),
+      'access arguments' => array('administer '. $module),
       'file' => 'includes/ds.buildmodes.inc',
       'type' => MENU_LOCAL_TASK,
       'weight' => 2,
@@ -113,7 +131,7 @@ function _ds_menu() {
       'title' => 'Plugins',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('ds_plugins', $module),
-      'access arguments' => array('administer content types'),
+      'access arguments' => array('administer '. $module),
       'file' => 'includes/ds.plugins.inc',
       'type' => MENU_LOCAL_TASK,
       'weight' => 3,
@@ -130,7 +148,7 @@ function _ds_menu() {
           'title' => drupal_ucfirst($type_url_str),
           'page callback' => 'drupal_get_form',
           'page arguments' => array('ds_display_overview_form', $type_name, 'full', $module),
-          'access arguments' => array('administer content types'),
+          'access arguments' => array('configure layout for '. $module),
           'file' => 'includes/ds.display.inc',
           'weight' => 2,
         );
@@ -141,7 +159,7 @@ function _ds_menu() {
             'title' => $value['title'],
             'page callback' => 'drupal_get_form',
             'page arguments' => array('ds_display_overview_form', $type_name, "$key", $module),
-            'access arguments' => array('administer content types'),
+            'access arguments' => array('configure layout for '. $module),
             'type' => $key == 'full' ? MENU_DEFAULT_LOCAL_TASK : MENU_LOCAL_TASK,
             'file' => 'includes/ds.display.inc',
             'weight' => (isset($value['weight']) && !empty($value['weight'])) ? $value['weight'] : $weight++,

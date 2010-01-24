@@ -47,6 +47,14 @@ function ds_init() {
 }
 
 /**
+ * Implementation of hook_perm().
+ */
+function ds_perm() {
+  require_once('includes/ds.registry.inc');
+  return _ds_perm();
+}
+
+/**
  * Implementation of hook_menu().
  */
 function ds_menu() {
@@ -609,4 +617,14 @@ function ds_import_default_data($module = '', $type = '', $build_mode = '') {
     module_load_include('inc', 'ds', 'includes/ds.tools');
     ds_import_data($data, FALSE, FALSE, $module, $type, $build_mode);
   }
+}
+
+/**
+ * Helper function to check access.
+ */
+function _ds_menu_access($string1, $string2) {
+  if (user_access($string1) && user_access($string2)) {
+    return TRUE;
+  }
+  return FALSE;
 }

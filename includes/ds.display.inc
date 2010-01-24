@@ -56,15 +56,17 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
   }
 
   // Settings status.
-  $settings_status_descriptions = array(
-    DS_SETTINGS_UI => t('Status: using settings via the UI.'),
-    DS_SETTINGS_DEFAULT => t('Status: using default settings.'),
-    DS_SETTINGS_OVERRIDDEN => t('Status: using overridden settings. <a href="@url">Click to revert to default settings</a>.', array('@url' => url('admin/ds/tools/revert/'.$module .'/'. $type .'/'. $build_mode)))
-  );
-  $form['settings_status'] = array(
-    '#type' => 'item',
-    '#value' => $settings_status_descriptions[$settings_status],
-  );
+  if (user_access('revert overridden settings')) {
+    $settings_status_descriptions = array(
+      DS_SETTINGS_UI => t('Status: using settings via the UI.'),
+      DS_SETTINGS_DEFAULT => t('Status: using default settings.'),
+      DS_SETTINGS_OVERRIDDEN => t('Status: using overridden settings. <a href="@url">Click to revert to default settings</a>.', array('@url' => url('admin/ds/tools/revert/'.$module .'/'. $type .'/'. $build_mode)))
+    );
+    $form['settings_status'] = array(
+      '#type' => 'item',
+      '#value' => $settings_status_descriptions[$settings_status],
+    );
+  }
 
   // Exclude build mode.
   $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
