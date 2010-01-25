@@ -145,6 +145,11 @@ function toggleFieldPluginsLink(div_show, div_hide) {
  
    var changed = prompt(Drupal.t("Edit label"), title);
    
+   if (changed == '') {
+     alert(Drupal.t('Field can not be empty'));
+     return false;
+   }
+   
    var labelcell = $(element).parents(".ds-label");
    labelcell.find(".label-field").text(changed);
    labelcell.find("input").val(changed);

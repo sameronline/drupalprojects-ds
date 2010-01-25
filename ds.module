@@ -111,6 +111,7 @@ function ds_api_info($module, $type_name = 'all') {
     $function = $module .'_ds_api';
     $api_data = $function();
     $api_info[$module][$type_name] = $api_data;
+    $api_info[$module][$type_name]['extra'] = array();
 
     // Extra info needed or not.
     if ($type_name != 'all' && isset($api_data['extra'])) {
@@ -157,6 +158,9 @@ function ds_build_fields_and_regions(&$object, $module) {
   $fields = ds_get_fields($module, $object->type, $object->build_mode, $api_info['extra']);
   $field_settings = ds_default_value($display_settings, $object->build_mode, 'fields');
 
+  // Get the object type for field rendering and tokenization.
+  $object_type = $api_info['object'];
+
   if (!empty($fields)) {
     foreach ($fields as $key => $field) {
 
@@ -190,10 +194,10 @@ function ds_build_fields_and_regions(&$object, $module) {
           case DS_FIELD_CUSTOM:
           case DS_FIELD_OVERRIDABLE:
           case DS_FIELD_OVERRIDDEN:
-            ds_eval_code($key, $field, $object, 'node');
+            ds_eval_code($key, $field, $object, $object_type);
             break;
           case DS_FIELD_BLOCK:
-            ds_eval_block($key, $field, $object, 'node');
+            ds_eval_block($key, $field, $object);
             break;
           case DS_FIELD_FUNCTION:
             if (isset($field['file'])) {
@@ -272,9 +276,9 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
         $field_content = isset($vars[$key .'_rendered']) ? $vars[$key .'_rendered'] : '';
         if (!empty($field_content)) {
           $field_key = strtr($key, '_', '-');
-          // Try to change the title if this is configured.
-          if (isset($display_settings[$object->build_mode]['fields'][$field_key]['label_value'])) {
-            $object->ds_fields[$key]['title'] = t(check_plain($display_settings[$object->build_mode]['fields'][$field_key]['label_value']));
+          // Try to change the label if this is configured.
+          if (isset($display_settings[$object->build_mode]['fields'][$key]['label_value'])) {
+            $object->ds_fields[$key]['title'] = t(check_plain($display_settings[$object->build_mode]['fields'][$key]['label_value']));
           }
           $region_content .= theme($theme_function, $field_content, $field_key, $object->ds_fields[$key]);
         }

@@ -150,6 +150,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   }
 
   // Plugins available.
+  $vars['plugins'] = FALSE;
   if ($form['#plugins'] == TRUE) {
     $vars['plugins'] = TRUE;
     $vars['plugins_content'] = '';
