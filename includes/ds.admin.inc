@@ -23,6 +23,7 @@ function ds_general_page() {
   $fieldset = array();
   $fieldset['#title'] = 'General';
   $fieldset['#children'] = $childs;
+  $fieldset['#attributes'] = array();
   $output = theme('fieldset', $fieldset);
 
   return $output;
