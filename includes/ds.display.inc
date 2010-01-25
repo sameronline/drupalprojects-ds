@@ -14,45 +14,44 @@ function ds_layout_overview() {
 
   drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
 
+  $rows = array();
   foreach (module_implements('ds_api') as $module) {
     if (user_access('configure layout for '. $module)) {
       $api_info = ds_api_info($module);
 
-      $content .= '<fieldset><legend><span class="ds-big-title">'. $api_info['title'] .'</span></legend>';
-
       // Build modes.
-      $rows = array();
       $build_modes = ds_get_build_modes($module);
 
-      foreach ($api_info['types']() as $tkey => $type) {
+      foreach ($api_info['types']() as $tkey => $otype) {
 
-        $type_name = $type->type;
+        $type_name = $otype->type;
         $type = $type_name;
         $type_url_str = str_replace('_', '-', $type_name);
 
-        foreach ($build_modes as $bkey => $build_mode) {
+        if (!empty($build_modes)) {
+          $rows[] = array(array('data' => $otype->name, 'colspan' => '3', 'class' => 'ds-row-title'));
+          foreach ($build_modes as $bkey => $build_mode) {
 
-          // Settings en status.
-          $display_settings = variable_get($module .'_display_settings_'. $type, array());
-          $settings_status = isset($display_settings[$bkey]['status']) ? $display_settings[$bkey]['status'] : DS_SETTINGS_UI;
+            // Settings en status.
+            $display_settings = variable_get($module .'_display_settings_'. $type, array());
+            $settings_status = isset($display_settings[$bkey]['status']) ? $display_settings[$bkey]['status'] : DS_SETTINGS_UI;
 
-          $row = array();
-          $row[] = $type .' - '. $build_mode['title'];
-          $row[] = ds_settings_status($settings_status);
+            $row = array();
+            $row[] = $build_mode['title'];
+            $row[] = ds_settings_status($settings_status);
 
-          $operations = l('Edit', 'admin/ds/layout/'. $type .'/'. $bkey);
-          if (user_access('revert overridden settings') && $settings_status == DS_SETTINGS_OVERRIDDEN) {
-            $operations .= ' - '.l('Revert', 'admin/ds/tools/revert/'.$module .'/'. $type .'/'. $bkey);
+            $operations = l('Edit', 'admin/ds/layout/'. $type .'/'. $bkey);
+            if (user_access('revert overridden settings') && $settings_status == DS_SETTINGS_OVERRIDDEN) {
+              $operations .= ' - '.l('Revert', 'admin/ds/tools/revert/'.$module .'/'. $type .'/'. $bkey);
+            }
+            $row[] = $operations;
+            $rows[] = array('data' => $row, 'class' => 'ds-row-type');
           }
-          $row[] = $operations;
-          $rows[] = $row;
         }
       }
       if (!empty($rows)) {
-        $content .= theme('table', array(), $rows);
+        $content = theme('table', array(), $rows, array('id' => 'ds-overview-page'));
       }
-
-      $content .= '</fieldset>';
     }
   }
 
