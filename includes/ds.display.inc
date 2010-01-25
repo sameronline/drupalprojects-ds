@@ -209,7 +209,7 @@ function ds_fields_display_form(&$form, $display_settings) {
       $format = key($value['formatters']);
     }
     $form[$field][$build_mode]['format']['#default_value'] = $format;
-    $form[$field][$build_mode]['format']['#access'] = (count($form[$field][$build_mode]['format']['#options']) == 1 || count($form[$field][$build_mode]['format']['#options']) == 0) ? FALSE : TRUE;
+    $form[$field][$build_mode]['format']['#access'] = (count($form[$field][$build_mode]['format']['#options']) == 0) ? FALSE : TRUE;
 
     $form[$field][$build_mode]['region']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'region', DS_DEFAULT_REGION);
   }
