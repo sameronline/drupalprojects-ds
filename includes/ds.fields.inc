@@ -168,6 +168,7 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
   $form['#field_type'] = ($field['type'] == DS_FIELD_OVERRIDABLE) ? DS_FIELD_OVERRIDDEN : (($field['type'] == DS_FIELD_OVERRIDDEN) ? DS_FIELD_OVERRIDDEN : DS_FIELD_CUSTOM);
   $form['#form_type'] = (empty($key)) ? 'insert' : 'update';
   $form['#module'] = $module;
+  $form['#all_fields'] = $all_fields;
 
   return $form;
 }
@@ -207,7 +208,7 @@ function ds_code_field_form_validate($form, &$form_state) {
   if ($form['#form_type'] == 'insert') {
 
     $module = $form['#module'];
-    $fields = variable_get($module .'_fields', array());
+    $fields = $form['#all_fields'];
     $existing = array_keys($fields);
 
     if (in_array($form_state['values']['code_key'], $existing)) {
@@ -342,6 +343,7 @@ function ds_block_field_form($form_state, $module, $all_fields, $object = '', $k
   $form['#field_type'] = DS_FIELD_BLOCK;
   $form['#form_type'] = (empty($key)) ? 'insert' : 'update';
   $form['#module'] = $module;
+  $form['#all_fields'] = $all_fields;
 
   return $form;
 }
@@ -353,7 +355,7 @@ function ds_block_field_form_validate($form, &$form_state) {
   if ($form['#form_type'] == 'insert') {
 
     $module = $form['#module'];
-    $fields = variable_get($module .'_fields', array());
+    $fields = $form['#all_fields'];
     $existing = array_keys($fields);
 
     if (in_array($form_state['values']['block_key'], $existing)) {
