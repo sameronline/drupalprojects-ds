@@ -19,8 +19,8 @@ define('DS_FIELD_THEME', 1);
 define('DS_FIELD_FUNCTION', 2);
 define('DS_FIELD_PREPROCESS', 3);
 define('DS_FIELD_IGNORE', 4);
-define('DS_FIELD_CUSTOM', 5);
-define('DS_FIELD_OVERRIDABLE', 6);
+define('DS_FIELD_UI', 5);
+define('DS_FIELD_DEFAULT', 6);
 define('DS_FIELD_OVERRIDDEN', 7);
 define('DS_FIELD_BLOCK', 8);
 
@@ -193,8 +193,8 @@ function ds_build_fields_and_regions(&$object, $module) {
           case DS_FIELD_IGNORE:
             $ds_preprocess_fields[$key] = $field['type'];
             break;
-          case DS_FIELD_CUSTOM:
-          case DS_FIELD_OVERRIDABLE:
+          case DS_FIELD_UI:
+          case DS_FIELD_DEFAULT:
           case DS_FIELD_OVERRIDDEN:
             ds_eval_code($key, $field, $object, $object_type);
             break;

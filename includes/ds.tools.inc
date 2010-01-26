@@ -152,32 +152,54 @@ function ds_export(&$form_state) {
       foreach ($form_state['values']['types'] as $otype => $value) {
         if ($otype === $value) {
           list($module, $type) = explode('-', $value);
+          // Display settings.
           $settings = variable_get($module .'_display_settings_'. $type, array());
           if (!empty($settings)) {
-            $export[$module][$type] = $settings;
+            $export['ds'][$module][$type] = $settings;
+          }
+          // Fields.
+          $fields = variable_get($module .'_fields', array());
+          if (!empty($fields)) {
+            foreach ($fields as $key => $field) {
+              $fields[$key]['type'] = DS_FIELD_DEFAULT;
+            }
+            $export['fields'][$module] = $fields;
           }
         }
       }
 
       if (!empty($export)) {
+
         $module_name = (!empty($form_state['values']['module'])) ? $form_state['values']['module'] : 'YOURMODULENAME';
-        $export_value = ds_var_export($export);
-        $form['export_hook'] = array(
-          '#title' => t('Display suite hook function'),
-          '#description' => t('This is the hook you need to implement for default data. You are free to return all data in this hook, this is just a suggestion.'),
-          '#value' => "<?php\n/**\n * Implementation of hook_ds_default_settings().\n */\nfunction ". $module_name ."_ds_default_settings() {\n  include_once('". $module_name .".ds_default.inc');\n  return _". $module_name ."_ds_default_settings();\n}\n",
+        $form['export_hooks'] = array(
+          '#title' => t('Display suite hooks'),
+          '#description' => t('These are the hooks you need to implement for default data. You are free to return all data in this hook, this is just a suggestion.'),
           '#type' => 'textarea',
           '#cols' => 60,
           '#rows' => 8,
+          '#value' => "<?php\n"
         );
-        $form['export_settings'] = array(
-          '#title' => t('Display suite export data'),
+        $form['export_data'] = array(
+          '#title' => t('Display suite export data display settings'),
           '#description' => t('You can paste this data into @module_name/@module_name.ds_default.inc. If you only want to store this data to import later, omit the function declaration.', array('@module_name' => $module_name)),
-          '#value' => "<?php\n/**\n * @file\n * Display suite default settings.\n */\nfunction _". $module_name ."_ds_default_settings() {\n  \$data = ". $export_value .";\n  return \$data;\n}",
+          '#value' => "<?php\n/**\n * @file\n * Display suite default settings.\n*/\n",
           '#type' => 'textarea',
           '#cols' => 60,
           '#rows' => 15,
         );
+
+        // Display settings.
+        if (isset($export['ds'])) {
+          $export_value = ds_var_export($export['ds']);
+          $form['export_hooks']['#value'] .= "\n/**\n * Implementation of hook_ds_default_settings().\n */\nfunction ". $module_name ."_ds_default_settings() {\n  include_once('". $module_name .".ds_default.inc');\n  return _". $module_name ."_ds_default_settings();\n}\n";
+          $form['export_data']['#value'] .= "\nfunction _". $module_name ."_ds_default_settings() {\n  \$data = ". $export_value .";\n  return \$data;\n}\n";
+        }
+        // Fields.
+        if (isset($export['fields'])) {
+          $export_value = ds_var_export($export['fields']);
+          $form['export_hooks']['#value'] .= "\n/**\n * Implementation of hook_ds_fields().\n */\nfunction ". $module_name ."_ds_fields() {\n  include_once('". $module_name .".ds_default.inc');\n  return _". $module_name ."_ds_fields();\n}\n";
+          $form['export_data']['#value'] .= "\nfunction _". $module_name ."_ds_fields() {\n  \$data = ". $export_value .";\n  return \$data;\n}\n";
+        }
       }
       else {
         $form['info'] = array(

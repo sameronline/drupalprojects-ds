@@ -4,9 +4,6 @@
 /**
  * @file
  * Manage fields.
- * @todo
- * - all validations aren't good because they don't look at the DS_FIELD_OVERRIDABLE type.
- * - try to make validations & submits only use one function.
  */
 
 /**
@@ -29,7 +26,7 @@ function ds_fields($module) {
 
   // Compare with db_fields.
   foreach ($all_fields as $key => $db_field) {
-    if ($db_field['type'] == DS_FIELD_OVERRIDABLE && !isset($db_field[$key])) {
+    if ($db_field['type'] == DS_FIELD_DEFAULT && !isset($db_field[$key])) {
       $db_fields[$key] = array(
         'title' => $db_field['title'],
         'code' => $db_field['code'],
@@ -66,11 +63,11 @@ function ds_fields($module) {
         $row = array();
         $row[] = check_plain($value['title']);
         $row[] = $key;
-        $type = ($value['type'] == DS_FIELD_OVERRIDABLE) ? t('Default') : (($value['type'] == DS_FIELD_OVERRIDDEN) ? t('Overridden') : t('Custom'));
+        $type = ($value['type'] == DS_FIELD_DEFAULT) ? t('Default') : (($value['type'] == DS_FIELD_OVERRIDDEN) ? t('Overridden') : t('Custom'));
         if ($value['type'] == DS_FIELD_BLOCK) $type = t('Block field');
         $row[] = $type;
         $operations = l(t('Edit'), 'admin/ds/'. $module .'/fields/edit/'. $key);
-        if ($value['type'] != DS_FIELD_OVERRIDABLE) {
+        if ($value['type'] != DS_FIELD_DEFAULT) {
           $text = ($value['type'] == DS_FIELD_OVERRIDDEN) ? 'Reset' : 'Delete';
           $operations .= ' - '. l(t($text), 'admin/ds/'. $module .'/fields/delete/'. $key);
         }
@@ -103,7 +100,7 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
   $form = array();
 
   if (empty($field)) {
-    $field = array('title' => '', 'code' => '', 'exclude' => array(), 'type' => DS_FIELD_CUSTOM);
+    $field = array('title' => '', 'code' => '', 'exclude' => array(), 'type' => DS_FIELD_UI);
   }
 
   $form['code_identity'] = array(
@@ -165,7 +162,7 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
     '#value' => t('Save code field'),
   );
 
-  $form['#field_type'] = ($field['type'] == DS_FIELD_OVERRIDABLE) ? DS_FIELD_OVERRIDDEN : (($field['type'] == DS_FIELD_OVERRIDDEN) ? DS_FIELD_OVERRIDDEN : DS_FIELD_CUSTOM);
+  $form['#field_type'] = ($field['type'] == DS_FIELD_DEFAULT) ? DS_FIELD_OVERRIDDEN : (($field['type'] == DS_FIELD_OVERRIDDEN) ? DS_FIELD_OVERRIDDEN : DS_FIELD_UI);
   $form['#form_type'] = (empty($key)) ? 'insert' : 'update';
   $form['#module'] = $module;
   $form['#all_fields'] = $all_fields;
