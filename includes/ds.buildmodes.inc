@@ -213,7 +213,7 @@ function ds_buildmodes_matrix_form($form_state, $module, $types) {
       );
       $form['exclude'][$tkey][$tkey .'-'. $bkey .'-disabled'] = array(
         '#type' => 'value',
-        '#value' => $exclude_build_modes[$tkey][$bkey],
+        '#value' => isset($exclude_build_modes[$tkey][$bkey]) ? $exclude_build_modes[$tkey][$bkey] : NULL,
       );
 
       if ($bkey == 'ds_block_all') {
@@ -221,7 +221,7 @@ function ds_buildmodes_matrix_form($form_state, $module, $types) {
         $form['exclude'][$tkey][$tkey .'-'. $bkey]['#default_value'] = $row_exluded;
       }
       else {
-        $form['exclude'][$tkey][$tkey .'-'. $bkey]['#default_value'] = $exclude_build_modes[$tkey][$bkey];
+        $form['exclude'][$tkey][$tkey .'-'. $bkey]['#default_value'] = isset($exclude_build_modes[$tkey][$bkey]) ? $exclude_build_modes[$tkey][$bkey] : NULL;
         if ($row_exluded) {
           $form['exclude'][$tkey][$tkey .'-'. $bkey]['#disabled'] = 'disabled';
         }
