@@ -511,6 +511,7 @@ function ds_eval_block($key, $field, &$object) {
         case BLOCK_TEMPLATE:
           global $theme_key;
           $block = (object) $block;
+          $block->region = NULL;
           $block->module = $module;
           $block->delta = $delta;
           $block_title = db_result(db_query("SELECT title FROM {blocks} WHERE module = '%s' AND delta = '%s' AND theme = '%s'", $module, $delta, $theme_key));

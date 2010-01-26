@@ -381,7 +381,12 @@ function ds_block_field_form_submit($form, &$form_state) {
     'render' => $form_state['values']['block_render'],
     'type' => $form['#field_type'],
   );
+
+  // Safe field and invalidate cached fields.
   variable_set($module .'_fields', $fields);
+  variable_del('ds_fields_cached');
+
+  // Redirect and confirmation message.
   $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
   drupal_set_message(t('Field %field has been saved.', array('%field' => $form_state['values']['block_title'])));
 }
