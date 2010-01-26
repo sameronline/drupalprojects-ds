@@ -36,8 +36,8 @@ span.label-field, span.label-edit {
   line-height:24px;
 }
 span.label-field {
-  font-size: 13px; 
-  float: left; 
+  font-size: 13px;
+  float: left;
 }
 span.label-edit {
   font-size: 11px;
@@ -59,17 +59,12 @@ span.label-edit {
   float: left;
   margin-left: 20px;
 }
-.ds-row-title {
-  font-weight: strong;
-  font-size: 18px;
+#ds-overview-page .ds-row-title {
+  font-weight: bold;
   background: #E4F0F8 none repeat scroll 0 0;
+  font-size: 14px;
 }
 #ds-overview-page .ds-row-type {
   background: #fff none repeat scroll 0 0;
-  padding-top: 3px;
-  border-bottom: none;
-}
-#ds-overview-page .ds-row-type {
-  background: #fff none repeat scroll 0 0;
-  border-bottom: none;
+  border: 0 none;
 }
