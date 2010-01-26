@@ -25,7 +25,7 @@ function ds_plugins($form_state, $module) {
     foreach ($plugins as $key => $plugin) {
       $form['plugin_'. $plugin['key']] = array(
         '#type' => 'checkbox',
-        '#default_value' => $plugin_settings[$plugin['key']]['status'],
+        '#default_value' => isset($plugin_settings[$plugin['key']]['status']) ? $plugin_settings[$plugin['key']]['status'] : 0,
       );
     }
   }

@@ -40,6 +40,7 @@ function ds_emptyregionrender_submit($form, $form_state, &$display_settings) {
   $regions_save = array();
   $build_mode = $form['#build_mode'];
   foreach ($regions as $region => $title) {
+    if (isset($form_state['values']['emptyregionrender']['region-render-'. $region]))
     $regions_save['render'][$region] = $form_state['values']['emptyregionrender']['region-render-'. $region];
   }
   $display_settings[$build_mode]['emptyregionrender'] = $regions_save;

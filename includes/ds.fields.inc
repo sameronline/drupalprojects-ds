@@ -239,7 +239,7 @@ function ds_code_field_form_submit($form, &$form_state) {
 
   // Redirect and confirmation message.
   $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
-  drupal_set_message(t('Field %field has been saved.', array('%field' => $form_state['values']['title'])));
+  drupal_set_message(t('Field %field has been saved.', array('%field' => $form_state['values']['code_title'])));
 }
 
 /**
@@ -255,7 +255,7 @@ function ds_block_field_form($form_state, $module, $all_fields, $object = '', $k
   $form = array();
 
   if (empty($field)) {
-    $field = array('title' => '', 'block' => '', 'exclude' => array(), 'type' => DS_FIELD_BLOCK);
+    $field = array('title' => '', 'block' => '', 'exclude' => array(), 'type' => DS_FIELD_BLOCK, 'render' => BLOCK_TEMPLATE);
   }
 
   $form['block_identity'] = array(
@@ -381,7 +381,7 @@ function ds_block_field_form_submit($form, &$form_state) {
   );
   variable_set($module .'_fields', $fields);
   $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
-  drupal_set_message(t('Field %field has been saved.', array('%field' => $form_state['values']['title'])));
+  drupal_set_message(t('Field %field has been saved.', array('%field' => $form_state['values']['block_title'])));
 }
 
 /**

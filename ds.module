@@ -111,10 +111,12 @@ function ds_api_info($module, $type_name = 'all') {
     $function = $module .'_ds_api';
     $api_data = $function();
     $api_info[$module][$type_name] = $api_data;
-    $api_info[$module][$type_name]['extra'] = array();
+    if (!isset($api_info[$module][$type_name]['extra'])) {
+      $api_info[$module][$type_name]['extra'] = array();
+    }
 
     // Extra info needed or not.
-    if ($type_name != 'all' && isset($api_data['extra'])) {
+    if ($type_name != 'all' && !empty($api_data['extra'])) {
       $extra = array();
       $types = $api_data['types']();
       $type_info = $types[$type_name];
