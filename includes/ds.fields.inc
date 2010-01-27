@@ -328,7 +328,7 @@ function ds_block_field_form($form_state, $module, $all_fields, $object = '', $k
     ),
     '#title' => t('Block render'),
     '#required' => TRUE,
-    '#default_value' => $field['render']
+    '#default_value' => isset($field['render']) ? $field['render'] : BLOCK_CONTENT,
   );
 
   $form['block_identity']['block_submit'] = array(
