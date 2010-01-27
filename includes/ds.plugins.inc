@@ -82,18 +82,21 @@ function theme_ds_plugins($form) {
  * Retrieve all available plugins.
  */
 function ds_plugins_retrieve($module) {
+
   $plugins = module_invoke_all('ds_plugins');
+
   foreach ($plugins as $plugin => $data) {
     if ($data['target'] == 'all' || (is_array($data['target']) && isset($data['target'][$module]))) {
+
       $data['key'] = $plugin;
-      $data['form_callback'] = 'ds_'. $plugin .'_form';
-      $data['submit_callback'] = 'ds_'. $plugin .'_submit';
-      $data['process_callback'] = 'ds_'. $plugin .'_process';
+      $data['class'] = $data['class'];
       if (isset($data['file']) && isset($data['path']))
       $data['filename'] = $data['path'] .'/'. $data['file'];
+
       $plugins[$plugin] = $data;
     }
   }
+
   return $plugins;
 }
 

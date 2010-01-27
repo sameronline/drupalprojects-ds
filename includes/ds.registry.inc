@@ -276,22 +276,24 @@ function _ds_register_build_modes() {
 }
 
 /**
- * Return nd plugins.
+ * Return ds plugins.
  */
 function _ds_plugins() {
   $path = drupal_get_path('module', 'ds');
   return array(
     'emptyregionrender' => array(
       'title' => t('Empty region'),
+      'class' => 'ds_emptyregionrender',
       'description' => t('Renders a region when there is no content in it.'),
-      'file' => 'emptyregionrender.inc',
+      'file' => 'ds_emptyregionrender.inc',
       'path' => $path .'/plugins',
       'target' => 'all',
     ),
     'cssoverrider' => array(
       'title' => t('Simple CSS overrider'),
+      'class' => 'ds_cssoverrider',
       'description' => t('Override region CSS with inline styles or add extra classes.'),
-      'file' => 'cssoverrider.inc',
+      'file' => 'ds_cssoverrider.inc',
       'path' => $path .'/plugins',
       'target' => 'all',
     ),

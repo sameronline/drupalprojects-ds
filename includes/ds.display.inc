@@ -228,12 +228,13 @@ function ds_plugins_display_form(&$form, $display_settings) {
     $form['#plugin_keys'] = array();
   }
 
-  foreach ($plugins as $key => $plugin) {
-    if (isset($plugin['filename'])) {
-      require_once($plugin['filename']);
+  foreach ($plugins as $key => $data) {
+    if (isset($data['filename'])) {
+      require_once($data['filename']);
     }
-    $function = $plugin['form_callback'];
-    $plugin_form = $function($form, $display_settings);
+    $class = $data['class'];
+    $plugin = new $class();
+    $plugin_form = $plugin->plugin_form($form, $display_settings);
     $form['#plugin_keys'][] = $key;
   }
 }
@@ -265,7 +266,7 @@ function ds_display_overview_form_submit($form, &$form_state) {
       $display_settings[$build_mode]['fields'][$key]['format'] = $form_state['values'][$key][$build_mode]['format'];
       $display_settings[$build_mode]['fields'][$key]['region'] = $form_state['values'][$key][$build_mode]['region'];
       if (!empty($form_state['values'][$key][$build_mode]['label_value'])) {
-        $display_settings[$build_mode]['fields'][$key]['label_value'] = $form_state['values'][$key][$build_mode]['label_value'];
+      $display_settings[$build_mode]['fields'][$key]['label_value'] = $form_state['values'][$key][$build_mode]['label_value'];
       }
       $display_settings[$build_mode]['fields'][$key]['labelformat'] = $form_state['values'][$key][$build_mode]['label']['format'];
 
@@ -301,12 +302,15 @@ function ds_plugins_display_submit($form, $form_state, &$display_settings) {
 
   $plugins = variable_get($module .'_plugin_settings', array());
 
-  foreach ($plugins as $key => $plugin) {
-    if (isset($plugin['filename'])) {
-      require_once($plugin['filename']);
+  foreach ($plugins as $key => $data) {
+
+    if (isset($data['filename'])) {
+      require_once($data['filename']);
     }
-    $function = $plugin['submit_callback'];
-    $function($form, $form_state, $display_settings);
+
+    $class = $data['class'];
+    $plugin = new $class();
+    $plugin->plugin_form_submit($form, $form_state, $display_settings);
   }
 }
 

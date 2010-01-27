@@ -112,7 +112,7 @@ function ds_api_info($module, $type_name = 'all') {
     $api_data = $function();
     $api_info[$module][$type_name] = $api_data;
     if (!isset($api_info[$module][$type_name]['extra'])) {
-      $api_info[$module][$type_name]['extra'] = array();
+    $api_info[$module][$type_name]['extra'] = array();
     }
 
     // Extra info needed or not.
@@ -471,12 +471,13 @@ function ds_get_build_modes($module = NULL, $reset = FALSE) {
 function ds_plugins_process($module, $object_type, $display_settings, &$vars, &$display) {
   $plugins = variable_get($module .'_plugin_settings', array());
   if (!empty($plugins)) {
-    foreach ($plugins as $key => $plugin) {
-      if (isset($plugin['filename'])) {
-        require_once($plugin['filename']);
+    foreach ($plugins as $key => $data) {
+      if (isset($data['filename']) && isset($data['class'])) {
+        require_once($data['filename']);
+        $class = $data['class'];
+        $plugin = new $class();
+        $plugin->execute($vars, $display, $display_settings, $object_type);
       }
-      $function = $plugin['process_callback'];
-      $function($vars, $display, $display_settings, $object_type);
     }
   }
 }
