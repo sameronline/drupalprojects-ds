@@ -360,28 +360,28 @@ function ds_field_default_form_properties($build_mode) {
   if (!empty($build_mode)) {
     $field['ds_weight'] = array(
       '#type' => 'weight',
-      '#default_value' => -19,
-      '#delta' => 20,
+      '#default_value' => DS_DEFAULT_WEIGHT,
+      '#delta' => 30,
     );
     $field[$build_mode] = array(
       'label' => array(
         'format' => array(
           '#type' => 'select',
           '#options' => ds_label_options(),
-          '#default_value' => 'hidden',
+          '#default_value' => DS_DEFAULT_LABEL_FORMAT,
         ),
       ),
       'format' => array(
         '#type' => 'select',
         '#options' => array(),
-        '#default_value' => 'default',
+        '#default_value' => DS_DEFAULT_FORMAT,
       ),
       'region' => array(
         '#type' => 'select',
         '#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
-        '#default_value' => '',
+        '#default_value' => DS_DEFAULT_WEIGHT,
         '#attributes' => array(
-          'class' => 'field-region-select field-region-disabled',
+          'class' => 'field-region-select field-region-'. DS_DEFAULT_REGION,
         ),
       ),
     );

@@ -23,9 +23,9 @@ class ds_emptyregionrender {
 
     $form['emptyregionrender'] = array(
       '#type' => 'fieldset',
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-      '#title' => t('Empty region render'),
+      '#collapsible' => FALSE,
+      '#collapsed' => FALSE,
+      //'#title' => t('Empty region render'),
       '#description' => t('Toggle regions you want to render when there are no fields in it or when field values are empty.'),
     );
 

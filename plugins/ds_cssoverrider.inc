@@ -20,9 +20,9 @@ class ds_cssoverrider {
 
     $form['cssoverrider'] = array(
       '#type' => 'fieldset',
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-      '#title' => t('CSS overrider'),
+      '#collapsible' => FALSE,
+      '#collapsed' => FALSE,
+      //'#title' => t('CSS overrider'),
       '#description' => t('Either add extra classes or override CSS inline per region.'),
     );
 
