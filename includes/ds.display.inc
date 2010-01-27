@@ -187,7 +187,7 @@ function ds_fields_display_form(&$form, $display_settings) {
     // Populate/override the fields with the saved values
     $form[$field][$build_mode]['label']['format']['#default_value'] = isset($value['display_settings'][$build_mode]['label']['format']) ? $value['display_settings'][$build_mode]['label']['format'] : ds_default_value($display_settings, $build_mode, 'fields', $field, 'labelformat', DS_DEFAULT_LABEL_FORMAT);
 
-    $label_value = t(check_plain(ds_default_value($display_settings, $build_mode, 'fields', $field, 'label_value', $value['title'])));
+    $label_value = t(ds_default_value($display_settings, $build_mode, 'fields', $field, 'label_value', $value['title']));
     $form[$field][$build_mode]['label_value'] = array(
       '#type' => 'hidden',
       '#default_value' => $label_value,
