@@ -381,6 +381,12 @@ function ds_get_fields($module, $type_name, $build_mode, $extra = array(), $rese
           foreach ($all_fields as $key => $field_results) {
             if ($key === $module) {
               $fields = array_merge($field_results, $fields);
+              foreach ($fields as $key => $field) {
+                $exclude = (isset($field['exclude'][$type_name]) && $field['exclude'][$type_name] === $type_name) ? TRUE : FALSE;
+                if ($exclude) {
+                  unset($fields[$key]);
+                }
+              }
             }
           }
         }
