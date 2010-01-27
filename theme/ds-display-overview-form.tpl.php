@@ -20,8 +20,8 @@ if ($rows): ?>
 <div id="ds-display-content" <?php print $extra_style; ?>>
   <?php if ($plugins): ?>
     <div id="display-tabs">
-      <div id="field-tab"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('fields-content', 'plugins-content');"><?php print t('Fields'); ?></a></div>
-      <div id="plugin-tab"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('plugins-content', 'fields-content');"><?php print t('Plugins'); ?></a></div>
+      <div id="field-tab" class="selected"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('field-tab', 'plugin-tab', 'fields-content', 'plugins-content');"><?php print t('Fields'); ?></a></div>
+      <div id="plugin-tab"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('plugin-tab', 'field-tab', 'plugins-content', 'fields-content');"><?php print t('Plugins'); ?></a></div>
     </div>
     <div style="clear: both"></div>
   <?php endif; ?>

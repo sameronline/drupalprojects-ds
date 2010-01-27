@@ -128,9 +128,11 @@ function toggleFieldOverviewForm() {
 /**
  * Show / hide fields or plugins content.
  */
-function toggleFieldPluginsLink(div_show, div_hide) {
-  $('#' + div_show).show();  
+function toggleFieldPluginsLink(highlight_tab, nonhighlight_tab, div_show, div_hide) {
+  $('#' + div_show).show();
+  $('#' + highlight_tab).addClass('selected');
   $('#' + div_hide).hide();
+  $('#' + nonhighlight_tab).removeClass('selected');
 }
 
 /**
