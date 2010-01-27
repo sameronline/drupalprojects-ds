@@ -61,13 +61,35 @@ function ds_features_export($data, &$export, $module_name = '') {
  * Implementation of hook_features_export_render().
  */
 function ds_features_export_render($module = 'foo', $data) {
+  $return = array();
   module_load_include('inc', 'ds', 'includes/ds.tools');
-  $export = array();
-  foreach ($data as $type) {
-    list($module, $dstype) = explode('-', $type);
-    $settings = variable_get($module .'_display_settings_'. $dstype, array());
-    $export[$module][$dstype] = $settings;
+
+  // Create nice build data.
+  $build_data = array();
+  foreach ($data as $module => $type) {
+    $build_data[$type] = $type;
   }
-  $export_value = '  $data = '. ds_var_export($export) .";\n  return \$data;";
-  return array('ds_default_settings' => $export_value);
+  $export = ds_export_build($build_data);
+
+  // Display settings.
+  if (isset($export['ds']['settings'])) {
+    $return['ds_default_settings'] = '  $data = '. ds_var_export($export['ds']['settings']) .";\n  return \$data;";
+  }
+  // Fields.
+  if (isset($export['ds']['fields'])) {
+    $return['ds_fields'] = '  $data = '. ds_var_export($export['ds']['fields']) .";\n  return \$data;";
+  }
+
+  if (!empty($return)) {
+    return $return;
+  }
+}
+
+/**
+ * Implementation of hook_features_revert().
+ *
+ * @param string $module name of module to revert settings for.
+ */
+function ds_features_revert($module = NULL) {
+
 }

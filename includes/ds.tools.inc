@@ -14,7 +14,7 @@ function ds_import($form_state) {
 
   $form['import'] = array(
     '#title' => t('Import data'),
-    '#description' => t('Paste data to import field settings. Do not include the function declaration from the export. <strong>Warning: existing data will be overwritten!</strong>'),
+    '#description' => t('Paste data to import field settings. Do not include the function declaration from the export. Note: only display settings can be imported here. <strong>Warning: existing data will be overwritten!</strong>'),
     '#type' => 'textarea',
     '#cols' => 60,
     '#default_value' => '',
@@ -148,41 +148,13 @@ function ds_export(&$form_state) {
 
     // Show export.
     case 2:
-      $exclude = array();
-      $export = array();
-      foreach ($form_state['values']['types'] as $otype => $value) {
-        if ($otype === $value) {
-          list($module, $type) = explode('-', $value);
-          // Display settings.
-          $settings = variable_get($module .'_display_settings_'. $type, array());
-          if (!empty($settings)) {
-            $export['ds'][$module][$type] = $settings;
-          }
-          // Fields.
-          $fields = variable_get($module .'_fields', array());
-          if (!empty($fields)) {
-            // We don't export overridden fields, unset them if necessary.
-            foreach ($fields as $key => $field) {
-              if ($field['type'] == DS_FIELD_OVERRIDDEN) {
-                unset($fields[$key]);
-                $exclude[] = $field['title'];
-              }
-              elseif ($field['type'] == DS_FIELD_UI) {
-                $fields[$key]['type'] = DS_FIELD_DEFAULT;
-              }
-            }
-            if (!empty($fields))
-            $export['fields'][$module] = $fields;
-          }
-        }
+      $export = ds_export_build($form_state['values']['types']);
+
+      if (!empty($export['exclude']['fields'])) {
+        drupal_set_message(t('Following fields were not included in the export because they are default fields: %fields', array('%fields' => implode(',', $export['exclude']['fields']))));
       }
 
-      if (!empty($exclude)) {
-        drupal_set_message(t('Following fields were not included in the export because they are default fields: %fields', array('%fields' => implode(',', $exclude))));
-      }
-
-
-      if (!empty($export)) {
+      if (!empty($export['ds'])) {
 
         $module_name = (!empty($form_state['values']['module'])) ? $form_state['values']['module'] : 'YOURMODULENAME';
         $form['export_hooks'] = array(
@@ -203,15 +175,15 @@ function ds_export(&$form_state) {
         );
 
         // Display settings.
-        if (isset($export['ds'])) {
-          $export_value = ds_var_export($export['ds']);
+        if (isset($export['ds']['settings'])) {
+          $export_value = ds_var_export($export['ds']['settings']);
           $form['export_hooks']['#value'] .= "\n/**\n * Implementation of hook_ds_default_settings().\n */\nfunction ". $module_name ."_ds_default_settings() {\n  include_once('". $module_name .".ds_default.inc');\n  return _". $module_name ."_ds_default_settings();\n}\n";
           $form['export_data']['#value'] .= "\nfunction _". $module_name ."_ds_default_settings() {\n  \$data = ". $export_value .";\n  return \$data;\n}\n";
         }
         // Fields.
-        if (isset($export['fields'])) {
-          if (!empty($export['fields'])) {
-            $export_value = ds_var_export($export['fields']);
+        if (isset($export['ds']['fields'])) {
+          if (!empty($export['ds']['fields'])) {
+            $export_value = ds_var_export($export['ds']['fields']);
             $form['export_hooks']['#value'] .= "\n/**\n * Implementation of hook_ds_fields().\n */\nfunction ". $module_name ."_ds_fields() {\n  include_once('". $module_name .".ds_default.inc');\n  return _". $module_name ."_ds_fields();\n}\n";
             $form['export_data']['#value'] .= "\nfunction _". $module_name ."_ds_fields() {\n  \$data = ". $export_value .";\n  return \$data;\n}\n";
           }
@@ -240,6 +212,40 @@ function ds_export(&$form_state) {
   );
 
   return $form;
+}
+
+/**
+ * Build the export variable.
+ */
+function ds_export_build($values) {
+  $return = array();
+  foreach ($values as $otype => $value) {
+    if ($otype === $value) {
+      list($module, $type) = explode('-', $value);
+      // Display settings.
+      $settings = variable_get($module .'_display_settings_'. $type, array());
+      if (!empty($settings)) {
+        $return['ds']['settings'][$module][$type] = $settings;
+      }
+      // Fields.
+      $fields = variable_get($module .'_fields', array());
+      if (!empty($fields)) {
+        // We don't export overridden fields, unset them if necessary.
+        foreach ($fields as $key => $field) {
+          if ($field['type'] == DS_FIELD_OVERRIDDEN) {
+            unset($fields[$key]);
+            $return['exclude']['fields'][] = $field['title'];
+          }
+          elseif ($field['type'] == DS_FIELD_UI) {
+            $fields[$key]['type'] = DS_FIELD_DEFAULT;
+          }
+        }
+        if (!empty($fields))
+        $return['ds']['fields'][$module] = $fields;
+      }
+    }
+  }
+  return $return;
 }
 
 /**

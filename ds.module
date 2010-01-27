@@ -618,7 +618,7 @@ function ds_regions($regions = 'all', $render = FALSE) {
 }
 
 /**
- * Import default data from modules.
+ * Import default display data from modules.
  *
  * @param string $module The module to import.
  * @param string $type The object type to import.
@@ -634,9 +634,12 @@ function ds_import_default_data($module = '', $type = '', $build_mode = '') {
 
 /**
  * Helper function to check access.
+ *
+ * @param string $perm_1 A permission.
+ * @param string $perm_2 A permission.
  */
-function _ds_menu_access($string1, $string2) {
-  if (user_access($string1) && user_access($string2)) {
+function _ds_menu_access($perm_1, $perm_2) {
+  if (user_access($perm_1) && user_access($perm_2)) {
     return TRUE;
   }
   return FALSE;
