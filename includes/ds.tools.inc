@@ -168,7 +168,7 @@ function ds_export(&$form_state) {
         $form['export_data'] = array(
           '#title' => t('Display suite export data'),
           '#description' => t('You can paste this data into @module_name/@module_name.ds_default.inc. If you only want to store this data to import later, omit the function declaration.', array('@module_name' => $module_name)),
-          '#value' => "<?php\n/**\n * @file\n * Display suite default settings.\n*/\n",
+          '#value' => "<?php\n/**\n * @file\n * Display suite default settings.\n */\n",
           '#type' => 'textarea',
           '#cols' => 60,
           '#rows' => 15,
