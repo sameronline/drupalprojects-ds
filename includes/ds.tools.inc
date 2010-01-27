@@ -13,7 +13,7 @@ function ds_import($form_state) {
   $form = array();
 
   $form['import'] = array(
-    '#title' => t('Import data'),
+    '#title' => t('Import display settings'),
     '#description' => t('Paste data to import field settings. Do not include the function declaration from the export. Note: only display settings can be imported here. <strong>Warning: existing data will be overwritten!</strong>'),
     '#type' => 'textarea',
     '#cols' => 60,
@@ -110,6 +110,7 @@ function ds_import_data($data, $dsm = TRUE, $override = TRUE, $revert_module = '
 function ds_export(&$form_state) {
   $form = array();
   $options = array();
+  $ds_variables = array();
   $step = isset($form_state['storage']['step']) ? $form_state['storage']['step'] + 1 : 1;
 
   switch ($step) {
@@ -119,8 +120,15 @@ function ds_export(&$form_state) {
       foreach (module_implements('ds_api') as $module) {
         $api_info = ds_api_info($module);
         $module = $api_info['module'];
+
+        // Content types.
         foreach ($api_info['types']() as $tkey => $type) {
           $options[$module .'-'. $tkey] = $type->name;
+        }
+        // Plugins.
+        $plugins = variable_get($module .'_plugin_settings', array());
+        if (!empty($plugins)) {
+          $ds_variables[] = $module .'_plugin_settings';
         }
       }
 
@@ -204,6 +212,12 @@ function ds_export(&$form_state) {
       '#type' => 'submit',
       '#value' => t('Export'),
     );
+    if (!empty($ds_variables)) {
+      $form['other'] = array(
+        '#type' => 'item',
+        '#value' => t('Other variables you might consider to have in code (likely your install file): %variables<br />You can look this up in your database or use <a href="http://drupal.org/project/variable_dump">http://drupal.org/project/variable_dump</a> to create variable exports.', array('%variables' => implode($ds_variables))),
+      );
+    }
   }
 
   $form['step'] = array(
@@ -225,6 +239,9 @@ function ds_export_build($values) {
       // Display settings.
       $settings = variable_get($module .'_display_settings_'. $type, array());
       if (!empty($settings)) {
+        foreach ($settings as $build_mode => $setting) {
+          $settings[$build_mode]['status'] = DS_SETTINGS_DEFAULT;
+        }
         $return['ds']['settings'][$module][$type] = $settings;
       }
       // Fields.
