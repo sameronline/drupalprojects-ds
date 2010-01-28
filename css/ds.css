@@ -71,7 +71,7 @@ span.label-edit {
   padding: 5px;
 }
 
-#plugin-tab {
+#ds-tabs .tab {
   float: left;
   margin-left: 5px;
   border: 1px solid #eee;

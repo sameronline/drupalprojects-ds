@@ -18,10 +18,12 @@ print $exclude_build_mode;
 if ($rows): ?>
 
 <div id="ds-display-content" <?php print $extra_style; ?>>
-  <?php if ($plugins): ?>
-    <div id="display-tabs">
-      <div id="field-tab" class="selected"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('field-tab', 'plugin-tab', 'fields-content', 'plugins-content');"><?php print t('Fields'); ?></a></div>
-      <div id="plugin-tab"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('plugin-tab', 'field-tab', 'plugins-content', 'fields-content');"><?php print t('Plugins'); ?></a></div>
+  <?php if (!empty($plugins_tabs)): ?>
+    <div id="ds-tabs">
+      <div id="field-tab" class="tab selected"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('field-tab', 'plugin-tab', 'fields-content', 'plugins-content');"><?php print t('Fields'); ?></a></div>
+      <?php foreach ($plugins_tabs as $key => $title): ?>
+      <div id="<?php print $key; ?>-tab" class="tab<?php ?>"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('plugin-tab', 'field-tab', 'plugins-content', 'fields-content');"><?php print $title; ?></a></div>
+      <?php endforeach; ?>
     </div>
     <div style="clear: both"></div>
   <?php endif; ?>
@@ -70,7 +72,7 @@ if ($rows): ?>
       </tbody>
     </table>
   </div>
-  <?php if ($plugins): ?>
+  <?php if (!empty($plugins_tabs)): ?>
   <div id="plugins-content">
     <?php print $plugins_content; ?>
   </div>

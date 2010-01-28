@@ -235,7 +235,7 @@ function ds_plugins_display_form(&$form, $display_settings) {
     $class = $data['class'];
     $plugin = new $class();
     $plugin_form = $plugin->plugin_form($form, $display_settings);
-    $form['#plugin_keys'][] = $key;
+    $form['#plugin_keys'][$key] = $data['title'];
   }
 }
 
