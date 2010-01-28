@@ -20,9 +20,9 @@ if ($rows): ?>
 <div id="ds-display-content" <?php print $extra_style; ?>>
   <?php if (!empty($plugins_tabs)): ?>
     <div id="ds-tabs">
-      <div id="field-tab" class="tab selected"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('field-tab', 'plugin-tab', 'fields-content', 'plugins-content');"><?php print t('Fields'); ?></a></div>
+      <div id="field-tab" class="tab selected"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab(this); return false;"><?php print t('Fields'); ?></a></div>
       <?php foreach ($plugins_tabs as $key => $title): ?>
-      <div id="<?php print $key; ?>" class="tab<?php ?>"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('plugin-tab', 'field-tab', 'plugins-content', 'fields-content');"><?php print $title; ?></a></div>
+      <div id="<?php print $key; ?>" class="tab<?php ?>"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab(this); return false;"><?php print $title; ?></a></div>
       <?php endforeach; ?>
     </div>
     <div style="clear: both"></div>

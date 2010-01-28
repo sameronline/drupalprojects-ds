@@ -8,6 +8,7 @@
  *
  * Based on nodeform cols.
  */
+
 Drupal.behaviors.fieldDrag = function(context) {
   var table = $('table#fields');
   var tableDrag = Drupal.tableDrag.fields; // Get the fields tableDrag object.
@@ -125,35 +126,39 @@ function toggleFieldOverviewForm() {
   }
 }
 
-/**
- * Show / hide fields or plugins content.
- */
-function toggleFieldPluginsLink(highlight_tab, nonhighlight_tab, div_show, div_hide) {
-  $('#' + div_show).show();
-  $('#' + highlight_tab).addClass('selected');
-  $('#' + div_hide).hide();
-  $('#' + nonhighlight_tab).removeClass('selected');
-}
 
 /**
  * Drupal ds object.
  */
- Drupal.DisplaySuite = Drupal.DisplaySuite || {};
+Drupal.DisplaySuite = Drupal.DisplaySuite || {};
+
+/**
+ * Show / hide fields or plugins content.
+ */
+Drupal.DisplaySuite.toggleDisplayTab = function(element) {
+  //alert(element);
+}
+
+/*function toggleFieldPluginsLink(highlight_tab, nonhighlight_tab, div_show, div_hide) {
+  $('#' + div_show).show();
+  $('#' + highlight_tab).addClass('selected');
+  $('#' + div_hide).hide();
+  $('#' + nonhighlight_tab).removeClass('selected');
+}*/
  
 /**
  * Change the label of a field instance in a build mode.
  */
- Drupal.DisplaySuite.changeLabel = function(element, title) {
+Drupal.DisplaySuite.changeLabel = function(element, title) {
  
-   var changed = prompt(Drupal.t("Edit label"), title);
+  var changed = prompt(Drupal.t("Edit label"), title);
    
-   if (changed == '') {
-     alert(Drupal.t('Field can not be empty'));
-     return false;
-   }
+  if (changed == '') {
+    alert(Drupal.t('Field can not be empty'));
+    return false;
+  }
    
-   var labelcell = $(element).parents(".ds-label");
-   labelcell.find(".label-field").text(changed);
-   labelcell.find("input").val(changed);
-   
- }
+  var labelcell = $(element).parents(".ds-label");
+  labelcell.find(".label-field").text(changed);
+  labelcell.find("input").val(changed);
+}

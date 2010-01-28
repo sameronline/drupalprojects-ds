@@ -97,6 +97,9 @@ function ds_plugins_retrieve($module) {
     }
   }
 
+  // Give modules a change to alter plugins.
+  drupal_alter('ds_plugins', $plugins);
+
   return $plugins;
 }
 
