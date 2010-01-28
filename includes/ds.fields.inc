@@ -28,7 +28,7 @@ function ds_fields($module) {
 
   // Compare with db_fields.
   foreach ($all_fields as $key => $db_field) {
-    if ($db_field['type'] == DS_FIELD_DEFAULT && !isset($db_field[$key])) {
+    if ($db_field['status'] == DS_FIELD_STATUS_DEFAULT && !isset($db_field[$key])) {
       $db_fields[$key] = array(
         'title' => $db_field['title'],
         'code' => $db_field['code'],
@@ -65,12 +65,12 @@ function ds_fields($module) {
         $row = array();
         $row[] = check_plain($value['title']);
         $row[] = $key;
-        $type = ($value['type'] == DS_FIELD_DEFAULT) ? t('Default') : (($value['type'] == DS_FIELD_OVERRIDDEN) ? t('Overridden') : t('Custom'));
-        if ($value['type'] == DS_FIELD_BLOCK) $type = t('Block field');
+        $type = ($value['type'] == DS_FIELD_STATUS_DEFAULT) ? t('Default') : (($value['type'] == DS_FIELD_STATUS_OVERRIDDEN) ? t('Overridden') : t('Custom'));
+        if ($value['type'] == DS_FIELD_TYPE_BLOCK) $type = t('Block field');
         $row[] = $type;
         $operations = l(t('Edit'), 'admin/ds/'. $module .'/fields/edit/'. $key);
-        if ($value['type'] != DS_FIELD_DEFAULT) {
-          $text = ($value['type'] == DS_FIELD_OVERRIDDEN) ? 'Reset' : 'Delete';
+        if ($value['type'] != DS_FIELD_STATUS_DEFAULT) {
+          $text = ($value['type'] == DS_FIELD_STATUS_OVERRIDDEN) ? 'Reset' : 'Delete';
           $operations .= ' - '. l(t($text), 'admin/ds/'. $module .'/fields/delete/'. $key);
         }
         $row[] = $operations;
@@ -102,7 +102,7 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
   $form = array();
 
   if (empty($field)) {
-    $field = array('title' => '', 'code' => '', 'exclude' => array(), 'type' => DS_FIELD_UI);
+    $field = array('title' => '', 'code' => '', 'exclude' => array(), 'type' => DS_FIELD_STATUS_CUSTOM);
   }
 
   $form['code_identity'] = array(
@@ -170,7 +170,7 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
     '#value' => t('Save code field'),
   );
 
-  $form['#field_type'] = ($field['type'] == DS_FIELD_DEFAULT) ? DS_FIELD_OVERRIDDEN : (($field['type'] == DS_FIELD_OVERRIDDEN) ? DS_FIELD_OVERRIDDEN : DS_FIELD_UI);
+  $form['#field_type'] = ($field['type'] == DS_FIELD_STATUS_DEFAULT) ? DS_FIELD_STATUS_OVERRIDDEN : (($field['type'] == DS_FIELD_STATUS_OVERRIDDEN) ? DS_FIELD_STATUS_OVERRIDDEN : DS_FIELD_STATUS_CUSTOM);
   $form['#form_type'] = (empty($key)) ? 'insert' : 'update';
   $form['#module'] = $module;
   $form['#all_fields'] = $all_fields;
@@ -261,7 +261,7 @@ function ds_block_field_form($form_state, $module, $all_fields, $object = '', $k
   $form = array();
 
   if (empty($field)) {
-    $field = array('title' => '', 'block' => '', 'exclude' => array(), 'type' => DS_FIELD_BLOCK, 'render' => BLOCK_TEMPLATE);
+    $field = array('title' => '', 'block' => '', 'exclude' => array(), 'type' => DS_FIELD_TYPE_BLOCK, 'render' => DS_BLOCK_TEMPLATE);
   }
 
   $form['block_identity'] = array(
@@ -330,9 +330,9 @@ function ds_block_field_form($form_state, $module, $all_fields, $object = '', $k
   $form['block_identity']['block_render'] = array(
     '#type' => 'select',
     '#options' => array(
-      BLOCK_TEMPLATE => t('Render through block template'),
-      BLOCK_TITLE_CONTENT => t('Show block title + content'),
-      BLOCK_CONTENT => t('Show only block content'),
+      DS_BLOCK_TEMPLATE => t('Render through block template'),
+      DS_BLOCK_TITLE_CONTENT => t('Show block title + content'),
+      DS_BLOCK_CONTENT => t('Show only block content'),
     ),
     '#title' => t('Block render'),
     '#required' => TRUE,
@@ -345,7 +345,7 @@ function ds_block_field_form($form_state, $module, $all_fields, $object = '', $k
     '#value' => t('Save block field'),
   );
 
-  $form['#field_type'] = DS_FIELD_BLOCK;
+  $form['#field_type'] = DS_FIELD_TYPE_BLOCK;
   $form['#form_type'] = (empty($key)) ? 'insert' : 'update';
   $form['#module'] = $module;
   $form['#all_fields'] = $all_fields;
