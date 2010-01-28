@@ -405,7 +405,7 @@ function ds_get_fields($module, $type_name, $build_mode, $extra = array(), $rese
           $fields[$key] = array(
             'title' => check_plain($field['title']),
             'type' => $field['type'],
-            'instance' => $field['instance'],
+            'status' => $field['status'],
             'properties' => $field['properties'],
           );
           $exclude = (isset($field['exclude'][$type_name]) && $field['exclude'][$type_name] === $type_name) ? TRUE : FALSE;
@@ -516,11 +516,11 @@ function ds_eval_code($key, $field, &$object, $object_type) {
  * @param stdClass $object The object on which we'll add new data.
  */
 function ds_eval_block($key, $field, &$object) {
-  if (isset($field['code'])) {
-    list($module, $delta) = explode('|', $field['code']);
+  if (isset($field['properties'])) {
+    list($module, $delta) = explode('|', $field['properties']['block']);
     $block = module_invoke($module, 'block', 'view', $delta);
     if (!empty($block)) {
-      switch ($field['render']) {
+      switch ($field['properties']['render']) {
         case DS_BLOCK_TEMPLATE:
           global $theme_key;
           $block = (object) $block;

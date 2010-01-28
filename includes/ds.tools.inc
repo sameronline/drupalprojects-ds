@@ -249,12 +249,12 @@ function ds_export_build($values) {
       if (!empty($fields)) {
         // We don't export overridden fields, unset them if necessary.
         foreach ($fields as $key => $field) {
-          if ($field['type'] == DS_FIELD_OVERRIDDEN) {
+          if ($field['status'] == DS_FIELD_STATUS_OVERRIDDEN) {
             unset($fields[$key]);
             $return['exclude']['fields'][] = $field['title'];
           }
-          elseif ($field['type'] == DS_FIELD_UI) {
-            $fields[$key]['type'] = DS_FIELD_DEFAULT;
+          elseif ($field['status'] == DS_FIELD_STATUS_CUSTOM) {
+            $fields[$key]['status'] = DS_FIELD_STATUS_DEFAULT;
           }
         }
         if (!empty($fields))
