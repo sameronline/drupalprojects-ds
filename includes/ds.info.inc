@@ -18,9 +18,7 @@ function ds_info($module) {
 
   // General info (if any).
   if (!empty($help)) {
-    //$fieldset['#title'] = t('General info');
     $info = theme('item_list', $help);
-    //$info .= theme('fieldset', $fieldset);
   }
 
   if (!empty($info)) {
