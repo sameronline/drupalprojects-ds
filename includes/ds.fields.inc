@@ -8,7 +8,7 @@
 
 /**
  *
- * @param integer $integer An integer which
+ * @param integer $integer An integer which identifies a constant.
  * @param string $type A string to identify the category.
  */
 function ds_human_name($integer, $type) {
@@ -61,7 +61,7 @@ function ds_fields($module) {
 
   // Delete form.
   if (in_array($field, array_keys($db_fields)) && $action == 'delete') {
-    $output .= drupal_get_form('ds_field_delete_form', $module, $field, $db_fields[$field]);
+    $output .= drupal_get_form('ds_field_delete_reset_form', $module, $field, $db_fields[$field]);
   }
   // Edit form.
   elseif (in_array($field, array_keys($db_fields)) && $action == 'edit') {
@@ -336,8 +336,14 @@ function ds_block_field_form($form_state, $module, $all_fields, $object = '', $k
       '#type' => 'checkboxes',
       '#title' => t('Field exclude'),
       '#options' => $types,
+      '#default_value' => $field['exclude'],
+      '#attributes' => array('class' => 'exclude-types')
+    );
+    $form['block_identity']['block_exclude_all'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Select all'),
       '#description' => t('Toggle types which you don\'t want the field to appear in.'),
-      '#default_value' => $field['exclude']
+      '#attributes' => array('class' => 'select-all')
     );
   }
   else {
@@ -438,14 +444,14 @@ function ds_block_field_form_submit($form, &$form_state) {
 }
 
 /**
- * Field delete form.
+ * Field delete or reset form.
  *
  * @param string $module The module the fields are for.
  * @param string $object The object name (ie node, user, comment).
  * @param string $key The key of the field.
  * @param array $field The field with title and code keys.
  */
-function ds_field_delete_form($form_state, $module, $key, $field) {
+function ds_field_delete_reset_form($form_state, $module, $key, $field) {
   $form = array();
 
   $action = ($field['status'] == DS_FIELD_STATUS_OVERRIDDEN) ? t('reset') : t('delete');
@@ -472,17 +478,18 @@ function ds_field_delete_form($form_state, $module, $key, $field) {
 }
 
 /**
- * Delete field.
+ * Delete or reset a field.
  */
-function ds_field_delete_form_submit($form, &$form_state) {
+function ds_field_delete_reset_form_submit($form, &$form_state) {
   $module = $form['#module'];
   $fields = variable_get($module .'_fields', array());
   $field = $fields[$form_state['values']['field']];
+  $field_title = $field['title'];
   $action = ($field['status'] == DS_FIELD_STATUS_OVERRIDDEN) ? t('reset') : t('deleted');
 
   unset($fields[$form_state['values']['field']]);
   variable_set($module .'_fields', $fields);
-  drupal_set_message(t('Field %field has been !action.', array('%field' => $form_state['values']['field'], '!action' => $action)));
+  drupal_set_message(t('Field %field has been !action.', array('%field' => $field_title, '!action' => $action)));
   $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
 }
 
