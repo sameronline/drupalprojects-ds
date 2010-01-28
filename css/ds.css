@@ -52,11 +52,11 @@ span.label-edit {
   float: right;
 }
 
-#fields-content {
+.ds-display {
 	display: block;
 }
 
-#plugins-content {
+.ds-hidden {
   display: none;
 }
 
@@ -78,11 +78,11 @@ span.label-edit {
   padding: 5px;
 }
 
-#display-tabs .selected {
+#ds-tabs .selected {
   background-color: #EDF5FA;
 }
 
-#display-tabs .not-selected {
+#ds-tabs .not-selected {
   background-color: #FFFFFF;
 }
 

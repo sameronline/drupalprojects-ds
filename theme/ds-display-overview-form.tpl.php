@@ -22,13 +22,13 @@ if ($rows): ?>
     <div id="ds-tabs">
       <div id="field-tab" class="tab selected"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('field-tab', 'plugin-tab', 'fields-content', 'plugins-content');"><?php print t('Fields'); ?></a></div>
       <?php foreach ($plugins_tabs as $key => $title): ?>
-      <div id="<?php print $key; ?>-tab" class="tab<?php ?>"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('plugin-tab', 'field-tab', 'plugins-content', 'fields-content');"><?php print $title; ?></a></div>
+      <div id="<?php print $key; ?>" class="tab<?php ?>"><a href="javascript:;" onClick="javascript:toggleFieldPluginsLink('plugin-tab', 'field-tab', 'plugins-content', 'fields-content');"><?php print $title; ?></a></div>
       <?php endforeach; ?>
     </div>
     <div style="clear: both"></div>
   <?php endif; ?>
 
-  <div id="fields-content">
+  <div id="fields-content" class="ds-display">
 
     <table id="fields" class="sticky-enabled">
       <thead>
@@ -73,9 +73,9 @@ if ($rows): ?>
     </table>
   </div>
   <?php if (!empty($plugins_tabs)): ?>
-  <div id="plugins-content">
-    <?php print $plugins_content; ?>
-  </div>
+    <?php foreach ($plugins_content as $key => $form): ?>
+      <div id="<?php print $key; ?>-content" class="ds-hidden"><?php print $form; ?></div>
+    <?php endforeach; ?>
   <?php endif; ?>
 </div>
 <?php
