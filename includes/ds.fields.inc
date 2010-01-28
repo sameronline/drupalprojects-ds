@@ -14,6 +14,8 @@ function ds_fields($module) {
   $action = arg(4);
   $field = arg(5);
 
+  drupal_add_js(drupal_get_path('module', 'ds') .'/js/fields.js');
+
   // Get API information.
   $api_info = ds_api_info($module);
 
@@ -137,8 +139,14 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
       '#type' => 'checkboxes',
       '#title' => t('Field exclude'),
       '#options' => $types,
+      '#default_value' => $field['exclude'],
+      '#attributes' => array('class' => 'exclude-types')
+    );
+    $form['code_identity']['code_exclude_all'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Select all'),
       '#description' => t('Toggle types which you don\'t want the field to appear in.'),
-      '#default_value' => $field['exclude']
+      '#attributes' => array('class' => 'select-all')
     );
   }
   else {

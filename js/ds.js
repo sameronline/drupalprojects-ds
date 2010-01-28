@@ -8,7 +8,6 @@
  *
  * Based on nodeform cols.
  */
-
 Drupal.behaviors.fieldDrag = function(context) {
   var table = $('table#fields');
   var tableDrag = Drupal.tableDrag.fields; // Get the fields tableDrag object.
@@ -155,13 +154,6 @@ Drupal.DisplaySuite.toggleDisplayTab = function(element) {
     }
   });	
 }
-
-/*function toggleFieldPluginsLink(highlight_tab, nonhighlight_tab, div_show, div_hide) {
-  $('#' + div_show).show();
-  $('#' + highlight_tab).addClass('selected');
-  $('#' + div_hide).hide();
-  $('#' + nonhighlight_tab).removeClass('selected');
-}*/
  
 /**
  * Change the label of a field instance in a build mode.

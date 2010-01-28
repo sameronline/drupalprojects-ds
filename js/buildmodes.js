@@ -1,5 +1,8 @@
 // $Id$
 
+/**
+ * Toggle all buildmodes at once.
+ */
 Drupal.behaviors.ds_buildmodes = function(context) {
 
 	$('.block-all').bind('click', function() {
