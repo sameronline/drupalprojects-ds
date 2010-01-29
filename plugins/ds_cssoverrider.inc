@@ -22,7 +22,6 @@ class ds_cssoverrider {
       '#type' => 'fieldset',
       '#collapsible' => FALSE,
       '#collapsed' => FALSE,
-      //'#title' => t('CSS overrider'),
       '#description' => t('Either add extra classes or override CSS inline per region.'),
     );
 

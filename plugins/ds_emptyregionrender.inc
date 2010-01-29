@@ -25,7 +25,6 @@ class ds_emptyregionrender {
       '#type' => 'fieldset',
       '#collapsible' => FALSE,
       '#collapsed' => FALSE,
-      //'#title' => t('Empty region render'),
       '#description' => t('Toggle regions you want to render when there are no fields in it or when field values are empty.'),
     );
 
