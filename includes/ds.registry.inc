@@ -243,11 +243,15 @@ function _ds_register_build_modes() {
     if (!empty($temp_data)) {
       foreach ($temp_data as $key => $value) {
         // Sane build modes.
-        $module_name = isset($value['module']) ? $value['module'] : 'nd';
-        $build_modes[$module_name][$key] = array(
-          'weight' => isset($value['weight']) ? $value['weight'] : $weight++,
-          'title' => $value['title'],
-        );
+        foreach ($value['build modes'] as $build_mode => $build_mode_value) {
+          // If no module key isset, we are adding it ourselves. This hook only applies
+          // to nodes anyway, so yes, we use nd as the $module key.
+          $module_name = isset($build_mode_value['module']) ? $build_mode_value['module'] : 'nd';
+          $build_modes[$module_name][$build_mode] = array(
+            'weight' => isset($build_mode_value['weight']) ? $build_mode_value['weight'] : $weight++,
+            'title' => $build_mode_value['title'],
+          );
+        }
       }
     }
   }
@@ -259,8 +263,13 @@ function _ds_register_build_modes() {
     if (!empty($db_build_modes)) {
       foreach ($db_build_modes as $key => $name) {
         $build_modes[$module][$key] = array(
-          'weight' => $weight++,
           'title' => check_plain($name),
+          'build modes' => array(
+            $key => array(
+              'weight' => $weight++,
+              'title' => check_plain($name),
+            ),
+          ),
         );
       }
     }

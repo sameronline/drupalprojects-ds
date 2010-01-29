@@ -79,8 +79,8 @@ function ds_build_mode_form($form_state, $module, $build_mode = '') {
   $form['identity'] = array(
     '#type' => 'fieldset',
     '#title' => (empty($build_mode)) ? t('Add new build mode'): t('Update build mode'),
-    '#collapsible' => (empty($build_mode)) ? TRUE : FALSE,
-    '#collapsed' => (empty($build_mode)) ? TRUE : FALSE,
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE,
   );
   $form['identity']['key'] = array(
     '#type' => 'textfield',
@@ -102,7 +102,7 @@ function ds_build_mode_form($form_state, $module, $build_mode = '') {
   );
   $form['identity']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Save display'),
+    '#value' => t('Save build mode'),
     '#submit' => array('ds_build_mode_form_submit'),
   );
 
@@ -120,7 +120,7 @@ function ds_build_mode_form_validate($form, &$form_state) {
 
     $existing = array_keys(ds_get_build_modes($form['#module']));
     if (in_array($form_state['values']['key'], $existing)) {
-      form_set_error('key', t('This display mode already exists.'));
+      form_set_error('key', t('This build mode already exists.'));
     }
 
     if (!preg_match('!^[a-z_]+$!', $form_state['values']['key'])) {
@@ -136,6 +136,7 @@ function ds_build_mode_form_submit($form, &$form_state) {
   $build_modes = variable_get($form['#module'] .'_build_modes', array());
   $build_modes[$form_state['values']['key']] = $form_state['values']['name'];
   variable_set($form['#module'] .'_build_modes', $build_modes);
+
   drupal_set_message(t('Build mode %build_mode has been saved.', array('%build_mode' => $build_modes[$form_state['values']['key']])));
   $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/buildmodes';
   menu_rebuild();
@@ -177,6 +178,7 @@ function ds_build_mode_delete_form_submit($form, &$form_state) {
   $build_modes = variable_get($module .'_build_modes', array());
   unset($build_modes[$form_state['values']['display']]);
   variable_set($module .'_build_modes', $build_modes);
+
   drupal_set_message(t('Custom build mode %build_mode has been removed.', array('%build_mode' => $form_state['values']['display'])));
   $form_state['redirect'] = 'admin/ds/'. $module .'/buildmodes';
   menu_rebuild();
@@ -269,8 +271,7 @@ function theme_ds_buildmodes_matrix_form($form) {
     '#title' => t('Exclude matrix'),
     '#description' => t('Toggle per type which build modes you want to exclude from rendering. The "Toggle all" checkbox will exclude/include all build modes at once.'),
     '#children' => $table,
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#attributes' => array(),
   );
   $output = theme('fieldset', $fieldset);
 
