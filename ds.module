@@ -625,6 +625,21 @@ function ds_regions($regions = 'all', $render = FALSE) {
 }
 
 /**
+ * Function to check if the $links fields is set for a type and build mode.
+ *
+ * @param string $type_name The name of the object type.
+ * @param string $build_mode The key of the build mode
+ */
+function ds_show_links($type_name, $build_mode) {
+  static $show_links = array();
+  if (!isset($show_links[$type_name][$build_mode])) {
+    $display_settings = variable_get('nd_display_settings_'. $type_name, array());
+    $show_links[$type_name][$build_mode] = (isset($display_settings[$build_mode]['fields']['links']) && $display_settings[$build_mode]['fields']['links']['region'] != 'disabled') ? TRUE : FALSE;
+  }
+  return $show_links[$type_name][$build_mode];
+}
+
+/**
  * Import default display data from modules.
  *
  * @param string $module The module to import.
