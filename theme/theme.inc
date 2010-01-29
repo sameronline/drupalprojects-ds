@@ -96,9 +96,6 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   // Status.
   $vars['settings_status'] = drupal_render($form['settings_status']);
 
-  // Render exclude build mode checkbox.
-  $vars['exclude_build_mode'] = drupal_render($form['exclude_build_mode']);
-
   $rows = array();
   foreach ($order as $key => $field) {
     $element = &$form[$key];
@@ -163,5 +160,4 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   $vars['submit'] = drupal_render($form);
   $vars['regions'] = $regions;
   $vars['build_mode'] = $build_mode;
-  $vars['extra_style'] = ($form['exclude_build_mode']['#default_value'] == TRUE) ? 'style="display: none;"' : '';
 }

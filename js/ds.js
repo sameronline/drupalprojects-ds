@@ -113,20 +113,6 @@ Drupal.behaviors.fieldDrag = function(context) {
 };
 
 /**
- * Toggle checkbox to exclude single build mode.
- */
-function toggleFieldOverviewForm() {
-  var toggled = $('#edit-exclude-build-mode').attr('checked');
-  if (toggled == false) {
-    $('#ds-display-content').show();  
-  }
-  else {
-    $('#ds-display-content').hide();
-  }
-}
-
-
-/**
  * Drupal ds object.
  */
 Drupal.DisplaySuite = Drupal.DisplaySuite || {};

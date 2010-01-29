@@ -139,32 +139,59 @@ function _ds_menu() {
 
     // Displays.
     $build_modes = $all_build_modes[$module];
+    $first_build_mode = key($build_modes);
     if (!empty($build_modes)) {
       foreach ($api_info['types']() as $tkey => $type) {
+
         $type_name = $type->type;
         $type_url_str = str_replace('_', '-', $type_name);
 
-        $items['admin/ds/layout/'. $type_url_str] = array(
-          'title' => drupal_ucfirst($type_url_str),
-          'page callback' => 'drupal_get_form',
-          'page arguments' => array('ds_display_overview_form', $type_name, 'full', $module),
-          'access arguments' => array('configure layout for '. $module),
-          'file' => 'includes/ds.display.inc',
-          'weight' => 2,
-        );
+        // Global exclude.
+        if (variable_get($module .'_type_'. $type->type, FALSE)) {
+          continue;
+        }
 
+        $first = 0;
         $weight = 20;
+        $local_task_items = array();
+        $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
         foreach ($build_modes as $key => $value) {
-          $items['admin/ds/layout/'. $type_url_str .'/'. $key] = array(
+
+          // Check if build mode is excluded for this object type.
+          $excluded = (isset($exclude_build_modes[$type_name][$key]) && $exclude_build_modes[$type_name][$key] == TRUE) ? TRUE : FALSE;
+          if ($excluded) {
+            continue;
+          }
+
+          // Tabs.
+          $local_task_items['admin/ds/layout/'. $type_url_str .'/'. $key] = array(
             'title' => $value['title'],
             'page callback' => 'drupal_get_form',
             'page arguments' => array('ds_display_overview_form', $type_name, "$key", $module),
             'access arguments' => array('configure layout for '. $module),
-            'type' => $key == 'full' ? MENU_DEFAULT_LOCAL_TASK : MENU_LOCAL_TASK,
+            'type' => $first == 0 ? MENU_DEFAULT_LOCAL_TASK : MENU_LOCAL_TASK,
             'file' => 'includes/ds.display.inc',
             'weight' => (isset($value['weight']) && !empty($value['weight'])) ? $value['weight'] : $weight++,
           );
+
+          // Store the first build_mode
+          if ($first == 0) {
+            $first++;
+            $first_build_mode = $key;
+          }
         }
+
+        // Default callback.
+        $items['admin/ds/layout/'. $type_url_str] = array(
+          'title' => drupal_ucfirst($type_url_str),
+          'page callback' => 'drupal_get_form',
+          'page arguments' => array('ds_display_overview_form', $type_name, "$first_build_mode", $module),
+          'access arguments' => array('configure layout for '. $module),
+          'file' => 'includes/ds.display.inc',
+          'weight' => 2,
+        );
+        $items += $local_task_items;
+
       }
     }
   }
@@ -232,10 +259,12 @@ function _ds_theme() {
  */
 function _ds_register_build_modes() {
 
-  // Build modes defined in hooks.
   $weight = 10;
   $build_modes = array();
+
+  // Build modes defined in hooks.
   foreach (module_implements('content_build_modes') as $module) {
+
     $module_data = array();
     $function = $module .'_content_build_modes';
     $temp_data = $function();
@@ -244,7 +273,7 @@ function _ds_register_build_modes() {
       foreach ($temp_data as $key => $value) {
         // Sane build modes.
         foreach ($value['build modes'] as $build_mode => $build_mode_value) {
-          // If no module key isset, we are adding it ourselves. This hook only applies
+          // If no module key is set, we are adding it ourselves. This hook only applies
           // to nodes anyway, so yes, we use nd as the $module key.
           $module_name = isset($build_mode_value['module']) ? $build_mode_value['module'] : 'nd';
           $build_modes[$module_name][$build_mode] = array(
@@ -273,6 +302,7 @@ function _ds_register_build_modes() {
         );
       }
     }
+    asort($build_modes[$module]);
   }
 
   // Give modules a change to alter build_modes.

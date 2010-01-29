@@ -28,6 +28,11 @@ function ds_layout_overview() {
         $type = $type_name;
         $type_url_str = str_replace('_', '-', $type_name);
 
+        // Global exclude.
+        if (variable_get($module .'_type_'. $type, FALSE)) {
+          continue;
+        }
+
         if (!empty($build_modes)) {
           $rows[] = array(array('data' => $otype->name, 'colspan' => '3', 'class' => 'ds-row-title'));
           foreach ($build_modes as $bkey => $build_mode) {
@@ -113,43 +118,21 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
     }
   }
 
-  // Exclude build mode.
-  $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
-  $excluded = ((isset($exclude_build_modes[$type][$build_mode])
-    && $exclude_build_modes[$type][$build_mode] == TRUE) ||
-    variable_get($module .'_type_'. $type, FALSE) == TRUE) ? TRUE : FALSE;
-  $form['exclude_build_mode'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Exclude this build mode from rendering.'),
-    '#default_value' => $excluded,
-    '#attributes' => array('onClick' => 'toggleFieldOverviewForm()'),
+  // Add the fields.
+  ds_fields_display_form($form, $display_settings);
+
+  // Plugins.
+  $plugins = TRUE;
+  if (isset($api_info['plugins_exclude']) && in_array($build_mode, $api_info['plugins_exclude'])) {
+    $plugins = FALSE;
+  }
+  if ($plugins)
+  ds_plugins_display_form($form, $display_settings);
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
   );
-
-  $global_exclude = variable_get($module .'_type_'. $type, FALSE);
-  $form['exclude_build_mode']['#disabled'] = $global_exclude;
-  if ($global_exclude == TRUE) {
-    $description = t('The checkbox has been disabled because the complete type has been excluded from rendering.') .'<br />';
-    $form['exclude_build_mode']['#description'] = $description .' '. $form['exclude_build_mode']['#description'];
-  }
-
-  // If global exclude is true, no point in rendering.
-  if ($global_exclude == FALSE) {
-    // Add the fields.
-    ds_fields_display_form($form, $display_settings);
-
-    // Plugins.
-    $plugins = TRUE;
-    if (isset($api_info['plugins_exclude']) && in_array($build_mode, $api_info['plugins_exclude'])) {
-      $plugins = FALSE;
-    }
-    if ($plugins)
-    ds_plugins_display_form($form, $display_settings);
-
-    $form['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('Save'),
-    );
-  }
 
   return $form;
 }
@@ -248,12 +231,6 @@ function ds_display_overview_form_submit($form, &$form_state) {
   $build_mode = $form['#build_mode'];
   $type = $form['#type_name'];
   $extra = $form['#extra'];
-
-  // Exclude build mode checkbox.
-  $exclude_build_mode = $form_state['values']['exclude_build_mode'];
-  $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
-  $exclude_build_modes[$type][$build_mode] = $exclude_build_mode;
-  variable_set($module .'_buildmodes_exclude', $exclude_build_modes);
 
   $display_settings = variable_get($module .'_display_settings_'. $type, array());
   unset($display_settings[$build_mode]);

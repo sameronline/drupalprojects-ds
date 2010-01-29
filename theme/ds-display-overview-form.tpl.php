@@ -13,11 +13,9 @@
  *   Properties (human_name, weight, stickyorder, build_mode, class, label_class)
  */
 
-print $exclude_build_mode;
-
 if ($rows): ?>
 
-<div id="ds-display-content" <?php print $extra_style; ?>>
+<div id="ds-display-content">
   <?php if (!empty($plugins_tabs)): ?>
     <div id="ds-tabs">
       <div id="field-tab" class="tab selected"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab('field-tab'); return false;"><?php print t('Fields'); ?></a></div>

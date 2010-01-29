@@ -124,12 +124,23 @@ function ds_export(&$form_state) {
         // Content types.
         foreach ($api_info['types']() as $tkey => $type) {
           $options[$module .'-'. $tkey] = $type->name;
+          $global_exclude = variable_get($module .'_type_'. $tkey, FALSE);
+          if ($global_exclude == TRUE) {
+            $ds_variables[] = $module .'_type_'. $tkey;
+          }
         }
         // Plugins.
         $plugins = variable_get($module .'_plugin_settings', array());
         if (!empty($plugins)) {
           $ds_variables[] = $module .'_plugin_settings';
         }
+        // Build modes
+        $build_modes = variable_get($module .'_build_modes', array());
+        if (!empty($build_modes)) {
+          $ds_variables[] = $module .'_build_modes';
+        }
+        // Build modes exclude.
+        $ds_variables[] = $module .'_buildmodes_exclude';
       }
 
       if (!empty($options)) {
@@ -159,7 +170,7 @@ function ds_export(&$form_state) {
       $export = ds_export_build($form_state['values']['types']);
 
       if (!empty($export['exclude']['fields'])) {
-        drupal_set_message(t('Following fields were not included in the export because they are default fields: %fields', array('%fields' => implode(',', $export['exclude']['fields']))));
+        drupal_set_message(t('Following fields were not included in the export because they are default fields: %fields', array('%fields' => implode(', ', $export['exclude']['fields']))));
       }
 
       if (!empty($export['ds'])) {
@@ -215,7 +226,7 @@ function ds_export(&$form_state) {
     if (!empty($ds_variables)) {
       $form['other'] = array(
         '#type' => 'item',
-        '#value' => t('Other variables you might consider to have in code (likely your install file): %variables<br />You can look this up in your database or use <a href="http://drupal.org/project/variable_dump">http://drupal.org/project/variable_dump</a> to create variable exports.', array('%variables' => implode($ds_variables))),
+        '#value' => t('Other variables you might consider to have in code (likely your install file): %variables. You can look this up in your database or use <a href="http://drupal.org/project/variable_dump">http://drupal.org/project/variable_dump</a> to create variable exports.', array('%variables' => implode(', ', $ds_variables))),
       );
     }
   }

@@ -300,4 +300,5 @@ function ds_build_modes_matrix_submit($form, &$form_state) {
     }
   }
   variable_set($form['#module'] .'_buildmodes_exclude', $exclude_build_modes);
+  menu_rebuild();
 }
