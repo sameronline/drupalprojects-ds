@@ -625,7 +625,7 @@ function ds_regions($regions = 'all', $render = FALSE) {
 }
 
 /**
- * Function to check if the $links fields is set for a type and build mode.
+ * Function to check if the $links field is set for a type and build mode.
  *
  * @param string $type_name The name of the object type.
  * @param string $build_mode The key of the build mode
