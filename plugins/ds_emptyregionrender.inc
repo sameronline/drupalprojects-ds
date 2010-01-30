@@ -39,7 +39,6 @@ class ds_emptyregionrender {
         );
       }
     }
-
   }
 
   /**
@@ -57,7 +56,6 @@ class ds_emptyregionrender {
     }
 
     $display_settings[$build_mode]['emptyregionrender'] = $regions_save;
-
   }
 
   /**
@@ -78,7 +76,5 @@ class ds_emptyregionrender {
         }
       }
     }
-
   }
-
 }

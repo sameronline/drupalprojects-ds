@@ -487,9 +487,11 @@ function ds_field_delete_reset_form_submit($form, &$form_state) {
   $field_title = $field['title'];
   $action = ($field['status'] == DS_FIELD_STATUS_OVERRIDDEN) ? t('reset') : t('deleted');
 
+  // Save and invalidate fields_cached.
   unset($fields[$form_state['values']['field']]);
   variable_set($module .'_fields', $fields);
+  variable_del('ds_fields_cached');
+
   drupal_set_message(t('Field %field has been !action.', array('%field' => $field_title, '!action' => $action)));
   $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
 }
-

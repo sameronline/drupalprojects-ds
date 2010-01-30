@@ -3,11 +3,11 @@
 
 /**
  * @file
- * Contains the nd view style plugin.
+ * Contains the ds view style plugin.
  */
 
 /**
- * Plugin which performs a object on the resulting object based on ds build modes.
+ * Plugin which sets a build mode on the resulting object.
  */
 class views_plugin_ds_object_view extends views_plugin_row {
 

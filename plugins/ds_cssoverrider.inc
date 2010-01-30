@@ -43,7 +43,6 @@ class ds_cssoverrider {
         );
       }
     }
-
   }
 
   /**
@@ -63,9 +62,7 @@ class ds_cssoverrider {
     }
 
     $display_settings[$build_mode]['cssoverrider'] = $css_save;
-
   }
-
 
   /**
    * process().
@@ -84,9 +81,6 @@ class ds_cssoverrider {
       if (!empty($inline)) {
         $display->themed_regions[$region_name]['inline_css'] = 'style="'. $inline .'"';
       }
-
     }
-
   }
-
 }

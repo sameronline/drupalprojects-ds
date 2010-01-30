@@ -12,7 +12,7 @@
 function ds_views_plugins() {
   $path = drupal_get_path('module', 'ds');
   return array(
-    'module' => 'ds', // This just tells our themes are elsewhere.
+    'module' => 'ds',
     'row' => array(
       'ds' => array(
         'title' => t('Display suite'),
