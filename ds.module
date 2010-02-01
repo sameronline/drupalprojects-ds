@@ -306,6 +306,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
   $object_display->all_regions = $all_regions;
   $object_display->themed_regions = $themed_regions;
   $object_display->region_classes = $region_classes;
+  $object_display->build_mode = $object->build_mode;
 
   // Plugins.
   ds_plugins_process($module, $api_info['object'], $display_settings, $vars, $object_display);

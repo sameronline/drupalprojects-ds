@@ -65,7 +65,7 @@ class ds_emptyregionrender {
 
     foreach ($display->all_regions as $region_name => $region_title) {
 
-      $render = ds_default_value($display_settings, $vars[$object_type]->build_mode, 'emptyregionrender', 'render', $region_name, FALSE);
+      $render = ds_default_value($display_settings, $display->build_mode, 'emptyregionrender', 'render', $region_name, FALSE);
 
       if ($render == TRUE && !isset($display->themed_regions[$region_name])) {
 

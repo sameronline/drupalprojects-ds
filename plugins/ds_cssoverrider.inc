@@ -71,8 +71,8 @@ class ds_cssoverrider {
 
     foreach ($display->themed_regions as $region_name => $region_data) {
 
-      $classes = ds_default_value($display_settings, $vars[$object_type]->build_mode, 'cssoverrider', 'class', $region_name, '');
-      $inline = ds_default_value($display_settings, $vars[$object_type]->build_mode, 'cssoverrider', 'inline', $region_name, '');
+      $classes = ds_default_value($display_settings, $display->build_mode, 'cssoverrider', 'class', $region_name, '');
+      $inline = ds_default_value($display_settings, $display->build_mode, 'cssoverrider', 'inline', $region_name, '');
 
       if (!empty($classes)) {
         $display->themed_regions[$region_name]['extra_class'] = ' '. $classes;
