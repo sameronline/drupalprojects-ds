@@ -67,7 +67,6 @@ function template_preprocess_ds_row_object(&$vars) {
   // ds_views_row_adv_VIEWSNAME.
   if ($options['advanced']) {
     $row_function = 'ds_views_row_adv_'. $vars['view']->name;
-    $build_mode = $options['build_mode'];
     $row_function($vars);
   }
   // Simple selector.
