@@ -53,6 +53,13 @@ function theme_ds_author_link(&$object) {
 }
 
 /**
+ * Temporary, will move this to DS probably.
+ */
+function theme_ds_field_picture(&$object) {
+  $object->picture_rendered = theme('user_picture', $object);
+}
+
+/**
  * Template preprocess function for theme_views_view_row_object().
  */
 function template_preprocess_ds_row_object(&$vars) {

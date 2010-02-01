@@ -237,7 +237,6 @@ function _ds_theme() {
       'path' => $path .'/theme',
     ),
 
-
     // Theming for fields which are shared across objects (name, picture etc).
     'ds_author_link' => array(
       'arguments' => array('object' => NULL),
@@ -245,6 +244,11 @@ function _ds_theme() {
       'path' => $path .'/theme',
     ),
     'ds_author_nolink' => array(
+      'arguments' => array('object' => NULL),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+    ),
+    'ds_picture' => array(
       'arguments' => array('object' => NULL),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
