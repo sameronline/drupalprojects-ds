@@ -55,7 +55,7 @@ function theme_ds_author_link(&$object) {
 /**
  * Temporary, will move this to DS probably.
  */
-function theme_ds_field_picture(&$object) {
+function theme_ds_picture(&$object) {
   $object->picture_rendered = theme('user_picture', $object);
 }
 
