@@ -53,7 +53,7 @@ function theme_ds_author_link(&$object) {
 }
 
 /**
- * Temporary, will move this to DS probably.
+ * Theme the user picture.
  */
 function theme_ds_picture(&$object) {
   $object->picture_rendered = theme('user_picture', $object);
@@ -98,9 +98,6 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     $order[$field] = $form[$field]['ds_weight']['#default_value'];
   }
   asort($order);
-
-  // Status.
-  $vars['settings_status'] = drupal_render($form['settings_status']);
 
   $rows = array();
   foreach ($order as $key => $field) {

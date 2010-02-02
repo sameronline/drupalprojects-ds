@@ -1,12 +1,11 @@
 <?php
-// $Id $
+// $Id$
 
 /**
- * Class DS_EmptyRegionRender
- *
- *   Plugin to render an empty region.
- *
+ * @file
+ * DS_EmptyRegionRender: Plugin to render an empty region.
  */
+
 class ds_emptyregionrender {
 
   /**

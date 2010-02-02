@@ -118,7 +118,7 @@ function ds_api_info($module, $type_name = 'all') {
     $api_data = $function();
     $api_info[$module][$type_name] = $api_data;
     if (!isset($api_info[$module][$type_name]['extra'])) {
-    $api_info[$module][$type_name]['extra'] = array();
+      $api_info[$module][$type_name]['extra'] = array();
     }
 
     // Extra info needed or not.
@@ -659,8 +659,8 @@ function ds_import_default_data($module = '', $type = '', $build_mode = '') {
 /**
  * Helper function to check access.
  *
- * @param string $perm_1 A permission.
- * @param string $perm_2 A permission.
+ * @param string $perm_1 a permission.
+ * @param string $perm_2 a permission.
  */
 function _ds_menu_access($perm_1, $perm_2) {
   if (user_access($perm_1) && user_access($perm_2)) {

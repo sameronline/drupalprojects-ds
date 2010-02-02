@@ -41,7 +41,7 @@ function _ds_features_get_types() {
 }
 
 /**
- * Implementation of hook_features_export.
+ * Implementation of hook_features_export().
  */
 function ds_features_export($data, &$export, $module_name = '') {
   $pipe = array();

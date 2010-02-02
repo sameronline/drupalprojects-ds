@@ -54,7 +54,7 @@ function ds_layout_overview() {
 
             $operations = l('Edit', 'admin/ds/layout/'. $type .'/'. $bkey);
             if (user_access('revert overridden settings') && $settings_status == DS_SETTINGS_OVERRIDDEN) {
-              $operations .= ' - '.l('Revert', 'admin/ds/tools/revert/'.$module .'/'. $type .'/'. $bkey);
+              $operations .= ' - '. l('Revert', 'admin/ds/tools/revert/'. $module .'/'. $type .'/'. $bkey);
             }
             $row[] = $operations;
             $rows[] = array('data' => $row, 'class' => 'ds-row-type');
@@ -183,7 +183,7 @@ function ds_fields_display_form(&$form, $display_settings) {
       '#default_value' => $label_value,
     );
     $form[$field][$build_mode]['label_edit']['#value'] = l(t('Edit'), $base_url . request_uri(), array(
-      'attributes' => array('onclick' => 'javascript: Drupal.DisplaySuite.changeLabel(this, "' . $label_value. '"); return false;')
+      'attributes' => array('onclick' => 'javascript: Drupal.DisplaySuite.changeLabel(this, "'. $label_value .'"); return false;')
     ));
 
     $form[$field]['human_name']['#value'] = !empty($label_value) ? $label_value : $value['title'];

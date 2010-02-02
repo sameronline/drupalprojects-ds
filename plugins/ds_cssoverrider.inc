@@ -1,9 +1,11 @@
 <?php
+// $Id$
 
 /**
- * Class DS_CSSOverrider
- *
+ * @file
+ * DS_CSSOverrider: plugin to override css per region.
  */
+
 class ds_cssoverrider {
 
   /**

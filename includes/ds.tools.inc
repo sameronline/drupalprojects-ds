@@ -343,10 +343,10 @@ function ds_var_export($var, $prefix = '  ', $init = TRUE, $indent = '  ') {
       $output .= "$indent)";
     }
   }
-  else if (is_bool($var)) {
+  elseif (is_bool($var)) {
     $output = $var ? 'TRUE' : 'FALSE';
   }
-  else if (is_string($var) && strpos($var, "\n") !== FALSE) {
+  elseif (is_string($var) && strpos($var, "\n") !== FALSE) {
     // Replace line breaks in strings with a token for replacement
     // at the very end. This protects multi-line strings from
     // unintentional indentation.

@@ -6,7 +6,6 @@
  * Display suite install file.
  */
 
-
 /**
  * Implementation of hook_uninstall().
  */
