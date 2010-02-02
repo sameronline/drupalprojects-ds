@@ -501,8 +501,8 @@ function ds_eval_code($key, $field, &$object, $object_type) {
   if (isset($field['properties']['code'])) {
     $key = $key .'_rendered';
     $value = ds_eval($field['properties']['code'], $object);
-    // Token support.
-    if (module_exists('token')) {
+    // Token support - check on token property so we don't run every single field through token.
+    if (module_exists('token') && isset($field['properties']['token']) && $field['properties']['token'] == TRUE) {
       $value = token_replace($value, $object_type, $object);
     }
     $object->{$key} = $value;

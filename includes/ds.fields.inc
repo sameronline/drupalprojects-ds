@@ -127,7 +127,10 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
       'exclude' => array(),
       'type' => DS_FIELD_TYPE_CODE,
       'status' => DS_FIELD_STATUS_CUSTOM,
-      'properties' => array('code' => '')
+      'properties' => array(
+        'code' => '',
+        'token' => FALSE
+      )
     );
   }
 
@@ -188,7 +191,7 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
     '#default_value' => $field['properties']['code'],
   );
 
-  _ds_field_object_info($form, $object);
+  _ds_field_object_info($form, $object, $field);
 
   $form['code_identity']['code_submit'] = array(
     '#type' => 'submit',
@@ -206,16 +209,23 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
 
 /**
  * Return info about the value field, including token info.
+ *
  * @param array $form The current form.
  * @param string $object The object name (ie node, user, comment)
+ * @param array $field The field array.
  */
-function _ds_field_object_info(&$form, $object) {
+function _ds_field_object_info(&$form, $object, $field) {
   $form['code_identity']['help'] = array(
     '#type' => 'item',
     '#value' => t('Every field will be wrapped in &lt;div class="field field-key"&gt;VALUE&lt;/div&gt;.<br/>Enter PHP code between &lt;?php ?&gt;. If you are using PHP, the variable for the '. $object .' is called $object.<br/>Note that executing incorrect PHP-code can break your Drupal site.'),
   );
 
   if (module_exists('token')) {
+    $form['code_identity']['help']['code_token'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Toggle this checkbox if you are using tokens in this field.'),
+      '#default_value' => $field['properties']['token'],
+    );
     $form['code_identity']['help']['tokens'] = array(
       '#type' => 'fieldset',
       '#title' => t('Placeholder tokens'),
@@ -228,6 +238,10 @@ function _ds_field_object_info(&$form, $object) {
     );
   }
   else {
+    $form['code_identity']['help']['code_token'] = array(
+      '#type' => 'value',
+      '#value' => FALSE,
+    );
     $form['code_identity']['help']['#value'] .= '<br />'. t("To use dynamic placeholder tokens in your custom fields (the ID or title of the current node, for example), download and install the <a href='@token'>Token module</a> from Drupal.org.", array('@token' => 'http://www.drupal.org/project/token'));
   }
 }
@@ -264,7 +278,8 @@ function ds_code_field_form_submit($form, &$form_state) {
     'type' => DS_FIELD_TYPE_CODE,
     'status' => $form['#field_status'],
     'properties' => array(
-      'code' => $form_state['values']['code_code']
+      'code' => $form_state['values']['code_code'],
+      'token' => $form_state['values']['code_token'],
     ),
   );
 
