@@ -278,6 +278,9 @@ function ds_code_field_form_submit($form, &$form_state) {
     'type' => DS_FIELD_TYPE_CODE,
     'status' => $form['#field_status'],
     'properties' => array(
+      'formatters' => array(
+        'ds_eval_code' => t('Default'),
+      ),
       'code' => $form_state['values']['code_code'],
       'token' => $form_state['values']['code_token'],
     ),

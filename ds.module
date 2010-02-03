@@ -206,7 +206,14 @@ function ds_build_fields_and_regions(&$object, $module) {
             $ds_preprocess_fields[$key] = $field['type'];
             break;
           case DS_FIELD_TYPE_CODE:
-            ds_eval_code($key, $field, $object, $object_type);
+            $format = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : 'ds_eval_code';
+            if ($format == 'ds_eval_code') {
+              ds_eval_code($key, $field, $object, $object_type);
+            }
+            else {
+              $key = $key .'_rendered';
+              $object->{$key} = theme($format, $object);
+            }
             break;
           case DS_FIELD_TYPE_BLOCK:
             ds_eval_block($key, $field, $object);
@@ -215,11 +222,11 @@ function ds_build_fields_and_regions(&$object, $module) {
             if (isset($field['file'])) {
               include_once($field['file']);
             }
-            $function = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : key($field['formatters']);
+            $function = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : key($field['properties']['formatters']);
             $function($object, $key, $field);
             break;
           case DS_FIELD_TYPE_THEME:
-            $format = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : key($field['formatters']);
+            $format = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : key($field['properties']['formatters']);
             theme($format, $object);
             break;
         }
