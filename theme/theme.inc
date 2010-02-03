@@ -41,22 +41,22 @@ function theme_ds_field($content, $field_key, $field) {
 /**
  * Theme author name.
  */
-function theme_ds_author_nolink(&$object) {
-  $object->author_rendered = $object->name;
+function theme_ds_author_nolink($object) {
+  return $object->name;
 }
 
 /**
  * Theme author name linked.
  */
-function theme_ds_author_link(&$object) {
-  $object->author_rendered = theme('username', $object);
+function theme_ds_author_link($object) {
+  return theme('username', $object);
 }
 
 /**
  * Theme the user picture.
  */
 function theme_ds_picture(&$object) {
-  $object->picture_rendered = theme('user_picture', $object);
+  return theme('user_picture', $object);
 }
 
 /**

@@ -197,6 +197,9 @@ function ds_build_fields_and_regions(&$object, $module) {
           continue;
         }
 
+        // Create a $key_rendered variable.
+        $key_rendered = $key .'_rendered';
+
         // Theming can either be done in preprocess, or with a custom funtion or an
         // existing formatter theming function. For a custom function we'll pass
         // on the $object object, the field name and the complete field array.
@@ -208,26 +211,26 @@ function ds_build_fields_and_regions(&$object, $module) {
           case DS_FIELD_TYPE_CODE:
             $format = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : 'ds_eval_code';
             if ($format == 'ds_eval_code') {
-              ds_eval_code($key, $field, $object, $object_type);
+              $object->{$key_rendered} = ds_eval_code($key, $field, $object, $object_type);
             }
+            // CF support.
             else {
-              $key = $key .'_rendered';
-              $object->{$key} = theme($format, $object);
+              $object->{$key_rendered} = theme($format, $object);
             }
             break;
           case DS_FIELD_TYPE_BLOCK:
-            ds_eval_block($key, $field, $object);
+            $object->{$key_rendered} = ds_eval_block($key, $field, $object);
             break;
           case DS_FIELD_TYPE_FUNCTION:
             if (isset($field['file'])) {
               include_once($field['file']);
             }
             $function = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : key($field['properties']['formatters']);
-            $function($object, $key, $field);
+            $object->{$key_rendered} = $function($object, $key, $field);
             break;
           case DS_FIELD_TYPE_THEME:
             $format = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : key($field['properties']['formatters']);
-            theme($format, $object);
+            $object->{$key_rendered} = theme($format, $object);
             break;
         }
       }
@@ -504,15 +507,14 @@ function ds_plugins_process($module, $object_type, $display_settings, &$vars, &$
  * @param stdClass $object The object.
  * @param string $object_type Type of object for token support.
  */
-function ds_eval_code($key, $field, &$object, $object_type) {
+function ds_eval_code($key, $field, $object, $object_type) {
   if (isset($field['properties']['code'])) {
-    $key = $key .'_rendered';
     $value = ds_eval($field['properties']['code'], $object);
     // Token support - check on token property so we don't run every single field through token.
     if (module_exists('token') && isset($field['properties']['token']) && $field['properties']['token'] == TRUE) {
       $value = token_replace($value, $object_type, $object);
     }
-    $object->{$key} = $value;
+    return $value;
   }
 }
 
@@ -523,7 +525,7 @@ function ds_eval_code($key, $field, &$object, $object_type) {
  * @param array $field The field array.
  * @param stdClass $object The object on which we'll add new data.
  */
-function ds_eval_block($key, $field, &$object) {
+function ds_eval_block($key, $field, $object) {
   if (isset($field['properties'])) {
     list($module, $delta) = explode('|', $field['properties']['block']);
     $block = module_invoke($module, 'block', 'view', $delta);
@@ -549,8 +551,7 @@ function ds_eval_block($key, $field, &$object) {
           $content = $block['content'];
           break;
       }
-      $key = $key .'_rendered';
-      $object->{$key} = $content;
+      return $content;
     }
   }
 }
