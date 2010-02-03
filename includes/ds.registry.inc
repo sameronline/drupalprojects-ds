@@ -237,6 +237,23 @@ function _ds_theme() {
       'path' => $path .'/theme',
     ),
 
+    // Evaluate code.
+    'ds_eval_code' => array(
+      'arguments' => array(
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+    ),
+    // Evaluate block.
+    'ds_eval_block' => array(
+      'arguments' => array(
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+    ),
+
     // Theming for fields which are shared across objects (name, picture etc).
     'ds_author_link' => array(
       'arguments' => array('object' => NULL),
