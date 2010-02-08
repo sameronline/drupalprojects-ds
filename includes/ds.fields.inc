@@ -97,7 +97,11 @@ function ds_fields($module) {
         $rows[] = $row;
       }
 
-      $output .= theme('table', $header, $rows);
+      $table_variables = array(
+        'header' => $header,
+        'rows' => $rows,
+      );
+      $output .= theme('table', $table_variables);
     }
 
     // New fields form.
@@ -476,8 +480,8 @@ function ds_field_delete_reset_form($form, &$form_state, $module, $key, $field) 
 
   $action = ($field['status'] == DS_FIELD_STATUS_OVERRIDDEN) ? t('reset') : t('delete');
   $form['question'] = array(
-    '#type' => 'markup',
-    '#value' => '<p>'. t('Are you sure you want to !action the field %field ?', array('!action' => $action, '%field' => $field['title'])) .'</p>',
+    '#type' => 'item',
+    '#markup' => '<p>'. t('Are you sure you want to !action the field %field ?', array('!action' => $action, '%field' => $field['title'])) .'</p>',
   );
   $form['field'] = array(
     '#type' => 'value',
@@ -490,8 +494,8 @@ function ds_field_delete_reset_form($form, &$form_state, $module, $key, $field) 
   );
   $form['buttons']['cancel'] = array(
     '#suffix' => '</div>',
-    '#type' => 'markup',
-    '#value' => l('cancel', 'admin/ds/'. $module .'/fields'),
+    '#type' => 'item',
+    '#markup' => l('cancel', 'admin/ds/'. $module .'/fields'),
   );
   $form['#module'] = $module;
   return $form;
