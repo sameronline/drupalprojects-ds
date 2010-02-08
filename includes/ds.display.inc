@@ -12,11 +12,11 @@
 function ds_layout_overview() {
   $content = '';
 
-  drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
+  drupal_add_css(drupal_get_path('module', 'ds') . '/css/ds.css');
 
   $rows = array();
   foreach (module_implements('ds_api') as $module) {
-    if (user_access('configure layout for '. $module)) {
+    if (user_access('configure layout for ' . $module)) {
       $api_info = ds_api_info($module);
 
       // Build modes.
@@ -29,11 +29,11 @@ function ds_layout_overview() {
         $type_url_str = str_replace('_', '-', $type_name);
 
         // Global exclude.
-        if (variable_get($module .'_type_'. $type, FALSE)) {
+        if (variable_get($module . '_type_' . $type, FALSE)) {
           continue;
         }
 
-        $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
+        $exclude_build_modes = variable_get($module . '_buildmodes_exclude', array());
 
         if (!empty($build_modes)) {
           $rows[] = array(array('data' => $otype->name, 'colspan' => '3', 'class' => 'ds-row-title'));
@@ -45,16 +45,16 @@ function ds_layout_overview() {
             }
 
             // Settings en status.
-            $display_settings = variable_get($module .'_display_settings_'. $type, array());
+            $display_settings = variable_get($module . '_display_settings_' . $type, array());
             $settings_status = isset($display_settings[$bkey]['status']) ? $display_settings[$bkey]['status'] : DS_SETTINGS_UI;
 
             $row = array();
             $row[] = $build_mode['title'];
             $row[] = ds_settings_status($settings_status);
 
-            $operations = l('Edit', 'admin/ds/layout/'. $type .'/'. $bkey);
+            $operations = l(t('Edit'), 'admin/ds/layout/' . $type . '/' . $bkey);
             if (user_access('revert overridden settings') && $settings_status == DS_SETTINGS_OVERRIDDEN) {
-              $operations .= ' - '. l('Revert', 'admin/ds/tools/revert/'. $module .'/'. $type .'/'. $bkey);
+              $operations .= ' - ' . l(t('Revert'), 'admin/ds/tools/revert/' . $module . '/' . $type . '/' . $bkey);
             }
             $row[] = $operations;
             $rows[] = array('data' => $row, 'class' => array('ds-row-type'));
@@ -106,7 +106,7 @@ function ds_display_overview_form($form, &$form_state, $type, $build_mode = 'ful
 
   // Gather information.
   $api_info = ds_api_info($module);
-  $display_settings = variable_get($module .'_display_settings_'. $type, array());
+  $display_settings = variable_get($module . '_display_settings_' . $type, array());
   $settings_status = isset($display_settings[$build_mode]['status']) ? $display_settings[$build_mode]['status'] : DS_SETTINGS_UI;
 
   $form = array(
@@ -187,7 +187,7 @@ function ds_fields_display_form(&$form, $display_settings) {
       '#default_value' => $label_value,
     );
     $form[$field][$build_mode]['label_edit']['#value'] = l(t('Edit'), $base_url . request_uri(), array(
-      'attributes' => array('onclick' => 'javascript: Drupal.DisplaySuite.changeLabel(this, "'. $label_value .'"); return false;')
+      'attributes' => array('onclick' => 'javascript: Drupal.DisplaySuite.changeLabel(this, "' . $label_value . '"); return false;')
     ));
 
     $form[$field]['human_name']['#value'] = !empty($label_value) ? $label_value : $value['title'];
@@ -216,7 +216,7 @@ function ds_fields_display_form(&$form, $display_settings) {
  */
 function ds_plugins_display_form(&$form, $display_settings) {
   $module = $form['#module'];
-  $plugins = variable_get($module .'_plugin_settings', array());
+  $plugins = variable_get($module . '_plugin_settings', array());
   if (!empty($plugins)) {
     $form['#plugins'] = TRUE;
     $form['#plugin_keys'] = array();
@@ -243,7 +243,7 @@ function ds_display_overview_form_submit($form, &$form_state) {
   $type = $form['#type_name'];
   $extra = $form['#extra'];
 
-  $display_settings = variable_get($module .'_display_settings_'. $type, array());
+  $display_settings = variable_get($module . '_display_settings_' . $type, array());
   unset($display_settings[$build_mode]);
 
   // Fields.
@@ -273,7 +273,7 @@ function ds_display_overview_form_submit($form, &$form_state) {
   $display_settings[$build_mode]['status'] = $status;
 
   // Save all these settings.
-  variable_set($module .'_display_settings_'. $type, $display_settings);
+  variable_set($module . '_display_settings_' . $type, $display_settings);
 
   drupal_set_message(t('Your settings have been saved.'));
 }
@@ -288,7 +288,7 @@ function ds_display_overview_form_submit($form, &$form_state) {
 function ds_plugins_display_submit($form, $form_state, &$display_settings) {
   $module = $form['#module'];
 
-  $plugins = variable_get($module .'_plugin_settings', array());
+  $plugins = variable_get($module . '_plugin_settings', array());
 
   foreach ($plugins as $key => $data) {
 
@@ -333,10 +333,10 @@ function ds_field_default_form_properties($build_mode) {
     ),
     'region' => array(
       '#type' => 'select',
-      '#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
+      '#options' => ds_regions(variable_get('ds_build_mode_' . $build_mode, 'all')),
       '#default_value' => DS_DEFAULT_REGION,
       '#attributes' => array(
-        'class' => 'field-region-select field-region-'. DS_DEFAULT_REGION,
+        'class' => 'field-region-select field-region-' . DS_DEFAULT_REGION,
       ),
     ),
   );
@@ -366,10 +366,10 @@ function ds_field_default_form_properties($build_mode) {
       ),
       'region' => array(
         '#type' => 'select',
-        '#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
+        '#options' => ds_regions(variable_get('ds_build_mode_' . $build_mode, 'all')),
         '#default_value' => DS_DEFAULT_WEIGHT,
         '#attributes' => array(
-          'class' => 'field-region-select field-region-'. DS_DEFAULT_REGION,
+          'class' => 'field-region-select field-region-' . DS_DEFAULT_REGION,
         ),
       ),
     );

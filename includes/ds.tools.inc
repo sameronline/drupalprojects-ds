@@ -68,7 +68,7 @@ function ds_import_data($data, $dsm = TRUE, $override = TRUE, $revert_module = '
       if ($dsm) {
         drupal_set_message(t('Saved display settings for @module and @type', array('@module' => $module, '@type' => $type)));
       }
-      $old_settings = variable_get($module .'_display_settings_'. $type, array());
+      $old_settings = variable_get($module . '_display_settings_' . $type, array());
       foreach ($settings as $build_mode => $setting) {
         // Override no matter what. This comes from the import settings screen.
         if ($override) {
@@ -99,7 +99,7 @@ function ds_import_data($data, $dsm = TRUE, $override = TRUE, $revert_module = '
           }
         }
       }
-      variable_set($module .'_display_settings_'. $type, $settings);
+      variable_set($module . '_display_settings_' . $type, $settings);
     }
   }
 }
@@ -123,24 +123,24 @@ function ds_export(&$form_state) {
 
         // Content types.
         foreach ($api_info['types']() as $tkey => $type) {
-          $options[$module .'-'. $tkey] = $type->name;
-          $global_exclude = variable_get($module .'_type_'. $tkey, FALSE);
+          $options[$module . '-' . $tkey] = $type->name;
+          $global_exclude = variable_get($module . '_type_' . $tkey, FALSE);
           if ($global_exclude == TRUE) {
-            $ds_variables[] = $module .'_type_'. $tkey;
+            $ds_variables[] = $module . '_type_' . $tkey;
           }
         }
         // Plugins.
-        $plugins = variable_get($module .'_plugin_settings', array());
+        $plugins = variable_get($module . '_plugin_settings', array());
         if (!empty($plugins)) {
-          $ds_variables[] = $module .'_plugin_settings';
+          $ds_variables[] = $module . '_plugin_settings';
         }
         // Build modes
-        $build_modes = variable_get($module .'_build_modes', array());
+        $build_modes = variable_get($module . '_build_modes', array());
         if (!empty($build_modes)) {
-          $ds_variables[] = $module .'_build_modes';
+          $ds_variables[] = $module . '_build_modes';
         }
         // Build modes exclude.
-        $ds_variables[] = $module .'_buildmodes_exclude';
+        $ds_variables[] = $module . '_buildmodes_exclude';
       }
 
       if (!empty($options)) {
@@ -196,15 +196,15 @@ function ds_export(&$form_state) {
         // Display settings.
         if (isset($export['ds']['settings'])) {
           $export_value = ds_var_export($export['ds']['settings']);
-          $form['export_hooks']['#value'] .= "\n/**\n * Implementation of hook_ds_default_settings().\n */\nfunction ". $module_name ."_ds_default_settings() {\n  include_once('". $module_name .".ds_default.inc');\n  return _". $module_name ."_ds_default_settings();\n}\n";
-          $form['export_data']['#value'] .= "\nfunction _". $module_name ."_ds_default_settings() {\n  \$data = ". $export_value .";\n  return \$data;\n}\n";
+          $form['export_hooks']['#value'] .= "\n/**\n * Implementation of hook_ds_default_settings().\n */\nfunction " . $module_name . "_ds_default_settings() {\n  include_once('" . $module_name . ".ds_default.inc');\n  return _" . $module_name . "_ds_default_settings();\n}\n";
+          $form['export_data']['#value'] .= "\nfunction _" . $module_name . "_ds_default_settings() {\n  \$data = " . $export_value . ";\n  return \$data;\n}\n";
         }
         // Fields.
         if (isset($export['ds']['fields'])) {
           if (!empty($export['ds']['fields'])) {
             $export_value = ds_var_export($export['ds']['fields']);
-            $form['export_hooks']['#value'] .= "\n/**\n * Implementation of hook_ds_fields().\n */\nfunction ". $module_name ."_ds_fields() {\n  include_once('". $module_name .".ds_default.inc');\n  return _". $module_name ."_ds_fields();\n}\n";
-            $form['export_data']['#value'] .= "\nfunction _". $module_name ."_ds_fields() {\n  \$data = ". $export_value .";\n  return \$data;\n}\n";
+            $form['export_hooks']['#value'] .= "\n/**\n * Implementation of hook_ds_fields().\n */\nfunction " . $module_name . "_ds_fields() {\n  include_once('" . $module_name . ".ds_default.inc');\n  return _" . $module_name . "_ds_fields();\n}\n";
+            $form['export_data']['#value'] .= "\nfunction _" . $module_name . "_ds_fields() {\n  \$data = " . $export_value . ";\n  return \$data;\n}\n";
           }
         }
       }
@@ -226,7 +226,7 @@ function ds_export(&$form_state) {
     if (!empty($ds_variables)) {
       $form['other'] = array(
         '#type' => 'item',
-        '#value' => t('Other variables you might consider to have in code (likely your install file): %variables. You can look this up in your database or use <a href="http://drupal.org/project/variable_dump">http://drupal.org/project/variable_dump</a> to create variable exports.', array('%variables' => implode(', ', $ds_variables))),
+        '#value' => t('Other variables you might consider to have in code (likely your install file): %variables. You can look this up in your database or use <a href="http://drupal.org/project/variable_dump">http://drupal.org/project/variable_dump</a> to create variable exports. ', array('%variables' => implode(', ', $ds_variables))),
       );
     }
   }
@@ -248,7 +248,7 @@ function ds_export_build($values) {
     if ($otype === $value) {
       list($module, $type) = explode('-', $value);
       // Display settings.
-      $settings = variable_get($module .'_display_settings_'. $type, array());
+      $settings = variable_get($module . '_display_settings_' . $type, array());
       if (!empty($settings)) {
         foreach ($settings as $build_mode => $setting) {
           $settings[$build_mode]['status'] = DS_SETTINGS_DEFAULT;
@@ -256,7 +256,7 @@ function ds_export_build($values) {
         $return['ds']['settings'][$module][$type] = $settings;
       }
       // Fields.
-      $fields = variable_get($module .'_fields', array());
+      $fields = variable_get($module . '_fields', array());
       if (!empty($fields)) {
         // We don't export overridden fields, unset them if necessary.
         foreach ($fields as $key => $field) {
@@ -293,7 +293,7 @@ function ds_export_submit($form, &$form_state) {
  */
 function ds_revert_form($form_state, $module = '', $type = '', $build_mode = '') {
 
-  $display_settings = variable_get($module .'_display_settings_'. $type, array());
+  $display_settings = variable_get($module . '_display_settings_' . $type, array());
 
   if (isset($display_settings[$build_mode]) &&
     isset($display_settings[$build_mode]['status']) &&
@@ -326,7 +326,7 @@ function ds_revert_form_submit($form, &$form_state) {
 /**
  * Nice var exporter, based on Views.
  */
-function ds_var_export($var, $prefix = '  ', $init = TRUE, $indent = '  ') {
+function ds_var_export($var, $prefix = '  ', $init = TRUE, $indent = ' ') {
   if (is_array($var)) {
     if (empty($var)) {
       $output = 'array()';

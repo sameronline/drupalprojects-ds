@@ -18,14 +18,14 @@ function theme_ds_field($content, $field_key, $field) {
   $output = '';
   if (!empty($content)) {
     if ($field['type'] == 'ds') {
-      $output .= '<div class="field field-'. $field_key .'">';
+      $output .= '<div class="field field-' . $field_key . '">';
       // Above label.
       if ($field['labelformat'] == 'above') {
-        $output .= '<div class="field-label">'. $field['title'] .': </div>';
+        $output .= '<div class="field-label">' . $field['title'] . ': </div>';
       }
       // Inline label
       if ($field['labelformat'] == 'inline') {
-        $output .= '<div class="field-label-inline-first">'. $field['title'] .': </div>';
+        $output .= '<div class="field-label-inline-first">' . $field['title'] . ': </div>';
       }
       $output .= $content;
       $output .= '</div>';
@@ -78,7 +78,7 @@ function theme_ds_eval_block($field) {
           $content = theme('block', $block);
           break;
         case DS_BLOCK_TITLE_CONTENT:
-          $content = '<h2 class="block-title">'. $block['subject'] .'</h2>';
+          $content = '<h2 class="block-title">' . $block['subject'] . '</h2>';
           $content .= $block['content'];
           break;
         case DS_BLOCK_CONTENT:
@@ -125,12 +125,12 @@ function template_preprocess_ds_row_object(&$vars) {
   // The advanced selector searches for a function build like this:
   // ds_views_row_adv_VIEWSNAME.
   if ($options['advanced']) {
-    $row_function = 'ds_views_row_adv_'. $vars['view']->name;
+    $row_function = 'ds_views_row_adv_' . $vars['view']->name;
     $row_function($vars);
   }
   // Simple selector.
   else {
-    $row_function = 'ds_views_row_'. $vars['view']->base_table;
+    $row_function = 'ds_views_row_' . $vars['view']->base_table;
     $build_mode = $options['build_mode'];
     $row_function($vars, $build_mode);
   }
@@ -173,7 +173,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
       else {
         // Process weight.
         if ($child == 'ds_weight') {
-          $element['ds_weight']['#attributes']['class'] = 'field-weight field-weight-'. $region;
+          $element['ds_weight']['#attributes']['class'] = 'field-weight field-weight-' . $region;
           $element['ds_weight'] = process_weight($element['ds_weight']);
         }
         $row->{$child} = drupal_render($element[$child]);
@@ -183,7 +183,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     // Add draggable.
     $row->class = 'draggable';
     if ($region == 'disabled') {
-      $row->class .= ' region-css-'. $region;
+      $row->class .= ' region-css-' . $region;
     }
 
     $row->label_class = 'label-field';
@@ -191,14 +191,14 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   }
 
   drupal_add_js('misc/tableheader.js');
-  drupal_add_js(drupal_get_path('module', 'ds') .'/js/ds.js');
-  drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
+  drupal_add_js(drupal_get_path('module', 'ds') . '/js/ds.js');
+  drupal_add_css(drupal_get_path('module', 'ds') . '/css/ds.css');
 
-  $regions = ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all'));
+  $regions = ds_regions(variable_get('ds_build_mode_' . $build_mode, 'all'));
   foreach ($regions as $region => $title) {
-    drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region, NULL, FALSE);
+    drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-' . $region, NULL, FALSE);
     // We need to have subgroups to make the dragging available within parents
-    drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', 'field-weight-'. $region);
+    drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', 'field-weight-' . $region);
   }
 
   // Plugins available.

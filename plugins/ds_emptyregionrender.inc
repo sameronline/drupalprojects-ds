@@ -31,7 +31,7 @@ class ds_emptyregionrender {
     $regions = ds_regions();
     foreach ($regions as $region => $title) {
       if ($region != 'disabled') {
-        $form['emptyregionrender']['region-render-'. $region] = array(
+        $form['emptyregionrender']['region-render-' . $region] = array(
           '#title' => $title,
           '#type' => 'checkbox',
           '#default_value' => ds_default_value($display_settings, $build_mode, 'emptyregionrender', 'render', $region, ''),
@@ -50,8 +50,8 @@ class ds_emptyregionrender {
     $build_mode = $form['#build_mode'];
 
     foreach ($regions as $region => $title) {
-      if (isset($form_state['values']['emptyregionrender']['region-render-'. $region]))
-      $regions_save['render'][$region] = $form_state['values']['emptyregionrender']['region-render-'. $region];
+      if (isset($form_state['values']['emptyregionrender']['region-render-' . $region]))
+      $regions_save['render'][$region] = $form_state['values']['emptyregionrender']['region-render-' . $region];
     }
 
     $display_settings[$build_mode]['emptyregionrender'] = $regions_save;

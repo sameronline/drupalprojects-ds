@@ -23,7 +23,7 @@ function ds_plugins($form, &$form_state, $module) {
   if (is_array($plugins)) {
     $form['#plugins'] = $plugins;
     foreach ($plugins as $key => $plugin) {
-      $form['plugin_'. $plugin['key']] = array(
+      $form['plugin_' . $plugin['key']] = array(
         '#type' => 'checkbox',
         '#default_value' => isset($plugin_settings[$plugin['key']]['status']) ? $plugin_settings[$plugin['key']]['status'] : 0,
       );
@@ -44,7 +44,7 @@ function ds_plugins($form, &$form_state, $module) {
 function ds_plugins_submit($form, &$form_state) {
   $plugin_settings = array();
   foreach ($form['#plugins'] as $key => $plugin) {
-    if ($form_state['values']['plugin_'. $plugin['key']] == '1') {
+    if ($form_state['values']['plugin_' . $plugin['key']] == '1') {
       $plugin_settings[$plugin['key']] = $plugin;
       $plugin_settings[$plugin['key']]['status'] = '1';
     }
@@ -67,8 +67,8 @@ function theme_ds_plugins($form) {
   $rows = array();
   foreach ($form['#plugins'] as $key => $plugin) {
     $row = array();
-    $row[] = array('data' => drupal_render($form['plugin_'. $plugin['key']]));
-    $row[] = array('data' => '<strong>' . $plugin['title'] .'</strong>: '. $plugin['description']);
+    $row[] = array('data' => drupal_render($form['plugin_' . $plugin['key']]));
+    $row[] = array('data' => '<strong>' . $plugin['title'] . '</strong>: ' . $plugin['description']);
     $rows[] = $row;
   }
 

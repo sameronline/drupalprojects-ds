@@ -13,7 +13,7 @@ function ds_build_modes($module) {
   $output = '';
   $action = arg(4);
   $build_mode = arg(5);
-  $build_modes = variable_get($module .'_build_modes', array());
+  $build_modes = variable_get($module . '_build_modes', array());
 
   // Delete form.
   if (in_array($build_mode, array_keys($build_modes)) && $action == 'delete') {
@@ -26,10 +26,10 @@ function ds_build_modes($module) {
   // Custom build modes overview form.
   else {
     if (empty($build_modes)) {
-      $output .= '<p>'. t('You have not defined any custom build modes.') .'</p>';
+      $output .= '<p>' . t('You have not defined any custom build modes.') . '</p>';
     }
     else {
-      $output .= '<p>'. t('This is a list of custom build modes defined via the UI.') .'</p>';
+      $output .= '<p>' . t('This is a list of custom build modes defined via the UI.') . '</p>';
 
       $header = array(
         t('Name'), t('Key'), t('Operations'),
@@ -40,7 +40,7 @@ function ds_build_modes($module) {
         $row = array();
         $row[] = check_plain($name);
         $row[] = $key;
-        $row[] = l(t('Edit'), 'admin/ds/'. $module .'/buildmodes/edit/'. $key) .' - '. l(t('Delete'), 'admin/ds/'. $module .'/buildmodes/delete/'. $key);
+        $row[] = l(t('Edit'), 'admin/ds/' . $module . '/buildmodes/edit/' . $key) . ' - ' . l(t('Delete'), 'admin/ds/' . $module . '/buildmodes/delete/' . $key);
         $rows[] = $row;
       }
 
@@ -74,7 +74,7 @@ function ds_build_mode_form($form, &$form_state, $module, $build_mode = '') {
   $form = array();
 
   if (!empty($build_mode)) {
-    $build_modes = variable_get($module .'_build_modes', array());
+    $build_modes = variable_get($module . '_build_modes', array());
     $title = $build_modes[$build_mode];
   }
   else {
@@ -138,12 +138,12 @@ function ds_build_mode_form_validate($form, &$form_state) {
  * Save new build mode.
  */
 function ds_build_mode_form_submit($form, &$form_state) {
-  $build_modes = variable_get($form['#module'] .'_build_modes', array());
+  $build_modes = variable_get($form['#module'] . '_build_modes', array());
   $build_modes[$form_state['values']['key']] = $form_state['values']['name'];
-  variable_set($form['#module'] .'_build_modes', $build_modes);
+  variable_set($form['#module'] . '_build_modes', $build_modes);
 
   drupal_set_message(t('Build mode %build_mode has been saved.', array('%build_mode' => $build_modes[$form_state['values']['key']])));
-  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/buildmodes';
+  $form_state['redirect'] = 'admin/ds/' . $form['#module'] . '/buildmodes';
   menu_rebuild();
 }
 
@@ -154,7 +154,7 @@ function ds_build_mode_delete_form($form, &$form_state, $module, $build_mode) {
   $form = array();
   $form['question'] = array(
     '#type' => 'item',
-    '#markup' => '<p>'. t('Are you sure you want to delete the build mode type %build_mode ?', array('%build_mode' => $build_mode)) .'</p>',
+    '#markup' => '<p>' . t('Are you sure you want to delete the build mode type %build_mode ?', array('%build_mode' => $build_mode)) . '</p>',
   );
   $form['display'] = array(
     '#type' => 'value',
@@ -168,7 +168,7 @@ function ds_build_mode_delete_form($form, &$form_state, $module, $build_mode) {
   $form['buttons']['cancel'] = array(
     '#suffix' => '</div>',
     '#type' => 'item',
-    '#markup' => l('cancel', 'admin/ds/'. $module .'/buildmodes'),
+    '#markup' => l(t('cancel'), 'admin/ds/' . $module . '/buildmodes'),
   );
 
   $form['#module'] = $module;
@@ -180,12 +180,12 @@ function ds_build_mode_delete_form($form, &$form_state, $module, $build_mode) {
  */
 function ds_build_mode_delete_form_submit($form, &$form_state) {
   $module = $form['#module'];
-  $build_modes = variable_get($module .'_build_modes', array());
+  $build_modes = variable_get($module . '_build_modes', array());
   unset($build_modes[$form_state['values']['display']]);
-  variable_set($module .'_build_modes', $build_modes);
+  variable_set($module . '_build_modes', $build_modes);
 
   drupal_set_message(t('Custom build mode %build_mode has been removed.', array('%build_mode' => $form_state['values']['display'])));
-  $form_state['redirect'] = 'admin/ds/'. $module .'/buildmodes';
+  $form_state['redirect'] = 'admin/ds/' . $module . '/buildmodes';
   menu_rebuild();
 }
 
@@ -197,10 +197,10 @@ function ds_build_mode_delete_form_submit($form, &$form_state) {
  */
 function ds_buildmodes_matrix_form($form, &$form_state, $module, $types) {
 
-  drupal_add_js(drupal_get_path('module', 'ds') .'/js/buildmodes.js');
+  drupal_add_js(drupal_get_path('module', 'ds') . '/js/buildmodes.js');
 
   // Exclude build mode matrix.
-  $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
+  $exclude_build_modes = variable_get($module . '_buildmodes_exclude', array());
   $build_modes = array('ds_block_all' => array('title' => t('Toggle all'))) + ds_get_build_modes($module);
 
   $form['#build_modes'] = $build_modes;
@@ -209,28 +209,28 @@ function ds_buildmodes_matrix_form($form, &$form_state, $module, $types) {
 
   foreach ($types as $tkey => $type) {
 
-    $row_exluded = variable_get($module .'_type_'. $tkey, FALSE);
+    $row_exluded = variable_get($module . '_type_' . $tkey, FALSE);
     foreach ($build_modes as $bkey => $mode) {
 
       // We create 2 form keys here. The first one is the checkbox,
       // the second is a hidden value to store the default value in.
-      $form['exclude'][$tkey][$tkey .'-'. $bkey] = array(
+      $form['exclude'][$tkey][$tkey . '-' . $bkey] = array(
         '#type' => 'checkbox',
         '#attributes' => array('class' => array('checkbox-instance'))
       );
-      $form['exclude'][$tkey][$tkey .'-'. $bkey .'-disabled'] = array(
+      $form['exclude'][$tkey][$tkey . '-' . $bkey . '-disabled'] = array(
         '#type' => 'value',
         '#value' => isset($exclude_build_modes[$tkey][$bkey]) ? $exclude_build_modes[$tkey][$bkey] : NULL,
       );
 
       if ($bkey == 'ds_block_all') {
-        $form['exclude'][$tkey][$tkey .'-'. $bkey]['#attributes']['class'][] = 'block-all';
-        $form['exclude'][$tkey][$tkey .'-'. $bkey]['#default_value'] = $row_exluded;
+        $form['exclude'][$tkey][$tkey . '-' . $bkey]['#attributes']['class'][] = 'block-all';
+        $form['exclude'][$tkey][$tkey . '-' . $bkey]['#default_value'] = $row_exluded;
       }
       else {
-        $form['exclude'][$tkey][$tkey .'-'. $bkey]['#default_value'] = isset($exclude_build_modes[$tkey][$bkey]) ? $exclude_build_modes[$tkey][$bkey] : NULL;
+        $form['exclude'][$tkey][$tkey . '-' . $bkey]['#default_value'] = isset($exclude_build_modes[$tkey][$bkey]) ? $exclude_build_modes[$tkey][$bkey] : NULL;
         if ($row_exluded) {
-          $form['exclude'][$tkey][$tkey .'-'. $bkey]['#disabled'] = 'disabled';
+          $form['exclude'][$tkey][$tkey . '-' . $bkey]['#disabled'] = 'disabled';
         }
       }
     }
@@ -263,7 +263,7 @@ function theme_ds_buildmodes_matrix_form($form) {
     $row = array();
     $row[] = array('data' => $type->name);
     foreach ($form['#build_modes'] as $bkey => $mode) {
-      $row[] = array('data' => drupal_render($form['exclude'][$key][$key .'-'. $bkey]));
+      $row[] = array('data' => drupal_render($form['exclude'][$key][$key . '-' . $bkey]));
     }
     $rows[] = $row;
   }
@@ -294,16 +294,16 @@ function ds_build_modes_matrix_submit($form, &$form_state) {
     foreach ($form['#build_modes'] as $bkey => $mode) {
       // Global exclude.
       if ($bkey == 'ds_block_all') {
-        $global_exclude = $form_state['values'][$ckey .'-'. $bkey];
-        variable_set($form['#module'] .'_type_'. $ckey, $form_state['values'][$ckey .'-'. $bkey]);
-        $exclude_build_modes[$ckey][$bkey] = $form_state['values'][$ckey .'-'. $bkey];
+        $global_exclude = $form_state['values'][$ckey . '-' . $bkey];
+        variable_set($form['#module'] . '_type_' . $ckey, $form_state['values'][$ckey . '-' . $bkey]);
+        $exclude_build_modes[$ckey][$bkey] = $form_state['values'][$ckey . '-' . $bkey];
       }
       else {
-        $value = ($global_exclude == TRUE) ? $form_state['values'][$ckey .'-'. $bkey .'-disabled'] : $form_state['values'][$ckey .'-'. $bkey];
+        $value = ($global_exclude == TRUE) ? $form_state['values'][$ckey . '-' . $bkey . '-disabled'] : $form_state['values'][$ckey . '-' . $bkey];
         $exclude_build_modes[$ckey][$bkey] = $value;
       }
     }
   }
-  variable_set($form['#module'] .'_buildmodes_exclude', $exclude_build_modes);
+  variable_set($form['#module'] . '_buildmodes_exclude', $exclude_build_modes);
   menu_rebuild();
 }

@@ -34,7 +34,7 @@ function ds_fields($module) {
   $action = arg(4);
   $field = arg(5);
 
-  drupal_add_js(drupal_get_path('module', 'ds') .'/js/fields.js');
+  drupal_add_js(drupal_get_path('module', 'ds') . '/js/fields.js');
 
   // Get API information.
   $api_info = ds_api_info($module);
@@ -43,7 +43,7 @@ function ds_fields($module) {
   $extra = array();
 
   // Get fields.
-  $db_fields = variable_get($module .'_fields', array());
+  $db_fields = variable_get($module . '_fields', array());
   $all_fields = ds_get_fields($module, NULL, NULL, $extra, TRUE);
 
   // Compare with db_fields.
@@ -72,10 +72,10 @@ function ds_fields($module) {
   // Custom fields overview form
   else {
     if (empty($db_fields)) {
-      $output .= '<p>'. t('You have not defined any custom fields.') .'</p>';
+      $output .= '<p>' . t('You have not defined any custom fields.') . '</p>';
     }
     else {
-      $output .= '<p>'. t('This is a list of custom fields either defined in code or via the UI.') .'</p>';
+      $output .= '<p>' . t('This is a list of custom fields either defined in code or via the UI.') . '</p>';
 
       $header = array(
         t('Title'), t('Key'), t('Type'), t('Status'), t('Operations'),
@@ -88,10 +88,10 @@ function ds_fields($module) {
         $row[] = $key;
         $row[] = ds_human_name($value['type'], 'type');
         $row[] = ds_human_name($value['status'], 'status');
-        $operations = l(t('Edit'), 'admin/ds/'. $module .'/fields/edit/'. $key);
+        $operations = l(t('Edit'), 'admin/ds/' . $module . '/fields/edit/' . $key);
         if ($value['status'] != DS_FIELD_STATUS_DEFAULT) {
           $text = ($value['status'] == DS_FIELD_STATUS_OVERRIDDEN) ? 'Reset' : 'Delete';
-          $operations .= ' - '. l(t($text), 'admin/ds/'. $module .'/fields/delete/'. $key);
+          $operations .= ' - ' . l(t($text), 'admin/ds/' . $module . '/fields/delete/' . $key);
         }
         $row[] = $operations;
         $rows[] = $row;
@@ -223,7 +223,7 @@ function ds_code_field_form($form, &$form_state, $module, $all_fields, $object =
 function _ds_field_object_info(&$form, $object, $field) {
   $form['code_identity']['help'] = array(
     '#type' => 'item',
-    '#value' => t('Every field will be wrapped in &lt;div class="field field-key"&gt;VALUE&lt;/div&gt;.<br/>Enter PHP code between &lt;?php ?&gt;. If you are using PHP, the variable for the '. $object .' is called $object.<br/>Note that executing incorrect PHP-code can break your Drupal site.'),
+    '#value' => t('Every field will be wrapped in &lt;div class="field field-key"&gt;VALUE&lt;/div&gt;.<br/>Enter PHP code between &lt;?php ?&gt;. If you are using PHP, the variable for the ' . $object . ' is called $object.<br/>Note that executing incorrect PHP-code can break your Drupal site.'),
   );
 
   if (module_exists('token')) {
@@ -248,7 +248,7 @@ function _ds_field_object_info(&$form, $object, $field) {
       '#type' => 'value',
       '#value' => FALSE,
     );
-    $form['code_identity']['help']['#value'] .= '<br />'. t("To use dynamic placeholder tokens in your custom fields (the ID or title of the current node, for example), download and install the <a href='@token'>Token module</a> from Drupal.org.", array('@token' => 'http://www.drupal.org/project/token'));
+    $form['code_identity']['help']['#value'] .= '<br />' . t("To use dynamic placeholder tokens in your custom fields (the ID or title of the current node, for example), download and install the <a href='@token'>Token module</a> from Drupal.org.", array('@token' => 'http://www.drupal.org/project/token'));
   }
 }
 
@@ -277,7 +277,7 @@ function ds_code_field_form_validate($form, &$form_state) {
  */
 function ds_code_field_form_submit($form, &$form_state) {
   $module = $form['#module'];
-  $fields = variable_get($module .'_fields', array());
+  $fields = variable_get($module . '_fields', array());
   $fields[$form_state['values']['code_key']] = array(
     'title' => $form_state['values']['code_title'],
     'exclude' => $form_state['values']['code_exclude'],
@@ -293,11 +293,11 @@ function ds_code_field_form_submit($form, &$form_state) {
   );
 
   // Safe field and invalidate cached fields.
-  variable_set($module .'_fields', $fields);
+  variable_set($module . '_fields', $fields);
   variable_del('ds_fields_cached');
 
   // Redirect and confirmation message.
-  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
+  $form_state['redirect'] = 'admin/ds/' . $form['#module'] . '/fields';
   drupal_set_message(t('Field %field has been saved.', array('%field' => $form_state['values']['code_title'])));
 }
 
@@ -382,7 +382,7 @@ function ds_block_field_form($form, &$form_state, $module, $all_fields, $object 
     $module_blocks = module_invoke($drupal_module, 'block_info');
     if ($module_blocks) {
       foreach ($module_blocks as $module_key => $info) {
-        $blocks[ucfirst($drupal_module)][$drupal_module .'|'. $module_key] = $info['info'];
+        $blocks[ucfirst($drupal_module)][$drupal_module . '|' . $module_key] = $info['info'];
       }
     }
   }
@@ -446,7 +446,7 @@ function ds_block_field_form_validate($form, &$form_state) {
  */
 function ds_block_field_form_submit($form, &$form_state) {
   $module = $form['#module'];
-  $fields = variable_get($module .'_fields', array());
+  $fields = variable_get($module . '_fields', array());
   $fields[$form_state['values']['block_key']] = array(
     'type' => DS_FIELD_TYPE_BLOCK,
     'status' => $form['#field_status'],
@@ -459,11 +459,11 @@ function ds_block_field_form_submit($form, &$form_state) {
   );
 
   // Safe field and invalidate cached fields.
-  variable_set($module .'_fields', $fields);
+  variable_set($module . '_fields', $fields);
   variable_del('ds_fields_cached');
 
   // Redirect and confirmation message.
-  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
+  $form_state['redirect'] = 'admin/ds/' . $form['#module'] . '/fields';
   drupal_set_message(t('Field %field has been saved.', array('%field' => $form_state['values']['block_title'])));
 }
 
@@ -481,7 +481,7 @@ function ds_field_delete_reset_form($form, &$form_state, $module, $key, $field) 
   $action = ($field['status'] == DS_FIELD_STATUS_OVERRIDDEN) ? t('reset') : t('delete');
   $form['question'] = array(
     '#type' => 'item',
-    '#markup' => '<p>'. t('Are you sure you want to !action the field %field ?', array('!action' => $action, '%field' => $field['title'])) .'</p>',
+    '#markup' => '<p>' . t('Are you sure you want to !action the field %field ?', array('!action' => $action, '%field' => $field['title'])) . '</p>',
   );
   $form['field'] = array(
     '#type' => 'value',
@@ -495,7 +495,7 @@ function ds_field_delete_reset_form($form, &$form_state, $module, $key, $field) 
   $form['buttons']['cancel'] = array(
     '#suffix' => '</div>',
     '#type' => 'item',
-    '#markup' => l('cancel', 'admin/ds/'. $module .'/fields'),
+    '#markup' => l(t('cancel'), 'admin/ds/' . $module . '/fields'),
   );
   $form['#module'] = $module;
   return $form;
@@ -506,16 +506,16 @@ function ds_field_delete_reset_form($form, &$form_state, $module, $key, $field) 
  */
 function ds_field_delete_reset_form_submit($form, &$form_state) {
   $module = $form['#module'];
-  $fields = variable_get($module .'_fields', array());
+  $fields = variable_get($module . '_fields', array());
   $field = $fields[$form_state['values']['field']];
   $field_title = $field['title'];
   $action = ($field['status'] == DS_FIELD_STATUS_OVERRIDDEN) ? t('reset') : t('deleted');
 
   // Save and invalidate fields_cached.
   unset($fields[$form_state['values']['field']]);
-  variable_set($module .'_fields', $fields);
+  variable_set($module . '_fields', $fields);
   variable_del('ds_fields_cached');
 
   drupal_set_message(t('Field %field has been !action.', array('%field' => $field_title, '!action' => $action)));
-  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
+  $form_state['redirect'] = 'admin/ds/' . $form['#module'] . '/fields';
 }

@@ -31,14 +31,14 @@ class ds_cssoverrider {
     $regions = ds_regions();
     foreach ($regions as $region => $title) {
       if ($region != 'disabled') {
-        $form['cssoverrider']['region-class-'. $region] = array(
-          '#title' => $title .' class',
+        $form['cssoverrider']['region-class-' . $region] = array(
+          '#title' => $title . ' class',
           '#type' => 'textfield',
           '#description' => t('Enter extra classes, seperated by comma.'),
           '#default_value' => ds_default_value($display_settings, $build_mode, 'cssoverrider', 'class', $region, ''),
         );
-        $form['cssoverrider']['region-inline-'. $region] = array(
-          '#title' => $title .' inline css',
+        $form['cssoverrider']['region-inline-' . $region] = array(
+          '#title' => $title . ' inline css',
           '#type' => 'textfield',
           '#description' => t('Enter inline css. Note, you only need to enter the css rules, the plugin will add style="" for you.'),
           '#default_value' => ds_default_value($display_settings, $build_mode, 'cssoverrider', 'inline', $region, ''),
@@ -58,8 +58,8 @@ class ds_cssoverrider {
 
     foreach ($regions as $region => $title) {
       if ($region != 'disabled') {
-        $css_save['class'][$region] = $form_state['values']['cssoverrider']['region-class-'. $region];
-        $css_save['inline'][$region] = $form_state['values']['cssoverrider']['region-inline-'. $region];
+        $css_save['class'][$region] = $form_state['values']['cssoverrider']['region-class-' . $region];
+        $css_save['inline'][$region] = $form_state['values']['cssoverrider']['region-inline-' . $region];
       }
     }
 
@@ -77,11 +77,11 @@ class ds_cssoverrider {
       $inline = ds_default_value($display_settings, $display->build_mode, 'cssoverrider', 'inline', $region_name, '');
 
       if (!empty($classes)) {
-        $display->themed_regions[$region_name]['extra_class'] = ' '. $classes;
+        $display->themed_regions[$region_name]['extra_class'] = ' ' . $classes;
       }
 
       if (!empty($inline)) {
-        $display->themed_regions[$region_name]['inline_css'] = 'style="'. $inline .'"';
+        $display->themed_regions[$region_name]['inline_css'] = 'style="' . $inline . '"';
       }
     }
   }

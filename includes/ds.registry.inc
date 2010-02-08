@@ -28,11 +28,11 @@ function _ds_permission() {
   foreach (module_implements('ds_api') as $module) {
     $function = $module . '_ds_api';
     $api_info = $function();
-    $perms['administer '. $module] = array(
+    $perms['administer ' . $module] = array(
       'title' => t('Administer @module', array('@module' => $api_info['title'])),
       'description' => t('Give users permission to administer fields, build modes and plugins')
     );
-    $perms['configure layout for '. $module] = array(
+    $perms['configure layout for ' . $module] = array(
       'title' => t('Configure layout for @module', array('@module' => $api_info['title'])),
       'description' => t('Give users permission to alter display settings')
     );
@@ -107,21 +107,21 @@ function _ds_menu() {
     $title = $api_info['title'];
 
     // Info.
-    $items['admin/ds/'. $module] = array(
+    $items['admin/ds/' . $module] = array(
       'title' => $title,
       'page callback' => 'ds_info',
       'page arguments' => array($module),
       'access arguments' => array('administer ' . $module),
       'file' => 'includes/ds.info.inc',
     );
-    $items['admin/ds/'. $module .'/info'] = array(
+    $items['admin/ds/' . $module . '/info'] = array(
       'title' => 'Info',
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => 0,
     );
 
     // Fields.
-    $items['admin/ds/'. $module .'/fields'] = array(
+    $items['admin/ds/' . $module . '/fields'] = array(
       'title' => 'Fields',
       'page callback' => 'ds_fields',
       'page arguments' => array($module),
@@ -133,7 +133,7 @@ function _ds_menu() {
     );
 
     // Build modes.
-    $items['admin/ds/'. $module .'/buildmodes'] = array(
+    $items['admin/ds/' . $module . '/buildmodes'] = array(
       'title' => 'Build modes',
       'page callback' => 'ds_build_modes',
       'page arguments' => array($module),
@@ -144,7 +144,7 @@ function _ds_menu() {
     );
 
     // Plugins.
-    $items['admin/ds/'. $module .'/plugins'] = array(
+    $items['admin/ds/' . $module . '/plugins'] = array(
       'title' => 'Plugins',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('ds_plugins', $module),
@@ -164,14 +164,14 @@ function _ds_menu() {
         $type_url_str = str_replace('_', '-', $type_name);
 
         // Global exclude.
-        if (variable_get($module .'_type_'. $type->type, FALSE)) {
+        if (variable_get($module . '_type_' . $type->type, FALSE)) {
           continue;
         }
 
         $first = 0;
         $weight = 20;
         $local_task_items = array();
-        $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
+        $exclude_build_modes = variable_get($module . '_buildmodes_exclude', array());
         foreach ($build_modes as $key => $value) {
 
           // Check if build mode is excluded for this object type.
@@ -181,11 +181,11 @@ function _ds_menu() {
           }
 
           // Tabs.
-          $local_task_items['admin/ds/layout/'. $type_url_str .'/'. $key] = array(
+          $local_task_items['admin/ds/layout/' . $type_url_str . '/' . $key] = array(
             'title' => $value['title'],
             'page callback' => 'drupal_get_form',
             'page arguments' => array('ds_display_overview_form', $type_name, "$key", $module),
-            'access arguments' => array('configure layout for '. $module),
+            'access arguments' => array('configure layout for ' . $module),
             'type' => $first == 0 ? MENU_DEFAULT_LOCAL_TASK : MENU_LOCAL_TASK,
             'file' => 'includes/ds.display.inc',
             'weight' => (isset($value['weight']) && !empty($value['weight'])) ? $value['weight'] : $weight++,
@@ -199,11 +199,11 @@ function _ds_menu() {
         }
 
         // Default callback.
-        $items['admin/ds/layout/'. $type_url_str] = array(
+        $items['admin/ds/layout/' . $type_url_str] = array(
           'title' => drupal_ucfirst($type_url_str),
           'page callback' => 'drupal_get_form',
           'page arguments' => array('ds_display_overview_form', $type_name, "$first_build_mode", $module),
-          'access arguments' => array('configure layout for '. $module),
+          'access arguments' => array('configure layout for ' . $module),
           'file' => 'includes/ds.display.inc',
           'weight' => 2,
         );
@@ -227,19 +227,19 @@ function _ds_theme() {
     'ds_display_overview_form' => array(
       'template' => 'ds-display-overview-form',
       'file' => 'theme.inc',
-      'path' => $path .'/theme',
+      'path' => $path . '/theme',
       'arguments' => array('form' => NULL),
     ),
     // Build modes matrix.
     'ds_buildmodes_matrix_form' => array(
       'file' => 'ds.buildmodes.inc',
-      'path' => $path .'/includes',
+      'path' => $path . '/includes',
       'arguments' => array('form' => NULL),
     ),
     // Plugins form.
     'ds_plugins' => array(
       'file' => 'ds.plugins.inc',
-      'path' => $path .'/includes',
+      'path' => $path . '/includes',
       'arguments' => array('form' => NULL),
     ),
 
@@ -251,7 +251,7 @@ function _ds_theme() {
         'field' => NULL,
       ),
       'file' => 'theme.inc',
-      'path' => $path .'/theme',
+      'path' => $path . '/theme',
     ),
 
     // Evaluate code.
@@ -260,7 +260,7 @@ function _ds_theme() {
         'field' => NULL,
       ),
       'file' => 'theme.inc',
-      'path' => $path .'/theme',
+      'path' => $path . '/theme',
     ),
     // Evaluate block.
     'ds_eval_block' => array(
@@ -268,24 +268,24 @@ function _ds_theme() {
         'field' => NULL,
       ),
       'file' => 'theme.inc',
-      'path' => $path .'/theme',
+      'path' => $path . '/theme',
     ),
 
     // Theming for fields which are shared across objects (name, picture etc).
     'ds_author_link' => array(
       'arguments' => array('object' => NULL),
       'file' => 'theme.inc',
-      'path' => $path .'/theme',
+      'path' => $path . '/theme',
     ),
     'ds_author_nolink' => array(
       'arguments' => array('object' => NULL),
       'file' => 'theme.inc',
-      'path' => $path .'/theme',
+      'path' => $path . '/theme',
     ),
     'ds_picture' => array(
       'arguments' => array('object' => NULL),
       'file' => 'theme.inc',
-      'path' => $path .'/theme',
+      'path' => $path . '/theme',
     ),
   );
 
@@ -304,7 +304,7 @@ function _ds_register_build_modes() {
   foreach (module_implements('content_build_modes') as $module) {
 
     $module_data = array();
-    $function = $module .'_content_build_modes';
+    $function = $module . '_content_build_modes';
     $temp_data = $function();
     // We need to do some fiddling existing build modes.
     if (!empty($temp_data)) {
@@ -326,7 +326,7 @@ function _ds_register_build_modes() {
   // Custom build modes via the UI.
   foreach (module_implements('ds_api') as $module) {
     $weight = 10;
-    $db_build_modes = variable_get($module .'_build_modes', array());
+    $db_build_modes = variable_get($module . '_build_modes', array());
     if (!empty($db_build_modes)) {
       foreach ($db_build_modes as $key => $name) {
         $build_modes[$module][$key] = array(
@@ -363,7 +363,7 @@ function _ds_plugins() {
       'class' => 'ds_emptyregionrender',
       'description' => t('Renders a region when there is no content in it.'),
       'file' => 'ds_emptyregionrender.inc',
-      'path' => $path .'/plugins',
+      'path' => $path . '/plugins',
       'target' => 'all',
     ),
     'cssoverrider' => array(
@@ -371,7 +371,7 @@ function _ds_plugins() {
       'class' => 'ds_cssoverrider',
       'description' => t('Override region CSS with inline styles or add extra classes.'),
       'file' => 'ds_cssoverrider.inc',
-      'path' => $path .'/plugins',
+      'path' => $path . '/plugins',
       'target' => 'all',
     ),
   );
