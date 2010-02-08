@@ -17,11 +17,11 @@ function ds_build_modes($module) {
 
   // Delete form.
   if (in_array($build_mode, array_keys($build_modes)) && $action == 'delete') {
-    $output .= drupal_get_form('ds_build_mode_delete_form', $module, $build_mode);
+    $output .= drupal_render(drupal_get_form('ds_build_mode_delete_form', $module, $build_mode));
   }
   // Edit form.
   elseif (in_array($build_mode, array_keys($build_modes)) && $action == 'edit') {
-    $output .= drupal_get_form('ds_build_mode_form', $module, $build_mode);
+    $output .= drupal_render(drupal_get_form('ds_build_mode_form', $module, $build_mode));
   }
   // Custom build modes overview form.
   else {
@@ -44,18 +44,23 @@ function ds_build_modes($module) {
         $rows[] = $row;
       }
 
-      $output .= theme('table', $header, $rows);
+      $table_variables = array(
+        'header' => $header,
+        'rows' => $rows,
+      );
+      $output .= theme('table', $table_variables);
     }
 
     // New build mode form.
-    $output .= drupal_get_form('ds_build_mode_form', $module);
+    $output .= drupal_render(drupal_get_form('ds_build_mode_form', $module));
 
     // Matrix form.
     $api_info = ds_api_info($module);
     if (isset($api_info['types'])) {
       $types = $api_info['types']();
-      if (count($types) > 1)
-      $output .= drupal_get_form('ds_buildmodes_matrix_form', $module, $types);
+      /*if (count($types) > 1) {
+        $output .= drupal_render(drupal_get_form('ds_buildmodes_matrix_form', $module, $types));
+      }*/
     }
   }
 
@@ -65,7 +70,7 @@ function ds_build_modes($module) {
 /**
  * Build mode form.
  */
-function ds_build_mode_form($form_state, $module, $build_mode = '') {
+function ds_build_mode_form($form, &$form_state, $module, $build_mode = '') {
   $form = array();
 
   if (!empty($build_mode)) {
@@ -145,25 +150,25 @@ function ds_build_mode_form_submit($form, &$form_state) {
 /**
  * Build mode delete form.
  */
-function ds_build_mode_delete_form($form_state, $module, $build_mode) {
+function ds_build_mode_delete_form($form, &$form_state, $module, $build_mode) {
   $form = array();
   $form['question'] = array(
-    '#type' => 'markup',
-    '#value' => '<p>'. t('Are you sure you want to delete the build mode type %build_mode ?', array('%build_mode' => $build_mode)) .'</p>',
+    '#type' => 'item',
+    '#markup' => '<p>'. t('Are you sure you want to delete the build mode type %build_mode ?', array('%build_mode' => $build_mode)) .'</p>',
   );
   $form['display'] = array(
     '#type' => 'value',
     '#value' => $build_mode,
   );
-  $form['button']['submit'] = array(
+  $form['buttons']['submit'] = array(
     '#prefix' => '<div>',
     '#type' => 'submit',
     '#value' => t('Delete'),
   );
   $form['buttons']['cancel'] = array(
     '#suffix' => '</div>',
-    '#type' => 'markup',
-    '#value' => l('cancel', 'admin/ds/'. $module .'/buildmodes'),
+    '#type' => 'item',
+    '#markup' => l('cancel', 'admin/ds/'. $module .'/buildmodes'),
   );
 
   $form['#module'] = $module;
@@ -190,7 +195,7 @@ function ds_build_mode_delete_form_submit($form, &$form_state) {
  * @param string $module The name of the module.
  * @param array $types A list of types.
  */
-function ds_buildmodes_matrix_form($form_state, $module, $types) {
+function ds_buildmodes_matrix_form($form, &$form_state, $module, $types) {
 
   drupal_add_js(drupal_get_path('module', 'ds') .'/js/buildmodes.js');
 
@@ -211,7 +216,7 @@ function ds_buildmodes_matrix_form($form_state, $module, $types) {
       // the second is a hidden value to store the default value in.
       $form['exclude'][$tkey][$tkey .'-'. $bkey] = array(
         '#type' => 'checkbox',
-        '#attributes' => array('class' => 'checkbox-instance')
+        '#attributes' => array('class' => array('checkbox-instance'))
       );
       $form['exclude'][$tkey][$tkey .'-'. $bkey .'-disabled'] = array(
         '#type' => 'value',
@@ -219,7 +224,7 @@ function ds_buildmodes_matrix_form($form_state, $module, $types) {
       );
 
       if ($bkey == 'ds_block_all') {
-        $form['exclude'][$tkey][$tkey .'-'. $bkey]['#attributes']['class'] .= ' block-all';
+        $form['exclude'][$tkey][$tkey .'-'. $bkey]['#attributes']['class'][] = 'block-all';
         $form['exclude'][$tkey][$tkey .'-'. $bkey]['#default_value'] = $row_exluded;
       }
       else {

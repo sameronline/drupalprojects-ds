@@ -57,12 +57,16 @@ function ds_layout_overview() {
               $operations .= ' - '. l('Revert', 'admin/ds/tools/revert/'. $module .'/'. $type .'/'. $bkey);
             }
             $row[] = $operations;
-            $rows[] = array('data' => $row, 'class' => 'ds-row-type');
+            $rows[] = array('data' => $row, 'class' => array('ds-row-type'));
           }
         }
       }
       if (!empty($rows)) {
-        $content = theme('table', array(), $rows, array('id' => 'ds-overview-page'));
+        $table_variables = array(
+          'rows' => $rows,
+          'attributes' => array('id' => 'ds-overview-page')
+        );
+        $content = theme('table', $table_variables);
       }
     }
   }
@@ -98,7 +102,7 @@ function ds_settings_status($status) {
  * This function is based on content_display_overview_form from
  * content.admin.inc of cck, but altered to have weights and regions.
  */
-function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $module = 'nd') {
+function ds_display_overview_form($form, &$form_state, $type, $build_mode = 'full', $module = 'nd') {
 
   // Gather information.
   $api_info = ds_api_info($module);

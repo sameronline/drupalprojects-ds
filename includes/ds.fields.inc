@@ -61,13 +61,13 @@ function ds_fields($module) {
 
   // Delete form.
   if (in_array($field, array_keys($db_fields)) && $action == 'delete') {
-    $output .= drupal_get_form('ds_field_delete_reset_form', $module, $field, $db_fields[$field]);
+    $output .= drupal_render(drupal_get_form('ds_field_delete_reset_form', $module, $field, $db_fields[$field]));
   }
   // Edit form.
   elseif (in_array($field, array_keys($db_fields)) && $action == 'edit') {
     if ($db_fields[$field]['type'] == DS_FIELD_TYPE_BLOCK) $form_id = 'ds_block_field_form';
     else $form_id = 'ds_code_field_form';
-    $output .= drupal_get_form($form_id, $module, $all_fields, $api_info['object'], $field, $db_fields[$field]);
+    $output .= drupal_render(drupal_get_form($form_id, $module, $all_fields, $api_info['object'], $field, $db_fields[$field]));
   }
   // Custom fields overview form
   else {
@@ -101,9 +101,11 @@ function ds_fields($module) {
     }
 
     // New fields form.
-    $output .= drupal_get_form('ds_code_field_form', $module, $all_fields, $api_info['object']);
+    $output .= drupal_render(drupal_get_form('ds_code_field_form', $module, $all_fields, $api_info['object']));
     // Block field form.
-    $output .= drupal_get_form('ds_block_field_form', $module, $all_fields);
+    if (module_exists('block')) {
+      $output .= drupal_render(drupal_get_form('ds_block_field_form', $module, $all_fields));
+    }
   }
 
   return $output;
@@ -118,7 +120,7 @@ function ds_fields($module) {
  * @param string $key The key of the field.
  * @param array $field The field with title and code keys.
  */
-function ds_code_field_form($form_state, $module, $all_fields, $object = '', $key = '', $field = array()) {
+function ds_code_field_form($form, &$form_state, $module, $all_fields, $object = '', $key = '', $field = array()) {
   $form = array();
 
   if (empty($field)) {
@@ -169,13 +171,13 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
       '#title' => t('Field exclude'),
       '#options' => $types,
       '#default_value' => $field['exclude'],
-      '#attributes' => array('class' => 'exclude-types')
+      '#attributes' => array('class' => array('exclude-types'))
     );
     $form['code_identity']['code_exclude_all'] = array(
       '#type' => 'checkbox',
       '#title' => t('Select all'),
       '#description' => t('Toggle types which you don\'t want the field to appear in.'),
-      '#attributes' => array('class' => 'select-all')
+      '#attributes' => array('class' => array('select-all'))
     );
   }
   else {
@@ -304,7 +306,7 @@ function ds_code_field_form_submit($form, &$form_state) {
  * @param string $key The key of the field.
  * @param array $field The field with title and code keys.
  */
-function ds_block_field_form($form_state, $module, $all_fields, $object = '', $key = '', $field = array()) {
+function ds_block_field_form($form, &$form_state, $module, $all_fields, $object = '', $key = '', $field = array()) {
   $form = array();
 
   if (empty($field)) {
@@ -355,13 +357,13 @@ function ds_block_field_form($form_state, $module, $all_fields, $object = '', $k
       '#title' => t('Field exclude'),
       '#options' => $types,
       '#default_value' => $field['exclude'],
-      '#attributes' => array('class' => 'exclude-types')
+      '#attributes' => array('class' => array('exclude-types'))
     );
     $form['block_identity']['block_exclude_all'] = array(
       '#type' => 'checkbox',
       '#title' => t('Select all'),
       '#description' => t('Toggle types which you don\'t want the field to appear in.'),
-      '#attributes' => array('class' => 'select-all')
+      '#attributes' => array('class' => array('select-all'))
     );
   }
   else {
@@ -373,7 +375,7 @@ function ds_block_field_form($form_state, $module, $all_fields, $object = '', $k
 
   $blocks = array();
   foreach (module_list() as $drupal_module) {
-    $module_blocks = module_invoke($drupal_module, 'block', 'list');
+    $module_blocks = module_invoke($drupal_module, 'block_info');
     if ($module_blocks) {
       foreach ($module_blocks as $module_key => $info) {
         $blocks[ucfirst($drupal_module)][$drupal_module .'|'. $module_key] = $info['info'];
@@ -469,7 +471,7 @@ function ds_block_field_form_submit($form, &$form_state) {
  * @param string $key The key of the field.
  * @param array $field The field with title and code keys.
  */
-function ds_field_delete_reset_form($form_state, $module, $key, $field) {
+function ds_field_delete_reset_form($form, &$form_state, $module, $key, $field) {
   $form = array();
 
   $action = ($field['status'] == DS_FIELD_STATUS_OVERRIDDEN) ? t('reset') : t('delete');

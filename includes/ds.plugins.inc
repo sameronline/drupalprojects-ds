@@ -9,7 +9,7 @@
 /**
  * Menu callback. Registers plugins for a module.
  */
-function ds_plugins($form_state, $module) {
+function ds_plugins($form, &$form_state, $module) {
   $form = array();
   $form['#module'] = $module;
 
@@ -19,7 +19,7 @@ function ds_plugins($form_state, $module) {
   );
 
   $plugins = ds_plugins_retrieve($module);
-  $plugin_settings = variable_get($module .'_plugin_settings', array());
+  $plugin_settings = variable_get($module . '_plugin_settings', array());
   if (is_array($plugins)) {
     $form['#plugins'] = $plugins;
     foreach ($plugins as $key => $plugin) {
@@ -49,7 +49,7 @@ function ds_plugins_submit($form, &$form_state) {
       $plugin_settings[$plugin['key']]['status'] = '1';
     }
   }
-  variable_set($form['#module'] .'_plugin_settings', $plugin_settings);
+  variable_set($form['#module'] . '_plugin_settings', $plugin_settings);
 }
 
 /**
@@ -68,7 +68,7 @@ function theme_ds_plugins($form) {
   foreach ($form['#plugins'] as $key => $plugin) {
     $row = array();
     $row[] = array('data' => drupal_render($form['plugin_'. $plugin['key']]));
-    $row[] = array('data' => '<strong>'. $plugin['title'] .'</strong>: '. $plugin['description']);
+    $row[] = array('data' => '<strong>' . $plugin['title'] .'</strong>: '. $plugin['description']);
     $rows[] = $row;
   }
 
@@ -91,7 +91,7 @@ function ds_plugins_retrieve($module) {
       $data['key'] = $plugin;
       $data['class'] = $data['class'];
       if (isset($data['file']) && isset($data['path']))
-      $data['filename'] = $data['path'] .'/'. $data['file'];
+      $data['filename'] = $data['path'] . '/' . $data['file'];
 
       $plugins[$plugin] = $data;
     }

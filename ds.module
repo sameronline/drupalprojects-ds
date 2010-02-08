@@ -46,22 +46,22 @@ define('DS_DEFAULT_LABEL_FORMAT', 'hidden');
 define('DS_DEFAULT_WEIGHT', -19);
 
 /**
- * Implementation of hook_init().
+ * Implements hook_init().
  */
 function ds_init() {
-  drupal_add_css(drupal_get_path('module', 'ds') .'/css/regions.css');
+  drupal_add_css(drupal_get_path('module', 'ds') . '/css/regions.css');
 }
 
 /**
- * Implementation of hook_perm().
+ * Implements hook_permission().
  */
-function ds_perm() {
+function ds_permission() {
   require_once('includes/ds.registry.inc');
-  return _ds_perm();
+  return _ds_permission();
 }
 
 /**
- * Implementation of hook_menu().
+ * Implements hook_menu().
  */
 function ds_menu() {
   require_once('includes/ds.registry.inc');
@@ -69,7 +69,7 @@ function ds_menu() {
 }
 
 /**
- * Implementation of hook_theme().
+ * Implements hook_theme().
  */
 function ds_theme() {
   require_once('includes/ds.registry.inc');
@@ -77,29 +77,21 @@ function ds_theme() {
 }
 
 /**
- * Implementation of hook_views_api().
+ * Implements hook_views_api().
  */
 function ds_views_api() {
   return array(
-    'api' => 2,
-    'path' => drupal_get_path('module', 'ds') .'/views',
+    'api' => 3,
+    'path' => drupal_get_path('module', 'ds') . '/views',
   );
 }
 
 /**
- * Implementation of hook_ds_plugins().
+ * Implements hook_ds_plugins().
  */
 function ds_ds_plugins() {
   require_once('includes/ds.registry.inc');
   return _ds_plugins();
-}
-
-/**
- * Implementation of hook_features_api().
- */
-function ds_features_api() {
-  require_once('includes/ds.features.inc');
-  return _ds_features_api();
 }
 
 /**
@@ -114,7 +106,7 @@ function ds_api_info($module, $type_name = 'all') {
   if (!isset($api_info[$module][$type_name])) {
 
     // Gather information.
-    $function = $module .'_ds_api';
+    $function = $module . '_ds_api';
     $api_data = $function();
     $api_info[$module][$type_name] = $api_data;
     if (!isset($api_info[$module][$type_name]['extra'])) {
@@ -152,15 +144,15 @@ function ds_build_fields_and_regions(&$object, $module) {
   // or per build mode per content type.
   // We don't return here, because we want to add all fields on the object
   // so themers can use it in their template.
-  $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
+  $exclude_build_modes = variable_get($module . '_buildmodes_exclude', array());
   $object->render_by_ds = ((isset($exclude_build_modes[$object->type][$object->build_mode])
     && $exclude_build_modes[$object->type][$object->build_mode] == TRUE) ||
-    variable_get($module .'_type_'. $object->type, FALSE) == TRUE) ? FALSE : TRUE;
+    variable_get($module . '_type_' . $object->type, FALSE) == TRUE) ? FALSE : TRUE;
 
   $regions = array();
   $ds_fields = array();
   $ds_preprocess_fields = array();
-  $display_settings = variable_get($module .'_display_settings_'. $object->type, array());
+  $display_settings = variable_get($module . '_display_settings_' . $object->type, array());
 
   // Get all fields and settings for this build mode.
   $fields = ds_get_fields($module, $object->type, $object->build_mode, $api_info['extra']);
@@ -204,7 +196,7 @@ function ds_build_fields_and_regions(&$object, $module) {
         $field['object_type'] = $object_type;
 
         // Create a $key_rendered variable.
-        $key_rendered = $key .'_rendered';
+        $key_rendered = $key . '_rendered';
 
         // Theming can either be done in preprocess, or with a custom funtion or an
         // existing formatter theming function. Always pass the $field as parameter.
@@ -263,7 +255,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
   $api_info = ds_api_info($module, $object->type);
 
   // Display settings for this module and object.
-  $display_settings = variable_get($module .'_display_settings_'. $object->type, array());
+  $display_settings = variable_get($module . '_display_settings_' . $object->type, array());
 
   $all_regions = ds_regions('all', TRUE);
   $regions = $vars['regions'];
@@ -274,11 +266,11 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
     foreach ($object->preprocess_fields as $key => $type) {
       switch ($type) {
         case DS_FIELD_TYPE_PREPROCESS:
-          $field_key = $key .'_rendered';
+          $field_key = $key . '_rendered';
           $vars[$field_key] = $vars[$key];
           break;
         case DS_FIELD_TYPE_IGNORE:
-          $field_key = $key .'_rendered';
+          $field_key = $key . '_rendered';
           $vars[$field_key] = $object->content[$key]['#value'];
           break;
       }
@@ -296,7 +288,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
       // Loop through all fields after ordering on weight.
       asort($region);
       foreach ($region as $key => $weight) {
-        $field_content = isset($vars[$key .'_rendered']) ? $vars[$key .'_rendered'] : '';
+        $field_content = isset($vars[$key . '_rendered']) ? $vars[$key . '_rendered'] : '';
         if (!empty($field_content)) {
           $field_key = strtr($key, '_', '-');
           $region_content .= theme($theme_function, $field_content, $field_key, $object->ds_fields[$key]);
@@ -337,9 +329,9 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
   // Build the $content variable.
   $content = '';
   foreach ($object_display->themed_regions as $region_name => $region_data) {
-    $content .= '<div class="ds-region-'. $region_name;
+    $content .= '<div class="ds-region-' . $region_name;
     if ($region_name == 'middle') {
-      $content .= ' '. $ds_middle_classes;
+      $content .= ' ' . $ds_middle_classes;
     }
     if (isset($region_data['extra_class'])) {
       $content .= $region_data['extra_class'];
@@ -348,7 +340,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
     if (isset($region_data['inline_css'])) {
       $content .= $region_data['inline_css'];
     }
-    $content .= '><div class="ds-region-inner">'. $region_data['content'] .'</div></div>';
+    $content .= '><div class="ds-region-inner">' . $region_data['content'] . '</div></div>';
   }
   return $content;
 }
@@ -393,7 +385,7 @@ function ds_get_fields($module, $type_name, $build_mode, $extra = array(), $rese
       // Fields in code.
       $fields = array();
       foreach (module_implements('ds_fields') as $prefix) {
-        $function = $prefix .'_ds_fields';
+        $function = $prefix . '_ds_fields';
         $all_fields = $function($type_name, $build_mode, $extra);
         if (!empty($all_fields)) {
           foreach ($all_fields as $key => $field_results) {
@@ -411,7 +403,7 @@ function ds_get_fields($module, $type_name, $build_mode, $extra = array(), $rese
       }
 
       // Fields via the UI.
-      $db_fields = variable_get($module .'_fields', array());
+      $db_fields = variable_get($module . '_fields', array());
       if (!empty($db_fields)) {
         foreach ($db_fields as $key => $field) {
           $fields[$key] = array(
@@ -487,7 +479,7 @@ function ds_get_build_modes($module = NULL, $reset = FALSE) {
  * @param stdClass $display Collection of arrays with object data.
  */
 function ds_plugins_process($module, $object_type, $display_settings, &$vars, &$display) {
-  $plugins = variable_get($module .'_plugin_settings', array());
+  $plugins = variable_get($module . '_plugin_settings', array());
   if (!empty($plugins)) {
     foreach ($plugins as $key => $data) {
       if (isset($data['filename']) && isset($data['class'])) {
@@ -526,7 +518,7 @@ function ds_eval($code, $object) {
   }
 
   ob_start();
-  print eval('?>'. $code);
+  print eval('?>' . $code);
   $output = ob_get_contents();
   ob_end_clean();
 
@@ -587,7 +579,7 @@ function ds_regions($regions = 'all', $render = FALSE) {
 function ds_show_links($module, $type_name, $build_mode) {
   static $show_links = array();
   if (!isset($show_links[$module][$type_name][$build_mode])) {
-    $display_settings = variable_get($module .'_display_settings_'. $type_name, array());
+    $display_settings = variable_get($module . '_display_settings_' . $type_name, array());
     $show_links[$module][$type_name][$build_mode] = (isset($display_settings[$build_mode]['fields']['links']) && $display_settings[$build_mode]['fields']['links']['region'] != 'disabled') ? TRUE : FALSE;
   }
   return $show_links[$module][$type_name][$build_mode];

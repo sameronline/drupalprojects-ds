@@ -44,7 +44,7 @@ class views_plugin_ds_object_view extends views_plugin_row {
     $build_mode_options = array();
     $build_modes = ds_get_build_modes();
     foreach ($build_modes as $module => $modes) {
-      $function = $module .'_ds_api';
+      $function = $module . '_ds_api';
       $api_info = $function();
       if ($api_info['views_base'] == $views_base_table) {
         foreach ($modes as $key => $title) {

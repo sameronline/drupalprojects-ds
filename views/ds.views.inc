@@ -7,7 +7,7 @@
  */
 
 /**
- * Implementation of hook_views_plugins().
+ * Implements hook_views_plugins().
  */
 function ds_views_plugins() {
   $path = drupal_get_path('module', 'ds');
@@ -19,8 +19,8 @@ function ds_views_plugins() {
         'help' => t('Display the object through the Display suite module.'),
         'handler' => 'views_plugin_ds_object_view',
         'theme' => 'ds_row_object',
-        'path' => $path .'/views',
-        'theme path' => $path .'/theme',
+        'path' => $path . '/views',
+        'theme path' => $path . '/theme',
         'theme file' => 'theme.inc',
         'uses options' => TRUE,
         'type' => 'normal',

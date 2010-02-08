@@ -9,16 +9,33 @@
 /**
  * Return permissions.
  */
-function _ds_perm() {
+function _ds_permission() {
   $perms = array(
-    'access display suite',
-    'use PHP in custom fields',
-    'revert overridden settings',
-    'export and import settings',
+    'access display suite' => array(
+      'title' => t('Access Display Suite main menu item')
+    ),
+    'use PHP in custom fields' => array(
+      'title' => t('Use PHP in custom fields'),
+      'description' => t('Only give this permission to trusted roles')
+    ),
+    'revert overridden settings' => array(
+      'title' => t('Let users revert overriden display settings')
+    ),
+    'export and import settings' => array(
+      'title' => t('Use the import and export screen.')
+    ),
   );
   foreach (module_implements('ds_api') as $module) {
-    $perms[] = 'administer '. $module;
-    $perms[] = 'configure layout for '. $module;
+    $function = $module . '_ds_api';
+    $api_info = $function();
+    $perms['administer '. $module] = array(
+      'title' => t('Administer @module', array('@module' => $api_info['title'])),
+      'description' => t('Give users permission to administer fields, build modes and plugins')
+    );
+    $perms['configure layout for '. $module] = array(
+      'title' => t('Configure layout for @module', array('@module' => $api_info['title'])),
+      'description' => t('Give users permission to alter display settings')
+    );
   }
   return $perms;
 }
@@ -94,7 +111,7 @@ function _ds_menu() {
       'title' => $title,
       'page callback' => 'ds_info',
       'page arguments' => array($module),
-      'access arguments' => array('administer '. $module),
+      'access arguments' => array('administer ' . $module),
       'file' => 'includes/ds.info.inc',
     );
     $items['admin/ds/'. $module .'/info'] = array(
@@ -109,7 +126,7 @@ function _ds_menu() {
       'page callback' => 'ds_fields',
       'page arguments' => array($module),
       'access callback' => '_ds_menu_access',
-      'access arguments' => array('administer '. $module, 'use PHP in custom fields'),
+      'access arguments' => array('administer ' . $module, 'use PHP in custom fields'),
       'file' => 'includes/ds.fields.inc',
       'type' => MENU_LOCAL_TASK,
       'weight' => 1,
@@ -120,7 +137,7 @@ function _ds_menu() {
       'title' => 'Build modes',
       'page callback' => 'ds_build_modes',
       'page arguments' => array($module),
-      'access arguments' => array('administer '. $module),
+      'access arguments' => array('administer ' . $module),
       'file' => 'includes/ds.buildmodes.inc',
       'type' => MENU_LOCAL_TASK,
       'weight' => 2,
@@ -131,7 +148,7 @@ function _ds_menu() {
       'title' => 'Plugins',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('ds_plugins', $module),
-      'access arguments' => array('administer '. $module),
+      'access arguments' => array('administer ' . $module),
       'file' => 'includes/ds.plugins.inc',
       'type' => MENU_LOCAL_TASK,
       'weight' => 3,
