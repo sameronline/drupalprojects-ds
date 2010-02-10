@@ -143,6 +143,11 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   $form = &$vars['form'];
 
   $build_mode = $form['#build_mode'];
+  $regions = ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all'));
+
+  // Tabledrag or dashboard style ?
+  $style = 'dashboard';
+  _template_preprocess_ds_display_style($vars, $regions, $style);
 
   // Order the fields.
   $order = array();
@@ -159,9 +164,12 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     // Each field will have a region, store it temporarily
     $region = $element[$build_mode]['region']['#default_value'];
 
-    foreach (element_children($element) as $child) {
+    // Add a field id, necessary for dashboard style.
+    $row->field_id = $key;
 
-      // Render the display fields
+    // Rander all children from an element.
+    foreach (element_children($element) as $child) {
+      // Display fields
       if ($child == $build_mode) {
         $row->{$child}->label = drupal_render($element[$child]['label']);
         $row->{$child}->label_edit = drupal_render($element[$child]['label_edit']);
@@ -169,9 +177,9 @@ function template_preprocess_ds_display_overview_form(&$vars) {
         $row->{$child}->format = drupal_render($element[$child]['format']);
         $row->{$child}->region = drupal_render($element[$child]['region']);
       }
-      // Render the rest of the fields
+      // Rest of the fields
       else {
-        // Process weight.
+        // Weight.
         if ($child == 'ds_weight') {
           $element['ds_weight']['#attributes']['class'] = 'field-weight field-weight-'. $region;
           $element['ds_weight'] = process_weight($element['ds_weight']);
@@ -180,25 +188,16 @@ function template_preprocess_ds_display_overview_form(&$vars) {
       }
     }
 
-    // Add draggable.
-    $row->class = 'draggable';
-    if ($region == 'disabled') {
-      $row->class .= ' region-css-'. $region;
+    // Add draggable in tabledrag style
+    if ($style == 'tabledrag') {
+      $row->class = 'draggable';
+      if ($region == 'disabled') {
+        $row->class .= ' region-css-'. $region;
+      }
     }
 
     $row->label_class = 'label-field';
     $rows[$region][] = $row;
-  }
-
-  drupal_add_js('misc/tableheader.js');
-  drupal_add_js(drupal_get_path('module', 'ds') .'/js/ds.js');
-  drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
-
-  $regions = ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all'));
-  foreach ($regions as $region => $title) {
-    drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region, NULL, FALSE);
-    // We need to have subgroups to make the dragging available within parents
-    drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', 'field-weight-'. $region);
   }
 
   // Plugins available.
@@ -215,4 +214,40 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   $vars['submit'] = drupal_render($form);
   $vars['regions'] = $regions;
   $vars['build_mode'] = $build_mode;
+}
+
+/**
+ * Helper function to determine which css & javascript we want to load. The form can either be
+ * themed as a table drag screen or as a dashboard screen.
+ *
+ * @param array $vars The current variables processed.
+ * @param array $regions The regions.
+ * @param string $style The style, either tabledrag or dashboard.
+ */
+function _template_preprocess_ds_display_style(&$vars, $regions, $style) {
+
+  // Global css & js.
+  drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
+  drupal_add_js(drupal_get_path('module', 'ds') .'/js/ds.js');
+
+  // Table drag style.
+  if ($style == 'tabledrag') {
+    drupal_add_js('misc/tableheader.js');
+    drupal_add_js(drupal_get_path('module', 'ds') .'/js/tables.js');
+
+    foreach ($regions as $region => $title) {
+      drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region, NULL, FALSE);
+      // We need to have subgroups to make the dragging available within parents
+      drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', 'field-weight-'. $region);
+    }
+  }
+
+  // Dashboard style.
+  if ($style == 'dashboard') {
+    $vars['template_files'][] = 'ds-display-overview-form-dashboard';
+    drupal_add_js(drupal_get_path('module', 'ds') .'/js/dashboard.js');
+    drupal_add_js(drupal_get_path('module', 'ds') .'/js/interface.js');
+    drupal_add_css(drupal_get_path('module', 'ds') .'/css/dashboard.css');
+    drupal_add_css(drupal_get_path('module', 'ds') .'/css/regions.css');
+  }
 }
