@@ -208,10 +208,10 @@ function ds_build_fields_and_regions($object, $module) {
           case DS_FIELD_TYPE_CODE:
             $format = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : 'ds_eval_code';
             $field['formatter'] = $format;
-            $object->{$key_rendered} = theme($format, $field);
+            $object->{$key_rendered} = theme($format, array('field' => $field));
             break;
           case DS_FIELD_TYPE_BLOCK:
-            $object->{$key_rendered} = theme('ds_eval_block', $field);
+            $object->{$key_rendered} = theme('ds_eval_block', array('field' => $field));
             break;
           case DS_FIELD_TYPE_FUNCTION:
             if (isset($field['file'])) {
@@ -223,7 +223,7 @@ function ds_build_fields_and_regions($object, $module) {
           case DS_FIELD_TYPE_THEME:
             $format = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : key($field['properties']['formatters']);
             $field['formatter'] = $format;
-            $object->{$key_rendered} = theme($format, $field);
+            $object->{$key_rendered} = theme($format, array('field' => $field));
             break;
         }
       }

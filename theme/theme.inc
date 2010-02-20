@@ -46,6 +46,7 @@ function theme_ds_field($variables) {
  * @param array $field The field with all its properties.
  */
 function theme_ds_eval_code($field) {
+  $field = $field['field'];
   if (isset($field['properties']['code'])) {
     $value = ds_eval($field['properties']['code'], $field['object']);
     // Token support - check on token property so we don't run every single field through token.
@@ -62,6 +63,7 @@ function theme_ds_eval_code($field) {
  * @param array $field The field array.
  */
 function theme_ds_eval_block($field) {
+  $field = $field['field'];
   if (isset($field['properties'])) {
     list($module, $delta) = explode('|', $field['properties']['block']);
     $block = module_invoke($module, 'block', 'view', $delta);
@@ -96,6 +98,7 @@ function theme_ds_eval_block($field) {
  * Theme author name.
  */
 function theme_ds_author_nolink($field) {
+  $field = $field['field'];
   return $field['object']->name;
 }
 
@@ -103,6 +106,7 @@ function theme_ds_author_nolink($field) {
  * Theme author name linked.
  */
 function theme_ds_author_link($field) {
+  $field = $field['field'];
   return theme('username', $field['object']);
 }
 
@@ -110,6 +114,7 @@ function theme_ds_author_link($field) {
  * Theme the user picture.
  */
 function theme_ds_picture($field) {
+  $field = $field['field'];
   return theme('user_picture', $field['object']);
 }
 
