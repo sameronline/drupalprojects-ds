@@ -245,7 +245,7 @@ function _ds_theme() {
 
     // General theming field.
     'ds_field' => array(
-      'arguments' => array(
+      'variables' => array(
         'content' => NULL,
         'field_key' => NULL,
         'field' => NULL,
@@ -256,7 +256,7 @@ function _ds_theme() {
 
     // Evaluate code.
     'ds_eval_code' => array(
-      'arguments' => array(
+      'variables' => array(
         'field' => NULL,
       ),
       'file' => 'theme.inc',
@@ -264,7 +264,7 @@ function _ds_theme() {
     ),
     // Evaluate block.
     'ds_eval_block' => array(
-      'arguments' => array(
+      'variables' => array(
         'field' => NULL,
       ),
       'file' => 'theme.inc',
@@ -273,17 +273,17 @@ function _ds_theme() {
 
     // Theming for fields which are shared across objects (name, picture etc).
     'ds_author_link' => array(
-      'arguments' => array('object' => NULL),
+      'variables' => array('object' => NULL),
       'file' => 'theme.inc',
       'path' => $path . '/theme',
     ),
     'ds_author_nolink' => array(
-      'arguments' => array('object' => NULL),
+      'variables' => array('object' => NULL),
       'file' => 'theme.inc',
       'path' => $path . '/theme',
     ),
     'ds_picture' => array(
-      'arguments' => array('object' => NULL),
+      'variables' => array('object' => NULL),
       'file' => 'theme.inc',
       'path' => $path . '/theme',
     ),

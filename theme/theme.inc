@@ -9,11 +9,13 @@
 /**
  * Theme function to render the field content.
  *
- * @param string $content The content to render.
- * @param string $field_key The name of the field key.
- * @param array $field The current field.
+ * @param array $variables A collection of data for this field.
  */
-function theme_ds_field($content, $field_key, $field) {
+function theme_ds_field($variables) {
+
+  $content = $variables['content'];
+  $field_key = $variables['field_key'];
+  $field = $variables['field'];
 
   $output = '';
   if (!empty($content)) {
