@@ -173,8 +173,8 @@ function template_preprocess_ds_display_overview_form(&$vars) {
       else {
         // Process weight.
         if ($child == 'ds_weight') {
-          $element['ds_weight']['#attributes']['class'] = 'field-weight field-weight-' . $region;
-          $element['ds_weight'] = process_weight($element['ds_weight']);
+          //$element['ds_weight']['#attributes']['class'][] = 'field-weight field-weight-' . $region;
+          //$element['ds_weight'] = form_process_weight($element['ds_weight']);
         }
         $row->{$child} = drupal_render($element[$child]);
       }

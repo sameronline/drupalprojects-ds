@@ -11,20 +11,21 @@
  */
 function ds_general_page() {
 
-  // Child pages.
-  $item = menu_get_item('admin/ds');
+  $item = menu_get_item();
   if ($content = system_admin_menu_block($item)) {
-    $childs = theme('admin_block_content', $content);
+    $childs = theme('admin_block_content', array('content' => $content));
   }
   else {
     $childs = t('You do not have any administrative items.');
   }
 
-  $fieldset = array();
-  $fieldset['#title'] = 'General';
-  $fieldset['#children'] = $childs;
-  $fieldset['#attributes'] = array();
-  $output = theme('fieldset', $fieldset);
+  $fieldset = array(
+    '#title' => t('General'),
+    '#children' => $childs,
+    '#attributes' => array(),
+  );
+
+  $output = theme('fieldset', array('element' => $fieldset));
 
   return $output;
 }

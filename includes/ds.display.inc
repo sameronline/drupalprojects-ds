@@ -336,7 +336,7 @@ function ds_field_default_form_properties($build_mode) {
       '#options' => ds_regions(variable_get('ds_build_mode_' . $build_mode, 'all')),
       '#default_value' => DS_DEFAULT_REGION,
       '#attributes' => array(
-        'class' => 'field-region-select field-region-' . DS_DEFAULT_REGION,
+        'class' => array('field-region-select field-region-' . DS_DEFAULT_REGION),
       ),
     ),
   );
@@ -369,7 +369,7 @@ function ds_field_default_form_properties($build_mode) {
         '#options' => ds_regions(variable_get('ds_build_mode_' . $build_mode, 'all')),
         '#default_value' => DS_DEFAULT_WEIGHT,
         '#attributes' => array(
-          'class' => 'field-region-select field-region-' . DS_DEFAULT_REGION,
+          'class' => array('field-region-select field-region-' . DS_DEFAULT_REGION),
         ),
       ),
     );
