@@ -1,6 +1,6 @@
 /* $Id$ */
 
-// Display fields overview screen.
+/* Display fields overview screen. */
 #fields td.region {
   font-weight: bold;
 }
@@ -14,6 +14,14 @@
   display: none;
 }
 
+#fields .td-region {
+	background-color:#D4E7F3;
+	border-bottom:1px solid #B4D7F0;
+	border-top:1.5em solid #FFFFFF;
+	color:#455067;
+	font-weight: bold;
+}
+		
 .field-region {
   background-color: #ff6;
   margin-top: 4px;

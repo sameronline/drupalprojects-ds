@@ -228,19 +228,19 @@ function _ds_theme() {
       'template' => 'ds-display-overview-form',
       'file' => 'theme.inc',
       'path' => $path . '/theme',
-      'arguments' => array('form' => NULL),
+      'render element' => 'form',
     ),
     // Build modes matrix.
     'ds_buildmodes_matrix_form' => array(
       'file' => 'ds.buildmodes.inc',
       'path' => $path . '/includes',
-      'arguments' => array('form' => NULL),
+      'render element' => 'form',
     ),
     // Plugins form.
     'ds_plugins' => array(
       'file' => 'ds.plugins.inc',
       'path' => $path . '/includes',
-      'arguments' => array('form' => NULL),
+      'render element' => 'form',
     ),
 
     // General theming field.

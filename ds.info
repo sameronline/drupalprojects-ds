@@ -7,7 +7,6 @@ files[] = ds.module
 files[] = ds.install
 files[] = includes/ds.admin.inc
 files[] = includes/ds.buildmodes.inc
-files[] = includes/ds.features.inc
 files[] = includes/ds.fields.inc
 files[] = includes/ds.info.inc
 files[] = includes/ds.plugins.inc

@@ -52,9 +52,9 @@ function ds_layout_overview() {
             $row[] = $build_mode['title'];
             $row[] = ds_settings_status($settings_status);
 
-            $operations = l(t('Edit'), 'admin/ds/layout/' . $type . '/' . $bkey);
+            $operations = l(t('Edit'), 'admin/ds/layout/' . $type_url_str . '/' . $bkey);
             if (user_access('revert overridden settings') && $settings_status == DS_SETTINGS_OVERRIDDEN) {
-              $operations .= ' - ' . l(t('Revert'), 'admin/ds/tools/revert/' . $module . '/' . $type . '/' . $bkey);
+              $operations .= ' - ' . l(t('Revert'), 'admin/ds/tools/revert/' . $module . '/' . $type_url_str . '/' . $bkey);
             }
             $row[] = $operations;
             $rows[] = array('data' => $row, 'class' => array('ds-row-type'));
@@ -137,8 +137,8 @@ function ds_display_overview_form($form, &$form_state, $type, $build_mode = 'ful
   if (isset($api_info['plugins_exclude']) && in_array($build_mode, $api_info['plugins_exclude'])) {
     $plugins = FALSE;
   }
-  if ($plugins)
-  ds_plugins_display_form($form, $display_settings);
+  /*if ($plugins)
+  ds_plugins_display_form($form, $display_settings);*/
 
   $form['submit'] = array(
     '#type' => 'submit',
@@ -186,11 +186,11 @@ function ds_fields_display_form(&$form, $display_settings) {
       '#type' => 'hidden',
       '#default_value' => $label_value,
     );
-    $form[$field][$build_mode]['label_edit']['#value'] = l(t('Edit'), $base_url . request_uri(), array(
+    $form[$field][$build_mode]['label_edit']['#markup'] = l(t('Edit'), $base_url . request_uri(), array(
       'attributes' => array('onclick' => 'javascript: Drupal.DisplaySuite.changeLabel(this, "' . $label_value . '"); return false;')
     ));
 
-    $form[$field]['human_name']['#value'] = !empty($label_value) ? $label_value : $value['title'];
+    $form[$field]['human_name']['#markup'] = !empty($label_value) ? $label_value : $value['title'];
 
     $form[$field]['weight']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
 

@@ -8,7 +8,16 @@
  *
  * Based on nodeform cols.
  */
-Drupal.behaviors.fieldDrag = function(context) {
+
+(function($) {
+
+Drupal.behaviors.fieldDSManageFields = {
+  attach: function (context) {
+    attachDSFields(context);
+  }
+};
+
+function attachDSFields(context) {
   var table = $('table#fields');
   var tableDrag = Drupal.tableDrag.fields; // Get the fields tableDrag object.
 
@@ -111,6 +120,8 @@ Drupal.behaviors.fieldDrag = function(context) {
     });
   };
 };
+
+})(jQuery);
 
 /**
  * Drupal ds object.

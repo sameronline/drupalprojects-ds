@@ -140,7 +140,7 @@ function template_preprocess_ds_row_object(&$vars) {
  * Theme preprocess function for ds-display-overview-form.tpl.php.
  */
 function template_preprocess_ds_display_overview_form(&$vars) {
-  $form = &$vars['form'];
+  $form = $vars['form'];
 
   $build_mode = $form['#build_mode'];
 
@@ -173,8 +173,8 @@ function template_preprocess_ds_display_overview_form(&$vars) {
       else {
         // Process weight.
         if ($child == 'ds_weight') {
-          //$element['ds_weight']['#attributes']['class'][] = 'field-weight field-weight-' . $region;
-          //$element['ds_weight'] = form_process_weight($element['ds_weight']);
+          $element['ds_weight']['#attributes']['class'][] = 'field-weight field-weight-' . $region;
+          $element['ds_weight'] = form_process_weight($element['ds_weight']);
         }
         $row->{$child} = drupal_render($element[$child]);
       }
@@ -212,7 +212,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   }
 
   $vars['rows'] = $rows;
-  $vars['submit'] = drupal_render($form);
+  $vars['submit'] = drupal_render_children($form);
   $vars['regions'] = $regions;
   $vars['build_mode'] = $build_mode;
 }
