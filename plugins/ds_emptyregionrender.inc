@@ -60,7 +60,7 @@ class ds_emptyregionrender {
   /**
    * execute().
    */
-  public function execute(&$vars, &$display, $display_settings, $object_type) {
+  public function execute(&$vars, &$display, $display_settings, $object_type, $module) {
 
     foreach ($display->all_regions as $region_name => $region_title) {
 

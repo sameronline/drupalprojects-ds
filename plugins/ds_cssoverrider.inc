@@ -69,7 +69,7 @@ class ds_cssoverrider {
   /**
    * process().
    */
-  public function execute(&$vars, &$display, $display_settings, $object_type) {
+  public function execute(&$vars, &$display, $display_settings, $object_type, $module) {
 
     foreach ($display->themed_regions as $region_name => $region_data) {
 
