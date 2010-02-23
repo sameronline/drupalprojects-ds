@@ -114,6 +114,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
     '#plugins' => FALSE,
     '#extra' => array(),
     '#status' => $settings_status,
+    '#regions' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
   );
 
   // Extra info.
