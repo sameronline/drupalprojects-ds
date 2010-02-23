@@ -195,7 +195,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   drupal_add_js(drupal_get_path('module', 'ds') .'/js/ds.js');
   drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
 
-  $regions = ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all'));
+  $regions = $form['#regions'];
   foreach ($regions as $region => $title) {
     drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region, NULL, FALSE);
     // We need to have subgroups to make the dragging available within parents
