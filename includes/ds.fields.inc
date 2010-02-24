@@ -129,6 +129,7 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
       'status' => DS_FIELD_STATUS_CUSTOM,
       'properties' => array(
         'code' => '',
+        'css-class' => '',
         'token' => FALSE
       )
     );
@@ -158,6 +159,13 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
     '#required' => TRUE,
     '#default_value' => $field['title']
   );
+  $form['code_identity']['code_class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Field class'),
+    '#description' => t('The classes you want to add to this field. This will replace the automatic class that Display Suite generates.'),
+    '#default_value' => isset($field['properties']['css-class']) ? $field['properties']['css-class'] : '',
+  );
+
   $api_info = ds_api_info($module);
   if (isset($api_info['types']) && count($api_info['types']()) > 1) {
     $types = array();
@@ -272,7 +280,9 @@ function ds_code_field_form_validate($form, &$form_state) {
 function ds_code_field_form_submit($form, &$form_state) {
   $module = $form['#module'];
   $fields = variable_get($module .'_fields', array());
-  $fields[$form_state['values']['code_key']] = array(
+
+  $key = $form_state['values']['code_key'];
+  $fields[$key] = array(
     'title' => $form_state['values']['code_title'],
     'exclude' => $form_state['values']['code_exclude'],
     'type' => DS_FIELD_TYPE_CODE,
@@ -285,6 +295,11 @@ function ds_code_field_form_submit($form, &$form_state) {
       'token' => $form_state['values']['code_token'],
     ),
   );
+
+  // Code class.
+  if (!empty($form_state['values']['code_class'])) {
+    $fields[$key]['properties']['css-class'] = $form_state['values']['code_class'];
+  }
 
   // Safe field and invalidate cached fields.
   variable_set($module .'_fields', $fields);
@@ -314,6 +329,7 @@ function ds_block_field_form($form_state, $module, $all_fields, $object = '', $k
       'type' => DS_FIELD_TYPE_BLOCK,
       'status' => DS_FIELD_STATUS_CUSTOM,
       'properties' => array(
+        'css-class' => '',
         'block' => '',
         'render' => DS_BLOCK_TEMPLATE
       )
@@ -344,6 +360,13 @@ function ds_block_field_form($form_state, $module, $all_fields, $object = '', $k
     '#required' => TRUE,
     '#default_value' => $field['title']
   );
+  $form['block_identity']['block_class'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Field class'),
+    '#description' => t('The classes you want to add to this field. This will replace the automatic class that Display Suite generates.'),
+    '#default_value' => isset($field['properties']['css-class']) ? $field['properties']['css-class'] : '',
+  );
+
   $api_info = ds_api_info($module);
   if (isset($api_info['types']) && count($api_info['types']()) > 1) {
     $types = array();
@@ -441,7 +464,9 @@ function ds_block_field_form_validate($form, &$form_state) {
 function ds_block_field_form_submit($form, &$form_state) {
   $module = $form['#module'];
   $fields = variable_get($module .'_fields', array());
-  $fields[$form_state['values']['block_key']] = array(
+
+  $key = $form_state['values']['block_key'];
+  $fields[$key] = array(
     'type' => DS_FIELD_TYPE_BLOCK,
     'status' => $form['#field_status'],
     'title' => $form_state['values']['block_title'],
@@ -451,6 +476,11 @@ function ds_block_field_form_submit($form, &$form_state) {
       'render' => $form_state['values']['block_render'],
     ),
   );
+
+  // Block class.
+  if (!empty($form_state['values']['block_class'])) {
+    $fields[$key]['properties']['css-class'] = $form_state['values']['block_class'];
+  }
 
   // Safe field and invalidate cached fields.
   variable_set($module .'_fields', $fields);
