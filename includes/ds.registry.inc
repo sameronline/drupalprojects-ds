@@ -330,10 +330,10 @@ function _ds_register_build_modes() {
     if (!empty($db_build_modes)) {
       foreach ($db_build_modes as $key => $name) {
         $build_modes[$module][$key] = array(
+          'weight' => $weight++,
           'title' => check_plain($name),
           'build modes' => array(
             $key => array(
-              'weight' => $weight++,
               'title' => check_plain($name),
             ),
           ),
