@@ -5,6 +5,7 @@
 - #710094 by swentel: fix small edit link bug in layout overview screen.
 - #722004 by swentel: better description of ds_views_row_adv_VIEWSNAME.
 - #710034 by swentel: region to block plugin.
+- #723916 by swentel: fields title leads to edit screen.
 
 -------------------------------------------------------------------------------------
 6.x-1.0 2010-02-04

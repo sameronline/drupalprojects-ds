@@ -228,7 +228,9 @@ function ds_build_fields_and_regions(&$object, $module) {
           'title' => $field['title'],
           'labelformat' => (isset($field_settings[$key]['labelformat'])) ? $field_settings[$key]['labelformat'] : DS_DEFAULT_LABEL_FORMAT,
           'type' => isset($field['display_settings']) ? 'other' : 'ds',
+          'class' => isset($field['properties']['css-class']) ? $field['properties']['css-class'] : 'field-'. strtr($key, '_', '-'),
         );
+
         // Try to change the title if this is configured and label is not hidden.
         if (isset($field_settings[$key]['label_value']) && $ds_fields[$key]['labelformat'] != DS_DEFAULT_LABEL_FORMAT) {
           $ds_fields[$key]['title'] = t(check_plain($field_settings[$key]['label_value']));
@@ -340,8 +342,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
       foreach ($region as $key => $weight) {
         $field_content = isset($vars[$key .'_rendered']) ? $vars[$key .'_rendered'] : '';
         if (!empty($field_content)) {
-          $field_key = strtr($key, '_', '-');
-          $region_content .= theme($theme_function, $field_content, $field_key, $object->ds_fields[$key]);
+          $region_content .= theme($theme_function, $field_content, $object->ds_fields[$key]);
         }
       }
 

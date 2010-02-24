@@ -84,7 +84,7 @@ function ds_fields($module) {
       $rows = array();
       foreach ($db_fields as $key => $value) {
         $row = array();
-        $row[] = check_plain($value['title']);
+        $row[] = l(check_plain($value['title']), 'admin/ds/'. $module .'/fields/edit/'. $key);
         $row[] = $key;
         $row[] = ds_human_name($value['type'], 'type');
         $row[] = ds_human_name($value['status'], 'status');
