@@ -36,7 +36,7 @@ function ds_layout_overview() {
         $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
 
         if (!empty($build_modes)) {
-          $rows[] = array(array('data' => $otype->name, 'colspan' => '3', 'class' => 'ds-row-title'));
+          $rows[] = array(array('data' => ucfirst($otype->name), 'colspan' => '3', 'class' => 'ds-row-title'));
           foreach ($build_modes as $bkey => $build_mode) {
 
             $excluded = (isset($exclude_build_modes[$type_name][$bkey]) && $exclude_build_modes[$type_name][$bkey] == TRUE) ? TRUE : FALSE;
