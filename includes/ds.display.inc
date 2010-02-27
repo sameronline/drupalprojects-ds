@@ -129,13 +129,17 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
   // Add the fields.
   ds_fields_display_form($form, $display_settings);
 
+  // Sync / copy tab.
+  ds_sync_copy_form($form, $display_settings, $build_mode, $module, $type);
+
   // Plugins.
   $plugins = TRUE;
   if (isset($api_info['plugins_exclude']) && in_array($build_mode, $api_info['plugins_exclude'])) {
     $plugins = FALSE;
   }
-  if ($plugins)
-  ds_plugins_display_form($form, $display_settings);
+  if ($plugins) {
+    ds_plugins_display_form($form, $display_settings);
+  }
 
   $form['submit'] = array(
     '#type' => 'submit',
@@ -206,6 +210,53 @@ function ds_fields_display_form(&$form, $display_settings) {
 }
 
 /**
+ * Add the sync / copy tab to the display overview form.
+ *
+ * @param $form The display form.
+ * @param array $display_settings Current display settings.
+ * @param array $current_build_mode Current build mode.
+ * @param string $module The current module.
+ * @param string $type_name The name of the type.
+ */
+function ds_sync_copy_form(&$form, $display_settings, $current_build_mode, $module, $type_name) {
+  $build_modes = array();
+  $all_build_modes = ds_get_build_modes($module);
+  $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
+
+  foreach ($all_build_modes as $key => $build_mode) {
+    $excluded = (isset($exclude_build_modes[$type_name][$key]) && $exclude_build_modes[$type_name][$key] == TRUE) ? TRUE : FALSE;
+    if ($excluded || $key == $current_build_mode) {
+      continue;
+    }
+    $build_modes[$key] = $build_mode['title'];
+  }
+
+  if (!empty($build_modes)) {
+    $form['sync_copy'] = array(
+      '#type' => 'fieldset',
+      '#description' => t('Copy once or always sync display and plugin settings with other build modes. Syncing options are not saved bi-directional.<br />Watch out when copying field settings to another build mode which has a different set of regions as you can loose some fields for display. A typical example is RSS which only has one region (middle).'),
+    );
+
+    $form['sync_copy']['copy'] = array(
+      '#title' => t('Copy'),
+      '#type' => 'checkboxes',
+      '#options' => $build_modes,
+      '#prefix' => '<div style="float: left; margin-right: 30px;">',
+      '#suffix' => '</div>',
+    );
+
+    $form['sync_copy']['sync'] = array(
+      '#title' => t('Synchronize'),
+      '#type' => 'checkboxes',
+      '#options' => $build_modes,
+      '#default_value' => isset($display_settings[$current_build_mode]['sync']) ? $display_settings[$current_build_mode]['sync'] : array(),
+      '#prefix' => '<div style="float: left;">',
+      '#suffix' => '</div>',
+    );
+  }
+}
+
+/**
  * Add plugins to display overview form.
  *
  * @param array $form The display form.
@@ -261,18 +312,75 @@ function ds_display_overview_form_submit($form, &$form_state) {
     }
   }
 
-  // Plugins
-  if ($form['#plugins'] == TRUE)
-  ds_plugins_display_submit($form, $form_state, $display_settings);
+
+  // Plugins.
+  if ($form['#plugins'] == TRUE) {
+    ds_plugins_display_submit($form, $form_state, $display_settings);
+  }
 
   // Status.
   $status = ($form['#status'] == DS_SETTINGS_DEFAULT) ? DS_SETTINGS_OVERRIDDEN : $form['#status'];
   $display_settings[$build_mode]['status'] = $status;
 
+  // Sync / copy tab.
+  ds_sync_copy_form_submit($form, $form_state, $display_settings);
+
   // Save all these settings.
   variable_set($module .'_display_settings_'. $type, $display_settings);
 
   drupal_set_message(t('Your settings have been saved.'));
+}
+
+/**
+ * Copy / sync settings.
+ *
+ * @param array $form The display form.
+ * @param array $form_state The submitted values of the form.
+ * @param array $display_settings Current display settings being saved.
+ */
+function ds_sync_copy_form_submit($form, $form_state, &$display_settings) {
+  $sync_copy = _ds_get_sync_copy($form, $form_state);
+  if (!empty($sync_copy)) {
+    $current_build_mode = $form['#build_mode'];
+    foreach ($sync_copy['copy'] as $key => $value) {
+      if ($key === $value || $sync_copy['sync'][$key] === $key) {
+
+        // Copy.
+        $display_settings[$key] = $display_settings[$current_build_mode];
+
+        // Keep in sync ?
+        if (isset($sync_copy['sync'][$key])) {
+          $display_settings[$current_build_mode]['sync'][$key] = $key;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Helper function to get build modes which need to be synced / copied.
+ */
+function _ds_get_sync_copy($form, $form_state) {
+  static $checked = FALSE;
+  static $sync_copy = array();
+  if (isset($form_state['values']['sync_copy']) && $checked == FALSE) {
+    $checked = TRUE;
+    $current_build_mode = $form['#build_mode'];
+    $values = $form_state['values']['sync_copy'];
+    foreach ($values['copy'] as $key => $value) {
+      if ($key === $value || $values['sync'][$key] === $key) {
+
+        // Copy.
+        $sync_copy['copy'][$key] = $key;
+
+        // Keep in sync ?
+        if ($values['sync'][$key] === $key) {
+          $sync_copy['sync'][$key] = $key;
+        }
+      }
+    }
+  }
+  return $sync_copy;
 }
 
 /**

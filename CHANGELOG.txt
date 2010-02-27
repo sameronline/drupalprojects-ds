@@ -8,6 +8,7 @@
 - #710034 by swentel: region to block plugin.
 - #723916 by swentel: fields title leads to edit screen.
 - #724124 by swentel: Add css-class to field definition.
+- #710782 by swentel: Add option to copy settings from one build mode to other(s).
 
 -------------------------------------------------------------------------------------
 6.x-1.0 2010-02-04

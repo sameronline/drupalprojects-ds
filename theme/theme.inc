@@ -201,6 +201,12 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', 'field-weight-'. $region);
   }
 
+  // Sync / copy tab.
+  $vars['sync_copy_tab'] = '';
+  if (isset($form['sync_copy'])) {
+    $vars['sync_copy_tab'] = drupal_render($form['sync_copy']);
+  }
+
   // Plugins available.
   $vars['plugins_tabs'] = array();
   $vars['plugins_content'] = '';
