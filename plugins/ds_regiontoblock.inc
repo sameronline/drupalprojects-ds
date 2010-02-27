@@ -31,11 +31,15 @@ class ds_regiontoblock {
     $regions = ds_regions();
     foreach ($regions as $region => $title) {
       if ($region != 'disabled') {
+        $default_value = ds_default_value($display_settings, $build_mode, 'regiontoblock', 'block', $region, '');
         $form['regiontoblock']['region-block-'. $region] = array(
           '#title' => $title,
           '#type' => 'checkbox',
-          '#default_value' => ds_default_value($display_settings, $build_mode, 'regiontoblock', 'block', $region, ''),
+          '#default_value' => $default_value,
         );
+        if ($default_value == TRUE) {
+          $form['#regions'][$region] .= ' - '. t('assigned to block');
+        }
       }
     }
   }
