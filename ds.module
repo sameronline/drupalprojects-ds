@@ -422,7 +422,7 @@ function ds_default_value($settings, $build_mode, $type, $key = NULL, $search_ke
  * @param string $build_mode The build mode.
  * @param array $extra Extra properties we might want to check on (ie has_body property).
  * @param boolean $reset Whether we need to reset the fields cache or not.
- * @param boolean $cache Whether we need to cache the the fields or not.
+ * @param boolean $cache Whether we need to cache the fields or not.
  * @return array of fields.
  */
 function ds_get_fields($module, $type_name, $build_mode, $extra = array(), $reset = FALSE, $cache = TRUE) {
