@@ -9,6 +9,7 @@
 - #723916 by swentel: fields title leads to edit screen.
 - #724124 by swentel: Add css-class to field definition.
 - #710782 by swentel: Add option to copy settings from one build mode to other(s).
+- #727224 by swentel: New option for ds_api.
 
 -------------------------------------------------------------------------------------
 6.x-1.0 2010-02-04
