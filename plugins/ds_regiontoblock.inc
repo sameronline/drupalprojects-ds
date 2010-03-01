@@ -80,7 +80,7 @@ class ds_regiontoblock {
             foreach ($settings['regiontoblock']['block'] as $region => $value) {
               if ($value) {
                 $block_key = 'ds_regiontoblock_'. $module .'_'. $object->type .'_'. $build_mode .'_'. $region;
-                $block_info = $api_info['title'] .': '. $object->name .', '. $build_mode .', '.$region;
+                $block_info = $api_info['title'] .': '. $object->name .', '. $build_mode .', '. $region;
                 $blocks[] = array(
                   'info' => $block_info,
                   'key' => $block_key,
