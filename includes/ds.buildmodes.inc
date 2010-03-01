@@ -261,7 +261,7 @@ function theme_ds_buildmodes_matrix_form($form) {
   $rows = array();
   foreach ($form['#types'] as $key => $type) {
     $row = array();
-    $row[] = array('data' => ucfirst($type->name));
+    $row[] = array('data' => drupal_ucfirst($type->name));
     foreach ($form['#build_modes'] as $bkey => $mode) {
       $row[] = array('data' => drupal_render($form['exclude'][$key][$key .'-'. $bkey]));
     }

@@ -83,6 +83,20 @@ function _ds_menu() {
     'file' => 'includes/ds.display.inc',
     'weight' => 2,
   );
+  $items['admin/ds/layout/overview'] = array(
+      'title' => 'Overview',
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+      'weight' => 0,
+  );
+  $items['admin/ds/layout/styles'] = array(
+    'title' => 'Styles',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_styles'),
+    'access arguments' => array('access display suite'),
+    'file' => 'includes/ds.display.inc',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+  );
 
   foreach (module_implements('ds_api') as $module) {
     $api_info = ds_api_info($module);
@@ -185,7 +199,7 @@ function _ds_menu() {
 
         // Default callback.
         $items['admin/ds/layout/'. $type_url_str] = array(
-          'title' => ucfirst($first_title),
+          'title' => drupal_ucfirst($first_title),
           'page callback' => 'drupal_get_form',
           'page arguments' => array('ds_display_overview_form', $type_name, "$first_build_mode", $module),
           'access arguments' => array('configure layout for '. $module),

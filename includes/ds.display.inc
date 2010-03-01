@@ -36,7 +36,7 @@ function ds_layout_overview() {
         $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
 
         if (!empty($build_modes)) {
-          $rows[] = array(array('data' => ucfirst($otype->name), 'colspan' => '3', 'class' => 'ds-row-title'));
+          $rows[] = array(array('data' => drupal_ucfirst($otype->name), 'colspan' => '3', 'class' => 'ds-row-title'));
           foreach ($build_modes as $bkey => $build_mode) {
 
             $excluded = (isset($exclude_build_modes[$type_name][$bkey]) && $exclude_build_modes[$type_name][$bkey] == TRUE) ? TRUE : FALSE;
@@ -87,6 +87,22 @@ function ds_settings_status($status) {
   );
 
   return $settings_status_descriptions[$status];
+}
+
+/**
+ * Menu callback, show styles form.
+ */
+function ds_styles(&$form_state) {
+  $form = array();
+
+  $form['ds_styles'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Field styles'),
+    '#default_value' => variable_get('ds_styles', ''),
+    '#description' => t('Configure styles which you can add to fields in the overview screen. Add multiple styles line per line and separate class and friendly name by | eg: <em>class_name|Friendly name.</em>')
+  );
+
+  return system_settings_form($form);
 }
 
 /**
@@ -205,6 +221,8 @@ function ds_fields_display_form(&$form, $display_settings) {
     $form[$field][$build_mode]['format']['#default_value'] = $format;
     $form[$field][$build_mode]['format']['#access'] = (count($form[$field][$build_mode]['format']['#options']) == 0) ? FALSE : TRUE;
 
+    $form[$field][$build_mode]['css-class']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'css-class', '');
+
     $form[$field][$build_mode]['region']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'region', DS_DEFAULT_REGION);
   }
 }
@@ -301,6 +319,7 @@ function ds_display_overview_form_submit($form, &$form_state) {
       $display_settings[$build_mode]['fields'][$key]['weight'] = $form_state['values'][$key]['ds_weight'];
       $display_settings[$build_mode]['fields'][$key]['format'] = $form_state['values'][$key][$build_mode]['format'];
       $display_settings[$build_mode]['fields'][$key]['region'] = $form_state['values'][$key][$build_mode]['region'];
+      $display_settings[$build_mode]['fields'][$key]['css-class'] = $form_state['values'][$key][$build_mode]['css-class'];
       if (!empty($form_state['values'][$key][$build_mode]['label_value'])) {
         $display_settings[$build_mode]['fields'][$key]['label_value'] = $form_state['values'][$key][$build_mode]['label_value'];
       }
@@ -419,6 +438,23 @@ function ds_label_options() {
 }
 
 /**
+ * Return field classes.
+ */
+function ds_field_classes() {
+  $styles = array('' => t('None'));
+  $extra_styles = trim(variable_get('ds_styles', ''));
+  if (!empty($extra_styles)) {
+    $extra_styles = explode("\n", $extra_styles);
+    foreach ($extra_styles as $key => $value) {
+      list($style_key, $style_name) = explode("|", $value);
+      $styles[$style_key] = $style_name;
+    }
+  }
+
+  return $styles;
+}
+
+/**
  * Function to load default form properties for a field in a context
  */
 function ds_field_default_form_properties($build_mode) {
@@ -435,6 +471,11 @@ function ds_field_default_form_properties($build_mode) {
       '#type' => 'select',
       '#options' => array(),
       '#default_value' => DS_DEFAULT_FORMAT,
+    ),
+    'css-class' => array(
+      '#type' => 'select',
+      '#options' => ds_field_classes(),
+      '#default_value' => '',
     ),
     'region' => array(
       '#type' => 'select',
@@ -468,6 +509,11 @@ function ds_field_default_form_properties($build_mode) {
         '#type' => 'select',
         '#options' => array(),
         '#default_value' => DS_DEFAULT_FORMAT,
+      ),
+      'css-class' => array(
+        '#type' => 'select',
+        '#options' => ds_field_classes(),
+        '#default_value' => '',
       ),
       'region' => array(
         '#type' => 'select',
