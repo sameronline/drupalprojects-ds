@@ -21,6 +21,7 @@ define('DS_FIELD_TYPE_PREPROCESS', 3);
 define('DS_FIELD_TYPE_IGNORE', 4);
 define('DS_FIELD_TYPE_CODE', 5);
 define('DS_FIELD_TYPE_BLOCK', 6);
+define('DS_FIELD_TYPE_GROUP', 7);
 
 /**
  * Constants for field statuses.
@@ -201,6 +202,7 @@ function ds_build_fields_and_regions(&$object, $module) {
 
   $regions = array();
   $ds_fields = array();
+  $ds_groups = array();
   $ds_preprocess_fields = array();
   $display_settings = variable_get($module .'_display_settings_'. $object->type, array());
 
@@ -218,9 +220,6 @@ function ds_build_fields_and_regions(&$object, $module) {
       $region = (isset($field_settings[$key]['region'])) ? $field_settings[$key]['region'] : DS_DEFAULT_REGION;
 
       if ($region != 'disabled') {
-        $weight = (isset($field_settings[$key]['weight'])) ? $field_settings[$key]['weight'] : DS_DEFAULT_WEIGHT;
-        $object->content[$key]['#weight'] = $weight;
-        $regions[$region][$key] = $weight;
 
         // Default class.
         $class = isset($field['properties']['css-class']) ? $field['properties']['css-class'] : 'field-'. strtr($key, '_', '-');
@@ -233,19 +232,31 @@ function ds_build_fields_and_regions(&$object, $module) {
         $ds_fields[$key] = array(
           'key' => $key,
           'title' => $field['title'],
+          'class' => $class,
+          'parent' => 'group_a_group',
           'labelformat' => (isset($field_settings[$key]['labelformat'])) ? $field_settings[$key]['labelformat'] : DS_DEFAULT_LABEL_FORMAT,
           'type' => isset($field['display_settings']) ? 'other' : 'ds',
-          'class' => $class,
         );
 
-        // Try to change the title if this is configured and label is not hidden.
-        if (isset($field_settings[$key]['label_value']) && $ds_fields[$key]['labelformat'] != DS_DEFAULT_LABEL_FORMAT) {
-          $ds_fields[$key]['title'] = t(check_plain($field_settings[$key]['label_value']));
+        // Check for weight in region and parent (if any).
+        $weight = (isset($field_settings[$key]['weight'])) ? $field_settings[$key]['weight'] : DS_DEFAULT_WEIGHT;
+        $regions[$region][$key] = $weight;
+        if (isset($ds_fields[$key]['parent']) && !empty($ds_fields[$key]['parent']) && $field['type'] != DS_FIELD_TYPE_GROUP) {
+          unset($regions[$region][$key]);
+          $group = $ds_fields[$key]['parent'];
+          $format = (isset($field_settings[$group]['format'])) ? $field_settings[$group]['format'] : 'ds_group_fieldset';
+          $ds_fields[$group]['theme'] = $format;
+          $ds_groups[$group][$key] = $weight;
         }
 
         // If the field has the storage key, it means the theming is done in that module.
         if (isset($field['storage'])) {
           continue;
+        }
+
+        // Try to change the title if this is configured and label is not hidden.
+        if (isset($field_settings[$key]['label_value']) && $ds_fields[$key]['labelformat'] != DS_DEFAULT_LABEL_FORMAT) {
+          $ds_fields[$key]['title'] = t(check_plain($field_settings[$key]['label_value']));
         }
 
         // Add extra properties.
@@ -289,9 +300,10 @@ function ds_build_fields_and_regions(&$object, $module) {
     }
   }
 
-  // Add fields and regions to the object.
+  // Add fields, groups and regions to the object.
   // Also reset render_by_ds property if needed.
   $object->ds_fields = $ds_fields;
+  $object->ds_groups = $ds_groups;
   $object->regions = $regions;
   $object->preprocess_fields = $ds_preprocess_fields;
   if (empty($regions)) {
@@ -336,6 +348,26 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
     }
   }
 
+  // Anything that needs to be nested ?
+  if (!empty($object->ds_groups)) {
+    foreach ($object->ds_groups as $group => $fields) {
+      asort($fields);
+      $group_content = '';
+
+      foreach ($fields as $key => $weight) {
+        $field_content = isset($vars[$key .'_rendered']) ? $vars[$key .'_rendered'] : '';
+        if (!empty($field_content)) {
+          $group_content .= theme($theme_function, $field_content, $object->ds_fields[$key]);
+        }
+      }
+
+      // Store group_content as children key in group key of ds_fields.
+      if (!empty($group_content)) {
+        $object->ds_fields[$group]['children'] = $group_content;
+      }
+    }
+  }
+
   // Loop through all regions and content and classes.
   $region_classes = array();
   foreach ($all_regions as $region_name => $region_title) {
@@ -347,9 +379,16 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
       // Loop through all fields after ordering on weight.
       asort($region);
       foreach ($region as $key => $weight) {
-        $field_content = isset($vars[$key .'_rendered']) ? $vars[$key .'_rendered'] : '';
-        if (!empty($field_content)) {
-          $region_content .= theme($theme_function, $field_content, $object->ds_fields[$key]);
+
+        // Theming function ?
+        if (isset($object->ds_fields[$key]['theme'])) {
+          $region_content .= theme($object->ds_fields[$key]['theme'], $object->ds_fields[$key]['children'], $object->ds_fields[$key]);
+        }
+        else {
+          $field_content = isset($vars[$key .'_rendered']) ? $vars[$key .'_rendered'] : '';
+          if (!empty($field_content)) {
+            $region_content .= theme($theme_function, $field_content, $object->ds_fields[$key]);
+          }
         }
       }
 

@@ -246,7 +246,6 @@ function _ds_theme() {
     'ds_field' => array(
       'arguments' => array(
         'content' => NULL,
-        'field_key' => NULL,
         'field' => NULL,
       ),
       'file' => 'theme.inc',
@@ -268,6 +267,35 @@ function _ds_theme() {
       ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
+    ),
+
+    // We'll only use one function for the fieldsets.
+    'ds_group_fieldset_open' => array(
+      'arguments' => array(
+        'content' => NULL,
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'ds_group_fieldset',
+    ),
+    'ds_group_fieldset_collapsible' => array(
+      'arguments' => array(
+        'content' => NULL,
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'ds_group_fieldset',
+    ),
+    'ds_group_fieldset_collapsed' => array(
+      'arguments' => array(
+        'content' => NULL,
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'ds_group_fieldset',
     ),
 
     // Theming for fields which are shared across objects (name, picture etc).

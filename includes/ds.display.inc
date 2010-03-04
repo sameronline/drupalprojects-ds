@@ -116,6 +116,8 @@ function ds_styles(&$form_state) {
  */
 function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $module = 'nd') {
 
+  drupal_set_message('If you see this message, it means you are using the latest dev version which has experimental code to support fieldgroups. In fact, all fields are now hardcoded to render in a fieldgroup/div called "group_a_group", so if you do not have fieldgroups from cck, you will see nothing :)', 'warning');
+
   // Gather information.
   $api_info = ds_api_info($module);
   $display_settings = variable_get($module .'_display_settings_'. $type, array());
@@ -207,7 +209,7 @@ function ds_fields_display_form(&$form, $display_settings) {
       'attributes' => array('onclick' => 'javascript: Drupal.DisplaySuite.changeLabel(this, "'. $label_value .'"); return false;')
     ));
 
-    $form[$field]['human_name']['#value'] = !empty($label_value) ? $label_value : $value['title'];
+    $form[$field]['human_name']['#value'] = !empty($label_value) ? $label_value : (isset($value['label']) ? $value['label'] : $value['title']);
 
     $form[$field]['weight']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
 

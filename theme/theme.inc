@@ -90,6 +90,17 @@ function theme_ds_eval_block($field) {
 }
 
 /**
+ * Theme a group (fieldset).
+ *
+ * @param string $content The content to render.
+ * @param string $field The field to theme.
+ */
+function ds_group_fieldset($content, $field) {
+  // @todo check collapsible stuff.
+  return '<fieldset><legend>'. $field['title'] .'</legend>'. $content .'</fieldset>';
+}
+
+/**
  * Theme author name.
  */
 function theme_ds_author_nolink($field) {
