@@ -54,6 +54,10 @@ span.label-edit {
   float: right;
 }
 
+span.field-group {
+  font-weight: bold;
+}
+
 .ds-display {
 	display: block;
 }

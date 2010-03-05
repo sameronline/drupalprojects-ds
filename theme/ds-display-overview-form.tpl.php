@@ -64,7 +64,7 @@ if ($rows): ?>
               <td><?php print $row->{$build_mode}->format; ?></td>
               <td><?php print $row->{$build_mode}->class; ?></td>
               <td><?php print $row->{$build_mode}->region; ?></td>
-              <td><?php print $row->ds_weight; ?></td>
+              <td><?php print $row->ds_weight . $row->{$build_mode}->field_id . $row->{$build_mode}->parent_id; ?></td>
             </tr>
             <?php
             $count++;

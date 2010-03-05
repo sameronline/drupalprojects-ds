@@ -129,6 +129,17 @@ function _ds_menu() {
       'weight' => 1,
     );
 
+    // Field groups
+    $items['admin/ds/'. $module .'/fieldgroups'] = array(
+      'title' => 'Fieldgroups',
+      'page callback' => 'ds_fieldgroups',
+      'page arguments' => array($module),
+      'access arguments' => array('administer '. $module),
+      'file' => 'includes/ds.groups.inc',
+      'type' => MENU_LOCAL_TASK,
+      'weight' => 2,
+    );
+
     // Build modes.
     $items['admin/ds/'. $module .'/buildmodes'] = array(
       'title' => 'Build modes',
@@ -137,18 +148,7 @@ function _ds_menu() {
       'access arguments' => array('administer '. $module),
       'file' => 'includes/ds.buildmodes.inc',
       'type' => MENU_LOCAL_TASK,
-      'weight' => 2,
-    );
-
-    // Build modes.
-    $items['admin/ds/'. $module .'/groups'] = array(
-      'title' => 'Groups',
-      'page callback' => 'ds_groups',
-      'page arguments' => array($module),
-      'access arguments' => array('administer '. $module),
-      'file' => 'includes/ds.groups.inc',
-      'type' => MENU_LOCAL_TASK,
-      'weight' => 2,
+      'weight' => 3,
     );
 
     // Plugins.

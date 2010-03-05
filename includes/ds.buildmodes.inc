@@ -51,13 +51,13 @@ function ds_build_modes($module) {
 
       // New build mode form.
       $output .= drupal_get_form('ds_build_mode_form', $module);
-    }
-  }
 
-  // Matrix form.
-  if (isset($api_info['types'])) {
-    $types = $api_info['types']();
-    $output .= drupal_get_form('ds_buildmodes_matrix_form', $module, $types);
+      // Matrix form.
+      if (isset($api_info['types'])) {
+        $types = $api_info['types']();
+        $output .= drupal_get_form('ds_buildmodes_matrix_form', $module, $types);
+      }
+    }
   }
 
   return $output;
@@ -65,6 +65,9 @@ function ds_build_modes($module) {
 
 /**
  * Build mode form.
+ *
+ * @param string $module The name of the module.
+ * @param string $build_mode The name of the build mode.
  */
 function ds_build_mode_form($form_state, $module, $build_mode = '') {
   $form = array();
@@ -145,12 +148,15 @@ function ds_build_mode_form_submit($form, &$form_state) {
 
 /**
  * Build mode delete form.
+ *
+ * @param string $module The module name.
+ * @param string $build_mode The build mode to delete.
  */
 function ds_build_mode_delete_form($form_state, $module, $build_mode) {
   $form = array();
   $form['question'] = array(
     '#type' => 'markup',
-    '#value' => '<p>'. t('Are you sure you want to delete the build mode type %build_mode ?', array('%build_mode' => $build_mode)) .'</p>',
+    '#value' => '<p>'. t('Are you sure you want to delete the build mode %build_mode ?', array('%build_mode' => $build_mode)) .'</p>',
   );
   $form['display'] = array(
     '#type' => 'value',

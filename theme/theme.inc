@@ -96,8 +96,29 @@ function theme_ds_eval_block($field) {
  * @param string $field The field to theme.
  */
 function ds_group_fieldset($content, $field) {
-  // @todo check collapsible stuff.
-  return '<fieldset><legend>'. $field['title'] .'</legend>'. $content .'</fieldset>';
+
+  $add_js = FALSE;
+  $class = $field['class'];
+  $variation = array_pop(explode('_', $field['theme']));
+  switch ($variation) {
+    case 'collapsible':
+      $add_js = TRUE;
+      $class .= ' collapsible';
+      break;
+    case 'collapsed':
+      $add_js = TRUE;
+      $class .= ' collapsible collapsed';
+      break;
+    default:
+      break;
+  }
+
+  // Add js.
+  if ($add_js == TRUE) {
+    drupal_add_js('misc/collapse.js');
+  }
+
+  return '<fieldset class="group '. $class .'"><legend>'. $field['title'] .'</legend>'. $content .'</fieldset>';
 }
 
 /**
@@ -174,6 +195,8 @@ function template_preprocess_ds_display_overview_form(&$vars) {
 
       // Render the display fields
       if ($child == $build_mode) {
+        $row->{$child}->field_id = drupal_render($element[$child]['field_id']);
+        $row->{$child}->parent_id = drupal_render($element[$child]['parent_id']);
         $row->{$child}->label = drupal_render($element[$child]['label']);
         $row->{$child}->label_edit = drupal_render($element[$child]['label_edit']);
         $row->{$child}->label_value = drupal_render($element[$child]['label_value']);
@@ -199,6 +222,11 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     }
 
     $row->label_class = 'label-field';
+    if ($element[$build_mode]['type']['#value'] == DS_FIELD_TYPE_GROUP) {
+      $row->label_class .= ' field-group';
+    }
+
+    // Add to rows.
     $rows[$region][] = $row;
   }
 
@@ -212,6 +240,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     // We need to have subgroups to make the dragging available within parents
     drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', 'field-weight-'. $region);
   }
+  drupal_add_tabledrag('fields', 'match', 'parent', 'field_id', 'field_id', 'parent_id', TRUE, 1);
 
   // Sync / copy tab.
   $vars['sync_copy_tab'] = '';

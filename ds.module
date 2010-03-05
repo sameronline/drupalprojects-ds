@@ -221,9 +221,8 @@ function ds_build_fields_and_regions(&$object, $module) {
 
       if ($region != 'disabled') {
 
-        // Default class.
+        // Default class and extra class from the UI.
         $class = isset($field['properties']['css-class']) ? $field['properties']['css-class'] : 'field-'. strtr($key, '_', '-');
-        // Extra class from UI.
         if (isset($field_settings[$key]['css-class']) && !empty($field_settings[$key]['css-class'])) {
           $class .= ' '. $field_settings[$key]['css-class'];
         }
@@ -233,7 +232,6 @@ function ds_build_fields_and_regions(&$object, $module) {
           'key' => $key,
           'title' => $field['title'],
           'class' => $class,
-          'parent' => 'group_a_group', // FIX THIS, should become $field['parent']
           'labelformat' => (isset($field_settings[$key]['labelformat'])) ? $field_settings[$key]['labelformat'] : DS_DEFAULT_LABEL_FORMAT,
           'type' => isset($field['display_settings']) ? 'other' : 'ds',
         );
@@ -241,16 +239,16 @@ function ds_build_fields_and_regions(&$object, $module) {
         // Check for weight in region and parent (if any). If a parent key is found, we'll unset the original
         // field from the region it might be set in and we'll add that field to the group array.
         $weight = (isset($field_settings[$key]['weight'])) ? $field_settings[$key]['weight'] : DS_DEFAULT_WEIGHT;
+        $parent = (isset($field_settings[$key]['parent'])) ? $field_settings[$key]['parent'] : '';
         $regions[$region][$key] = $weight;
-        if (isset($ds_fields[$key]['parent']) && !empty($ds_fields[$key]['parent'])
-          && $field['type'] != DS_FIELD_TYPE_GROUP) {
-            // Remove the field from the $regions array.
-            unset($regions[$region][$key]);
-            $group = $ds_fields[$key]['parent'];
-            // Get the form of the group and create a theme key.
-            $format = (isset($field_settings[$group]['format'])) ? $field_settings[$group]['format'] : 'ds_group_fieldset';
-            $ds_fields[$group]['theme'] = $format;
-            $ds_groups[$group][$key] = $weight;
+
+        if (!empty($parent)) {
+          // Remove the field from the $regions array.
+          unset($regions[$region][$key]);
+          // Get the form of the group and create a theme key.
+          $format = (isset($field_settings[$parent]['format'])) ? $field_settings[$parent]['format'] : 'ds_group_fieldset';
+          $ds_fields[$parent]['theme'] = $format;
+          $ds_groups[$parent][$key] = $weight;
         }
 
         // If the field has the storage key, it means the theming is

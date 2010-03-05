@@ -3,152 +3,216 @@
 
 /**
  * @file
- * Manage groups.
+ * Manage fieldgroups.
  */
 
 /**
- * Groups overview.
+ * Fieldgroups overview.
  */
-function ds_groups($module) {
+function ds_fieldgroups($module) {
   $output = '';
   $action = arg(4);
-  $group = arg(5);
-  $groups = variable_get($module .'_groups', array());
+  $fieldgroup = arg(5);
+
+  drupal_add_js(drupal_get_path('module', 'ds') .'/js/fields.js');
+
+  // Get API information.
   $api_info = ds_api_info($module);
 
+  // Extra info.
+  $extra = array();
+
+  // Get fields.
+  $db_fields = variable_get($module .'_fields', array());
+
   // Delete form.
-  if (in_array($group, array_keys($groups)) && $action == 'delete') {
-    $output .= drupal_get_form('ds_group_delete_form', $module, $group);
+  if (in_array($fieldgroup, array_keys($db_fields)) && $action == 'delete') {
+    $output .= drupal_get_form('ds_fieldgroup_delete_form', $module, $fieldgroup);
   }
   // Edit form.
-  elseif (in_array($group, array_keys($groups)) && $action == 'edit') {
-    $output .= drupal_get_form('ds_group_form', $module, $group);
+  elseif (in_array($fieldgroup, array_keys($db_fields)) && $action == 'edit') {
+    $output .= drupal_get_form('ds_fieldgroup_form', $module, $fieldgroup, $db_fields[$fieldgroup]);
   }
-  // Custom build modes overview form.
+  // Custom fieldgroups overview form.
   else {
-    if (empty($groups)) {
-      $output .= '<p>'. t('You have not defined any custom groups.') .'</p>';
-    }
-    else {
-      $output .= '<p>'. t('This is a list of custom groups defined via the UI.') .'</p>';
-
-      $header = array(
-        t('Name'), t('Key'), t('Operations'),
-      );
-
-      $rows = array();
-      foreach ($groups as $key => $name) {
+    $rows = array();
+    foreach ($db_fields as $key => $value) {
+      if ($value['type'] == DS_FIELD_TYPE_GROUP) {
         $row = array();
-        $row[] = check_plain($name);
+        $row[] = l($value['title'], 'admin/ds/'. $module .'/fieldgroups/edit/'. $key);
         $row[] = $key;
-        $row[] = l(t('Edit'), 'admin/ds/'. $module .'/groups/edit/'. $key) .' - '. l(t('Delete'), 'admin/ds/'. $module .'/groups/delete/'. $key);
+        $operations = l(t('Edit'), 'admin/ds/'. $module .'/fieldgroups/edit/'. $key);
+        $operations .= ' - '. l(t('Delete'), 'admin/ds/'. $module .'/fieldgroups/delete/'. $key);
+        $row[] = $operations;
         $rows[] = $row;
       }
-
-      $output .= theme('table', $header, $rows);
     }
 
-    // New group form.
-    $output .= drupal_get_form('ds_group_form', $module);
-  }
+    if (!empty($rows)) {
+      $header = array(
+        t('Title'), t('Key'), t('Operations'),
+      );
 
+      $output .= '<p>'. t('This is a list of fieldgroups defined via the UI.') .'</p>';
+      $output .= theme('table', $header, $rows);
+    }
+    else {
+      $output .= '<p>'. t('You have not defined any custom fieldgroups.') .'</p>';
+    }
+
+    // New fieldgroup form.
+    $output .= drupal_get_form('ds_fieldgroup_form', $module, $fieldgroup);
+  }
 
   return $output;
 }
 
 /**
- * Group form.
+ * Fieldgroup form.
  */
-function ds_group_form($form_state, $module, $group = '') {
+function ds_fieldgroup_form($form_state, $module, $key = '', $fieldgroup = array()) {
   $form = array();
 
-  if (!empty($group)) {
-    $groups = variable_get($module .'_groups', array());
-    $title = $groups[$group];
-  }
-  else {
-    $title = '';
+  if (empty($fieldgroup)) {
+    $fieldgroup = array(
+      'title' => '',
+      'exclude' => array(),
+    );
   }
 
   $form['identity'] = array(
     '#type' => 'fieldset',
-    '#title' => (empty($build_mode)) ? t('Add new group'): t('Update group'),
-    '#description' => '<strong>'. t('There is no validation against existing groups, eg coming from CCK, so make sure you create unique keys for groups!') .'</strong>',
+    '#title' => (empty($key)) ? t('Add new fieldgroup'): t('Update fieldgroup'),
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
   );
   $form['identity']['key'] = array(
     '#type' => 'textfield',
     '#title' => 'Key name',
-    '#description' => t('The machine-readable name of this group.'),
+    '#description' => t('The machine-readable name of this fieldgroup. Saving will automatically prepend <em>ds_group</em> to the key. <br /><strong>Warning: there is no validation against fields from other modules, so make sure you create a unique key.</strong>'),
     '#required' => TRUE,
   );
-  if (!empty($build_mode)) {
+  if (!empty($key)) {
     $form['identity']['key']['#disabled'] = TRUE;
-    $form['identity']['key']['#value'] = $build_mode;
-    $form['identity']['key']['#description'] = t('The machine-readable name of this group. Note: you can not edit this key.');
+    $form['identity']['key']['#value'] = $key;
+    $form['identity']['key']['#description'] = t('The machine-readable name of this fieldgroup. Note: you can not edit this key.');
   }
   $form['identity']['name'] = array(
     '#type' => 'textfield',
-    '#title' => 'Group label',
-    '#description' => t('The name of this label which will be used as default label/title on the display fields page.'),
+    '#title' => 'Fieldgroup name',
+    '#description' => t('The name of this fieldgroup which will be used for every type on the display fields page.'),
     '#required' => TRUE,
-    '#default_value' => $title,
+    '#default_value' => $fieldgroup['title'],
   );
+
+  $api_info = ds_api_info($module);
+  if (isset($api_info['types']) && count($api_info['types']()) > 1) {
+    $types = array();
+    foreach ($api_info['types']() as $tkey => $type) {
+      $types[$tkey] = $type->name;
+    }
+    $form['identity']['exclude'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Field exclude'),
+      '#options' => $types,
+      '#default_value' => $fieldgroup['exclude'],
+      '#attributes' => array('class' => 'exclude-types')
+    );
+    $form['identity']['exclude_all'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Select all'),
+      '#description' => t('Toggle types which you don\'t want the fieldgroups to appear in.'),
+      '#attributes' => array('class' => 'select-all')
+    );
+  }
+  else {
+    $form['identity']['exclude'] = array(
+      '#type' => 'value',
+      '#value' => array(),
+    );
+  }
+
   $form['identity']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Save group'),
-    '#submit' => array('ds_group_form_submit'),
+    '#value' => t('Save fieldgroup'),
+    '#submit' => array('ds_fieldgroup_form_submit'),
   );
 
   $form['#module'] = $module;
-  $form['#form_type'] = (empty($group)) ? 'insert' : 'update';
-
+  $form['#form_type'] = (empty($key)) ? 'insert' : 'update';
   return $form;
 }
 
 /**
- * Validate new custom group submission.
+ * Validate new custom fieldgroup submission.
  */
-/*function ds_group_form_validate($form, &$form_state) {
+function ds_fieldgroup_form_validate($form, &$form_state) {
   if ($form['#form_type'] == 'insert') {
 
-    $existing = array_keys(ds_get_build_modes($form['#module']));
-    if (in_array($form_state['values']['key'], $existing)) {
-      form_set_error('key', t('This build mode already exists.'));
+    $module = $form['#module'];
+    $existing = array_keys(variable_get($module .'_fields', array()));
+
+    if (in_array('ds_group_'. $form_state['values']['key'], $existing)) {
+      form_set_error('key', t('This fieldgroup already exists.'));
     }
 
     if (!preg_match('!^[a-z_]+$!', $form_state['values']['key'])) {
       form_set_error('key', t('The machine-readable name must contain only lowercase letters and underscores.'));
     }
+
+    // Prepend with 'ds_group'.
+    $form_state['values']['key'] = 'ds_group_'. $form_state['values']['key'];
   }
-}*/
+}
 
 /**
- * Save new build mode.
+ * Save new fieldgroup.
  */
-/*function ds_build_mode_form_submit($form, &$form_state) {
-  $build_modes = variable_get($form['#module'] .'_build_modes', array());
-  $build_modes[$form_state['values']['key']] = $form_state['values']['name'];
-  variable_set($form['#module'] .'_build_modes', $build_modes);
+function ds_fieldgroup_form_submit($form, &$form_state) {
+  $module = $form['#module'];
+  $fields = variable_get($module .'_fields', array());
 
-  drupal_set_message(t('Build mode %build_mode has been saved.', array('%build_mode' => $build_modes[$form_state['values']['key']])));
-  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/buildmodes';
-  menu_rebuild();
-}*/
+  $key = $form_state['values']['key'];
+  $fields[$key] = array(
+    'title' => $form_state['values']['name'],
+    'exclude' => $form_state['values']['exclude'],
+    'type' => DS_FIELD_TYPE_GROUP,
+    'status' => DS_FIELD_STATUS_STATIC,
+    'properties' => array(
+      'formatters' => array(
+        'ds_field' => 'A simple div',
+        'ds_group_fieldset_open' => 'Fieldset open',
+        'ds_group_fieldset_collapsible' => 'Fieldset collapsible',
+        'ds_group_fieldset_collapsed' => 'Fieldset collapsed',
+      ),
+    ),
+  );
+
+  // Safe field and invalidate cached fields.
+  variable_set($module .'_fields', $fields);
+  variable_del('ds_fields_cached');
+
+  // Redirect and confirmation message.
+  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fieldgroups';
+  drupal_set_message(t('Fieldgroup %field has been saved.', array('%field' => $form_state['values']['name'])));
+}
 
 /**
- * Build mode delete form.
+ * Fieldgroup delete form.
  */
-/*function ds_build_mode_delete_form($form_state, $module, $build_mode) {
+function ds_fieldgroup_delete_form($form_state, $module, $fieldgroup) {
   $form = array();
+
+  $fields = variable_get($module .'_fields', array());
+  $field_title = $fields[$fieldgroup]['title'];
+
   $form['question'] = array(
     '#type' => 'markup',
-    '#value' => '<p>'. t('Are you sure you want to delete the build mode type %build_mode ?', array('%build_mode' => $build_mode)) .'</p>',
+    '#value' => '<p>'. t('Are you sure you want to delete the fieldgroup %fieldgroup ?', array('%fieldgroup' => $field_title)) .'</p>',
   );
-  $form['display'] = array(
+  $form['fieldgroup'] = array(
     '#type' => 'value',
-    '#value' => $build_mode,
+    '#value' => $fieldgroup,
   );
   $form['button']['submit'] = array(
     '#prefix' => '<div>',
@@ -158,25 +222,28 @@ function ds_group_form($form_state, $module, $group = '') {
   $form['buttons']['cancel'] = array(
     '#suffix' => '</div>',
     '#type' => 'markup',
-    '#value' => l('cancel', 'admin/ds/'. $module .'/buildmodes'),
+    '#value' => l('cancel', 'admin/ds/'. $module .'/fieldgroups'),
   );
 
   $form['#module'] = $module;
   return $form;
-}*/
+}
 
 /**
  * Delete build mode.
  */
-/*function ds_build_mode_delete_form_submit($form, &$form_state) {
+function ds_fieldgroup_delete_form_submit($form, &$form_state) {
+
   $module = $form['#module'];
-  $build_modes = variable_get($module .'_build_modes', array());
-  unset($build_modes[$form_state['values']['display']]);
-  variable_set($module .'_build_modes', $build_modes);
+  $fields = variable_get($module .'_fields', array());
+  $fieldgroup = $form_state['values']['fieldgroup'];
+  $field_title = $fields[$fieldgroup]['title'];
 
-  drupal_set_message(t('Custom build mode %build_mode has been removed.', array('%build_mode' => $form_state['values']['display'])));
-  $form_state['redirect'] = 'admin/ds/'. $module .'/buildmodes';
-  menu_rebuild();
-}*/
+  // Save and invalidate fields_cached.
+  unset($fields[$fieldgroup]);
+  variable_set($module .'_fields', $fields);
+  variable_del('ds_fields_cached');
 
-
+  drupal_set_message(t('Fieldgroup %fieldgroup has been deleted.', array('%fieldgroup' => $field_title)));
+  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fieldgroups';
+}

@@ -71,18 +71,9 @@ function ds_fields($module) {
   }
   // Custom fields overview form
   else {
-    if (empty($db_fields)) {
-      $output .= '<p>'. t('You have not defined any custom fields.') .'</p>';
-    }
-    else {
-      $output .= '<p>'. t('This is a list of custom fields either defined in code or via the UI.') .'</p>';
-
-      $header = array(
-        t('Title'), t('Key'), t('Type'), t('Status'), t('Operations'),
-      );
-
-      $rows = array();
-      foreach ($db_fields as $key => $value) {
+    $rows = array();
+    foreach ($db_fields as $key => $value) {
+      if ($value['type'] != DS_FIELD_TYPE_GROUP) {
         $row = array();
         $row[] = l($value['title'], 'admin/ds/'. $module .'/fields/edit/'. $key);
         $row[] = $key;
@@ -96,11 +87,21 @@ function ds_fields($module) {
         $row[] = $operations;
         $rows[] = $row;
       }
-
-      $output .= theme('table', $header, $rows);
     }
 
-    // New fields form.
+    if (!empty($rows)) {
+      $header = array(
+        t('Title'), t('Key'), t('Type'), t('Status'), t('Operations'),
+      );
+
+      $output .= '<p>'. t('This is a list of fields either defined in code or via the UI.') .'</p>';
+      $output .= theme('table', $header, $rows);
+    }
+    else {
+      $output .= '<p>'. t('You have not defined any fields.') .'</p>';
+    }
+
+    // New field form.
     $output .= drupal_get_form('ds_code_field_form', $module, $all_fields, $api_info['object']);
     // Block field form.
     $output .= drupal_get_form('ds_block_field_form', $module, $all_fields);
