@@ -150,7 +150,7 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
   if (!empty($key)) {
     $form['code_identity']['code_key']['#disabled'] = TRUE;
     $form['code_identity']['code_key']['#value'] = $key;
-    $form['code_identity']['code_key']['#description'] = t('The machine-readable name of this field. Note: you can not edit this field.');
+    $form['code_identity']['code_key']['#description'] = t('The machine-readable name of this field. Note: you can not edit this key.');
   }
   $form['code_identity']['code_title'] = array(
     '#type' => 'textfield',

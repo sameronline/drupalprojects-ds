@@ -92,7 +92,7 @@ function ds_build_mode_form($form_state, $module, $build_mode = '') {
   if (!empty($build_mode)) {
     $form['identity']['key']['#disabled'] = TRUE;
     $form['identity']['key']['#value'] = $build_mode;
-    $form['identity']['key']['#description'] = t('The machine-readable name of this build mode. Note: you can not edit this field.');
+    $form['identity']['key']['#description'] = t('The machine-readable name of this build mode. Note: you can not edit this key.');
   }
   $form['identity']['name'] = array(
     '#type' => 'textfield',
@@ -114,7 +114,7 @@ function ds_build_mode_form($form_state, $module, $build_mode = '') {
 }
 
 /**
- * Validate new custom display submission.
+ * Validate new custom build mode submission.
  */
 function ds_build_mode_form_validate($form, &$form_state) {
   if ($form['#form_type'] == 'insert') {

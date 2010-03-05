@@ -140,6 +140,17 @@ function _ds_menu() {
       'weight' => 2,
     );
 
+    // Build modes.
+    $items['admin/ds/'. $module .'/groups'] = array(
+      'title' => 'Groups',
+      'page callback' => 'ds_groups',
+      'page arguments' => array($module),
+      'access arguments' => array('administer '. $module),
+      'file' => 'includes/ds.groups.inc',
+      'type' => MENU_LOCAL_TASK,
+      'weight' => 2,
+    );
+
     // Plugins.
     $items['admin/ds/'. $module .'/plugins'] = array(
       'title' => 'Plugins',
@@ -148,7 +159,7 @@ function _ds_menu() {
       'access arguments' => array('administer '. $module),
       'file' => 'includes/ds.plugins.inc',
       'type' => MENU_LOCAL_TASK,
-      'weight' => 3,
+      'weight' => 4,
     );
 
     // Displays.
