@@ -73,6 +73,7 @@ function ds_group_form($form_state, $module, $group = '') {
   $form['identity'] = array(
     '#type' => 'fieldset',
     '#title' => (empty($build_mode)) ? t('Add new group'): t('Update group'),
+    '#description' => '<strong>'. t('There is no validation against existing groups, eg coming from CCK, so make sure you create unique keys for groups!') .'</strong>',
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
   );

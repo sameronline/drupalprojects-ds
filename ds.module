@@ -191,8 +191,8 @@ function ds_build_fields_and_regions(&$object, $module) {
   $api_info = ds_api_info($module, $object->type);
 
   // See if rendering is needed later on.
-  // There are two ways of excluding: global exclude on content type
-  // or per build mode per content type.
+  // There are two ways of excluding: global exclude on object type
+  // or per build mode per object type.
   // We don't return here, because we want to add all fields on the object
   // so themers can use it in their template.
   $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
@@ -216,7 +216,7 @@ function ds_build_fields_and_regions(&$object, $module) {
   if (!empty($fields)) {
     foreach ($fields as $key => $field) {
 
-      // Exclude now depends on the region, previous it was an exclude property.
+      // Exclude depends on the region.
       $region = (isset($field_settings[$key]['region'])) ? $field_settings[$key]['region'] : DS_DEFAULT_REGION;
 
       if ($region != 'disabled') {
@@ -233,28 +233,33 @@ function ds_build_fields_and_regions(&$object, $module) {
           'key' => $key,
           'title' => $field['title'],
           'class' => $class,
-          'parent' => 'group_a_group',
+          'parent' => 'group_a_group', // FIX THIS, should become $field['parent']
           'labelformat' => (isset($field_settings[$key]['labelformat'])) ? $field_settings[$key]['labelformat'] : DS_DEFAULT_LABEL_FORMAT,
           'type' => isset($field['display_settings']) ? 'other' : 'ds',
         );
 
-        // Check for weight in region and parent (if any).
+        // Check for weight in region and parent (if any). If a parent key is found, we'll unset the original
+        // field from the region it might be set in and we'll add that field to the group array.
         $weight = (isset($field_settings[$key]['weight'])) ? $field_settings[$key]['weight'] : DS_DEFAULT_WEIGHT;
         $regions[$region][$key] = $weight;
-        if (isset($ds_fields[$key]['parent']) && !empty($ds_fields[$key]['parent']) && $field['type'] != DS_FIELD_TYPE_GROUP) {
-          unset($regions[$region][$key]);
-          $group = $ds_fields[$key]['parent'];
-          $format = (isset($field_settings[$group]['format'])) ? $field_settings[$group]['format'] : 'ds_group_fieldset';
-          $ds_fields[$group]['theme'] = $format;
-          $ds_groups[$group][$key] = $weight;
+        if (isset($ds_fields[$key]['parent']) && !empty($ds_fields[$key]['parent'])
+          && $field['type'] != DS_FIELD_TYPE_GROUP) {
+            // Remove the field from the $regions array.
+            unset($regions[$region][$key]);
+            $group = $ds_fields[$key]['parent'];
+            // Get the form of the group and create a theme key.
+            $format = (isset($field_settings[$group]['format'])) ? $field_settings[$group]['format'] : 'ds_group_fieldset';
+            $ds_fields[$group]['theme'] = $format;
+            $ds_groups[$group][$key] = $weight;
         }
 
-        // If the field has the storage key, it means the theming is done in that module.
+        // If the field has the storage key, it means the theming is
+        // done in that module and we can skip the rest of the loop.
         if (isset($field['storage'])) {
           continue;
         }
 
-        // Try to change the title if this is configured and label is not hidden.
+        // Change the title if this is configured and label is not hidden.
         if (isset($field_settings[$key]['label_value']) && $ds_fields[$key]['labelformat'] != DS_DEFAULT_LABEL_FORMAT) {
           $ds_fields[$key]['title'] = t(check_plain($field_settings[$key]['label_value']));
         }
@@ -348,7 +353,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
     }
   }
 
-  // Anything that needs to be nested ?
+  // Any groups which have nested content?
   if (!empty($object->ds_groups)) {
     foreach ($object->ds_groups as $group => $fields) {
       asort($fields);
@@ -361,14 +366,14 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
         }
       }
 
-      // Store group_content as children key in group key of ds_fields.
+      // Store group_content as content key in group key of ds_fields.
       if (!empty($group_content)) {
-        $object->ds_fields[$group]['children'] = $group_content;
+        $object->ds_fields[$group]['content'] = $group_content;
       }
     }
   }
 
-  // Loop through all regions and content and classes.
+  // Loop through all regions.
   $region_classes = array();
   foreach ($all_regions as $region_name => $region_title) {
 
@@ -380,10 +385,11 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
       asort($region);
       foreach ($region as $key => $weight) {
 
-        // Theming function ?
+        // Theming function. This implies a 'content' key exists (which we don't check on right now).
         if (isset($object->ds_fields[$key]['theme'])) {
-          $region_content .= theme($object->ds_fields[$key]['theme'], $object->ds_fields[$key]['children'], $object->ds_fields[$key]);
+          $region_content .= theme($object->ds_fields[$key]['theme'], $object->ds_fields[$key]['content'], $object->ds_fields[$key]);
         }
+        // Default ds_field theming function.
         else {
           $field_content = isset($vars[$key .'_rendered']) ? $vars[$key .'_rendered'] : '';
           if (!empty($field_content)) {
@@ -392,7 +398,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
         }
       }
 
-      // Render region.
+      // Store content from a region and add classes if necessary.
       if (!empty($region_content)) {
         if ($region_name == 'left' || $region_name == 'right') {
           $region_classes[$region_name] = $region_name;
@@ -411,7 +417,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
   // Plugins.
   ds_plugins_process($module, $api_info['object'], $display_settings, $vars, $object_display);
 
-  // Add classes based on regions.
+  // Add middle classes based on regions.
   $ds_middle_classes = 'no-sidebars';
   if (isset($object_display->region_classes['left']) && isset($object_display->region_classes['right'])) {
     $ds_middle_classes = 'two-sidebars';
