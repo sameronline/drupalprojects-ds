@@ -195,21 +195,22 @@ function ds_fields_display_form(&$form, $display_settings) {
     // Every field starts with the default value
     $form[$field] = $default;
 
-
     // Store the type.
     $form[$field][$build_mode]['type'] = array('#type' => 'value', '#value' => $value['type']);
 
-    // Key and parent key.
+    // Field key, parent key and depth.
     $form[$field][$build_mode]['field_id'] = array(
       '#type' => 'hidden',
       '#default_value' => $field,
       '#attributes' => array('class' => 'field_id'),
     );
+    $parent = ds_default_value($display_settings, $build_mode, 'fields', $field, 'parent', $field);
     $form[$field][$build_mode]['parent_id'] = array(
       '#type' => 'hidden',
-      '#default_value' => (isset($value['display_settings'][$build_mode]['parent'])) ? $value['display_settings'][$build_mode]['parent'] : $field,
+      '#default_value' => $parent,
       '#attributes' => array('class' => 'parent_id'),
     );
+    $form[$field][$build_mode]['#depth'] = ($parent != $field) ? 1 : 0;
 
     // Populate/override the fields with the saved values
     $form[$field][$build_mode]['label']['format']['#default_value'] = isset($value['display_settings'][$build_mode]['label']['format']) ? $value['display_settings'][$build_mode]['label']['format'] : ds_default_value($display_settings, $build_mode, 'fields', $field, 'labelformat', DS_DEFAULT_LABEL_FORMAT);
@@ -351,7 +352,7 @@ function ds_display_overview_form_submit($form, &$form_state) {
       $field_id = $form_state['values'][$key][$build_mode]['field_id'];
       $parent_id = $form_state['values'][$key][$build_mode]['parent_id'];
       if ($field_id != $parent_id) {
-        $display_settings[$build_mode]['fields'][$key]['parent'] = $parent_id;
+        $display_settings[$build_mode]['fields'][$key]['parent'] = $field_id;
       }
 
       // Ditch this field, unless it has its storage in another module (ie CCK)

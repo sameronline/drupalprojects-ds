@@ -195,6 +195,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
 
       // Render the display fields
       if ($child == $build_mode) {
+        $row->{$child}->indentation = theme('indentation', $element[$child]['#depth']);
         $row->{$child}->field_id = drupal_render($element[$child]['field_id']);
         $row->{$child}->parent_id = drupal_render($element[$child]['parent_id']);
         $row->{$child}->label = drupal_render($element[$child]['label']);
@@ -224,6 +225,10 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     $row->label_class = 'label-field';
     if ($element[$build_mode]['type']['#value'] == DS_FIELD_TYPE_GROUP) {
       $row->label_class .= ' field-group';
+      $row->class .= ' tabledrag-root';
+    }
+    else {
+      $row->class .= ' tabledrag-leaf';
     }
 
     // Add to rows.
