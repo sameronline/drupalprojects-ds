@@ -201,15 +201,17 @@ function ds_fields_display_form(&$form, $display_settings) {
     // Field key, parent key and depth.
     $parent = ds_default_value($display_settings, $build_mode, 'fields', $field, 'parent', $field);
     $form[$field][$build_mode]['parent_id'] = array(
-      '#type' => 'hidden',
+      '#type' => 'textfield',
       '#default_value' => $parent,
-      '#attributes' => array('class' => 'parent_id'),
+      '#attributes' => array('class' => 'parent-id'),
+      '#size' => 20,
     );
     $form[$field][$build_mode]['#depth'] = ($parent != $field) ? 1 : 0;
     $form[$field][$build_mode]['field_id'] = array(
       '#type' => 'hidden',
       '#default_value' => $field,
-      '#attributes' => array('class' => 'field_id'),
+      '#attributes' => array('class' => 'field-id'),
+      '#size' => 20,
     );
 
     // Populate/override the fields with the saved values
@@ -507,9 +509,10 @@ function ds_field_default_form_properties($build_mode) {
       '#default_value' => '',
     ),
     'region' => array(
-      '#type' => 'select',
-      '#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
+      '#type' => 'textfield',
+      //'#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
       '#default_value' => DS_DEFAULT_REGION,
+      //'#size' => 10,
       '#attributes' => array(
         'class' => 'field-region-select field-region-'. DS_DEFAULT_REGION,
       ),
@@ -524,7 +527,7 @@ function ds_field_default_form_properties($build_mode) {
     $field['ds_weight'] = array(
       '#type' => 'weight',
       '#default_value' => DS_DEFAULT_WEIGHT,
-      '#delta' => 30,
+      '#delta' => 50,
     );
     $field[$build_mode] = array(
       'label' => array(
@@ -545,9 +548,10 @@ function ds_field_default_form_properties($build_mode) {
         '#default_value' => '',
       ),
       'region' => array(
-        '#type' => 'select',
-        '#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
+        '#type' => 'textfield',
+        //'#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
         '#default_value' => DS_DEFAULT_WEIGHT,
+        '#size' => 10,
         '#attributes' => array(
           'class' => 'field-region-select field-region-'. DS_DEFAULT_REGION,
         ),

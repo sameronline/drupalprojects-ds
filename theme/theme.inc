@@ -118,7 +118,9 @@ function ds_group_fieldset($content, $field) {
     drupal_add_js('misc/collapse.js');
   }
 
-  return '<fieldset class="group '. $class .'"><legend>'. $field['title'] .'</legend>'. $content .'</fieldset>';
+  // Legend or not ?
+  $title = ($field['labelformat'] != 'hidden') ? $field['title'] : '';
+  return '<fieldset class="group '. $class .'"><legend>'. $title .'</legend>'. $content .'</fieldset>';
 }
 
 /**
@@ -235,17 +237,12 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     $rows[$region][] = $row;
   }
 
+  // CSS and JS.
   drupal_add_js('misc/tableheader.js');
   drupal_add_js(drupal_get_path('module', 'ds') .'/js/ds.js');
   drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
-
-  $regions = $form['#regions'];
-  foreach ($regions as $region => $title) {
-    drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region, NULL, FALSE);
-    // We need to have subgroups to make the dragging available within parents
-    drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', 'field-weight-'. $region);
-  }
-  drupal_add_tabledrag('fields', 'match', 'parent', 'field_id', 'field_id', 'parent_id', TRUE, 1);
+  drupal_add_tabledrag('fields', 'match', 'parent', 'field-region-select', 'field-region-select', 'field-id', FALSE, MENU_MAX_DEPTH - 1);
+  drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight');
 
   // Sync / copy tab.
   $vars['sync_copy_tab'] = '';
@@ -265,6 +262,6 @@ function template_preprocess_ds_display_overview_form(&$vars) {
 
   $vars['rows'] = $rows;
   $vars['submit'] = drupal_render($form);
-  $vars['regions'] = $regions;
+  $vars['regions'] = $form['#regions'];
   $vars['build_mode'] = $build_mode;
 }

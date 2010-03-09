@@ -26,10 +26,11 @@ Drupal.behaviors.fieldDrag = function(context) {
   tableDrag.onDrop = function() {
     dragObject = this;
       
-    if ($(dragObject.rowObject.element).prev('tr').is('.region-message')) {
-      var regionRow = $(dragObject.rowObject.element).prev('tr').get(0);
+    if ($(dragObject.rowObject.element).prev($('tr.region-message'))) {
+      var regionRow = $(dragObject.rowObject.element).prev($('tr.region-message')).get(0);
       var regionName = regionRow.className.replace(/([^ ]+[ ]+)*region-([^ ]+)-message([ ]+[^ ]+)*/, '$2');
-      var regionField = $('select.field-region-select', dragObject.rowObject.element);
+      var regionField = $('.field-region-select', dragObject.rowObject.element);
+      var parentField = $('.parent-id', dragObject.rowObject.element);
       var weightField = $('select.field-weight', dragObject.rowObject.element);
       var oldRegionName = weightField[0].className.replace(/([^ ]+[ ]+)*field-weight-([^ ]+)([ ]+[^ ]+)*/, '$2');
 
@@ -37,7 +38,9 @@ Drupal.behaviors.fieldDrag = function(context) {
         regionField.removeClass('field-region-' + oldRegionName).addClass('field-region-' + regionName);
         weightField.removeClass('field-weight-' + oldRegionName).addClass('field-weight-' + regionName);
         regionField.val(regionName);
+        parentField.val(regionName);
       }
+
       // Manage classes to make it look disabled
       if(regionName == 'disabled') {
         $(dragObject.rowObject.element).addClass('region-css-disabled');
@@ -46,6 +49,11 @@ Drupal.behaviors.fieldDrag = function(context) {
         $(dragObject.rowObject.element).removeClass('region-css-disabled');
       }
     }
+    /*else if ($(dragObject.rowObject.element).prev('tr').prev('tr').is('.region-message')) {
+      var regionName = $('.field-region-select', dragObject.rowObject.element).val();
+      var parentField = $('.parent-id', dragObject.rowObject.element);
+      parentField.val(regionName);        
+    }*/
   };
 
   // Add the behavior to each region select list.
