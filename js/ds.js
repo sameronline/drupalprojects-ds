@@ -26,9 +26,9 @@ Drupal.behaviors.fieldDrag = function(context) {
   tableDrag.onDrop = function() {
     dragObject = this;
       
-    if ($(dragObject.rowObject.element).prev($('tr.region-message'))) {
-      var regionRow = $(dragObject.rowObject.element).prev($('tr.region-message')).get(0);
-      var regionName = regionRow.className.replace(/([^ ]+[ ]+)*region-([^ ]+)-message([ ]+[^ ]+)*/, '$2');
+    if ($(dragObject.rowObject.element).prevAll('tr.region').eq(0)) {
+      var regionRow = $(dragObject.rowObject.element).prevAll('tr.region').eq(0).get(0);
+      var regionName = regionRow.className.replace(/([^ ]+[ ]+)*region-([^ ]+)-title([ ]+[^ ]+)*/, '$2');
       var regionField = $('.field-region-select', dragObject.rowObject.element);
       var parentField = $('.parent-id', dragObject.rowObject.element);
       var weightField = $('select.field-weight', dragObject.rowObject.element);
@@ -49,11 +49,6 @@ Drupal.behaviors.fieldDrag = function(context) {
         $(dragObject.rowObject.element).removeClass('region-css-disabled');
       }
     }
-    /*else if ($(dragObject.rowObject.element).prev('tr').prev('tr').is('.region-message')) {
-      var regionName = $('.field-region-select', dragObject.rowObject.element).val();
-      var parentField = $('.parent-id', dragObject.rowObject.element);
-      parentField.val(regionName);        
-    }*/
   };
 
   // Add the behavior to each region select list.
@@ -102,7 +97,7 @@ Drupal.behaviors.fieldDrag = function(context) {
   var checkEmptyRegions = function(table, rowObject) {
     $('tr.region-message', table).each(function() {
       // If the dragged row is in this region, but above the message row, swap it down one space.
-      if ($(this).prev('tr').get(0) == rowObject.element) {
+      if ($(this).prevAll('tr').eq(0).get(0) == rowObject.element) {
         // Prevent a recursion problem when using the keyboard to move rows up.
         if ((rowObject.method != 'keyboard' || rowObject.direction == 'down')) {
           rowObject.swap('after', this);

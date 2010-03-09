@@ -46,7 +46,7 @@ if ($rows): ?>
 
       <!-- Node regions -->
       <?php foreach ($regions as $region => $title): ?>
-        <tr class="region region-<?php print $region?>">
+        <tr class="region region-<?php print $region?>-title">
           <td colspan="6" class="region"><?php print $title; ?></td>
         </tr>
         <tr class="region-message region-<?php print $region?>-message <?php print empty($rows[$region]) ? 'region-empty' : 'region-populated'; ?>">
