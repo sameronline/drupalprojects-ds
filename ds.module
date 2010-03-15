@@ -657,12 +657,12 @@ function ds_regions($regions = 'all', $render = FALSE) {
  * @param string $field The name of the field to check for.
  */
 function ds_show_field($module, $type_name, $build_mode, $field) {
-  static $show_links = array();
-  if (!isset($show_links[$module][$type_name][$build_mode])) {
+  static $show_fields = array();
+  if (!isset($show_fields[$module][$type_name][$build_mode][$field])) {
     $display_settings = variable_get($module .'_display_settings_'. $type_name, array());
-    $show_links[$module][$type_name][$build_mode] = (isset($display_settings[$build_mode]['fields'][$field]) && $display_settings[$build_mode]['fields'][$field]['region'] != 'disabled') ? TRUE : FALSE;
+    $show_fields[$module][$type_name][$build_mode][$field] = (isset($display_settings[$build_mode]['fields'][$field]) && $display_settings[$build_mode]['fields'][$field]['region'] != 'disabled') ? TRUE : FALSE;
   }
-  return $show_links[$module][$type_name][$build_mode];
+  return $show_fields[$module][$type_name][$build_mode][$field];
 }
 
 /**
