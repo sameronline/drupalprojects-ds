@@ -46,8 +46,13 @@ if ($rows): ?>
 
       <!-- Node regions -->
       <?php foreach ($regions as $region => $title): ?>
-        <tr class="region region-<?php print $region?>-title">
-          <td colspan="6" class="region"><?php print $title; ?></td>
+        <tr class="region-title region-<?php print $region?>-title draggable tabledrag-root">
+          <td colspan="6" class="region">
+          <?php print $title; ?>
+          <input type="textfield" size="10" class="parent-id" value="<?php print $region; ?>">
+          <input type="textfield" size="10" class="field-id" value="<?php print $region; ?>">
+
+          </td>
         </tr>
         <tr class="region-message region-<?php print $region?>-message <?php print empty($rows[$region]) ? 'region-empty' : 'region-populated'; ?>">
           <td colspan="6"><em><?php print t('No fields in this region'); ?></em></td>

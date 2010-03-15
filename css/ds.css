@@ -34,6 +34,10 @@ tr.region-css-disabled  {
 	margin-bottom: 0;
 }
 
+.region-title .tabledrag-handle tabledrag-handle-hover {
+  display: none;
+}
+
 span.label-field, span.label-edit {
   padding:2px;
   font-size-adjust:none;

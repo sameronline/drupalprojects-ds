@@ -227,11 +227,12 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     $row->label_class = 'label-field';
     if ($element[$build_mode]['type']['#value'] == DS_FIELD_TYPE_GROUP) {
       $row->label_class .= ' field-group';
-      $row->class .= ' tabledrag-root';
+      //$row->class .= ' tabledrag-root';
     }
     else {
-      $row->class .= ' tabledrag-leaf';
+//      $row->class .= ' tabledrag-leaf';
     }
+      //$row->class .= ' tabledrag-leaf';
 
     // Add to rows.
     $rows[$region][] = $row;
@@ -241,7 +242,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   drupal_add_js('misc/tableheader.js');
   drupal_add_js(drupal_get_path('module', 'ds') .'/js/ds.js');
   drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
-  drupal_add_tabledrag('fields', 'match', 'parent', 'field-region-select', 'field-region-select', 'field-id', FALSE, MENU_MAX_DEPTH - 1);
+  drupal_add_tabledrag('fields', 'match', 'parent', 'parent-id', 'parent-id', 'field-id', FALSE, 2);
   drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight');
 
   // Sync / copy tab.

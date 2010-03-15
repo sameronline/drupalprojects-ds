@@ -208,10 +208,10 @@ function ds_fields_display_form(&$form, $display_settings) {
     );
     $form[$field][$build_mode]['#depth'] = ($parent != $field) ? 1 : 0;
     $form[$field][$build_mode]['field_id'] = array(
-      '#type' => 'hidden',
-      '#default_value' => $field,
-      '#attributes' => array('class' => 'field-id'),
+      '#type' => 'textfield',
+      '#value' => $field,
       '#size' => 20,
+      '#attributes' => array('class' => 'field-id'),
     );
 
     // Populate/override the fields with the saved values
@@ -339,9 +339,11 @@ function ds_display_overview_form_submit($form, &$form_state) {
   $fields = ds_get_fields($module, $type, $build_mode, $extra);
   if (!empty($fields)) {
     foreach ($fields as $key => $field) {
+
+      $region = $form_state['values'][$key][$build_mode]['region'];
+      $display_settings[$build_mode]['fields'][$key]['region'] = $region;
       $display_settings[$build_mode]['fields'][$key]['weight'] = $form_state['values'][$key]['ds_weight'];
       $display_settings[$build_mode]['fields'][$key]['format'] = $form_state['values'][$key][$build_mode]['format'];
-      $display_settings[$build_mode]['fields'][$key]['region'] = $form_state['values'][$key][$build_mode]['region'];
       $display_settings[$build_mode]['fields'][$key]['css-class'] = $form_state['values'][$key][$build_mode]['css-class'];
 
       // Label value.
@@ -353,7 +355,7 @@ function ds_display_overview_form_submit($form, &$form_state) {
       // Parent.
       $field_id = $form_state['values'][$key][$build_mode]['field_id'];
       $parent_id = $form_state['values'][$key][$build_mode]['parent_id'];
-      if ($field_id != $parent_id) {
+      if ($region != $parent_id) {
         $display_settings[$build_mode]['fields'][$key]['parent'] = $parent_id;
       }
 
@@ -509,8 +511,8 @@ function ds_field_default_form_properties($build_mode) {
       '#default_value' => '',
     ),
     'region' => array(
-      '#type' => 'textfield',
-      //'#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
+      '#type' => 'select',
+      '#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
       '#default_value' => DS_DEFAULT_REGION,
       //'#size' => 10,
       '#attributes' => array(
@@ -548,10 +550,10 @@ function ds_field_default_form_properties($build_mode) {
         '#default_value' => '',
       ),
       'region' => array(
-        '#type' => 'textfield',
-        //'#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
+        '#type' => 'select',
+        '#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
         '#default_value' => DS_DEFAULT_WEIGHT,
-        '#size' => 10,
+        //'#size' => 10,
         '#attributes' => array(
           'class' => 'field-region-select field-region-'. DS_DEFAULT_REGION,
         ),

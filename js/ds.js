@@ -38,9 +38,8 @@ Drupal.behaviors.fieldDrag = function(context) {
         regionField.removeClass('field-region-' + oldRegionName).addClass('field-region-' + regionName);
         weightField.removeClass('field-weight-' + oldRegionName).addClass('field-weight-' + regionName);
         regionField.val(regionName);
-        parentField.val(regionName);
       }
-
+      
       // Manage classes to make it look disabled
       if(regionName == 'disabled') {
         $(dragObject.rowObject.element).addClass('region-css-disabled');
