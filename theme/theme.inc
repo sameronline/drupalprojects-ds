@@ -13,8 +13,8 @@
  * @param string $field The field to theme.
  */
 function theme_ds_field($content, $field) {
-
   $output = '';
+
   if (!empty($content)) {
     if ($field['type'] == 'ds') {
       $output .= '<div class="field '. $field['class'] .'">';
@@ -44,22 +44,24 @@ function theme_ds_field($content, $field) {
  * @param string $module The module name.
  */
 function theme_ds_regions($object_display, $module) {
-  $content = '';
+  $output = '';
+
   foreach ($object_display->themed_regions as $region_name => $region_data) {
-    $content .= '<div class="'. $module .'-region-'. $region_name;
+    $output .= '<div class="'. $module .'-region-'. $region_name;
     if ($region_name == 'middle') {
-      $content .= ' '. $object_display->ds_middle_classes;
+      $output .= ' '. $object_display->ds_middle_classes;
     }
     if (isset($region_data['extra_class'])) {
-      $content .= $region_data['extra_class'];
+      $output .= $region_data['extra_class'];
     }
-    $content .= '" ';
+    $output .= '" ';
     if (isset($region_data['inline_css'])) {
-      $content .= $region_data['inline_css'];
+      $output .= $region_data['inline_css'];
     }
-    $content .= '>'. $region_data['content'] .'</div>';
+    $output .= '>'. $region_data['content'] .'</div>';
   }
-  return $content;
+
+  return $output;
 }
 
 /**
@@ -121,10 +123,10 @@ function theme_ds_eval_block($field) {
  * @param string $field The field to theme.
  */
 function ds_group_fieldset($content, $field) {
-
   $add_js = FALSE;
   $class = $field['class'];
   $variation = array_pop(explode('_', $field['theme']));
+
   switch ($variation) {
     case 'collapsible':
       $add_js = TRUE;
@@ -173,7 +175,6 @@ function theme_ds_picture($field) {
  * Template preprocess function for theme_views_view_row_object().
  */
 function template_preprocess_ds_row_object(&$vars) {
-
   $options = $vars['options'];
   $vars['object'] = ''; // make sure var is defined.
 
@@ -200,7 +201,6 @@ function template_preprocess_ds_row_object(&$vars) {
  */
 function template_preprocess_ds_display_overview_form(&$vars) {
   $form = &$vars['form'];
-
   $build_mode = $form['#build_mode'];
 
   // Order the fields.
