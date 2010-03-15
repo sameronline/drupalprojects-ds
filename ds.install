@@ -13,3 +13,13 @@ function ds_uninstall() {
   db_query("DELETE FROM {variable} WHERE name LIKE 'ds_%%'");
   cache_clear_all('variables', 'cache');
 }
+
+/**
+ * Implementation of hook_update_N().
+ *
+ * We simply return an array here. We want the people to
+ * run update.php because new theming functions got introduced.
+ */
+function ds_update_1() {
+  return array();
+}

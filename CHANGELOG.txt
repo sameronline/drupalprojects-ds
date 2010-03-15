@@ -11,6 +11,7 @@
 - #710782 by swentel: Add option to copy settings from one build mode to other(s).
 - #727224 by swentel: New option for ds_api.
 - #742658 by swentel: Rename ds_show_links() to ds_show_field().
+- #722852 by swentel and jyve: Theming optimizations.
 
 -------------------------------------------------------------------------------------
 6.x-1.0 2010-02-04

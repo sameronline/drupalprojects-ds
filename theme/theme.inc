@@ -38,6 +38,31 @@ function theme_ds_field($content, $field) {
 }
 
 /**
+ * Theme function to render all regions with their content.
+ *
+ * @param stdClass $object_display The complete object and display properties.
+ * @param string $module The module name.
+ */
+function theme_ds_regions($object_display, $module) {
+  $content = '';
+  foreach ($object_display->themed_regions as $region_name => $region_data) {
+    $content .= '<div class="'. $module .'-region-'. $region_name;
+    if ($region_name == 'middle') {
+      $content .= ' '. $object_display->ds_middle_classes;
+    }
+    if (isset($region_data['extra_class'])) {
+      $content .= $region_data['extra_class'];
+    }
+    $content .= '" ';
+    if (isset($region_data['inline_css'])) {
+      $content .= $region_data['inline_css'];
+    }
+    $content .= '>'. $region_data['content'] .'</div>';
+  }
+  return $content;
+}
+
+/**
  * Evaluate custom code.
  *
  * @param array $field The field with all its properties.
