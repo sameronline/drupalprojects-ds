@@ -52,12 +52,13 @@ function ds_build_modes($module) {
       // New build mode form.
       $output .= drupal_get_form('ds_build_mode_form', $module);
 
-      // Matrix form.
-      if (isset($api_info['types'])) {
-        $types = $api_info['types']();
-        $output .= drupal_get_form('ds_buildmodes_matrix_form', $module, $types);
-      }
     }
+  }
+
+  // Matrix form.
+  if (isset($api_info['types'])) {
+    $types = $api_info['types']();
+    $output .= drupal_get_form('ds_buildmodes_matrix_form', $module, $types);
   }
 
   return $output;
