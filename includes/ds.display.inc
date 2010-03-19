@@ -353,11 +353,11 @@ function ds_display_overview_form_submit($form, &$form_state) {
       $display_settings[$build_mode]['fields'][$key]['labelformat'] = $form_state['values'][$key][$build_mode]['label']['format'];
 
       // Parent.
-      $field_id = $form_state['values'][$key][$build_mode]['field_id'];
+      /*$field_id = $form_state['values'][$key][$build_mode]['field_id'];
       $parent_id = $form_state['values'][$key][$build_mode]['parent_id'];
       if ($region != $parent_id) {
         $display_settings[$build_mode]['fields'][$key]['parent'] = $parent_id;
-      }
+      }*/
 
       // Ditch this field, unless it has its storage in another module (ie CCK)
       if (!isset($field['storage']))

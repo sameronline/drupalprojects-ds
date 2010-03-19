@@ -17,8 +17,8 @@ if ($rows): ?>
 
 <div id="ds-display-content">
   <div id="ds-tabs">
-    <div id="field-tab" class="tab selected"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab('field-tab'); return false;"><?php print t('Fields'); ?></a></div>
     <?php if ($sync_copy_tab): ?>
+      <div id="field-tab" class="tab selected"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab('field-tab'); return false;"><?php print t('Fields'); ?></a></div>
       <div id="sync-copy-tab" class="tab"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab('sync-copy-tab'); return false;"><?php print t('Sync / copy'); ?></a></div>
     <?php endif; ?>
     <?php if (!empty($plugins_tabs)): ?>
@@ -46,12 +46,9 @@ if ($rows): ?>
 
       <!-- Node regions -->
       <?php foreach ($regions as $region => $title): ?>
-        <tr class="region-title region-<?php print $region?>-title draggable tabledrag-root">
+        <tr class="region-title region-<?php print $region?>-title">
           <td colspan="6" class="region">
           <?php print $title; ?>
-          <input type="textfield" size="10" class="parent-id" value="<?php print $region; ?>">
-          <input type="textfield" size="10" class="field-id" value="<?php print $region; ?>">
-
           </td>
         </tr>
         <tr class="region-message region-<?php print $region?>-message <?php print empty($rows[$region]) ? 'region-empty' : 'region-populated'; ?>">

@@ -267,8 +267,12 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   drupal_add_js('misc/tableheader.js');
   drupal_add_js(drupal_get_path('module', 'ds') .'/js/ds.js');
   drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
-  drupal_add_tabledrag('fields', 'match', 'parent', 'parent-id', 'parent-id', 'field-id', FALSE, 2);
-  drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight');
+  $regions = ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all'));
+  foreach ($regions as $region => $title) {
+    drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region, NULL, FALSE);
+    // We need to have subgroups to make the dragging available within parents
+    drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', 'field-weight-'. $region);
+  }
 
   // Sync / copy tab.
   $vars['sync_copy_tab'] = '';
