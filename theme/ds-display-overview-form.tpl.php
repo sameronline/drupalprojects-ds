@@ -46,13 +46,19 @@ if ($rows): ?>
 
       <!-- Node regions -->
       <?php foreach ($regions as $region => $title): ?>
-        <tr class="region-title region-<?php print $region?>-title">
+        <tr class="region region-<?php print $region?> tabledrag-leaf">
           <td colspan="6" class="region">
-          <?php print $title; ?>
+            <?php print $title; ?>
+            <input type="hidden" class="ds-field-id" value="" size="2" id="edit-<?php print $region; ?>-full-field-id" name="region_<?php print $region; ?>[full][field_id]" maxlength="128"/>
+            <input type="hidden" class="ds-parent-id" value="" size="2" id="edit-<?php print $region; ?>-full-parent-id" name="region_<?php print $region; ?>[full][parent_id]" maxlength="128"/>
           </td>
         </tr>
-        <tr class="region-message region-<?php print $region?>-message <?php print empty($rows[$region]) ? 'region-empty' : 'region-populated'; ?>">
-          <td colspan="6"><em><?php print t('No fields in this region'); ?></em></td>
+        <tr class="tabledrag-leaf region-message region-<?php print $region?>-message <?php print empty($rows[$region]) ? 'region-empty' : 'region-populated'; ?>">
+          <td colspan="6">
+          <em><?php print t('No fields in this region'); ?></em>
+            <input type="hidden" class="ds-field-id" value="" size="2" id="edit-<?php print $region; ?>empty-full-field-id" name="empty<?php print $region; ?>[full][field_id]" maxlength="128"/>
+            <input type="hidden" class="ds-parent-id" value="" size="2" id="edit-<?php print $region; ?>empty-full-parent-id" name="empty<?php print $region; ?>[full][parent_id]" maxlength="128"/>
+          </td>
         </tr>
 
         <!-- fields -->

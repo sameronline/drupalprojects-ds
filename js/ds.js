@@ -1,5 +1,7 @@
 // $Id$
 
+Drupal.DisplaySuite = Drupal.DisplaySuite || {};
+
 /**
  * Move a field in the fields table from one region to another via select list.
  *
@@ -25,28 +27,43 @@ Drupal.behaviors.fieldDrag = function(context) {
   // Add a handler so when a row is dropped, update fields dropped into new regions.
   tableDrag.onDrop = function() {
     dragObject = this;
-      
-    if ($(dragObject.rowObject.element).prevAll('tr.region').eq(0)) {
-      var regionRow = $(dragObject.rowObject.element).prevAll('tr.region').eq(0).get(0);
-      var regionName = regionRow.className.replace(/([^ ]+[ ]+)*region-([^ ]+)-title([ ]+[^ ]+)*/, '$2');
-      var regionField = $('.field-region-select', dragObject.rowObject.element);
-      var parentField = $('.parent-id', dragObject.rowObject.element);
-      var weightField = $('select.field-weight', dragObject.rowObject.element);
-      var oldRegionName = weightField[0].className.replace(/([^ ]+[ ]+)*field-weight-([^ ]+)([ ]+[^ ]+)*/, '$2');
 
-      if (!regionField.is('.field-region-'+ regionName)) {
-        regionField.removeClass('field-region-' + oldRegionName).addClass('field-region-' + regionName);
-        weightField.removeClass('field-weight-' + oldRegionName).addClass('field-weight-' + regionName);
-        regionField.val(regionName);
-      }
-      
-      // Manage classes to make it look disabled
-      if(regionName == 'disabled') {
-        $(dragObject.rowObject.element).addClass('region-css-disabled');
-      }
-      else {
-        $(dragObject.rowObject.element).removeClass('region-css-disabled');
-      }
+    var regionRow = $(dragObject.rowObject.element).prevAll('tr.region').get(0);
+    var regionName = regionRow.className.replace(/([^ ]+[ ]+)*region-([^ ]+)([ ]+[^ ]+)*/, '$2');
+    var regionField = $('select.field-region-select', dragObject.rowObject.element);
+    var weightField = $('.field-weight', dragObject.rowObject.element);
+    var parent_id = $('.ds-parent-id', dragObject.rowObject.element).val();
+    var field_id = $('.ds-field-id', dragObject.rowObject.element).val();
+    var oldRegionName = weightField[0].className.replace(/([^ ]+[ ]+)*field-weight-([^ ]+)([ ]+[^ ]+)*/, '$2');
+
+    if (!regionField.is('.field-region-'+ regionName)) {
+      regionField.removeClass('field-region-' + oldRegionName).addClass('field-region-' + regionName);
+      weightField.removeClass('field-weight-' + oldRegionName).addClass('field-weight-' + regionName);
+      regionField.val(regionName);
+      checkRegionSelect(regionField, parent_id);
+
+      // Leafs.
+      $(dragObject.rowObject.element).nextAll('.tabledrag-leaf').each(function() {
+        if ($(this).find('.ds-parent-id').val() == field_id) {
+          var regionField = $('select.field-region-select', this);
+          regionField.val(regionName);
+          regionField.addClass('ds-hidden');
+        }
+        else {
+          return false;
+        }
+      });
+    }
+    else {
+      checkRegionSelect(regionField, parent_id);
+    }
+  
+    // Manage classes to make it look disabled
+    if(regionName == 'disabled') {
+      $(dragObject.rowObject.element).addClass('region-css-disabled');
+    }
+    else {
+      $(dragObject.rowObject.element).removeClass('region-css-disabled');
     }
   };
 
@@ -65,7 +82,7 @@ Drupal.behaviors.fieldDrag = function(context) {
       else {
         $(row).removeClass('region-css-disabled');
       }
-
+      
       // Find the correct region and insert the row as the first in the region.
       $('tr.region-message', table).each(function() {
         if ($(this).is('.region-' + select[0].value + '-message')) {
@@ -84,7 +101,16 @@ Drupal.behaviors.fieldDrag = function(context) {
           $(row).addClass('drag-previous');
         }
       });
-
+      
+      var field_id = row.find('.ds-field-id').val();
+      $('.tabledrag-leaf').each(function() {
+        if ($(this).find('.ds-parent-id').val() == field_id) {
+          var regionField= $(this).find('.field-region-select');
+          $(row).after($(this));
+          regionField.val(select[0].value);
+        }
+      });      
+      
       // Modify empty regions with added or removed fields.
       checkEmptyRegions(table, row);
       // Remove focus from selectbox.
@@ -93,17 +119,23 @@ Drupal.behaviors.fieldDrag = function(context) {
     $(this).addClass('fieldregionselect-processed');
   });
 
+  // Check if region select must be hidden or not.
+  var checkRegionSelect = function(regionField, parent_id) {
+    if (parent_id == '') {
+      regionField.removeClass('ds-hidden');
+    }
+    else {
+      regionField.addClass('ds-hidden');
+    }	  
+  };
+  
+  // Check the emptyness of regions.
   var checkEmptyRegions = function(table, rowObject) {
-    $('tr.region-message', table).each(function() {
-      // If the dragged row is in this region, but above the message row, swap it down one space.
-      if ($(this).prevAll('tr').eq(0).get(0) == rowObject.element) {
-        // Prevent a recursion problem when using the keyboard to move rows up.
-        if ((rowObject.method != 'keyboard' || rowObject.direction == 'down')) {
-          rowObject.swap('after', this);
-        }
-      }
+
+	$('tr.region-message', table).each(function() {
+
       // This region has become empty
-      if ($(this).next('tr').is(':not(.draggable)') || $(this).next('tr').size() == 0) {
+      if (($(this).next('tr').is(':not(.draggable)') || $(this).next('tr').size() == 0) && $(this).prev('tr').is(':not(.draggable)')) {
         $(this).removeClass('region-populated').addClass('region-empty');
       }
       // This region has become populated.
@@ -111,13 +143,30 @@ Drupal.behaviors.fieldDrag = function(context) {
         $(this).removeClass('region-empty').addClass('region-populated');
       }
     });
+
+    var regionRow = $(rowObject.element).prevAll('tr.region').get(0);
+    var regionName =  regionRow.className.replace(/([^ ]+[ ]+)*region-([^ ]+)([ ]+[^ ]+)m*/, '$2');
+    $('.region-' + regionName + '-message').addClass('region-populated');	  
   };
 };
 
 /**
- * Drupal ds object.
+ * Change label format on fieldgroups.
  */
-Drupal.DisplaySuite = Drupal.DisplaySuite || {};
+Drupal.behaviors.fieldgroupFormat = function(context) {
+  $('select.fieldgroup-format').each(function() {
+    $(this).change(function(event) {
+      var field_group_value = $(this).val();
+  	  var label_format = $(this).attr('id').replace('format', 'label-format');
+      if (field_group_value.substr(0, 17) == 'ds_group_fieldset') {
+        $('#'+ label_format).addClass('ds-hidden');
+      }
+      else {
+        $('#'+ label_format).removeClass('ds-hidden');
+      }
+    });
+  });
+};
 
 /**
  * Show / hide fields or plugins content.

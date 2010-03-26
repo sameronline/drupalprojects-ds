@@ -51,6 +51,9 @@ function theme_ds_regions($object_display, $module) {
     if ($region_name == 'middle') {
       $output .= ' '. $object_display->ds_middle_classes;
     }
+    if ($region_name == 'header' || $region_name == 'footer') {
+      $output .= ' clear-block';
+    }
     if (isset($region_data['extra_class'])) {
       $output .= $region_data['extra_class'];
     }
@@ -145,9 +148,7 @@ function ds_group_fieldset($content, $field) {
     drupal_add_js('misc/collapse.js');
   }
 
-  // Legend or not ?
-  $title = ($field['labelformat'] != 'hidden') ? $field['title'] : '';
-  return '<fieldset class="group '. $class .'"><legend>'. $title .'</legend>'. $content .'</fieldset>';
+  return '<fieldset class="group '. $class .'"><legend>'. $field['title'] .'</legend>'. $content .'</fieldset>';
 }
 
 /**
@@ -203,16 +204,34 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   $form = &$vars['form'];
   $build_mode = $form['#build_mode'];
 
-  // Order the fields.
+  // Sort fields.
   $order = array();
+  $root_fields = array();
+  $leaf_fields = array();
   foreach ($form['#fields'] as $key => $field) {
-    $order[$field] = $form[$field]['ds_weight']['#default_value'];
+    if (!empty($form[$field][$build_mode]['parent_id']['#default_value'])) {
+      $leaf_fields[$form[$field][$build_mode]['parent_id']['#default_value']][$field] = $form[$field]['ds_weight']['#default_value'];
+    }
+    else {
+      $root_fields[$field] = $form[$field]['ds_weight']['#default_value'];
+    }
   }
-  asort($order);
+
+  asort($root_fields);
+  foreach ($root_fields as $root_field => $root_weight) {
+    $order[$root_field] = $root_weight;
+    if (isset($leaf_fields[$root_field])) {
+      $fields_in_leaf = $leaf_fields[$root_field];
+      asort($fields_in_leaf);
+      foreach ($fields_in_leaf as $leaf_field => $leaf_weight) {
+        $order[$leaf_field] = $leaf_weight;
+      }
+    }
+  }
 
   $rows = array();
-  foreach ($order as $key => $field) {
-    $element = &$form[$key];
+  foreach ($order as $field => $field_weight) {
+    $element = &$form[$field];
     $row = new stdClass();
 
     // Each field will have a region, store it temporarily
@@ -223,14 +242,29 @@ function template_preprocess_ds_display_overview_form(&$vars) {
       // Render the display fields
       if ($child == $build_mode) {
         $row->{$child}->indentation = theme('indentation', $element[$child]['#depth']);
-        $row->{$child}->field_id = drupal_render($element[$child]['field_id']);
+        $row->{$child}->class = drupal_render($element[$child]['css-class']);
+
+        // Parent & Field id.
         $row->{$child}->parent_id = drupal_render($element[$child]['parent_id']);
+        $row->{$child}->field_id = drupal_render($element[$child]['field_id']);
+
+        // Extra classes when fieldgroup.
+        if ($element[$child]['type']['#value'] == DS_FIELD_TYPE_GROUP) {
+          $element[$child]['format']['#attributes']['class'] = 'fieldgroup-format';
+
+          if (substr($element[$child]['format']['#default_value'], 0, 17) == 'ds_group_fieldset') {
+            $element[$child]['label']['format']['#attributes']['class'] = 'ds-hidden';
+          }
+        }
+        if (!empty($element[$child]['parent_id']['#default_value'])) {
+          //$element[$child]['region']['#attributes']['class'] .= ' ds-hidden';
+        }
+
+        $row->{$child}->region = drupal_render($element[$child]['region']);
+        $row->{$child}->format = drupal_render($element[$child]['format']);
         $row->{$child}->label = drupal_render($element[$child]['label']);
         $row->{$child}->label_edit = drupal_render($element[$child]['label_edit']);
         $row->{$child}->label_value = drupal_render($element[$child]['label_value']);
-        $row->{$child}->format = drupal_render($element[$child]['format']);
-        $row->{$child}->class = drupal_render($element[$child]['css-class']);
-        $row->{$child}->region = drupal_render($element[$child]['region']);
       }
       // Render the rest of the fields
       else {
@@ -252,12 +286,11 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     $row->label_class = 'label-field';
     if ($element[$build_mode]['type']['#value'] == DS_FIELD_TYPE_GROUP) {
       $row->label_class .= ' field-group';
-      //$row->class .= ' tabledrag-root';
+      $row->class .= ' tabledrag-root';
     }
     else {
-//      $row->class .= ' tabledrag-leaf';
+      $row->class .= ' tabledrag-leaf';
     }
-      //$row->class .= ' tabledrag-leaf';
 
     // Add to rows.
     $rows[$region][] = $row;
@@ -267,12 +300,10 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   drupal_add_js('misc/tableheader.js');
   drupal_add_js(drupal_get_path('module', 'ds') .'/js/ds.js');
   drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
-  $regions = ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all'));
-  foreach ($regions as $region => $title) {
-    drupal_add_tabledrag('fields', 'match', 'sibling', 'field-region-select', 'field-region-'. $region, NULL, FALSE);
-    // We need to have subgroups to make the dragging available within parents
-    drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', 'field-weight-'. $region);
-  }
+
+  // Parent & field order.
+  drupal_add_tabledrag('fields', 'match', 'parent', 'ds-parent-id', 'ds-parent-id', 'ds-field-id', FALSE, 1);
+  drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', NULL, NULL, TRUE);
 
   // Sync / copy tab.
   $vars['sync_copy_tab'] = '';

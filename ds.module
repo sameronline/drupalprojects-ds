@@ -202,7 +202,6 @@ function ds_build_fields_and_regions(&$object, $module) {
   // Get all fields and settings for this build mode.
   $fields = ds_get_fields($module, $object->type, $object->build_mode, $api_info['extra']);
   $field_settings = ds_default_value($display_settings, $object->build_mode, 'fields');
-
   // Get the object type for field rendering and tokenization.
   $object_type = $api_info['object'];
 
@@ -221,13 +220,11 @@ function ds_build_fields_and_regions(&$object, $module) {
         }
 
         // Build field key.
-        $ds_fields[$key] = array(
-          'key' => $key,
-          'title' => $field['title'],
-          'class' => $class,
-          'labelformat' => (isset($field_settings[$key]['labelformat'])) ? $field_settings[$key]['labelformat'] : DS_DEFAULT_LABEL_FORMAT,
-          'type' => isset($field['display_settings']) ? 'other' : 'ds',
-        );
+        $ds_fields[$key]['key'] = $key;
+        $ds_fields[$key]['title'] = $field['title'];
+        $ds_fields[$key]['class'] = $class;
+        $ds_fields[$key]['labelformat'] = (isset($field_settings[$key]['labelformat'])) ? $field_settings[$key]['labelformat'] : DS_DEFAULT_LABEL_FORMAT;
+        $ds_fields[$key]['type'] = isset($field['display_settings']) ? 'other' : 'ds';
 
         // Check for weight in region and parent (if any). If a parent key is found, we'll unset the original
         // field from the region it might be set in and we'll add that field to the group array.
