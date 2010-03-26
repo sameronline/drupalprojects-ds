@@ -257,7 +257,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
           }
         }
         if (!empty($element[$child]['parent_id']['#default_value'])) {
-          //$element[$child]['region']['#attributes']['class'] .= ' ds-hidden';
+          $element[$child]['region']['#attributes']['class'] .= ' ds-hidden';
         }
 
         $row->{$child}->region = drupal_render($element[$child]['region']);
