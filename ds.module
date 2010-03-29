@@ -405,7 +405,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
   // Plugins.
   ds_plugins_process($module, $api_info['object'], $display_settings, $vars, $object_display);
 
-  // Add middle classes based on regions.
+  // Add classes based on regions.
   $object_display->ds_middle_classes = $module .'-no-sidebars';
   if (isset($object_display->region_classes['left']) && isset($object_display->region_classes['right'])) {
     $object_display->ds_middle_classes = $module .'-two-sidebars';
