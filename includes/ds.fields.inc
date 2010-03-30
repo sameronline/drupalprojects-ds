@@ -389,7 +389,7 @@ function ds_block_field_form($form_state, $module, $all_fields, $object = '', $k
     );
   }
   else {
-    $form['code_identity']['code_exclude'] = array(
+    $form['code_identity']['block_exclude'] = array(
       '#type' => 'value',
       '#value' => array(),
     );
