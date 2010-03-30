@@ -133,8 +133,10 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
     '#regions' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
   );
 
+  dsm($api_info);
+
   // Extra info.
-  if (isset($api_info['extra'])) {
+  if (isset($api_info['extra']) && !empty($api_info['extra'])) {
     $types = $api_info['types']();
     $type_info = $types[$type];
     foreach ($api_info['extra'] as $key) {
