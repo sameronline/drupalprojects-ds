@@ -156,6 +156,7 @@ function _ds_menu() {
 
     // Displays.
     $build_modes = $all_build_modes[$module];
+    $first_title = '';
     $first_build_mode = key($build_modes);
     if (!empty($build_modes)) {
       foreach ($api_info['types']() as $tkey => $type) {
@@ -194,13 +195,14 @@ function _ds_menu() {
           // Store the first build_mode
           if ($first == 0) {
             $first++;
+            $first_title = $type->name;
             $first_build_mode = $key;
           }
         }
 
         // Default callback.
         $items['admin/ds/layout/' . $type_url_str] = array(
-          'title' => drupal_ucfirst($type_url_str),
+          'title' => ucfirst($first_title),
           'page callback' => 'drupal_get_form',
           'page arguments' => array('ds_display_overview_form', $type_name, "$first_build_mode", $module),
           'access arguments' => array('configure layout for ' . $module),
