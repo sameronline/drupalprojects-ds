@@ -46,7 +46,8 @@ class views_plugin_ds_object_view extends views_plugin_row {
     foreach ($build_modes as $module => $modes) {
       $function = $module . '_ds_api';
       $api_info = $function();
-      if ($api_info['views_base'] == $views_base_table) {
+      // $api_info['views_base'] can either be a string or an array.
+      if ((is_array($api_info['views_base']) && in_array($views_base_table, $api_info['views_base'])) || (is_string($api_info['views_base']) && $api_info['views_base'] == $views_base_table)) {
         foreach ($modes as $key => $title) {
           $build_mode_options[$key] = $title['title'];
         }
