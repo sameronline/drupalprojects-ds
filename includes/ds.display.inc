@@ -516,7 +516,7 @@ function ds_field_default_form_properties($build_mode) {
       '#default_value' => DS_DEFAULT_REGION,
       //'#size' => 10,
       '#attributes' => array(
-        'class' => 'field-region-select field-region-'. DS_DEFAULT_REGION,
+        'class' => 'field-region-select',
       ),
     ),
   );
@@ -555,7 +555,7 @@ function ds_field_default_form_properties($build_mode) {
         '#default_value' => DS_DEFAULT_WEIGHT,
         //'#size' => 10,
         '#attributes' => array(
-          'class' => 'field-region-select field-region-'. DS_DEFAULT_REGION,
+          'class' => 'field-region-select',
         ),
       ),
     );
