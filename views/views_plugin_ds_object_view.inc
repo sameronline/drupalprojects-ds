@@ -64,7 +64,7 @@ class views_plugin_ds_object_view extends views_plugin_row {
     $form['advanced'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use the advanced build mode selector'),
-      '#description' => t('This gives you the opportunity to have more control in a list, eg the first build mode on the object is A and the rest B.<br /> There is no UI for this, you need to create a function named like this: ds_views_row_adv_VIEWSNAME. All logic is in that function.<br/>Note: the build mode selected above is not passed in that function, only the variables.'),
+      '#description' => t('This gives you the opportunity to have more control in a list, eg the first build mode on the object is A and the rest B.<br /> There is no UI for this, you need to create a function named like this: <strong><em>ds_views_row_adv_@VIEWSNAME(&$variables, $build_mode)</em></strong>.<br />See <a href="http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME">http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME</a> for an example.', array('@VIEWSNAME' => $this->view->name)),
       '#default_value' => $this->options['advanced'],
     );
 
