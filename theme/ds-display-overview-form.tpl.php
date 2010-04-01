@@ -17,15 +17,18 @@ if ($rows) {
 ?>
 
 <div id="ds-display-content">
-  <?php if (!empty($plugins_tabs)): ?>
-    <div id="ds-tabs">
-      <div id="field-tab" class="tab selected"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab('field-tab'); return false;"><?php print t('Fields'); ?></a></div>
+  <div id="ds-tabs">
+    <div id="field-tab" class="tab selected"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab('field-tab'); return false;"><?php print t('Fields'); ?></a></div>
+    <?php if ($sync_copy_tab): ?>
+      <div id="sync-copy-tab" class="tab"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab('sync-copy-tab'); return false;"><?php print t('Sync / copy'); ?></a></div>
+    <?php endif; ?>
+    <?php if (!empty($plugins_tabs)): ?>
       <?php foreach ($plugins_tabs as $key => $title): ?>
       <div id="<?php print $key; ?>-tab" class="tab"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab('<?php print $key; ?>-tab'); return false;"><?php print $title; ?></a></div>
       <?php endforeach; ?>
-    </div>
-    <div style="clear: both"></div>
-  <?php endif; ?>
+    <?php endif; ?>
+  </div>
+  <div style="clear: both"></div>
 
   <div id="field-content" class="ds-display">
 
@@ -71,6 +74,9 @@ if ($rows) {
       </tbody>
     </table>
   </div>
+  <?php if ($sync_copy_tab): ?>
+    <div id="sync-copy-content" class="ds-hidden"><?php print $sync_copy_tab; ?></div>
+  <?php endif; ?>
   <?php if (!empty($plugins_tabs)): ?>
     <?php foreach ($plugins_content as $key => $form): ?>
       <div id="<?php print $key; ?>-content" class="ds-hidden"><?php print $form; ?></div>
