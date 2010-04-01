@@ -245,6 +245,16 @@ function _ds_theme() {
       'render element' => 'form',
     ),
 
+    // Regions theming.
+    'ds_regions' => array(
+      'variables' => array(
+        'object_display' => NULL,
+        'module' => '',
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+    ),
+
     // General theming field.
     'ds_field' => array(
       'variables' => array(

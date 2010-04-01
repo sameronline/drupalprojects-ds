@@ -320,34 +320,19 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
   ds_plugins_process($module, $api_info['object'], $display_settings, $vars, $object_display);
 
   // Add classes based on regions.
-  $ds_middle_classes = 'no-sidebars';
+  $object_display->ds_middle_classes = $module .'-no-sidebars';
   if (isset($object_display->region_classes['left']) && isset($object_display->region_classes['right'])) {
-    $ds_middle_classes = 'two-sidebars';
+    $object_display->ds_middle_classes = $module .'-two-sidebars';
   }
   elseif (isset($object_display->region_classes['left'])) {
-    $ds_middle_classes = 'one-sidebar sidebar-left';
+    $object_display->ds_middle_classes = $module .'-one-sidebar '. $module .'-sidebar-left';
   }
   elseif (isset($object_display->region_classes['right'])) {
-    $ds_middle_classes = 'one-sidebar sidebar-right';
+    $object_display->ds_middle_classes = $module .'-one-sidebar '. $module .'-sidebar-right';
   }
 
-  // Build the $content variable.
-  $content = '';
-  foreach ($object_display->themed_regions as $region_name => $region_data) {
-    $content .= '<div class="ds-region-' . $region_name;
-    if ($region_name == 'middle') {
-      $content .= ' ' . $ds_middle_classes;
-    }
-    if (isset($region_data['extra_class'])) {
-      $content .= $region_data['extra_class'];
-    }
-    $content .= '" ';
-    if (isset($region_data['inline_css'])) {
-      $content .= $region_data['inline_css'];
-    }
-    $content .= '><div class="ds-region-inner">' . $region_data['content'] . '</div></div>';
-  }
-  return $content;
+  // Theme the regions with their content.
+  return theme('ds_regions', $object_display, $module);
 }
 
 /**

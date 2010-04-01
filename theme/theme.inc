@@ -41,6 +41,36 @@ function theme_ds_field($variables) {
 }
 
 /**
+ * Theme function to render all regions with their content.
+ *
+ * @param stdClass $object_display The complete object and display properties.
+ * @param string $module The module name.
+ */
+function theme_ds_regions($object_display, $module) {
+  $output = '';
+
+  foreach ($object_display->themed_regions as $region_name => $region_data) {
+    $output .= '<div class="'. $module .'-region-'. $region_name;
+    if ($region_name == 'middle') {
+      $output .= ' '. $object_display->ds_middle_classes;
+    }
+    if ($region_name == 'header' || $region_name == 'footer') {
+      $output .= ' clear-block';
+    }
+    if (isset($region_data['extra_class'])) {
+      $output .= $region_data['extra_class'];
+    }
+    $output .= '" ';
+    if (isset($region_data['inline_css'])) {
+      $output .= $region_data['inline_css'];
+    }
+    $output .= '>'. $region_data['content'] .'</div>';
+  }
+
+  return $output;
+}
+
+/**
  * Evaluate custom code.
  *
  * @param array $field The field with all its properties.
