@@ -95,6 +95,47 @@ function ds_ds_plugins() {
 }
 
 /**
+ * Implements hook_block_info().
+ */
+function ds_block_info() {
+  require_once('includes/ds.registry.inc');
+  return _ds_block_list();
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function ds_block($delta = '') {
+  $content = array();
+  $ds_blocks = variable_get('ds_blocks', array());
+  if (isset($ds_blocks[$delta])) {
+    $info = $ds_blocks[$delta];
+    $data = $info['data'];
+    if (isset($data['filename']) && isset($data['class'])) {
+      require_once($data['filename']);
+      $class = $data['class'];
+      $plugin = new $class();
+      if (method_exists($plugin, 'block_view')) {
+        $content = $plugin->block_view($info);
+      }
+    }
+  }
+}
+
+/**
+ * Set or get static variables at runtime.
+ */
+function ds_static_variables($key, $data = NULL) {
+  static $variables = array();
+  if (!isset($data) && isset($key) && isset($variables[$key])) {
+    return $variables[$key];
+  }
+  elseif (!isset($variables[$key]) && isset($data)) {
+    $variables[$key] = $data;
+  }
+}
+
+/**
  * Return API info about a module and type.
  *
  * @param string $module The module to get the API info from.
@@ -476,7 +517,7 @@ function ds_plugins_process($module, $object_type, $display_settings, &$vars, &$
         require_once($data['filename']);
         $class = $data['class'];
         $plugin = new $class();
-        $plugin->execute($vars, $display, $display_settings, $object_type);
+        $plugin->execute($vars, $display, $display_settings, $object_type, $module);
       }
     }
   }

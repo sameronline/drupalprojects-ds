@@ -365,6 +365,48 @@ function _ds_register_build_modes() {
 }
 
 /**
+ * Return blocks.
+ */
+function _ds_block_list() {
+  $blocks = array();
+  $all_blocks = array();
+
+  foreach (module_implements('ds_api') as $module) {
+    $plugins = variable_get($module .'_plugin_settings', array());
+    if (!empty($plugins)) {
+      foreach ($plugins as $key => $data) {
+        if (isset($data['filename']) && isset($data['class'])) {
+          require_once($data['filename']);
+          $class = $data['class'];
+          $plugin = new $class();
+          if (method_exists($plugin, 'block_list')) {
+            $plugin->block_list($module, $all_blocks, $data);
+          }
+        }
+      }
+    }
+  }
+
+  if (!empty($all_blocks)) {
+    $i = 0;
+    $ds_blocks = array();
+    foreach ($all_blocks as $key => $block) {
+      if (isset($block['info']) && isset($block['key']) && isset($block['data'])) {
+        // Calculating the md5 from the key is effective here, because we'll
+        // get back an int which is exactly 32 characters long, the length
+        // of the delta field of the blocks table.
+        $hash = md5($block['key']);
+        $blocks[$hash] = array('info' => $block['info']);
+        $ds_blocks[$hash] = $block;
+      }
+    }
+    variable_set('ds_blocks', $ds_blocks);
+  }
+
+  return $blocks;
+}
+
+/**
  * Return ds plugins.
  */
 function _ds_plugins() {
@@ -384,6 +426,14 @@ function _ds_plugins() {
       'description' => t('Override region CSS with inline styles or add extra classes.'),
       'file' => 'ds_cssoverrider.inc',
       'path' => $path . '/plugins',
+      'target' => 'all',
+    ),
+    'regiontoblock' => array(
+      'title' => t('Region to block'),
+      'class' => 'ds_regiontoblock',
+      'description' => t('Render a display suite region into a theme region. That region will be made available as a block.'),
+      'file' => 'ds_regiontoblock.inc',
+      'path' => $path .'/plugins',
       'target' => 'all',
     ),
   );
