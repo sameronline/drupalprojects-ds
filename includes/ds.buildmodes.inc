@@ -128,8 +128,8 @@ function ds_build_mode_form_validate($form, &$form_state) {
       form_set_error('key', t('This build mode already exists.'));
     }
 
-    if (!preg_match('!^[a-z_]+$!', $form_state['values']['key'])) {
-      form_set_error('key', t('The machine-readable name must contain only lowercase letters and underscores.'));
+    if (!preg_match('!^[a-z_0-9]+$!', $form_state['values']['key'])) {
+      form_set_error('key', t('The machine-readable name must contain only lowercase letters, numbers and underscores.'));
     }
   }
 }
