@@ -358,6 +358,9 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
       if (!empty($group_content)) {
         $object->ds_fields[$group]['content'] = $group_content;
       }
+      else {
+        unset($object->ds_fields[$group]);
+      }
     }
   }
 
