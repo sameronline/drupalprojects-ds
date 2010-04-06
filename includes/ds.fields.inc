@@ -269,8 +269,8 @@ function ds_code_field_form_validate($form, &$form_state) {
       form_set_error('code_key', t('This field already exists.'));
     }
 
-    if (!preg_match('!^[a-z_]+$!', $form_state['values']['code_key'])) {
-      form_set_error('code_key', t('The machine-readable name must contain only lowercase letters and underscores.'));
+    if (!preg_match('!^[a-z_0-9]+$!', $form_state['values']['code_key'])) {
+      form_set_error('code_key', t('The machine-readable name must contain only lowercase letters, numbers and underscores.'));
     }
   }
 }
@@ -453,8 +453,8 @@ function ds_block_field_form_validate($form, &$form_state) {
       form_set_error('block_key', t('This field already exists.'));
     }
 
-    if (!preg_match('!^[a-z_]+$!', $form_state['values']['block_key'])) {
-      form_set_error('block_key', t('The machine-readable name must contain only lowercase letters and underscores.'));
+    if (!preg_match('!^[a-z_0-9]+$!', $form_state['values']['block_key'])) {
+      form_set_error('block_key', t('The machine-readable name must contain only lowercase letters, numbers and underscores.'));
     }
   }
 }
