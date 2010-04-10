@@ -14,13 +14,12 @@
 function theme_ds_field($variables) {
 
   $content = $variables['content'];
-  $field_key = $variables['field_key'];
   $field = $variables['field'];
 
   $output = '';
   if (!empty($content)) {
     if ($field['type'] == 'ds') {
-      $output .= '<div class="field field-' . $field_key . '">';
+      $output .= '<div class="field field-' . $field['class'] . '">';
       // Above label.
       if ($field['labelformat'] == 'above') {
         $output .= '<div class="field-label">' . $field['title'] . ': </div>';
@@ -205,6 +204,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
         $row->{$child}->label_edit = drupal_render($element[$child]['label_edit']);
         $row->{$child}->label_value = drupal_render($element[$child]['label_value']);
         $row->{$child}->format = drupal_render($element[$child]['format']);
+        $row->{$child}->class = drupal_render($element[$child]['css-class']);
         $row->{$child}->region = drupal_render($element[$child]['region']);
       }
       // Render the rest of the fields

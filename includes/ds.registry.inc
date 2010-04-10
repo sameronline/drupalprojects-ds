@@ -100,6 +100,20 @@ function _ds_menu() {
     'file' => 'includes/ds.display.inc',
     'weight' => 2,
   );
+  $items['admin/ds/layout/overview'] = array(
+      'title' => 'Overview',
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+      'weight' => 0,
+  );
+  $items['admin/ds/layout/styles'] = array(
+    'title' => 'Styles',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_styles'),
+    'access arguments' => array('access display suite'),
+    'file' => 'includes/ds.display.inc',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+  );
 
   foreach (module_implements('ds_api') as $module) {
     $api_info = ds_api_info($module);
