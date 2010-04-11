@@ -62,9 +62,9 @@ function ds_fieldgroups($module) {
 
     // Additional modules support.
     if ($module == 'nd')
-    $output .= '<p>'. t('<strong>Additional modules</strong><br />These fieldgroups are independant from the fieldgroups module that comes with the CCK package.<br />You can also output fieldgroups as tabs if you have the <a href="!url_tabs">tabs</a> module enabled.<br />It\'s not necessary to have the fieldgroup and/or <a href="!url_cck_tabs">CCK fieldgroup tabs</a> modules enabled.', array('!url_tabs' => 'http://drupal.org/project/tabs', 'url_cck_tabs' => 'http://drupal.org/project/cck_fieldgroup_tabs')) .'</p>';
+    $output .= '<p>'. t('<strong>Additional modules</strong><br />These fieldgroups are independant from the fieldgroups module that comes with the CCK package.<br />You can also output fieldgroups as tabs if you have the <a href="!url_tabs">tabs</a> module enabled.<br />It\'s not necessary to have the fieldgroup and/or <a href="!url_cck_tabs">CCK fieldgroup tabs</a> modules enabled.', array('!url_tabs' => 'http://drupal.org/project/tabs', '!url_cck_tabs' => 'http://drupal.org/project/cck_fieldgroup_tabs')) .'</p>';
     else
-    $output .= '<p>'. t('<strong>Additional modules</strong><br />You can also output fieldgroups as tabs if you have the <a href="!url_tabs">tabs</a> module enabled.', array('!url_tabs' => 'http://drupal.org/project/tabs', 'url_cck_tabs' => 'http://drupal.org/project/cck_fieldgroup_tabs')) .'</p>';
+    $output .= '<p>'. t('<strong>Additional modules</strong><br />You can also output fieldgroups as tabs if you have the <a href="!url_tabs">tabs</a> module enabled.', array('!url_tabs' => 'http://drupal.org/project/tabs', '!url_cck_tabs' => 'http://drupal.org/project/cck_fieldgroup_tabs')) .'</p>';
 
     // New fieldgroup form.
     $output .= drupal_get_form('ds_fieldgroup_form', $module, $fieldgroup);
