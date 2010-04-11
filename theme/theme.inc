@@ -158,6 +158,7 @@ function ds_group_fieldset($content, $field) {
  * right array before we an send it to theme('tabset');
  */
 function theme_ds_tabs($field) {
+  tabs_load();
 
   static $i = 1;
   $fields = $field['fields'];
