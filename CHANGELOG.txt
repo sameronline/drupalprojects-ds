@@ -15,6 +15,7 @@
 - #582618 by swentel, stalski, zuupermand and Jyve: Support for fieldgroups.
 - #763516 by swentel: validation of keys for fields, fieldgroups & buildmodes 
                       can contain numbers.
+- #763024 by swentel: support for (cck) tabs.
 
 -------------------------------------------------------------------------------------
 6.x-1.0 2010-02-04

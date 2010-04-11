@@ -337,6 +337,15 @@ function _ds_theme() {
     ),
   );
 
+  // Tabs support
+  if (module_exists('tabs')) {
+    $theme_functions['ds_tabs'] = array(
+      'arguments' => array('object' => NULL),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+    );
+  }
+
   return $theme_functions;
 }
 

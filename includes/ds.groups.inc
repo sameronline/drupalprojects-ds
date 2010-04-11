@@ -188,6 +188,11 @@ function ds_fieldgroup_form_submit($form, &$form_state) {
     ),
   );
 
+  // Tabs support.
+  if (module_exists('tabs')) {
+    $fields[$key]['properties']['formatters']['ds_tabs'] = 'Tabs';
+  }
+
   // Safe field and invalidate cached fields.
   variable_set($module .'_fields', $fields);
   variable_del('ds_fields_cached');

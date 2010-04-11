@@ -152,6 +152,34 @@ function ds_group_fieldset($content, $field) {
 }
 
 /**
+ * Theme tabs. This is based on the theme_tabset() function
+ * from the tabs module. We use our own theming function because
+ * otherwhise we need to loop through our fields to build the
+ * right array before we an send it to theme('tabset');
+ */
+function theme_ds_tabs($field) {
+
+  static $i = 1;
+  $fields = $field['fields'];
+  ksort($fields);
+
+  $tabs_content = '';
+  $output = '<div id="tabs-tabset-'. $field['name'] .'" class="drupal-tabs">';
+  $tabs = '<ul class="clear-block">';
+  foreach ($fields as $weight => $data) {
+    $tabs .= '<li class="tabset-tab-'. $i .'">
+    <a href="#tabset-tab-'. $i .'"><span class="tab">'. $data['title'] .'</span></a></li>';
+    $tabs_content .= '<div id="tabset-tab-'. $i .'" class="tabs-tabset ui-tabs-panel '. $data['class'] .'">'. $data['content'] .'</div>';
+    $i++;
+  }
+  $tabs .= '</ul>';
+  $output .= $tabs;
+  $output .= $tabs_content;
+  $output .= '</div>';
+  return $output;
+}
+
+/**
  * Theme author name.
  */
 function theme_ds_author_nolink($field) {
@@ -252,7 +280,9 @@ function template_preprocess_ds_display_overview_form(&$vars) {
         if ($element[$child]['type']['#value'] == DS_FIELD_TYPE_GROUP) {
           $element[$child]['format']['#attributes']['class'] = 'fieldgroup-format';
 
-          if (substr($element[$child]['format']['#default_value'], 0, 17) == 'ds_group_fieldset') {
+          if (substr($element[$child]['format']['#default_value'], 0, 17) == 'ds_group_fieldset'
+            || substr($element[$child]['format']['#default_value'], 0, 7) == 'ds_tabs'
+            ) {
             $element[$child]['label']['format']['#attributes']['class'] = 'ds-hidden';
           }
         }
