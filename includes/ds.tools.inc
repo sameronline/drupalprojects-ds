@@ -123,7 +123,7 @@ function ds_export(&$form_state) {
 
         // Content types.
         foreach ($api_info['types']() as $tkey => $type) {
-          $options[$module .'-'. $tkey] = $type->name;
+          $options[$module .'-'. $type->type] = $type->name;
           $global_exclude = variable_get($module .'_type_'. $tkey, FALSE);
           if ($global_exclude == TRUE) {
             $ds_variables[] = $module .'_type_'. $tkey;
