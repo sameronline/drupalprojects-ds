@@ -164,13 +164,15 @@ function theme_ds_tabs($field) {
   $fields = $field['fields'];
   ksort($fields);
 
+  $tab_navigation = (variable_get('tabs_navigation', 0)) ? ' tabs-navigation' : '';
+
   $tabs_content = '';
-  $output = '<div id="tabs-tabset-'. $field['name'] .'" class="drupal-tabs">';
-  $tabs = '<ul class="clear-block">';
+  $output = '<div id="tabs-'. $field['name'] .'" class="drupal-tabs js-hide'. $tab_navigation .'" style="display:block;">';
+  $tabs = '<ul class="clear-block ui-tabs-nav tabs">';
   foreach ($fields as $weight => $data) {
     $tabs .= '<li class="tabset-tab-'. $i .'">
     <a href="#tabset-tab-'. $i .'"><span class="tab">'. $data['title'] .'</span></a></li>';
-    $tabs_content .= '<div id="tabset-tab-'. $i .'" class="tabs-tabset ui-tabs-panel '. $data['class'] .'">'. $data['content'] .'</div>';
+    $tabs_content .= '<div id="tabset-tab-'. $i .'" class="tabs-'. $field['name'] .' ui-tabs-panel '. $data['class'] .'">'. $data['content'] .'</div>';
     $i++;
   }
   $tabs .= '</ul>';
