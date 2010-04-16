@@ -240,6 +240,13 @@ function _ds_theme() {
       'path' => $path .'/theme',
       'arguments' => array('form' => NULL),
     ),
+    // Display overview form for views
+    'ds_display_overview_views_form' => array(
+      'template' => 'ds-display-overview-views-form',
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'arguments' => array('form' => NULL),
+    ),
     // Build modes matrix.
     'ds_buildmodes_matrix_form' => array(
       'file' => 'ds.buildmodes.inc',

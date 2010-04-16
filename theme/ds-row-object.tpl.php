@@ -3,7 +3,7 @@
 
 /**
  * @file
- * DS display mode row.
+ * DS display node mode row.
  *
  * @ingroup views_templates
  */

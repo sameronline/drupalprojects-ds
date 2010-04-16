@@ -168,7 +168,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
 /**
  * Add fields to display overview form.
  */
-function ds_fields_display_form(&$form, $display_settings) {
+function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
 
   global $base_url;
 
@@ -177,7 +177,9 @@ function ds_fields_display_form(&$form, $display_settings) {
   $type = $form['#type_name'];
   $extra = $form['#extra'];
 
-  $fields = ds_get_fields($module, $type, $build_mode, $extra, TRUE);
+  if (empty($fields)) {
+    $fields = ds_get_fields($module, $type, $build_mode, $extra, TRUE);
+  }
 
   // Break form build in case no fields
   if (empty($fields)) {
