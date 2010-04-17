@@ -42,3 +42,41 @@ function ds_views_plugins() {
     ),
   );
 }
+
+/**
+ * Implementation of hook_views_handlers().
+ */
+function ds_views_handlers() {
+  return array(
+    'info' => array(
+      'path' => drupal_get_path('module', 'ds') .'/views',
+    ),
+    'handlers' => array(
+      'ds_handler_field_fieldgroup' => array(
+        'parent' => 'views_handler_field',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_views_data().
+ */
+function ds_views_data() {
+  $data['displaysuite']['table']['group'] = t('Display suite');
+  $data['displaysuite']['table']['join'] = array(
+    '#global' => array(),
+  );
+
+  $data['displaysuite']['fieldgroup'] = array(
+    'title' => t('Fieldgroup'),
+    'help' => t('Create a fieldgroup.'),
+    'field' => array(
+      'handler' => 'ds_handler_field_fieldgroup',
+      'click sortable' => FALSE,
+      'notafield' => TRUE,
+    ),
+  );
+
+  return $data;
+}

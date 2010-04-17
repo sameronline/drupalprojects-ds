@@ -8,10 +8,10 @@
  * @ingroup views_templates
  */
 
-  $region_classes = array();
-  $all_regions = ds_regions('all', TRUE);
-  $module = $view->style_plugin->row_plugin->options['base_table'];
-  $regions = $view->style_plugin->row_plugin->options['regions'];
+$region_classes = array();
+$all_regions = ds_regions('all', TRUE);
+$module = $view->style_plugin->row_plugin->options['base_table'];
+$regions = $view->style_plugin->row_plugin->options['regions'];
 
 $object_display = new stdClass();
 
@@ -49,15 +49,15 @@ foreach ($all_regions as $region_name => $region_title) {
    }
 }
 
-  $object_display->ds_middle_classes = $module .'-no-sidebars';
-  if (isset($region_classes['left']) && isset($region_classes['right'])) {
-    $object_display->ds_middle_classes = $module .'-two-sidebars';
-  }
-  elseif (isset($region_classes['left'])) {
-    $object_display->ds_middle_classes = $module .'-one-sidebar '. $module .'-sidebar-left';
-  }
-  elseif (isset($region_classes['right'])) {
-    $object_display->ds_middle_classes = $module .'-one-sidebar '. $module .'-sidebar-right';
-  }
+$object_display->ds_middle_classes = $module .'-no-sidebars';
+if (isset($region_classes['left']) && isset($region_classes['right'])) {
+  $object_display->ds_middle_classes = $module .'-two-sidebars';
+}
+elseif (isset($region_classes['left'])) {
+  $object_display->ds_middle_classes = $module .'-one-sidebar '. $module .'-sidebar-left';
+}
+elseif (isset($region_classes['right'])) {
+  $object_display->ds_middle_classes = $module .'-one-sidebar '. $module .'-sidebar-right';
+}
 
 print theme('ds_regions', $object_display, $module);

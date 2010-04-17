@@ -11,6 +11,7 @@
  */
 class views_plugin_ds_fields_view extends views_plugin_row {
 
+  // @todo check views 3 support.
   function option_definition() {
     $options = parent::option_definition();
     return $options;
@@ -98,5 +99,3 @@ class views_plugin_ds_fields_view extends views_plugin_row {
     return 'ds-views';
   }
 }
-
-
