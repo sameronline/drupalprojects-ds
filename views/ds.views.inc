@@ -74,7 +74,6 @@ function ds_views_data() {
     'field' => array(
       'handler' => 'ds_handler_field_fieldgroup',
       'click sortable' => FALSE,
-      'notafield' => TRUE,
     ),
   );
 

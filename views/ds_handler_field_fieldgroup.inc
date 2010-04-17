@@ -12,10 +12,7 @@
 class ds_handler_field_fieldgroup extends views_handler_field {
 
   function query() {
-    $this->field_alias = 'ds_fieldgroup_'. $this->position;
-
-    $value = db_escape_string($this->options['value']);
-    $this->query->add_field('', "'$value'", $this->field_alias);
+    // do nothing -- to override the parent query.
   }
 
   function option_definition() {
@@ -44,10 +41,16 @@ class ds_handler_field_fieldgroup extends views_handler_field {
       '#default_value' => $this->options['format'],
       '#options' => $options,
     );
+
+    // Remove all the rest that's normall associated with fields.
+    unset($form['alter']);
+    unset($form['exclude']);
+    unset($form['empty']);
+    unset($form['empty_zero']);
+    unset($form['hide_empty']);
   }
 
   function render($values) {
-    $value = $values->{$this->field_alias};
-    return check_markup($value, $this->options['format'], FALSE);
+    return;
   }
 }
