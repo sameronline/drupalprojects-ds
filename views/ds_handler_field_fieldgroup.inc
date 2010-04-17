@@ -20,20 +20,30 @@ class ds_handler_field_fieldgroup extends views_handler_field {
 
   function option_definition() {
     $options = parent::option_definition();
-    $options['value'] = array('default' => '');
-    $options['format'] = array('default' => FILTER_FORMAT_DEFAULT);
+    $options['format'] = array('default' => 'ds_field');
     return $options;
   }
 
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
-    $form['value'] = array(
-      '#type' => 'textarea',
-      '#title' => t('Value'),
-      '#default_value' => $this->options['value'],
-      '#rows' => 5,
+
+    $options = array(
+      'ds_field' => 'A simple div',
+      'ds_group_fieldset_open' => 'Fieldset open',
+      'ds_group_fieldset_collapsible' => 'Fieldset collapsible',
+      'ds_group_fieldset_collapsed' => 'Fieldset collapsed',
     );
-    $form['format'] = filter_form($this->options['format'], NULL, array('options', 'format'));
+
+    if (module_exists('tabs')) {
+      $options['tabs'] = 'Tabs';
+    }
+
+    $form['format'] = array(
+      '#type' => 'select',
+      '#title' => t('Format'),
+      '#default_value' => $this->options['format'],
+      '#options' => $options,
+    );
   }
 
   function render($values) {
