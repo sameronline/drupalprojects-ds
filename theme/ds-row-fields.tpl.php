@@ -8,9 +8,9 @@
  * @ingroup views_templates
  */
 
-  $module = 'nd'; // Change to views base table.
   $region_classes = array();
   $all_regions = ds_regions('all', TRUE);
+  $module = $view->style_plugin->row_plugin->options['base_table'];
   $regions = $view->style_plugin->row_plugin->options['regions'];
 
 $object_display = new stdClass();

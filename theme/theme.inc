@@ -471,9 +471,8 @@ function template_preprocess_ds_display_overview_views_form(&$vars) {
   drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
 
   // Parent & field order.
-//  drupal_add_tabledrag('fields', 'match', 'parent', 'ds-parent-id', 'ds-parent-id', 'ds-field-id', FALSE, 1);
+  drupal_add_tabledrag('fields', 'match', 'parent', 'ds-parent-id', 'ds-parent-id', 'ds-field-id', FALSE, 1);
   drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', NULL, NULL, TRUE);
-
 
   $vars['rows'] = $rows;
   $vars['submit'] = drupal_render($form);

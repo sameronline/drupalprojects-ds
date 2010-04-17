@@ -77,6 +77,25 @@ class views_plugin_ds_fields_view extends views_plugin_row {
         $form_state['values']['row_options']['regions'][$value['views']['region']][$field] = $value['ds_weight'];
       }
     }
+    $form_state['values']['row_options']['base_table'] = $this->ds_views_base_table();
+  }
+
+  /**
+   * Store the base module.
+   */
+  function ds_views_base_table() {
+    $views_base_table = $this->view->base_table;
+    $ds_views_fields_modules = array(
+      'node' => 'nd',
+      'users' => 'ud',
+      'comments' => 'cd',
+      'heartbeat_activity' => 'hds',
+    );
+
+    if (isset($ds_views_fields_modules[$views_base_table])) {
+      return $ds_views_fields_modules[$views_base_table];
+    }
+    return 'ds-views';
   }
 }
 
