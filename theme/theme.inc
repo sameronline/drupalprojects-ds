@@ -10,13 +10,14 @@
  * Theme function to render the field content.
  *
  * @param string $content The content to render.
- * @param string $field The field to theme.
+ * @param array $field Collection of field properties.
  */
 function theme_ds_field($content, $field) {
   $output = '';
 
   if (!empty($content)) {
     if ($field['type'] == 'ds') {
+
       $output .= '<div class="field '. $field['class'] .'">';
       // Above label.
       if ($field['labelformat'] == 'above') {

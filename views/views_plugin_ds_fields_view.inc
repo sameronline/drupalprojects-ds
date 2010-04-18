@@ -78,24 +78,79 @@ class views_plugin_ds_fields_view extends views_plugin_row {
         $form_state['values']['row_options']['regions'][$value['views']['region']][$field] = $value['ds_weight'];
       }
     }
-    $form_state['values']['row_options']['base_table'] = $this->ds_views_base_table();
+    $form_state['values']['row_options']['module'] = $this->ds_views_base_table('module');
+    $form_state['values']['row_options']['object_type'] = $this->ds_views_base_table('object_type');
   }
 
   /**
    * Store the base module.
    */
-  function ds_views_base_table() {
+  function ds_views_base_table($key) {
     $views_base_table = $this->view->base_table;
     $ds_views_fields_modules = array(
-      'node' => 'nd',
-      'users' => 'ud',
-      'comments' => 'cd',
-      'heartbeat_activity' => 'hds',
+      'node' => array(
+        'module' => 'nd',
+        'object_type' => 'node',
+      ),
+      'users' => array(
+        'module' => 'ud',
+        'object_type' => 'user'
+      ),
+      'comments' => array(
+        'module' => 'cd',
+        'object_type' => 'comment',
+      ),
+      'heartbeat_activity' => array(
+        'module' => 'hds',
+        'object_type' => 'heartbeatactivity',
+      ),
     );
 
     if (isset($ds_views_fields_modules[$views_base_table])) {
-      return $ds_views_fields_modules[$views_base_table];
+      return $ds_views_fields_modules[$views_base_table][$key];
     }
     return 'ds-views';
   }
+
+  /**
+   * Render the fields.
+   */
+  function ds_fields_render($fields) {
+
+    $object = new stdClass;
+    $object->type = 'all';
+    $object->build_mode = 'ds_views';
+    $object_type = $this->view->style_plugin->row_plugin->options['object_type'];
+    $vars[$object_type] = $object_type;
+    $vars['regions'] = $this->view->style_plugin->row_plugin->options['regions'];
+    $module = $this->view->style_plugin->row_plugin->options['module'];
+
+    // Loop through views fields.
+    foreach ($fields as $key => $field) {
+
+      // Field content.
+      $vars[$key] = $field->content;
+
+      // Class.
+      $class = $field->class;
+      if (!empty($this->view->style_plugin->row_plugin->options[$key]['css-class'])) {
+        $class .= ' '. $this->view->style_plugin->row_plugin->options[$key]['css-class'];
+      }
+
+      // Build field key in ds_fields.
+      $object->ds_fields[$key] = array(
+        'type' => 'ds',
+        'title' => $field->label,
+        'labelformat' => 'inline', // fix this - bring back inline labels on the form.
+        'class' => $class,
+      );
+
+      // Add key to preprocess fields.
+      $object->preprocess_fields[$key] = DS_FIELD_TYPE_PREPROCESS;
+    }
+
+    // Return the row.
+    return ds_render_content($object, $module, $vars);
+  }
+
 }
