@@ -25,10 +25,13 @@ class views_plugin_ds_fields_view extends views_plugin_row {
     $fields = array();
     $display_settings = array();
     foreach ($this->display->handler->get_handlers('field') as $field => $handler) {
+
+      $type = ($handler->definition['handler'] == 'ds_handler_field_fieldgroup') ? DS_FIELD_TYPE_GROUP : DS_FIELD_TYPE_PREPROCESS;
+
       $fields[$field] = array(
         'title' => $handler->ui_name(),
-        'status' => 1,
-        'type' => 1,
+        'status' => DS_FIELD_STATUS_STATIC,
+        'type' => $type,
       );
 
       $display_settings['views']['fields'][$field]['region'] = isset($this->options[$field]['region']) ? $this->options[$field]['region'] : 'disabled';
@@ -42,14 +45,16 @@ class views_plugin_ds_fields_view extends views_plugin_row {
     $form['#extra'] = array();
     $form['#regions'] = ds_regions();
 
+    // Load the drag and drop form.
     module_load_include('inc', 'ds', 'includes/ds.display');
     ds_fields_display_form($form, $display_settings, $fields);
 
+    // Add our javascript and css.
     $path = drupal_get_path('module', 'ds');
     $form['#prefix'] = '<script type="text/javascript" src="'. base_path() . $path .'/js/ds.js?d"></script>' .
         '<link type="text/css" rel="stylesheet" media="all" href="'. base_path() . $path .'/css/ds.css" />';
 
-
+    // Special js stuff for drag and drop.
     $form['#js']['tableDrag']['fields']['field-weight'][0] = array(
       'target' => 'field-weight',
       'source' => NULL,
@@ -59,6 +64,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       'limit' => 0,
     );
 
+    // We're using a different theme.
     $form['#theme'] = 'ds_display_overview_views_form';
 
     views_ui_standard_form_buttons($form, $form_state, 'views_ui_ds_form');
@@ -114,18 +120,21 @@ class views_plugin_ds_fields_view extends views_plugin_row {
 
   /**
    * Render the fields.
+   *
+   * @param array $fields Collection of fields for display.
    */
   function ds_fields_render($fields) {
 
     $object = new stdClass;
     $object->type = 'all';
+    $object->ds_groups = array();
     $object->build_mode = 'ds_views';
     $object_type = $this->view->style_plugin->row_plugin->options['object_type'];
     $vars[$object_type] = $object_type;
     $vars['regions'] = $this->view->style_plugin->row_plugin->options['regions'];
     $module = $this->view->style_plugin->row_plugin->options['module'];
 
-    // Loop through views fields.
+    // Loop through views fields, see if they are a field or a group.
     foreach ($fields as $key => $field) {
 
       // Field content.
