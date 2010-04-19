@@ -38,6 +38,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       $display_settings['views']['fields'][$field]['region'] = isset($this->options[$field]['region']) ? $this->options[$field]['region'] : 'disabled';
       $display_settings['views']['fields'][$field]['weight'] = isset($this->options[$field]['weight']) ? $this->options[$field]['weight'] : 0;
       $display_settings['views']['fields'][$field]['css-class'] = isset($this->options[$field]['css-class']) ? $this->options[$field]['css-class'] : '';
+      $display_settings['views']['fields'][$field]['parent'] = isset($this->options[$field]['parent']) ? $this->options[$field]['parent'] : '';
     }
 
     $form['#module'] = 'ds';
@@ -56,6 +57,16 @@ class views_plugin_ds_fields_view extends views_plugin_row {
         '<link type="text/css" rel="stylesheet" media="all" href="'. base_path() . $path .'/css/ds.css" />';
 
     // Special js stuff for drag and drop.
+    $form['#js']['tableDrag']['fields']['ds-parent-id'][0] = array(
+      'target' => 'ds-parent-id',
+      'source' => 'ds-field-id',
+      'group' => 'ds-parent-id',
+      'subgroup' => 'ds-parent-id',
+      'relationship' => 'parent',
+      'action' => 'match',
+      'hidden' => FALSE,
+      'limit' => 1,
+    );
     $form['#js']['tableDrag']['fields']['field-weight'][0] = array(
       'target' => 'field-weight',
       'source' => NULL,
@@ -64,17 +75,6 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       'hidden' => TRUE,
       'limit' => 0,
     );
-    /*$form['#js']['tableDrag']['fields']['ds-field-id'][0] = array(
-      'target' => 'parent',
-      'source' => 'ds-field-id',
-      'group' => 'ds-parent-id',
-      'subgroup' => 'ds-parent-id',
-      'relationship' => 'parent',
-      'action' => 'match',
-      'hidden' => TRUE,
-      'limit' => 1,
-    );*/
-  //drupal_add_tabledrag('fields', 'match', 'parent', 'ds-parent-id', 'ds-parent-id', 'ds-field-id', FALSE, 1);
 
     // We're using a different theme.
     $form['#theme'] = 'ds_display_overview_views_form';
@@ -93,6 +93,12 @@ class views_plugin_ds_fields_view extends views_plugin_row {
           'weight' => $value['ds_weight'],
           'css-class' => $value['views']['css-class'],
         );
+
+        // Parent
+        if (!empty($value['views']['parent_id'])) {
+          $form_state['values']['row_options'][$field]['parent'] = $value['views']['parent_id'];
+        }
+
         $form_state['values']['row_options']['regions'][$value['views']['region']][$field] = $value['ds_weight'];
       }
     }
@@ -139,18 +145,21 @@ class views_plugin_ds_fields_view extends views_plugin_row {
 
     $object = new stdClass;
     $object->type = 'all';
-    $object->ds_groups = array();
+    $ds_fields = array();
+    $ds_groups = array();
     $object->build_mode = 'ds_views';
     $object_type = $this->view->style_plugin->row_plugin->options['object_type'];
     $vars[$object_type] = $object_type;
-    $vars['regions'] = $this->view->style_plugin->row_plugin->options['regions'];
+    $regions = $this->view->style_plugin->row_plugin->options['regions'];
     $module = $this->view->style_plugin->row_plugin->options['module'];
 
+    //dsm($regions);
     // Loop through views fields, see if they are a field or a group.
     foreach ($fields as $key => $field) {
 
-      // Field content.
-      $vars[$key] = $field->content;
+      $region = $this->view->style_plugin->row_plugin->options[$key]['region'];
+      $weight = $this->view->style_plugin->row_plugin->options[$key]['weight'];
+      $parent = (isset($this->view->style_plugin->row_plugin->options[$key]['parent'])) ? $this->view->style_plugin->row_plugin->options[$key]['parent'] : FALSE;
 
       // Class.
       $class = $field->class;
@@ -159,16 +168,35 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       }
 
       // Build field key in ds_fields.
-      $object->ds_fields[$key] = array(
-        'type' => 'ds',
-        'title' => $field->label,
-        'labelformat' => 'inline', // @todo - bring back inline labels on the form.
-        'class' => $class,
-      );
+      $ds_fields[$key]['key'] = $key;
+      $ds_fields[$key]['title'] = $field->label;
+      $ds_fields[$key]['class'] = $class;
+      $ds_fields[$key]['labelformat'] = 'inline';
+      $ds_fields[$key]['type'] = 'ds';
+
+      if ($parent != FALSE) {
+
+        // Remove the field from the $regions array.
+        unset($regions[$region][$key]);
+
+        // Get the form of the group and create a theme key.
+        $parent_field = $fields[$parent];
+        $format = (isset($parent_field->handler->options['ds_format'])) ? $parent_field->handler->options['ds_format'] : 'ds_group_fieldset';
+        $ds_fields[$parent]['theme'] = $format;
+        $ds_groups[$parent][$key] = $weight;
+      }
+
+      // Field content.
+      $vars[$key] = $field->content;
 
       // Add key to preprocess fields.
       $object->preprocess_fields[$key] = DS_FIELD_TYPE_PREPROCESS;
     }
+
+    // Vars.
+    $object->ds_fields = $ds_fields;
+    $object->ds_groups = $ds_groups;
+    $vars['regions'] = $regions;
 
     // Return the row.
     return ds_render_content($object, $module, $vars);

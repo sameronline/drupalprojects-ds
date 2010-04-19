@@ -17,7 +17,7 @@ class ds_handler_field_fieldgroup extends views_handler_field {
 
   function option_definition() {
     $options = parent::option_definition();
-    $options['format'] = array('default' => 'ds_field');
+    $options['ds_format'] = array('default' => 'ds_field');
     return $options;
   }
 
@@ -35,7 +35,7 @@ class ds_handler_field_fieldgroup extends views_handler_field {
       $options['tabs'] = 'Tabs';
     }
 
-    $form['format'] = array(
+    $form['ds_format'] = array(
       '#type' => 'select',
       '#title' => t('Format'),
       '#default_value' => $this->options['format'],
