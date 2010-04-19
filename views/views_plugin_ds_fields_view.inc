@@ -34,6 +34,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
         'type' => $type,
       );
 
+      // Build the display settings.
       $display_settings['views']['fields'][$field]['region'] = isset($this->options[$field]['region']) ? $this->options[$field]['region'] : 'disabled';
       $display_settings['views']['fields'][$field]['weight'] = isset($this->options[$field]['weight']) ? $this->options[$field]['weight'] : 0;
       $display_settings['views']['fields'][$field]['css-class'] = isset($this->options[$field]['css-class']) ? $this->options[$field]['css-class'] : '';
@@ -63,6 +64,17 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       'hidden' => TRUE,
       'limit' => 0,
     );
+    /*$form['#js']['tableDrag']['fields']['ds-field-id'][0] = array(
+      'target' => 'parent',
+      'source' => 'ds-field-id',
+      'group' => 'ds-parent-id',
+      'subgroup' => 'ds-parent-id',
+      'relationship' => 'parent',
+      'action' => 'match',
+      'hidden' => TRUE,
+      'limit' => 1,
+    );*/
+  //drupal_add_tabledrag('fields', 'match', 'parent', 'ds-parent-id', 'ds-parent-id', 'ds-field-id', FALSE, 1);
 
     // We're using a different theme.
     $form['#theme'] = 'ds_display_overview_views_form';
@@ -150,7 +162,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       $object->ds_fields[$key] = array(
         'type' => 'ds',
         'title' => $field->label,
-        'labelformat' => 'inline', // fix this - bring back inline labels on the form.
+        'labelformat' => 'inline', // @todo - bring back inline labels on the form.
         'class' => $class,
       );
 

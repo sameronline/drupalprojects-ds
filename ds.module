@@ -651,9 +651,9 @@ function ds_regions($regions = 'all', $render = FALSE) {
     else {
       return array(
         'header' => t('Header'),
+        'middle' => t('Middle'),
         'left' => t('Left'),
         'right' => t('Right'),
-        'middle' => t('Middle'),
         'footer' => t('Footer'),
         'disabled' => t('Disabled'),
       );

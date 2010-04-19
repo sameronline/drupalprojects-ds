@@ -49,8 +49,10 @@ function theme_ds_regions($object_display, $module) {
 
   foreach ($object_display->themed_regions as $region_name => $region_data) {
     $output .= '<div class="'. $module .'-region-'. $region_name;
+
+    // the middle region has a wrapper region and some sidebar related classes
     if ($region_name == 'middle') {
-      $output .= ' '. $object_display->ds_middle_classes;
+      $output .= '-wrapper '. $object_display->ds_middle_classes;
     }
     if ($region_name == 'header' || $region_name == 'footer') {
       $output .= ' clear-block';
@@ -62,7 +64,11 @@ function theme_ds_regions($object_display, $module) {
     if (isset($region_data['inline_css'])) {
       $output .= $region_data['inline_css'];
     }
-    $output .= '>'. $region_data['content'] .'</div>';
+    if ($region_name == 'middle') {
+      $output .= '><div class="'. $module .'-region-'. $region_name .'">'. $region_data['content'] .'</div></div>';
+    } else {
+      $output .= '>'. $region_data['content'] .'</div>';
+    }
   }
 
   return $output;
@@ -466,14 +472,6 @@ function template_preprocess_ds_display_overview_views_form(&$vars) {
     // Add to rows.
     $rows[$region][] = $row;
   }
-
-  // CSS and JS.
-  drupal_add_js(drupal_get_path('module', 'ds') .'/js/ds.js');
-  drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
-
-  // Parent & field order.
-  drupal_add_tabledrag('fields', 'match', 'parent', 'ds-parent-id', 'ds-parent-id', 'ds-field-id', FALSE, 1);
-  drupal_add_tabledrag('fields', 'order', 'sibling', 'field-weight', NULL, NULL, TRUE);
 
   $vars['rows'] = $rows;
   $vars['submit'] = drupal_render($form);
