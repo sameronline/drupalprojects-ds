@@ -3,6 +3,7 @@
 -------------------------------------------------------------------------------------
 - #770368 by swentel and zuuperman: views fields ds plugin.
 - #722852 by jyve: theming optimisations.
+- #777290 by swentel: fix empty region plugin order of regions.
 
 -------------------------------------------------------------------------------------
 6.x-1.1 2010-04-15
