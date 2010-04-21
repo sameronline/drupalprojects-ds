@@ -62,18 +62,24 @@ class ds_emptyregionrender {
    */
   public function execute(&$vars, &$display, $display_settings, $object_type, $module) {
 
+    $themed_regions = array();
     foreach ($display->all_regions as $region_name => $region_title) {
 
       $render = ds_default_value($display_settings, $display->build_mode, 'emptyregionrender', 'render', $region_name, FALSE);
 
       if ($render == TRUE && !isset($display->themed_regions[$region_name])) {
 
-        $display->themed_regions[$region_name] = array('content' => '&nbsp;');
+        // Add content for this region, simply a whitespace.
+        $themed_regions[$region_name] = array('content' => '&nbsp;');
 
         if ($region_name == 'left' || $region_name == 'right') {
           $display->region_classes[$region_name] = $region_name;
         }
       }
+      elseif (isset($display->themed_regions[$region_name])) {
+        $themed_regions[$region_name] = $display->themed_regions[$region_name];
+      }
     }
+    $display->themed_regions = $themed_regions;
   }
 }
