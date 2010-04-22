@@ -38,7 +38,7 @@ class ds_handler_field_fieldgroup extends views_handler_field {
     $form['ds_format'] = array(
       '#type' => 'select',
       '#title' => t('Format'),
-      '#default_value' => $this->options['format'],
+      '#default_value' => $this->options['ds_format'],
       '#options' => $options,
     );
 
