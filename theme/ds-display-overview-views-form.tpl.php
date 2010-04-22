@@ -16,6 +16,7 @@
 if ($rows):
 ?>
 
+<div class="description views-override">Note: if you removed the label on the field, the label selection is obsolete.</div>
 <div id="ds-display-content">
 
   <div id="field-content" class="ds-display">
@@ -24,6 +25,7 @@ if ($rows):
       <thead>
         <tr>
           <th><?php print t('Field'); ?></th>
+          <th><?php print t('Label'); ?></th>
           <th><?php print t('Style'); ?></th>
           <th><?php print t('Region'); ?></th>
           <th><?php print t('Weight'); ?></th>
@@ -34,14 +36,14 @@ if ($rows):
       <!-- Node regions -->
       <?php foreach ($regions as $region => $title): ?>
         <tr class="region region-<?php print $region?> tabledrag-leaf">
-          <td colspan="4" class="region">
+          <td colspan="5" class="region">
             <?php print $title; ?>
             <input type="hidden" class="ds-field-id" value="" size="2" id="edit-<?php print $region; ?>-full-field-id" name="region_<?php print $region; ?>[full][field_id]" maxlength="128"/>
             <input type="hidden" class="ds-parent-id" value="" size="2" id="edit-<?php print $region; ?>-full-parent-id" name="region_<?php print $region; ?>[full][parent_id]" maxlength="128"/>
           </td>
         </tr>
         <tr class="tabledrag-leaf region-message region-<?php print $region?>-message <?php print empty($rows[$region]) ? 'region-empty' : 'region-populated'; ?>">
-          <td colspan="4">
+          <td colspan="5">
           <em><?php print t('No fields in this region'); ?></em>
             <input type="hidden" class="ds-field-id" value="" size="2" id="edit-<?php print $region; ?>empty-full-field-id" name="empty<?php print $region; ?>[full][field_id]" maxlength="128"/>
             <input type="hidden" class="ds-parent-id" value="" size="2" id="edit-<?php print $region; ?>empty-full-parent-id" name="empty<?php print $region; ?>[full][parent_id]" maxlength="128"/>
@@ -57,6 +59,7 @@ if ($rows):
               <td class="ds-label">
               <?php print $row->{$build_mode}->indentation; ?>
               <span class="<?php print $row->label_class; ?>"><?php print $row->human_name; ?></span></td>
+              <td><?php print $row->{$build_mode}->label; ?></td>
               <td><?php print $row->{$build_mode}->class . $row->{$build_mode}->field_id . $row->{$build_mode}->parent_id; ?></td>
               <td><?php print $row->{$build_mode}->region; ?></td>
               <td><?php print $row->ds_weight; ?></td>

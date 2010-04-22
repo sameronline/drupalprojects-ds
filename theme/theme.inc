@@ -421,6 +421,7 @@ function template_preprocess_ds_display_overview_views_form(&$vars) {
       if ($child == $build_mode) {
         $row->{$child}->indentation = theme('indentation', $element[$child]['#depth']);
         $row->{$child}->class = drupal_render($element[$child]['css-class']);
+        $row->{$child}->label = drupal_render($element[$child]['label']);
 
         // Parent & Field id.
         $row->{$child}->parent_id = drupal_render($element[$child]['parent_id']);
@@ -441,7 +442,6 @@ function template_preprocess_ds_display_overview_views_form(&$vars) {
         }
 
         $row->{$child}->region = drupal_render($element[$child]['region']);
-        $row->{$child}->label = drupal_render($element[$child]['label']);
       }
       // Render the rest of the fields
       else {

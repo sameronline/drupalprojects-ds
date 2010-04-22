@@ -38,6 +38,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       $display_settings['views']['fields'][$field]['region'] = isset($this->options[$field]['region']) ? $this->options[$field]['region'] : 'disabled';
       $display_settings['views']['fields'][$field]['weight'] = isset($this->options[$field]['weight']) ? $this->options[$field]['weight'] : 0;
       $display_settings['views']['fields'][$field]['css-class'] = isset($this->options[$field]['css-class']) ? $this->options[$field]['css-class'] : '';
+      $display_settings['views']['fields'][$field]['labelformat'] = isset($this->options[$field]['labelformat']) ? $this->options[$field]['labelformat'] : 'default';
       $display_settings['views']['fields'][$field]['parent'] = isset($this->options[$field]['parent']) ? $this->options[$field]['parent'] : '';
     }
 
@@ -92,6 +93,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
           'region' => $value['views']['region'],
           'weight' => $value['ds_weight'],
           'css-class' => $value['views']['css-class'],
+          'labelformat' => $value['views']['label']['format'],
         );
 
         // Parent
@@ -159,6 +161,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
 
       $region = $this->view->style_plugin->row_plugin->options[$key]['region'];
       $weight = $this->view->style_plugin->row_plugin->options[$key]['weight'];
+      $labelformat = $this->view->style_plugin->row_plugin->options[$key]['labelformat'];
       $parent = (isset($this->view->style_plugin->row_plugin->options[$key]['parent'])) ? $this->view->style_plugin->row_plugin->options[$key]['parent'] : FALSE;
 
       // Class.
@@ -170,8 +173,8 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       // Build field key in ds_fields.
       $ds_fields[$key]['key'] = $key;
       $ds_fields[$key]['title'] = $field->label;
+      $ds_fields[$key]['labelformat'] = $labelformat;
       $ds_fields[$key]['class'] = $class;
-      $ds_fields[$key]['labelformat'] = 'inline';
       $ds_fields[$key]['type'] = 'ds';
 
       if ($parent != FALSE) {
