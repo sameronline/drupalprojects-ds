@@ -16,7 +16,12 @@
 if ($rows):
 ?>
 
-<div class="description views-override">Note: if you removed the label on the field, the label selection is obsolete.</div>
+<div class="description views-override">Some important notes:
+  <ul>
+    <li>if you removed the label on the field, the label selection is obsolete.</li>
+    <li>Plugins aren't available, so watch out when positioning your fields.</li>
+  </ul>
+</div>
 <div id="ds-display-content">
 
   <div id="field-content" class="ds-display">
