@@ -4,8 +4,6 @@
 /**
  * @file
  * Contains the ds views fields style plugin.
- *
- * @todo check when creating new view
  */
 
 class views_plugin_ds_fields_view extends views_plugin_row {
@@ -153,7 +151,10 @@ class views_plugin_ds_fields_view extends views_plugin_row {
     $regions = $this->view->style_plugin->row_plugin->options['regions'];
     $module = $this->view->style_plugin->row_plugin->options['module'];
 
-    //dsm($regions);
+    if (empty($object_type) || $object_type == 'ds-views') {
+      return;
+    }
+
     // Loop through views fields, see if they are a field or a group.
     foreach ($fields as $key => $field) {
 
