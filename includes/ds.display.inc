@@ -61,13 +61,54 @@ function ds_layout_overview() {
           }
         }
       }
-      if (!empty($rows)) {
-        $content = theme('table', array(), $rows, array('id' => 'ds-overview-page'));
-      }
     }
   }
 
-  if (empty($content)) {
+  // Special listing for views which are using the views fields style plugin.
+  if (module_exists('views')) {
+    $views_rows = array();
+    $views_ui = (module_exists('views_ui') && user_access('administer views'));
+    $views = views_get_all_views();
+    foreach ($views as $v => $view) {
+      foreach ($view->display as $d => $display) {
+        if ($display->display_options['row_plugin'] == 'ds_fields') {
+          $views_row = array();
+          $views_row[] = ucfirst($view->name);
+          $views_row[] = '';
+          if ($views_ui) {
+            $views_row[] = l(t('Edit'), 'admin/build/views/edit/'. $view->name);
+          }
+          else {
+            $views_row[] = '';
+          }
+          $views_rows[] = array('data' => $views_row, 'class' => 'ds-row-type');
+          break;
+        }
+      }
+    }
+    if (!empty($views_rows)) {
+      $views_fields_explanation = 'This list of views are using the Display Suite fields plugin to render fields in regions.';
+      if ($views_ui) {
+        $views_fields_explanation .= ' The edit link will lead you to the edit screen of the view.';
+      }
+      else {
+        $views_fields_explanation .= ' Views interface is disabled or you do not have access to edit the view.';
+      }
+      // Add empty row first and then the header of the views.
+      $rows[] = array(array('data' => '&nbsp;', 'colspan' => '3', 'class' => 'ds-row-type'));
+      $rows[] = array(array('data' => t('Views fields'), 'colspan' => '3', 'class' => 'ds-row-title'));
+      $rows[] = array(array('data' => t($views_fields_explanation), 'colspan' => '3'));
+      // Views rows
+      $rows = array_merge($rows, $views_rows);
+    }
+  }
+
+  dsm($rows);
+
+  if (!empty($rows)) {
+    $content = theme('table', array(), $rows, array('id' => 'ds-overview-page'));
+  }
+  else {
     $content = t('No items found.');
   }
 

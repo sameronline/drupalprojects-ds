@@ -1,12 +1,11 @@
 <?php
 // $Id$
+
 /**
  * @file
- * Contains the base row style plugin for Display Suite.
+ * Contains the ds views fields style plugin.
  *
  * @todo check when creating new view
- * @todo make the form also available on admin/ds - in first moment, let's
- * only put a link to views.
  */
 
 class views_plugin_ds_fields_view extends views_plugin_row {

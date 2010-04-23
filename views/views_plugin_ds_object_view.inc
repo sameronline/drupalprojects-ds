@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Contains the ds view style plugin.
+ * Contains the ds views node style plugin.
  */
 
 /**
