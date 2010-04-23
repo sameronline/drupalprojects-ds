@@ -2,13 +2,13 @@
 // $Id$
 /**
  * @file
- * Contains the base row style plugin for Display Sujite.
+ * Contains the base row style plugin for Display Suite.
+ *
+ * @todo check when creating new view
+ * @todo make the form also available on admin/ds - in first moment, let's
+ * only put a link to views.
  */
 
-/**
- *
- * @ingroup views_row_plugins
- */
 class views_plugin_ds_fields_view extends views_plugin_row {
 
   function option_definition() {
@@ -28,7 +28,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       $type = ($handler->definition['handler'] == 'ds_handler_field_fieldgroup') ? DS_FIELD_TYPE_GROUP : DS_FIELD_TYPE_PREPROCESS;
 
       $fields[$field] = array(
-        'title' => $handler->ui_name(),
+        'title' => ($handler->label() == '') ? $handler->ui_name() : $handler->label(),
         'status' => DS_FIELD_STATUS_STATIC,
         'type' => $type,
       );

@@ -18,7 +18,7 @@ if ($rows):
 
 <div class="description views-override">Some important notes:
   <ul>
-    <li>if you removed the label on the field, the label selection is obsolete.</li>
+    <li>Label editing is only limited to the format.</li>
     <li>Plugins aren't available, so watch out when positioning your fields.</li>
   </ul>
 </div>
