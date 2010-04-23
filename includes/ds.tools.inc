@@ -123,12 +123,21 @@ function ds_export(&$form_state) {
 
         // Content types.
         foreach ($api_info['types']() as $tkey => $type) {
-          $options[$module .'-'. $type->type] = $type->name;
+
           $global_exclude = variable_get($module .'_type_'. $tkey, FALSE);
+
+          // Views displays is special case.
+          if ($module == 'vd') {
+            if ($global_exclude == TRUE) {
+              continue;
+            }
+          }
+          $options[$module .'-'. $type->type] = $type->name;
           if ($global_exclude == TRUE) {
             $ds_variables[] = $module .'_type_'. $tkey;
           }
         }
+
         // Plugins.
         $plugins = variable_get($module .'_plugin_settings', array());
         if (!empty($plugins)) {
