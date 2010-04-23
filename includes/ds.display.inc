@@ -103,8 +103,6 @@ function ds_layout_overview() {
     }
   }
 
-  dsm($rows);
-
   if (!empty($rows)) {
     $content = theme('table', array(), $rows, array('id' => 'ds-overview-page'));
   }
