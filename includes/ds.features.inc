@@ -35,7 +35,19 @@ function _ds_features_get_types() {
   $types = array();
   foreach (module_implements('ds_api') as $module) {
     $api_info = ds_api_info($module);
-    $types[$module] = $api_info['title'];
+
+    foreach ($api_info['types']() as $tkey => $type) {
+
+      $global_exclude = variable_get($module .'_type_'. $tkey, FALSE);
+
+      // Views displays is special case.
+      if ($module == 'vd') {
+        if ($global_exclude == TRUE) {
+          continue;
+        }
+      }
+      $types[$module .'-'. $type->type] = $type->name;
+    }
   }
   return $types;
 }
@@ -47,8 +59,9 @@ function ds_features_export($data, &$export, $module_name = '') {
   $pipe = array();
 
   foreach ($data as $module) {
-    $export['dependencies'][$module] = $module;
-    $export['features']['ds'][$module] = $module;
+    list($dependency, $feature) = explode('-', $module);
+    $export['dependencies'][$dependency] = $dependency;
+    $export['features'][$dependency][$feature] = $feature;
   }
 
   return $pipe;
@@ -64,11 +77,8 @@ function ds_features_export_render($module = 'foo', $data) {
 
   // Create nice build data.
   $build_data = array();
-  foreach ($data as $module) {
-    $api_info = ds_api_info($module);
-    foreach ($api_info['types']() as $key => $type) {
-      $build_data[$module .'-'. $type->type] = $module .'-'. $type->type;
-    }
+  foreach ($data as $ds_setting) {
+    $build_data[$ds_setting] = $ds_setting;
   }
   $export = ds_export_build($build_data);
 

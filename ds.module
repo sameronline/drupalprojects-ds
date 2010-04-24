@@ -268,7 +268,12 @@ function ds_build_fields_and_regions(&$object, $module) {
         switch ($field['type']) {
           case DS_FIELD_TYPE_PREPROCESS:
           case DS_FIELD_TYPE_IGNORE:
-            $ds_preprocess_fields[$key] = $field['type'];
+            if (isset($field['properties']['key']) && !empty($field['properties']['key'])) {
+              $ds_preprocess_fields[$key] = array('type' => $field['type'], 'key' => $field['properties']['key']);
+            }
+            else {
+              $ds_preprocess_fields[$key] = $field['type'];
+            }
             break;
           case DS_FIELD_TYPE_CODE:
             $format = (isset($field_settings[$key]['format'])) ? $field_settings[$key]['format'] : 'ds_eval_code';
@@ -330,10 +335,20 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
   // Create key_rendered fields from DS_FIELD_TYPE_PREPROCESS and DS_FIELD_TYPE_IGNORE.
   if (!empty($object->preprocess_fields)) {
     foreach ($object->preprocess_fields as $key => $type) {
+      $vars_key = NULL;
+      if (is_array($type)) {
+        $vars_key = $type['key'];
+        $type = $type['type'];
+      }
       switch ($type) {
         case DS_FIELD_TYPE_PREPROCESS:
           $field_key = $key .'_rendered';
-          $vars[$field_key] = $vars[$key];
+          if (!empty($vars_key)) {
+            $vars[$field_key] = $vars[$key][$vars_key];
+          }
+          else {
+            $vars[$field_key] = $vars[$key];
+          }
           break;
         case DS_FIELD_TYPE_IGNORE:
           $field_key = $key .'_rendered';
