@@ -1,5 +1,5 @@
 ; $Id$
 name = "Display suite"
-description = "Core functions for the Display Suite module."
+description = "Manage the display of your data objects."
 core = "6.x"
 package = "Display suite"

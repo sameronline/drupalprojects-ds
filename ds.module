@@ -47,22 +47,6 @@ define('DS_DEFAULT_LABEL_FORMAT', 'hidden');
 define('DS_DEFAULT_WEIGHT', -19);
 
 /**
- * Implementation of hook_perm().
- */
-function ds_perm() {
-  require_once('includes/ds.registry.inc');
-  return _ds_perm();
-}
-
-/**
- * Implementation of hook_menu().
- */
-function ds_menu() {
-  require_once('includes/ds.registry.inc');
-  return _ds_menu();
-}
-
-/**
  * Implementation of hook_theme().
  */
 function ds_theme() {
@@ -94,6 +78,18 @@ function ds_ds_plugins() {
 function ds_features_api() {
   require_once('includes/ds.features.inc');
   return _ds_features_api();
+}
+
+/**
+ * Implementation of hook_flush_caches().
+ */
+function ds_flush_caches() {
+  // Reset fields cache.
+  variable_del('ds_fields_cached');
+
+  // Import default settings.
+  ds_import_default_data();
+  return array();
 }
 
 /**
@@ -712,17 +708,4 @@ function ds_import_default_data($module = '', $type = '', $build_mode = '') {
     module_load_include('inc', 'ds', 'includes/ds.tools');
     ds_import_data($data, FALSE, FALSE, $module, $type, $build_mode);
   }
-}
-
-/**
- * Helper function to check access.
- *
- * @param string $perm_1 a permission.
- * @param string $perm_2 a permission.
- */
-function _ds_menu_access($perm_1, $perm_2) {
-  if (user_access($perm_1) && user_access($perm_2)) {
-    return TRUE;
-  }
-  return FALSE;
 }

@@ -18,6 +18,14 @@ class views_plugin_ds_fields_view extends views_plugin_row {
    */
   function options_form(&$form, &$form_state) {
 
+    if (!module_exists('ds_ui')) {
+      $form['no_ui'] = array(
+        '#type' => 'markup',
+        '#value' => '&nbsp;&nbsp;'. t('The Display Suite UI module is not enabled, enable the module if you want to change this layout.'),
+      );
+      return;
+    }
+
     $fields = array();
     $display_settings = array();
     foreach ($this->display->handler->get_handlers('field') as $field => $handler) {

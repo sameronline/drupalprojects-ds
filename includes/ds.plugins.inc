@@ -53,32 +53,6 @@ function ds_plugins_submit($form, &$form_state) {
 }
 
 /**
- * Theme the form.
- */
-function theme_ds_plugins($form) {
-
-  $output = drupal_render($form['info']);
-
-  $header = array(
-    t('Status'),
-    t('Info'),
-  );
-
-  $rows = array();
-  foreach ($form['#plugins'] as $key => $plugin) {
-    $row = array();
-    $row[] = array('data' => drupal_render($form['plugin_'. $plugin['key']]));
-    $row[] = array('data' => '<strong>'. $plugin['title'] .'</strong>: '. $plugin['description']);
-    $rows[] = $row;
-  }
-
-  $output .= theme('table', $header, $rows);
-  $output .= drupal_render($form);
-
-  return $output;
-}
-
-/**
  * Retrieve all available plugins.
  */
 function ds_plugins_retrieve($module) {
