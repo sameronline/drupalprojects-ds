@@ -86,10 +86,6 @@ function ds_features_export_render($module = 'foo', $data) {
   if (isset($export['ds']['settings'])) {
     $return['ds_default_settings'] = '  $data = '. ds_var_export($export['ds']['settings']) .";\n  return \$data;";
   }
-  // Fields.
-  if (isset($export['ds']['fields'])) {
-    $return['ds_fields'] = '  $data = '. ds_var_export($export['ds']['fields']) .";\n  return \$data;";
-  }
 
   if (!empty($return)) {
     return $return;
@@ -100,9 +96,10 @@ function ds_features_export_render($module = 'foo', $data) {
  * Implementation of hook_features_export_revert().
  */
 function ds_features_revert($module = NULL) {
-  // We currently only reset the display settings. Fields aren't recognized yet as overridden.
-  $data = module_invoke($module, 'ds_default_settings');
-  foreach ($data as $ds_module => $settings) {
+
+  // Display settings.
+  $display_settings = module_invoke($module, 'ds_default_settings');
+  foreach ($display_settings as $ds_module => $settings) {
     foreach ($settings as $object_type => $setting) {
       variable_set($ds_module .'_display_settings_'. $object_type, $setting);
     }

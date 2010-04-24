@@ -5,6 +5,7 @@
 - #722852 by jyve: theming optimisations.
 - #777290 by swentel: fix empty region plugin order of regions.
 - #771134 by swentel: Add support for preprocess fields via UI and selecting a key in variables.
+- #737008 by swentel: Support feature integration per object type.
 
 -------------------------------------------------------------------------------------
 6.x-1.1 2010-04-15
