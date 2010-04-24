@@ -61,7 +61,7 @@ function ds_features_export($data, &$export, $module_name = '') {
   foreach ($data as $module) {
     list($dependency, $feature) = explode('-', $module);
     $export['dependencies'][$dependency] = $dependency;
-    $export['features'][$dependency][$feature] = $feature;
+    $export['features']['ds'][$module] = $module;
   }
 
   return $pipe;
