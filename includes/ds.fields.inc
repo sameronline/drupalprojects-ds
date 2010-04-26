@@ -744,7 +744,7 @@ function ds_fields_examples($module) {
   }
 
   // Load it if needed and show the rest.
-  _ds_load_devel();
+  _ds_fields_load_devel();
 
   $output = '';
   $api_info = ds_api_info($module);
@@ -762,7 +762,7 @@ function ds_fields_examples($module) {
 
   $selects = theme('links', $types);
   $output = '<div><h2 style="margin-bottom: 10px;">'. t('Object types') .'</h2>'. $selects .'</div>';
-  $output .= '<div style="margin: 10px 0px 10px 0px; padding-top: 10px; border-top: 1px solid #ddd">'. t('Select a type to see properties from it. The output from the objects is usually the object individually (e.g. a full node, comment, user ...). If you pass the parameter id in the URL, you can select an object with that id instead of a random one.') .'</div>';
+  $output .= '<div style="margin: 10px 0px 10px 0px; padding-top: 10px; border-top: 1px solid #ddd">'. t('Select a type to see properties from it. The output from the objects is usually the object individually (e.g. a full node, comment, user ...). If you pass the parameter id in the URL, you can select an object with that id instead of a random one. Note that variables ending with "_rendered" are not usable when creating preprocess fields.') .'</div>';
   if (isset($_GET['type']) && isset($types[$_GET['type']])) {
     $output .= _ds_fields_examples_render($api_info, $_GET['type'], $output);
   }
@@ -787,10 +787,28 @@ function _ds_fields_examples_render($api_info, $type, &$output) {
 }
 
 /**
- * Load devel if needed.
+ * Helper function to load devel if needed.
  */
-function _ds_load_devel() {
+function _ds_fields_load_devel() {
   if (!module_exists('devel')) {
     module_load_include('module', 'devel');
+  }
+}
+
+/**
+ * Helper function to run through the preprocess functions.
+ */
+function _ds_fields_run_preprocess(&$variables, $hook) {
+  $hooks = theme_get_registry();
+  $info = $hooks[$hook];
+  if (isset($info['preprocess functions']) && is_array($info['preprocess functions'])) {
+    // This construct ensures that we can keep a reference through
+    // call_user_func_array.
+    $args = array(&$variables, $hook);
+    foreach ($info['preprocess functions'] as $preprocess_function) {
+      if (function_exists($preprocess_function)) {
+        call_user_func_array($preprocess_function, $args);
+      }
+    }
   }
 }
