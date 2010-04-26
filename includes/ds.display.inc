@@ -71,7 +71,7 @@ function ds_layout_overview() {
     $views = views_get_all_views();
     foreach ($views as $v => $view) {
       foreach ($view->display as $d => $display) {
-        if ($display->display_options['row_plugin'] == 'ds_fields') {
+        if (isset($display->display_options['row_plugin']) && $display->display_options['row_plugin'] == 'ds_fields') {
           $views_row = array();
           $views_row[] = ucfirst($view->name);
           $views_row[] = '';
