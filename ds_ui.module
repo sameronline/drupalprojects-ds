@@ -42,3 +42,20 @@ function _ds_ui_menu_access($perm_1, $perm_2) {
   }
   return FALSE;
 }
+
+/**
+ * Implementation of hook_theme_registry_alter().
+ */
+function ds_ui_theme_registry_alter(&$theme_registry) {
+  array_unshift($theme_registry['page']['theme paths'], drupal_get_path('module', 'ds_ui') .'/theme');
+}
+
+/**
+ * Implementation of hook_preprocess_page().
+ */
+function ds_ui_preprocess_page(&$vars) {
+  // Only fire on page examples page.
+  if (arg(3) == 'fields-examples') {
+    $vars['template_files'][] = 'ds-page-fieldexamples';
+  }
+}

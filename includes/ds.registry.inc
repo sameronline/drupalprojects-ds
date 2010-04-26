@@ -127,6 +127,20 @@ function _ds_ui_menu() {
       'weight' => 1,
     );
 
+    // Fields examples.
+    if (!isset($api_info['no_fields_examples'])) {
+      $items['admin/ds/'. $module .'/fields-examples'] = array(
+        'title' => 'Field examples',
+        'page callback' => 'ds_fields_examples',
+        'page arguments' => array($module),
+        'access callback' => '_ds_ui_menu_access',
+        'access arguments' => array('administer '. $module, 'use PHP in custom fields'),
+        'file' => 'includes/ds.fields.inc',
+        'type' => MENU_CALLBACK,
+        'weight' => 1,
+      );
+    }
+
     // Field groups
     $items['admin/ds/'. $module .'/fieldgroups'] = array(
       'title' => 'Fieldgroups',

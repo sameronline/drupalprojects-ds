@@ -96,11 +96,17 @@ function ds_fields($module) {
         t('Title'), t('Key'), t('Type'), t('Status'), t('Operations'),
       );
 
-      $output .= '<p>'. t('This is a list of fields either defined in code or via the UI.') .'</p>';
+      $output .= '<p>'. t('This is a list of fields either defined in code or via the UI.') .' ';
+      if (!isset($api_info['no_fields_examples'])) {
+        $output .= t('You can look at properties and preprocess variables for any object type in a <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes\'); return false();">separate window</a>.', array('!url' => url('admin/ds/'. $module .'/fields-examples'))) .'</p>';
+      }
       $output .= theme('table', $header, $rows);
     }
     else {
-      $output .= '<p>'. t('You have not defined any fields.') .'</p>';
+      $output .= '<p>'. t('You have not defined any fields.') .' ';
+      if (!isset($api_info['no_fields_examples'])) {
+        $output .= t('You can look at properties and preprocess variables for any object type in a <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes\'); return false();">separate window</a>.', array('!url' => url('admin/ds/'. $module .'/fields-examples'))) .'</p>';
+      }
     }
 
     // New code field form.
@@ -175,6 +181,15 @@ function ds_code_field_form($form_state, $module, $all_fields, $object = '', $ke
   if (isset($api_info['types']) && count($api_info['types']()) > 1) {
     $types = array();
     foreach ($api_info['types']() as $tkey => $type) {
+
+      // Views displays is special case.
+      if ($module == 'vd') {
+        $global_exclude = variable_get($module .'_type_'. $tkey, FALSE);
+        if ($global_exclude == TRUE) {
+          continue;
+        }
+      }
+
       $types[$tkey] = $type->name;
     }
     $form['code_identity']['code_exclude'] = array(
@@ -535,6 +550,15 @@ function ds_block_field_form($form_state, $module, $all_fields, $object = '', $k
   if (isset($api_info['types']) && count($api_info['types']()) > 1) {
     $types = array();
     foreach ($api_info['types']() as $tkey => $type) {
+
+      // Views displays is special case.
+      if ($module == 'vd') {
+        $global_exclude = variable_get($module .'_type_'. $tkey, FALSE);
+        if ($global_exclude == TRUE) {
+          continue;
+        }
+      }
+
       $types[$tkey] = $type->name;
     }
     $form['block_identity']['block_exclude'] = array(
@@ -706,4 +730,49 @@ function ds_field_delete_reset_form_submit($form, &$form_state) {
 
   drupal_set_message(t('Field %field has been !action.', array('%field' => $field_title, '!action' => $action)));
   $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
+}
+
+/**
+ * Show examples for a field by loading the objects and preprocess variables.
+ */
+function ds_fields_examples($module) {
+
+  $output = '';
+  $api_info = ds_api_info($module);
+  if (isset($api_info['types'])) {
+    $types = array();
+    foreach ($api_info['types']() as $tkey => $type) {
+
+      $types[$tkey] = array(
+        'title' => $type->name,
+        'href' => 'admin/ds/'. $module .'/fields-examples',
+        'query' => array('type' => $tkey),
+      );
+    }
+  }
+
+  $selects = theme('links', $types);
+
+  $output = '<div><h2>'. t('Object types') .'</h2>'. $selects .'</div>';
+  $output .= '<div style="margin: 10px 0px 10px 0px; padding-top: 10px; border-top: 1px solid #ddd">'. t('Select a type to see properties from it. You need the devel module for this on your site, however, it does not have to be enabled. You can download the module from <a href="!url">!url</a>.', array('!url' => 'http://drupal.org/project/devel')) .'</div>';
+  if (isset($_GET['type']) && isset($types[$_GET['type']])) {
+    _ds_fields_examples_render($api_info, $_GET['type']);
+  }
+
+  return $output;
+}
+
+/**
+ * Get the load/render info about an object.
+ */
+function _ds_fields_examples_render($api_info, $type) {
+  $object = $api_info['object'];
+  $module = $api_info['module'];
+  $examples_file = drupal_get_path('module', $module) .'/'. $module .'_fields_examples.inc';
+  if (file_exists($examples_file)) {
+    require_once($examples_file);
+  }
+  else {
+    drupal_set_message('No info found.');
+  }
 }
