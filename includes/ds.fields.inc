@@ -737,6 +737,15 @@ function ds_field_delete_reset_form_submit($form, &$form_state) {
  */
 function ds_fields_examples($module) {
 
+  // Check on devel.
+  $devel = drupal_get_path('module', 'devel');
+  if (empty($devel)) {
+    return t('You need the devel module for this on your site, however, it does not have to be enabled. You can download the module from <a href="!url">!url</a>.', array('!url' => 'http://drupal.org/project/devel'));
+  }
+
+  // Load it if needed and show the rest.
+  _ds_load_devel();
+
   $output = '';
   $api_info = ds_api_info($module);
   if (isset($api_info['types'])) {
@@ -752,9 +761,8 @@ function ds_fields_examples($module) {
   }
 
   $selects = theme('links', $types);
-
-  $output = '<div><h2>'. t('Object types') .'</h2>'. $selects .'</div>';
-  $output .= '<div style="margin: 10px 0px 10px 0px; padding-top: 10px; border-top: 1px solid #ddd">'. t('Select a type to see properties from it. You need the devel module for this on your site, however, it does not have to be enabled. You can download the module from <a href="!url">!url</a>.', array('!url' => 'http://drupal.org/project/devel')) .'</div>';
+  $output = '<div><h2 style="margin-bottom: 10px;">'. t('Object types') .'</h2>'. $selects .'</div>';
+  $output .= '<div style="margin: 10px 0px 10px 0px; padding-top: 10px; border-top: 1px solid #ddd">'. t('Select a type to see properties from it. The output from the objects is usually the object individually (e.g. a full node, comment, user ...)') .'</div>';
   if (isset($_GET['type']) && isset($types[$_GET['type']])) {
     _ds_fields_examples_render($api_info, $_GET['type']);
   }
@@ -774,5 +782,14 @@ function _ds_fields_examples_render($api_info, $type) {
   }
   else {
     drupal_set_message('No info found.');
+  }
+}
+
+/**
+ * Load devel if needed.
+ */
+function _ds_load_devel() {
+  if (!module_exists('devel')) {
+    module_load_include('module', 'devel');
   }
 }
