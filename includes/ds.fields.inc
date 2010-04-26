@@ -343,6 +343,7 @@ function ds_preprocess_field_form($form_state, $module, $all_fields, $object = '
   $form['preprocess_identity'] = array(
     '#type' => 'fieldset',
     '#title' => (empty($key)) ? t('Add new preprocess field'): t('Update preprocess field'),
+    '#description' => t('Create fields from variables available when preprocessing an object. For inspiration, see <a href="!url">!url</a>.', array('!url' => 'http://drupal.org/node/700056')),
     '#collapsible' => (empty($key)) ? TRUE : FALSE,
     '#collapsed' => (empty($key)) ? TRUE : FALSE,
   );
