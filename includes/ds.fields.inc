@@ -98,14 +98,14 @@ function ds_fields($module) {
 
       $output .= '<p>'. t('This is a list of fields either defined in code or via the UI.') .' ';
       if (!isset($api_info['no_fields_examples'])) {
-        $output .= t('You can look at properties and preprocess variables for any object type in a <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes\'); return false();">separate window</a>.', array('!url' => url('admin/ds/'. $module .'/fields-examples'))) .'</p>';
+        $output .= t('You can look at properties and preprocess variables for any object type in a <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes,location=1,resizable=1,toolbar=1\'); return false();">separate window</a>.', array('!url' => url('admin/ds/'. $module .'/fields-examples'))) .'</p>';
       }
       $output .= theme('table', $header, $rows);
     }
     else {
       $output .= '<p>'. t('You have not defined any fields.') .' ';
       if (!isset($api_info['no_fields_examples'])) {
-        $output .= t('You can look at properties and preprocess variables for any object type in a <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes\'); return false();">separate window</a>.', array('!url' => url('admin/ds/'. $module .'/fields-examples'))) .'</p>';
+        $output .= t('You can look at properties and preprocess variables for any object type in a <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes,location=1,resizable=1,toolbar=1\'); return false();">separate window</a>.', array('!url' => url('admin/ds/'. $module .'/fields-examples'))) .'</p>';
       }
     }
 
@@ -762,9 +762,9 @@ function ds_fields_examples($module) {
 
   $selects = theme('links', $types);
   $output = '<div><h2 style="margin-bottom: 10px;">'. t('Object types') .'</h2>'. $selects .'</div>';
-  $output .= '<div style="margin: 10px 0px 10px 0px; padding-top: 10px; border-top: 1px solid #ddd">'. t('Select a type to see properties from it. The output from the objects is usually the object individually (e.g. a full node, comment, user ...)') .'</div>';
+  $output .= '<div style="margin: 10px 0px 10px 0px; padding-top: 10px; border-top: 1px solid #ddd">'. t('Select a type to see properties from it. The output from the objects is usually the object individually (e.g. a full node, comment, user ...). If you pass the parameter id in the URL, you can select an object with that id instead of a random one.') .'</div>';
   if (isset($_GET['type']) && isset($types[$_GET['type']])) {
-    _ds_fields_examples_render($api_info, $_GET['type']);
+    $output .= _ds_fields_examples_render($api_info, $_GET['type'], $output);
   }
 
   return $output;
@@ -773,11 +773,12 @@ function ds_fields_examples($module) {
 /**
  * Get the load/render info about an object.
  */
-function _ds_fields_examples_render($api_info, $type) {
+function _ds_fields_examples_render($api_info, $type, &$output) {
   $object = $api_info['object'];
   $module = $api_info['module'];
   $examples_file = drupal_get_path('module', $module) .'/'. $module .'_fields_examples.inc';
   if (file_exists($examples_file)) {
+    $output .= '<div style="margin: 10px 0px 10px 0px; padding-top: 10px; border-top: 1px solid #ddd"></div>';
     require_once($examples_file);
   }
   else {
