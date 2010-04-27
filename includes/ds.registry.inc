@@ -12,6 +12,7 @@
 function _ds_ui_perm() {
   $perms = array(
     'access display suite',
+    'administer styles',
     'use PHP in custom fields',
     'revert overridden settings',
     'export and import settings',
@@ -90,7 +91,7 @@ function _ds_ui_menu() {
     'title' => 'Styles',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_styles'),
-    'access arguments' => array('access display suite'),
+    'access arguments' => array('administer styles'),
     'file' => 'includes/ds.display.inc',
     'type' => MENU_LOCAL_TASK,
     'weight' => 1,

@@ -8,6 +8,7 @@
 - #737008 by swentel: Support feature integration per object type.
 - #779040 by swentel: DS now has a UI module. 
 - #781882 by swentel: add example outputs from objects.
+- #783106 by swentel: styles do not necessarily need friendly names.
 
 -------------------------------------------------------------------------------------
 6.x-1.1 2010-04-15
