@@ -98,14 +98,14 @@ function ds_fields($module) {
 
       $output .= '<p>'. t('This is a list of fields either defined in code or via the UI.') .' ';
       if (!isset($api_info['no_fields_examples'])) {
-        $output .= t('You can look at properties and preprocess variables for any object type in a <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes,location=1,resizable=1,toolbar=1\'); return false();">separate window</a>.', array('!url' => url('admin/ds/'. $module .'/fields-examples'))) .'</p>';
+        $output .= t('You can look at <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes,location=1,resizable=1,toolbar=1\'); return false();">properties and preprocess variables</a> for any object type in a separate window.', array('!url' => url('admin/ds/'. $module .'/fields-examples'))) .'</p>';
       }
       $output .= theme('table', $header, $rows);
     }
     else {
       $output .= '<p>'. t('You have not defined any fields.') .' ';
       if (!isset($api_info['no_fields_examples'])) {
-        $output .= t('You can look at properties and preprocess variables for any object type in a <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes,location=1,resizable=1,toolbar=1\'); return false();">separate window</a>.', array('!url' => url('admin/ds/'. $module .'/fields-examples'))) .'</p>';
+        $output .= t('You can look at <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes,location=1,resizable=1,toolbar=1\'); return false();">properties and preprocess variables</a> for any object type in a separate window.', array('!url' => url('admin/ds/'. $module .'/fields-examples'))) .'</p>';
       }
     }
 
