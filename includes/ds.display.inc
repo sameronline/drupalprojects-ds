@@ -520,8 +520,8 @@ function ds_field_classes() {
     $extra_styles = explode("\n", $extra_styles);
     foreach ($extra_styles as $key => $value) {
       $classes = explode("|", $value);
-      $key = $classes[0];
-      $name = isset($classes[1]) ? $classes[1] : $key;
+      $key = trim($classes[0]);
+      $name = isset($classes[1]) ? trim($classes[1]) : $key;
       $styles[$key] = $name;
     }
   }
