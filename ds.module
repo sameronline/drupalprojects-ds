@@ -214,6 +214,9 @@ function ds_build_fields_and_regions(&$object, $module) {
         if (isset($field_settings[$key]['css-class']) && !empty($field_settings[$key]['css-class'])) {
           $class .= ' '. $field_settings[$key]['css-class'];
         }
+        if ($field['type'] == DS_FIELD_TYPE_GROUP) {
+          $class .= ' field-group';
+        }
 
         // Build field key.
         $ds_fields[$key]['key'] = $key;
