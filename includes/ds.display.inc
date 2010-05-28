@@ -246,7 +246,7 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     $fields = ds_get_fields($module, $type, $build_mode, $extra, TRUE);
   }
 
-  // Break form build in case no fields
+  // Break form build in case no fields.
   if (empty($fields)) {
     return;
   }

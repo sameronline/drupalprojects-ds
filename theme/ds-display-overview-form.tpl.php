@@ -22,7 +22,9 @@ if ($rows): ?>
 
 <div id="ds-display-content">
   <div id="ds-tabs">
-    <div id="field-tab" class="tab selected"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab('field-tab'); return false;"><?php print t('Fields'); ?></a></div>
+    <?php if (!empty($plugins_tabs) || $sync_copy_tab): ?>
+      <div id="field-tab" class="tab selected"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab('field-tab'); return false;"><?php print t('Fields'); ?></a></div>
+    <?php endif; ?>
     <?php if ($sync_copy_tab): ?>
       <div id="sync-copy-tab" class="tab"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab('sync-copy-tab'); return false;"><?php print t('Sync / copy'); ?></a></div>
     <?php endif; ?>
