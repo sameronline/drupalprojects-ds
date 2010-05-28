@@ -192,6 +192,7 @@ function _ds_ui_menu() {
 
         $first = 0;
         $weight = 20;
+        $build_modes_found = FALSE;
         $local_task_items = array();
         $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
         foreach ($build_modes as $key => $value) {
@@ -201,6 +202,8 @@ function _ds_ui_menu() {
           if ($excluded) {
             continue;
           }
+
+          $build_modes_found = TRUE;
 
           // Tabs.
           $local_task_items['admin/ds/layout/'. $type_url_str .'/'. $key] = array(
@@ -222,16 +225,17 @@ function _ds_ui_menu() {
         }
 
         // Default callback.
-        $items['admin/ds/layout/'. $type_url_str] = array(
-          'title' => drupal_ucfirst($first_title),
-          'page callback' => 'drupal_get_form',
-          'page arguments' => array('ds_display_overview_form', $type_name, "$first_build_mode", $module),
-          'access arguments' => array('configure layout for '. $module),
-          'file' => 'includes/ds.display.inc',
-          'weight' => 2,
-        );
-        $items += $local_task_items;
-
+        if ($build_modes_found) {
+          $items['admin/ds/layout/'. $type_url_str] = array(
+            'title' => drupal_ucfirst($first_title),
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('ds_display_overview_form', $type_name, "$first_build_mode", $module),
+            'access arguments' => array('configure layout for '. $module),
+            'file' => 'includes/ds.display.inc',
+            'weight' => 2,
+          );
+          $items += $local_task_items;
+        }
       }
     }
   }

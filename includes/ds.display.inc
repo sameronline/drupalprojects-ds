@@ -36,7 +36,8 @@ function ds_layout_overview() {
         $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
 
         if (!empty($build_modes)) {
-          $rows[] = array(array('data' => drupal_ucfirst($otype->name), 'colspan' => '3', 'class' => 'ds-row-title'));
+
+          $build_mode_rows = array();
           foreach ($build_modes as $bkey => $build_mode) {
 
             $excluded = (isset($exclude_build_modes[$type_name][$bkey]) && $exclude_build_modes[$type_name][$bkey] == TRUE) ? TRUE : FALSE;
@@ -57,7 +58,13 @@ function ds_layout_overview() {
               $operations .= ' - '. l('Revert', 'admin/ds/tools/revert/'. $module .'/'. $type_url_str .'/'. $bkey);
             }
             $row[] = $operations;
-            $rows[] = array('data' => $row, 'class' => 'ds-row-type');
+            $build_mode_rows[] = array('data' => $row, 'class' => 'ds-row-type');
+          }
+
+          // Any build modes found ?
+          if (!empty($build_mode_rows)) {
+            $rows[] = array(array('data' => drupal_ucfirst($otype->name), 'colspan' => '3', 'class' => 'ds-row-title'));
+            $rows = array_merge($rows, $build_mode_rows);
           }
         }
       }

@@ -5,6 +5,7 @@
 - #795784 by swentel and jyve: add extra field-group class to fieldgroup.
 - #783050 by swentel: multiple classes on fields.
 - #783196 by swentel: sync/copy little confusing.
+- #786740 by swentel: excluding build modes confused administration logic.
 
 -------------------------------------------------------------------------------------
 6.x-1.2 2010-05-07
