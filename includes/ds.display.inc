@@ -159,7 +159,21 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
   $display_settings = variable_get($module .'_display_settings_'. $type, array());
   $settings_status = isset($display_settings[$build_mode]['status']) ? $display_settings[$build_mode]['status'] : DS_SETTINGS_UI;
 
+  // See if this build mode isn't synced from another build mode.
+  $synced = FALSE;
+  foreach ($display_settings as $build_mode_key => $values) {
+    if (isset($values['sync'])) {
+      foreach ($values['sync'] as $sync => $sync_value) {
+        if ($sync == $build_mode) {
+          $synced = $build_mode_key;
+          break;
+        }
+      }
+    }
+  }
+
   $form = array(
+    '#synced' => FALSE,
     '#tree' => TRUE,
     '#module' => $module,
     '#type_name' => $type,
@@ -170,6 +184,11 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
     '#status' => $settings_status,
     '#regions' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
   );
+
+  if ($synced) {
+    $all_build_modes = ds_get_build_modes('nd');
+    $form['#synced'] = t('You can not edit this buildmode right now because it is synchronised with !bm.', array('!bm' => l($all_build_modes[$synced]['title'], 'admin/ds/layout/'. $type .'/'. $synced)));
+  }
 
   // Extra info.
   if (isset($api_info['extra']) && !empty($api_info['extra'])) {

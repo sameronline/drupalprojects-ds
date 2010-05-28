@@ -13,6 +13,15 @@ function template_preprocess_ds_display_overview_form(&$vars) {
   $form = &$vars['form'];
   $build_mode = $form['#build_mode'];
 
+  // Synced or not?
+  $vars['synced'] = '';
+  if ($form['#synced']) {
+    $vars['synced'] = $form['#synced'];
+    $vars['rows'] = array();
+    $vars['form'] = array();
+    return;
+  }
+
   // Sort fields.
   $order = array();
   $root_fields = array();

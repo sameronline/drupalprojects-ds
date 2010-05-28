@@ -13,6 +13,11 @@
  *   Properties (human_name, weight, stickyorder, build_mode, class, label_class)
  */
 
+// Synced.
+if ($synced) {
+  print $synced;
+}
+
 if ($rows): ?>
 
 <div id="ds-display-content">
