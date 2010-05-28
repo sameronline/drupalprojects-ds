@@ -49,26 +49,30 @@ function theme_ds_regions($object_display, $module) {
   $build_mode = $object_display->build_mode;
 
   foreach ($object_display->themed_regions as $region_name => $region_data) {
-    $style = isset($object_display->region_styles[$region_name]) ? $object_display->region_styles[$region_name] : '';
     $output .= '<div class="'. $module .'-region-'. $region_name;
 
-    // the middle region has a wrapper region and some sidebar related classes
+    // The middle region has a wrapper region and some sidebar related classes.
     if ($region_name == 'middle') {
-      $output .= '-wrapper '. $object_display->ds_middle_classes;
+      $output .= '-wrapper ';
     }
     if ($region_name == 'header' || $region_name == 'footer') {
       $output .= ' clear-block';
     }
-    if (isset($region_data['extra_class'])) {
+
+    // Extra classes or inline styles.
+    if (!empty($region_data['extra_class'])) {
       $output .= $region_data['extra_class'];
     }
-    $output .= ' '. $style .'" ';
+    $output .= '" ';
     if (isset($region_data['inline_css'])) {
       $output .= $region_data['inline_css'];
     }
+
+    // Close the wrapper for middle if necessary.
     if ($region_name == 'middle') {
       $output .= '><div class="'. $module .'-region-'. $region_name .'">'. $region_data['content'] .'</div></div>';
-    } else {
+    }
+    else {
       $output .= '">'. $region_data['content'] .'</div>';
     }
   }
