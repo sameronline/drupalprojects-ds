@@ -3,6 +3,7 @@
 -------------------------------------------------------------------------------------
 - #794908 by swentel: styles with no friendly names trigger illegal choice detection.
 - #795784 by swentel and jyve: add extra field-group class to fieldgroup.
+- #783050 by swentel: multiple classes on fields.
 
 -------------------------------------------------------------------------------------
 6.x-1.2 2010-05-07

@@ -210,6 +210,7 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
 
   global $base_url;
 
+  $form['#field_styles'] = array();
   $module = $form['#module'];
   $build_mode = $form['#build_mode'];
   $type = $form['#type_name'];
@@ -224,6 +225,7 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     return;
   }
 
+  $multiselect = array();
   $default_properties = ds_field_default_form_properties($build_mode);
   $default = (!empty($form[key($fields)])) ? $form[key($fields)] : $default_properties;
 
@@ -283,7 +285,11 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     $form[$field][$build_mode]['format']['#access'] = (count($form[$field][$build_mode]['format']['#options']) == 0) ? FALSE : TRUE;
 
     // CSS class.
-    $form[$field][$build_mode]['css-class']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'css-class', '');
+    $form['#field_styles'][] = array(
+      'field' => $field,
+      'id' => str_replace(array('][', '_', ' '), '-', 'edit-'. $field .'-'. $build_mode .'-css-class')
+    );
+    $form[$field][$build_mode]['css-class']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'css-class', array());
 
     // Region
     $form[$field][$build_mode]['region']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'region', DS_DEFAULT_REGION);
@@ -359,6 +365,30 @@ function ds_plugins_display_form(&$form, $display_settings) {
     $plugin = new $class();
     $plugin_form = $plugin->plugin_form($form, $display_settings);
     $form['#plugin_keys'][$key] = $data['title'];
+  }
+}
+
+/**
+ * Validate function for display overview form.
+ */
+function ds_display_overview_form_validate($form, &$form_state) {
+
+  $build_mode = $form['#build_mode'];
+  // Because of the multiselect.js, the multiselect now have become
+  // checkboxes and FAPI doesn't send the form_state. We'll do the
+  // validation here and pass on the form_state values!
+  $classes = ds_field_classes();
+  foreach ($form['#field_styles'] as $key => $value) {
+    $field = $value['field'];
+    $id = $value['id'];
+    if (isset($_POST[$id])) {
+      $values = $_POST[$id];
+      foreach ($values as $key => $value) {
+        if (isset($classes[$value])) {
+          $form_state['values'][$field][$build_mode]['css-class'][] = $value;
+        }
+      }
+    }
   }
 }
 
@@ -514,7 +544,7 @@ function ds_label_options() {
  * Return field classes.
  */
 function ds_field_classes() {
-  $styles = array('' => t('None'));
+  $styles = array();
   $extra_styles = trim(variable_get('ds_styles', ''));
   if (!empty($extra_styles)) {
     $extra_styles = explode("\n", $extra_styles);
@@ -549,14 +579,16 @@ function ds_field_default_form_properties($build_mode) {
     ),
     'css-class' => array(
       '#type' => 'select',
+      '#multiple' => TRUE,
+      '#size' => 5,
       '#options' => ds_field_classes(),
-      '#default_value' => '',
+      '#default_value' => array(),
+      '#attributes' => array('class' => 'field-style-selects'),
     ),
     'region' => array(
       '#type' => 'select',
       '#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
       '#default_value' => DS_DEFAULT_REGION,
-      //'#size' => 10,
       '#attributes' => array(
         'class' => 'field-region-select',
       ),
@@ -588,8 +620,11 @@ function ds_field_default_form_properties($build_mode) {
       ),
       'css-class' => array(
         '#type' => 'select',
+        '#multiple' => TRUE,
+        '#size' => 5,
         '#options' => ds_field_classes(),
-        '#default_value' => '',
+        '#default_value' => array(),
+        '#attributes' => array('class' => 'field-style-selects'),
       ),
       'region' => array(
         '#type' => 'select',

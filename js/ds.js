@@ -208,3 +208,10 @@ Drupal.DisplaySuite.changeLabel = function(element, title) {
   labelcell.find(".label-field").text(changed);
   labelcell.find("input").val(changed);
 }
+
+/**
+ * Multiple field style selects.
+ */
+$(document).ready( function() {
+	$("#fields .field-style-selects").multiSelect();
+});

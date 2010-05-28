@@ -109,6 +109,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
 
   // CSS and JS.
   drupal_add_js('misc/tableheader.js');
+  drupal_add_js(drupal_get_path('module', 'ds') .'/js/multiselect.js');
   drupal_add_js(drupal_get_path('module', 'ds') .'/js/ds.js');
   drupal_add_css(drupal_get_path('module', 'ds') .'/css/ds.css');
 
