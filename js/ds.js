@@ -213,5 +213,5 @@ Drupal.DisplaySuite.changeLabel = function(element, title) {
  * Multiple field style selects.
  */
 $(document).ready( function() {
-	$("#fields .field-style-selects").multiSelect();
+	$("#fields .style-selects").multiSelect();
 });

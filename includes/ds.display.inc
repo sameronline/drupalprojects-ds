@@ -197,6 +197,21 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
     $form['#synced'] = t('You can not edit this buildmode right now because it is synchronised with !bm.', array('!bm' => l($all_build_modes[$synced]['title'], 'admin/ds/layout/'. $type .'/'. $synced)));
   }
 
+  // Build style selects for region classes.
+  $region_styles = ds_default_value($display_settings, $build_mode, 'region_styles');
+  foreach ($form['#regions'] as $key => $region_name) {
+    if ($key != 'disabled') {
+      $default_value = isset($region_styles[$key]) ? explode(' ', $region_styles[$key]) : array();
+      $form['region_styles_'. $key] = array(
+        '#type' => 'select',
+        '#multiple' => TRUE,
+        '#options' => ds_styles(),
+        '#attributes' => array('class' => 'style-selects'),
+        '#default_value' => $default_value,
+      );
+    }
+  }
+
   // Extra info.
   if (isset($api_info['extra']) && !empty($api_info['extra'])) {
     $types = $api_info['types']();
@@ -315,7 +330,8 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
       'field' => $field,
       'id' => str_replace(array('][', '_', ' '), '-', 'edit-'. $field .'-'. $build_mode .'-css-class')
     );
-    $form[$field][$build_mode]['css-class']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'css-class', array());
+    $class = ds_default_value($display_settings, $build_mode, 'fields', $field, 'css-class', NULL);
+    $form[$field][$build_mode]['css-class']['#default_value'] = explode(' ', $class);
 
     // Region
     $form[$field][$build_mode]['region']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'region', DS_DEFAULT_REGION);
@@ -404,15 +420,17 @@ function ds_plugins_display_form(&$form, $display_settings) {
 
 /**
  * Validate function for display overview form.
+ * Because of the multiselect.js, the multiselect now have become
+ * checkboxes and FAPI doesn't send the form_state. We'll do the
+ * validation here and pass on the form_state values!
  */
 function ds_display_overview_form_validate($form, &$form_state) {
 
-  $build_mode = $form['#build_mode'];
-  // Because of the multiselect.js, the multiselect now have become
-  // checkboxes and FAPI doesn't send the form_state. We'll do the
-  // validation here and pass on the form_state values!
   $classes = ds_styles();
-  foreach ($form['#field_styles'] as $key => $value) {
+  $build_mode = $form['#build_mode'];
+
+  // Field styles.
+  foreach ($form['#field_styles'] as $field => $value) {
     $field = $value['field'];
     $id = $value['id'];
     if (isset($_POST[$id])) {
@@ -420,6 +438,19 @@ function ds_display_overview_form_validate($form, &$form_state) {
       foreach ($values as $key => $value) {
         if (isset($classes[$value])) {
           $form_state['values'][$field][$build_mode]['css-class'][] = $value;
+        }
+      }
+    }
+  }
+
+  // Region styles.
+  foreach($form['#regions'] as $region_key => $region_name) {
+    $id = 'edit-region-styles-'. $region_key;
+    if (isset($_POST[$id])) {
+      $values = $_POST[$id];
+      foreach ($values as $key => $value) {
+        if (isset($classes[$value])) {
+          $form_state['values']['region_styles_'. $region_key][] = $value;
         }
       }
     }
@@ -448,7 +479,7 @@ function ds_display_overview_form_submit($form, &$form_state) {
       $display_settings[$build_mode]['fields'][$key]['region'] = $region;
       $display_settings[$build_mode]['fields'][$key]['weight'] = $form_state['values'][$key]['ds_weight'];
       $display_settings[$build_mode]['fields'][$key]['format'] = $form_state['values'][$key][$build_mode]['format'];
-      $display_settings[$build_mode]['fields'][$key]['css-class'] = $form_state['values'][$key][$build_mode]['css-class'];
+      $display_settings[$build_mode]['fields'][$key]['css-class'] = implode(' ', $form_state['values'][$key][$build_mode]['css-class']);
 
       // Label value.
       if (!empty($form_state['values'][$key][$build_mode]['label_value'])) {
@@ -480,6 +511,14 @@ function ds_display_overview_form_submit($form, &$form_state) {
 
   // Sync / copy tab.
   ds_sync_copy_form_submit($form, $form_state, $display_settings);
+
+  // Regions styles.
+  $region_styles = array();
+  foreach ($form['#regions'] as $region_key => $region_name) {
+    if ($region_key != 'disabled')
+    $region_styles[$region_key] = implode(' ', $form_state['values']['region_styles_'. $region_key]);
+  }
+  $display_settings[$build_mode]['region_styles'] = $region_styles;
 
   // Save all these settings.
   variable_set($module .'_display_settings_'. $type, $display_settings);
@@ -617,7 +656,7 @@ function ds_field_default_form_properties($build_mode) {
       '#size' => 5,
       '#options' => ds_styles(),
       '#default_value' => array(),
-      '#attributes' => array('class' => 'field-style-selects'),
+      '#attributes' => array('class' => 'style-selects'),
     ),
     'region' => array(
       '#type' => 'select',
@@ -658,7 +697,7 @@ function ds_field_default_form_properties($build_mode) {
         '#size' => 5,
         '#options' => ds_styles(),
         '#default_value' => array(),
-        '#attributes' => array('class' => 'field-style-selects'),
+        '#attributes' => array('class' => 'style-selects'),
       ),
       'region' => array(
         '#type' => 'select',

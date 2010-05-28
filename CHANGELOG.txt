@@ -6,6 +6,7 @@
 - #783050 by swentel: multiple classes on fields.
 - #783196 by swentel: sync/copy little confusing.
 - #786740 by swentel: excluding build modes confused administration logic.
+- #783056 by swentel: add classes to regions via the UI.
 
 -------------------------------------------------------------------------------------
 6.x-1.2 2010-05-07

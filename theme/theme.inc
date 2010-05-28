@@ -46,8 +46,10 @@ function theme_ds_field($content, $field) {
  */
 function theme_ds_regions($object_display, $module) {
   $output = '';
+  $build_mode = $object_display->build_mode;
 
   foreach ($object_display->themed_regions as $region_name => $region_data) {
+    $style = isset($object_display->region_styles[$region_name]) ? $object_display->region_styles[$region_name] : '';
     $output .= '<div class="'. $module .'-region-'. $region_name;
 
     // the middle region has a wrapper region and some sidebar related classes
@@ -60,14 +62,14 @@ function theme_ds_regions($object_display, $module) {
     if (isset($region_data['extra_class'])) {
       $output .= $region_data['extra_class'];
     }
-    $output .= '" ';
+    $output .= ' '. $style .'" ';
     if (isset($region_data['inline_css'])) {
       $output .= $region_data['inline_css'];
     }
     if ($region_name == 'middle') {
       $output .= '><div class="'. $module .'-region-'. $region_name .'">'. $region_data['content'] .'</div></div>';
     } else {
-      $output .= '>'. $region_data['content'] .'</div>';
+      $output .= '">'. $region_data['content'] .'</div>';
     }
   }
 
@@ -236,7 +238,7 @@ function template_preprocess_ds_row_object(&$vars) {
 }
 
 /**
- * Preprocess theme function to print a single record from a row, with fields
+ * Preprocess theme function to print a single record from a row, with fields.
  */
 function template_preprocess_ds_row_fields(&$vars) {
   template_preprocess_views_view_fields($vars);

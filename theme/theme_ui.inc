@@ -142,6 +142,12 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     }
   }
 
+  // Region classes.
+  $vars['region_classes'] = array();
+  foreach($form['#regions'] as $key => $region_name) {
+    $vars['region_classes'][$key] = drupal_render($form['region_styles_'. $key]);
+  }
+
   $vars['rows'] = $rows;
   $vars['submit'] = drupal_render($form);
   $vars['regions'] = $form['#regions'];

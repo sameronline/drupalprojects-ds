@@ -56,6 +56,7 @@ if ($rows): ?>
         <tr class="region region-<?php print $region?> tabledrag-leaf">
           <td colspan="6" class="region">
             <?php print $title; ?>
+            <?php print $region_classes[$region]; ?>
             <input type="hidden" class="ds-field-id" value="" size="2" id="edit-<?php print $region; ?>-full-field-id" name="region_<?php print $region; ?>[full][field_id]" maxlength="128"/>
             <input type="hidden" class="ds-parent-id" value="" size="2" id="edit-<?php print $region; ?>-full-parent-id" name="region_<?php print $region; ?>[full][parent_id]" maxlength="128"/>
           </td>

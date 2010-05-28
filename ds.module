@@ -212,7 +212,7 @@ function ds_build_fields_and_regions(&$object, $module) {
         // Default class and extra class from the UI.
         $class = isset($field['properties']['css-class']) ? $field['properties']['css-class'] : 'field-'. strtr($key, '_', '-');
         if (isset($field_settings[$key]['css-class']) && !empty($field_settings[$key]['css-class'])) {
-          $class .= ' '. implode(' ', $field_settings[$key]['css-class']);
+          $class .= ' '. $field_settings[$key]['css-class'];
         }
         if ($field['type'] == DS_FIELD_TYPE_GROUP) {
           $class .= ' field-group';
@@ -437,6 +437,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
   $object_display->themed_regions = $themed_regions;
   $object_display->region_classes = $region_classes;
   $object_display->build_mode = $object->build_mode;
+  $object_display->region_styles = ds_default_value($display_settings, $object->build_mode, 'region_styles');
 
   // Plugins.
   ds_plugins_process($module, $api_info['object'], $display_settings, $vars, $object_display);
