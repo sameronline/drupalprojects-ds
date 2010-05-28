@@ -33,3 +33,11 @@ function ds_update_2() {
   module_enable(array('ds_ui'));
   return array();
 }
+
+/**
+ * Implementation of hook_update_N().
+ */
+function ds_update_3() {
+  // Needs menu rebuild.
+  return array();
+}

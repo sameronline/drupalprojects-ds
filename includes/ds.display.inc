@@ -138,13 +138,13 @@ function ds_settings_status($status) {
 /**
  * Menu callback, show styles form.
  */
-function ds_styles(&$form_state) {
+function ds_styles_form(&$form_state) {
   $form = array();
 
   $form['ds_styles'] = array(
     '#type' => 'textarea',
     '#default_value' => variable_get('ds_styles', ''),
-    '#description' => t('Configure styles which you can add to fields in the overview screen. Add multiple styles line per line.<br />If you want to have a friendly name, separate class and friendly name by |, but this is not required. eg:<br /><em>class_name_1<br />class_name_2|Friendly name<br />class_name_3</em>')
+    '#description' => t('Configure styles which you can add to fields or regions in the overview screen. Add multiple styles line per line.<br />If you want to have a friendly name, separate class and friendly name by |, but this is not required. eg:<br /><em>class_name_1<br />class_name_2|Friendly name<br />class_name_3</em>')
   );
 
   return system_settings_form($form);
@@ -411,7 +411,7 @@ function ds_display_overview_form_validate($form, &$form_state) {
   // Because of the multiselect.js, the multiselect now have become
   // checkboxes and FAPI doesn't send the form_state. We'll do the
   // validation here and pass on the form_state values!
-  $classes = ds_field_classes();
+  $classes = ds_styles();
   foreach ($form['#field_styles'] as $key => $value) {
     $field = $value['field'];
     $id = $value['id'];
@@ -575,9 +575,9 @@ function ds_label_options() {
 }
 
 /**
- * Return field classes.
+ * Return styles.
  */
-function ds_field_classes() {
+function ds_styles() {
   $styles = array();
   $extra_styles = trim(variable_get('ds_styles', ''));
   if (!empty($extra_styles)) {
@@ -615,7 +615,7 @@ function ds_field_default_form_properties($build_mode) {
       '#type' => 'select',
       '#multiple' => TRUE,
       '#size' => 5,
-      '#options' => ds_field_classes(),
+      '#options' => ds_styles(),
       '#default_value' => array(),
       '#attributes' => array('class' => 'field-style-selects'),
     ),
@@ -656,7 +656,7 @@ function ds_field_default_form_properties($build_mode) {
         '#type' => 'select',
         '#multiple' => TRUE,
         '#size' => 5,
-        '#options' => ds_field_classes(),
+        '#options' => ds_styles(),
         '#default_value' => array(),
         '#attributes' => array('class' => 'field-style-selects'),
       ),

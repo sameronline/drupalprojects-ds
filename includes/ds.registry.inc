@@ -90,7 +90,7 @@ function _ds_ui_menu() {
   $items['admin/ds/layout/styles'] = array(
     'title' => 'Styles',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_styles'),
+    'page arguments' => array('ds_styles_form'),
     'access arguments' => array('administer styles'),
     'file' => 'includes/ds.display.inc',
     'type' => MENU_LOCAL_TASK,
