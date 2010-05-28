@@ -325,6 +325,8 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
  * @param string $type_name The name of the type.
  */
 function ds_sync_copy_form(&$form, $display_settings, $current_build_mode, $module, $type_name) {
+  $copy = array();
+  $sync = array();
   $build_modes = array();
   $all_build_modes = ds_get_build_modes($module);
   $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
@@ -334,29 +336,35 @@ function ds_sync_copy_form(&$form, $display_settings, $current_build_mode, $modu
     if ($excluded || $key == $current_build_mode) {
       continue;
     }
-    $build_modes[$key] = $build_mode['title'];
+    $copy[$key] = $build_mode['title'];
+    $sync[$key] = t('Keep synchronized');
   }
 
-  if (!empty($build_modes)) {
+  if (!empty($copy)) {
     $form['sync_copy'] = array(
       '#type' => 'fieldset',
       '#description' => t('Copy once or always sync display and plugin settings with other build modes. Syncing options are not saved bi-directional.<br />Watch out when copying field settings to another build mode which has a different set of regions as you can loose some fields for display. A typical example is RSS which only has one region (middle).'),
     );
 
+    $form['sync_copy']['info'] = array(
+      '#type' => 'item',
+      '#value' => t('Copy "!current" to', array('!current' => $all_build_modes[$current_build_mode]['title'])),
+      '#prefix' => '<div style="float: left; margin-right: 10px;">',
+      '#suffix' => '</div>',
+    );
+
     $form['sync_copy']['copy'] = array(
-      '#title' => t('Copy'),
       '#type' => 'checkboxes',
-      '#options' => $build_modes,
-      '#prefix' => '<div style="float: left; margin-right: 30px;">',
+      '#options' => $copy,
+      '#prefix' => '<div style="float: left; margin-right: 30px; margin-top: 10px;">',
       '#suffix' => '</div>',
     );
 
     $form['sync_copy']['sync'] = array(
-      '#title' => t('Synchronize'),
       '#type' => 'checkboxes',
-      '#options' => $build_modes,
+      '#options' => $sync,
       '#default_value' => isset($display_settings[$current_build_mode]['sync']) ? $display_settings[$current_build_mode]['sync'] : array(),
-      '#prefix' => '<div style="float: left;">',
+      '#prefix' => '<div style="float: left; margin-top: 10px;">',
       '#suffix' => '</div>',
     );
   }

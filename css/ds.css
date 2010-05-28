@@ -103,10 +103,6 @@ span.field-group {
   border: 0 none;
 }
 
-#sync-copy-content label {
-  /*float: left;*/
-}
-
 /* Multiselect */
 a.multiSelect {
   background: #FFF url(../images/dropdown.png) right center no-repeat;
