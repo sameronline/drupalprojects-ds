@@ -46,7 +46,6 @@ function theme_ds_field($content, $field) {
  */
 function theme_ds_regions($object_display, $module) {
   $output = '';
-  $build_mode = $object_display->build_mode;
 
   foreach ($object_display->themed_regions as $region_name => $region_data) {
     $output .= '<div class="'. $module .'-region-'. $region_name;
