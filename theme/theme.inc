@@ -72,7 +72,7 @@ function theme_ds_regions($object_display, $module) {
       $output .= '><div class="'. $module .'-region-'. $region_name .'">'. $region_data['content'] .'</div></div>';
     }
     else {
-      $output .= '">'. $region_data['content'] .'</div>';
+      $output .= '>'. $region_data['content'] .'</div>';
     }
   }
 
