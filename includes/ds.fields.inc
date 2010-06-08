@@ -32,8 +32,8 @@ function ds_human_name($integer, $type) {
  */
 function ds_fields($module) {
   $output = '';
-  $action = arg(4);
-  $field = arg(5);
+  $action = arg(5);
+  $field = arg(6);
 
   drupal_add_js(drupal_get_path('module', 'ds') .'/js/fields.js');
 
@@ -77,14 +77,14 @@ function ds_fields($module) {
     foreach ($db_fields as $key => $value) {
       if ($value['type'] != DS_FIELD_TYPE_GROUP) {
         $row = array();
-        $row[] = l($value['title'], 'admin/ds/'. $module .'/fields/edit/'. $key);
+        $row[] = l($value['title'], 'admin/build/ds/'. $module .'/fields/edit/'. $key);
         $row[] = $key;
         $row[] = ds_human_name($value['type'], 'type');
         $row[] = ds_human_name($value['status'], 'status');
-        $operations = l(t('Edit'), 'admin/ds/'. $module .'/fields/edit/'. $key);
+        $operations = l(t('Edit'), 'admin/build/ds/'. $module .'/fields/edit/'. $key);
         if ($value['status'] != DS_FIELD_STATUS_DEFAULT) {
           $text = ($value['status'] == DS_FIELD_STATUS_OVERRIDDEN) ? 'Reset' : 'Delete';
-          $operations .= ' - '. l(t($text), 'admin/ds/'. $module .'/fields/delete/'. $key);
+          $operations .= ' - '. l(t($text), 'admin/build/ds/'. $module .'/fields/delete/'. $key);
         }
         $row[] = $operations;
         $rows[] = $row;
@@ -98,14 +98,14 @@ function ds_fields($module) {
 
       $output .= '<p>'. t('This is a list of fields either defined in code or via the UI.') .' ';
       if (!isset($api_info['no_fields_examples'])) {
-        $output .= t('You can look at <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes,location=1,resizable=1,toolbar=1\'); return false();">properties and preprocess variables</a> for any object type in a separate window.', array('!url' => url('admin/ds/'. $module .'/fields-examples'))) .'</p>';
+        $output .= t('You can look at <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes,location=1,resizable=1,toolbar=1\'); return false();">properties and preprocess variables</a> for any object type in a separate window.', array('!url' => url('admin/build/ds/'. $module .'/fields-examples'))) .'</p>';
       }
       $output .= theme('table', $header, $rows);
     }
     else {
       $output .= '<p>'. t('You have not defined any fields.') .' ';
       if (!isset($api_info['no_fields_examples'])) {
-        $output .= t('You can look at <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes,location=1,resizable=1,toolbar=1\'); return false();">properties and preprocess variables</a> for any object type in a separate window.', array('!url' => url('admin/ds/'. $module .'/fields-examples'))) .'</p>';
+        $output .= t('You can look at <a href="javascript:;" onClick="window.open(\'!url\', \'mywindow\', \'width=800,height=600,scrollbars=yes,location=1,resizable=1,toolbar=1\'); return false();">properties and preprocess variables</a> for any object type in a separate window.', array('!url' => url('admin/build/ds/'. $module .'/fields-examples'))) .'</p>';
       }
     }
 
@@ -326,7 +326,7 @@ function ds_code_field_form_submit($form, &$form_state) {
   variable_del('ds_fields_cached');
 
   // Redirect and confirmation message.
-  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
+  $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fields';
   drupal_set_message(t('Field %field has been saved.', array('%field' => $form_state['values']['code_title'])));
 }
 
@@ -485,7 +485,7 @@ function ds_preprocess_field_form_submit($form, &$form_state) {
   variable_del('ds_fields_cached');
 
   // Redirect and confirmation message.
-  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
+  $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fields';
   drupal_set_message(t('Field %field has been saved.', array('%field' => $form_state['values']['preprocess_title'])));
 }
 
@@ -675,7 +675,7 @@ function ds_block_field_form_submit($form, &$form_state) {
   variable_del('ds_fields_cached');
 
   // Redirect and confirmation message.
-  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
+  $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fields';
   drupal_set_message(t('Field %field has been saved.', array('%field' => $form_state['values']['block_title'])));
 }
 
@@ -707,7 +707,7 @@ function ds_field_delete_reset_form($form_state, $module, $key, $field) {
   $form['buttons']['cancel'] = array(
     '#suffix' => '</div>',
     '#type' => 'markup',
-    '#value' => l('cancel', 'admin/ds/'. $module .'/fields'),
+    '#value' => l('cancel', 'admin/build/ds/'. $module .'/fields'),
   );
   $form['#module'] = $module;
   return $form;
@@ -729,7 +729,7 @@ function ds_field_delete_reset_form_submit($form, &$form_state) {
   variable_del('ds_fields_cached');
 
   drupal_set_message(t('Field %field has been !action.', array('%field' => $field_title, '!action' => $action)));
-  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fields';
+  $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fields';
 }
 
 /**
@@ -754,7 +754,7 @@ function ds_fields_examples($module) {
 
       $types[$tkey] = array(
         'title' => $type->name,
-        'href' => 'admin/ds/'. $module .'/fields-examples',
+        'href' => 'admin/build/ds/'. $module .'/fields-examples',
         'query' => array('type' => $tkey),
       );
     }

@@ -55,7 +55,7 @@ function ds_ui_theme_registry_alter(&$theme_registry) {
  */
 function ds_ui_preprocess_page(&$vars) {
   // Only fire on page examples page.
-  if (arg(3) == 'fields-examples') {
+  if (arg(4) == 'fields-examples') {
     $vars['template_files'][] = 'ds-page-fieldexamples';
   }
 }

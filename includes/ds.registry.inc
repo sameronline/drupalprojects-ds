@@ -33,7 +33,7 @@ function _ds_ui_menu() {
   $all_build_modes = ds_get_build_modes(NULL, TRUE);
 
   // Display suite main menu block.
-  $items['admin/ds'] = array(
+  $items['admin/build/ds'] = array(
     'title' => 'Display suite',
     'description' => 'Manage your site display.',
     'page callback' => 'ds_general_page',
@@ -42,7 +42,7 @@ function _ds_ui_menu() {
   );
 
   // Import / Export
-  $items['admin/ds/tools'] = array(
+  $items['admin/build/ds/tools'] = array(
     'title' => 'Tools',
     'description' => 'Tools for Display suite',
     'page callback' => 'drupal_get_form',
@@ -51,12 +51,12 @@ function _ds_ui_menu() {
     'file' => 'includes/ds.tools.inc',
     'weight' => -1,
   );
-  $items['admin/ds/tools/import'] = array(
+  $items['admin/build/ds/tools/import'] = array(
     'title' => 'Import',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => 0,
   );
-  $items['admin/ds/tools/export'] = array(
+  $items['admin/build/ds/tools/export'] = array(
     'title' => 'Export',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_export'),
@@ -65,7 +65,7 @@ function _ds_ui_menu() {
     'type' => MENU_LOCAL_TASK,
     'weight' => 1,
   );
-  $items['admin/ds/tools/revert'] = array(
+  $items['admin/build/ds/tools/revert'] = array(
     'title' => 'Revert',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_revert_form'),
@@ -75,19 +75,19 @@ function _ds_ui_menu() {
   );
 
   // Display layout menu item.
-  $items['admin/ds/layout'] = array(
+  $items['admin/build/ds/layout'] = array(
     'title' => 'Layout',
     'page callback' => 'ds_layout_overview',
     'access arguments' => array('access display suite'),
     'file' => 'includes/ds.display.inc',
     'weight' => 2,
   );
-  $items['admin/ds/layout/overview'] = array(
+  $items['admin/build/ds/layout/overview'] = array(
       'title' => 'Overview',
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => 0,
   );
-  $items['admin/ds/layout/styles'] = array(
+  $items['admin/build/ds/layout/styles'] = array(
     'title' => 'Styles',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_styles_form'),
@@ -103,21 +103,21 @@ function _ds_ui_menu() {
     $title = $api_info['title'];
 
     // Info.
-    $items['admin/ds/'. $module] = array(
+    $items['admin/build/ds/'. $module] = array(
       'title' => $title,
       'page callback' => 'ds_info',
       'page arguments' => array($module),
       'access arguments' => array('administer '. $module),
       'file' => 'includes/ds.info.inc',
     );
-    $items['admin/ds/'. $module .'/info'] = array(
+    $items['admin/build/ds/'. $module .'/info'] = array(
       'title' => 'Info',
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => 0,
     );
 
     // Fields.
-    $items['admin/ds/'. $module .'/fields'] = array(
+    $items['admin/build/ds/'. $module .'/fields'] = array(
       'title' => 'Fields',
       'page callback' => 'ds_fields',
       'page arguments' => array($module),
@@ -130,7 +130,7 @@ function _ds_ui_menu() {
 
     // Fields examples.
     if (!isset($api_info['no_fields_examples'])) {
-      $items['admin/ds/'. $module .'/fields-examples'] = array(
+      $items['admin/build/ds/'. $module .'/fields-examples'] = array(
         'title' => 'Field examples',
         'page callback' => 'ds_fields_examples',
         'page arguments' => array($module),
@@ -143,7 +143,7 @@ function _ds_ui_menu() {
     }
 
     // Field groups
-    $items['admin/ds/'. $module .'/fieldgroups'] = array(
+    $items['admin/build/ds/'. $module .'/fieldgroups'] = array(
       'title' => 'Fieldgroups',
       'page callback' => 'ds_fieldgroups',
       'page arguments' => array($module),
@@ -154,7 +154,7 @@ function _ds_ui_menu() {
     );
 
     // Build modes.
-    $items['admin/ds/'. $module .'/buildmodes'] = array(
+    $items['admin/build/ds/'. $module .'/buildmodes'] = array(
       'title' => 'Build modes',
       'page callback' => 'ds_build_modes',
       'page arguments' => array($module),
@@ -165,7 +165,7 @@ function _ds_ui_menu() {
     );
 
     // Plugins.
-    $items['admin/ds/'. $module .'/plugins'] = array(
+    $items['admin/build/ds/'. $module .'/plugins'] = array(
       'title' => 'Plugins',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('ds_plugins', $module),
@@ -206,7 +206,7 @@ function _ds_ui_menu() {
           $build_modes_found = TRUE;
 
           // Tabs.
-          $local_task_items['admin/ds/layout/'. $type_url_str .'/'. $key] = array(
+          $local_task_items['admin/build/ds/layout/'. $type_url_str .'/'. $key] = array(
             'title' => $value['title'],
             'page callback' => 'drupal_get_form',
             'page arguments' => array('ds_display_overview_form', $type_name, "$key", $module),
@@ -226,7 +226,7 @@ function _ds_ui_menu() {
 
         // Default callback.
         if ($build_modes_found) {
-          $items['admin/ds/layout/'. $type_url_str] = array(
+          $items['admin/build/ds/layout/'. $type_url_str] = array(
             'title' => drupal_ucfirst($first_title),
             'page callback' => 'drupal_get_form',
             'page arguments' => array('ds_display_overview_form', $type_name, "$first_build_mode", $module),

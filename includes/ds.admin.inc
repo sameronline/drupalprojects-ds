@@ -12,7 +12,7 @@
 function ds_general_page() {
 
   // Child pages.
-  $item = menu_get_item('admin/ds');
+  $item = menu_get_item('admin/build/ds');
   if ($content = system_admin_menu_block($item)) {
     $childs = theme('admin_block_content', $content);
   }

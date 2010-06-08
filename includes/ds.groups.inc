@@ -11,8 +11,8 @@
  */
 function ds_fieldgroups($module) {
   $output = '';
-  $action = arg(4);
-  $fieldgroup = arg(5);
+  $action = arg(5);
+  $fieldgroup = arg(6);
 
   drupal_add_js(drupal_get_path('module', 'ds') .'/js/fields.js');
 
@@ -39,10 +39,10 @@ function ds_fieldgroups($module) {
     foreach ($db_fields as $key => $value) {
       if ($value['type'] == DS_FIELD_TYPE_GROUP) {
         $row = array();
-        $row[] = l($value['title'], 'admin/ds/'. $module .'/fieldgroups/edit/'. $key);
+        $row[] = l($value['title'], 'admin/build/ds/'. $module .'/fieldgroups/edit/'. $key);
         $row[] = $key;
-        $operations = l(t('Edit'), 'admin/ds/'. $module .'/fieldgroups/edit/'. $key);
-        $operations .= ' - '. l(t('Delete'), 'admin/ds/'. $module .'/fieldgroups/delete/'. $key);
+        $operations = l(t('Edit'), 'admin/build/ds/'. $module .'/fieldgroups/edit/'. $key);
+        $operations .= ' - '. l(t('Delete'), 'admin/build/ds/'. $module .'/fieldgroups/delete/'. $key);
         $row[] = $operations;
         $rows[] = $row;
       }
@@ -204,7 +204,7 @@ function ds_fieldgroup_form_submit($form, &$form_state) {
   variable_del('ds_fields_cached');
 
   // Redirect and confirmation message.
-  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fieldgroups';
+  $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fieldgroups';
   drupal_set_message(t('Fieldgroup %field has been saved.', array('%field' => $form_state['values']['name'])));
 }
 
@@ -233,7 +233,7 @@ function ds_fieldgroup_delete_form($form_state, $module, $fieldgroup) {
   $form['buttons']['cancel'] = array(
     '#suffix' => '</div>',
     '#type' => 'markup',
-    '#value' => l('cancel', 'admin/ds/'. $module .'/fieldgroups'),
+    '#value' => l('cancel', 'admin/build/ds/'. $module .'/fieldgroups'),
   );
 
   $form['#module'] = $module;
@@ -256,5 +256,5 @@ function ds_fieldgroup_delete_form_submit($form, &$form_state) {
   variable_del('ds_fields_cached');
 
   drupal_set_message(t('Fieldgroup %fieldgroup has been deleted.', array('%fieldgroup' => $field_title)));
-  $form_state['redirect'] = 'admin/ds/'. $form['#module'] .'/fieldgroups';
+  $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fieldgroups';
 }
