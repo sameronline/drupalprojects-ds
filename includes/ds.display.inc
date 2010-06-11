@@ -291,6 +291,9 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
 
     // Field key, parent key and depth.
     $parent = ds_default_value($display_settings, $build_mode, 'fields', $field, 'parent', '');
+    if (!isset($fields[$parent])) {
+      $parent = '';
+    }
     $form[$field][$build_mode]['#depth'] = (!empty($parent)) ? 1 : 0;
     $form[$field][$build_mode]['parent_id'] = array(
       '#type' => 'hidden',

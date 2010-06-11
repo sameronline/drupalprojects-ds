@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 6.x-1.3 2010-xx-xx
 -------------------------------------------------------------------------------------
+- #824796 by swentel: check for fieldgroup in display because sometimes parent does not exist anymore
 - #818036 by swentel and netsensei: rebuild theme registry when creating new build modes.
 - #794908 by swentel: styles with no friendly names trigger illegal choice detection.
 - #795784 by swentel and jyve: add extra field-group class to fieldgroup.
