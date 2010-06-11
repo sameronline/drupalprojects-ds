@@ -79,14 +79,24 @@ if ($rows): ?>
           foreach ($rows[$region] as $row): ?>
             <tr class="<?php print $count % 2 == 0 ? 'odd' : 'even'; ?> <?php print $row->class ?>">
               <td class="ds-label">
-              <?php print $row->{$build_mode}->indentation; ?>
-              <span class="<?php print $row->label_class; ?>"><?php print $row->human_name; ?></span><span class="label-edit"><?php print $row->{$build_mode}->label_edit; ?></span><?php print $row->{$build_mode}->label_value; ?></td>
+                <?php print $row->{$build_mode}->indentation; ?>
+                <span class="<?php print $row->label_class; ?>"><?php print $row->human_name; ?></span><span class="label-edit"><?php print $row->{$build_mode}->label_edit; ?></span><?php print $row->{$build_mode}->label_value; ?>
+              </td>
               <td><?php print $row->{$build_mode}->label; ?></td>
               <td><?php print $row->{$build_mode}->format; ?></td>
-              <?php if ($show_field_style): ?><td><?php endif;?>
-              <?php print $row->{$build_mode}->class . $row->{$build_mode}->field_id . $row->{$build_mode}->parent_id; ?></td>
-              <?php if ($show_field_style): ?></td><?php endif;?>
-              <td><?php print $row->{$build_mode}->region; ?></td>
+              <?php
+              if ($show_field_style) {
+                print '<td>'. $row->{$build_mode}->class . $row->{$build_mode}->field_id . $row->{$build_mode}->parent_id .'</td>';
+              }
+              ?>
+              <td>
+              <?php
+                print $row->{$build_mode}->region;
+                if (!$show_field_style) {
+                  print $row->{$build_mode}->class . $row->{$build_mode}->field_id . $row->{$build_mode}->parent_id;
+                }
+              ?>
+              </td>
               <td><?php print $row->ds_weight; ?></td>
             </tr>
             <?php
