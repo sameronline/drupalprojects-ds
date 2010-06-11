@@ -143,8 +143,16 @@ function ds_styles_form(&$form_state) {
 
   $form['ds_styles'] = array(
     '#type' => 'textarea',
+    '#title' => t('Styles for fields'),
     '#default_value' => variable_get('ds_styles', ''),
-    '#description' => t('Configure styles which you can add to fields or regions in the overview screen. Add multiple styles line per line.<br />If you want to have a friendly name, separate class and friendly name by |, but this is not required. eg:<br /><em>class_name_1<br />class_name_2|Friendly name<br />class_name_3</em>')
+    '#description' => t('Configure styles which you can add to fields in the overview screen. Add multiple styles line per line.<br />If you want to have a friendly name, separate class and friendly name by |, but this is not required. eg:<br /><em>class_name_1<br />class_name_2|Friendly name<br />class_name_3</em>')
+  );
+
+  $form['ds_styles_regions'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Styles for regions'),
+    '#default_value' => variable_get('ds_styles_regions', ''),
+    '#description' => t('Configure styles which you can add to regions in the overview screen. Add multiple styles line per line.<br />If you want to have a friendly name, separate class and friendly name by |, but this is not required. eg:<br /><em>class_name_1<br />class_name_2|Friendly name<br />class_name_3</em>')
   );
 
   return system_settings_form($form);
@@ -205,7 +213,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
       $form['region_styles_'. $key] = array(
         '#type' => 'select',
         '#multiple' => TRUE,
-        '#options' => ds_styles(),
+        '#options' => ds_styles('regions'),
         '#attributes' => array('class' => 'style-selects'),
         '#default_value' => $default_value,
       );
@@ -436,7 +444,7 @@ function ds_display_overview_form_validate($form, &$form_state) {
     if (isset($_POST[$id])) {
       $values = $_POST[$id];
       foreach ($values as $key => $value) {
-        if (isset($classes[$value])) {
+        if (isset($classes['fields'][$value])) {
           $form_state['values'][$field][$build_mode]['css-class'][] = $value;
         }
       }
@@ -449,7 +457,7 @@ function ds_display_overview_form_validate($form, &$form_state) {
     if (isset($_POST[$id])) {
       $values = $_POST[$id];
       foreach ($values as $key => $value) {
-        if (isset($classes[$value])) {
+        if (isset($classes['regions'][$value])) {
           $form_state['values']['region_styles_'. $region_key][] = $value;
         }
       }
@@ -616,20 +624,38 @@ function ds_label_options() {
 /**
  * Return styles.
  */
-function ds_styles() {
-  $styles = array();
-  $extra_styles = trim(variable_get('ds_styles', ''));
-  if (!empty($extra_styles)) {
-    $extra_styles = explode("\n", $extra_styles);
-    foreach ($extra_styles as $key => $value) {
-      $classes = explode("|", $value);
-      $key = trim($classes[0]);
-      $name = isset($classes[1]) ? trim($classes[1]) : $key;
-      $styles[$key] = $name;
+function ds_styles($variable = '') {
+  static $run = FALSE;
+  static $styles = array();
+
+  if (!$run) {
+    // Field styles.
+    $field_styles = trim(variable_get('ds_styles', ''));
+    if (!empty($field_styles)) {
+      $field_styles = explode("\n", $field_styles);
+      foreach ($field_styles as $key => $value) {
+        $classes = explode("|", $value);
+        $key = trim($classes[0]);
+        $name = isset($classes[1]) ? trim($classes[1]) : $key;
+        $styles['fields'][$key] = $name;
+      }
     }
+
+    // Region styles.
+    $region_styles = trim(variable_get('ds_styles_regions', ''));
+    if (!empty($region_styles)) {
+      $region_styles = explode("\n", $region_styles);
+      foreach ($region_styles as $key => $value) {
+        $classes = explode("|", $value);
+        $key = trim($classes[0]);
+        $name = isset($classes[1]) ? trim($classes[1]) : $key;
+        $styles['regions'][$key] = $name;
+      }
+    }
+    $run = TRUE;
   }
 
-  return $styles;
+  return (empty($variable)) ? $styles : (isset($styles[$variable]) ? $styles[$variable] : array());
 }
 
 /**
@@ -654,7 +680,7 @@ function ds_field_default_form_properties($build_mode) {
       '#type' => 'select',
       '#multiple' => TRUE,
       '#size' => 5,
-      '#options' => ds_styles(),
+      '#options' => ds_styles('fields'),
       '#default_value' => array(),
       '#attributes' => array('class' => 'style-selects'),
     ),
@@ -695,7 +721,7 @@ function ds_field_default_form_properties($build_mode) {
         '#type' => 'select',
         '#multiple' => TRUE,
         '#size' => 5,
-        '#options' => ds_styles(),
+        '#options' => ds_styles('fields'),
         '#default_value' => array(),
         '#attributes' => array('class' => 'style-selects'),
       ),
