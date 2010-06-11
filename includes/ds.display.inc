@@ -315,14 +315,13 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     // Labels.
     $label_value = ds_default_value($display_settings, $build_mode, 'fields', $field, 'label_value', '');
     $form[$field][$build_mode]['label_value'] = array(
-      '#type' => 'hidden',
+      '#type' => 'textfield',
+      '#title' => t('Change label'),
       '#default_value' => $label_value,
+      '#description' => (!empty($label_value)) ? t('The original value was: @label', array('@label' => $value['title'])) : t('Change the default label. This label will be translatable.'),
     );
-    $form[$field][$build_mode]['label_edit']['#value'] = l(t('Edit'), $base_url . request_uri(), array(
-      'attributes' => array('onclick' => 'javascript: Drupal.DisplaySuite.changeLabel(this, "'. $label_value .'"); return false;')
-    ));
 
-    $form[$field]['human_name']['#value'] = !empty($label_value) ? $label_value : (isset($value['label']) ? $value['label'] : $value['title']);
+    $form[$field]['human_name']['#value'] = !empty($label_value) ? check_plain($label_value) : (isset($value['label']) ? $value['label'] : $value['title']);
 
     // Weight.
     $form[$field]['weight']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
@@ -670,17 +669,20 @@ function ds_field_default_form_properties($build_mode) {
   $field = array(
     'label' => array(
       'format' => array(
+        '#title' => t('Label format'),
         '#type' => 'select',
         '#options' => ds_label_options(),
         '#default_value' => DS_DEFAULT_LABEL_FORMAT,
       ),
     ),
     'format' => array(
+      '#title' => t('Field format'),
       '#type' => 'select',
       '#options' => array(),
       '#default_value' => DS_DEFAULT_FORMAT,
     ),
     'css-class' => array(
+      '#title' => t('Styles'),
       '#type' => 'select',
       '#multiple' => TRUE,
       '#size' => 5,
@@ -711,29 +713,30 @@ function ds_field_default_form_properties($build_mode) {
     $field[$build_mode] = array(
       'label' => array(
         'format' => array(
+          '#title' => t('Label format'),
           '#type' => 'select',
           '#options' => ds_label_options(),
           '#default_value' => DS_DEFAULT_LABEL_FORMAT,
         ),
       ),
       'format' => array(
+        '#title' => t('Field format'),
         '#type' => 'select',
         '#options' => array(),
         '#default_value' => DS_DEFAULT_FORMAT,
       ),
       'css-class' => array(
+        '#title' => t('Styles'),
         '#type' => 'select',
         '#multiple' => TRUE,
-        '#size' => 5,
+//        '#size' => 5,
         '#options' => ds_styles('fields'),
         '#default_value' => array(),
-        '#attributes' => array('class' => 'style-selects'),
       ),
       'region' => array(
         '#type' => 'select',
         '#options' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
         '#default_value' => DS_DEFAULT_WEIGHT,
-        //'#size' => 10,
         '#attributes' => array(
           'class' => 'field-region-select',
         ),

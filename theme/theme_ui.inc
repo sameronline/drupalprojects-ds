@@ -86,7 +86,6 @@ function template_preprocess_ds_display_overview_form(&$vars) {
         $row->{$child}->region = drupal_render($element[$child]['region']);
         $row->{$child}->format = drupal_render($element[$child]['format']);
         $row->{$child}->label = drupal_render($element[$child]['label']);
-        $row->{$child}->label_edit = drupal_render($element[$child]['label_edit']);
         $row->{$child}->label_value = drupal_render($element[$child]['label_value']);
       }
       // Render the rest of the fields

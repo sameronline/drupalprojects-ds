@@ -203,20 +203,3 @@ Drupal.DisplaySuite.toggle = function(element, id) {
 	$('#'+ id).slideDown('normal');	  
   }
 }
- 
-/**
- * Change the label of a field instance in a build mode.
- */
-Drupal.DisplaySuite.changeLabel = function(element, title) {
- 
-  var changed = prompt(Drupal.t("Edit label"), title);
-   
-  if (changed == '') {
-    alert(Drupal.t('Field can not be empty'));
-    return false;
-  }
-   
-  var labelcell = $(element).parents(".ds-label");
-  labelcell.find(".label-field").text(changed);
-  labelcell.find("input").val(changed);
-}

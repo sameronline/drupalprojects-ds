@@ -43,12 +43,8 @@ if ($rows): ?>
       <thead>
         <tr>
           <th><?php print t('Field'); ?></th>
-          <th><?php print t('Label'); ?></th>
-          <th><?php print t('Format'); ?></th>
-          <?php if ($show_field_style): ?>
-            <th><?php print t('Style'); ?></th>
-          <?php endif; ?>
           <th><?php print t('Region'); ?></th>
+          <th><?php print t('Settings'); ?></th>
           <th><?php print t('Weight'); ?></th>
         </tr>
       </thead>
@@ -57,7 +53,7 @@ if ($rows): ?>
       <!-- Regions -->
       <?php foreach ($regions as $region => $title): ?>
         <tr class="region region-<?php print $region?> tabledrag-leaf">
-          <td colspan="<?php echo ($show_field_style) ? '6' : '5';?>" class="region">
+          <td colspan="4" class="region">
             <?php print $title; ?>
             <?php print $region_classes[$region]; ?>
             <input type="hidden" class="ds-field-id" value="" size="2" id="edit-<?php print $region; ?>-full-field-id" name="region_<?php print $region; ?>[full][field_id]" maxlength="128"/>
@@ -65,7 +61,7 @@ if ($rows): ?>
           </td>
         </tr>
         <tr class="tabledrag-leaf region-message region-<?php print $region?>-message <?php print empty($rows[$region]) ? 'region-empty' : 'region-populated'; ?>">
-          <td colspan="<?php echo ($show_field_style) ?  '6' : '5';?>">
+          <td colspan="4">
           <em><?php print t('No fields in this region'); ?></em>
             <input type="hidden" class="ds-field-id" value="" size="2" id="edit-<?php print $region; ?>empty-full-field-id" name="empty<?php print $region; ?>[full][field_id]" maxlength="128"/>
             <input type="hidden" class="ds-parent-id" value="" size="2" id="edit-<?php print $region; ?>empty-full-parent-id" name="empty<?php print $region; ?>[full][parent_id]" maxlength="128"/>
@@ -78,24 +74,19 @@ if ($rows): ?>
           $count = 0;
           foreach ($rows[$region] as $row): ?>
             <tr class="<?php print $count % 2 == 0 ? 'odd' : 'even'; ?> <?php print $row->class ?>">
+
               <td class="ds-label">
                 <?php print $row->{$build_mode}->indentation; ?>
-                <span class="<?php print $row->label_class; ?>"><?php print $row->human_name; ?></span><span class="label-edit"><?php print $row->{$build_mode}->label_edit; ?></span><?php print $row->{$build_mode}->label_value; ?>
+                <?php print $row->human_name; ?>
               </td>
-              <td><?php print $row->{$build_mode}->label; ?></td>
-              <td><?php print $row->{$build_mode}->format; ?></td>
-              <?php
-              if ($show_field_style) {
-                print '<td>'. $row->{$build_mode}->class . $row->{$build_mode}->field_id . $row->{$build_mode}->parent_id .'</td>';
-              }
-              ?>
-              <td>
-              <?php
-                print $row->{$build_mode}->region;
-                if (!$show_field_style) {
-                  print $row->{$build_mode}->class . $row->{$build_mode}->field_id . $row->{$build_mode}->parent_id;
-                }
-              ?>
+              <td><?php print $row->{$build_mode}->region; ?></td>
+              <td><a class="settings-tab" href="javascript:;" onClick="Drupal.DisplaySuite.toggle(this, 'settings-tab-<?php print $count;?>'); return false;"><?php print t('Update'); ?></a>
+                <div style="display: none" id="settings-tab-<?php print $count; ?>">
+                  <?php print $row->{$build_mode}->label_value; ?>
+                  <?php print $row->{$build_mode}->label; ?>
+                  <?php print $row->{$build_mode}->format; ?>
+                  <?php print $row->{$build_mode}->class . $row->{$build_mode}->field_id . $row->{$build_mode}->parent_id ?>
+                </div>
               </td>
               <td><?php print $row->ds_weight; ?></td>
             </tr>
