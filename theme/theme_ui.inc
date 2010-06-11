@@ -60,6 +60,9 @@ function template_preprocess_ds_display_overview_form(&$vars) {
       // Render the display fields
       if ($child == $build_mode) {
         $row->{$child}->indentation = theme('indentation', $element[$child]['#depth']);
+        if (empty($element[$child]['css-class']['#options'])) {
+          $element[$child]['css-class']['#access'] = FALSE;
+        }
         $row->{$child}->class = drupal_render($element[$child]['css-class']);
 
         // Parent & Field id.
@@ -142,9 +145,15 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     }
   }
 
+  // Field classes.
+  $vars['show_field_style'] = (isset($form['#all_styles']['fields'])) ? TRUE : FALSE;
+
   // Region classes.
   $vars['region_classes'] = array();
   foreach($form['#regions'] as $key => $region_name) {
+    if (empty($form['region_styles_'. $key]['#options'])) {
+      $form['region_styles_'. $key]['#access'] = FALSE;
+    }
     $vars['region_classes'][$key] = drupal_render($form['region_styles_'. $key]);
   }
 

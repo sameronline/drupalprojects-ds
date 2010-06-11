@@ -259,6 +259,7 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
 
   global $base_url;
 
+  $form['#all_styles'] = ds_styles();
   $form['#field_styles'] = array();
   $module = $form['#module'];
   $build_mode = $form['#build_mode'];

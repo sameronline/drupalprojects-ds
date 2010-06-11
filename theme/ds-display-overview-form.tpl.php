@@ -38,23 +38,26 @@ if ($rows): ?>
 
   <div id="field-content" class="ds-display">
 
+    <!-- Table header -->
     <table id="fields" class="sticky-enabled">
       <thead>
         <tr>
           <th><?php print t('Field'); ?></th>
           <th><?php print t('Label'); ?></th>
           <th><?php print t('Format'); ?></th>
-          <th><?php print t('Style'); ?></th>
+          <?php if ($show_field_style): ?>
+            <th><?php print t('Style'); ?></th>
+          <?php endif; ?>
           <th><?php print t('Region'); ?></th>
           <th><?php print t('Weight'); ?></th>
         </tr>
       </thead>
       <tbody>
 
-      <!-- Node regions -->
+      <!-- Regions -->
       <?php foreach ($regions as $region => $title): ?>
         <tr class="region region-<?php print $region?> tabledrag-leaf">
-          <td colspan="6" class="region">
+          <td colspan="<?php echo ($show_field_style) ? '6' : '5';?>" class="region">
             <?php print $title; ?>
             <?php print $region_classes[$region]; ?>
             <input type="hidden" class="ds-field-id" value="" size="2" id="edit-<?php print $region; ?>-full-field-id" name="region_<?php print $region; ?>[full][field_id]" maxlength="128"/>
@@ -62,7 +65,7 @@ if ($rows): ?>
           </td>
         </tr>
         <tr class="tabledrag-leaf region-message region-<?php print $region?>-message <?php print empty($rows[$region]) ? 'region-empty' : 'region-populated'; ?>">
-          <td colspan="6">
+          <td colspan="<?php echo ($show_field_style) ?  '6' : '5';?>">
           <em><?php print t('No fields in this region'); ?></em>
             <input type="hidden" class="ds-field-id" value="" size="2" id="edit-<?php print $region; ?>empty-full-field-id" name="empty<?php print $region; ?>[full][field_id]" maxlength="128"/>
             <input type="hidden" class="ds-parent-id" value="" size="2" id="edit-<?php print $region; ?>empty-full-parent-id" name="empty<?php print $region; ?>[full][parent_id]" maxlength="128"/>
@@ -80,7 +83,9 @@ if ($rows): ?>
               <span class="<?php print $row->label_class; ?>"><?php print $row->human_name; ?></span><span class="label-edit"><?php print $row->{$build_mode}->label_edit; ?></span><?php print $row->{$build_mode}->label_value; ?></td>
               <td><?php print $row->{$build_mode}->label; ?></td>
               <td><?php print $row->{$build_mode}->format; ?></td>
-              <td><?php print $row->{$build_mode}->class . $row->{$build_mode}->field_id . $row->{$build_mode}->parent_id; ?></td>
+              <?php if ($show_field_style): ?><td><?php endif;?>
+              <?php print $row->{$build_mode}->class . $row->{$build_mode}->field_id . $row->{$build_mode}->parent_id; ?></td>
+              <?php if ($show_field_style): ?></td><?php endif;?>
               <td><?php print $row->{$build_mode}->region; ?></td>
               <td><?php print $row->ds_weight; ?></td>
             </tr>
