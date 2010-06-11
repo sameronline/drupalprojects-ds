@@ -191,6 +191,18 @@ Drupal.DisplaySuite.toggleDisplayTab = function(element) {
     }
   });	
 }
+
+/**
+ * Show / hide settings for fields.
+ */
+Drupal.DisplaySuite.toggle = function(element, id) {
+  if ($('#'+ id).is(':visible')) {
+    $('#'+ id).hide();	  
+  }
+  else {
+	$('#'+ id).slideDown('normal');	  
+  }
+}
  
 /**
  * Change the label of a field instance in a build mode.
@@ -208,13 +220,3 @@ Drupal.DisplaySuite.changeLabel = function(element, title) {
   labelcell.find(".label-field").text(changed);
   labelcell.find("input").val(changed);
 }
-
-/**
- * Multiple field style selects.
- */
-$(document).ready( function() {
-	$("#fields .style-selects").multiSelect({
-        selectAll: false,
-        noneSelected: 'Select styles'
-	});
-});
