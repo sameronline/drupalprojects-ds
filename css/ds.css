@@ -15,11 +15,11 @@
   display: none;
 }
 
-tr.odd:hover {
+#fields tr.odd:hover {
 	background: #bbb;
 	color: #fff;
 }
-tr.even:hover {
+#fields tr.even:hover {
   background: #bbb;
   color: #fff;
 }
