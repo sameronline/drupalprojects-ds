@@ -1,6 +1,7 @@
 // $Id$
 
 Drupal.DisplaySuite = Drupal.DisplaySuite || {};
+Drupal.DisplaySuite.fieldopened = '';
 
 /**
  * Move a field in the fields table from one region to another via select list.
@@ -196,10 +197,18 @@ Drupal.DisplaySuite.toggleDisplayTab = function(element) {
  * Show / hide settings for fields.
  */
 Drupal.DisplaySuite.toggle = function(element, id) {
+
   if ($('#'+ id).is(':visible')) {
     $('#'+ id).hide();	  
   }
   else {
+	// Close setting if not empty.
+	if (Drupal.DisplaySuite.fieldopened != '') {
+	  $('#'+ Drupal.DisplaySuite.fieldopened).hide();
+	}
+	 
+	// Store the other opened setting.
+    Drupal.DisplaySuite.fieldopened = id;
 	$('#'+ id).slideDown('normal');	  
   }
 }

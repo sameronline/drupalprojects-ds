@@ -18,6 +18,8 @@ if ($synced) {
   print $synced;
 }
 
+$field_count = 0;
+
 if ($rows): ?>
 
 <div id="ds-display-content">
@@ -87,8 +89,8 @@ if ($rows): ?>
                 <?php print $row->human_name; ?>
               </td>
               <td width="20%"><?php print $row->{$build_mode}->region; ?></td>
-              <td width="60%"><a class="settings-tab" href="javascript:;" onClick="Drupal.DisplaySuite.toggle(this, 'settings-tab-<?php print $count;?>'); return false;"><?php print t('Update'); ?></a>
-                <div style="display: none" id="settings-tab-<?php print $count; ?>">
+              <td width="60%"><a class="settings-tab" href="javascript:;" onClick="Drupal.DisplaySuite.toggle(this, 'settings-tab-<?php print $field_count;?>'); return false;"><?php print t('Update'); ?></a>
+                <div style="display: none" id="settings-tab-<?php print $field_count; ?>">
                   <div style="float: left;">
                     <?php print $row->{$build_mode}->label; ?>
                   </div>
@@ -105,6 +107,7 @@ if ($rows): ?>
             </tr>
             <?php
             $count++;
+            $field_count++;
           endforeach;
         endif;
       endforeach;
