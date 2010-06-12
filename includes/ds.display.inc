@@ -637,6 +637,7 @@ function ds_field_default_form_properties($build_mode) {
       '#type' => 'select',
       '#options' => array(),
       '#default_value' => DS_DEFAULT_FORMAT,
+      '#description' => t('Select how this field will be displayed.')
     ),
     'css-class' => array(
       '#title' => t('Styles'),
@@ -681,6 +682,7 @@ function ds_field_default_form_properties($build_mode) {
         '#type' => 'select',
         '#options' => array(),
         '#default_value' => DS_DEFAULT_FORMAT,
+        '#description' => t('Select how this field will be displayed.')
       ),
       'css-class' => array(
         '#title' => t('Styles'),
