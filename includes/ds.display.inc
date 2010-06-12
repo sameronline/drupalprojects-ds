@@ -217,6 +217,10 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
         '#default_value' => $default_value,
         '#description' => t('Select styles to apply to this region.')
       );
+      $form['region_styles_'. $key .'_summary'] = array(
+        '#type' => 'markup',
+        '#value' => implode(' ', $default_value),
+      );
     }
   }
 

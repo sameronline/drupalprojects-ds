@@ -63,6 +63,7 @@ if ($rows): ?>
           <td colspan="2" width="65%" class="region">
             <?php if (!empty($region_classes[$region])): ?>
               <a class="settings-tab" href="javascript:;" onClick="Drupal.DisplaySuite.toggle(this, 'region-tab-<?php print $region;?>'); return false;"><?php print t('Update'); ?></a>
+              <span class="ds-normal"><?php print $region_classes_summary[$region]; ?></span>
               <div style="display: none" id="region-tab-<?php print $region; ?>">
                 <?php print $region_classes[$region]; ?>
               </div>

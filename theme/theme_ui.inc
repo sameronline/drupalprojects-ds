@@ -153,11 +153,19 @@ function template_preprocess_ds_display_overview_form(&$vars) {
 
   // Region classes.
   $vars['region_classes'] = array();
+  $vars['region_classes_summary'] = array();
   foreach($form['#regions'] as $key => $region_name) {
     if (empty($form['region_styles_'. $key]['#options'])) {
       $form['region_styles_'. $key]['#access'] = FALSE;
     }
     $vars['region_classes'][$key] = drupal_render($form['region_styles_'. $key]);
+    if (!empty($form['region_styles_'. $key .'_summary']['#value'])) {
+      $summary = 'Styles: '. drupal_render($form['region_styles_'. $key .'_summary']);
+    }
+    else {
+      $summary = '';
+    }
+    $vars['region_classes_summary'][$key] = $summary;
   }
 
   $vars['rows'] = $rows;
