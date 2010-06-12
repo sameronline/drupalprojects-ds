@@ -279,6 +279,8 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
 
   foreach ($fields as $field => $value) {
 
+    $summary = '';
+
     // Add form variable to let the template system know about the fields.
     $form['#fields'][] = $field;
 
@@ -308,7 +310,9 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     );
 
     // Populate/override the fields with the saved values
-    $form[$field][$build_mode]['label']['format']['#default_value'] = isset($value['display_settings'][$build_mode]['label']['format']) ? $value['display_settings'][$build_mode]['label']['format'] : ds_default_value($display_settings, $build_mode, 'fields', $field, 'labelformat', DS_DEFAULT_LABEL_FORMAT);
+    $label_format = isset($value['display_settings'][$build_mode]['label']['format']) ? $value['display_settings'][$build_mode]['label']['format'] : ds_default_value($display_settings, $build_mode, 'fields', $field, 'labelformat', DS_DEFAULT_LABEL_FORMAT);
+    $form[$field][$build_mode]['label']['format']['#default_value'] =
+    $summary .= 'Label: '. $label_format;
 
     // Labels.
     $label_value = ds_default_value($display_settings, $build_mode, 'fields', $field, 'label_value', '');
@@ -334,13 +338,24 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     }
     $form[$field][$build_mode]['format']['#default_value'] = $format;
     $form[$field][$build_mode]['format']['#access'] = (count($form[$field][$build_mode]['format']['#options']) == 0) ? FALSE : TRUE;
+    if (!empty($format))
+    $summary .= ' - Format: '. $form[$field][$build_mode]['format']['#options'][$format];
 
     // Class.
     $class = ds_default_value($display_settings, $build_mode, 'fields', $field, 'css-class', NULL);
     $form[$field][$build_mode]['css-class']['#default_value'] = explode(' ', $class);
+    if (!empty($class)) {
+      $summary .= ' - Styles: '. $class;
+    }
 
-    // Region
+    // Region.
     $form[$field][$build_mode]['region']['#default_value'] = ds_default_value($display_settings, $build_mode, 'fields', $field, 'region', DS_DEFAULT_REGION);
+
+    // Settings summary.
+    $form[$field][$build_mode]['summary'] = array(
+      '#type' => 'markup',
+      '#value' => $summary,
+    );
   }
 }
 

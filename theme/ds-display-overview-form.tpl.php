@@ -55,12 +55,12 @@ if ($rows): ?>
       <!-- Regions -->
       <?php foreach ($regions as $region => $title): ?>
         <tr class="region region-<?php print $region?> tabledrag-leaf">
-          <td colspan="2" width="40%" class="region">
+          <td colspan="2" width="35%" class="region">
             <?php print $title; ?>
             <input type="hidden" class="ds-field-id" value="" size="2" id="edit-<?php print $region; ?>-full-field-id" name="region_<?php print $region; ?>[full][field_id]" maxlength="128"/>
             <input type="hidden" class="ds-parent-id" value="" size="2" id="edit-<?php print $region; ?>-full-parent-id" name="region_<?php print $region; ?>[full][parent_id]" maxlength="128"/>
           </td>
-          <td colspan="2" width="60%" class="region">
+          <td colspan="2" width="65%" class="region">
             <?php if (!empty($region_classes[$region])): ?>
               <a class="settings-tab" href="javascript:;" onClick="Drupal.DisplaySuite.toggle(this, 'region-tab-<?php print $region;?>'); return false;"><?php print t('Update'); ?></a>
               <div style="display: none" id="region-tab-<?php print $region; ?>">
@@ -88,8 +88,10 @@ if ($rows): ?>
                 <?php print $row->{$build_mode}->indentation; ?>
                 <?php print $row->human_name; ?>
               </td>
-              <td width="20%"><?php print $row->{$build_mode}->region; ?></td>
-              <td width="60%"><a class="settings-tab" href="javascript:;" onClick="Drupal.DisplaySuite.toggle(this, 'settings-tab-<?php print $field_count;?>'); return false;"><?php print t('Update'); ?></a>
+              <td width="15%"><?php print $row->{$build_mode}->region; ?></td>
+              <td width="65%">
+                <a class="settings-tab" href="javascript:;" onClick="Drupal.DisplaySuite.toggle(this, 'settings-tab-<?php print $field_count;?>'); return false;"><?php print t('Update'); ?></a>
+                <?php print $row->{$build_mode}->summary; ?>
                 <div style="display: none" id="settings-tab-<?php print $field_count; ?>">
                   <div style="float: left;">
                     <?php print $row->{$build_mode}->label; ?>

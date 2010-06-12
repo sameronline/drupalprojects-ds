@@ -83,10 +83,14 @@ function template_preprocess_ds_display_overview_form(&$vars) {
           $element[$child]['region']['#attributes']['class'] .= ' ds-hidden';
         }
 
+        // Other fields.
         $row->{$child}->region = drupal_render($element[$child]['region']);
         $row->{$child}->format = drupal_render($element[$child]['format']);
         $row->{$child}->label = drupal_render($element[$child]['label']);
         $row->{$child}->label_value = drupal_render($element[$child]['label_value']);
+
+        // Summary.
+        $row->{$child}->summary = drupal_render($element[$child]['summary']);
       }
       // Render the rest of the fields
       else {
