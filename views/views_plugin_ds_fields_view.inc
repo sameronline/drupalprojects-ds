@@ -174,7 +174,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       // Class.
       $class = $field->class;
       if (!empty($this->view->style_plugin->row_plugin->options[$key]['css-class'])) {
-        $class .= ' '. $this->view->style_plugin->row_plugin->options[$key]['css-class'];
+        $class .= ' '. implode(' ', $this->view->style_plugin->row_plugin->options[$key]['css-class']);
       }
 
       // Build field key in ds_fields.

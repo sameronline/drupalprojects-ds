@@ -22,6 +22,16 @@
   padding: 3px;
 }
 
+.ds-label-title {
+	margin-left: 15px;
+}
+.ds-label-title .form-text {
+  width: 50%;
+}
+.region .description, .settings-tab {
+  font-weight: normal;
+}
+
 tr.region-css-disabled  {
   filter:alpha(opacity=60);
   -moz-opacity:0.6;

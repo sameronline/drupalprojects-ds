@@ -53,11 +53,18 @@ if ($rows): ?>
       <!-- Regions -->
       <?php foreach ($regions as $region => $title): ?>
         <tr class="region region-<?php print $region?> tabledrag-leaf">
-          <td colspan="4" class="region">
+          <td colspan="2" width="40%" class="region">
             <?php print $title; ?>
-            <?php print $region_classes[$region]; ?>
             <input type="hidden" class="ds-field-id" value="" size="2" id="edit-<?php print $region; ?>-full-field-id" name="region_<?php print $region; ?>[full][field_id]" maxlength="128"/>
             <input type="hidden" class="ds-parent-id" value="" size="2" id="edit-<?php print $region; ?>-full-parent-id" name="region_<?php print $region; ?>[full][parent_id]" maxlength="128"/>
+          </td>
+          <td colspan="2" width="60%" class="region">
+            <?php if (!empty($region_classes[$region])): ?>
+              <a class="settings-tab" href="javascript:;" onClick="Drupal.DisplaySuite.toggle(this, 'region-tab-<?php print $region;?>'); return false;"><?php print t('Update'); ?></a>
+              <div style="display: none" id="region-tab-<?php print $region; ?>">
+                <?php print $region_classes[$region]; ?>
+              </div>
+            <?php endif; ?>
           </td>
         </tr>
         <tr class="tabledrag-leaf region-message region-<?php print $region?>-message <?php print empty($rows[$region]) ? 'region-empty' : 'region-populated'; ?>">
@@ -75,17 +82,23 @@ if ($rows): ?>
           foreach ($rows[$region] as $row): ?>
             <tr class="<?php print $count % 2 == 0 ? 'odd' : 'even'; ?> <?php print $row->class ?>">
 
-              <td class="ds-label">
+              <td class="ds-label" width="20%">
                 <?php print $row->{$build_mode}->indentation; ?>
                 <?php print $row->human_name; ?>
               </td>
-              <td><?php print $row->{$build_mode}->region; ?></td>
-              <td><a class="settings-tab" href="javascript:;" onClick="Drupal.DisplaySuite.toggle(this, 'settings-tab-<?php print $count;?>'); return false;"><?php print t('Update'); ?></a>
+              <td width="20%"><?php print $row->{$build_mode}->region; ?></td>
+              <td width="60%"><a class="settings-tab" href="javascript:;" onClick="Drupal.DisplaySuite.toggle(this, 'settings-tab-<?php print $count;?>'); return false;"><?php print t('Update'); ?></a>
                 <div style="display: none" id="settings-tab-<?php print $count; ?>">
-                  <?php print $row->{$build_mode}->label_value; ?>
-                  <?php print $row->{$build_mode}->label; ?>
-                  <?php print $row->{$build_mode}->format; ?>
-                  <?php print $row->{$build_mode}->class . $row->{$build_mode}->field_id . $row->{$build_mode}->parent_id ?>
+                  <div style="float: left;">
+                    <?php print $row->{$build_mode}->label; ?>
+                  </div>
+                  <div style="float: left;" class="ds-label-title">
+                    <?php print $row->{$build_mode}->label_value; ?>
+                  </div>
+                  <div style="clear: both;">
+                    <?php print $row->{$build_mode}->format; ?>
+                    <?php print $row->{$build_mode}->class . $row->{$build_mode}->field_id . $row->{$build_mode}->parent_id ?>
+                  </div>
                 </div>
               </td>
               <td><?php print $row->ds_weight; ?></td>

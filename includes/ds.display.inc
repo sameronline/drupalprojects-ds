@@ -215,6 +215,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
         '#multiple' => TRUE,
         '#options' => ds_styles('regions'),
         '#default_value' => $default_value,
+        '#description' => t('Select styles to apply to this region.')
       );
     }
   }
@@ -644,7 +645,7 @@ function ds_field_default_form_properties($build_mode) {
       '#size' => 5,
       '#options' => ds_styles('fields'),
       '#default_value' => array(),
-      '#attributes' => array('class' => 'style-selects'),
+      '#description' => t('Select styles to apply to this field.')
     ),
     'region' => array(
       '#type' => 'select',
@@ -687,6 +688,7 @@ function ds_field_default_form_properties($build_mode) {
         '#multiple' => TRUE,
         '#options' => ds_styles('fields'),
         '#default_value' => array(),
+        '#description' => t('Select styles to apply to this field.')
       ),
       'region' => array(
         '#type' => 'select',
