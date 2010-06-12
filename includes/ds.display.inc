@@ -214,7 +214,6 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
         '#type' => 'select',
         '#multiple' => TRUE,
         '#options' => ds_styles('regions'),
-        '#attributes' => array('class' => 'style-selects'),
         '#default_value' => $default_value,
       );
     }
@@ -259,8 +258,6 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
 
   global $base_url;
 
-  $form['#all_styles'] = ds_styles();
-  $form['#field_styles'] = array();
   $module = $form['#module'];
   $build_mode = $form['#build_mode'];
   $type = $form['#type_name'];
@@ -321,6 +318,7 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
       '#description' => (!empty($label_value)) ? t('The original value was: @label', array('@label' => $value['title'])) : t('Change the default label. This label will be translatable.'),
     );
 
+    // Label.
     $form[$field]['human_name']['#value'] = !empty($label_value) ? check_plain($label_value) : (isset($value['label']) ? $value['label'] : $value['title']);
 
     // Weight.
@@ -336,11 +334,7 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     $form[$field][$build_mode]['format']['#default_value'] = $format;
     $form[$field][$build_mode]['format']['#access'] = (count($form[$field][$build_mode]['format']['#options']) == 0) ? FALSE : TRUE;
 
-    // CSS class.
-    $form['#field_styles'][] = array(
-      'field' => $field,
-      'id' => str_replace(array('][', '_', ' '), '-', 'edit-'. $field .'-'. $build_mode .'-css-class')
-    );
+    // Class.
     $class = ds_default_value($display_settings, $build_mode, 'fields', $field, 'css-class', NULL);
     $form[$field][$build_mode]['css-class']['#default_value'] = explode(' ', $class);
 
@@ -430,45 +424,6 @@ function ds_plugins_display_form(&$form, $display_settings) {
 }
 
 /**
- * Validate function for display overview form.
- * Because of the multiselect.js, the multiselect now have become
- * checkboxes and FAPI doesn't send the form_state. We'll do the
- * validation here and pass on the form_state values!
- */
-function ds_display_overview_form_validate($form, &$form_state) {
-
-  $classes = ds_styles();
-  $build_mode = $form['#build_mode'];
-
-  // Field styles.
-  foreach ($form['#field_styles'] as $field => $value) {
-    $field = $value['field'];
-    $id = $value['id'];
-    if (isset($_POST[$id])) {
-      $values = $_POST[$id];
-      foreach ($values as $key => $value) {
-        if (isset($classes['fields'][$value])) {
-          $form_state['values'][$field][$build_mode]['css-class'][] = $value;
-        }
-      }
-    }
-  }
-
-  // Region styles.
-  foreach($form['#regions'] as $region_key => $region_name) {
-    $id = 'edit-region-styles-'. $region_key;
-    if (isset($_POST[$id])) {
-      $values = $_POST[$id];
-      foreach ($values as $key => $value) {
-        if (isset($classes['regions'][$value])) {
-          $form_state['values']['region_styles_'. $region_key][] = $value;
-        }
-      }
-    }
-  }
-}
-
-/**
  * Save fields & plugins for a build mode.
  */
 function ds_display_overview_form_submit($form, &$form_state) {
@@ -490,7 +445,8 @@ function ds_display_overview_form_submit($form, &$form_state) {
       $display_settings[$build_mode]['fields'][$key]['region'] = $region;
       $display_settings[$build_mode]['fields'][$key]['weight'] = $form_state['values'][$key]['ds_weight'];
       $display_settings[$build_mode]['fields'][$key]['format'] = $form_state['values'][$key][$build_mode]['format'];
-      $display_settings[$build_mode]['fields'][$key]['css-class'] = implode(' ', $form_state['values'][$key][$build_mode]['css-class']);
+      $class = implode(' ', $form_state['values'][$key][$build_mode]['css-class']);
+      $display_settings[$build_mode]['fields'][$key]['css-class'] = $class;
 
       // Label value.
       if (!empty($form_state['values'][$key][$build_mode]['label_value'])) {
@@ -729,7 +685,6 @@ function ds_field_default_form_properties($build_mode) {
         '#title' => t('Styles'),
         '#type' => 'select',
         '#multiple' => TRUE,
-//        '#size' => 5,
         '#options' => ds_styles('fields'),
         '#default_value' => array(),
       ),
