@@ -15,15 +15,6 @@
   display: none;
 }
 
-#fields tr.odd:hover {
-	background: #bbb;
-	color: #fff;
-}
-#fields tr.even:hover {
-  background: #bbb;
-  color: #fff;
-}
-
 .field-region {
   background-color: #ff6;
   margin-top: 4px;
