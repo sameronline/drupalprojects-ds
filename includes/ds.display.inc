@@ -315,7 +315,7 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
 
     // Populate/override the fields with the saved values
     $label_format = isset($value['display_settings'][$build_mode]['label']['format']) ? $value['display_settings'][$build_mode]['label']['format'] : ds_default_value($display_settings, $build_mode, 'fields', $field, 'labelformat', DS_DEFAULT_LABEL_FORMAT);
-    $form[$field][$build_mode]['label']['format']['#default_value'] =
+    $form[$field][$build_mode]['label']['format']['#default_value'] = $label_format;
     $summary .= 'Label: '. $label_format;
 
     // Labels.
