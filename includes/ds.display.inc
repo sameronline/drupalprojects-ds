@@ -212,6 +212,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
       $default_value = isset($region_styles[$key]) ? explode(' ', $region_styles[$key]) : array();
       $form['region_styles_'. $key] = array(
         '#type' => 'select',
+        '#title' => t('Region style'),
         '#multiple' => TRUE,
         '#options' => ds_styles('regions'),
         '#default_value' => $default_value,
@@ -322,9 +323,9 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     $label_value = ds_default_value($display_settings, $build_mode, 'fields', $field, 'label_value', '');
     $form[$field][$build_mode]['label_value'] = array(
       '#type' => 'textfield',
-      '#title' => t('Change label'),
+      '#title' => t('Label text'),
       '#default_value' => $label_value,
-      '#description' => (!empty($label_value)) ? t('The original value was: @label', array('@label' => $value['title'])) : t('Change the default label. This label will be translatable.'),
+      '#description' => (!empty($label_value)) ? t('The original value was: @label', array('@label' => $value['title'])) : t('Change the default label text, which will be translatable.'),
     );
 
     // Label.
@@ -645,10 +646,11 @@ function ds_field_default_form_properties($build_mode) {
   $field = array(
     'label' => array(
       'format' => array(
-        '#title' => t('Label format'),
+        '#title' => t('Label position'),
         '#type' => 'select',
         '#options' => ds_label_options(),
         '#default_value' => DS_DEFAULT_LABEL_FORMAT,
+        '#description' => t('Position of the label'),
       ),
     ),
     'format' => array(
@@ -656,10 +658,10 @@ function ds_field_default_form_properties($build_mode) {
       '#type' => 'select',
       '#options' => array(),
       '#default_value' => DS_DEFAULT_FORMAT,
-      '#description' => t('Select how this field will be displayed.')
+      '#description' => t('Hide the label or select a style.'),
     ),
     'css-class' => array(
-      '#title' => t('Styles'),
+      '#title' => t('Field style'),
       '#type' => 'select',
       '#multiple' => TRUE,
       '#size' => 5,
@@ -690,10 +692,11 @@ function ds_field_default_form_properties($build_mode) {
     $field[$build_mode] = array(
       'label' => array(
         'format' => array(
-          '#title' => t('Label format'),
+          '#title' => t('Label position'),
           '#type' => 'select',
           '#options' => ds_label_options(),
           '#default_value' => DS_DEFAULT_LABEL_FORMAT,
+          '#description' => t('Hide the label or select a style.'),
         ),
       ),
       'format' => array(
@@ -704,7 +707,7 @@ function ds_field_default_form_properties($build_mode) {
         '#description' => t('Select how this field will be displayed.')
       ),
       'css-class' => array(
-        '#title' => t('Styles'),
+        '#title' => t('Field style'),
         '#type' => 'select',
         '#multiple' => TRUE,
         '#options' => ds_styles('fields'),

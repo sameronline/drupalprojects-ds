@@ -2,8 +2,21 @@
 
 /* Display fields overview screen. */
 
+#fields td {
+	vertical-align: top;
+}
+
+.settings-tab-row {
+	margin: 0.5em 0;
+	line-height: 2.5em;
+}
+
 #fields td.region {
   font-weight: bold;
+}
+
+#fields td.region a {
+  font-weight: normal;
 }
 
 #fields tr.region-message {
@@ -22,12 +35,26 @@
   padding: 3px;
 }
 
+.ds-label-label {
+	float: left;
+	margin-right: 15px;
+}
+
 .ds-label-title {
-	margin-left: 15px;
+	float: left;
 }
+
 .ds-label-title .form-text {
-  width: 50%;
+  width: 130px;
 }
+
+.settings-tab label {
+  display: block;
+  float: left;
+  margin-right: 0.3em;
+  width: 100px;
+}
+
 .region .description, .settings-tab, .ds-normal {
   font-weight: normal;
 }

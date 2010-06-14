@@ -196,19 +196,26 @@ Drupal.DisplaySuite.toggleDisplayTab = function(element) {
 /**
  * Show / hide settings for fields.
  */
-Drupal.DisplaySuite.toggle = function(element, id) {
+Drupal.behaviors.settingsToggle = function(context) {
+  // remove click from link
+  $('.settings-tab-toggle').click(function(e){
+    e.preventDefault();
+  });
+  
+  // Add click event to entire td
+  $('.settings-tab-toggle').click(function(){
+    var settings = $(this).siblings('.settings-tab');
+    if (Drupal.DisplaySuite.fieldopened != '' && Drupal.DisplaySuite.fieldopened != settings.attr('id')) {
+      $('#' + Drupal.DisplaySuite.fieldopened).hide();
+    }
 
-  if ($('#'+ id).is(':visible')) {
-    $('#'+ id).hide();	  
-  }
-  else {
-	// Close setting if not empty.
-	if (Drupal.DisplaySuite.fieldopened != '') {
-	  $('#'+ Drupal.DisplaySuite.fieldopened).hide();
-	}
-	 
-	// Store the other opened setting.
-    Drupal.DisplaySuite.fieldopened = id;
-	$('#'+ id).slideDown('normal');	  
-  }
+    if (settings.is(':visible')) {
+      settings.hide();
+    }
+    else {
+      settings.slideDown('normal');
+    }
+    // Store the opened setting.
+    Drupal.DisplaySuite.fieldopened = settings.attr('id');
+  });
 }
