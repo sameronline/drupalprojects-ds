@@ -30,8 +30,8 @@ if ($rows):
       <thead>
         <tr>
           <th><?php print t('Field'); ?></th>
-          <th><?php print t('Label'); ?></th>
-          <th><?php print t('Style'); ?></th>
+          <th></th>
+          <th></th>
           <th><?php print t('Region'); ?></th>
           <th><?php print t('Weight'); ?></th>
         </tr>
