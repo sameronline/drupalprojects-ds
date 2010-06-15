@@ -4,6 +4,7 @@
 
 #fields td {
 	vertical-align: top;
+  white-space: nowrap;
 }
 
 .settings-tab-row {

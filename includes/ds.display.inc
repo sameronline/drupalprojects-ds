@@ -612,6 +612,7 @@ function ds_styles($variable = '') {
     // Field styles.
     $field_styles = trim(variable_get('ds_styles', ''));
     if (!empty($field_styles)) {
+      $styles['fields'][''] = t('None');
       $field_styles = explode("\n", $field_styles);
       foreach ($field_styles as $key => $value) {
         $classes = explode("|", $value);
@@ -624,6 +625,7 @@ function ds_styles($variable = '') {
     // Region styles.
     $region_styles = trim(variable_get('ds_styles_regions', ''));
     if (!empty($region_styles)) {
+      $styles['regions'][''] = t('None');
       $region_styles = explode("\n", $region_styles);
       foreach ($region_styles as $key => $value) {
         $classes = explode("|", $value);
