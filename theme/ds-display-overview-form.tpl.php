@@ -62,7 +62,7 @@ if ($rows): ?>
           </td>
           <td colspan="2" width="65%" class="region settings-tab-column">
             <?php if (!empty($region_classes[$region])): ?>
-              <div class="settings-tab-toggle"><a href="javascript:;"><?php print t('Update'); ?></a>
+              <div class="settings-tab-toggle"><a href="javascript:;"><?php print t('Change settings'); ?></a>
               <span class="ds-normal"><?php print $region_classes_summary[$region]; ?></span></div>
               <div style="display: none" class="settings-tab" id="region-tab-<?php print $region; ?>">
                 <?php print $region_classes[$region]; ?>
@@ -91,7 +91,7 @@ if ($rows): ?>
               </td>
               <td width="15%"><?php print $row->{$build_mode}->region; ?></td>
               <td width="65%" class="settings-tab-column">
-              <div class="settings-tab-toggle"><a href="javascript:;"><?php print t('Update'); ?></a>
+              <div class="settings-tab-toggle"><a href="javascript:;"><?php print t('Change settings'); ?></a>
                 <?php print $row->{$build_mode}->summary; ?></div>
                 <div class="settings-tab" style="display: none" id="settings-tab-<?php print $field_count; ?>">
                   <div class="settings-tab-row clear-block">
