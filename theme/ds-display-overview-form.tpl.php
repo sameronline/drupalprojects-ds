@@ -87,7 +87,7 @@ if ($rows): ?>
 
               <td class="ds-label" width="20%">
                 <?php print $row->{$build_mode}->indentation; ?>
-                <?php print $row->human_name; ?>
+                <span class="<?php print $row->label_class; ?>"><?php print $row->human_name; ?></span>
               </td>
               <td width="15%"><?php print $row->{$build_mode}->region; ?></td>
               <td width="65%" class="settings-tab-column">
