@@ -160,10 +160,10 @@ Drupal.behaviors.fieldgroupFormat = function(context) {
       var field_group_value = $(this).val();
   	  var label_format = $(this).attr('id').replace('format', 'label-format');
       if (field_group_value.substr(0, 17) == 'ds_group_fieldset' || field_group_value.substr(0, 7) == 'ds_tabs') {
-        $('#'+ label_format +'wrapper').addClass('ds-hidden');
+        $('#'+ label_format +'-wrapper').addClass('ds-hidden');
       }
       else {
-        $('#'+ label_format +'wrapper').removeClass('ds-hidden');
+        $('#'+ label_format +'-wrapper').removeClass('ds-hidden');
       }
     });
   });

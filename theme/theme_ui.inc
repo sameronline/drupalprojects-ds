@@ -59,6 +59,9 @@ function template_preprocess_ds_display_overview_form(&$vars) {
 
       // Render the display fields
       if ($child == $build_mode) {
+
+        $hide_label_position = FALSE;
+
         $row->{$child}->indentation = theme('indentation', $element[$child]['#depth']);
         if (empty($element[$child]['css-class']['#options'])) {
           $element[$child]['css-class']['#access'] = FALSE;
@@ -76,9 +79,11 @@ function template_preprocess_ds_display_overview_form(&$vars) {
           if (substr($element[$child]['format']['#default_value'], 0, 17) == 'ds_group_fieldset'
             || substr($element[$child]['format']['#default_value'], 0, 7) == 'ds_tabs'
             ) {
-            $element[$child]['label']['format']['#attributes']['class'] = 'ds-hidden';
+            $hide_label_position = TRUE;
           }
         }
+
+        // Hide region.
         if (!empty($element[$child]['parent_id']['#default_value'])) {
           $element[$child]['region']['#attributes']['class'] .= ' ds-hidden';
         }
@@ -88,6 +93,10 @@ function template_preprocess_ds_display_overview_form(&$vars) {
         $row->{$child}->format = drupal_render($element[$child]['format']);
         $row->{$child}->label = drupal_render($element[$child]['label']);
         $row->{$child}->label_value = drupal_render($element[$child]['label_value']);
+
+        if ($hide_label_position) {
+          $row->{$child}->label = str_replace("form-item", "form-item ds-hidden", $row->{$child}->label);
+        }
 
         // Summary.
         $row->{$child}->summary = drupal_render($element[$child]['summary']);
@@ -237,6 +246,8 @@ function template_preprocess_ds_display_overview_views_form(&$vars) {
             $element[$child]['label']['format']['#attributes']['class'] = 'ds-hidden';
           }
         }
+
+        // Hide region.
         if (!empty($element[$child]['parent_id']['#default_value'])) {
           $element[$child]['region']['#attributes']['class'] .= ' ds-hidden';
         }
