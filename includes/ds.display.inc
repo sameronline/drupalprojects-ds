@@ -278,7 +278,6 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     return;
   }
 
-  $multiselect = array();
   $default_properties = ds_field_default_form_properties($build_mode);
   $default = (!empty($form[key($fields)])) ? $form[key($fields)] : $default_properties;
 
