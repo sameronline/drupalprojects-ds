@@ -253,7 +253,7 @@ Drupal.behaviors.StyleChange = function(context) {
       options[i] = $(selected).text();
     });
     if (options != '') {
-        var info = 'Styles: '+ options.join(', ');
+        var info = ' - Styles: '+ options.join(', ');
       }
       else {
         var info = '';

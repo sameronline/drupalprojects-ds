@@ -371,7 +371,10 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     }
     $form[$field][$build_mode]['css-class']['#default_value'] = explode(' ', $class);
     if (!empty($human_names)) {
-      $summary .= ' - <span class="style-info">Styles: '. implode(', ', $human_names) .'</span>';
+      $summary .= '<span class="style-info"> - Styles: '. implode(', ', $human_names) .'</span>';
+    }
+    else {
+      $summary .= '<span class="style-info"></span>';
     }
 
     // Region.
