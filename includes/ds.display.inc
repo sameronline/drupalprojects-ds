@@ -206,6 +206,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
   }
 
   // Build style selects for region classes.
+  $region_style_options = ds_styles('regions');
   $region_styles = ds_default_value($display_settings, $build_mode, 'region_styles');
   foreach ($form['#regions'] as $key => $region_name) {
     if ($key != 'disabled') {
@@ -214,13 +215,24 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
         '#type' => 'select',
         '#title' => t('Region style'),
         '#multiple' => TRUE,
-        '#options' => ds_styles('regions'),
+        '#options' => $region_style_options,
         '#default_value' => $default_value,
-        '#description' => t('Select styles to apply to this region.')
+        '#description' => t('Select styles to apply to this region.'),
+        '#attributes' => array(
+          'class' => 'ds-style-change',
+        ),
       );
+      $human_names = array();
+      if (!empty($default_value)) {
+        foreach ($default_value as $dv_key => $dv_value) {
+          if (!empty($dv_value)) {
+            $human_names[] = $region_style_options[$dv_value];
+          }
+        }
+      }
       $form['region_styles_'. $key .'_summary'] = array(
         '#type' => 'markup',
-        '#value' => implode(' ', $default_value),
+        '#value' => implode(', ', $human_names),
       );
     }
   }
@@ -278,6 +290,7 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     return;
   }
 
+  $field_style_options = ds_styles('fields');
   $default_properties = ds_field_default_form_properties($build_mode);
   $default = (!empty($form[key($fields)])) ? $form[key($fields)] : $default_properties;
 
@@ -316,7 +329,7 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     // Populate/override the fields with the saved values
     $label_format = isset($value['display_settings'][$build_mode]['label']['format']) ? $value['display_settings'][$build_mode]['label']['format'] : ds_default_value($display_settings, $build_mode, 'fields', $field, 'labelformat', DS_DEFAULT_LABEL_FORMAT);
     $form[$field][$build_mode]['label']['format']['#default_value'] = $label_format;
-    $summary .= 'Label: '. $label_format;
+    $summary .= '<span class="label-info">Label: '. $label_format .'</span>';
 
     // Labels.
     $label_value = ds_default_value($display_settings, $build_mode, 'fields', $field, 'label_value', '');
@@ -343,13 +356,22 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     $form[$field][$build_mode]['format']['#default_value'] = $format;
     $form[$field][$build_mode]['format']['#access'] = (count($form[$field][$build_mode]['format']['#options']) == 0) ? FALSE : TRUE;
     if (!empty($format))
-    $summary .= ' - Format: '. $form[$field][$build_mode]['format']['#options'][$format];
+    $summary .= ' - <span class="format-info">Format: '. $form[$field][$build_mode]['format']['#options'][$format] .'</span>';
 
     // Class.
     $class = ds_default_value($display_settings, $build_mode, 'fields', $field, 'css-class', NULL);
+    $class_values = explode(' ', $class);
+    $human_names = array();
+    if (!empty($class_values)) {
+      foreach ($class_values as $dv_key => $dv_value) {
+        if (!empty($dv_value)) {
+          $human_names[] = $field_style_options[$dv_value];
+        }
+      }
+    }
     $form[$field][$build_mode]['css-class']['#default_value'] = explode(' ', $class);
-    if (!empty($class)) {
-      $summary .= ' - Styles: '. $class;
+    if (!empty($human_names)) {
+      $summary .= ' - <span class="style-info">Styles: '. implode(', ', $human_names) .'</span>';
     }
 
     // Region.
@@ -652,6 +674,9 @@ function ds_field_default_form_properties($build_mode) {
         '#options' => ds_label_options(),
         '#default_value' => DS_DEFAULT_LABEL_FORMAT,
         '#description' => t('Position of the label'),
+        '#attributes' => array(
+          'class' => 'ds-label-change'
+        ),
       ),
     ),
     'format' => array(
@@ -660,6 +685,9 @@ function ds_field_default_form_properties($build_mode) {
       '#options' => array(),
       '#default_value' => DS_DEFAULT_FORMAT,
       '#description' => t('Hide the label or select a style.'),
+      '#attributes' => array(
+        'class' => 'ds-format-change',
+      ),
     ),
     'css-class' => array(
       '#title' => t('Field style'),
@@ -668,7 +696,10 @@ function ds_field_default_form_properties($build_mode) {
       '#size' => 5,
       '#options' => ds_styles('fields'),
       '#default_value' => array(),
-      '#description' => t('Select styles to apply to this field.')
+      '#description' => t('Select styles to apply to this field.'),
+      '#attributes' => array(
+        'class' => 'ds-style-change',
+      ),
     ),
     'region' => array(
       '#type' => 'select',
@@ -698,6 +729,9 @@ function ds_field_default_form_properties($build_mode) {
           '#options' => ds_label_options(),
           '#default_value' => DS_DEFAULT_LABEL_FORMAT,
           '#description' => t('Hide the label or select a style.'),
+          '#attributes' => array(
+            'class' => 'ds-label-change'
+          ),
         ),
       ),
       'format' => array(
@@ -705,7 +739,10 @@ function ds_field_default_form_properties($build_mode) {
         '#type' => 'select',
         '#options' => array(),
         '#default_value' => DS_DEFAULT_FORMAT,
-        '#description' => t('Select how this field will be displayed.')
+        '#description' => t('Select how this field will be displayed.'),
+        '#attributes' => array(
+          'class' => 'ds-format-change',
+        ),
       ),
       'css-class' => array(
         '#title' => t('Field style'),
@@ -713,7 +750,10 @@ function ds_field_default_form_properties($build_mode) {
         '#multiple' => TRUE,
         '#options' => ds_styles('fields'),
         '#default_value' => array(),
-        '#description' => t('Select styles to apply to this field.')
+        '#description' => t('Select styles to apply to this field.'),
+        '#attributes' => array(
+          'class' => 'ds-style-change',
+        ),
       ),
       'region' => array(
         '#type' => 'select',

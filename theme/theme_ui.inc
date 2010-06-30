@@ -168,7 +168,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     }
     $vars['region_classes'][$key] = drupal_render($form['region_styles_'. $key]);
     if (!empty($form['region_styles_'. $key .'_summary']['#value'])) {
-      $summary = 'Styles: '. drupal_render($form['region_styles_'. $key .'_summary']);
+      $summary = '<span class="style-info">Styles: '. drupal_render($form['region_styles_'. $key .'_summary']) .'</span>';
     }
     else {
       $summary = '';

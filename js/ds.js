@@ -146,7 +146,7 @@ Drupal.behaviors.fieldDrag = function(context) {
     });
 
     var regionRow = $(rowObject.element).prevAll('tr.region').get(0);
-    var regionName =  regionRow.className.replace(/([^ ]+[ ]+)*region-([^ ]+)([ ]+[^ ]+)m*/, '$2');
+    var regionName = regionRow.className.replace(/([^ ]+[ ]+)*region-([^ ]+)([ ]+[^ ]+)m*/, '$2');
     $('.region-' + regionName + '-message').addClass('region-populated');	  
   };
 };
@@ -219,3 +219,46 @@ Drupal.behaviors.settingsToggle = function(context) {
     Drupal.DisplaySuite.fieldopened = settings.attr('id');
   });
 }
+
+/**
+ * Change the info about the label format.
+ */
+Drupal.behaviors.labelChange = function(context) {
+  $('.ds-label-change').change(function(){
+    var label_info = $(this).val();
+    $(this).parents('td').find('.label-info').text('Label: '+ label_info);
+  });
+}
+
+/**
+ * Change the info about the label format.
+ */
+Drupal.behaviors.formatChange = function(context) {
+  $('.ds-format-change').change(function(){
+	var options = new Array();
+    $('#'+ $(this).attr('id') +' option:selected').each(function(i, selected) {
+       options[i] = $(selected).text();    	
+    });
+    $(this).parents('td').find('.format-info').text('Format: '+ options.join(', '));
+  });
+}
+
+/**
+ * Change the info about the styles for fields or regions.
+ */
+Drupal.behaviors.StyleChange = function(context) {
+  $('.ds-style-change').change(function(){
+    var options = new Array();
+    $('#'+ $(this).attr('id') +' option:selected').each(function(i, selected) {
+      options[i] = $(selected).text();
+    });
+    if (options != '') {
+        var info = 'Styles: '+ options.join(', ');
+      }
+      else {
+        var info = '';
+      }
+    $(this).parents('td').find('.style-info').text(info);
+  });
+}
+
