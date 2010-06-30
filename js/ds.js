@@ -253,7 +253,13 @@ Drupal.behaviors.StyleChange = function(context) {
       options[i] = $(selected).text();
     });
     if (options != '') {
-        var info = ' - Styles: '+ options.join(', ');
+    	if ($(this).attr('id').substr(0, 18) == 'edit-region-styles') {
+    	  var separator = ''
+    	}
+    	else {
+    	  var separator = ' - ';
+    	}
+        var info = separator + 'Styles: '+ options.join(', ');
       }
       else {
         var info = '';

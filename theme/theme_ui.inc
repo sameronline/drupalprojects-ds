@@ -171,7 +171,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
       $summary = '<span class="style-info">Styles: '. drupal_render($form['region_styles_'. $key .'_summary']) .'</span>';
     }
     else {
-      $summary = '';
+      $summary = '<span class="style-info"></span>';
     }
     $vars['region_classes_summary'][$key] = $summary;
   }
