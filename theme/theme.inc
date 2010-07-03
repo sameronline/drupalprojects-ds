@@ -62,7 +62,7 @@ function theme_ds_regions($object_display, $module) {
     if (!empty($region_data['extra_class'])) {
       $output .= $region_data['extra_class'];
     }
-    $output .= '" ';
+    $output .= ' '. $module .'-fields-count-'. $region_data['count'] .'" ';
     if (isset($region_data['inline_css'])) {
       $output .= $region_data['inline_css'];
     }

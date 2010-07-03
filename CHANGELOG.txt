@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 6.x-1.3 2010-xx-xx
 -------------------------------------------------------------------------------------
+- #843214 by swentel: add counter class on region to indicate how many fields are in it.
 - #824796 by swentel: check for fieldgroup in display because sometimes parent does not exist anymore
 - #818036 by swentel and netsensei: rebuild theme registry when creating new build modes.
 - #794908 by swentel: styles with no friendly names trigger illegal choice detection.
