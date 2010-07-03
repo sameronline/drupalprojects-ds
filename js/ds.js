@@ -231,10 +231,10 @@ Drupal.behaviors.labelChange = function(context) {
 }
 
 /**
- * Change the info about the label format.
+ * Change the info about the field format.
  */
 Drupal.behaviors.formatChange = function(context) {
-  $('.ds-format-change').change(function(){
+  $('.ds-format-change, .fieldgroup-format').change(function(){
 	var options = new Array();
     $('#'+ $(this).attr('id') +' option:selected').each(function(i, selected) {
        options[i] = $(selected).text();    	
