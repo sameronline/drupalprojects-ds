@@ -130,7 +130,11 @@ function ds_static_variables($key, $data = NULL) {
     return $variables[$key];
   }
   elseif (!isset($variables[$key]) && isset($data)) {
-    $variables[$key] = $data;
+    $variables[$key] = array();
+    $variables[$key][] = $data;
+  }
+  elseif (isset($variables[$key]) && isset($data)) {
+    $variables[$key][] = $data;
   }
 }
 

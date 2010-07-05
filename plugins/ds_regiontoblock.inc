@@ -102,7 +102,7 @@ class ds_regiontoblock {
     $static_content = ds_static_variables($block['key']);
     if (!empty($static_content)) {
       $content['subject'] = $block['info'];
-      $content['content'] = $static_content;
+      $content['content'] = implode(' ', $static_content);
     }
     return $content;
   }
