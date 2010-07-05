@@ -70,7 +70,7 @@ class ds_emptyregionrender {
       if ($render == TRUE && !isset($display->themed_regions[$region_name])) {
 
         // Add content for this region, simply a whitespace.
-        $themed_regions[$region_name] = array('content' => '&nbsp;');
+        $themed_regions[$region_name] = array('content' => '&nbsp;', 'count' => 1);
 
         if ($region_name == 'left' || $region_name == 'right') {
           $display->region_classes[$region_name] = $region_name;
