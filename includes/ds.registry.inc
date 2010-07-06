@@ -287,6 +287,16 @@ function _ds_theme() {
       'path' => $path .'/theme',
     ),
 
+    // DS objects.
+    'ds_objects' => array(
+      'arguments' => array(
+        'data' => array(),
+        'extra' => array(),
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+    ),
+
     // We'll only use one function for the fieldsets.
     'ds_group_fieldset_open' => array(
       'arguments' => array(

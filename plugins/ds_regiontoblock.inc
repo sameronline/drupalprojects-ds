@@ -99,10 +99,10 @@ class ds_regiontoblock {
    */
   public function block_view($block) {
     $content = array();
-    $static_content = ds_static_variables($block['key']);
-    if (!empty($static_content)) {
+    $data = ds_static_variables($block['key']);
+    if (!empty($data)) {
       $content['subject'] = $block['info'];
-      $content['content'] = implode(' ', $static_content);
+      $content['content'] = theme('ds_objects', $data, array('context' => 'blocktoregion', 'block' => $block));
     }
     return $content;
   }
@@ -120,7 +120,10 @@ class ds_regiontoblock {
       if ($region_to_block == TRUE && isset($display->themed_regions[$region_name])) {
         $region_content = $display->themed_regions[$region_name];
         $key = 'ds_regiontoblock_'. $module .'_'. $object->type .'_'. $object->build_mode .'_'. $region_name;
-        ds_static_variables($key, $region_content['content']);
+        $data = new stdClass;
+        $data->content = $region_content['content'];
+        $data->object = $vars[$object_type];
+        ds_static_variables($key, $data);
         unset($display->themed_regions[$region_name]);
         if ($region_name == 'left' || $region_name == 'right') {
           unset($display->region_classes[$region_name]);

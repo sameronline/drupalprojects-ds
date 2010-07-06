@@ -135,6 +135,20 @@ function theme_ds_eval_block($field) {
 }
 
 /**
+ * Theme a collection of ds objects.
+ *
+ * @param array $data A collection of data to print.
+ * @param array $extra A collection data, ie context etc ..
+ */
+function theme_ds_objects($data, $extra) {
+  $output = '';
+  foreach ($data as $key => $value) {
+    $output .= $value->content;
+  }
+  return $output;
+}
+
+/**
  * Theme a group (fieldset).
  *
  * @param string $content The content to render.
