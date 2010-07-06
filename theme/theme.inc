@@ -43,6 +43,9 @@ function theme_ds_field($content, $field) {
  *
  * @param stdClass $object_display The complete object and display properties.
  * @param string $module The module name.
+ *
+ * Other variables which you can use:
+ *  - $region_data['count']: holds the number of fields per region.
  */
 function theme_ds_regions($object_display, $module) {
   $output = '';
@@ -62,7 +65,7 @@ function theme_ds_regions($object_display, $module) {
     if (!empty($region_data['extra_class'])) {
       $output .= $region_data['extra_class'];
     }
-    $output .= ' '. $module .'-fields-count-'. $region_data['count'] .'" ';
+    $output .= '" ';
     if (isset($region_data['inline_css'])) {
       $output .= $region_data['inline_css'];
     }
