@@ -167,6 +167,9 @@ class views_plugin_ds_fields_view extends views_plugin_row {
     foreach ($fields as $key => $field) {
 
       $region = $this->view->style_plugin->row_plugin->options[$key]['region'];
+      if ($region == 'disabled') {
+        continue;
+      }
       $weight = $this->view->style_plugin->row_plugin->options[$key]['weight'];
       $labelformat = $this->view->style_plugin->row_plugin->options[$key]['labelformat'];
       $parent = (isset($this->view->style_plugin->row_plugin->options[$key]['parent'])) ? $this->view->style_plugin->row_plugin->options[$key]['parent'] : FALSE;
