@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------------
-6.x-1.3 2010-xx-xx
+6.x-1.3 2010-07-18
 -------------------------------------------------------------------------------------
 - #845416 by swentel: ds_static_variables should hold key values in an array.
 - #843214 by swentel: add counter class on region to indicate how many fields are in it.
