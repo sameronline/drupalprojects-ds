@@ -359,7 +359,7 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     $summary .= ' - <span class="format-info">Format: '. $form[$field][$build_mode]['format']['#options'][$format] .'</span>';
 
     // Class.
-    $class = ds_default_value($display_settings, $build_mode, 'fields', $field, 'css-class', NULL);
+    $class = ds_default_value($display_settings, $build_mode, 'fields', $field, 'css-class', '');
     $class_values = explode(' ', $class);
     $human_names = array();
     if (!empty($class_values)) {

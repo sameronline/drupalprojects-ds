@@ -96,7 +96,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
         $form_state['values']['row_options'][$field] = array(
           'region' => $value['views']['region'],
           'weight' => $value['ds_weight'],
-          'css-class' => $value['views']['css-class'],
+          'css-class' => implode(' ', $value['views']['css-class']),
           'labelformat' => $value['views']['label']['format'],
         );
 
@@ -175,9 +175,9 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       $parent = (isset($this->view->style_plugin->row_plugin->options[$key]['parent'])) ? $this->view->style_plugin->row_plugin->options[$key]['parent'] : FALSE;
 
       // Class.
-      $class = $field->class;
+      $class = '';
       if (!empty($this->view->style_plugin->row_plugin->options[$key]['css-class'])) {
-        $class .= ' '. implode(' ', $this->view->style_plugin->row_plugin->options[$key]['css-class']);
+        $class = $this->view->style_plugin->row_plugin->options[$key]['css-class'];
       }
 
       // Build field key in ds_fields.
