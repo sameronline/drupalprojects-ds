@@ -18,7 +18,7 @@ function ds_info($module) {
 
   // General info (if any).
   if (!empty($help)) {
-    $info = theme('item_list', t($help));
+    $info = theme('item_list', $help);
   }
 
   if (!empty($info)) {
