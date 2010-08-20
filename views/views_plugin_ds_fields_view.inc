@@ -159,7 +159,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
     $regions = $this->view->style_plugin->row_plugin->options['regions'];
     $module = $this->view->style_plugin->row_plugin->options['module'];
 
-    if (empty($object_type) || $object_type == 'ds-views') {
+    if (empty($object_type)) {
       return;
     }
 
@@ -194,7 +194,8 @@ class views_plugin_ds_fields_view extends views_plugin_row {
 
         // Get the form of the group and create a theme key.
         $parent_field = $fields[$parent];
-        $format = (isset($parent_field->handler->options['ds_format'])) ? $parent_field->handler->options['ds_format'] : 'ds_group_fieldset';
+        $format = (isset($parent_field->handler->options
+        ['ds_format'])) ? $parent_field->handler->options['ds_format'] : 'ds_group_fieldset';
         $ds_fields[$parent]['theme'] = $format;
         $ds_groups[$parent][$key] = $weight;
       }
@@ -212,7 +213,79 @@ class views_plugin_ds_fields_view extends views_plugin_row {
     $vars['regions'] = $regions;
 
     // Return the row.
-    return ds_render_content($object, $module, $vars);
+    if ($object_type != 'ds-views') {
+      return ds_render_content($object, $module, $vars);
+    }
+    else {
+      return $this->ds_views_fields_render($object, 'ds-views-fields', $vars);
+    }
   }
 
+  /**
+   * Render the content for modules not implementing the ds api.
+   */
+  function ds_views_fields_render($object, $module, $vars) {
+    $content = '';
+    $all_regions = ds_regions('all', TRUE);
+
+    // Loop through all regions.
+    $regions = $vars['regions'];
+    $region_classes = array();
+    foreach ($all_regions as $region_name => $region_title) {
+
+      if (isset($regions[$region_name])) {
+        $region_content = '';
+        $region = $regions[$region_name];
+
+        $count = 0;
+        // Loop through all fields after ordering on weight.
+        asort($region);
+        foreach ($region as $key => $weight) {
+          // Theming function. This implies a 'content' key exists.
+          $field_content = isset($vars[$key]) ? $vars[$key] : '';
+          if (!empty($field_content)) {
+            $count++;
+            $region_content .= theme('ds_field', $field_content, $object->ds_fields[$key]);
+          }
+        }
+
+        // Store content from a region and add classes if necessary.
+        if (!empty($region_content)) {
+          if ($region_name == 'left' || $region_name == 'right') {
+            $region_classes[$region_name] = $region_name;
+          }
+          $style = isset($region_styles[$region_name]) ? ' '. $region_styles[$region_name] : '';
+          $themed_regions[$region_name] = array(
+            'content' => $region_content,
+            'extra_class' => $style,
+            'count' => $count,
+          );
+        }
+      }
+    }
+
+    $object_display = new stdClass();
+    $object_display->all_regions = $all_regions;
+    $object_display->themed_regions = $themed_regions;
+    $object_display->region_classes = $region_classes;
+    $object_display->build_mode = $object->build_mode;
+
+    // Add classes based on regions.
+    if (isset($object_display->themed_regions['middle'])) {
+      $middle_class = $module .'-no-sidebars';
+      if (isset($object_display->region_classes['left']) && isset($object_display->region_classes['right'])) {
+        $middle_class = $module .'-two-sidebars';
+      }
+      elseif (isset($object_display->region_classes['left'])) {
+        $middle_class = $module .'-one-sidebar '. $module .'-sidebar-left';
+      }
+      elseif (isset($object_display->region_classes['right'])) {
+        $middle_class = $module .'-one-sidebar '. $module .'-sidebar-right';
+      }
+      $object_display->themed_regions['middle']['extra_class'] .= ' '.$middle_class;
+    }
+
+    // Theme the regions with their content.
+    return theme('ds_regions', $object_display, $module);
+  }
 }

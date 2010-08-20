@@ -2,6 +2,7 @@
 6.x-1.4 2010-xx-xx
 -------------------------------------------------------------------------------------
 - #848478 by swentel: add relationship to views.
+- #855888 by swentel: add support for foreign tables and modules in views fields.
 - Fix notices in views fields.
 
 -------------------------------------------------------------------------------------
