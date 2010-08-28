@@ -333,6 +333,98 @@ function ds_revert_form_submit($form, &$form_state) {
 }
 
 /**
+ * Export stylesheet.
+ */
+function ds_export_stylesheet() {
+  $selectors = array();
+  $regions = ds_regions();
+  $all_build_modes = ds_get_build_modes();
+
+  // Build an array of selectors of all enabled objects and fields.
+  foreach (module_implements('ds_api') as $module) {
+    $api_info = ds_api_info($module);
+
+    // Title.
+    $selectors[] = "/* ". $api_info['title'] ." */\n";
+
+    // Regions - disabled currently
+//    $selectors[] = "/* Regions */\n";
+//    foreach ($regions as $region_name => $region_title) {
+//      if ($region_name != 'disabled') {
+//        $selectors[] = ".". $module ."-region-". $region_name ." {\n}";
+//      }
+//    }
+
+    // Get all objects.
+    $build_modes = $all_build_modes[$module];
+    if (!empty($build_modes)) {
+      foreach ($api_info['types']() as $tkey => $type) {
+
+        $type_name = $type->type;
+        $type_url_str = str_replace('_', '-', $type_name);
+        $display_settings = variable_get($module .'_display_settings_'. $type_name, array());
+
+        // Global exclude.
+        if (variable_get($module .'_type_'. $type->type, FALSE)) {
+          continue;
+        }
+
+        $type_selectors = array();
+        $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
+        foreach ($build_modes as $key => $value) {
+
+          // Check if build mode is excluded for this object type.
+          $excluded = (isset($exclude_build_modes[$type_name][$key]) && $exclude_build_modes[$type_name][$key] == TRUE) ? TRUE : FALSE;
+          if ($excluded) {
+            continue;
+          }
+
+          // Get any configured fields.
+          $field_settings = ds_default_value($display_settings, $key, 'fields');
+          foreach ($field_settings as $field_key => $field) {
+            if ($field['region'] != 'disabled') {
+
+              $class = isset($field['properties']['css-class']) ? $field['properties']['css-class'] : 'field-'. strtr($field_key, '_', '-');
+              if (isset($field_settings[$field]['css-class']) && !empty($field_settings[$field]['css-class'])) {
+                $class .= ' '. $field_settings[$field]['css-class'];
+              }
+              if ($field['type'] == DS_FIELD_TYPE_GROUP) {
+                $class .= ' field-group';
+              }
+
+              $prefix = ($module == 'nd') ? 'node-type-' : '';
+              $type_selectors[] = ".buildmode-". $key ." .". $prefix . $type_name ." .". $class ." {\n}";
+            }
+          }
+        }
+
+        // Add selectors when not empty.
+        if (!empty($type_selectors)) {
+//          $selectors[] = "\n/* Fields of ". $type_name ." */\n";
+          $selectors = array_merge($selectors, $type_selectors);
+          $selectors[] = "";
+        }
+      }
+    }
+  }
+
+  $skeleton = implode("\n", $selectors);
+
+  $form = array();
+  $form['info'] = array(
+    '#type' => 'markup',
+    '#value' => t('The textarea underneath generates a skeleton stylesheet for all current enabled objects and fields.')
+  );
+  $form['skeleton'] = array(
+    '#type' => 'textarea',
+    '#rows' => 25,
+    '#default_value' => $skeleton,
+  );
+
+  return $form;
+}
+
+/**
  * Nice var exporter, based on Views.
  */
 function ds_var_export($var, $prefix = '  ', $init = TRUE, $indent = '  ') {

@@ -3,6 +3,7 @@
 -------------------------------------------------------------------------------------
 - #848478 by swentel: add relationship to views.
 - #855888 by swentel: add support for foreign tables and modules in views fields.
+- Added an new tool tab to export a stylesheet skeleton.
 - Fix notices in views fields.
 
 -------------------------------------------------------------------------------------
@@ -45,7 +46,7 @@
 - #727224 by swentel: New option for ds_api.
 - #742658 by swentel: Rename ds_show_links() to ds_show_field().
 - #722852 by swentel and jyve: Theming optimizations.
-- #582618 by swentel, stalski, zuupermand and Jyve: Support for fieldgroups.
+- #582618 by swentel, stalski, zuuperman and jyve: Support for fieldgroups.
 - #763516 by swentel: validation of keys for fields, fieldgroups & buildmodes 
                       can contain numbers.
 - #763024 by swentel: support for (cck) tabs.

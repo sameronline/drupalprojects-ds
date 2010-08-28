@@ -52,14 +52,23 @@ function _ds_ui_menu() {
     'weight' => -1,
   );
   $items['admin/build/ds/tools/import'] = array(
-    'title' => 'Import',
+    'title' => 'Import settings',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => 0,
   );
   $items['admin/build/ds/tools/export'] = array(
-    'title' => 'Export',
+    'title' => 'Export settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_export'),
+    'access arguments' => array('export and import settings'),
+    'file' => 'includes/ds.tools.inc',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+  );
+  $items['admin/build/ds/tools/export_stylesheet'] = array(
+    'title' => 'Export stylesheet',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_export_stylesheet'),
     'access arguments' => array('export and import settings'),
     'file' => 'includes/ds.tools.inc',
     'type' => MENU_LOCAL_TASK,
