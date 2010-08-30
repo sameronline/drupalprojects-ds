@@ -722,7 +722,7 @@ function ds_field_default_form_properties($build_mode) {
     $field['ds_weight'] = array(
       '#type' => 'weight',
       '#default_value' => DS_DEFAULT_WEIGHT,
-      '#delta' => 50,
+      '#delta' => 100,
     );
     $field[$build_mode] = array(
       'label' => array(
