@@ -392,6 +392,7 @@ function ds_export_stylesheet() {
                 $class .= ' field-group';
               }
 
+              // TODO this is not 100% ok.
               $prefix = ($module == 'nd') ? 'node-type-' : '';
               $type_selectors[] = ".buildmode-". $key ." .". $prefix . $type_name ." .". $class ." {\n}";
             }
