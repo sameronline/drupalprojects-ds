@@ -136,7 +136,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       ),
     );
 
-    if (isset($ds_views_fields_modules[$views_base_table])) {
+    if (isset($ds_views_fields_modules[$views_base_table]) && module_exists($ds_views_fields_modules[$views_base_table]['module'])) {
       return $ds_views_fields_modules[$views_base_table][$key];
     }
     return 'ds-views';

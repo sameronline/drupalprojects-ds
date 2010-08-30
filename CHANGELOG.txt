@@ -4,6 +4,7 @@
 - #848478 by swentel: add relationship to views.
 - #855888 by swentel: add support for foreign tables and modules in views fields.
 - #887530 by swentel: heigher delta for weights.
+- #886684 by swentel: check if module exists in ds fields plugin.
 - Added an new tool tab to export a stylesheet skeleton.
 - Fix notices in views fields.
 
