@@ -37,58 +37,12 @@ class views_plugin_ds_object_view extends views_plugin_row {
     $options = parent::option_definition();
     $options['build_mode'] = array('default' => 'teaser');
     $options['advanced'] = FALSE;
-    if (isset($this->view->base_table)) {
-      $options['relationship'] = array('default' => 'none');
-    }
+    $options['changing'] = FALSE;
     return $options;
   }
 
   function options_form(&$form, &$form_state) {
     $views_base_table = $this->view->base_table;
-
-    if (isset($this->view->base_table)) {
-      $view = &$form_state['view'];
-
-      // A whole bunch of code to figure out what relationships are valid for
-      // this item.
-      $relationships = $view->display_handler->get_option('relationships');
-      $relationship_options = array();
-
-      foreach ($relationships as $relationship) {
-        $relationship_handler = views_get_handler($relationship['table'], $relationship['field'], 'relationship');
-
-        // If this relationship is valid for this type, add it to the list.
-        $data = views_fetch_data($relationship['table']);
-        $base = $data[$relationship['field']]['relationship']['base'];
-        if ($base == $this->view->base_table) {
-          $relationship_handler->init($view, $relationship);
-          $relationship_options[$relationship['id']] = $relationship_handler->label();
-        }
-      }
-
-      if (!empty($relationship_options)) {
-        $relationship_options = array_merge(array('none' => t('Do not use a relationship')), $relationship_options);
-        $rel = empty($this->options['relationship']) ? 'none' : $this->options['relationship'];
-        if (empty($relationship_options[$rel])) {
-          // Pick the first relationship.
-          $rel = key($relationship_options);
-        }
-
-        $form['relationship'] = array(
-          '#type' => 'select',
-          '#title' => t('Relationship'),
-          '#options' => $relationship_options,
-          '#default_value' => $rel,
-        );
-      }
-      else {
-        $form['relationship'] = array(
-          '#type' => 'value',
-          '#value' => 'none',
-        );
-      }
-    }
-
     $build_mode_options = array();
     $build_modes = ds_get_build_modes();
     foreach ($build_modes as $module => $modes) {
@@ -102,7 +56,13 @@ class views_plugin_ds_object_view extends views_plugin_row {
       }
     }
 
-    $form['build_mode'] = array(
+    $form['single_fieldset'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Single build mode'),
+      '#collapsible' => TRUE,
+      '#collapsed' => ($this->options['advanced'] && $this->options['changing']),
+    );
+    $form['single_fieldset']['build_mode'] = array(
       '#type' => 'select',
       '#title' => t('Select the build mode'),
       '#default_value' => $this->options['build_mode'],
@@ -110,21 +70,48 @@ class views_plugin_ds_object_view extends views_plugin_row {
       '#description' => t('Make sure you select a build mode which is compatible with the base table of this view which is %base_table. <br />Also note that if you excluded build modes, you will still see them listed here as it\'s possible to list different types in a view.', array('%base_table' => $this->view->base_table))
     );
 
-    $form['advanced'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Use the advanced build mode selector'),
-      '#description' => t('This gives you the opportunity to have more control in a list, eg the first build mode on the object is A and the rest B.<br /> There is no UI for this, you need to create a function named like this: <strong><em>ds_views_row_adv_@VIEWSNAME(&$variables, $build_mode)</em></strong>.<br />See <a href="http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME">http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME</a> for an example.', array('@VIEWSNAME' => $this->view->name)),
-      '#default_value' => $this->options['advanced'],
+    $form['changing_fieldset'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Changing build mode'),
+      '#collapsible' => TRUE,
+      '#collapsed' => !$this->options['changing'],
     );
-  }
-
-  function query() {
-    if (isset($this->view->base_table) && isset($this->options['relationship']) && isset($this->view->relationship[$this->options['relationship']])) {
-      $relationship = $this->view->relationship[$this->options['relationship']];
-      $this->field_alias = $this->view->query->add_field($relationship->alias, $this->view->base_field);
+    $form['changing_fieldset']['advanced'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use the changing build mode selector'),
+      '#default_value' => $this->options['changing'],
+    );
+    $limit = $this->view->display_handler->get_option('items_per_page');
+    if ($limit == 0 || $limit > 20) {
+      $form['changing_fieldset']['disabled'] = array(
+        '#type' => 'markup',
+        '#value' => t('This option is disabled because you have unlimited items or listing more than 20 items.'),
+      );
     }
     else {
-      $this->field_alias = $this->view->base_field;
+      $a = 1;
+      while ($limit != 0) {
+        $form['changing_fieldset']['item_'. $a] = array(
+          '#title' => 'Item '. $a,
+          '#type' => 'select',
+          '#options' => $build_mode_options,
+        );
+        $limit--;
+        $a++;
+      }
     }
+
+    $form['advanced_fieldset'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Advanced build mode'),
+      '#collapsible' => TRUE,
+      '#collapsed' => !$this->options['advanced'],
+    );
+    $form['advanced_fieldset']['advanced'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use the advanced build mode selector'),
+      '#description' => t('This gives you the opportunity to have full control of a list for really advanced features.<br /> There is no UI for this, you need to create a function named like this: <strong><em>ds_views_row_adv_@VIEWSNAME(&$variables, $build_mode)</em></strong>.<br />See <a href="http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME">http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME</a> for an example.', array('@VIEWSNAME' => $this->view->name)),
+      '#default_value' => $this->options['advanced'],
+    );
   }
 }
