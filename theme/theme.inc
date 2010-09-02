@@ -234,41 +234,41 @@ function theme_ds_picture($field) {
 
 /**
  * Template preprocess function for theme_views_view_row_object().
+ * We delegate the manipulation of the object to a function
+ * which every module implementing the ds_api should define.
  */
 function template_preprocess_ds_row_object(&$vars) {
   $options = $vars['options'];
   $vars['object'] = '';
 
-  // We delegate the manipulation of the object to a function
-  // which every module implementing the ds_api should define.
-  // The simple and changing selector will change the build mode
-  // per row and take care of paging.
-  // The advanced selector searches for a function build like this:
+  // The advanced selector searches for a function called
   // ds_views_row_adv_VIEWSNAME.
   if ($options['advanced']) {
     $build_mode = $options['build_mode'];
     $row_function = 'ds_views_row_adv_'. $vars['view']->name;
     $row_function($vars, $build_mode);
   }
-  elseif ($options['changing']) {
+  // The default selector searches for a function called
+  // ds_views_row_VIEWSBASETABLE.
+  // It can also possibly change the build mode of per row and
+  // take care of pagination.
+  else {
     static $item_nr = 1;
-
-    // Check for paging to determine the build mode.
-    if (isset($_GET['page']) && !$options['changing_fieldset']['allpages']) {
-      $build_mode = $options['build_mode'];
+    if (isset($options['changing']) && $options['changing']) {
+      // Check for paging to determine the build mode.
+      if (isset($_GET['page']) && isset($options['changing_fieldset']['allpages']) && !$options['changing_fieldset']['allpages']) {
+        $build_mode = $options['build_mode'];
+      }
+      else {
+        $build_mode = $options['changing_fieldset']['item_'. $item_nr];
+      }
     }
     else {
-      $build_mode = $options['changing_fieldset']['item_'. $item_nr];
+      $build_mode = $options['build_mode'];
     }
     $row_function = 'ds_views_row_'. $vars['view']->base_table;
     $row_function($vars, $build_mode);
     $item_nr++;
-  }
-  // Simple selector.
-  else {
-    $row_function = 'ds_views_row_'. $vars['view']->base_table;
-    $build_mode = $options['build_mode'];
-    $row_function($vars, $build_mode);
   }
 }
 

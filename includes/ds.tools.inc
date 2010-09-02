@@ -342,18 +342,20 @@ function ds_export_stylesheet() {
 
   // Build an array of selectors of all enabled objects and fields.
   foreach (module_implements('ds_api') as $module) {
+
+    // Let's skip hds for now
+    if ($module == 'hds' || $module == 'vd') {
+      continue;
+    }
+
     $api_info = ds_api_info($module);
 
     // Title.
     $selectors[] = "/* ". $api_info['title'] ." */\n";
 
-    // Regions - disabled currently
-//    $selectors[] = "/* Regions */\n";
-//    foreach ($regions as $region_name => $region_title) {
-//      if ($region_name != 'disabled') {
-//        $selectors[] = ".". $module ."-region-". $region_name ." {\n}";
-//      }
-//    }
+    // Regions
+    $selectors[] = "/* Regions */";
+    $selectors[] = str_replace('@replace', $module, ds_export_style_sheet_regions());
 
     // Get all objects.
     $build_modes = $all_build_modes[$module];
@@ -392,16 +394,26 @@ function ds_export_stylesheet() {
                 $class .= ' field-group';
               }
 
-              // TODO this is not 100% ok.
-              $prefix = ($module == 'nd') ? 'node-type-' : '';
-              $type_selectors[] = ".buildmode-". $key ." .". $prefix . $type_name ." .". $class ." {\n}";
+              // This actually a bit hardcoded, pity.
+              switch ($module) {
+                case 'nd':
+                  $prefix = '.buildmode-'. $key .' .node-type-'. $type_name;
+                  break;
+                case 'ud':
+                  $prefix = '.buildmode-'. $key .' .profile';
+                  break;
+                case 'cd':
+                  $prefix = '.buildmode-'. $key .' .comment';
+                  break;
+              }
+              $type_selectors[] = $prefix ." .". $class ." {\n}";
             }
           }
         }
 
         // Add selectors when not empty.
         if (!empty($type_selectors)) {
-//          $selectors[] = "\n/* Fields of ". $type_name ." */\n";
+          $selectors[] = "/* Fields of ". $type_name ." */\n";
           $selectors = array_merge($selectors, $type_selectors);
           $selectors[] = "";
         }
@@ -414,7 +426,7 @@ function ds_export_stylesheet() {
   $form = array();
   $form['info'] = array(
     '#type' => 'markup',
-    '#value' => t('The textarea underneath generates a skeleton stylesheet for all current enabled objects and fields.')
+    '#value' => t('The textarea underneath generates a skeleton stylesheet for enabled objects and fields in your site. Views displays and Heartbeat displays are not supported yet.')
   );
   $form['skeleton'] = array(
     '#type' => 'textarea',
@@ -423,6 +435,30 @@ function ds_export_stylesheet() {
   );
 
   return $form;
+}
+
+/**
+ * Skeleton for default regions.
+ */
+function ds_export_style_sheet_regions() {
+  return '
+.@replace-region-header {
+}
+.@replace-region-left {
+}
+.@replace-no-sidebars .@replace-region-middle {
+}
+.@replace-sidebar-left .@replace-region-middle {
+}
+.@replace-sidebar-right .@replace-region-middle {
+}
+.@replace-two-sidebars .@replace-region-middle {
+}
+.@replace-region-right {
+}
+.@replace-region-footer {
+}
+  ';
 }
 
 /**
