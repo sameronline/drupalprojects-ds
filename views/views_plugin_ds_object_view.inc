@@ -64,7 +64,6 @@ class views_plugin_ds_object_view extends views_plugin_row {
     );
     $form['single_fieldset']['build_mode'] = array(
       '#type' => 'select',
-      '#title' => t('Select the build mode'),
       '#default_value' => $this->options['build_mode'],
       '#options' => $build_mode_options,
       '#description' => t('Make sure you select a build mode which is compatible with the base table of this view which is %base_table. <br />Also note that if you excluded build modes, you will still see them listed here as it\'s possible to list different types in a view.', array('%base_table' => $this->view->base_table))
