@@ -56,13 +56,13 @@ class views_plugin_ds_object_view extends views_plugin_row {
       }
     }
 
-    $form['single_fieldset'] = array(
+    $form['default_fieldset'] = array(
       '#type' => 'fieldset',
       '#title' => t('Default build mode'),
       '#collapsible' => TRUE,
       '#collapsed' => ($this->options['advanced']),
     );
-    $form['single_fieldset']['build_mode'] = array(
+    $form['default_fieldset']['build_mode'] = array(
       '#type' => 'select',
       '#default_value' => $this->options['build_mode'],
       '#options' => $build_mode_options,
@@ -133,7 +133,7 @@ class views_plugin_ds_object_view extends views_plugin_row {
    * Reset all fieldsets except for changing.
    */
   function options_submit($form, &$form_state) {
-    $form_state['values']['row_options']['build_mode'] = $form_state['values']['row_options']['single_fieldset']['build_mode'];
+    $form_state['values']['row_options']['build_mode'] = $form_state['values']['row_options']['default_fieldset']['build_mode'];
     $form_state['values']['row_options']['changing'] = $form_state['values']['row_options']['changing_fieldset']['changing'];
     $form_state['values']['row_options']['advanced'] = $form_state['values']['row_options']['advanced_fieldset']['advanced'];
   }
