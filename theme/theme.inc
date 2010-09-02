@@ -237,17 +237,32 @@ function theme_ds_picture($field) {
  */
 function template_preprocess_ds_row_object(&$vars) {
   $options = $vars['options'];
-  $vars['object'] = ''; // make sure var is defined.
+  $vars['object'] = '';
 
   // We delegate the manipulation of the object to a function
   // which every module implementing the ds_api should define.
-  // This can either be the simple selector or the advanced selector.
+  // The simple and changing selector will change the build mode
+  // per row and take care of paging.
   // The advanced selector searches for a function build like this:
   // ds_views_row_adv_VIEWSNAME.
   if ($options['advanced']) {
     $build_mode = $options['build_mode'];
     $row_function = 'ds_views_row_adv_'. $vars['view']->name;
     $row_function($vars, $build_mode);
+  }
+  elseif ($options['changing']) {
+    static $item_nr = 1;
+
+    // Check for paging to determine the build mode.
+    if (isset($_GET['page']) && !$options['changing_fieldset']['allpages']) {
+      $build_mode = $options['build_mode'];
+    }
+    else {
+      $build_mode = $options['changing_fieldset']['item_'. $item_nr];
+    }
+    $row_function = 'ds_views_row_'. $vars['view']->base_table;
+    $row_function($vars, $build_mode);
+    $item_nr++;
   }
   // Simple selector.
   else {

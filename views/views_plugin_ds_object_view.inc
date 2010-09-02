@@ -36,8 +36,8 @@ class views_plugin_ds_object_view extends views_plugin_row {
   function option_definition() {
     $options = parent::option_definition();
     $options['build_mode'] = array('default' => 'teaser');
-    $options['advanced'] = FALSE;
-    $options['changing'] = FALSE;
+    $options['changing'] = array('default' => FALSE);
+    $options['advanced'] = array('default' => FALSE);
     return $options;
   }
 
@@ -58,9 +58,9 @@ class views_plugin_ds_object_view extends views_plugin_row {
 
     $form['single_fieldset'] = array(
       '#type' => 'fieldset',
-      '#title' => t('Single build mode'),
+      '#title' => t('Default build mode'),
       '#collapsible' => TRUE,
-      '#collapsed' => ($this->options['advanced'] && $this->options['changing']),
+      '#collapsed' => ($this->options['advanced']),
     );
     $form['single_fieldset']['build_mode'] = array(
       '#type' => 'select',
@@ -76,10 +76,15 @@ class views_plugin_ds_object_view extends views_plugin_row {
       '#collapsible' => TRUE,
       '#collapsed' => !$this->options['changing'],
     );
-    $form['changing_fieldset']['advanced'] = array(
+    $form['changing_fieldset']['changing'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use the changing build mode selector'),
       '#default_value' => $this->options['changing'],
+    );
+    $form['changing_fieldset']['allpages'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use this configuration across paging. Otherwhise, the default build mode above is used.'),
+      '#default_value' => (isset($this->options['changing_fieldset']['allpages'])) ? $this->options['changing_fieldset']['allpages'] : FALSE,
     );
     $limit = $this->view->display_handler->get_option('items_per_page');
     if ($limit == 0 || $limit > 20) {
@@ -94,6 +99,7 @@ class views_plugin_ds_object_view extends views_plugin_row {
         $form['changing_fieldset']['item_'. $a] = array(
           '#title' => 'Item '. $a,
           '#type' => 'select',
+          '#default_value' => (isset($this->options['changing_fieldset']['item_'. $a])) ? $this->options['changing_fieldset']['item_'. $a] : 'teaser',
           '#options' => $build_mode_options,
         );
         $limit--;
@@ -113,5 +119,23 @@ class views_plugin_ds_object_view extends views_plugin_row {
       '#description' => t('This gives you the opportunity to have full control of a list for really advanced features.<br /> There is no UI for this, you need to create a function named like this: <strong><em>ds_views_row_adv_@VIEWSNAME(&$variables, $build_mode)</em></strong>.<br />See <a href="http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME">http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME</a> for an example.', array('@VIEWSNAME' => $this->view->name)),
       '#default_value' => $this->options['advanced'],
     );
+  }
+
+  /**
+   * Validate build mode type selector.
+   */
+  function options_validate($form, &$form_state) {
+    if ($form_state['values']['row_options']['changing_fieldset']['changing'] && $form_state['values']['row_options']['advanced_fieldset']['advanced']) {
+      form_set_error('advanced', t('You can not have changing and advanced enabled at the same time'));
+    }
+  }
+
+  /**
+   * Reset all fieldsets except for changing.
+   */
+  function options_submit($form, &$form_state) {
+    $form_state['values']['row_options']['build_mode'] = $form_state['values']['row_options']['single_fieldset']['build_mode'];
+    $form_state['values']['row_options']['changing'] = $form_state['values']['row_options']['changing_fieldset']['changing'];
+    $form_state['values']['row_options']['advanced'] = $form_state['values']['row_options']['advanced_fieldset']['advanced'];
   }
 }
