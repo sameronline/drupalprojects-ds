@@ -56,6 +56,7 @@ class views_plugin_ds_object_view extends views_plugin_row {
       }
     }
 
+    // Default build mode.
     $form['default_fieldset'] = array(
       '#type' => 'fieldset',
       '#title' => t('Default build mode'),
@@ -69,6 +70,7 @@ class views_plugin_ds_object_view extends views_plugin_row {
       '#description' => t('Make sure you select a build mode which is compatible with the base table of this view which is %base_table. <br />Also note that if you excluded build modes, you will still see them listed here as it\'s possible to list different types in a view.', array('%base_table' => $this->view->base_table))
     );
 
+    // Changing build modes.
     $form['changing_fieldset'] = array(
       '#type' => 'fieldset',
       '#title' => t('Changing build mode'),
@@ -108,6 +110,7 @@ class views_plugin_ds_object_view extends views_plugin_row {
       }
     }
 
+    // Grouping rows.
     $form['grouping_fieldset'] = array(
       '#type' => 'fieldset',
       '#title' => t('Group data'),
@@ -138,7 +141,7 @@ class views_plugin_ds_object_view extends views_plugin_row {
       $form['grouping_fieldset']['grouping']['#description'] = t('Grouping is disabled because you do not have any sort fields.');
     }
 
-
+    // Advanced function.
     $form['advanced_fieldset'] = array(
       '#type' => 'fieldset',
       '#title' => t('Advanced build mode'),

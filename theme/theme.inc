@@ -256,7 +256,7 @@ function template_preprocess_ds_row_object(&$vars) {
   else {
     static $nrs, $grouping = array();
     $group_value_content = '';
-    $view_name = $vars['view']->name;
+    $view_name = $vars['view']->name .'_'. $vars['view']->current_display;
 
     // Keep a static number for this view.
     if (!isset($nrs[$view_name])) {
