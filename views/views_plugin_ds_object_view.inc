@@ -91,9 +91,11 @@ class views_plugin_ds_object_view extends views_plugin_row {
         '#type' => 'markup',
         '#value' => t('This option is disabled because you have unlimited items or listing more than 20 items.'),
       );
+      $form['changing_fieldset']['changing']['#disabled'] = TRUE;
+      $form['changing_fieldset']['allpages']['#disabled'] = TRUE;
     }
     else {
-      $a = 1;
+      $a = 0;
       while ($limit != 0) {
         $form['changing_fieldset']['item_'. $a] = array(
           '#title' => 'Item '. $a,
@@ -105,6 +107,37 @@ class views_plugin_ds_object_view extends views_plugin_row {
         $a++;
       }
     }
+
+    $form['grouping_fieldset'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Group data'),
+      '#collapsible' => TRUE,
+      '#collapsed' => !$this->options['grouping'],
+    );
+    $form['grouping_fieldset']['grouping'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Group data on a field. The value of this field will be displayed too.'),
+      '#default_value' => $this->options['grouping'],
+    );
+    $sorts = $this->view->display_handler->get_option('sorts');
+    if (!empty($sorts)) {
+      $sort_options = array();
+      foreach ($sorts as $key => $sort) {
+        $sort_name = ucfirst(str_replace('_', ' ', $sort['table']) .' '. $sort['field']);
+        $sort_options[$sort['table'] .'_'. $sort['field']] = $sort_name;
+      }
+
+      $form['grouping_fieldset']['group_field'] = array(
+        '#type' => 'select',
+        '#options' => $sort_options,
+        '#default_value' => $this->options['grouping_fieldset']['group_field'],
+      );
+    }
+    else {
+      $form['grouping_fieldset']['grouping']['#disabled'] = TRUE;
+      $form['grouping_fieldset']['grouping']['#description'] = t('Grouping is disabled because you do not have any sort fields.');
+    }
+
 
     $form['advanced_fieldset'] = array(
       '#type' => 'fieldset',
@@ -124,8 +157,8 @@ class views_plugin_ds_object_view extends views_plugin_row {
    * Validate build mode type selector.
    */
   function options_validate($form, &$form_state) {
-    if ($form_state['values']['row_options']['changing_fieldset']['changing'] && $form_state['values']['row_options']['advanced_fieldset']['advanced']) {
-      form_set_error('advanced', t('You can not have changing and advanced enabled at the same time'));
+    if (($form_state['values']['row_options']['changing_fieldset']['changing'] || $form_state['values']['row_options']['grouping_fieldset']['grouping']) && $form_state['values']['row_options']['advanced_fieldset']['advanced']) {
+      form_set_error('advanced', t('You can not have changing/grouping and advanced enabled at the same time'));
     }
   }
 
@@ -135,6 +168,7 @@ class views_plugin_ds_object_view extends views_plugin_row {
   function options_submit($form, &$form_state) {
     $form_state['values']['row_options']['build_mode'] = $form_state['values']['row_options']['default_fieldset']['build_mode'];
     $form_state['values']['row_options']['changing'] = $form_state['values']['row_options']['changing_fieldset']['changing'];
+    $form_state['values']['row_options']['grouping'] = $form_state['values']['row_options']['grouping_fieldset']['grouping'];
     $form_state['values']['row_options']['advanced'] = $form_state['values']['row_options']['advanced_fieldset']['advanced'];
   }
 }

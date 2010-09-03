@@ -7,6 +7,7 @@
 - #886684 by swentel: check if module exists in ds fields plugin.
 - Added an new tool tab to export a stylesheet skeleton.
 - Add option in display plugin to change build modes per row via the UI.
+- Add option in display plugin to group on a sort field per row via the UI.
 - Fix notices in views fields.
 
 -------------------------------------------------------------------------------------
