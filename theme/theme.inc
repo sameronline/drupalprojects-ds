@@ -240,6 +240,7 @@ function theme_ds_picture($field) {
 function template_preprocess_ds_row_object(&$vars) {
   $options = $vars['options'];
   $vars['object'] = '';
+  $vars['data_object'] = '';
 
   // The advanced selector searches for a function called
   // ds_views_row_adv_VIEWSNAME.
