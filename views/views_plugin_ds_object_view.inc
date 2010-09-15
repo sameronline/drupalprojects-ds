@@ -111,8 +111,8 @@ class views_plugin_ds_object_view extends views_plugin_row {
     }
 
     // Grouping rows.
-    $groupable = !empty($sorts) && $this->options['grouping'];
     $sorts = $this->view->display_handler->get_option('sorts');
+    $groupable = !empty($sorts) && $this->options['grouping'];
     $form['grouping_fieldset'] = array(
       '#type' => 'fieldset',
       '#title' => t('Group data'),
