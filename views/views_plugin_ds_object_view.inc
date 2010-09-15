@@ -111,18 +111,19 @@ class views_plugin_ds_object_view extends views_plugin_row {
     }
 
     // Grouping rows.
+    $groupable = !empty($sorts) && $this->options['grouping'];
+    $sorts = $this->view->display_handler->get_option('sorts');
     $form['grouping_fieldset'] = array(
       '#type' => 'fieldset',
       '#title' => t('Group data'),
       '#collapsible' => TRUE,
-      '#collapsed' => !$this->options['grouping'],
+      '#collapsed' => !$groupable,
     );
     $form['grouping_fieldset']['grouping'] = array(
       '#type' => 'checkbox',
       '#title' => t('Group data on a field. The value of this field will be displayed too.'),
-      '#default_value' => $this->options['grouping'],
+      '#default_value' => $groupable,
     );
-    $sorts = $this->view->display_handler->get_option('sorts');
     if (!empty($sorts)) {
       $sort_options = array();
       foreach ($sorts as $key => $sort) {
