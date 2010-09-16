@@ -97,16 +97,18 @@ class views_plugin_ds_object_view extends views_plugin_row {
       $form['changing_fieldset']['allpages']['#disabled'] = TRUE;
     }
     else {
+      $i = 1;
       $a = 0;
       while ($limit != 0) {
         $form['changing_fieldset']['item_'. $a] = array(
-          '#title' => 'Item '. $a,
+          '#title' => 'Item '. $i,
           '#type' => 'select',
           '#default_value' => (isset($this->options['changing_fieldset']['item_'. $a])) ? $this->options['changing_fieldset']['item_'. $a] : 'teaser',
           '#options' => $build_mode_options,
         );
         $limit--;
         $a++;
+        $i++;
       }
     }
 
