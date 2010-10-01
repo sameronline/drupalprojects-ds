@@ -16,6 +16,10 @@ class views_plugin_ds_object_view extends views_plugin_row {
     parent::init($view, $display, $options);
     if (version_compare(views_api_version(), '2.0') == 1) {
       $this->base_table = $view->base_table;
+      // Special case for apachesolr_views.
+      if ($this->base_table == 'apachesolr_node' || $this->base_table == 'apachesolr') {
+        $this->base_table = 'node';
+      }
       $this->base_field = $this->ds_views_3_support();
     }
   }
@@ -29,6 +33,7 @@ class views_plugin_ds_object_view extends views_plugin_row {
       'users' => 'uid',
       'comments' => 'cid',
       'apachesolr' => 'nid',
+      'apachesolr_node' => 'nid',
     );
     return $base_table_fields[$this->base_table];
   }
