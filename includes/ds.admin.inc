@@ -10,21 +10,29 @@
  * General page.
  */
 function ds_general_page() {
+  $i = 0;
+  $output = '';
+  $items = array();
 
   // Child pages.
   $item = menu_get_item('admin/build/ds');
   if ($content = system_admin_menu_block($item)) {
-    $childs = theme('admin_block_content', $content);
+    foreach ($content as $item) {
+      $link = l($item['title'], $item['link_path']);
+      if (!empty($item['description'])) {
+        $link .= ' : '. $item['description'];
+      }
+      $items[$i] = $link;
+      $i++;
+    }
+    $childs = theme('item_list', $items);
   }
   else {
     $childs = t('You do not have any administrative items.');
   }
 
-  $fieldset = array();
-  $fieldset['#title'] = 'General';
-  $fieldset['#children'] = $childs;
-  $fieldset['#attributes'] = array();
-  $output = theme('fieldset', $fieldset);
+  $output = t('Click on one of the following items to get started.');
+  $output .= $childs;
 
   return $output;
 }

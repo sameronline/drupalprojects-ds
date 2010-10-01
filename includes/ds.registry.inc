@@ -44,7 +44,7 @@ function _ds_ui_menu() {
   // Import / Export
   $items['admin/build/ds/tools'] = array(
     'title' => 'Tools',
-    'description' => 'Tools for Display suite',
+    'description' => 'Import and export settings and get a skeleton of your stylesheet depending on your configuration.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_import'),
     'access arguments' => array('export and import settings'),
@@ -86,6 +86,7 @@ function _ds_ui_menu() {
   // Display layout menu item.
   $items['admin/build/ds/layout'] = array(
     'title' => 'Layout',
+    'description' => 'Go to the overview screen of all the objects in your Drupal site to theme.',
     'page callback' => 'ds_layout_overview',
     'access arguments' => array('access display suite'),
     'file' => 'includes/ds.display.inc',
@@ -114,6 +115,7 @@ function _ds_ui_menu() {
     // Info.
     $items['admin/build/ds/'. $module] = array(
       'title' => $title,
+      'description' => 'Find help, configure build modes, fields, fieldgroups, plugins and possibly other settings for '. $title .'.',
       'page callback' => 'ds_info',
       'page arguments' => array($module),
       'access arguments' => array('administer '. $module),
