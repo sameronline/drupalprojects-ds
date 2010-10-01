@@ -243,7 +243,7 @@ function _ds_ui_menu() {
             'page arguments' => array('ds_display_overview_form', $type_name, "$first_build_mode", $module),
             'access arguments' => array('configure layout for '. $module),
             'file' => 'includes/ds.display.inc',
-            'type' => MENU_CALLBACK,
+            'type' => MENU_NORMAL_ITEM,
             'weight' => 2,
           );
           $items += $local_task_items;
