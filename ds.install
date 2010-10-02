@@ -7,9 +7,65 @@
  */
 
 /**
+ * Implements hook_schema().
+ */
+function ds_schema() {
+  $schema['display_suite'] = array(
+    'description' => 'The table that holds configuration for the display of every entity.',
+    'fields' => array(
+      'field' => array(
+        'description' => 'The machine name of the field.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'entity' => array(
+        'description' => 'The name of the entity.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'bundle' => array(
+        'description' => 'The name of the entity.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'view_mode' => array(
+        'description' => 'The name of the view_mode.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      // TODO split up more (like label, format, class etc etc)
+      'settings' => array(
+        'description' => 'The settings for this field.',
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+    ),
+    'indexes' => array(
+      'ds_field'        => array('field'),
+      'ds_entity'       => array('entity'),
+      'ds_bundle'       => array('bundle'),
+      'ds_view_mode'    => array('view_mode'),
+    ),
+    'primary key' => array('field'),
+  );
+
+  return $schema;
+}
+
+/**
  * Implements hook_uninstall().
  */
 function ds_uninstall() {
+  // TODO probably not needed anymore.
   db_delete('variable')
     ->condition('name', 'ds_%', 'LIKE')
     ->execute();

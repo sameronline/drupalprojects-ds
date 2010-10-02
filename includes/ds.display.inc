@@ -12,7 +12,6 @@
 function ds_extend_manage_display_table(&$form, $form_state) {
   // TODO stop if nothing found.
 
-
   // Get the entity, bundle and view mode.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
@@ -71,4 +70,14 @@ function ds_extend_manage_display_table(&$form, $form_state) {
       ),
     );
   }
+
+  // Add extra submit handler.
+  $form['#submit'][] = 'ds_form_field_ui_display_overview_form_alter_submit';
+}
+
+/**
+ * Save the region and field settings from the 'Manage display' screen.
+ */
+function ds_extend_manage_display_table_submit($form, &$form_state) {
+  // We'll save later :)
 }

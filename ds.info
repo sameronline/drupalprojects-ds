@@ -1,17 +1,9 @@
 ; $Id$
 name = "Display suite"
-description = "Core functions for the Display Suite module."
+description = "Extend the display options for every entity type."
 core = "7.x"
 package = "Display suite"
 files[] = ds.module
 files[] = ds.install
-files[] = includes/ds.admin.inc
-files[] = includes/ds.buildmodes.inc
-files[] = includes/ds.fields.inc
-files[] = includes/ds.info.inc
-files[] = includes/ds.plugins.inc
-files[] = includes/ds.registry.inc
-files[] = includes/ds.tools.inc
-files[] = plugins/ds_emptyregionrender.inc
-files[] = plugins/ds_cssoverrider.inc
-files[] = theme/theme.inc
+files[] = includes/ds.display.inc
+files[] = entities/node.inc

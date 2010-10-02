@@ -55,3 +55,52 @@ function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
   module_load_include('inc', 'ds', 'includes/ds.display');
   ds_extend_manage_display_table($form, $form_state);
 }
+
+/**
+ * Save the region and field settings from the 'Manage display' screen.
+ */
+function ds_form_field_ui_display_overview_form_alter_submit($form, &$form_state) {
+  module_load_include('inc', 'ds', 'includes/ds.display');
+  ds_extend_manage_display_table_submit($form, $form_state);
+}
+
+/**
+ * Implements hook_field_attach_view_alter().
+ */
+function ds_field_attach_view_alter(&$output, $context) {
+  $entity_type = $output['#entity_type'];
+  $bundle = $output['#bundle'];
+  ds_render_content($output, $entity_type, $bundle, $context['view_mode']);
+}
+
+/**
+ * Render content of an entity.
+ * TODO A LOT :)
+ */
+function ds_render_content(&$output, $entity_type, $bundle, $view_mode) {
+  $weight = 5;
+  $i = 0;
+  $fields = ds_get_fields($entity_type, $bundle, $view_mode);
+  foreach ($fields as $key => $field) {
+    $output[$key] = array(
+      '#theme' => 'field',
+      '#field_type' => 'ds',
+      '#title' => $field['title'],
+      '#weight' => $weight++,
+      '#label_display' => 'inline',
+      '#field_name' => $key,
+      '#bundle' => $bundle,
+      '#entity_type' => $entity_type,
+      '#access' => TRUE,
+      '#items' => array(
+        0 => array(
+          'value' => 'field ' . $i++,
+        ),
+      ),
+      0 => array(
+        '#markup' => 'field ' . $i,
+      ),
+    );
+  }
+}
+
