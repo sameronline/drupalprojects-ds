@@ -15,8 +15,10 @@ function _ds_menu() {
   $items['admin/structure/ds'] = array(
     'title' => 'Display suite',
     'description' => 'Manage configuration for Display Suite.',
-    'page callback' => 'ds_configuration',
-    'access arguments' => array('administer ds'),
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
   );
 
   // Custom view modes.
