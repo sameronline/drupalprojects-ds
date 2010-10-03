@@ -3,11 +3,34 @@
 
 /**
  * @file
- * Display Suite node entity.
+ * Display Suite node entity base file.
  */
 
 /**
- * Return fields for the node entity.
+ * Implements hook_ds_theme_registry().
+ */
+function node_ds_theme_registry() {
+  $theme_functions = array();
+
+  // Single theming functions.
+  $formatters = array(
+    'nd_bodyfield', 'nd_title_h1_nolink', 'nd_title_h1_link', 'nd_title_h2_nolink', 'nd_title_h2_link',
+    'nd_title_h2_block_nolink', 'nd_title_h2_block_link', 'nd_title_p_nolink', 'nd_title_p_link',
+    'nd_book_add_new_child', 'nd_book_printer_version',
+  );
+
+  foreach ($formatters as $formatter) {
+    $theme_functions[$formatter] = array(
+      'variables' => array('node' => NULL),
+      'file' => 'entities/node/node.theme.inc',
+    );
+  }
+
+  return $theme_functions;
+}
+
+/**
+ * Implements hook_ds_fields().
  *
  * @param $entity_type
  *   The name of the entity type
@@ -18,7 +41,7 @@
  * @return $fields
  *   A collection of fields.
  */
-function ds_node_fields($entity_type, $bundle, $view_mode) {
+function node_ds_fields($entity_type, $bundle, $view_mode) {
   $fields = array();
 
   // Title TODO check if type has a title.
@@ -73,5 +96,5 @@ function ds_node_fields($entity_type, $bundle, $view_mode) {
     ),
   );
 
-  return $fields;
+  return array('node' => $fields);
 }

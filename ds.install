@@ -20,7 +20,7 @@ function ds_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
-      'entity' => array(
+      'entity_type' => array(
         'description' => 'The name of the entity.',
         'type' => 'varchar',
         'length' => 32,
@@ -55,7 +55,6 @@ function ds_schema() {
       'ds_bundle'       => array('bundle'),
       'ds_view_mode'    => array('view_mode'),
     ),
-    'primary key' => array('field'),
   );
 
   return $schema;

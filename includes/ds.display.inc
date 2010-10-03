@@ -21,6 +21,7 @@ function ds_extend_manage_display_table(&$form, $form_state) {
   $fields = ds_get_fields($entity_type, $bundle, $view_mode, TRUE, FALSE);
 
   $table = &$form['fields'];
+  $form['#ds_fields'] = array();
 
   $field_label_options = array(
     'above' => t('Above'),
@@ -29,6 +30,7 @@ function ds_extend_manage_display_table(&$form, $form_state) {
   );
 
   foreach ($fields as $key => $field) {
+    $form['#ds_fields'][] = $key;
     $table[$key] = array(
       '#row_type' => 'field',
       '#attributes' => array('class' => array('draggable', 'tabledrag-leaf')),
@@ -79,5 +81,45 @@ function ds_extend_manage_display_table(&$form, $form_state) {
  * Save the region and field settings from the 'Manage display' screen.
  */
 function ds_extend_manage_display_table_submit($form, &$form_state) {
-  // We'll save later :)
+
+  // Get the entity_type, bundle and view mode.
+  $entity_type = $form['#entity_type'];
+  $bundle = $form['#bundle'];
+  $view_mode = $form['#view_mode'];
+
+  // Delete previous configuration.
+  db_delete('display_suite')
+    ->condition('entity_type', $entity_type)
+    ->condition('bundle', $bundle)
+    ->condition('view_mode', $view_mode)
+    ->execute();
+
+  // Create a record to insert into the display_suite table.
+  $record = new stdClass;
+  $record->entity_type = $entity_type;
+  $record->bundle = $bundle;
+  $record->view_mode = $view_mode;
+
+  // Save settings for each field.
+  $fields = $form['#ds_fields'];
+  foreach ($fields as $key => $field) {
+
+    // Field values.
+    $field_values = $form_state['values']['fields'][$field];
+
+    // Build settings.
+    $settings = array();
+    $settings['weight'] = $field_values['weight'];
+    $settings['label'] = $field_values['label'];
+    $settings['format'] = $field_values['format']['type'];
+
+    // Save the record.
+    $record->field = $field;
+    $record->settings = serialize($settings);
+    drupal_write_record('display_suite', $record);
+  }
+
+  // Clear the ds_fields_configuration cache.
+  cache_clear_all('ds_fields_configuration', 'cache');
+
 }
