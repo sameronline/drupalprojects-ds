@@ -10,8 +10,8 @@
  * Implements hook_schema().
  */
 function ds_schema() {
-  $schema['display_suite'] = array(
-    'description' => 'The table that holds configuration for the display of every entity.',
+  $schema['ds_settings'] = array(
+    'description' => 'The table that holds settings for the display of every entity.',
     'fields' => array(
       'field' => array(
         'description' => 'The machine name of the field.',
@@ -44,17 +44,47 @@ function ds_schema() {
       // TODO split up more (like label, format, class etc etc)
       'settings' => array(
         'description' => 'The settings for this field.',
-        'type' => 'text',
+        'type' => 'blob',
+        'not null' => FALSE,
         'size' => 'big',
-        'not null' => TRUE,
       ),
     ),
     'indexes' => array(
       'ds_field'        => array('field'),
-      'ds_entity'       => array('entity'),
+      'ds_entity'       => array('entity_type'),
       'ds_bundle'       => array('bundle'),
       'ds_view_mode'    => array('view_mode'),
     ),
+  );
+
+  $schema['ds_view_modes'] = array(
+    'description' => 'The table that holds custom view modes managed by Display Suite.',
+    'fields' => array(
+      'view_mode' => array(
+        'description' => 'The machine name of the view mode.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'label' => array(
+        'description' => 'The label of the view mode.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'entities' => array(
+        'description' => 'The entities for this view mode.',
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+      ),
+    ),
+    'indexes' => array(
+      'ds_view_mode'  => array('view_mode'),
+    ),
+    'primary key' => array('view_mode'),
   );
 
   return $schema;
@@ -64,9 +94,4 @@ function ds_schema() {
  * Implements hook_uninstall().
  */
 function ds_uninstall() {
-  // TODO probably not needed anymore.
-  db_delete('variable')
-    ->condition('name', 'ds_%', 'LIKE')
-    ->execute();
-  cache_clear_all('variables', 'cache');
 }

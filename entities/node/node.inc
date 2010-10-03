@@ -92,7 +92,7 @@ function node_ds_fields($entity_type, $bundle, $view_mode) {
       'formatters' => array(
         'ds_eval_code' => t('Default'),
       ),
-      'code' => '<?php echo l(t("Read more"), "node/$object->nid"); ?>' // TODO theme this no ? // or use new tokens in Drupal Core
+      'code' => '<?php echo l(t("Read more"), "node/$entity->nid"); ?>' // TODO theme this no ? // or use new tokens in Drupal Core
     ),
   );
 

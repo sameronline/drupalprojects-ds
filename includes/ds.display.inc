@@ -88,7 +88,7 @@ function ds_extend_manage_display_table_submit($form, &$form_state) {
   $view_mode = $form['#view_mode'];
 
   // Delete previous configuration.
-  db_delete('display_suite')
+  db_delete('ds_settings')
     ->condition('entity_type', $entity_type)
     ->condition('bundle', $bundle)
     ->condition('view_mode', $view_mode)
@@ -116,7 +116,7 @@ function ds_extend_manage_display_table_submit($form, &$form_state) {
     // Save the record.
     $record->field = $field;
     $record->settings = serialize($settings);
-    drupal_write_record('display_suite', $record);
+    drupal_write_record('ds_settings', $record);
   }
 
   // Clear the ds_fields_configuration cache.
