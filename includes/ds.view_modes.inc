@@ -69,7 +69,7 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
     '#description' => t('The human-readable label of view mode. This name must be unique.'),
     '#required' => TRUE,
     '#size' => 30,
-    '#field_suffix' => '<small id="edit-name-suffix">' . t('Machine name: @name', array('@name' => $view_mode->view_mode)) . '</small>',
+    '#field_suffix' => ' <small id="edit-label-suffix">' . t('Machine name: @view_mode', array('@view_mode' => $view_mode->view_mode)) . '</small>',
   );
 
   if (empty($view_mode->view_mode)) {
@@ -77,9 +77,9 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
       'type' => 'setting',
       'data' => array(
         'machineReadableValue' => array(
-          'view_mode' => array(
+          'label' => array(
             'text' => t('Machine name'),
-            'target' => 'view_mode',
+            'target' => 'view-mode',
             'searchPattern' => '[^a-z_]+',
             'replaceToken' => '_',
           ),
