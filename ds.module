@@ -53,13 +53,29 @@ function ds_theme() {
 
 /**
  * Load our own entity implementatios for fields, registry etc.
+ *
+ * @param $return
+ *   Whether to return the enabled entities or not.
+ * @return $entities
+ *   A collection of entities we support.
  */
-function ds_load_entity_implementations() {
-  static $loaded = FALSE;
+function ds_load_entity_implementations($return = FALSE) {
+  static $loaded, $entities = FALSE;
 
   if (!$loaded) {
     $loaded = TRUE;
-    require_once('entities/node/node.inc');
+    $entities = array();
+    $entity_info = entity_get_info();
+    foreach ($entity_info as $entity_type => $info) {
+      $file = module_load_include('inc', 'ds', 'entities/' . $entity_type . '/' . $entity_type);
+      if ($file) {
+        $entities[] = $entity_type;
+      }
+    }
+  }
+
+  if ($return) {
+    return $entities;
   }
 }
 
@@ -404,7 +420,7 @@ function theme_ds_eval_block($field) {
           $block->region = NULL;
           $block->module = $module;
           $block->delta = $delta;
-          $block_title = db_query("SELECT title FROM {blocks} WHERE module = :module AND delta = :delta AND theme = :theme", array(':module' => $module, ':delta' => $delta, ':theme' => $theme_key))->fetchField();
+          $block_title = db_query("SELECT title FROM {block} WHERE module = :module AND delta = :delta AND theme = :theme", array(':module' => $module, ':delta' => $delta, ':theme' => $theme_key))->fetchField();
           if (!empty($block_title)) {
             $block->subject = $block_title == '<none>' ? '' : check_plain($block_title);
           }
