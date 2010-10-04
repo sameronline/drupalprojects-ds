@@ -12,6 +12,7 @@
 function _ds_menu() {
   $items = array();
 
+  // Start page of Display Suite.
   $items['admin/structure/ds'] = array(
     'title' => 'Display suite',
     'description' => 'Manage configuration for Display Suite.',
