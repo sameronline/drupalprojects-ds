@@ -72,6 +72,21 @@ function ds_entity_info_alter(&$entity_info) {
 }
 
 /**
+ * Regions.
+ * @todo this is stub, replace with cool template files
+ */
+function ds_regions() {
+  return array(
+    'visible' => t('Header'),
+    'left' => t('Left'),
+    'middle' => t('Middle'),
+    'right' => t('Right'),
+    'footer' => t('Footer'),
+    'hidden' => t('Hidden'),
+  );
+}
+
+/**
  * API function to get fields.
  *
  * @param $entity_type

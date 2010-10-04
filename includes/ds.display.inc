@@ -25,7 +25,10 @@ function ds_extend_manage_display_table(&$form, $form_state) {
   $form['#ds_fields'] = array();
 
   // Add regions.
-  $form['fields']['#regions'] = array(
+  $table['#header'][5] = $table['#header'][4];
+  $table['#header'][5]['colspan'] = 3;
+  $table['#header'][4] = t('Region');
+  $table['#regions'] = array(
     'visible' => array('title' => t('Header'), 'message' => t('No field is displayed.')),
     'left' => array('title' => t('Left'), 'message' => t('No field is displayed.')),
     'middle' => array('title' => t('Middle'), 'message' => t('No field is displayed.')),
@@ -40,10 +43,16 @@ function ds_extend_manage_display_table(&$form, $form_state) {
     'hidden' => t('<Hidden>'),
   );
 
-  // Update existing rows accordingly.
+  // Update existing rows by changing rowHandler and adding regions.
   foreach (element_children($table) as $name) {
     $row = &$table[$name];
     $row['#js_settings'] = array('rowHandler' => 'ds');
+    // TODO move settings to the end of the array.
+    $row['region'] = array(
+      '#type' => 'select',
+      '#options' => ds_regions(),
+      '#default_value' => 'hidden',
+    );
   }
 
   foreach ($fields as $key => $field) {
@@ -85,6 +94,11 @@ function ds_extend_manage_display_table(&$form, $form_state) {
         '#type' => 'select',
         '#options' => $field_label_options,
         '#default_value' => isset($field_values[$key]['label']) ? $field_values[$key]['label'] : 'hidden',
+      ),
+      'region' => array(
+        '#type' => 'select',
+        '#options' => ds_regions(),
+        '#default_value' => 'hidden',
       ),
       'format' => array(
         'type' => array(
