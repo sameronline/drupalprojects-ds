@@ -19,9 +19,17 @@ function ds_extend_manage_display_table(&$form, $form_state) {
 
   // Get the fields.
   $fields = ds_get_fields($entity_type, $bundle, $view_mode, TRUE, FALSE);
+  $field_values = ds_get_fields_configuration($entity_type, $bundle, $view_mode);
 
   $table = &$form['fields'];
   $form['#ds_fields'] = array();
+
+  // Add regions.
+  $form['fields']['#regions'] = array(
+    'visible' => array('title' => t('Header'), 'message' => t('No field is displayed.')),
+    'footer' => array('title' => t('Footer'), 'message' => t('No field is displayed.')),
+    'hidden' => array('title' => t('Hidden'), 'message' => t('No field is hidden.')),
+  );
 
   $field_label_options = array(
     'above' => t('Above'),
@@ -29,10 +37,22 @@ function ds_extend_manage_display_table(&$form, $form_state) {
     'hidden' => t('<Hidden>'),
   );
 
+  // Update existing rows accordingly.
+  foreach (element_children($table) as $name) {
+    $row = &$table[$name];
+    $row['#js_settings'] = array('rowHandler' => 'ds');
+  }
+
   foreach ($fields as $key => $field) {
     $form['#ds_fields'][] = $key;
+
+    $formatters = isset($field['properties']['formatters']) ? $field['properties']['formatters'] : array('default' => t('Default'));
+    $formatters['hidden'] = t('<Hidden>');
+
     $table[$key] = array(
+      //'#parents' => array($key),
       '#row_type' => 'field',
+      '#js_settings' => array('rowHandler' => 'ds'),
       '#attributes' => array('class' => array('draggable', 'tabledrag-leaf')),
       '#region_callback' => 'field_ui_display_overview_row_region', // TODO
       'human_name' => array(
@@ -40,7 +60,7 @@ function ds_extend_manage_display_table(&$form, $form_state) {
       ),
       'weight' => array(
         '#type' => 'textfield',
-        '#default_value' => 0, // TODO
+        '#default_value' => isset($field_values[$key]['weight']) ? $field_values[$key]['weight'] : 0,
         '#size' => 3,
         '#attributes' => array('class' => array('field-weight')),
       ),
@@ -61,17 +81,22 @@ function ds_extend_manage_display_table(&$form, $form_state) {
       'label' => array(
         '#type' => 'select',
         '#options' => $field_label_options,
-        '#default_value' => 'default', // TODO
+        '#default_value' => isset($field_values[$key]['label']) ? $field_values[$key]['label'] : 'hidden',
       ),
       'format' => array(
         'type' => array(
           '#type' => 'select',
-          '#options' => isset($field['properties']['formatters']) ? $field['properties']['formatters'] : array('default' => t('Default')),
-          '#default_value' => 'default',
+          '#options' => $formatters,
+          '#default_value' => isset($field_values[$key]['format']) ? $field_values[$key]['format'] : 'hidden',
+          '#attributes' => array('class' => array('field-formatter-type')),
         ),
       ),
+      'settings_summary' => array(),
+      'settings_edit' => array(),
     );
   }
+
+  $form['#attached']['js'][] = drupal_get_path('module', 'ds') . '/js/ds.js';
 
   // Add extra submit handler.
   $form['#submit'][] = 'ds_form_field_ui_display_overview_form_alter_submit';

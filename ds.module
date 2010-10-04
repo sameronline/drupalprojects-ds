@@ -284,9 +284,16 @@ function ds_field_attach_view_alter(&$output, $context) {
 function ds_render_content(&$output, $entity_type, $bundle, $view_mode, $entity) {
   $field_values = ds_get_fields_configuration($entity_type, $bundle, $view_mode);
   $fields = ds_get_fields($entity_type, $bundle, $view_mode);
+
   foreach ($fields as $key => $field) {
 
-    $field['formatter'] = isset($field_values[$key]['format']) ? $field_values[$key]['format'] : 'default';
+    $format = isset($field_values[$key]['format']) ? $field_values[$key]['format'] : 'hidden';
+
+    if ($format == 'hidden') {
+      continue;
+    }
+
+    $field['formatter'] = $format;
     $field_value = ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_mode);
 
     $output[$key] = array(

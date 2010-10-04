@@ -176,11 +176,12 @@ function ds_edit_view_mode_form_submit($form, &$form_state) {
     ->condition('view_mode', $view_mode->view_mode)
     ->execute();
 
-  // Save view mode en clear entity info cache
+  // Save view mode en clear entity info cache and rebuild menu.
   drupal_write_record('ds_view_modes', $view_mode);
   cache_clear_all('entity_info', 'cache', TRUE);
+  menu_rebuild();
 
-  // TODO check if we need menu rebuild also
+  // Redirect.
   $form_state['redirect'] = 'admin/structure/ds/view_modes';
   drupal_set_message(t('The view mode %view_mode has been saved', array('%view_mode' => $view_mode->label)));
 }
@@ -214,11 +215,16 @@ function ds_delete_view_mode_confirm_submit($form, &$form_state) {
 
   $view_mode = $form['#view_mode'];
 
+  // Remove view mode.
   db_delete('ds_view_modes')
     ->condition('view_mode', $view_mode->view_mode)
     ->execute();
 
-  // TODO check if we need menu rebuild also
+  // Clear cache and rebuild menu.
+  menu_rebuild();
+  cache_clear_all('entity_info', 'cache', TRUE);
+
+  // Redirect.
   $form_state['redirect'] = 'admin/structure/ds/view_modes';
   drupal_set_message(t('The view mode %view_mode has been deleted', array('%view_mode' => $view_mode->label)));
 }
