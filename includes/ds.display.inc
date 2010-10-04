@@ -27,6 +27,9 @@ function ds_extend_manage_display_table(&$form, $form_state) {
   // Add regions.
   $form['fields']['#regions'] = array(
     'visible' => array('title' => t('Header'), 'message' => t('No field is displayed.')),
+    'left' => array('title' => t('Left'), 'message' => t('No field is displayed.')),
+    'middle' => array('title' => t('Middle'), 'message' => t('No field is displayed.')),
+    'right' => array('title' => t('Right'), 'message' => t('No field is displayed.')),
     'footer' => array('title' => t('Footer'), 'message' => t('No field is displayed.')),
     'hidden' => array('title' => t('Hidden'), 'message' => t('No field is hidden.')),
   );
