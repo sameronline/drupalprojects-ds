@@ -49,8 +49,43 @@ function _ds_menu() {
     'type' => MENU_CALLBACK,
   );
 
-
-
+  // Fields.
+  $items['admin/structure/ds/fields'] = array(
+    'title' => 'Fields',
+    'description' => 'Manage custom fields for all entities.',
+    'page callback' => 'ds_custom_fields',
+    'file' => 'includes/ds.fields.inc',
+    'access arguments' => array('admin_fields'),
+  );
+  $items['admin/structure/ds/fields/manage_custom'] = array(
+    'title' => 'Add a field',
+    'description' => 'Manage a field',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_edit_custom_field_form'),
+    'file' => 'includes/ds.fields.inc',
+    'access arguments' => array('admin_view_modes'),
+    'type' => MENU_LOCAL_ACTION,
+    'weight' => 0,
+  );
+  $items['admin/structure/ds/fields/manage_block'] = array(
+    'title' => 'Add a block field',
+    'description' => 'Manage a block field',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_edit_block_field_form'),
+    'file' => 'includes/ds.fields.inc',
+    'access arguments' => array('admin_view_modes'),
+    'type' => MENU_LOCAL_ACTION,
+    'weight' => 1,
+  );
+  $items['admin/structure/ds/fields/delete'] = array(
+    'title' => 'Delete a field',
+    'description' => 'Delete a field.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_delete_field_confirm'),
+    'file' => 'includes/ds.fields.inc',
+    'access arguments' => array('admin_fields'),
+    'type' => MENU_CALLBACK,
+  );
 
   return $items;
 }

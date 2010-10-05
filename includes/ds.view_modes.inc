@@ -66,7 +66,7 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
     '#title' => t('Label'),
     '#type' => 'textfield',
     '#default_value' => $view_mode->label,
-    '#description' => t('The human-readable label of view mode. This name must be unique.'),
+    '#description' => t('The human-readable label of the view mode. This name must be unique.'),
     '#required' => TRUE,
     '#size' => 30,
     '#field_suffix' => ' <small id="edit-label-suffix">' . t('Machine name: @view_mode', array('@view_mode' => $view_mode->view_mode)) . '</small>',
@@ -177,6 +177,7 @@ function ds_edit_view_mode_form_submit($form, &$form_state) {
     ->execute();
 
   // Save view mode en clear entity info cache and rebuild menu.
+  // TODO this doesn't work apparently
   drupal_write_record('ds_view_modes', $view_mode);
   cache_clear_all('entity_info', 'cache', TRUE);
   menu_rebuild();
@@ -221,6 +222,7 @@ function ds_delete_view_mode_confirm_submit($form, &$form_state) {
     ->execute();
 
   // Clear cache and rebuild menu.
+  // TODO check this.
   menu_rebuild();
   cache_clear_all('entity_info', 'cache', TRUE);
 

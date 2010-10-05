@@ -81,10 +81,34 @@ function ds_schema() {
         'size' => 'big',
       ),
     ),
-    'indexes' => array(
-      'ds_view_mode'  => array('view_mode'),
-    ),
     'primary key' => array('view_mode'),
+  );
+
+  $schema['ds_fields'] = array(
+    'description' => 'The table that holds custom fields managed by Display Suite.',
+    'fields' => array(
+      'field' => array(
+        'description' => 'The machine name of the field.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'label' => array(
+        'description' => 'The label of the field.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'entities' => array(
+        'description' => 'The entities for this field.',
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+      ),
+    ),
+    'primary key' => array('field'),
   );
 
   return $schema;
