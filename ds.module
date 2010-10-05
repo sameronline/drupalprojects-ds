@@ -208,18 +208,18 @@ function ds_get_view_modes() {
  * Get custom fields defined by Display Suite.
  */
 function ds_get_custom_fields() {
-  static $fields = NULL;
+  static $custom_fields = NULL;
 
   if (!isset($fields)) {
-    $fields = array();
+    $custom_fields = array();
     $results = db_query('SELECT field, label, entities FROM {ds_fields}')->fetchAll();
     foreach ($results as $field) {
       $field->entities = unserialize($field->entities);
-      $fields[$field->field] = $field;
+      $custom_fields[$field->field] = $field;
     }
   }
 
-  return $fields;
+  return $custom_fields;
 }
 
 /**

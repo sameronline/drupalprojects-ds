@@ -10,7 +10,40 @@
  * Shows the overview page for custom fields.
  */
 function ds_custom_fields() {
-  return 'jow';
+  $output = '';
+
+  $custom_fields = ds_get_custom_fields();
+  if (!empty($custom_fields)) {
+
+    $rows = array();
+    foreach ($custom_fields as $field_key => $field_value) {
+      $row = array();
+      $row[] = check_plain($field_value->label);
+      $row[] = $field_key;
+      $row[] = ucwords(str_replace('_', ' ', implode(', ', $field_value->entities)));
+      $operations = l(t('Edit'), 'admin/structure/ds/fields/manage/' . $field_key, array('alias' => TRUE));
+      $operations .= ' - ' . l(t('Delete'), 'admin/structure/ds/fields/delete/' . $field_key, array('alias' => TRUE));
+      $row[] = $operations;
+      $rows[] = $row;
+    }
+
+    $table = array(
+      'header' => array(
+        'Label',
+        'Machine name',
+        'Entities',
+        'Operations',
+      ),
+      'rows' => $rows,
+    );
+
+    $output = theme('table', $table);
+  }
+  else {
+    $output = t('No custom fields have been defined.');
+  }
+
+  return $output;
 }
 
 /**
@@ -203,7 +236,7 @@ function ds_delete_field_confirm_submit($form, &$form_state) {
 
   // Remove view mode.
   db_delete('ds_fields')
-    ->condition('fields', $field->field)
+    ->condition('field', $field->field)
     ->execute();
 
   // Clear cache.
