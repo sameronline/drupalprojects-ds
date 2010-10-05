@@ -59,11 +59,11 @@ function ds_extend_manage_display_table(&$form, $form_state) {
   foreach (element_children($table) as $name) {
     $row = &$table[$name];
     $row['#js_settings'] = array('rowHandler' => 'ds');
-    // Add region between parent_wrapper & label.
 
-    dsm($row);
+    // Add region between parent_wrapper & label.
+    $second = array_splice($row, 7);
     $row['region'] = $region;
-    dsm($row);
+    $row = array_merge($row, $second);
   }
 
   foreach ($fields as $key => $field) {
