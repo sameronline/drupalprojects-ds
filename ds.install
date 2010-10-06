@@ -107,6 +107,12 @@ function ds_schema() {
         'not null' => FALSE,
         'size' => 'big',
       ),
+      'properties' => array(
+        'description' => 'The properties for this field.',
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+      ),
     ),
     'primary key' => array('field'),
   );

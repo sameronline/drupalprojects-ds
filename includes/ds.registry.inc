@@ -67,16 +67,19 @@ function _ds_menu() {
     'type' => MENU_LOCAL_ACTION,
     'weight' => 0,
   );
-  $items['admin/structure/ds/fields/manage_block'] = array(
-    'title' => 'Add a block field',
-    'description' => 'Manage a block field',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_edit_block_field_form'),
-    'file' => 'includes/ds.fields.inc',
-    'access arguments' => array('admin_view_modes'),
-    'type' => MENU_LOCAL_ACTION,
-    'weight' => 1,
-  );
+  // Block can be disabled.
+  if (module_exists('block')) {
+    $items['admin/structure/ds/fields/manage_block'] = array(
+      'title' => 'Add a block field',
+      'description' => 'Manage a block field',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('ds_edit_block_field_form'),
+      'file' => 'includes/ds.fields.inc',
+      'access arguments' => array('admin_view_modes'),
+      'type' => MENU_LOCAL_ACTION,
+      'weight' => 1,
+    );
+  }
   $items['admin/structure/ds/fields/delete'] = array(
     'title' => 'Delete a field',
     'description' => 'Delete a field.',

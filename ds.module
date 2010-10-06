@@ -25,6 +25,13 @@ define('DS_FIELD_STATUS_CUSTOM', 3);
 define('DS_FIELD_STATUS_OVERRIDDEN', 4);
 
 /**
+ * Constants for block fields rendering.
+ */
+define('DS_BLOCK_TEMPLATE', 1);
+define('DS_BLOCK_TITLE_CONTENT', 2);
+define('DS_BLOCK_CONTENT', 3);
+
+/**
  * Implements hook_permission().
  */
 function ds_permission() {
@@ -36,10 +43,6 @@ function ds_permission() {
     'admin_fields' => array(
       'title' => t('Administer fields'),
       'description' => t('Create fields for every entity.')
-    ),
-    'admin_fields_php' => array(
-      'title' => t('Use PHP for fields'),
-      'description' => t('Use PHP for custom fields. Danger!'),
     ),
   );
 }
@@ -215,6 +218,7 @@ function ds_get_custom_fields() {
     $results = db_query('SELECT field, label, entities FROM {ds_fields}')->fetchAll();
     foreach ($results as $field) {
       $field->entities = unserialize($field->entities);
+      $field->properties = unserialize($field->properties);
       $custom_fields[$field->field] = $field;
     }
   }

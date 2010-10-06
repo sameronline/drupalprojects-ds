@@ -8,6 +8,8 @@
 
 /**
  * Shows the overview page for custom fields.
+ *
+ * TODO check on field type (also add to schema)
  */
 function ds_custom_fields() {
   $output = '';
@@ -49,7 +51,7 @@ function ds_custom_fields() {
 /**
  * Shared form for all all fields.
  */
-function ds_shared_form($field) {
+function ds_shared_form(&$form, $field) {
 
   $custom_fields = ds_get_custom_fields();
   if (isset($custom_view_modes[$field])) {
@@ -60,6 +62,7 @@ function ds_shared_form($field) {
     $field->label = '';
     $field->field = '';
     $field->entities = array();
+    $field->properties = array();
   }
 
   $form['label'] = array(
@@ -123,7 +126,8 @@ function ds_shared_form($field) {
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Save')
+    '#value' => t('Save'),
+    '#weight' => 100,
   );
 
   $form['old_field'] = array(
@@ -135,7 +139,7 @@ function ds_shared_form($field) {
   $form['#validate'][] = 'ds_shared_form_validate';
   $form['#submit'][] = 'ds_shared_form_submit';
 
-  return $form;
+  return $field;
 }
 
 /**
@@ -193,16 +197,77 @@ function ds_shared_form_submit($form, &$form_state) {
  * Manage a custom field.
  */
 function ds_edit_custom_field_form($form, &$form_state, $custom_field = '') {
-  $form += ds_shared_form($custom_field);
+  $custom_field = ds_shared_form($form, $custom_field);
+
+  $form['code'] = array(
+    '#type' => 'text_format',
+    '#title' => t('Field code'),
+    '#description' => t('If you are able to insert PHP code, the $entity variable is available to use. Eg $entity->nid is the id of a node.'),
+    '#default_value' => isset($custom_field->properties->code) ? $custom_field->code : '',
+    '#format' => isset($custom_field->properties->format) ? $custom_field->properties->format : 1,
+    '#base_type' => 'textarea',
+    '#required' => TRUE,
+  );
+
+  $form['#validate'][] = 'ds_custom_field_form_validate';
+
   return $form;
+}
+
+/**
+ * Custom field form validation.
+ */
+function ds_custom_field_form_validate($form, &$form_state) {
+  $form_state['field']->entities->code = $form_state['values']['code'];
 }
 
 /**
  * Manage a custom block.
  */
 function ds_edit_block_field_form($form, &$form_state, $custom_block = '') {
-  $form += ds_shared_form($custom_block);
+  $custom_block = ds_shared_form($form, $custom_block);
+
+  $blocks = array();
+  foreach (module_implements('block_info') as $module) {
+    $module_blocks = module_invoke($module, 'block_info');
+    if ($module_blocks) {
+      foreach ($module_blocks as $module_key => $info) {
+        $blocks[ucfirst($module)][$module .'|'. $module_key] = $info['info'];
+      }
+    }
+  }
+  ksort($blocks);
+
+  $form['block_identity']['block'] = array(
+    '#type' => 'select',
+    '#options' => $blocks,
+    '#title' => t('Block'),
+    '#required' => TRUE,
+    '#default_value' => isset($field->properties->block) ? $field->properties->block : '',
+  );
+  $form['block_identity']['block_render'] = array(
+    '#type' => 'select',
+    '#options' => array(
+      DS_BLOCK_TEMPLATE => t('Render through block template'),
+      DS_BLOCK_TITLE_CONTENT => t('Show block title + content'),
+      DS_BLOCK_CONTENT => t('Show only block content'),
+    ),
+    '#title' => t('Block render'),
+    '#required' => TRUE,
+    '#default_value' => isset($field->properties->block_render) ? $field->properties->block_render : '',
+  );
+
+  $form['#validate'][] = 'ds_block_field_form_validate';
+
   return $form;
+}
+
+/**
+ * Custom field form validation.
+ */
+function ds_block_field_form_validate($form, &$form_state) {
+  $form_state['field']->properties->block = $form_state['values']['block'];
+  $form_state['field']->properties->block_render = $form_state['values']['block_render'];
 }
 
 /**
