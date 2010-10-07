@@ -72,8 +72,8 @@ function ds_field_human_name($type) {
  */
 function ds_custom_manage($field_key = '') {
   $fields = ds_get_custom_fields();
-  if (isset($fields[$field])) {
-    $field = $fields[$field];
+  if (isset($fields[$field_key])) {
+    $field = $fields[$field_key];
     switch ($field->type) {
       case DS_FIELD_TYPE_CODE:
         $redirect = 'admin/structure/ds/fields/manage_custom/' . $field_key;
