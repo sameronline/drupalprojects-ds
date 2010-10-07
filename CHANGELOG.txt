@@ -6,6 +6,7 @@
 - #887530 by swentel: heigher delta for weights.
 - #886684 by swentel: check if module exists in ds fields plugin.
 - #872708 by swentel: extra info on the start screen.
+- #933876 by swentel: Fix tokens fieldset for rubik.
 - Added an new tool tab to export a stylesheet skeleton.
 - Add option in display plugin to change build modes per row via the UI.
 - Add option in display plugin to group on a sort field per row via the UI.
