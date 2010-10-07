@@ -8,8 +8,6 @@
 
 /**
  * Shows the overview page for custom fields.
- *
- * TODO check on field type (also add to schema)
  */
 function ds_custom_fields() {
   $output = '';
@@ -21,6 +19,7 @@ function ds_custom_fields() {
     foreach ($custom_fields as $field_key => $field_value) {
       $row = array();
       $row[] = check_plain($field_value->label);
+      $row[] = ds_field_human_name($field_value->type);
       $row[] = $field_key;
       $row[] = ucwords(str_replace('_', ' ', implode(', ', $field_value->entities)));
       $operations = l(t('Edit'), 'admin/structure/ds/fields/manage/' . $field_key, array('alias' => TRUE));
@@ -32,6 +31,7 @@ function ds_custom_fields() {
     $table = array(
       'header' => array(
         'Label',
+        'Type',
         'Machine name',
         'Entities',
         'Operations',
@@ -46,6 +46,51 @@ function ds_custom_fields() {
   }
 
   return $output;
+}
+
+/**
+ * Return the human name of a field.
+ *
+ * @return $human_name
+ *   The human name of a field.
+ */
+function ds_field_human_name($type) {
+
+  switch ($type) {
+    case DS_FIELD_TYPE_CODE:
+      return t('Code field');
+    case DS_FIELD_TYPE_BLOCK:
+      return t('Block field');
+  }
+
+  // Fallback
+  return t('Unknown');
+}
+
+/**
+ * Manage a field. This will redirect to the exact form.
+ */
+function ds_custom_manage($field_key = '') {
+  $fields = ds_get_custom_fields();
+  if (isset($fields[$field])) {
+    $field = $fields[$field];
+    switch ($field->type) {
+      case DS_FIELD_TYPE_CODE:
+        $redirect = 'admin/structure/ds/fields/manage_custom/' . $field_key;
+        break;
+
+      case DS_FIELD_TYPE_BLOCK:
+        $redirect = 'admin/structure/ds/fields/manage_block/' . $field_key;
+        break;
+
+      default:
+        drupal_set_message(t('Field not found'));
+        $redirect = 'admin/structure/ds/fields';
+        break;
+    }
+  }
+
+  drupal_goto($redirect);
 }
 
 /**
@@ -147,6 +192,7 @@ function ds_shared_form(&$form, $field) {
  */
 function ds_shared_form_validate($form, &$form_state) {
   $field = new stdClass;
+  $field->properties = new stdClass;
   $field->field = $form_state['values']['field'];
   $field->label = $form_state['values']['label'];
 
@@ -177,6 +223,7 @@ function ds_shared_form_validate($form, &$form_state) {
  */
 function ds_shared_form_submit($form, &$form_state) {
   $field = $form_state['field'];
+  $field->properties = serialize($field->properties);
 
   // Delete previous field configuration.
   db_delete('ds_fields')
@@ -218,7 +265,8 @@ function ds_edit_custom_field_form($form, &$form_state, $custom_field = '') {
  * Custom field form validation.
  */
 function ds_custom_field_form_validate($form, &$form_state) {
-  $form_state['field']->entities->code = $form_state['values']['code'];
+  $form_state['field']->type = DS_FIELD_TYPE_CODE;
+  $form_state['field']->properties->code = $form_state['values']['code'];
 }
 
 /**
@@ -266,6 +314,7 @@ function ds_edit_block_field_form($form, &$form_state, $custom_block = '') {
  * Custom field form validation.
  */
 function ds_block_field_form_validate($form, &$form_state) {
+  $form_state['field']->type = DS_FIELD_TYPE_BLOCK;
   $form_state['field']->properties->block = $form_state['values']['block'];
   $form_state['field']->properties->block_render = $form_state['values']['block_render'];
 }

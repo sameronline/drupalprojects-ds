@@ -101,6 +101,13 @@ function ds_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
+      'type' => array(
+        'description' => 'The type of of the field',
+        'type' => 'int',
+        'size' => 'small',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
       'entities' => array(
         'description' => 'The entities for this field.',
         'type' => 'blob',

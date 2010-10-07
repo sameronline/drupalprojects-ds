@@ -215,7 +215,7 @@ function ds_get_custom_fields() {
 
   if (!isset($fields)) {
     $custom_fields = array();
-    $results = db_query('SELECT field, label, entities FROM {ds_fields}')->fetchAll();
+    $results = db_query('SELECT field, label, type, entities, properties FROM {ds_fields}')->fetchAll();
     foreach ($results as $field) {
       $field->entities = unserialize($field->entities);
       $field->properties = unserialize($field->properties);

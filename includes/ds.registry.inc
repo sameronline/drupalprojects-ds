@@ -52,10 +52,17 @@ function _ds_menu() {
   // Fields.
   $items['admin/structure/ds/fields'] = array(
     'title' => 'Fields',
-    'description' => 'Manage custom fields for all entities.',
+    'description' => 'Manage fields for all entities.',
     'page callback' => 'ds_custom_fields',
     'file' => 'includes/ds.fields.inc',
     'access arguments' => array('admin_fields'),
+  );
+  $items['admin/structure/ds/fields/manage'] = array(
+    'title' => 'Fields edit',
+    'page callback' => 'ds_custom_manage',
+    'file' => 'includes/ds.fields.inc',
+    'access arguments' => array('admin_fields'),
+    'type' => MENU_CALLBACK,
   );
   $items['admin/structure/ds/fields/manage_custom'] = array(
     'title' => 'Add a field',
