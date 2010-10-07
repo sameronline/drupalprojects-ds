@@ -249,19 +249,18 @@ function _ds_field_object_info(&$form, $object, $field) {
   );
 
   if (module_exists('token')) {
-    $form['code_identity']['help']['code_token'] = array(
+    $form['code_identity']['code_token'] = array(
       '#type' => 'checkbox',
       '#title' => t('Toggle this checkbox if you are using tokens in this field.'),
       '#default_value' => $field['properties']['token'],
     );
-    $form['code_identity']['help']['tokens'] = array(
+    $form['code_identity']['tokens'] = array(
       '#type' => 'fieldset',
       '#title' => t('Placeholder tokens'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
-    $form['code_identity']['help']['tokens']['info'] = array(
-      '#type' => 'item',
+    $form['code_identity']['tokens']['help'] = array(
       '#value' => theme('token_help', $object),
     );
   }
