@@ -97,10 +97,9 @@ function ds_custom_manage($field_key = '') {
  * Shared form for all all fields.
  */
 function ds_shared_form(&$form, $field) {
-
   $custom_fields = ds_get_custom_fields();
-  if (isset($custom_view_modes[$field])) {
-    $field = $custom_view_modes[$field];
+  if (isset($custom_fields[$field])) {
+    $field = $custom_fields[$field];
   }
   else {
     $field = new stdClass;
@@ -250,11 +249,37 @@ function ds_edit_custom_field_form($form, &$form_state, $custom_field = '') {
     '#type' => 'text_format',
     '#title' => t('Field code'),
     '#description' => t('If you are able to insert PHP code, the $entity variable is available to use. Eg $entity->nid is the id of a node.'),
-    '#default_value' => isset($custom_field->properties->code) ? $custom_field->code : '',
-    '#format' => isset($custom_field->properties->format) ? $custom_field->properties->format : 1,
+    '#default_value' => isset($custom_field->properties->code['value']) ? $custom_field->properties->code['value'] : '',
+    '#format' => isset($custom_field->properties->code['format']) ? $custom_field->properties->code['format'] : 1,
     '#base_type' => 'textarea',
     '#required' => TRUE,
   );
+
+  $form['use_token'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Token'),
+    '#description' => t('Toggle this checkbox if you are using tokens in this field.'),
+    '#default_value' => isset($custom_field->properties->use_token) ? $custom_field->properties->use_token : '',
+  );
+
+  // Token support.
+  if (module_exists('token')) {
+
+    $form['tokens'] = array(
+      '#title' => t('Tokens'),
+      '#type' => 'fieldset',
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+    $form['tokens']['help'] = array(
+      '#theme' => 'token_tree',
+      '#token_types' => 'all',
+      '#global_types' => FALSE,
+    );
+  }
+  else {
+    $form['use_token']['#description'] = t('Toggle this checkbox if you are using tokens in this field. If the token module is installed, you get a nice list of all tokens available in your site.');
+  }
 
   $form['#validate'][] = 'ds_custom_field_form_validate';
 
@@ -267,6 +292,7 @@ function ds_edit_custom_field_form($form, &$form_state, $custom_field = '') {
 function ds_custom_field_form_validate($form, &$form_state) {
   $form_state['field']->type = DS_FIELD_TYPE_CODE;
   $form_state['field']->properties->code = $form_state['values']['code'];
+  $form_state['field']->properties->use_token = $form_state['values']['use_token'];
 }
 
 /**

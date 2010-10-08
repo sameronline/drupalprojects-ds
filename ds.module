@@ -152,14 +152,22 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
           foreach ($all_fields as $key => $field_results) {
             if ($key === $entity_type) {
               $fields = array_merge($field_results, $fields);
-              /*foreach ($fields as $key => $field) {
-                $exclude = (isset($field['exclude'][$type_name]) && $field['exclude'][$type_name] === $type_name) ? TRUE : FALSE;
-                if ($exclude) {
-                  unset($fields[$key]);
-                }
-              }*/
             }
           }
+        }
+      }
+
+      // Fields in database. // TODO refactor / cache this, in fact, this complete function needs to be refactored :)
+      // TODO all stuff should be objects, not arrays (see properties here)
+      $custom_fields = ds_get_custom_fields();
+      foreach ($custom_fields as $key => $field) {
+        if (isset($field->entities[$entity_type])) {
+          $fields[$key] = array(
+            'title' => $field->label,
+            'type' => $field->type,
+            // TODO status field
+            'properties' => (array) $field->properties,
+          );
         }
       }
 
