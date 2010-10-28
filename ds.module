@@ -266,7 +266,7 @@ function ds_build_fields_and_regions(&$object, $module) {
         // Create a $key_rendered variable.
         $key_rendered = $key .'_rendered';
 
-        // Theming can either be done in preprocess, or with a custom funtion or an
+        // Theming can either be done in preprocess, with a custom function or an
         // existing formatter theming function. Always pass the $field as parameter.
         switch ($field['type']) {
           case DS_FIELD_TYPE_PREPROCESS:
