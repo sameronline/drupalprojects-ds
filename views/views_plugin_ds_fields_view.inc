@@ -194,8 +194,7 @@ class views_plugin_ds_fields_view extends views_plugin_row {
 
         // Get the form of the group and create a theme key.
         $parent_field = $fields[$parent];
-        $format = (isset($parent_field->handler->options
-        ['ds_format'])) ? $parent_field->handler->options['ds_format'] : 'ds_group_fieldset';
+        $format = (isset($parent_field->handler->options['ds_format'])) ? $parent_field->handler->options['ds_format'] : 'ds_group_fieldset';
         $ds_fields[$parent]['theme'] = $format;
         $ds_groups[$parent][$key] = $weight;
       }
