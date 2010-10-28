@@ -176,8 +176,8 @@ Drupal.DisplaySuite.toggleDisplayTab = function(element) {
   $('#ds-tabs .tab').each(function() {
     var tab_id = $(this).attr('id');
     var content_id = tab_id.replace('-tab', '-content');
-	if (tab_id == element) {
-	  // Tabs.
+	  if (tab_id == element) {
+      // Tabs.
       $(this).addClass('selected');
       $(this).removeClass('not-selected');
       // Content.
