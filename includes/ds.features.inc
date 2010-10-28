@@ -98,10 +98,11 @@ function ds_features_export_render($module = 'foo', $data) {
 function ds_features_revert($module = NULL) {
 
   // Display settings.
-  $display_settings = module_invoke($module, 'ds_default_settings');
-  foreach ($display_settings as $ds_module => $settings) {
-    foreach ($settings as $object_type => $setting) {
-      variable_set($ds_module .'_display_settings_'. $object_type, $setting);
+  if ($display_settings = module_invoke($module, 'ds_default_settings')) {
+    foreach ($display_settings as $ds_module => $settings) {
+      foreach ($settings as $object_type => $setting) {
+        variable_set($ds_module .'_display_settings_'. $object_type, $setting);
+      }
     }
   }
 }

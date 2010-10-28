@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 6.x-1.4 2010-xx-xx
 -------------------------------------------------------------------------------------
+- #931510 by joelstein: fix occasional features errors when reverting.
 - #848478 by swentel: add relationship to views.
 - #855888 by swentel: add support for foreign tables and modules in views fields.
 - #887530 by swentel: heigher delta for weights.
