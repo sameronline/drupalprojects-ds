@@ -282,7 +282,7 @@ function ds_code_field_form_validate($form, &$form_state) {
     $module = $form['#module'];
     $fields = $form['#all_fields'];
     $existing = array_keys($fields);
-
+dsm($fields);
     if (in_array($form_state['values']['code_key'], $existing)) {
       form_set_error('code_key', t('This field already exists.'));
     }

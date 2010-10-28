@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 6.x-1.4 2010-xx-xx
 -------------------------------------------------------------------------------------
+- #922114 by Shawn DeArmond: Exporting ds features properly requires strongarm.
 - #931510 by joelstein: fix occasional features errors when reverting.
 - #848478 by swentel: add relationship to views.
 - #855888 by swentel: add support for foreign tables and modules in views fields.
