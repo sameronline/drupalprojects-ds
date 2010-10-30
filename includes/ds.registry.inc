@@ -126,8 +126,8 @@ function _ds_theme() {
   // Load theming functions from entities we implement.
   $entities = ds_load_entity_implementations(TRUE);
   foreach ($entities as $entity_type) {
-    $enitity_type_theme_function = $entity_type . '_ds_theme_registry';
-    $theme_functions += $enitity_type_theme_function();
+    $entity_type_theme_function = $entity_type . '_ds_theme_registry';
+    $theme_functions += $entity_type_theme_function();
   }
 
   return $theme_functions;
