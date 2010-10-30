@@ -115,6 +115,12 @@ function _ds_theme() {
     'ds_eval_block' => array(
       'variables' => array('field' => NULL),
     ),
+    // Layouts
+    // @todo should be registered otherwise of course.
+    'ds_2col' => array(
+      'render element' => 'elements',
+      'template' => 'layouts/ds_2col/ds-2col',
+    ),
   );
 
   // Load theming functions from entities we implement.
