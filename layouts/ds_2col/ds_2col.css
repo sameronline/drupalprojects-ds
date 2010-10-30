@@ -1,0 +1,11 @@
+/* $Id$ */
+
+.group-left {
+  float: left;
+  width: 50%;
+}
+
+.group-right {
+	float: left;
+  width: 50%;
+}
