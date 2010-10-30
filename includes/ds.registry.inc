@@ -145,4 +145,62 @@ function _ds_entity_info_alter(&$entity_info) {
       }
     }
   }
+
+  // Add layout if applicable.
+  $ds_layouts = module_invoke_all('ds_layouts');
+  $results = db_query('SELECT entity_type, bundle, view_mode, layout FROM {ds_layouts}')->fetchAll();
+  foreach ($results as $row) {
+    $layout = $ds_layouts[$row->layout];
+    $layout['layout'] = $row->layout;
+    $entity_info[$row->entity_type]['bundles'][$row->bundle]['layouts'][$row->view_mode] = $layout;
+  }
+}
+
+/**
+ * Display suite layouts.
+ */
+function _ds_layouts() {
+  $path = drupal_get_path('module', 'ds');
+  $layouts = array(
+    'ds_2col' => array(
+      'label' => t('Two column'),
+      'path' => $path . '/layouts/ds_2col',
+      'regions' => array(
+        'left' => t('Left'),
+        'right' => t('Right')
+      ),
+    ),
+    'ds_2col_stacked' => array(
+      'label' => t('Two column stacked'),
+      'path' => $path . '/layouts/ds_2col_stacked',
+      'regions' => array(
+        'header' => t('Header'),
+        'left' => t('Left'),
+        'right' => t('Right'),
+        'footer' => t('Footer'),
+      ),
+    ),
+    'ds_3col' => array(
+      'label' => t('Three column'),
+      'path' => $path . '/layouts/ds_3col',
+      'regions' => array(
+        'left' => t('Left'),
+        'middle' => t('Middle'),
+        'right' => t('Right'),
+      ),
+    ),
+    'ds_3col_stacked' => array(
+      'label' => t('Three column stacked'),
+      'path' => $path . '/layouts/ds_3col_stacked',
+      'regions' => array(
+        'header' => t('Header'),
+        'left' => t('Left'),
+        'middle' => t('Middle'),
+        'right' => t('Right'),
+        'footer' => t('Footer'),
+      ),
+    ),
+  );
+
+  return $layouts;
 }

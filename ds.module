@@ -64,6 +64,46 @@ function ds_theme() {
 }
 
 /**
+ * Implements hook_entity_info_alter().
+ */
+function ds_entity_info_alter(&$entity_info) {
+  module_load_include('inc', 'ds', 'includes/ds.registry');
+  _ds_entity_info_alter($entity_info);
+}
+
+/**
+ * Implements hook_ds_layouts().
+ */
+function ds_ds_layouts() {
+  module_load_include('inc', 'ds', 'includes/ds.registry');
+  return _ds_layouts();
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ds_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
+  module_load_include('inc', 'ds', 'includes/ds.display');
+  ds_extend_field_ui_table($form, $form_state);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
+  module_load_include('inc', 'ds', 'includes/ds.display');
+  ds_extend_field_ui_table($form, $form_state);
+}
+
+/**
+ * Save the region and field settings from the 'Manage fields' screen.
+ */
+function ds_extend_field_ui_table_submit($form, &$form_state) {
+  module_load_include('inc', 'ds', 'includes/ds.display');
+  ds_extend_field_ui_table_save($form, $form_state);
+}
+
+/**
  * Load our own entity implementatios for fields, registry etc.
  *
  * @param $return
@@ -89,29 +129,6 @@ function ds_load_entity_implementations($return = FALSE) {
   if ($return) {
     return $entities;
   }
-}
-
-/**
- * Implements hook_entity_info_alter().
- */
-function ds_entity_info_alter(&$entity_info) {
-  module_load_include('inc', 'ds', 'includes/ds.registry');
-  _ds_entity_info_alter($entity_info);
-}
-
-/**
- * Regions.
- * @todo this is stub, replace with cool template files
- */
-function ds_regions() {
-  return array(
-    'visible' => t('Header'),
-    'left' => t('Left'),
-    'middle' => t('Middle'),
-    'right' => t('Right'),
-    'footer' => t('Footer'),
-    'hidden' => t('Hidden'),
-  );
 }
 
 /**
@@ -314,22 +331,6 @@ function ds_get_fields_configuration($entity_type, $bundle, $view_mode) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
- */
-function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
-  module_load_include('inc', 'ds', 'includes/ds.display');
-  ds_extend_manage_display_table($form, $form_state);
-}
-
-/**
- * Save the region and field settings from the 'Manage display' screen.
- */
-function ds_form_field_ui_display_overview_form_alter_submit($form, &$form_state) {
-  module_load_include('inc', 'ds', 'includes/ds.display');
-  ds_extend_manage_display_table_submit($form, $form_state);
-}
-
-/**
  * Implements hook_field_attach_view_alter().
  */
 function ds_field_attach_view_alter(&$output, $context) {
@@ -338,6 +339,28 @@ function ds_field_attach_view_alter(&$output, $context) {
   $view_mode = $context['view_mode'];
   $entity = $context['entity'];
   ds_render_content($output, $entity_type, $bundle, $view_mode, $entity);
+
+  // Add layouts.
+  $entity_info = entity_get_info();
+  // @todo temp fix - get default for now.
+  $view_mode = 'default';
+  if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode])) {
+    $layout = $entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode];
+    $output['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
+  }
+
+}
+
+/**
+ * Implements hook_field_attach_form().
+ */
+function ds_field_attach_form($entity_type, $entity, &$form, &$form_state, $langcode) {
+  $bundle = $form['#bundle'];
+  $entity_info = entity_get_info();
+  if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['form'])) {
+    $layout = $entity_info[$entity_type]['bundles'][$bundle]['layouts']['form'];
+    $form['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
+  }
 }
 
 /**

@@ -57,6 +57,45 @@ function ds_schema() {
     ),
   );
 
+  $schema['ds_layouts'] = array(
+    'description' => 'The table that holds the layouts for the display of every entity.',
+    'fields' => array(
+      'entity_type' => array(
+        'description' => 'The name of the entity.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'bundle' => array(
+        'description' => 'The name of the entity.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'view_mode' => array(
+        'description' => 'The name of the view_mode.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'layout' => array(
+        'description' => 'The name of the layout.',
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+    ),
+    'indexes' => array(
+      'ds_entity'       => array('entity_type'),
+      'ds_bundle'       => array('bundle'),
+      'ds_view_mode'    => array('view_mode'),
+    ),
+  );
+
   $schema['ds_view_modes'] = array(
     'description' => 'The table that holds custom view modes managed by Display Suite.',
     'fields' => array(
