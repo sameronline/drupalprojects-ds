@@ -23,7 +23,7 @@ function ds_extend_field_ui_table(&$form, $form_state) {
 
   $layout_options = array();
   $ds_layouts = module_invoke_all('ds_layouts');
-  $layout_options = array('' => t('<None>'));
+  $layout_options = array('' => t(' - None - '));
   foreach ($ds_layouts as $key => $layout) {
     $layout_options[$key] = $layout['label'];
   }
