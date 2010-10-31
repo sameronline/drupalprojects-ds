@@ -6,12 +6,12 @@
 
 .group-left {
   float: left;
-  width: 70%;
+  width: 50%;
 }
 
 .group-right {
   float: right;
-  width: 30%;
+  width: 50%;
 }
 
 .group-footer {
