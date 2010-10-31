@@ -121,6 +121,10 @@ function _ds_theme() {
       'render element' => 'elements',
       'template' => 'layouts/ds_2col/ds-2col',
     ),
+    'ds_2col_stacked' => array(
+      'render element' => 'elements',
+      'template' => 'layouts/ds_2col_stacked/ds-2col-stacked',
+    ),
   );
 
   // Load theming functions from entities we implement.
