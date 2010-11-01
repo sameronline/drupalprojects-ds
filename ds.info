@@ -7,6 +7,7 @@ dependencies[] = field_group
 files[] = ds.module
 files[] = ds.install
 files[] = includes/ds.display.inc
+files[] = includes/ds.fields.inc
 files[] = includes/ds.registry.inc
 files[] = includes/ds.view_modes.inc
 files[] = entities/node/node.inc
