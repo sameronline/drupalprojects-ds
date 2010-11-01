@@ -353,7 +353,7 @@ function ds_preprocess_node(&$variables) {
  * Implements hook_field_attach_form().
  */
 function ds_field_attach_form($entity_type, $entity, &$form, &$form_state, $langcode) {
-  ds_determine_layout_variables($entity_type, $form['#bundle'], 'form', 'css', &$form['#attached']['css']);
+  ds_determine_layout_variables($entity_type, $form['#bundle'], 'form', 'css', $form['#attached']['css']);
 }
 
 /**
