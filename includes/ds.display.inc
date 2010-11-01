@@ -21,6 +21,110 @@ function ds_extend_field_ui_table(&$form, $form_state) {
     $form['modes']['view_modes_custom']['#description'] = t('<a href="!url">Create new view modes</a>', array('!url' => url('admin/structure/ds/view_modes')));
   }
 
+  // Add extra fields.
+  ds_extend_field_ui_table_fields($entity_type, $bundle, $view_mode, $form);
+
+  // Add layouts fieldset.
+  ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, $form);
+
+  // Add extra submit handler.
+  $form['#submit'][] = 'ds_extend_field_ui_table_submit';
+}
+
+/**
+ * Adds the Display Suite fields to the form.
+ *
+ * @param $entity_type
+ *   The name of the entity type.
+ * @param $bundle
+ *   The name of the bundle
+ * @param $view_mode
+ *   The name of the view_mode
+ * @param $form
+ *   A collection of form properties.
+ */
+function ds_extend_field_ui_table_fields($entity_type, $bundle, $view_mode, &$form) {
+
+  // Get the fields.
+  $fields = ds_get_fields($entity_type, $bundle, $view_mode, TRUE, FALSE);
+  $field_values = ds_get_fields_configuration($entity_type, $bundle, $view_mode);
+
+  $table = &$form['fields'];
+  $form['#ds_fields'] = array();
+
+  $field_label_options = array(
+    'above' => t('Above'),
+    'inline' => t('Inline'),
+    'hidden' => t('<Hidden>'),
+  );
+
+foreach ($fields as $key => $field) {
+    $form['#ds_fields'][] = $key;
+
+    $formatters = isset($field['properties']['formatters']) ? $field['properties']['formatters'] : array('default' => t('Default'));
+
+    $table[$key] = array(
+      //'#parents' => array($key),
+      '#row_type' => 'field',
+      '#js_settings' => array('rowHandler' => 'field'),
+      '#attributes' => array('class' => array('draggable', 'tabledrag-leaf')),
+      '#region_callback' => 'field_ui_display_overview_row_region',
+      'human_name' => array(
+        '#markup' => check_plain($field['title']),
+      ),
+      'weight' => array(
+        '#type' => 'textfield',
+        '#default_value' => isset($field_values[$key]['weight']) ? $field_values[$key]['weight'] : 0,
+        '#size' => 3,
+        '#attributes' => array('class' => array('field-weight')),
+      ),
+      'parent_wrapper' => array(
+        'parent' => array(
+          '#type' => 'select',
+          '#empty_value' => '',
+          '#options' => array(), // This will be filled by field_group. Default value as well.
+          '#attributes' => array('class' => array('field-parent')),
+          '#parents' => array('fields', $key, 'parent'),
+        ),
+        'hidden_name' => array(
+          '#type' => 'hidden',
+          '#default_value' => $key,
+          '#attributes' => array('class' => array('field-name')),
+        ),
+      ),
+      'label' => array(
+        '#type' => 'select',
+        '#options' => $field_label_options,
+        '#default_value' => isset($field_values[$key]['label']) ? $field_values[$key]['label'] : 'hidden',
+      ),
+      'format' => array(
+        'type' => array(
+          '#type' => 'select',
+          '#options' => $formatters,
+          '#default_value' => isset($field_values[$key]['format']) ? $field_values[$key]['format'] : 'hidden',
+          '#attributes' => array('class' => array('field-formatter-type')),
+        ),
+      ),
+      'settings_summary' => array(),
+      'settings_edit' => array(),
+    );
+  }
+}
+
+/**
+ * Adds the layouts fieldset to the form.
+ *
+ * @param $entity_type
+ *   The name of the entity type.
+ * @param $bundle
+ *   The name of the bundle
+ * @param $view_mode
+ *   The name of the view_mode
+ * @param $form
+ *   A collection of form properties.
+ */
+function ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
+
   $layout_options = array();
   $ds_layouts = module_invoke_all('ds_layouts');
   $layout_options = array('' => t(' - None - '));
@@ -49,9 +153,6 @@ function ds_extend_field_ui_table(&$form, $form_state) {
     $layout = $ds_layouts[$layout];
     $form['ds_layouts']['current'] = array('#markup' => t('You have chosen the %layout layout.', array('%layout' => $layout['label'])));
   }
-
-  // Add extra submit handler.
-  $form['#submit'][] = 'ds_extend_field_ui_table_submit';
 }
 
 /**

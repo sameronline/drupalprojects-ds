@@ -340,7 +340,6 @@ function ds_field_attach_view_alter(&$output, $context) {
   $entity = $context['entity'];
   ds_render_content($output, $entity_type, $bundle, $view_mode, $entity);
   ds_determine_layout_variables($entity_type, $bundle, $view_mode, 'css', &$output['#attached']['css']);
-
 }
 
 /**
@@ -375,13 +374,17 @@ function ds_determine_layout_variables($entity_type, $bundle, $view_mode, $type,
   $layout = array();
   $entity_info = entity_get_info();
 
+  $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
+  $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
+
   // Check if a layout is configured.
   if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode])) {
     $layout = $entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode];
   }
 
-  // In case $view_mode is not form and not found, check if we have a default layout.
-  if ($view_mode != 'form' && $view_mode != 'default' && isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'])) {
+  // In case $view_mode is not form and not found, check if we have a default layout,
+  // but only if the view mode settings aren't overridden for this view mode.
+  if ($view_mode != 'form' && $view_mode != 'default' && !$overriden && isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'])) {
     $layout = $entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'];
   }
 
