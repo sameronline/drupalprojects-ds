@@ -2,7 +2,7 @@
 // $Id$
 
 /**
- * Extend 'Manage display' table with layout and fields.
+ * Extend 'Manage fields/display' table with layout and fields.
  *
  * @param $form
  *   The form to add layout fieldset and extra display suite fields.
@@ -133,7 +133,7 @@ function ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$f
   }
 
   // Add layouts form.
-  $layout = db_query('SELECT layout FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchField();
+  $layout = db_query('SELECT layout, load_css, load_template FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
   $form['ds_layouts'] = array(
     '#type' => 'fieldset',
     '#title' => t('Layouts'),
@@ -150,9 +150,23 @@ function ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$f
     );
   }
   else {
-    $layout = $ds_layouts[$layout];
-    $form['ds_layouts']['current'] = array('#markup' => t('You have chosen the %layout layout.', array('%layout' => $layout['label'])));
+    $form['ds_layouts']['layout'] = array('#type' => 'value', '#value' => $layout->layout);
+    $form['ds_layouts']['existing'] = array('#type' => 'value', '#value' => TRUE);
+    $form['ds_layouts']['current'] = array('#markup' => '<p>'. t('You have chosen the %layout layout.', array('%layout' => $ds_layouts[$layout->layout]['label'])) .'</p>');
   }
+
+  // Load css & template file.
+  $form['ds_layouts']['load_css'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Load stylesheet'),
+    '#default_value' => isset($layout->load_css) ? $layout->load_css : 1,
+  );
+
+  $form['ds_layouts']['load_template'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Load template file'),
+    '#default_value' => isset($layout->load_template) ? $layout->load_template : 1,
+  );
 }
 
 /**
@@ -163,23 +177,25 @@ function ds_extend_field_ui_table_save($form, &$form_state) {
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = isset($form['#view_mode']) ? $form['#view_mode'] : 'form';
+  $layout_new = isset($form_state['values']['existing']) ? FALSE : TRUE;
 
   // Save layout and add regions if necessary.
-  $layout = isset($form_state['values']['layout']) ? $form_state['values']['layout'] : 0;
-  if (!empty($layout)) {
+  $record = new stdClass;
+  $record->entity_type = $entity_type;
+  $record->bundle = $bundle;
+  $record->view_mode = $view_mode;
+  $record->layout = $form_state['values']['layout'];
+  $record->load_css = $form_state['values']['load_css'];
+  $record->load_template = $form_state['values']['load_template'];
 
-    // Layout record.
-    $record = new stdClass;
-    $record->entity_type = $entity_type;
-    $record->bundle = $bundle;
-    $record->view_mode = $view_mode;
-    $record->layout = $layout;
+  if ($layout_new) {
+    // Save layout.
     drupal_write_record('ds_layouts', $record);
 
     // Group records.
     $weight = -100;
     $ds_layouts = module_invoke_all('ds_layouts');
-    $layout = $ds_layouts[$layout];
+    $layout = $ds_layouts[$record->layout];
     foreach ($layout['regions'] as $region => $label) {
       $record = new stdClass;
       $record->group_name = 'group_' . $region;
@@ -194,9 +210,12 @@ function ds_extend_field_ui_table_save($form, &$form_state) {
       );
       drupal_write_record('field_group', $record);
     }
-
-    // Clear entity cache.
-    cache_clear_all('entity_info', 'cache', TRUE);
+  }
+  else {
+    // Update existing layout.
+    drupal_write_record('ds_layouts', $record, array('entity_type', 'bundle', 'view_mode', 'layout'));
   }
 
+  // Clear entity cache.
+  cache_clear_all('entity_info', 'cache', TRUE);
 }
