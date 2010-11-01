@@ -79,9 +79,19 @@ function node_ds_fields($entity_type, $bundle, $view_mode) {
   // Links.
   $fields['links'] = array(
     'title' => t('Links'),
-    'type' => DS_FIELD_TYPE_PREPROCESS,
+    'type' => DS_FIELD_TYPE_IGNORE,
     'status' => DS_FIELD_STATUS_STATIC,
   );
+
+  // Comments.
+  // @todo check in_preview
+  if (module_exists('comment') && ($view_mode == 'full' || $view_mode == 'default')) {
+    $fields['comments'] = array(
+      'title' => t('Comments'),
+      'type' => DS_FIELD_TYPE_IGNORE,
+      'status' => DS_FIELD_STATUS_STATIC,
+    );
+  }
 
   // Read more link.
   $fields['read_more'] = array(
