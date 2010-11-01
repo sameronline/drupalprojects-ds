@@ -28,8 +28,6 @@ function ds_extend_field_ui_table(&$form, $form_state) {
     $layout_options[$key] = $layout['label'];
   }
 
-  // @todo needs more work - like what with reselect and stuff - or might need a delete button to reset the layout ?
-
   // Add layouts form.
   $layout = db_query('SELECT layout FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchField();
   $form['ds_layouts'] = array(
@@ -48,7 +46,8 @@ function ds_extend_field_ui_table(&$form, $form_state) {
     );
   }
   else {
-    $form['ds_layouts']['current'] = array('#markup' => 'Current layout chosen: '. $layout .' - remove button is coming later :)');
+    $layout = $ds_layouts[$layout];
+    $form['ds_layouts']['current'] = array('#markup' => t('You have chosen the %layout layout.', array('%layout' => $layout['label'])));
   }
 
   // Add extra submit handler.
@@ -94,6 +93,9 @@ function ds_extend_field_ui_table_save($form, &$form_state) {
       );
       drupal_write_record('field_group', $record);
     }
+
+    // Clear entity cache.
+    cache_clear_all('entity_info', 'cache', TRUE);
   }
 
 }

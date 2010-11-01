@@ -339,44 +339,63 @@ function ds_field_attach_view_alter(&$output, $context) {
   $view_mode = $context['view_mode'];
   $entity = $context['entity'];
   ds_render_content($output, $entity_type, $bundle, $view_mode, $entity);
+  ds_determine_layout_variables($entity_type, $bundle, $view_mode, 'css', &$output['#attached']['css']);
 
-  // Add layouts.
-  $entity_info = entity_get_info();
-  // @todo temp - get default for now.
-  $view_mode = 'default';
-  if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode])) {
-    $layout = $entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode];
-    $output['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
-  }
 }
 
 /**
  * Implements hook_preprocess_node().
- *
- * @param $variables
- *   A collection of variables.
  */
 function ds_preprocess_node(&$variables) {
-  $entity_info = entity_get_info();
-  $bundle = $variables['node']->type;
-  $view_mode = $variables['elements']['#view_mode'];
-  // @todo temp - get default for now.
-  $view_mode = 'default';
-  if (isset($entity_info['node']['bundles'][$bundle]['layouts'][$view_mode])) {
-    $layout = $entity_info['node']['bundles'][$bundle]['layouts'][$view_mode];
-    $variables['theme_hook_suggestions'][] = $layout['layout'];
-  }
+  ds_determine_layout_variables('node', $variables['node']->type, $variables['elements']['#view_mode'], 'theme_hook_suggestions', &$variables['theme_hook_suggestions']);
 }
 
 /**
  * Implements hook_field_attach_form().
  */
 function ds_field_attach_form($entity_type, $entity, &$form, &$form_state, $langcode) {
-  $bundle = $form['#bundle'];
+  ds_determine_layout_variables($entity_type, $form['#bundle'], 'form', 'css', &$form['#attached']['css']);
+}
+
+/**
+ *
+ * @param $entity_type
+ *   The name of the entity.
+ * @param $bundle
+ *   The name of the bundle.
+ * @param $view_mode
+ *   The name of the view mode.
+ * @param $variables
+ *   The variables to add either the css file or theme_hook_suggestions.
+ * @param $type
+ *   The type of variables to add to (can be css or theme_hook_suggestions).
+ */
+function ds_determine_layout_variables($entity_type, $bundle, $view_mode, $type, $variables = array()) {
+  // @todo keep static
+  $layout = array();
   $entity_info = entity_get_info();
-  if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['form'])) {
-    $layout = $entity_info[$entity_type]['bundles'][$bundle]['layouts']['form'];
-    $form['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
+
+  // Check if a layout is configured.
+  if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode])) {
+    $layout = $entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode];
+  }
+
+  // In case $view_mode is not form and not found, check if we have a default layout.
+  if ($view_mode != 'form' && $view_mode != 'default' && isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'])) {
+    $layout = $entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'];
+  }
+
+  if (!empty($layout)) {
+
+    // Add path to css file for this layout.
+    if ($type == 'css') {
+      $variables[] = $layout['path'] . '/' . $layout['layout'] . '.css';
+    }
+
+    // Add template files for hook_theme_suggestions.
+    if ($type == 'theme_hook_suggestions') {
+      $variables[] = $layout['layout'];
+    }
   }
 }
 

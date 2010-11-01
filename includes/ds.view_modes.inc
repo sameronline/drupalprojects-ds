@@ -161,6 +161,9 @@ function ds_edit_view_mode_form_validate($form, &$form_state) {
   if (!preg_match('!^[a-z_]+$!', $view_mode->view_mode)) {
     form_set_error('type', t('The machine-readable name must contain only lowercase letters and underscores.'));
   }
+  if ($view_mode->view_mode == 'form' || $view_mode->view_mode == 'default') {
+    form_set_error('type', t('The machine-readable name %view_mode is reserved.', array('%view_mode' => $view_mode->view_mode)));
+  }
 
   $form_state['view_mode'] = $view_mode;
 }
