@@ -275,16 +275,6 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
   $field['entity'] = $entity;
 
   switch ($field['type']) {
-    /*case DS_FIELD_TYPE_PREPROCESS:
-    case DS_FIELD_TYPE_IGNORE:
-      if (isset($field['properties']['key']) && !empty($field['properties']['key'])) {
-        $ds_preprocess_fields[$key] = array('type' => $field['type'], 'key' => $field['properties']['key']);
-      }
-      else {
-        $ds_preprocess_fields[$key] = $field['type'];
-      }
-      break;*/
-
     case DS_FIELD_TYPE_FUNCTION:
       // TODO make sure we use DRUPAL_ROOT to include
       if (isset($field['file']) && !isset($included_files[$field['file']])) {
@@ -331,15 +321,15 @@ function ds_get_fields_configuration($entity_type, $bundle, $view_mode) {
 }
 
 /**
- * Implements hook_field_attach_view_alter().
+ * Implements hook_entity_view_alter().
  */
-function ds_field_attach_view_alter(&$output, $context) {
-  $entity_type = $output['#entity_type'];
-  $bundle = $output['#bundle'];
-  $view_mode = $context['view_mode'];
-  $entity = $context['entity'];
+function ds_entity_view_alter(&$build, $type) {
+  $entity_type = $build['#entity_type'];
+  $bundle = $build['#bundle'];
+  $view_mode = $build['#view_mode'];
+  $entity = $build['#' . $type];
   ds_render_content($output, $entity_type, $bundle, $view_mode, $entity);
-  ds_determine_layout_variables($entity_type, $bundle, $view_mode, 'css', $output['#attached']['css']);
+  ds_determine_layout_variables($entity_type, $bundle, $view_mode, 'css', $build['#attached']['css']);
 }
 
 /**

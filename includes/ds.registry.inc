@@ -115,17 +115,16 @@ function _ds_theme() {
     'ds_eval_block' => array(
       'variables' => array('field' => NULL),
     ),
-    // Layouts
-    // @todo should be registered otherwise of course.
-    'ds_2col' => array(
-      'render element' => 'elements',
-      'template' => 'layouts/ds_2col/ds-2col',
-    ),
-    'ds_2col_stacked' => array(
-      'render element' => 'elements',
-      'template' => 'layouts/ds_2col_stacked/ds-2col-stacked',
-    ),
   );
+
+  // Layouts
+  $layouts = module_invoke_all('ds_layouts');
+  foreach ($layouts as $key => $layout) {
+    $theme_functions[$key] = array(
+      'render element' => 'elements',
+      'template' => 'layouts/' . $key . '/' . strtr($key, '_', '-'),
+    );
+  }
 
   // Load theming functions from entities we implement.
   $entities = ds_load_entity_implementations(TRUE);

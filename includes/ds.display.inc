@@ -58,10 +58,11 @@ function ds_extend_field_ui_table_fields($entity_type, $bundle, $view_mode, &$fo
     'hidden' => t('<Hidden>'),
   );
 
-foreach ($fields as $key => $field) {
+  foreach ($fields as $key => $field) {
     $form['#ds_fields'][] = $key;
 
-    $formatters = isset($field['properties']['formatters']) ? $field['properties']['formatters'] : array('default' => t('Default'));
+    $formatters = array('hidden' => t('<Hidden>'));
+    $formatters += isset($field['properties']['formatters']) ? $field['properties']['formatters'] : array('default' => t('Default'));
 
     $table[$key] = array(
       //'#parents' => array($key),
