@@ -179,6 +179,41 @@ function ds_extend_field_ui_table_save($form, &$form_state) {
   $view_mode = isset($form['#view_mode']) ? $form['#view_mode'] : 'form';
   $layout_new = isset($form_state['values']['existing']) ? FALSE : TRUE;
 
+  // Delete previous field configuration configuration.
+  db_delete('ds_settings')
+    ->condition('entity_type', $entity_type)
+    ->condition('bundle', $bundle)
+    ->condition('view_mode', $view_mode)
+    ->execute();
+
+  // Create a record to insert into the ds_settings table.
+  $record = new stdClass;
+  $record->entity_type = $entity_type;
+  $record->bundle = $bundle;
+  $record->view_mode = $view_mode;
+
+  // Save settings for each field.
+  $fields = $form['#ds_fields'];
+  foreach ($fields as $key => $field) {
+
+    // Field values.
+    $field_values = $form_state['values']['fields'][$field];
+
+    // Build settings.
+    $settings = array();
+    $settings['weight'] = $field_values['weight'];
+    $settings['label'] = $field_values['label'];
+    $settings['format'] = $field_values['format']['type'];
+
+    // Save the record.
+    $record->field = $field;
+    $record->settings = serialize($settings);
+    drupal_write_record('ds_settings', $record);
+  }
+
+  // Clear the ds_fields_configuration cache.
+  cache_clear_all('ds_fields_configuration', 'cache');
+
   // Save layout and add regions if necessary.
   $record = new stdClass;
   $record->entity_type = $entity_type;
