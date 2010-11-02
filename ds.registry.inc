@@ -179,6 +179,22 @@ function ds_entity_info_alter(&$entity_info) {
 }
 
 /**
+ * Implements hook_theme_registry_alter().
+ */
+function ds_theme_registry_alter(&$theme_registry) {
+
+  // Inject ds_preprocess_entity in all base theming functions. User profile is
+  // different than the rest, using user_profile though :(
+  $entity_info = entity_get_info();
+  foreach ($entity_info as $entity => $info) {
+    if ($entity_info[$entity]['fieldable']) {
+      if ($entity == 'user') $entity = 'user_profile';
+      $theme_registry[$entity]['preprocess functions'][] = 'ds_preprocess_entity';
+    }
+  }
+}
+
+/**
  * Implements hook_ds_layouts().
  */
 function ds_ds_layouts() {

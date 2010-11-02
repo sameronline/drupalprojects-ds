@@ -2,6 +2,26 @@
 // $Id$
 
 /**
+ * @file
+ * Field UI form alters for Display Suite.
+ */
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ds_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
+  dsm('jow');
+  ds_extend_field_ui_table($form, $form_state);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
+  ds_extend_field_ui_table($form, $form_state);
+}
+
+/**
  * Extend 'Manage fields/display' table with layout and fields.
  *
  * @param $form
