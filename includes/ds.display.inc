@@ -134,7 +134,7 @@ function ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$f
   }
 
   // Add layouts form.
-  $layout = db_query('SELECT layout, load_css, load_template FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
+  $layout = db_query('SELECT layout, load_css, load_template, load_html5 FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
   $form['ds_layouts'] = array(
     '#type' => 'fieldset',
     '#title' => t('Layouts'),
@@ -167,6 +167,12 @@ function ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$f
     '#type' => 'checkbox',
     '#title' => t('Load template file'),
     '#default_value' => isset($layout->load_template) ? $layout->load_template : 1,
+  );
+
+  $form['ds_layouts']['load_html5'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Load the HTML 5 version of the template file'),
+    '#default_value' => isset($layout->load_html5) ? $layout->load_html5 : 0,
   );
 }
 
@@ -223,6 +229,7 @@ function ds_extend_field_ui_table_save($form, &$form_state) {
   $record->layout = $form_state['values']['layout'];
   $record->load_css = $form_state['values']['load_css'];
   $record->load_template = $form_state['values']['load_template'];
+  $record->load_html5 = $form_state['values']['load_html5'];
 
   if ($layout_new) {
     // Save layout.

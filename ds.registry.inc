@@ -120,9 +120,17 @@ function ds_theme() {
   // Layouts
   $layouts = module_invoke_all('ds_layouts');
   foreach ($layouts as $key => $layout) {
+
+    // Default HTML template.
     $theme_functions[$key] = array(
       'render element' => 'elements',
       'template' => 'layouts/' . $key . '/' . strtr($key, '_', '-'),
+    );
+
+    // HTML 5 version of template.
+    $theme_functions[$key . '_html5'] = array(
+      'render element' => 'elements',
+      'template' => 'layouts/' . $key . '/' . strtr($key, '_', '-') .'-html5',
     );
   }
 
@@ -157,12 +165,13 @@ function ds_entity_info_alter(&$entity_info) {
 
   // Add layout if applicable.
   $ds_layouts = module_invoke_all('ds_layouts');
-  $results = db_query('SELECT entity_type, bundle, view_mode, layout, load_css, load_template FROM {ds_layouts}')->fetchAll();
+  $results = db_query('SELECT entity_type, bundle, view_mode, layout, load_css, load_template, load_html5 FROM {ds_layouts}')->fetchAll();
   foreach ($results as $row) {
     $layout = $ds_layouts[$row->layout];
     $layout['layout'] = $row->layout;
     $layout['load_css'] = $row->load_css;
     $layout['load_template'] = $row->load_template;
+    $layout['load_html5'] = $row->load_html5;
     $entity_info[$row->entity_type]['bundles'][$row->bundle]['layouts'][$row->view_mode] = $layout;
   }
 }
@@ -180,6 +189,7 @@ function ds_ds_layouts() {
         'left' => t('Left'),
         'right' => t('Right')
       ),
+      'has_html5' => TRUE,
     ),
     'ds_2col_stacked' => array(
       'label' => t('Two column stacked'),
@@ -190,6 +200,7 @@ function ds_ds_layouts() {
         'right' => t('Right'),
         'footer' => t('Footer'),
       ),
+      'has_html5' => TRUE,
     ),
     'ds_3col' => array(
       'label' => t('Three column'),
@@ -199,6 +210,7 @@ function ds_ds_layouts() {
         'middle' => t('Middle'),
         'right' => t('Right'),
       ),
+      'has_html5' => TRUE,
     ),
     'ds_3col_stacked' => array(
       'label' => t('Three column stacked'),
@@ -210,6 +222,7 @@ function ds_ds_layouts() {
         'right' => t('Right'),
         'footer' => t('Footer'),
       ),
+      'has_html5' => TRUE,
     ),
   );
 

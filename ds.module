@@ -369,7 +369,7 @@ function ds_determine_layout_variables($entity_type, $bundle, $view_mode, $type,
 
     // Add template files for hook_theme_suggestions.
     if ($type == 'theme_hook_suggestions' && $layout['load_template']) {
-      $variables[] = $layout['layout'];
+      $variables[] = $layout['layout'] . ($layout['load_html5'] ? '_html5' : '');
     }
   }
 }
