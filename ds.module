@@ -68,7 +68,7 @@ function ds_hook_info() {
  * Save the region and field settings from the 'Manage fields' screen.
  */
 function ds_extend_field_ui_table_submit($form, &$form_state) {
-  module_load_include('inc', 'ds', 'includes/ds.display');
+  module_load_include('inc', 'ds', 'ds.field_ui');
   ds_extend_field_ui_table_save($form, $form_state);
 }
 
@@ -290,14 +290,15 @@ function ds_get_fields_configuration($entity_type, $bundle, $view_mode) {
 }
 
 /**
- * Implements hook_entity_view_alter().
+ * Implements hook_field_attach_view_alter().
  */
-function ds_entity_view_alter(&$build, $type) {
+function ds_field_attach_view_alter(&$build, $context) {
   $entity_type = $build['#entity_type'];
   $bundle = $build['#bundle'];
-  $view_mode = $build['#view_mode'];
-  $entity = $build['#' . $type];
+  $view_mode = $context['view_mode'];
+  $entity = $context['entity'];
   ds_render_content($build, $entity_type, $bundle, $view_mode, $entity);
+  //ds_determine_layout_variables($entity_type, $bundle, $view_mode, 'css', $build['#attached']['css']);
 }
 
 /**
@@ -307,18 +308,18 @@ function ds_entity_view_alter(&$build, $type) {
  * to every entity that is themeable.
  */
 function ds_preprocess_entity(&$variables) {
-  ds_determine_layout_variables($variables['elements']['#entity_type'], $variables['elements']['#bundle'], $variables['elements']['#view_mode'], $variables['elements']['#attached']['css'], $variables['theme_hook_suggestions']);
+  ds_determine_layout_variables($variables['elements']['#entity_type'], $variables['elements']['#bundle'], $variables['elements']['#view_mode'], 'css', $variables['elements']['#attached']);
+  ds_determine_layout_variables($variables['elements']['#entity_type'], $variables['elements']['#bundle'], $variables['elements']['#view_mode'], 'theme_hook_suggestions', $variables['theme_hook_suggestions']);
 }
 
 /**
  * Implements hook_field_attach_form().
  */
 function ds_field_attach_form($entity_type, $entity, &$form, &$form_state, $langcode) {
-  ds_determine_layout_variables($entity_type, $form['#bundle'], 'form', 'css', $form['#attached']['css']);
+   //ds_determine_layout_variables($entity_type, $form['#bundle'], 'form', $form['#attached']);
 }
 
 /**
- * Function to attach css and add theme_hook_suggestions if needed.
  *
  * @param $entity_type
  *   The name of the entity.
@@ -329,9 +330,9 @@ function ds_field_attach_form($entity_type, $entity, &$form, &$form_state, $lang
  * @param $variables
  *   The variables to add either the css file or theme_hook_suggestions.
  * @param $type
- *   The type of variables to add to (can be css or theme_hook_suggestions).
+ *   The type of variables to ad$outputd to (can be css or theme_hook_suggestions).
  */
-function ds_determine_layout_variables($entity_type, $bundle, $view_mode, &$css = array(), &$theme_hook_suggestions = array()) {
+function ds_determine_layout_variables($entity_type, $bundle, $view_mode, $type, &$variables) {
   // @todo keep static
   $layout = array();
   $entity_info = entity_get_info();
@@ -353,12 +354,16 @@ function ds_determine_layout_variables($entity_type, $bundle, $view_mode, &$css 
   if (!empty($layout)) {
 
     // Add path to css file for this layout.
-    if ($layout['load_css']) {
-      $variables[] = $layout['path'] . '/' . $layout['layout'] . '.css';
+    if ($type == 'css' && $layout['load_css']) {
+      $css_file = $layout['path'] . '/' . $layout['layout'] . '.css';
+      if (!isset($variables['css'])) {
+        $variables['css'] = array();
+      }
+      $variables['css'][] = $css_file;
     }
 
     // Add template files for hook_theme_suggestions.
-    if ($layout['load_template']) {
+    if ($type == 'theme_hook_suggestions' && $layout['load_template']) {
       $variables[] = $layout['layout'] . ($layout['load_html5'] ? '_html5' : '');
     }
   }
