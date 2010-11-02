@@ -7,9 +7,9 @@
  */
 
 /**
- * Menu implementations.
+ * Implements hook_menu().
  */
-function _ds_menu() {
+function ds_menu() {
   $items = array();
 
   // Start page of Display Suite.
@@ -101,9 +101,9 @@ function _ds_menu() {
 }
 
 /**
- * Theme implementations.
+ * Implements hook_theme().
  */
-function _ds_theme() {
+function ds_theme() {
 
   // Display Suite theme functions.
   $theme_functions = array(
@@ -137,9 +137,9 @@ function _ds_theme() {
 }
 
 /**
- * Entity info alter.
+ * Implements hook_entity_info_alter().
  */
-function _ds_entity_info_alter(&$entity_info) {
+function ds_entity_info_alter(&$entity_info) {
 
   // Add custom view modes to entities.
   $custom_view_modes = ds_get_view_modes();
@@ -168,9 +168,9 @@ function _ds_entity_info_alter(&$entity_info) {
 }
 
 /**
- * Display suite layouts.
+ * Implements hook_ds_layouts().
  */
-function _ds_layouts() {
+function ds_ds_layouts() {
   $path = drupal_get_path('module', 'ds');
   $layouts = array(
     'ds_2col' => array(

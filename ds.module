@@ -48,35 +48,17 @@ function ds_permission() {
 }
 
 /**
- * Implements hook_menu().
+ * Implements hook_hook_info().
  */
-function ds_menu() {
-  module_load_include('inc', 'ds', 'includes/ds.registry');
-  return _ds_menu();
-}
+function ds_hook_info() {
+  $hooks = array(
+    'menu' => array('group' => 'registry'),
+    'theme' => array('group' => 'registry'),
+    'entity_info_alter' => array('group' => 'registry'),
+    'ds_layouts' => array('group' => 'registry'),
+  );
 
-/**
- * Implements hook_theme().
- */
-function ds_theme() {
-  module_load_include('inc', 'ds', 'includes/ds.registry');
-  return _ds_theme();
-}
-
-/**
- * Implements hook_entity_info_alter().
- */
-function ds_entity_info_alter(&$entity_info) {
-  module_load_include('inc', 'ds', 'includes/ds.registry');
-  _ds_entity_info_alter($entity_info);
-}
-
-/**
- * Implements hook_ds_layouts().
- */
-function ds_ds_layouts() {
-  module_load_include('inc', 'ds', 'includes/ds.registry');
-  return _ds_layouts();
+  return $hooks;
 }
 
 /**
@@ -328,7 +310,7 @@ function ds_entity_view_alter(&$build, $type) {
   $bundle = $build['#bundle'];
   $view_mode = $build['#view_mode'];
   $entity = $build['#' . $type];
-  ds_render_content($output, $entity_type, $bundle, $view_mode, $entity);
+  ds_render_content($build, $entity_type, $bundle, $view_mode, $entity);
   ds_determine_layout_variables($entity_type, $bundle, $view_mode, 'css', $build['#attached']['css']);
 }
 
