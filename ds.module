@@ -298,7 +298,6 @@ function ds_entity_view_alter(&$build, $type) {
   $view_mode = $build['#view_mode'];
   $entity = $build['#' . $type];
   ds_render_content($build, $entity_type, $bundle, $view_mode, $entity);
-  ds_determine_layout_variables($entity_type, $bundle, $view_mode, 'css', $build['#attached']['css']);
 }
 
 /**
@@ -308,7 +307,7 @@ function ds_entity_view_alter(&$build, $type) {
  * to every entity that is themeable.
  */
 function ds_preprocess_entity(&$variables) {
-  ds_determine_layout_variables($variables['elements']['#entity_type'], $variables['elements']['#bundle'], $variables['elements']['#view_mode'], 'theme_hook_suggestions', $variables['theme_hook_suggestions']);
+  ds_determine_layout_variables($variables['elements']['#entity_type'], $variables['elements']['#bundle'], $variables['elements']['#view_mode'], $variables['elements']['#attached']['css'], $variables['theme_hook_suggestions']);
 }
 
 /**
@@ -319,6 +318,7 @@ function ds_field_attach_form($entity_type, $entity, &$form, &$form_state, $lang
 }
 
 /**
+ * Function to attach css and add theme_hook_suggestions if needed.
  *
  * @param $entity_type
  *   The name of the entity.
@@ -331,7 +331,7 @@ function ds_field_attach_form($entity_type, $entity, &$form, &$form_state, $lang
  * @param $type
  *   The type of variables to add to (can be css or theme_hook_suggestions).
  */
-function ds_determine_layout_variables($entity_type, $bundle, $view_mode, $type, &$variables = array()) {
+function ds_determine_layout_variables($entity_type, $bundle, $view_mode, &$css = array(), &$theme_hook_suggestions = array()) {
   // @todo keep static
   $layout = array();
   $entity_info = entity_get_info();
@@ -353,12 +353,12 @@ function ds_determine_layout_variables($entity_type, $bundle, $view_mode, $type,
   if (!empty($layout)) {
 
     // Add path to css file for this layout.
-    if ($type == 'css' && $layout['load_css']) {
+    if ($layout['load_css']) {
       $variables[] = $layout['path'] . '/' . $layout['layout'] . '.css';
     }
 
     // Add template files for hook_theme_suggestions.
-    if ($type == 'theme_hook_suggestions' && $layout['load_template']) {
+    if ($layout['load_template']) {
       $variables[] = $layout['layout'] . ($layout['load_html5'] ? '_html5' : '');
     }
   }

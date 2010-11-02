@@ -27,7 +27,7 @@ function ds_menu() {
     'title' => 'View modes',
     'description' => 'Manage custom view modes for all entities.',
     'page callback' => 'ds_custom_view_modes',
-    'file' => 'includes/ds.view_modes.inc',
+    'file' => 'ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
   );
   $items['admin/structure/ds/view_modes/manage'] = array(
@@ -35,7 +35,7 @@ function ds_menu() {
     'description' => 'Manage a view mode',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_edit_view_mode_form'),
-    'file' => 'includes/ds.view_modes.inc',
+    'file' => 'ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
     'type' => MENU_LOCAL_ACTION,
   );
@@ -44,7 +44,7 @@ function ds_menu() {
     'description' => 'Delete a custom view mode.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_delete_view_mode_confirm'),
-    'file' => 'includes/ds.view_modes.inc',
+    'file' => 'ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
     'type' => MENU_CALLBACK,
   );
@@ -54,13 +54,13 @@ function ds_menu() {
     'title' => 'Fields',
     'description' => 'Manage fields for all entities.',
     'page callback' => 'ds_custom_fields',
-    'file' => 'includes/ds.fields.inc',
+    'file' => 'ds.fields.inc',
     'access arguments' => array('admin_fields'),
   );
   $items['admin/structure/ds/fields/manage'] = array(
     'title' => 'Fields edit',
     'page callback' => 'ds_custom_manage',
-    'file' => 'includes/ds.fields.inc',
+    'file' => 'ds.fields.inc',
     'access arguments' => array('admin_fields'),
     'type' => MENU_CALLBACK,
   );
@@ -69,7 +69,7 @@ function ds_menu() {
     'description' => 'Manage a field',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_edit_custom_field_form'),
-    'file' => 'includes/ds.fields.inc',
+    'file' => 'ds.fields.inc',
     'access arguments' => array('admin_view_modes'),
     'type' => MENU_LOCAL_ACTION,
     'weight' => 0,
@@ -81,7 +81,7 @@ function ds_menu() {
       'description' => 'Manage a block field',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('ds_edit_block_field_form'),
-      'file' => 'includes/ds.fields.inc',
+      'file' => 'ds.fields.inc',
       'access arguments' => array('admin_view_modes'),
       'type' => MENU_LOCAL_ACTION,
       'weight' => 1,
@@ -92,7 +92,7 @@ function ds_menu() {
     'description' => 'Delete a field.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_delete_field_confirm'),
-    'file' => 'includes/ds.fields.inc',
+    'file' => 'ds.fields.inc',
     'access arguments' => array('admin_fields'),
     'type' => MENU_CALLBACK,
   );
