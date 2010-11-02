@@ -44,6 +44,10 @@ function node_ds_theme_registry() {
 function node_ds_fields($entity_type, $bundle, $view_mode) {
   $fields = array();
 
+  if ($view_mode == 'form') {
+    return;
+  }
+
   // Title TODO check if type has a title.
   $fields['title'] = array(
     'title' => t('Title'),

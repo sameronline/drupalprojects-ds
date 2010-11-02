@@ -9,7 +9,7 @@
 /**
  * Implements hook_menu().
  */
-function ds_menu() {
+function _ds_menu() {
   $items = array();
 
   // Start page of Display Suite.
@@ -103,7 +103,7 @@ function ds_menu() {
 /**
  * Implements hook_theme().
  */
-function ds_theme() {
+function _ds_theme() {
 
   // Display Suite theme functions.
   $theme_functions = array(
@@ -147,9 +147,25 @@ function ds_theme() {
 }
 
 /**
+ * Implements hook_theme_registry_alter().
+ */
+function _ds_theme_registry_alter(&$theme_registry) {
+
+  // Inject ds_preprocess_entity in all base theming functions. User profile is
+  // different than the rest, using user_profile though :(
+  $entity_info = entity_get_info();
+  foreach ($entity_info as $entity => $info) {
+    if ($entity_info[$entity]['fieldable']) {
+      if ($entity == 'user') $entity = 'user_profile';
+      $theme_registry[$entity]['preprocess functions'][] = 'ds_preprocess_entity';
+    }
+  }
+}
+
+/**
  * Implements hook_entity_info_alter().
  */
-function ds_entity_info_alter(&$entity_info) {
+function _ds_entity_info_alter(&$entity_info) {
 
   // Add custom view modes to entities.
   $custom_view_modes = ds_get_view_modes();
@@ -179,25 +195,9 @@ function ds_entity_info_alter(&$entity_info) {
 }
 
 /**
- * Implements hook_theme_registry_alter().
- */
-function ds_theme_registry_alter(&$theme_registry) {
-
-  // Inject ds_preprocess_entity in all base theming functions. User profile is
-  // different than the rest, using user_profile though :(
-  $entity_info = entity_get_info();
-  foreach ($entity_info as $entity => $info) {
-    if ($entity_info[$entity]['fieldable']) {
-      if ($entity == 'user') $entity = 'user_profile';
-      $theme_registry[$entity]['preprocess functions'][] = 'ds_preprocess_entity';
-    }
-  }
-}
-
-/**
  * Implements hook_ds_layouts().
  */
-function ds_ds_layouts() {
+function _ds_ds_layouts() {
   $path = drupal_get_path('module', 'ds');
   $layouts = array(
     'ds_2col' => array(

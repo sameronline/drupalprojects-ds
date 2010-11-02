@@ -48,20 +48,59 @@ function ds_permission() {
 }
 
 /**
- * Implements hook_hook_info().
+ * Implements hook_menu().
  */
-function ds_hook_info() {
-  $hooks = array(
-    'menu' => array('group' => 'registry'),
-    'theme' => array('group' => 'registry'),
-    'entity_info_alter' => array('group' => 'registry'),
-    'ds_layouts' => array('group' => 'registry'),
-    'theme_registry_alter' => array('group' => 'registry'),
-    'form_field_ui_field_overview_form_alter' => array('group' => 'field_ui'),
-    'form_field_ui_display_overview_form_alter' => array('group' => 'field_ui'),
-  );
+function ds_menu() {
+  module_load_include('inc', 'ds', 'ds.registry');
+  return _ds_menu();
+}
 
-  return $hooks;
+/**
+ * Implements hook_theme().
+ */
+function ds_theme() {
+  module_load_include('inc', 'ds', 'ds.registry');
+  return _ds_theme();
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function ds_theme_registry_alter(&$theme_registry) {
+  module_load_include('inc', 'ds', 'ds.registry');
+  _ds_theme_registry_alter($theme_registry);
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function ds_entity_info_alter(&$entity_info) {
+  module_load_include('inc', 'ds', 'ds.registry');
+  _ds_entity_info_alter($entity_info);
+}
+
+/**
+ * Implements hook_ds_layouts().
+ */
+function ds_ds_layouts() {
+  module_load_include('inc', 'ds', 'ds.registry');
+  return _ds_ds_layouts();
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ds_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
+  module_load_include('inc', 'ds', 'ds.field_ui');
+  ds_extend_field_ui_table($form, $form_state);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
+  module_load_include('inc', 'ds', 'ds.field_ui');
+  ds_extend_field_ui_table($form, $form_state);
 }
 
 /**
