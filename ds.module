@@ -454,6 +454,8 @@ function ds_eval($code, $entity) {
 /**
  * Evaluate custom code.
  *
+ * @todo rename to something else, we really need to check with content_format!
+ *
  * @param $field
  *   The field with all its properties.
  */

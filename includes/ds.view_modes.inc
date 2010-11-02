@@ -62,48 +62,26 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
     $view_mode->entities = array();
   }
 
-  $form['label'] = array(
+  $form['name'] = array(
     '#title' => t('Label'),
     '#type' => 'textfield',
     '#default_value' => $view_mode->label,
     '#description' => t('The human-readable label of the view mode. This name must be unique.'),
     '#required' => TRUE,
     '#size' => 30,
-    '#field_suffix' => ' <small id="edit-label-suffix">' . t('Machine name: @view_mode', array('@view_mode' => $view_mode->view_mode)) . '</small>',
   );
 
-  if (empty($view_mode->view_mode)) {
-    $js_settings = array(
-      'type' => 'setting',
-      'data' => array(
-        'machineReadableValue' => array(
-          'label' => array(
-            'text' => t('Machine name'),
-            'target' => 'view-mode',
-            'searchPattern' => '[^a-z_]+',
-            'replaceToken' => '_',
-          ),
-        ),
-      ),
-    );
-    $form['view_mode'] = array(
-      '#title' => t('Machine name'),
-      '#type' => 'textfield',
-      '#default_value' => $view_mode->view_mode,
-      '#maxlength' => 32,
-      '#required' => TRUE,
-      '#description' => t('The machine-readable name of this view mode. This name must contain only lowercase letters and underscores. This name must be unique.'),
-      '#attached' => array(
-        'js' => array(drupal_get_path('module', 'system') . '/system.js', $js_settings),
-      ),
-    );
-  }
-  else {
-    $form['view_mode'] = array(
-      '#type' => 'value',
-      '#value' => $view_mode->view_mode
-    );
-  }
+  $form['view_mode'] = array(
+    '#title' => t('Machine name'),
+    '#type' => 'machine_name',
+    '#default_value' => $view_mode->view_mode,
+    '#maxlength' => 32,
+    '#description' => t('The machine-readable name of this view mode. This name must contain only lowercase letters and underscores. This name must be unique.'),
+    '#disabled' => !empty($view_mode->view_mode),
+    '#machine_name' => array(
+      'exists' => 'ds_view_mode_unique',
+    ),
+  );
 
   $entity_options = array();
   $entities = entity_get_info();
@@ -126,12 +104,16 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
     '#value' => t('Save')
   );
 
-  $form['old_view_mode'] = array(
-    '#type' => 'value',
-    '#value' => $view_mode->view_mode,
-  );
-
   return $form;
+}
+
+/**
+ * Return whether a view mode machine name is unique.
+ */
+function ds_view_mode_unique($name) {
+  $custom_view_modes = ds_get_view_modes();
+  $value = strtr($name, array('-' => '_'));
+  return isset($custom_view_modes[$value]) ? TRUE : FALSE;
 }
 
 /**
@@ -141,7 +123,7 @@ function ds_edit_view_mode_form_validate($form, &$form_state) {
 
   $view_mode = new stdClass;
   $view_mode->view_mode = $form_state['values']['view_mode'];
-  $view_mode->label = $form_state['values']['label'];
+  $view_mode->label = $form_state['values']['name'];
 
   $entities = $form_state['values']['entities'];
   foreach ($entities as $key => $value) {
@@ -151,17 +133,8 @@ function ds_edit_view_mode_form_validate($form, &$form_state) {
   }
   $view_mode->entities = serialize($entities);
 
-  $old_view_mode = $form_state['values']['old_view_mode'];
-
-  $custom_view_modes = ds_get_view_modes();
-
-  if (isset($custom_view_modes[$view_mode->view_mode]) && $view_mode->view_mode != $old_view_mode) {
-    form_set_error('type', t('The machine-readable name %view_mode is already taken.', array('%view_mode' => $view_mode->view_mode)));
-  }
-  if (!preg_match('!^[a-z_]+$!', $view_mode->view_mode)) {
-    form_set_error('type', t('The machine-readable name must contain only lowercase letters and underscores.'));
-  }
-  if ($view_mode->view_mode == 'form' || $view_mode->view_mode == 'default') {
+  $reserved_view_modes = array('form', 'default', 'full', 'teaser', 'search_result', 'search_index', 'rss');
+  if (in_array($view_mode->view_mode, $reserved_view_modes)) {
     form_set_error('type', t('The machine-readable name %view_mode is reserved.', array('%view_mode' => $view_mode->view_mode)));
   }
 

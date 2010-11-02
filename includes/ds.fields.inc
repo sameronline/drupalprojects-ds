@@ -109,48 +109,25 @@ function ds_shared_form(&$form, $field) {
     $field->properties = array();
   }
 
-  $form['label'] = array(
+  $form['name'] = array(
     '#title' => t('Label'),
     '#type' => 'textfield',
     '#default_value' => $field->label,
     '#description' => t('The human-readable label of the field. This name must be unique.'),
     '#required' => TRUE,
     '#size' => 30,
-    '#field_suffix' => ' <small id="edit-label-suffix">' . t('Machine name: @field', array('@field' => $field->field)) . '</small>',
   );
 
-  if (empty($field->field)) {
-    $js_settings = array(
-      'type' => 'setting',
-      'data' => array(
-        'machineReadableValue' => array(
-          'label' => array(
-            'text' => t('Machine name'),
-            'target' => 'field',
-            'searchPattern' => '[^a-z_]+',
-            'replaceToken' => '_',
-          ),
-        ),
-      ),
-    );
-    $form['field'] = array(
-      '#title' => t('Machine name'),
-      '#type' => 'textfield',
-      '#default_value' => $field->field,
-      '#maxlength' => 32,
-      '#required' => TRUE,
-      '#description' => t('The machine-readable name of this field. This name must contain only lowercase letters and underscores. This name must be unique.'),
-      '#attached' => array(
-        'js' => array(drupal_get_path('module', 'system') . '/system.js', $js_settings),
-      ),
-    );
-  }
-  else {
-    $form['field'] = array(
-      '#type' => 'value',
-      '#value' => $field->field
-    );
-  }
+  $form['field'] = array(
+    '#type' => 'machine_name',
+    '#default_value' => $field->field,
+    '#maxlength' => 32,
+    '#description' => t('The machine-readable name of this field. This name must contain only lowercase letters and underscores. This name must be unique.'),
+    '#disabled' => !empty($field->field),
+    '#machine_name' => array(
+      'exists' => 'ds_field_unique',
+    ),
+  );
 
   $entity_options = array();
   $entities = entity_get_info();
@@ -174,16 +151,20 @@ function ds_shared_form(&$form, $field) {
     '#weight' => 100,
   );
 
-  $form['old_field'] = array(
-    '#type' => 'value',
-    '#value' => $field->field,
-  );
-
   // Validate & submit are also the same.
   $form['#validate'][] = 'ds_shared_form_validate';
   $form['#submit'][] = 'ds_shared_form_submit';
 
   return $field;
+}
+
+/**
+ * Return whether a field machine name is unique.
+ */
+function ds_field_unique($name) {
+  $custom_fields = ds_get_custom_fields();
+  $value = strtr($name, array('-' => '_'));
+  return isset($custom_fields[$value]) ? TRUE : FALSE;
 }
 
 /**
@@ -193,7 +174,7 @@ function ds_shared_form_validate($form, &$form_state) {
   $field = new stdClass;
   $field->properties = new stdClass;
   $field->field = $form_state['values']['field'];
-  $field->label = $form_state['values']['label'];
+  $field->label = $form_state['values']['name'];
 
   $entities = $form_state['values']['entities'];
   foreach ($entities as $key => $value) {
@@ -202,18 +183,6 @@ function ds_shared_form_validate($form, &$form_state) {
     }
   }
   $field->entities = serialize($entities);
-
-  $old_field = $form_state['values']['old_field'];
-
-  $custom_fields = ds_get_custom_fields();
-
-  if (isset($custom_fields[$field->field]) && $field->field != $old_field) {
-    form_set_error('type', t('The machine-readable name %field is already taken.', array('%field' => $field->field)));
-  }
-  if (!preg_match('!^[a-z_]+$!', $field->field)) {
-    form_set_error('type', t('The machine-readable name must contain only lowercase letters and underscores.'));
-  }
-
   $form_state['field'] = $field;
 }
 

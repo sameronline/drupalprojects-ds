@@ -138,7 +138,9 @@ function ds_theme() {
   $entities = ds_load_entity_implementations(TRUE);
   foreach ($entities as $entity_type) {
     $entity_type_theme_function = $entity_type . '_ds_theme_registry';
-    $theme_functions += $entity_type_theme_function();
+    if (function_exists($entity_type_theme_function)) {
+      $theme_functions += $entity_type_theme_function();
+    }
   }
 
   return $theme_functions;
