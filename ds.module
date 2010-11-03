@@ -48,6 +48,16 @@ function ds_permission() {
 }
 
 /**
+ * Implementation of hook_views_api().
+ */
+function ds_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'ds') .'/views',
+  );
+}
+
+/**
  * Implements hook_menu().
  */
 function ds_menu() {
@@ -156,6 +166,11 @@ function ds_load_entity_implementations($return = FALSE) {
  *   Collection of fields.
  */
 function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache = TRUE) {
+
+  // Bail out on forms.
+  if ($view_mode == 'form') {
+    return array();
+  }
 
   static $static_fields = array();
   if (!isset($static_fields[$entity_type][$bundle][$view_mode])) {

@@ -14,9 +14,9 @@ function node_ds_theme_registry() {
 
   // Single theming functions.
   $formatters = array(
-    'nd_bodyfield', 'nd_title_h1_nolink', 'nd_title_h1_link', 'nd_title_h2_nolink', 'nd_title_h2_link',
-    'nd_title_h2_block_nolink', 'nd_title_h2_block_link', 'nd_title_p_nolink', 'nd_title_p_link',
-    'nd_book_add_new_child', 'nd_book_printer_version',
+    'node_bodyfield', 'node_title_h1_nolink', 'node_title_h1_link', 'node_title_h2_nolink', 'node_title_h2_link',
+    'node_title_h2_block_nolink', 'node_title_h2_block_link', 'node_title_p_nolink', 'node_title_p_link',
+    'node_title_text', 'node_title_text_linked',
   );
 
   foreach ($formatters as $formatter) {
@@ -44,43 +44,28 @@ function node_ds_theme_registry() {
 function node_ds_fields($entity_type, $bundle, $view_mode) {
   $fields = array();
 
-  if ($view_mode == 'form') {
-    return;
-  }
-
-  // Title TODO check if type has a title.
+  // Title
   $fields['title'] = array(
     'title' => t('Title'),
     'type' => DS_FIELD_TYPE_THEME,
     'status' => DS_FIELD_STATUS_STATIC,
     'properties' => array(
       'formatters' => array(
-        'nd_title_h1_nolink' => t('H1 title'),
-        'nd_title_h1_link' => t('H1 title, linked to node'),
-        'nd_title_h2_nolink' => t('H2 title'),
-        'nd_title_h2_link' => t('H2 title, linked to node'),
-        'nd_title_h2_block_nolink' => t('H2 block title'),
-        'nd_title_h2_block_link' => t('H2 block title, linked to node'),
-        'nd_title_p_nolink' => t('Paragraph title'),
-        'nd_title_p_link' => t('Paragraph title, linked to node'),
+        'node_title_h1_nolink' => t('H1 title'),
+        'node_title_h1_link' => t('H1 title, linked to node'),
+        'node_title_h2_nolink' => t('H2 title'),
+        'node_title_h2_link' => t('H2 title, linked to node'),
+        'node_title_h2_block_nolink' => t('H2 block title'),
+        'node_title_h2_block_link' => t('H2 block title, linked to node'),
+        'node_title_p_nolink' => t('Paragraph title'),
+        'node_title_p_link' => t('Paragraph title, linked to node'),
+        'node_title_text' => t('Plain text'),
+        'node_title_text_linked' => t('Plain text, linked to node'),
       ),
     )
   );
 
-  // Author
-  $fields['author'] = array(
-    'title' => t('Author'),
-    'type' => DS_FIELD_TYPE_THEME,
-    'status' => DS_FIELD_STATUS_STATIC,
-    'properties' => array(
-      'formatters' => array(
-        'ds_author_nolink' => t('Author'),
-        'ds_author_link' => t('Author linked to profile')
-      ),
-    ),
-  );
-
-  // Links.
+  // Links
   $fields['links'] = array(
     'title' => t('Links'),
     'type' => DS_FIELD_TYPE_IGNORE,
