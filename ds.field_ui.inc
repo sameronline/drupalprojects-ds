@@ -139,57 +139,59 @@ function ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$f
   }
 
   // Add layouts form.
-  $layout = db_query('SELECT layout, load_css, load_template, load_html5 FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
+  $layout = db_query('SELECT layout, load_html5 FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
   $form['ds_layouts'] = array(
     '#type' => 'fieldset',
     '#title' => t('Layouts'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
+    '#weight' => -10,
   );
 
-  if (empty($layout)) {
-    $form['ds_layouts']['layout'] = array(
-      '#type' => 'select',
-      '#title' => t('Select a layout'),
-      '#options' => $layout_options,
-      '#description' => t('Select a layout for !bundle in !view_mode.', array('!bundle' => $bundle, '!view_mode' => $view_mode)),
-    );
-  }
-  else {
-    $form['ds_layouts']['layout'] = array('#type' => 'value', '#value' => $layout->layout);
-    $form['ds_layouts']['existing'] = array('#type' => 'value', '#value' => TRUE);
-    $form['ds_layouts']['current'] = array('#markup' => '<p>'. t('You have chosen the %layout layout.', array('%layout' => $ds_layouts[$layout->layout]['label'])) .'</p>');
+  if (!empty($layout)) {
+    $chosen_layout = $ds_layouts[$layout->layout];
+    $layout_string = ($layout->load_html5) ? $layout->layout .'-html5' : $layout->layout;
+    $suggestions = '- ' . $layout_string .'-'. $entity_type .'.tpl.php<br />';
+    $suggestions .= '- ' . $layout_string .'-'. $entity_type .'-'. $bundle .'.tpl.php<br />';
+    $suggestions .= '- ' . $layout_string .'-'. $entity_type .'-'. $bundle .'-' . $view_mode .'.tpl.php<br />';
+    $form['ds_layouts']['#description'] = t('You have selected the %layout_label layout. The default template can be found in %path.<br />Possible template suggestions are: <br />!suggestions', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path'], '!suggestions' => strtr($suggestions, '_', '-')));
   }
 
-  // Load css & template file.
-  $form['ds_layouts']['load_css'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Load stylesheet'),
-    '#default_value' => isset($layout->load_css) ? $layout->load_css : 1,
+  $form['ds_layouts']['layout'] = array(
+    '#type' => 'select',
+    '#title' => t('Select a layout'),
+    '#options' => $layout_options,
+    '#description' => t('Select a layout for !bundle in !view_mode.', array('!bundle' => $bundle, '!view_mode' => $view_mode)),
+    '#default_value' => isset($layout->layout) ? $layout->layout : '',
   );
 
-  $form['ds_layouts']['load_template'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Load template file'),
-    '#default_value' => isset($layout->load_template) ? $layout->load_template : 1,
+  $form['ds_layouts']['old_layout'] = array(
+    '#type' => 'value',
+    '#value' => isset($layout->layout) ? $layout->layout : 0
   );
 
   $form['ds_layouts']['load_html5'] = array(
     '#type' => 'checkbox',
     '#title' => t('Load the HTML 5 version of the template file'),
-    '#default_value' => isset($layout->load_html5) ? $layout->load_html5 : 0,
+    '#default_value' => isset($layout->load_html5) ? $layout->load_html5 : '',
+  );
+
+  $form['ds_layouts']['save_button'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save layout settings'),
+    '#submit' => array('ds_save_layout_settings_submit'),
   );
 }
 
 /**
- * Save the layout and field settings from the 'Manage display' screen.
+ * Save the field settings from the 'Manage fields' & 'Manage display' screen.
  */
 function ds_extend_field_ui_table_save($form, &$form_state) {
-  // Get the entity_type, bundle and view mode.
+
+  // Get some default values.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = isset($form['#view_mode']) ? $form['#view_mode'] : 'form';
-  $layout_new = isset($form_state['values']['existing']) ? FALSE : TRUE;
 
   // Delete previous field configuration configuration.
   db_delete('ds_settings')
@@ -226,17 +228,48 @@ function ds_extend_field_ui_table_save($form, &$form_state) {
   // Clear the ds_fields_configuration cache.
   cache_clear_all('ds_fields_configuration', 'cache');
 
+  // Clear entity cache.
+  cache_clear_all('entity_info', 'cache', TRUE);
+}
+
+/**
+ * Save the layout settings from the 'Manage fields' & 'Manage display' screen.
+ */
+function ds_save_layout_settings_save($form, &$form_state) {
+
+  // Get some default values.
+  $entity_type = $form['#entity_type'];
+  $bundle = $form['#bundle'];
+  $view_mode = isset($form['#view_mode']) ? $form['#view_mode'] : 'form';
+
+  // Determine layout variables.
+  $layout = $form_state['values']['layout'];
+  $old_layout = $form_state['values']['old_layout'];
+  $new_layout = ($layout != $old_layout) || empty($old_layout);
+
   // Save layout and add regions if necessary.
   $record = new stdClass;
   $record->entity_type = $entity_type;
   $record->bundle = $bundle;
   $record->view_mode = $view_mode;
   $record->layout = $form_state['values']['layout'];
-  $record->load_css = $form_state['values']['load_css'];
-  $record->load_template = $form_state['values']['load_template'];
-  $record->load_html5 = $form_state['values']['load_html5'];
+  $record->load_html5 = (isset($form_state['values']['load_html5']) && (!empty($form_state['values']['layout']))) ? $form_state['values']['load_html5'] : FALSE;
 
-  if ($layout_new) {
+  // Remove old layout if necessary.
+  if ($new_layout && !empty($old_layout)) {
+    db_delete('ds_layouts')
+      ->condition('entity_type', $entity_type)
+      ->condition('bundle', $bundle)
+      ->condition('view_mode', $view_mode)
+      ->execute();
+    db_delete('field_group')
+      ->condition('entity_type', $entity_type)
+      ->condition('bundle', $bundle)
+      ->condition('mode', $view_mode)
+      ->execute();
+  }
+
+  if ($new_layout && !empty($layout)) {
     // Save layout.
     drupal_write_record('ds_layouts', $record);
 
@@ -259,11 +292,13 @@ function ds_extend_field_ui_table_save($form, &$form_state) {
       drupal_write_record('field_group', $record);
     }
   }
-  else {
+  elseif (!empty($layout)) {
     // Update existing layout.
     drupal_write_record('ds_layouts', $record, array('entity_type', 'bundle', 'view_mode', 'layout'));
   }
 
   // Clear entity cache.
-  cache_clear_all('entity_info', 'cache', TRUE);
+  cache_clear_all('field_groups', 'cache_field');
+
+  drupal_set_message(t('Your layout settings have been saved.'));
 }

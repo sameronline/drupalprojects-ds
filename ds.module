@@ -114,11 +114,19 @@ function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
 }
 
 /**
- * Save the region and field settings from the 'Manage fields' screen.
+ * Save the field settings from the 'Manage fields' & 'Manage display' screen.
  */
 function ds_extend_field_ui_table_submit($form, &$form_state) {
   module_load_include('inc', 'ds', 'ds.field_ui');
   ds_extend_field_ui_table_save($form, $form_state);
+}
+
+/**
+ * Save the layout settings from the 'Manage fields' & 'Manage display' screen.
+ */
+function ds_save_layout_settings_submit($form, &$form_state) {
+  module_load_include('inc', 'ds', 'ds.field_ui');
+  ds_save_layout_settings_save($form, $form_state);
 }
 
 /**
@@ -407,7 +415,7 @@ function ds_determine_layout_variables($entity_type, $bundle, $view_mode, $type,
   if (!empty($layout)) {
 
     // Add path to css file for this layout.
-    if ($type == 'css' && $layout['load_css']) {
+    if ($type == 'css') {
       $css_file = $layout['path'] . '/' . $layout['layout'] . '.css';
       if (!isset($variables['css'])) {
         $variables['css'] = array();
@@ -416,7 +424,7 @@ function ds_determine_layout_variables($entity_type, $bundle, $view_mode, $type,
     }
 
     // Add template files for hook_theme_suggestions.
-    if ($type == 'theme_hook_suggestions' && $layout['load_template']) {
+    if ($type == 'theme_hook_suggestions') {
       $variables[] = $layout['layout'] . ($layout['load_html5'] ? '_html5' : '');
     }
   }

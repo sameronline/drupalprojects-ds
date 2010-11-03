@@ -88,18 +88,6 @@ function ds_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
-      'load_css' => array(
-        'description' => 'Whether to load the css or not.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 1,
-      ),
-      'load_template' => array(
-        'description' => 'Whether to load the template or not.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 1,
-      ),
       'load_html5' => array(
         'description' => 'Whether to load the HTML 5 version of the template or not.',
         'type' => 'int',

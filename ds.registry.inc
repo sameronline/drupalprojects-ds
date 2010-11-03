@@ -183,12 +183,10 @@ function _ds_entity_info_alter(&$entity_info) {
 
   // Add layout if applicable.
   $ds_layouts = module_invoke_all('ds_layouts');
-  $results = db_query('SELECT entity_type, bundle, view_mode, layout, load_css, load_template, load_html5 FROM {ds_layouts}')->fetchAll();
+  $results = db_query('SELECT entity_type, bundle, view_mode, layout, load_html5 FROM {ds_layouts}')->fetchAll();
   foreach ($results as $row) {
     $layout = $ds_layouts[$row->layout];
     $layout['layout'] = $row->layout;
-    $layout['load_css'] = $row->load_css;
-    $layout['load_template'] = $row->load_template;
     $layout['load_html5'] = $row->load_html5;
     $entity_info[$row->entity_type]['bundles'][$row->bundle]['layouts'][$row->view_mode] = $layout;
   }
