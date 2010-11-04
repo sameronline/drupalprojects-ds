@@ -34,8 +34,7 @@ Drupal.fieldUIDisplayOverview.ds.prototype = {
    *
    * This function is called when the row is moved to a different region, as a
    * result of either :
-   * - a drag-and-drop action (the row's form elements then probably need to be
-   *   updated accordingly)
+   * - a drag-and-drop action 
    * - user input in one of the form elements watched by the
    *   Drupal.fieldUIOverview.onChange change listener.
    *
@@ -48,11 +47,11 @@ Drupal.fieldUIDisplayOverview.ds.prototype = {
    */
   regionChange: function (region) {
 
-    var currentRegion = this.$regionSelect.val();
+    this.$regionSelect.val(region);    
 
     var refreshRows = {};
     refreshRows[this.name] = this.$regionSelect.get(0);
-
+    
     return refreshRows;
   },
 };
