@@ -8,17 +8,17 @@
 ?>
 
 <header>
-  <?php print render($content['group_header']); ?>
+  <?php print ds_render_region($content, 'header', $ds_layout); ?>
 </header>
 
 <aside>
-  <?php print render($content['group_left']); ?>
+  <?php print ds_render_region($content, 'left', $ds_layout); ?>
 </aside>
 
 <aside>
-  <?php print render($content['group_right']); ?>
+  <?php print ds_render_region($content, 'right', $ds_layout); ?>
 </aside>
 
 <footer>
-  <?php print render($content['group_footer']); ?>
+  <?php print ds_render_region($content, 'footer', $ds_layout); ?>
 </footer>

@@ -14,22 +14,19 @@ Drupal.fieldUIDisplayOverview.ds = function (row, data) {
   this.region = data.region;
   this.tableDrag = data.tableDrag;
 
-  // Attach change listener to the 'formatter type' select.
-  this.$formatSelect = $('select.field-formatter-type', row);
-  this.$formatSelect.change(Drupal.fieldUIOverview.onChange);
+  this.$regionSelect = $('select.ds-field-region', row);
+  this.$regionSelect.change(Drupal.fieldUIOverview.onChange);
 
   return this;
 };
 
 Drupal.fieldUIDisplayOverview.ds.prototype = {
+
   /**
    * Returns the region corresponding to the current form values of the row.
    */
   getRegion: function () {
-    region = this.$formatSelect.val() == 'hidden'
-    if (region == 'hidden') {
-      return 'hidden';
-    }
+    return this.$regionSelect.val();
   },
 
   /**
@@ -51,30 +48,10 @@ Drupal.fieldUIDisplayOverview.ds.prototype = {
    */
   regionChange: function (region) {
 
-    // When triggered by a row drag, the 'format' select needs to be adjusted
-    // to the new region.
-    var currentValue = this.$formatSelect.val();
-    switch (region) {
-      case 'visible':
-        if (currentValue == 'hidden') {
-          // Restore the formatter back to the default formatter. Pseudo-fields do
-          // not have default formatters, we just return to 'visible' for those.
-          var value = (this.defaultFormatter != undefined) ? this.defaultFormatter : 'visible';
-        }
-        break;
-
-      default:
-        var value = 'hidden';
-        break;
-    }
-    if (value != undefined) {
-      this.$formatSelect.val(value);
-    }
+    var currentRegion = this.$regionSelect.val();
 
     var refreshRows = {};
-    if (region == 'hidden') {
-      refreshRows[this.name] = this.$formatSelect.get(0);
-    }
+    refreshRows[this.name] = this.$regionSelect.get(0);
 
     return refreshRows;
   },

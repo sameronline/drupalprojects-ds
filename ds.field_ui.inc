@@ -26,95 +26,15 @@ function ds_extend_field_ui_table(&$form, $form_state) {
     $form['modes']['view_modes_custom']['#description'] = t('<a href="!url">Create new view modes</a>', array('!url' => url('admin/structure/ds/view_modes')));
   }
 
-  // Add extra fields.
-  ds_extend_field_ui_table_fields($entity_type, $bundle, $view_mode, $form);
-
   // Add layouts fieldset.
   ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, $form);
 
-  // Add extra submit handler.
-  $form['#submit'][] = 'ds_extend_field_ui_table_submit';
-}
+  // Add extra fields.
+  ds_extend_field_ui_table_fields($entity_type, $bundle, $view_mode, $form);
 
-/**
- * Adds the Display Suite fields to the form.
- *
- * @param $entity_type
- *   The name of the entity type.
- * @param $bundle
- *   The name of the bundle
- * @param $view_mode
- *   The name of the view_mode
- * @param $form
- *   A collection of form properties.
- */
-function ds_extend_field_ui_table_fields($entity_type, $bundle, $view_mode, &$form) {
-
-  // Get the fields.
-  $fields = ds_get_fields($entity_type, $bundle, $view_mode, TRUE, FALSE);
-  $field_values = ds_get_fields_configuration($entity_type, $bundle, $view_mode);
-
-  $table = &$form['fields'];
-  $form['#ds_fields'] = array();
-
-  $field_label_options = array(
-    'above' => t('Above'),
-    'inline' => t('Inline'),
-    'hidden' => t('<Hidden>'),
-  );
-
-  foreach ($fields as $key => $field) {
-    $form['#ds_fields'][] = $key;
-
-    $formatters = array('hidden' => t('<Hidden>'));
-    $formatters += isset($field['properties']['formatters']) ? $field['properties']['formatters'] : array('default' => t('Default'));
-
-    $table[$key] = array(
-      //'#parents' => array($key),
-      '#row_type' => 'field',
-      '#js_settings' => array('rowHandler' => 'field'),
-      '#attributes' => array('class' => array('draggable', 'tabledrag-leaf')),
-      '#region_callback' => 'field_ui_display_overview_row_region',
-      'human_name' => array(
-        '#markup' => check_plain($field['title']),
-      ),
-      'weight' => array(
-        '#type' => 'textfield',
-        '#default_value' => isset($field_values[$key]['weight']) ? $field_values[$key]['weight'] : 0,
-        '#size' => 3,
-        '#attributes' => array('class' => array('field-weight')),
-      ),
-      'parent_wrapper' => array(
-        'parent' => array(
-          '#type' => 'select',
-          '#empty_value' => '',
-          '#options' => array(), // This will be filled by field_group. Default value as well.
-          '#attributes' => array('class' => array('field-parent')),
-          '#parents' => array('fields', $key, 'parent'),
-        ),
-        'hidden_name' => array(
-          '#type' => 'hidden',
-          '#default_value' => $key,
-          '#attributes' => array('class' => array('field-name')),
-        ),
-      ),
-      'label' => array(
-        '#type' => 'select',
-        '#options' => $field_label_options,
-        '#default_value' => isset($field_values[$key]['label']) ? $field_values[$key]['label'] : 'hidden',
-      ),
-      'format' => array(
-        'type' => array(
-          '#type' => 'select',
-          '#options' => $formatters,
-          '#default_value' => isset($field_values[$key]['format']) ? $field_values[$key]['format'] : 'hidden',
-          '#attributes' => array('class' => array('field-formatter-type')),
-        ),
-      ),
-      'settings_summary' => array(),
-      'settings_edit' => array(),
-    );
-  }
+  // Add extra submit handlers.
+  $form['#submit'][] = 'ds_extend_field_ui_layouts_submit';
+  $form['#submit'][] = 'ds_extend_field_ui_fields_submit';
 }
 
 /**
@@ -139,7 +59,7 @@ function ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$f
   }
 
   // Add layouts form.
-  $layout = db_query('SELECT layout, load_html5 FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
+  $layout = db_query('SELECT layout, settings, load_html5 FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
   $form['ds_layouts'] = array(
     '#type' => 'fieldset',
     '#title' => t('Layouts'),
@@ -179,16 +99,230 @@ function ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$f
   $form['ds_layouts']['save_button'] = array(
     '#type' => 'submit',
     '#value' => t('Save layout settings'),
-    '#submit' => array('ds_save_layout_settings_submit'),
   );
+
+  if (isset($layout->layout)) {
+    $layout->settings = unserialize($layout->settings);
+    $layout->regions = $chosen_layout['regions'];
+    $form['#ds_layout'] = $layout;
+  }
+}
+
+/**
+ * Adds the Display Suite fields to the form.
+ *
+ * @param $entity_type
+ *   The name of the entity type.
+ * @param $bundle
+ *   The name of the bundle
+ * @param $view_mode
+ *   The name of the view_mode
+ * @param $form
+ *   A collection of form properties.
+ */
+function ds_extend_field_ui_table_fields($entity_type, $bundle, $view_mode, &$form) {
+
+  $region_options = array();
+  $layout = isset($form['#ds_layout']) ? $form['#ds_layout'] : FALSE;
+
+  // Get the fields.
+  $fields = ds_get_fields($entity_type, $bundle, $view_mode, TRUE, FALSE);
+  $field_values = ds_get_fields_configuration($entity_type, $bundle, $view_mode);
+
+  $table = &$form['fields'];
+  $form['#ds_fields'] = array();
+
+  $field_label_options = array(
+    'above' => t('Above'),
+    'inline' => t('Inline'),
+    'hidden' => t('<Hidden>'),
+  );
+
+  // Change UI to add Region column.
+  if ($layout) {
+    $table['#header'] = array(
+      t('Field'),
+      t('Weight'),
+      t('Parent'),
+      t('Region'),
+      t('Label'),
+      array('data' => t('Format'), 'colspan' => 3),
+    );
+
+    $table['#regions'] = array();
+    foreach ($layout->regions as $region_key => $region_title) {
+      $region_options[$region_key] = $region_title;
+      $table['#regions'][$region_key] = array(
+        'title' => $region_title,
+        'message' => t('No fields are displayed in this region'),
+      );
+    }
+    $region_options['hidden'] = t('Disabled');
+    $table['#regions']['hidden'] = array(
+      'title' => t('Disabled'),
+      'message' => t('No field are hidden.')
+    );
+
+    $region = array(
+      '#type' => 'select',
+      '#options' => $region_options,
+      '#default_value' => 'hidden',
+      '#attributes' => array(
+        'class' => array('ds-field-region'),
+      )
+    );
+
+    // Update existing rows by changing rowHandler and adding regions.
+    foreach (element_children($table) as $name) {
+      $row = &$table[$name];
+      $row['#js_settings'] = array('rowHandler' => 'ds');
+      $row['#region_callback'] = 'ds_field_ui_row_region';
+
+      // Remove hidden format.
+      if (isset($row['format']['type']['#options']['hidden'])) {
+        unset($row['format']['type']['#options']['hidden']);
+      }
+
+      // Add region between parent_wrapper & label.
+      $second = array_splice($row, 7);
+      $row['region'] = $region;
+      $row['region']['#default_value'] = (isset($layout->settings['fields'][$name])) ? $layout->settings['fields'][$name] : 'hidden';
+      $row = array_merge($row, $second);
+    }
+
+    $form['#attached']['js'][] = drupal_get_path('module', 'ds') . '/js/ds.js';
+  }
+
+  foreach ($fields as $key => $field) {
+    $form['#ds_fields'][] = $key;
+
+    //$formatters = array('hidden' => t('<Hidden>'));
+    $formatters = isset($field['properties']['formatters']) ? $field['properties']['formatters'] : array('default' => t('Default'));
+    if (!$layout) {
+      array_unshift($formatters, array('hidden' => t('<Hidden>')));
+    }
+
+    $table[$key] = array(
+      //'#parents' => array($key),
+      '#row_type' => 'field',
+      '#js_settings' => array('rowHandler' => (!$layout) ? 'field' : 'ds'),
+      '#region_callback' => (!$layout) ? 'field_ui_display_overview_row_region' : 'ds_field_ui_row_region',
+      '#attributes' => array('class' => array('draggable', 'tabledrag-leaf')),
+      'human_name' => array(
+        '#markup' => check_plain($field['title']),
+      ),
+      'weight' => array(
+        '#type' => 'textfield',
+        '#default_value' => isset($field_values[$key]['weight']) ? $field_values[$key]['weight'] : 0,
+        '#size' => 3,
+        '#attributes' => array('class' => array('field-weight')),
+      ),
+      'parent_wrapper' => array(
+        'parent' => array(
+          '#type' => 'select',
+          '#empty_value' => '',
+          '#options' => array(), // This will be filled by field_group. Default value as well.
+          '#attributes' => array('class' => array('field-parent')),
+          '#parents' => array('fields', $key, 'parent'),
+        ),
+        'hidden_name' => array(
+          '#type' => 'hidden',
+          '#default_value' => $key,
+          '#attributes' => array('class' => array('field-name')),
+        ),
+      ),
+      'region' => array(
+        '#type' => 'select',
+        '#options' => $region_options,
+        '#default_value' => isset($layout->settings['fields'][$key]) ? isset($layout->settings['fields'][$key]) : 'hidden',
+        '#attributes' => array(
+          'class' => array('ds-field-region'),
+        ),
+      ),
+      'label' => array(
+        '#type' => 'select',
+        '#options' => $field_label_options,
+        '#default_value' => isset($field_values[$key]['label']) ? $field_values[$key]['label'] : 'hidden',
+      ),
+      'format' => array(
+        'type' => array(
+          '#type' => 'select',
+          '#options' => $formatters,
+          '#default_value' => isset($field_values[$key]['format']) ? $field_values[$key]['format'] : 'hidden',
+          '#attributes' => array('class' => array('field-formatter-type')),
+        ),
+      ),
+      'settings_summary' => array(),
+      'settings_edit' => array(),
+    );
+
+    // Remove region
+    if (!$layout) {
+      unset($table[$key]['region']);
+    }
+  }
+}
+
+/**
+ * Save the layout settings from the 'Manage fields' & 'Manage display' screen.
+ */
+function ds_extend_field_ui_layouts_save($form, &$form_state) {
+
+  // Get some default values.
+  $entity_type = $form['#entity_type'];
+  $bundle = $form['#bundle'];
+  $view_mode = isset($form['#view_mode']) ? $form['#view_mode'] : 'form';
+
+  // Determine layout variables.
+  $layout = $form_state['values']['layout'];
+  $old_layout = $form_state['values']['old_layout'];
+  $new_layout = ($layout != $old_layout) || empty($old_layout);
+
+  // Save layout and add regions if necessary.
+  $record = new stdClass;
+  $record->entity_type = $entity_type;
+  $record->bundle = $bundle;
+  $record->view_mode = $view_mode;
+  $record->layout = $form_state['values']['layout'];
+  $record->load_html5 = (isset($form_state['values']['load_html5']) && (!empty($form_state['values']['layout']))) ? $form_state['values']['load_html5'] : FALSE;
+
+  // Remove old layout if necessary.
+  if ($new_layout && !empty($old_layout)) {
+    db_delete('ds_layouts')
+      ->condition('entity_type', $entity_type)
+      ->condition('bundle', $bundle)
+      ->condition('view_mode', $view_mode)
+      ->execute();
+  }
+
+  if ($new_layout && !empty($layout)) {
+    // Save new layout.
+    drupal_write_record('ds_layouts', $record);
+  }
+  // Update existing layout.
+  elseif (!empty($layout)) {
+    $record->settings = array();
+    foreach ($form_state['values']['fields'] as $key => $field) {
+      if ($key == '_add_new_group') {
+        continue;
+      }
+      if (!isset($record->settings['regions'][$field['region']])) {
+        $record->settings['regions'][$field['region']] = array();
+      }
+      $record->settings['regions'][$field['region']][] = $key;
+      $record->settings['fields'][$key] = $field['region'];
+    }
+    $record->settings = serialize($record->settings);
+    drupal_write_record('ds_layouts', $record, array('entity_type', 'bundle', 'view_mode', 'layout'));
+  }
 }
 
 /**
  * Save the field settings from the 'Manage fields' & 'Manage display' screen.
  */
-function ds_extend_field_ui_table_save($form, &$form_state) {
+function ds_extend_field_ui_fields_save($form, &$form_state) {
 
-  // Get some default values.
+  // Setup some variables.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = isset($form['#view_mode']) ? $form['#view_mode'] : 'form';
@@ -233,72 +367,8 @@ function ds_extend_field_ui_table_save($form, &$form_state) {
 }
 
 /**
- * Save the layout settings from the 'Manage fields' & 'Manage display' screen.
+ * Returns the region to which a row in the Field UI screen belongs.
  */
-function ds_save_layout_settings_save($form, &$form_state) {
-
-  // Get some default values.
-  $entity_type = $form['#entity_type'];
-  $bundle = $form['#bundle'];
-  $view_mode = isset($form['#view_mode']) ? $form['#view_mode'] : 'form';
-
-  // Determine layout variables.
-  $layout = $form_state['values']['layout'];
-  $old_layout = $form_state['values']['old_layout'];
-  $new_layout = ($layout != $old_layout) || empty($old_layout);
-
-  // Save layout and add regions if necessary.
-  $record = new stdClass;
-  $record->entity_type = $entity_type;
-  $record->bundle = $bundle;
-  $record->view_mode = $view_mode;
-  $record->layout = $form_state['values']['layout'];
-  $record->load_html5 = (isset($form_state['values']['load_html5']) && (!empty($form_state['values']['layout']))) ? $form_state['values']['load_html5'] : FALSE;
-
-  // Remove old layout if necessary.
-  if ($new_layout && !empty($old_layout)) {
-    db_delete('ds_layouts')
-      ->condition('entity_type', $entity_type)
-      ->condition('bundle', $bundle)
-      ->condition('view_mode', $view_mode)
-      ->execute();
-    db_delete('field_group')
-      ->condition('entity_type', $entity_type)
-      ->condition('bundle', $bundle)
-      ->condition('mode', $view_mode)
-      ->execute();
-  }
-
-  if ($new_layout && !empty($layout)) {
-    // Save layout.
-    drupal_write_record('ds_layouts', $record);
-
-    // Group records.
-    $weight = -100;
-    $ds_layouts = module_invoke_all('ds_layouts');
-    $layout = $ds_layouts[$record->layout];
-    foreach ($layout['regions'] as $region => $label) {
-      $record = new stdClass;
-      $record->group_name = 'group_' . $region;
-      $record->entity_type = $entity_type;
-      $record->bundle = $bundle;
-      $record->mode = $view_mode;
-      $record->data = array(
-        'label' => $label,
-        'weight' => $weight++,
-        'children' => array(),
-        'visible' => 'region',
-      );
-      drupal_write_record('field_group', $record);
-    }
-  }
-  elseif (!empty($layout)) {
-    // Update existing layout.
-    drupal_write_record('ds_layouts', $record, array('entity_type', 'bundle', 'view_mode', 'layout'));
-  }
-
-  // Clear entity cache.
-  cache_clear_all('field_groups', 'cache_field');
-
-  drupal_set_message(t('Your layout settings have been saved.'));
+function ds_field_ui_row_region($row) {
+  return ($row['region']['#value']);
 }

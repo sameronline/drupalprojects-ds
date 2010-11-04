@@ -8,21 +8,21 @@
 ?>
 
 <div class="group-header">
-  <?php print render($content['group_header']); ?>
+  <?php print ds_render_region($content, 'header', $ds_layout); ?>
 </div>
 
 <div class="group-left">
-  <?php print render($content['group_left']); ?>
+  <?php print ds_render_region($content, 'left', $ds_layout); ?>
 </div>
 
 <div class="group-middle">
-  <?php print render($content['group_middle']); ?>
+  <?php print ds_render_region($content, 'middle', $ds_layout); ?>
 </div>
 
 <div class="group-right">
-  <?php print render($content['group_right']); ?>
+  <?php print ds_render_region($content, 'right', $ds_layout); ?>
 </div>
 
 <div class="group-footer">
-  <?php print render($content['group_left']); ?>
+  <?php print ds_render_region($content, 'footer', $ds_layout); ?>
 </div>

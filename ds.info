@@ -3,7 +3,6 @@ name = "Display suite"
 description = "Extend the display options for every entity type."
 core = "7.x"
 package = "Display suite"
-dependencies[] = field_group
 files[] = ds.module
 files[] = ds.install
 files[] = ds.registry.inc

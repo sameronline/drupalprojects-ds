@@ -88,6 +88,12 @@ function ds_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
+      'settings' => array(
+        'description' => 'The settings for this layout.',
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+      ),
       'load_html5' => array(
         'description' => 'Whether to load the HTML 5 version of the template or not.',
         'type' => 'int',
