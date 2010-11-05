@@ -53,7 +53,7 @@ function ds_permission() {
 function ds_views_api() {
   return array(
     'api' => 3,
-    'path' => drupal_get_path('module', 'ds') .'/views',
+    'path' => drupal_get_path('module', 'ds'),
   );
 }
 
@@ -573,3 +573,4 @@ function theme_ds_eval_block($field) {
     }
   }
 }
+

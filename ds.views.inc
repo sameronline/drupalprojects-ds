@@ -1,0 +1,31 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Views plugins provided by Display Suite.
+ */
+
+/**
+ * Implementation of hook_views_plugins().
+ */
+function ds_views_plugins() {
+  $path = drupal_get_path('module', 'ds');
+  return array(
+    'module' => 'ds',
+    'row' => array(
+      'ds' => array(
+        'title' => t('Display suite entity'),
+        'help' => t('Display the entity through the Display suite module.'),
+        'handler' => 'views_plugin_ds_entity_view',
+        'theme' => 'ds_row_entity',
+        'path' => $path .'/views',
+        'theme path' => $path .'/theme',
+        'theme file' => 'theme.inc',
+        'uses options' => TRUE,
+        'type' => 'normal',
+        'help topic' => 'style-entity',
+      ),
+    ),
+  );
+}
