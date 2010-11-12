@@ -26,6 +26,9 @@ function ds_extend_field_ui_table(&$form, $form_state) {
     $form['modes']['view_modes_custom']['#description'] = t('<a href="!url">Create new view modes</a>', array('!url' => url('admin/structure/ds/view_modes')));
   }
 
+  // Add tabs for browsing through the options.
+  ds_extend_field_ui_table_tabs($form);
+
   // Add layouts fieldset.
   ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, $form);
 
@@ -35,6 +38,22 @@ function ds_extend_field_ui_table(&$form, $form_state) {
   // Add extra submit handlers.
   $form['#submit'][] = 'ds_extend_field_ui_layouts_submit';
   $form['#submit'][] = 'ds_extend_field_ui_fields_submit';
+
+  // Attach css and js.
+  $form['#attached']['js'][] = drupal_get_path('module', 'ds') . '/js/ds.js';
+  $form['#attached']['css'][] = drupal_get_path('module', 'ds') . '/css/ds.css';
+}
+
+/**
+ * @param $form
+ *   A collection of form properties.
+ */
+function ds_extend_field_ui_table_tabs(&$form) {
+  $ds_tabs = '<div id="ds-tabs"><a href="#">' . t('Fields') . '</a><a href="#">' . t('Layout') . '</a></div>';
+  $form['ds_tabs'] = array(
+    '#markup' => $ds_tabs,
+    '#weight' => -10,
+  );
 }
 
 /**
@@ -62,10 +81,10 @@ function ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$f
   $layout = db_query('SELECT layout, settings, load_html5 FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
   $form['ds_layouts'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Layouts'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
-    '#weight' => -10,
+    '#title' => t('Layout'),
+    '#weight' => -9,
+    '#prefix' => '<div id="ds-layout-wrapper" style="display: none;">',
+    '#suffix' => '</div>',
   );
 
   if (!empty($layout)) {
@@ -96,7 +115,7 @@ function ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$f
     '#default_value' => isset($layout->load_html5) ? $layout->load_html5 : '',
   );
 
-  $form['ds_layouts']['save_button'] = array(
+  $form['save_button'] = array(
     '#type' => 'submit',
     '#value' => t('Save layout settings'),
   );
