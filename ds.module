@@ -52,7 +52,7 @@ function ds_permission() {
  */
 function ds_views_api() {
   return array(
-    'api' => 3,
+    'api' => '3',
     'path' => drupal_get_path('module', 'ds'),
   );
 }
@@ -243,6 +243,24 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
   }
 
   return $static_fields[$entity_type][$bundle][$view_mode];
+}
+
+/**
+ * Get entity view modes.
+ *
+ * @param $entity
+ *   The name of the entity.
+ * @param $options
+ *   Whether to return all view modes or a key array.
+ */
+function ds_entity_view_modes($entity = 'all', $options = TRUE) {
+  // @todo make static - choose the way of returning.
+  $view_mode_options = array();
+  $entity_info = entity_get_info($entity);
+  foreach ($entity_info['view modes'] as $key => $view_mode) {
+    $view_mode_options[$key] = $view_mode['label'];
+  }
+  return $view_mode_options;
 }
 
 /**

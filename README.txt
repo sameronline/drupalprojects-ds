@@ -10,6 +10,10 @@ For documentation of the module, visit the handbook pages:
 
 To submit bug reports and feature suggestions, or to track changes:
   http://drupal.org/project/issues/ds
+  
+-- RECOMMENDED MODULES --
+
+Entity cache - http://drupal.org/project/entitycache
 
 -- MAINTAINERS --
 

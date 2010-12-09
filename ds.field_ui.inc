@@ -115,7 +115,7 @@ function ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$f
     '#default_value' => isset($layout->load_html5) ? $layout->load_html5 : '',
   );
 
-  $form['save_button'] = array(
+  $form['ds_layouts']['save_button'] = array(
     '#type' => 'submit',
     '#value' => t('Save layout settings'),
   );

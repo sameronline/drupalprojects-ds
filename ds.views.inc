@@ -16,10 +16,10 @@ function ds_views_plugins() {
     'row' => array(
       'ds' => array(
         'title' => t('Display suite entity'),
-        'help' => t('Display the entity through the Display suite module.'),
+        'help' => t('Display the entity with the Display suite module.'),
         'handler' => 'views_plugin_ds_entity_view',
-        'theme' => 'ds_row_entity',
         'path' => $path .'/views',
+        'theme' => 'ds_row_entity',
         'theme path' => $path .'/theme',
         'theme file' => 'theme.inc',
         'uses options' => TRUE,

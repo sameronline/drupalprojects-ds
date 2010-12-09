@@ -3,15 +3,16 @@
 
 /**
  * @file
- * Global theming functions for Display Suite.
+ * Theming functions for Display Suite.
  */
 
  /**
- * Template preprocess function for theme_views_view_row_object().
- * We delegate the manipulation of the object to a function
+ * Template preprocess function for theme_views_view_row_entity().
+ * We delegate the manipulation of the entity to a function
  * which every module implementing the ds_api should define.
  */
-function template_preprocess_ds_row_object(&$vars) {
+function template_preprocess_ds_row_entity(&$vars) {
+
   $options = $vars['options'];
   $vars['object'] = '';
   $vars['data_object'] = '';
