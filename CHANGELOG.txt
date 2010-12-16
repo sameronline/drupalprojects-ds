@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------------
-6.x-1.4 2010-xx-xx
+6.x-1.4 2010-12-17
 -------------------------------------------------------------------------------------
 - #922114 by Shawn DeArmond: Exporting ds features properly requires strongarm.
 - #931510 by joelstein: fix occasional features errors when reverting.
