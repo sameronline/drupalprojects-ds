@@ -5,7 +5,6 @@
  * Core functions for the Display Suite module.
  */
 
-
 /**
  * Constants for field types.
  */
@@ -48,16 +47,6 @@ function ds_permission() {
 }
 
 /**
- * Implementation of hook_views_api().
- */
-function ds_views_api() {
-  return array(
-    'api' => '3',
-    'path' => drupal_get_path('module', 'ds'),
-  );
-}
-
-/**
  * Implements hook_menu().
  */
 function ds_menu() {
@@ -90,19 +79,21 @@ function ds_entity_info_alter(&$entity_info) {
 }
 
 /**
+ * Implementation of hook_views_api().
+ */
+function ds_views_api() {
+  return array(
+    'api' => '3',
+    'path' => drupal_get_path('module', 'ds'),
+  );
+}
+
+/**
  * Implements hook_ds_layouts().
  */
 function ds_ds_layouts() {
   module_load_include('inc', 'ds', 'ds.registry');
   return _ds_ds_layouts();
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function ds_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
-  module_load_include('inc', 'ds', 'ds.field_ui');
-  ds_extend_field_ui_table($form, $form_state);
 }
 
 /**
@@ -114,7 +105,7 @@ function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
 }
 
 /**
- * Save the layout settings from the 'Manage fields' & 'Manage display' screen.
+ * Save the layout settings from the 'Manage display' screen.
  */
 function ds_extend_field_ui_layouts_submit($form, &$form_state) {
   module_load_include('inc', 'ds', 'ds.field_ui');
@@ -122,7 +113,7 @@ function ds_extend_field_ui_layouts_submit($form, &$form_state) {
 }
 
 /**
- * Save the field settings from the 'Manage fields' & 'Manage display' screen.
+ * Save the field settings from the 'Manage display' screen.
  */
 function ds_extend_field_ui_fields_submit($form, &$form_state) {
   module_load_include('inc', 'ds', 'ds.field_ui');
@@ -175,12 +166,8 @@ function ds_load_entity_implementations($return = FALSE) {
  */
 function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache = TRUE) {
 
-  // Bail out on forms.
-  if ($view_mode == 'form') {
-    return array();
-  }
-
   static $static_fields = array();
+
   if (!isset($static_fields[$entity_type][$bundle][$view_mode])) {
 
     // Do we have them cached or not ? // TODO Get this from cache instead of variable
@@ -377,7 +364,7 @@ function ds_field_attach_view_alter(&$build, $context) {
   $bundle = $build['#bundle'];
   $view_mode = $context['view_mode'];
   $entity = $context['entity'];
-  ds_render_content($build, $entity_type, $bundle, $view_mode, $entity);
+  ds_attach_fields($build, $entity_type, $bundle, $view_mode, $entity);
   ds_determine_layout_variables($entity_type, $bundle, $view_mode, 'css', $build['#attached']);
 }
 
@@ -389,13 +376,6 @@ function ds_field_attach_view_alter(&$build, $context) {
  */
 function ds_preprocess_entity(&$variables) {
   ds_determine_layout_variables($variables['elements']['#entity_type'], $variables['elements']['#bundle'], $variables['elements']['#view_mode'], 'theme_hook_suggestions', $variables);
-}
-
-/**
- * Implements hook_field_attach_form().
- */
-function ds_field_attach_form($entity_type, $entity, &$form, &$form_state, $langcode) {
-  ds_determine_layout_variables($entity_type, $form['#bundle'], 'form', 'css', $form['#attached']);
 }
 
 /**
@@ -426,7 +406,7 @@ function ds_determine_layout_variables($entity_type, $bundle, $view_mode, $type,
 
   // In case $view_mode is not form and not found, check if we have a default layout,
   // but only if the view mode settings aren't overridden for this view mode.
-  if ($view_mode != 'form' && $view_mode != 'default' && !$overriden && isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'])) {
+  if ($view_mode != 'default' && !$overriden && isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'])) {
     $layout = $entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'];
   }
 
@@ -450,10 +430,9 @@ function ds_determine_layout_variables($entity_type, $bundle, $view_mode, $type,
 }
 
 /**
- * Render content of an entity.
- * @todo this should be renamed no?
+ * Attach fields from Display suite.
  */
-function ds_render_content(&$output, $entity_type, $bundle, $view_mode, $entity) {
+function ds_attach_fields(&$output, $entity_type, $bundle, $view_mode, $entity) {
   $field_values = ds_get_fields_configuration($entity_type, $bundle, $view_mode);
   $fields = ds_get_fields($entity_type, $bundle, $view_mode);
 
@@ -591,4 +570,3 @@ function theme_ds_eval_block($field) {
     }
   }
 }
-

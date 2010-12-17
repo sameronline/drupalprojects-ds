@@ -7,7 +7,7 @@
  */
 
 /**
- * Extend 'Manage fields/display' table with layout and fields.
+ * Extend 'Manage display' table with layout and fields.
  *
  * @param $form
  *   The form to add layout fieldset and extra display suite fields.
@@ -111,7 +111,7 @@ function ds_extend_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$f
 
   $form['ds_layouts']['load_html5'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Load the HTML 5 version of the template file'),
+    '#title' => t('Use the HTML 5 version of the template file'),
     '#default_value' => isset($layout->load_html5) ? $layout->load_html5 : '',
   );
 
@@ -283,7 +283,7 @@ function ds_extend_field_ui_table_fields($entity_type, $bundle, $view_mode, &$fo
 }
 
 /**
- * Save the layout settings from the 'Manage fields' & 'Manage display' screen.
+ * Save the layout settings from the 'Manage display' screen.
  */
 function ds_extend_field_ui_layouts_save($form, &$form_state) {
 
@@ -337,7 +337,7 @@ function ds_extend_field_ui_layouts_save($form, &$form_state) {
 }
 
 /**
- * Save the field settings from the 'Manage fields' & 'Manage display' screen.
+ * Save the field settings from the 'Manage display' screen.
  */
 function ds_extend_field_ui_fields_save($form, &$form_state) {
 
@@ -389,5 +389,6 @@ function ds_extend_field_ui_fields_save($form, &$form_state) {
  * Returns the region to which a row in the Field UI screen belongs.
  */
 function ds_field_ui_row_region($row) {
-  return ($row['region']['#value']);
+
+  return isset($row['region']['#value']) ? $row['region']['#value'] : 'hidden';
 }

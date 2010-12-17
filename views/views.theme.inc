@@ -9,7 +9,7 @@
  /**
  * Template preprocess function for theme_views_view_row_entity().
  * We delegate the manipulation of the entity to a function
- * which every module implementing the ds_api should define.
+ * which every entity should implement.
  */
 function template_preprocess_ds_row_entity(&$vars) {
 
@@ -20,9 +20,9 @@ function template_preprocess_ds_row_entity(&$vars) {
   // The advanced selector searches for a function called
   // ds_views_row_adv_VIEWSNAME.
   if ($options['advanced']) {
-    $build_mode = $options['build_mode'];
+    $view_mode = $options['view_mode'];
     $row_function = 'ds_views_row_adv_'. $vars['view']->name;
-    $row_function($vars, $build_mode);
+    $row_function($vars, $view_mode);
   }
   // The default selector searches for a function called
   // ds_views_row_VIEWSBASETABLE.
@@ -43,19 +43,19 @@ function template_preprocess_ds_row_entity(&$vars) {
     if (isset($options['changing']) && $options['changing']) {
       // Check for paging to determine the build mode.
       if (isset($_GET['page']) && isset($options['changing_fieldset']['allpages']) && !$options['changing_fieldset']['allpages']) {
-        $build_mode = $options['build_mode'];
+        $view_mode = $options['view_mode'];
       }
       else {
-        $build_mode = $options['changing_fieldset']['item_'. $nrs[$view_name]];
+        $view_mode = $options['changing_fieldset']['item_'. $nrs[$view_name]];
       }
     }
     else {
-      $build_mode = $options['build_mode'];
+      $view_mode = $options['view_mode'];
     }
 
     // Call the function.
     $row_function = 'ds_views_row_'. $vars['view']->base_table;
-    $row_function($vars, $build_mode);
+    $row_function($vars, $view_mode);
 
     // Keep a static grouping for this view.
     if (isset($options['grouping']) && $options['grouping']) {

@@ -36,7 +36,8 @@ class views_plugin_ds_entity_view extends views_plugin_row {
 
   function option_definition() {
     $options = parent::option_definition();
-    $options['build_mode'] = array('default' => 'teaser');
+    $options['view_mode'] = array('default' => 'teaser');
+    $options['alternating'] = array('default' => FALSE);
     $options['changing'] = array('default' => FALSE);
     $options['advanced'] = array('default' => FALSE);
     return $options;
