@@ -228,6 +228,9 @@ function template_preprocess_ds_display_overview_views_form(&$vars) {
       // Render the display fields
       if ($child == $build_mode) {
         $row->{$child}->indentation = theme('indentation', $element[$child]['#depth']);
+        if (empty($element[$child]['css-class']['#options'])) {
+          $element[$child]['css-class']['#access'] = FALSE;
+        }
         $row->{$child}->class = drupal_render($element[$child]['css-class']);
         $row->{$child}->label = drupal_render($element[$child]['label']);
 
