@@ -166,4 +166,12 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     $form_state['values']['row_options']['grouping'] = $form_state['values']['row_options']['grouping_fieldset']['grouping'];
     $form_state['values']['row_options']['advanced'] = $form_state['values']['row_options']['advanced_fieldset']['advanced'];
   }
+
+  function pre_render($values) {
+    $nids = array();
+    foreach ($values as $row) {
+      $nids[] = $row->{$this->field_alias};
+    }
+    $this->nodes = node_load_multiple($nids);
+  }
 }

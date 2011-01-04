@@ -30,6 +30,9 @@ function template_preprocess_ds_row_entity(&$vars) {
   // mode per row and pagination. Simple grouping is
   // also supported if there is a sort handler.
   else {
+
+    // @todo see if we can make this a bit more sane
+
     static $nrs, $grouping = array();
     $group_value_content = '';
     $view_name = $vars['view']->name .'_'. $vars['view']->current_display;
@@ -80,4 +83,25 @@ function template_preprocess_ds_row_entity(&$vars) {
     // Increment the number for this view.
     $nrs[$view_name]++;
   }
+}
+
+/**
+ * Theme the node through the views entity plugin.
+ */
+function ds_views_row_node(&$vars, $view_mode) {
+  $nid = $vars['row']->{$vars['field_alias']};
+  //$nid = $vars['row']->nid;
+  if (!is_numeric($nid)) {
+    return;
+  }
+
+  $row_plugin = $vars['view']->style_plugin->row_plugin;
+  $node = $row_plugin->nodes[$nid];
+
+  if (empty($node)) {
+    return;
+  }
+
+  // @todo render this through our template rendering system.
+  $vars['object'] = drupal_render(node_view($node, $view_mode));
 }
