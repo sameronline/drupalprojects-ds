@@ -253,7 +253,7 @@ function ds_extend_field_ui_table_fields($entity_type, $bundle, $view_mode, &$fo
       'region' => array(
         '#type' => 'select',
         '#options' => $region_options,
-        '#default_value' => isset($layout->settings['fields'][$key]) ? isset($layout->settings['fields'][$key]) : 'hidden',
+        '#default_value' => isset($layout->settings['fields'][$key]) ? $layout->settings['fields'][$key] : 'hidden',
         '#attributes' => array(
           'class' => array('ds-field-region'),
         ),
