@@ -44,7 +44,11 @@ class views_plugin_ds_entity_view extends views_plugin_row {
   }
 
   function options_form(&$form, &$form_state) {
-    $view_mode_options = ds_entity_view_modes($this->view->base_table);
+    $view_mode_options = array();
+    $entity_view_modes = ds_entity_view_modes($this->view->base_table);
+    foreach ($entity_view_modes['view modes'] as $key => $view_mode) {
+      $view_mode_options[$key] = $view_mode['label'];
+    }
 
     // Default view mode.
     $form['default_fieldset'] = array(

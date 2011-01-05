@@ -3,5 +3,5 @@
 
 /**
  * @file
- * Display Suite comment entity base file.
+ * Display Suite comment entity file.
  */

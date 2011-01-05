@@ -12,7 +12,7 @@
 function ds_custom_fields() {
   $output = '';
 
-  $custom_fields = ds_get_custom_fields();
+  $custom_fields = ds_custom_fields();
   if (!empty($custom_fields)) {
 
     $rows = array();
@@ -71,7 +71,7 @@ function ds_field_human_name($type) {
  * Manage a field. This will redirect to the exact form.
  */
 function ds_custom_manage($field_key = '') {
-  $fields = ds_get_custom_fields();
+  $fields = ds_custom_fields();
   if (isset($fields[$field_key])) {
     $field = $fields[$field_key];
     switch ($field->type) {
@@ -97,7 +97,7 @@ function ds_custom_manage($field_key = '') {
  * Shared form for all all fields.
  */
 function ds_shared_form(&$form, $field) {
-  $custom_fields = ds_get_custom_fields();
+  $custom_fields = ds_custom_fields();
   if (isset($custom_fields[$field])) {
     $field = $custom_fields[$field];
   }
@@ -162,7 +162,7 @@ function ds_shared_form(&$form, $field) {
  * Return whether a field machine name is unique.
  */
 function ds_field_unique($name) {
-  $custom_fields = ds_get_custom_fields();
+  $custom_fields = ds_custom_fields();
   $value = strtr($name, array('-' => '_'));
   return isset($custom_fields[$value]) ? TRUE : FALSE;
 }
@@ -318,7 +318,7 @@ function ds_block_field_form_validate($form, &$form_state) {
  * Confirmation custom field delete form
  */
 function ds_delete_field_confirm($form, &$form_state, $field = '') {
-  $fields = ds_get_custom_fields();
+  $fields = ds_custom_fields();
   if (isset($fields[$field])) {
     $field = $fields[$field];
     $form['#field'] = $field;

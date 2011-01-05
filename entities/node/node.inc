@@ -3,31 +3,8 @@
 
 /**
  * @file
- * Display Suite node entity base file.
+ * Display Suite node entity file.
  */
-
-/**
- * Implements hook_ds_theme_registry().
- */
-function node_ds_theme_registry() {
-  $theme_functions = array();
-
-  // Single theming functions.
-  $formatters = array(
-    'node_bodyfield', 'node_title_h1_nolink', 'node_title_h1_link', 'node_title_h2_nolink', 'node_title_h2_link',
-    'node_title_h2_block_nolink', 'node_title_h2_block_link', 'node_title_p_nolink', 'node_title_p_link',
-    'node_title_text', 'node_title_text_linked',
-  );
-
-  foreach ($formatters as $formatter) {
-    $theme_functions[$formatter] = array(
-      'variables' => array('node' => NULL),
-      'file' => 'entities/node/node.theme.inc',
-    );
-  }
-
-  return $theme_functions;
-}
 
 /**
  * Implements hook_ds_fields().
@@ -47,20 +24,21 @@ function node_ds_fields($entity_type, $bundle, $view_mode) {
   // Title
   $fields['title'] = array(
     'title' => t('Title'),
-    'type' => DS_FIELD_TYPE_THEME,
+    'type' => DS_FIELD_TYPE_FUNCTION,
     'status' => DS_FIELD_STATUS_STATIC,
+    'function' => 'theme_ds_title_field',
     'properties' => array(
       'formatters' => array(
-        'node_title_h1_nolink' => t('H1 title'),
-        'node_title_h1_link' => t('H1 title, linked to node'),
-        'node_title_h2_nolink' => t('H2 title'),
-        'node_title_h2_link' => t('H2 title, linked to node'),
-        'node_title_h2_block_nolink' => t('H2 block title'),
-        'node_title_h2_block_link' => t('H2 block title, linked to node'),
-        'node_title_p_nolink' => t('Paragraph title'),
-        'node_title_p_link' => t('Paragraph title, linked to node'),
-        'node_title_text' => t('Plain text'),
-        'node_title_text_linked' => t('Plain text, linked to node'),
+        'node_title_nolink_h1' => t('H1 title'),
+        'node_title_link_h1' => t('H1 title, linked to node'),
+        'node_title_nolink_h2' => t('H2 title'),
+        'node_title_link_h2' => t('H2 title, linked to node'),
+        'node_title_nolink_h2_block' => t('H2 block title'),
+        'node_title_link_h2_block' => t('H2 block title, linked to node'),
+        'node_title_nolink_p' => t('Paragraph title'),
+        'node_title_link_p' => t('Paragraph title, linked to node'),
+        'node_title_nolink' => t('Plain text'),
+        'node_title_link' => t('Plain text, linked to node'),
       ),
     )
   );

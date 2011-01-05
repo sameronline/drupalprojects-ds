@@ -168,7 +168,7 @@ function _ds_theme_registry_alter(&$theme_registry) {
 function _ds_entity_info_alter(&$entity_info) {
 
   // Add custom view modes to entities.
-  $custom_view_modes = ds_get_view_modes();
+  $custom_view_modes = ds_custom_view_modes();
   foreach ($custom_view_modes as $view_mode_key => $view_mode_value) {
     $view_mode = array(
       'label' => check_plain($view_mode_value->label),
@@ -183,6 +183,7 @@ function _ds_entity_info_alter(&$entity_info) {
 
   // Add layout if applicable.
   $ds_layouts = module_invoke_all('ds_layouts');
+  // @todo convert to db_select().
   $results = db_query('SELECT entity_type, bundle, view_mode, layout, settings, load_html5 FROM {ds_layouts}')->fetchAll();
   foreach ($results as $row) {
     $layout = $ds_layouts[$row->layout];

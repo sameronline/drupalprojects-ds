@@ -12,7 +12,7 @@
 function ds_custom_view_modes() {
   $output = '';
 
-  $custom_view_modes = ds_get_view_modes();
+  $custom_view_modes = ds_custom_view_modes();
   if (!empty($custom_view_modes)) {
 
     $rows = array();
@@ -51,7 +51,7 @@ function ds_custom_view_modes() {
  */
 function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
 
-  $custom_view_modes = ds_get_view_modes();
+  $custom_view_modes = ds_custom_view_modes();
   if (isset($custom_view_modes[$view_mode])) {
     $view_mode = $custom_view_modes[$view_mode];
   }
@@ -111,7 +111,7 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
  * Return whether a view mode machine name is unique.
  */
 function ds_view_mode_unique($name) {
-  $custom_view_modes = ds_get_view_modes();
+  $custom_view_modes = ds_custom_view_modes();
   $value = strtr($name, array('-' => '_'));
   return isset($custom_view_modes[$value]) ? TRUE : FALSE;
 }
@@ -167,7 +167,7 @@ function ds_edit_view_mode_form_submit($form, &$form_state) {
  * Confirmation view mode delete form
  */
 function ds_delete_view_mode_confirm($form, &$form_state, $view_mode = '') {
-  $custom_view_modes = ds_get_view_modes();
+  $custom_view_modes = ds_custom_view_modes();
   if (isset($custom_view_modes[$view_mode])) {
     $view_mode = $custom_view_modes[$view_mode];
     $form['#view_mode'] = $view_mode;
