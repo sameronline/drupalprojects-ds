@@ -92,9 +92,8 @@ function ds_views_api() {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
-  module_load_include('inc', 'ds', 'ds.field_ui');
+  form_load_include($form_state, 'inc', 'ds', 'ds.field_ui');
   ds_field_ui_fields_layouts($form, $form_state);
-  $form_state['build_info']['files']['ds'] = drupal_get_path('module', 'ds') . '/ds.field_ui.inc';
 }
 
 /**
