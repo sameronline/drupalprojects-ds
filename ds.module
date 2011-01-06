@@ -567,7 +567,7 @@ function theme_ds_title_field($field) {
   // Tags / class.
   if (isset($formatter[3])) {
     $class = (isset($formatter[4])) ? 'class="' . $formatter[4] . '-title"' : '';
-    $output = '<' . $formatter[3] . ' ' . $class . '>' . $string . '<' . $formatter[3] . '/>';
+    $output = '<' . $formatter[3] . ' ' . $class . '>' . $output . '<' . $formatter[3] . '/>';
   }
 
   return $output;
