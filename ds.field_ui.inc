@@ -16,18 +16,14 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   $bundle = $form['#bundle'];
   $view_mode = $form['#view_mode'];
 
-  // Add tabs for browsing through the options.
-  _ds_field_ui_table_tabs($form);
-
-  // Add layout form.
+  // Add layout fieldset.
   _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, $form);
 
   // Add the fields.
   _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form);
 
-  // Attach css and js.
+  // Attach js.
   $form['#attached']['js'][] = drupal_get_path('module', 'ds') . '/js/ds.js';
-  $form['#attached']['css'][] = drupal_get_path('module', 'ds') . '/css/ds.css';
 
   // Add process function to add the regions.
   $form['#process'][] = 'ds_field_ui_regions';
@@ -226,23 +222,8 @@ function ds_field_ui_fields_save($form, &$form_state) {
   cache_clear_all('entity_info', 'cache', TRUE);
 }
 
-
 /**
- * Add the tabs at the top of the Field UI form.
- *
- * @param $form
- *   A collection of form properties.
- */
-function _ds_field_ui_table_tabs(&$form) {
-  $ds_tabs = '<div id="ds-tabs"><a href="#">' . t('Fields') . '</a><a href="#">' . t('Layout') . '</a></div>';
-  $form['ds_tabs'] = array(
-    '#markup' => $ds_tabs,
-    '#weight' => -10,
-  );
-}
-
-/**
- * Add the layouts form on the Field UI screen.
+ * Add the layouts fieldset on the Field UI screen.
  *
  * @param $entity_type
  *   The name of the entity type.
@@ -267,10 +248,9 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   $layout = db_query('SELECT layout, settings, load_html5 FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
   $form['ds_layouts'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Layout'),
-    '#weight' => -9,
-    '#prefix' => '<div id="ds-layout-wrapper" style="display: none;">',
-    '#suffix' => '</div>',
+    '#title' => t('Layout for !bundle in !view_mode', array('!bundle' => $bundle, '!view_mode' => $view_mode)),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
   );
 
   if (!empty($layout)) {
@@ -286,7 +266,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#type' => 'select',
     '#title' => t('Select a layout'),
     '#options' => $layout_options,
-    '#description' => t('Select a layout for !bundle in !view_mode.', array('!bundle' => $bundle, '!view_mode' => $view_mode)),
     '#default_value' => isset($layout->layout) ? $layout->layout : '',
   );
 
@@ -297,7 +276,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
 
   $form['ds_layouts']['load_html5'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Use the HTML 5 version of the template file'),
+    '#title' => t('Use the HTML 5 version of the template file.'),
     '#default_value' => isset($layout->load_html5) ? $layout->load_html5 : '',
   );
 

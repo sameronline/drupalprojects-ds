@@ -3,30 +3,6 @@
 (function($) {
 
 /**
- * Creates tabs for visibility
- */
-Drupal.behaviors.dsTabs = {
-  attach: function (context) {
-    $('#ds-tabs a').click(function() {
-      // todo clean this up.
-      if ($('#field-display-overview-wrapper').is(':visible')) {
-        $('#field-display-overview-wrapper').css('display', 'none');
-        $('#edit-modes').css('display', 'none');
-        $('#edit-actions').css('display', 'none');
-        $('#ds-layout-wrapper').css('display', 'block');        
-      }
-      else {
-        $('#field-display-overview-wrapper').css('display', 'block');      
-        $('#edit-actions').css('display', 'block');
-        $('#edit-modes').css('display', 'block');
-        $('#ds-layout-wrapper').css('display', 'none');
-      }
-      return false;
-    });
-  }
-};
-
-/**
  * Row handlers for the 'Manage display' screen.
  */
 Drupal.fieldUIDisplayOverview = Drupal.fieldUIDisplayOverview || {};
