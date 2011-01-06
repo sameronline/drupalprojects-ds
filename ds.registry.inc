@@ -26,7 +26,7 @@ function _ds_menu() {
   $items['admin/structure/ds/view_modes'] = array(
     'title' => 'View modes',
     'description' => 'Manage custom view modes for all entities.',
-    'page callback' => 'ds_custom_view_modes',
+    'page callback' => 'ds_custom_view_modes_list',
     'file' => 'ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
   );
@@ -53,7 +53,7 @@ function _ds_menu() {
   $items['admin/structure/ds/fields'] = array(
     'title' => 'Fields',
     'description' => 'Manage fields for all entities.',
-    'page callback' => 'ds_custom_fields',
+    'page callback' => 'ds_custom_fields_list',
     'file' => 'ds.fields.inc',
     'access arguments' => array('admin_fields'),
   );

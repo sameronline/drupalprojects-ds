@@ -7,9 +7,9 @@
  */
 
 /**
- * Shows the overview page for custom fields.
+ * Shows the list of custom fields.
  */
-function ds_custom_fields() {
+function ds_custom_fields_list() {
   $output = '';
 
   $custom_fields = ds_custom_fields();

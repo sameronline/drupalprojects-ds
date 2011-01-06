@@ -7,9 +7,9 @@
  */
 
 /**
- * Shows the overview page for custom view modes.
+ * Shows the list of custom view modes.
  */
-function ds_custom_view_modes() {
+function ds_custom_view_modes_list() {
   $output = '';
 
   $custom_view_modes = ds_custom_view_modes();
