@@ -367,11 +367,13 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
     foreach ($object->ds_groups as $group => $fields) {
       asort($fields);
       $group_content = '';
+      $field_count = 0;
       foreach ($fields as $key => $weight) {
         $field_content = isset($vars[$key .'_rendered']) ? $vars[$key .'_rendered'] : '';
         if (!empty($field_content)) {
           $group_content .= theme($theme_function, $field_content, $object->ds_fields[$key]);
           unset($object->ds_fields[$key]);
+          $field_count++;
         }
       }
 
@@ -391,6 +393,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
         }
         else {
           $object->ds_fields[$group]['content'] = $group_content;
+          $object->ds_fields[$group]['count'] = $field_count;
         }
       }
       else {

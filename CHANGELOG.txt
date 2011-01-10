@@ -3,6 +3,7 @@
 -------------------------------------------------------------------------------------
 - #1003380 by vadym.kononenko: views field class should be added by default.
 - #1004096 by swentel: deleting a build mode breaks synced build modes.
+- #1016664 by jstoller: Add field count variable to groups.
 - Hide the classes select box on views fiels if there are no styles.
 
 -------------------------------------------------------------------------------------
