@@ -126,12 +126,6 @@ function _ds_theme() {
       'render element' => 'elements',
       'template' => 'layouts/' . $key . '/' . strtr($key, '_', '-'),
     );
-
-    // HTML 5 version of template.
-    $theme_functions[$key . '_html5'] = array(
-      'render element' => 'elements',
-      'template' => 'layouts/' . $key . '/' . strtr($key, '_', '-') .'-html5',
-    );
   }
 
   // Load theming functions from entities we implement.
@@ -184,11 +178,10 @@ function _ds_entity_info_alter(&$entity_info) {
   // Add layout if applicable.
   $ds_layouts = module_invoke_all('ds_layouts');
   // @todo convert to db_select().
-  $results = db_query('SELECT entity_type, bundle, view_mode, layout, settings, load_html5 FROM {ds_layouts}')->fetchAll();
+  $results = db_query('SELECT entity_type, bundle, view_mode, layout, settings FROM {ds_layouts}')->fetchAll();
   foreach ($results as $row) {
     $layout = $ds_layouts[$row->layout];
     $layout['layout'] = $row->layout;
-    $layout['load_html5'] = $row->load_html5;
     $layout['settings'] = unserialize($row->settings);
     $entity_info[$row->entity_type]['bundles'][$row->bundle]['layouts'][$row->view_mode] = $layout;
   }
@@ -200,6 +193,13 @@ function _ds_entity_info_alter(&$entity_info) {
 function _ds_ds_layouts() {
   $path = drupal_get_path('module', 'ds');
   $layouts = array(
+    'ds_1col' => array(
+      'label' => t('One column'),
+      'path' => $path . '/layouts/ds_1col',
+      'regions' => array(
+        'ds_content' => t('Content'),
+      ),
+    ),  
     'ds_2col' => array(
       'label' => t('Two column'),
       'path' => $path . '/layouts/ds_2col',
@@ -207,7 +207,6 @@ function _ds_ds_layouts() {
         'left' => t('Left'),
         'right' => t('Right')
       ),
-      'has_html5' => TRUE,
     ),
     'ds_2col_stacked' => array(
       'label' => t('Two column stacked'),
@@ -218,20 +217,27 @@ function _ds_ds_layouts() {
         'right' => t('Right'),
         'footer' => t('Footer'),
       ),
-      'has_html5' => TRUE,
     ),
     'ds_3col' => array(
-      'label' => t('Three column'),
+      'label' => t('Three column - 25/50/25'),
       'path' => $path . '/layouts/ds_3col',
       'regions' => array(
         'left' => t('Left'),
         'middle' => t('Middle'),
         'right' => t('Right'),
       ),
-      'has_html5' => TRUE,
     ),
+    'ds_3col_equal_width' => array(
+      'label' => t('Three column - equal width'),
+      'path' => $path . '/layouts/ds_3col_equal_width',
+      'regions' => array(
+        'left' => t('Left'),
+        'middle' => t('Middle'),
+        'right' => t('Right'),
+      ),
+    ),    
     'ds_3col_stacked' => array(
-      'label' => t('Three column stacked'),
+      'label' => t('Three column stacked - 25/50/25'),
       'path' => $path . '/layouts/ds_3col_stacked',
       'regions' => array(
         'header' => t('Header'),
@@ -240,8 +246,39 @@ function _ds_ds_layouts() {
         'right' => t('Right'),
         'footer' => t('Footer'),
       ),
-      'has_html5' => TRUE,
     ),
+    'ds_3col_stacked_equal_width' => array(
+      'label' => t('Three column stacked - equal width'),
+      'path' => $path . '/layouts/ds_3col_stacked_equal_width',
+      'regions' => array(
+        'header' => t('Header'),
+        'left' => t('Left'),
+        'middle' => t('Middle'),
+        'right' => t('Right'),
+        'footer' => t('Footer'),
+      ),
+    ),    
+    'ds_3col_stacked_html5' => array(
+      'label' => t('Three column stacked - 25/50/25 (HTML5)'),
+      'path' => $path . '/layouts/ds_3col_stacked_html5',
+      'regions' => array(
+        'header' => t('Header'),
+        'left' => t('Left'),
+        'middle' => t('Middle'),
+        'right' => t('Right'),
+        'footer' => t('Footer'),
+      ),
+    ), 
+    'ds_4col' => array(
+      'label' => t('Four column - equal width'),
+      'path' => $path . '/layouts/ds_4col',
+      'regions' => array(
+        'first' => t('First'),
+        'second' => t('Second'),
+        'third' => t('Third'),
+        'fourth' => t('Fourth'),
+      ),
+    ),        
   );
 
   return $layouts;

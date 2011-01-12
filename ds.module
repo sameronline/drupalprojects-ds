@@ -437,7 +437,7 @@ function ds_determine_layout_variables($entity_type, $bundle, $view_mode, $type,
     // Add template files for hook_theme_suggestions and also the regions.
     if ($type == 'theme_hook_suggestions') {
       $variables['ds_layout'] = $layout;
-      $variables['theme_hook_suggestions'][] = $layout['layout'] . ($layout['load_html5'] ? '_html5' : '');
+      $variables['theme_hook_suggestions'][] = $layout['layout'];
     }
   }
 }

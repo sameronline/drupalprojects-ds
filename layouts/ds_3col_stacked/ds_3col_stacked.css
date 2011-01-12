@@ -1,16 +1,24 @@
 /* $Id$ */
 
+.group-header {
+  clear: both;
+}
+
 .group-left {
-  float: left;
   width: 25%;
+  float: left;
 }
 
 .group-middle {
-  float: left;
   width: 50%;
+  float: left;
 }
 
 .group-right {
-  float: left;
   width: 25%;
+  float: right;
+}
+
+.group-footer {
+  clear: both;
 }

@@ -140,7 +140,6 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $record->bundle = $bundle;
   $record->view_mode = $view_mode;
   $record->layout = $form_state['values']['layout'];
-  $record->load_html5 = (isset($form_state['values']['load_html5']) && (!empty($form_state['values']['layout']))) ? $form_state['values']['load_html5'] : FALSE;
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
@@ -245,7 +244,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
 
   // Add layouts form.
   // @todo convert to db_select();
-  $layout = db_query('SELECT layout, settings, load_html5 FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
+  $layout = db_query('SELECT layout, settings FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
   $form['ds_layouts'] = array(
     '#type' => 'fieldset',
     '#title' => t('Layout for !bundle in !view_mode', array('!bundle' => $bundle, '!view_mode' => $view_mode)),
@@ -255,7 +254,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
 
   if (!empty($layout)) {
     $chosen_layout = $ds_layouts[$layout->layout];
-    $layout_string = ($layout->load_html5) ? $layout->layout .'-html5' : $layout->layout;
+    $layout_string = $layout->layout;
     $suggestions = '- ' . $layout_string .'-'. $entity_type .'.tpl.php<br />';
     $suggestions .= '- ' . $layout_string .'-'. $entity_type .'-'. $bundle .'.tpl.php<br />';
     $suggestions .= '- ' . $layout_string .'-'. $entity_type .'-'. $bundle .'-' . $view_mode .'.tpl.php<br />';
@@ -272,12 +271,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   $form['ds_layouts']['old_layout'] = array(
     '#type' => 'value',
     '#value' => isset($layout->layout) ? $layout->layout : 0
-  );
-
-  $form['ds_layouts']['load_html5'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Use the HTML 5 version of the template file.'),
-    '#default_value' => isset($layout->load_html5) ? $layout->load_html5 : '',
   );
 
   $form['ds_layouts']['save_button'] = array(
