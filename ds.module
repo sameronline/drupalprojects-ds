@@ -235,8 +235,10 @@ function ds_entity_view_modes($entity = NULL) {
 function ds_custom_view_modes() {
   $custom_view_modes = array();
 
-  // @todo convert to db_select().
-  $results = db_query('SELECT view_mode, label, entities FROM {ds_view_modes}')->fetchAll();
+  $results = db_select('ds_view_modes', 'dsv')
+               ->fields('dsv', array('view_mode', 'label', 'entities'))
+               ->execute();
+
   foreach ($results as $view_mode) {
     $view_mode->entities = unserialize($view_mode->entities);
     $custom_view_modes[$view_mode->view_mode] = $view_mode;
@@ -253,8 +255,11 @@ function ds_custom_fields() {
 
   if (!isset($fields)) {
     $custom_fields = array();
-    // @todo convert to db_select().
-    $results = db_query('SELECT field, label, type, entities, properties FROM {ds_fields}')->fetchAll();
+
+    $results = db_select('ds_fields', 'df')
+                 ->fields('df', array('field', 'type', 'label', 'entities', 'properties'))
+                 ->execute();
+
     foreach ($results as $field) {
       $field->entities = unserialize($field->entities);
       $field->properties = unserialize($field->properties);
@@ -290,7 +295,7 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
 
   switch ($field['type']) {
     case DS_FIELD_TYPE_FUNCTION:
-      // TODO make sure we use DRUPAL_ROOT to include
+      // @todo make sure we use DRUPAL_ROOT to include
       if (isset($field['file']) && !isset($included_files[$field['file']])) {
         $included_files[$field['file']] = TRUE;
         include DRUPAL_ROOT . $field['file'];
@@ -321,9 +326,11 @@ function ds_get_fields_configuration($entity_type, $bundle, $view_mode) {
       $fields_configuration = $cache->data;
     }
     else {
-      // @todo convert to db_select().
-      $result = db_query('SELECT field, entity_type, bundle, view_mode, settings FROM {ds_settings}')->fetchAll();
-      foreach ($result as $row) {
+      $results = db_select('ds_settings', 'ds')
+                  ->fields('ds', array('field', 'entity_type', 'bundle', 'view_mode'))
+                  ->execute();
+
+      foreach ($results as $row) {
         $fields_configuration[$row->entity_type][$row->bundle][$row->view_mode][$row->field] = unserialize($row->settings);
       }
       cache_set('ds_fields_configuration', $fields_configuration);
