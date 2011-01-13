@@ -64,6 +64,7 @@ function template_preprocess_ds_row_entity(&$vars) {
     if (isset($options['grouping']) && $options['grouping']) {
       $group_value = $vars['view']->result[$nrs[$view_name]]->$options['grouping_fieldset']['group_field'];
       if (!isset($grouping[$view_name][$group_value])) {
+        // @todo make the theming of this group_value configurable.
         $group_value_content = '<h2 class="grouping-title">'. $group_value .'</h2>';
         $grouping[$view_name][$group_value] = $group_value;
       }
@@ -101,6 +102,5 @@ function ds_views_row_node(&$vars, $view_mode) {
     return;
   }
 
-  // @todo render this through our template rendering system.
   $vars['object'] = drupal_render(node_view($node, $view_mode));
 }

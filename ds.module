@@ -561,7 +561,13 @@ function theme_ds_title_field($field) {
 
   // Link.
   if ($formatter[2] == 'link') {
-    $output = l($output, $field['entity']->uri['path']);
+    if (isset($field['entity']->uri['path'])) {
+      $path = $field['entity']->uri['path'];
+    }
+    else {
+      $path = 'node/' . $field['entity']->nid;
+    }
+    $output = l($output, $path);
   }
 
   // Tags / class.

@@ -319,8 +319,8 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form) {
   foreach ($fields as $key => $field) {
     $form['#ds_fields'][] = $key;
 
-    //$formatters = array('hidden' => t('<Hidden>'));
-    $formatters = isset($field['properties']['formatters']) ? $field['properties']['formatters'] : array('default' => t('Default'));
+    $hidden = array('hidden' => t('<Hidden>'));
+    $formatters = isset($field['properties']['formatters']) ? $hidden + $field['properties']['formatters'] : $hidden + array('default' => t('Default'));
 
     $table[$key] = array(
       //'#parents' => array($key),
