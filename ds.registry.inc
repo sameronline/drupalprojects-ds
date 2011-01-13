@@ -25,7 +25,7 @@ function _ds_menu() {
   // Custom view modes.
   $items['admin/structure/ds/view_modes'] = array(
     'title' => 'View modes',
-    'description' => 'Manage custom view modes for all entities.',
+    'description' => 'Manage custom view modes for all content.',
     'page callback' => 'ds_custom_view_modes_list',
     'file' => 'ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
@@ -52,7 +52,7 @@ function _ds_menu() {
   // Fields.
   $items['admin/structure/ds/fields'] = array(
     'title' => 'Fields',
-    'description' => 'Manage fields for all entities.',
+    'description' => 'Manage fields for all content.',
     'page callback' => 'ds_custom_fields_list',
     'file' => 'ds.fields.inc',
     'access arguments' => array('admin_fields'),
@@ -199,7 +199,7 @@ function _ds_ds_layouts() {
       'regions' => array(
         'ds_content' => t('Content'),
       ),
-    ),  
+    ),
     'ds_2col' => array(
       'label' => t('Two column'),
       'path' => $path . '/layouts/ds_2col',
@@ -235,7 +235,7 @@ function _ds_ds_layouts() {
         'middle' => t('Middle'),
         'right' => t('Right'),
       ),
-    ),    
+    ),
     'ds_3col_stacked' => array(
       'label' => t('Three column stacked - 25/50/25'),
       'path' => $path . '/layouts/ds_3col_stacked',
@@ -257,7 +257,7 @@ function _ds_ds_layouts() {
         'right' => t('Right'),
         'footer' => t('Footer'),
       ),
-    ),    
+    ),
     'ds_3col_stacked_html5' => array(
       'label' => t('Three column stacked - 25/50/25 (HTML5)'),
       'path' => $path . '/layouts/ds_3col_stacked_html5',
@@ -268,7 +268,7 @@ function _ds_ds_layouts() {
         'right' => t('Right'),
         'footer' => t('Footer'),
       ),
-    ), 
+    ),
     'ds_4col' => array(
       'label' => t('Four column - equal width'),
       'path' => $path . '/layouts/ds_4col',
@@ -278,7 +278,7 @@ function _ds_ds_layouts() {
         'third' => t('Third'),
         'fourth' => t('Fourth'),
       ),
-    ),        
+    ),
   );
 
   return $layouts;

@@ -327,7 +327,7 @@ function ds_get_fields_configuration($entity_type, $bundle, $view_mode) {
     }
     else {
       $results = db_select('ds_settings', 'ds')
-                  ->fields('ds', array('field', 'entity_type', 'bundle', 'view_mode'))
+                  ->fields('ds', array('field', 'entity_type', 'bundle', 'view_mode', 'settings'))
                   ->execute();
 
       foreach ($results as $row) {
