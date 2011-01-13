@@ -258,7 +258,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     $suggestions = '- ' . $layout_string .'-'. $entity_type .'.tpl.php<br />';
     $suggestions .= '- ' . $layout_string .'-'. $entity_type .'-'. $bundle .'.tpl.php<br />';
     $suggestions .= '- ' . $layout_string .'-'. $entity_type .'-'. $bundle .'-' . $view_mode .'.tpl.php<br />';
-    $form['ds_layouts']['#description'] = t('You have selected the %layout_label layout. The default template can be found in %path.<br />Possible template suggestions are: <br />!suggestions', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path'], '!suggestions' => strtr($suggestions, '_', '-')));
+    $form['ds_layouts']['#description'] = t('You have selected the %layout_label layout. The default template can be found in %path', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
   }
 
   $form['ds_layouts']['layout'] = array(
@@ -267,6 +267,12 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#options' => $layout_options,
     '#default_value' => isset($layout->layout) ? $layout->layout : '',
   );
+
+  if (!empty($layout)) {
+    $form['ds_layouts']['suggestions'] = array(
+      '#markup' => '<p>' . t('Possible template suggestions are: <br />!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p>',
+    );
+  }
 
   $form['ds_layouts']['old_layout'] = array(
     '#type' => 'value',
