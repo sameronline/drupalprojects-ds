@@ -14,7 +14,7 @@ $right = ds_render_region($content, 'right', $ds_layout);
   <div class="group-left">
     <?php print $left; ?>
   </div>
-  
+
   <div class="group-right">
     <?php print $right; ?>
   </div>

@@ -90,7 +90,6 @@ function template_preprocess_ds_row_entity(&$vars) {
  */
 function ds_views_row_node(&$vars, $view_mode) {
   $nid = $vars['row']->{$vars['field_alias']};
-  //$nid = $vars['row']->nid;
   if (!is_numeric($nid)) {
     return;
   }

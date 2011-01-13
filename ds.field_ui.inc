@@ -279,11 +279,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#value' => isset($layout->layout) ? $layout->layout : 0
   );
 
-  $form['ds_layouts']['save_button'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save layout settings'),
-  );
-
   if (isset($layout->layout)) {
     $layout->settings = unserialize($layout->settings);
     $layout->regions = $chosen_layout['regions'];
