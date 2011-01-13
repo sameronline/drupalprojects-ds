@@ -388,7 +388,14 @@ function ds_field_attach_view_alter(&$build, $context) {
  * to every entity that is themeable to modify the theme_hook_suggestions key.
  */
 function ds_preprocess_entity(&$variables) {
+
   ds_determine_layout_variables($variables['elements']['#entity_type'], $variables['elements']['#bundle'], $variables['elements']['#view_mode'], 'theme_hook_suggestions', $variables);
+
+  if (isset($variables['ds_layout'])) {
+    foreach ($variables['ds_layout']['regions'] as $region_name => $region) {
+      $variables[$region_name] = ds_render_region($variables['content'], $region_name, $variables['ds_layout']);
+    }
+  }
 }
 
 /**
