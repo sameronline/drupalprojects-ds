@@ -42,7 +42,6 @@ function ds_help($path, $arg) {
       $output .= '</dl>';
       return $output;
   }
-
 }
 
 /**
@@ -57,6 +56,10 @@ function ds_permission() {
     'admin_fields' => array(
       'title' => t('Administer fields'),
       'description' => t('Create fields for every entity.')
+    ),
+    'admin_display_suite' => array(
+      'title' => t('Administer Display Suite'),
+      'description' => t('General permission for Display Suite settings pages.')
     ),
   );
 }

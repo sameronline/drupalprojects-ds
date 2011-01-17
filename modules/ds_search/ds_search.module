@@ -1,0 +1,173 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Display Suite search.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function ds_search_help($path, $arg) {
+  switch ($path) {
+    case 'admin/structure/ds/search':
+      $output = '<dl>';
+      $output .= '<dt>' . t('Search settings for display suite') . '</dt>';
+      //$output .= '<dd>' . t("") . '</dd>';
+      $output .= '</dl>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ds_search_menu() {
+
+  $items['admin/structure/ds/search'] = array(
+    'title' => 'Search',
+    'description' => 'Configure search settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_search_settings'),
+    'access arguments' => array('admin_display_suite'),
+  );
+
+  return $items;
+}
+
+/**
+ * Menu callback: Display Suite search settings.
+ */
+function ds_search_settings($form, $form_state) {
+  return $form;
+}
+
+/**
+ * Implements hook_search_info().
+ */
+function ds_search_search_info() {
+  return array(
+    'title' => 'Content',
+    'path' => 'content',
+  );
+}
+
+/**
+ * Implements hook_search_execute().
+ */
+function ds_search_search_execute($keys = NULL, $conditions = NULL) {
+  // We will call an extra function which handles the actual search.
+  // In some cases, we simply copied a lot from the original hook,
+  // because some modules already called drupal_render and were unsetting
+  // the #theme key. By using our own search info type, we can call
+  // hook_search_page ourselves and be as flexible as we need to be.
+  $ds_search_type = variable_get('ds_search_type', 'node') . '_ds_search_execute';
+  return $ds_search_type($keys, $conditions);
+}
+
+/**
+ * Implements hook_search_page().
+ */
+function ds_search_search_page($results) {
+  $build = array();
+
+  // Render results.
+  foreach ($results as $result) {
+    $build[$result->nid] = node_view($result, 'search_result');
+  }
+
+  // Render pager.
+  $build['pager'] = array('#markup' => theme('pager', array('tags' => NULL)));
+
+  return $build;
+}
+
+/**
+ * Search on behalf of Drupal Core.
+ */
+function node_ds_search_execute($keys = NULL, $conditions = NULL) {
+  // Build matching conditions
+  $query = db_select('search_index', 'i', array('target' => 'slave'))->extend('SearchQuery')->extend('PagerDefault');
+  $query->join('node', 'n', 'n.nid = i.sid');
+  $query
+    ->condition('n.status', 1)
+    ->addTag('node_access')
+    ->searchExpression($keys, 'node');
+
+  // Insert special keywords.
+  $query->setOption('type', 'n.type');
+  $query->setOption('language', 'n.language');
+  if ($query->setOption('term', 'ti.tid')) {
+    $query->join('taxonomy_index', 'ti', 'n.nid = ti.nid');
+  }
+  // Only continue if the first pass query matches.
+  if (!$query->executeFirstPass()) {
+    return array();
+  }
+
+  // Add the ranking expressions.
+  _node_rankings($query);
+
+  // Load results.
+  $find = $query
+    ->limit(10)
+    ->execute();
+  $results = array();
+  foreach ($find as $item) {
+    $results[$item->sid] = node_load($item->sid);
+  }
+  return $results;
+}
+
+/**
+ * Search on behalf of Apache Solr.
+ */
+function apachesolr_ds_search_execute($keys = NULL, $conditions = NULL) {
+  // @todo test this.
+  return apachesolr_search_search_execute($keys, $conditions);
+}
+
+/**
+ * Search on behalf of Lucene API.
+ */
+function luceneapi_ds_search_execute($keys = NULL, $conditions = NULL) {
+  // @todo test this.
+  $results = array();
+  try {
+    if (!$index = luceneapi_index_open('luceneapi_node')) {
+      throw new LuceneAPI_Exception(t('Error opening index.'));
+    }
+
+    // Executes search, builds results array.
+    $hits = luceneapi_do_search($index, $keys);
+    foreach ($hits as $hit) {
+      try {
+
+        // Loads the body of the node, throws exception on errors.
+        // NOTE: this is more efficient than $hit->nid
+        $nid = $index->getDocument($hit->id)->getFieldValue('nid');
+        if (!$node = node_load($nid)) {
+          throw new LuceneAPI_Exception(t('Error loading node.'));
+        }
+        $results[$nid] = $node;
+      }
+      catch (Exception $e) {
+        $result = array(
+          'type' => '',
+          'title' => t('Error loading page'),
+          'score' => $hit->score,
+          'snippet' => t('The contents of the page could not be retrieved.'),
+          'positive_keys' => array(),
+        );
+      }
+
+      $results[] = $result;
+    }
+
+  }
+  catch (Exception $e) {
+    watchdog_exception('luceneapi', $e);
+  }
+  return $results;
+}

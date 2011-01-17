@@ -1,0 +1,6 @@
+; $Id$
+name = "Display suite search"
+description = "Extend the display options for search results for Drupal Core, Apache Solr or LuceneAPI."
+core = "7.x"
+package = "Display suite"
+dependencies[] = ds
