@@ -31,6 +31,21 @@ define('DS_BLOCK_TITLE_CONTENT', 2);
 define('DS_BLOCK_CONTENT', 3);
 
 /**
+ * Implements hook_help().
+ */
+function ds_help($path, $arg) {
+  switch ($path) {
+    case 'admin/structure/ds':
+      $output = '<dl>';
+      $output .= '<dt>' . t('Display Suite') . '</dt>';
+      //$output .= '<dd>' . t("") . '</dd>';
+      $output .= '</dl>';
+      return $output;
+  }
+
+}
+
+/**
  * Implements hook_permission().
  */
 function ds_permission() {
@@ -150,19 +165,28 @@ function ds_load_entity_implementations($return = FALSE) {
  */
 function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache = TRUE) {
 
-  static $static_fields = array();
+  static $static_fields, $ds_fields_cached = array();
+  static $run = FALSE;
+
+  if (!$run) {
+    $run = TRUE;
+    // Load our own entity implementations
+    ds_load_entity_implementations();
+    // Get all fields from cache.
+    // @todo consider moving field configurations to the entity.
+    // needs a proof of concept with benchmarks, memory profiling and kcachegrind calls.
+    if ($cache = cache_get('ds_fields_cached', 'cache')) {
+      $ds_fields_cached = $cache->data;
+    }
+  }
 
   if (!isset($static_fields[$entity_type][$bundle][$view_mode])) {
 
-    // Do we have them cached or not ? // TODO Get this from cache instead of variable
+    // Do we have them cached or not ?
     // This takes a few iterations of a site before everything will be in it,
-    $ds_fields_cached = variable_get('ds_fields_cached', array());
     if (!isset($ds_fields_cached[$entity_type][$bundle][$view_mode]) || $reset) {
 
-      // Load our own entity implementations // TODO enable or disable our own entities implementations ?
-      ds_load_entity_implementations();
-
-      // Fields in code.
+      // Get all fields.
       $fields = array();
       foreach (module_implements('ds_fields') as $module) {
         $function = $module .'_ds_fields';
@@ -176,8 +200,10 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
         }
       }
 
-      // Fields in database. // TODO refactor / cache this, in fact, this complete function needs to be refactored :)
-      // TODO all stuff should be objects, not arrays (see properties here)
+      // Fields in database.
+      // @todo refactor / cache this, in fact, this complete function needs to be refactored :)
+      // @todo all stuff should be objects, not arrays (see properties here)
+      // @todo move this do ds_ds_fields().
       $custom_fields = ds_custom_fields();
       foreach ($custom_fields as $key => $field) {
         if (isset($field->entities[$entity_type])) {
@@ -200,16 +226,18 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
       else {
         $ds_fields_cached[$entity_type][$bundle][$view_mode] = $fields;
       }
-      // Do we cache or not ?
+
+      // Cache the fields. This will happen a few times when the site
+      // has just flushed all cache tables.
       if ($cache) {
-        //variable_set('ds_fields_cached', $ds_fields_cached);
+        cache_set('ds_fields_cached', $ds_fields_cached, 'cache');
       }
     }
     else {
       $fields = $ds_fields_cached[$entity_type][$bundle][$view_mode];
     }
 
-    // Store the fields.
+    // Store the fields statically.
     $static_fields[$entity_type][$bundle][$view_mode] = $fields;
   }
 
@@ -295,7 +323,7 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
 
   switch ($field['type']) {
     case DS_FIELD_TYPE_FUNCTION:
-      // @todo make sure we use DRUPAL_ROOT to include
+      // @todo test with file key
       if (isset($field['file']) && !isset($included_files[$field['file']])) {
         $included_files[$field['file']] = TRUE;
         include DRUPAL_ROOT . $field['file'];
