@@ -40,7 +40,96 @@ function ds_search_menu() {
  * Menu callback: Display Suite search settings.
  */
 function ds_search_settings($form, $form_state) {
-  return $form;
+
+  $form['general'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('General'),
+  );
+
+  $engine_options = array();
+  foreach (module_implements('search_info') as $module) {
+    if ($module != 'ds_search' && $module != 'user') {
+      $engine_options[$module] = ucfirst(str_replace('_', ' ', $module));
+    }
+  }
+
+  $form['general']['ds_search_type'] = array(
+    '#type' => 'select',
+    '#title' => t('Search engine'),
+    '#description' => t('Select the search engine as the query backend'),
+    '#options' => $engine_options,
+    '#default_value' => variable_get('ds_search_type', 'node'),
+  );
+
+  $entity_view_modes = ds_entity_view_modes('node');
+  foreach ($entity_view_modes as $key => $view_mode) {
+    $view_mode_options[$key] = $view_mode['label'];
+  }
+  $form['general']['ds_search_view_mode'] = array(
+    '#type' => 'select',
+    '#title' => t('View mode'),
+    '#description' => 'Select another view mode in favor of the default search build mode. You can hide the search results build mode with matrix form afterwards.',
+    '#default_value' => variable_get('ds_search_view_mode', 'search_result'),
+    '#options' => $view_mode_options,
+  );
+
+  $form['general']['ds_search_show_title'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show title'),
+    '#description' => t('Toggle this checkbox if you want to display the "Search results" title.'),
+    '#default_value' => variable_get('ds_search_show_title', FALSE),
+  );
+
+  $form['general']['ds_search_variables'] = array(
+    '#type' => 'select',
+    '#options' => array(
+      'none' => t('None'),
+      'search_totals' => t('Total results'),
+      'search_totals_plus_keywords' => t('Total results + keywords'),
+      'search_totals_from_to_end' => t('Totals + start to end')
+    ),
+    '#title' => t('Extra variables'),
+    '#description' => t('Choose an extra variable to display on the results screen. Only applicable if override search page above is enabled'),
+    '#default_value' => variable_get('ds_search_variables', 'none'),
+  );
+
+  $form['general']['ds_search_highlight'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Highlight search word'),
+    '#description' => t('Use jQuery to highlight the word in the results.'),
+    '#default_value' => variable_get('ds_search_highlight', FALSE),
+  );
+
+  $form['general']['ds_search_highlight_selector'] = array(
+    '#type' => 'textfield',
+    '#title' => t('HTML selector'),
+    '#description' => t('Enter the css selector, if not sure, leave this by default.'),
+    '#default_value' => variable_get('nd_search_highlight_selector', '.buildmode-3'),
+  );
+
+  if (module_exists('apachesolr')) {
+
+    $form['apachesolr'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Apache Solr'),
+    );
+
+    $form['apachesolr']['ds_search_apachesolr_hide_current_filters'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Retain filters'),
+      '#description' => t('Toggle this checkbox if you want to hide the "Retain current filters" checkbox.'),
+      '#default_value' => variable_get('ds_search_apachesolr_hide_current_filters', TRUE),
+    );
+    // @todo still needed ?
+    $form['apachesolr']['ds_search_apachesolr_language'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Language'),
+      '#description' => t('Toggle this checkbox if you want only want to search in the language the site is currently in. Enable this if you have at least 2 languages.'),
+      '#default_value' => variable_get('ds_search_apachesolr_language', FALSE),
+    );
+  }
+
+  return system_settings_form($form);
 }
 
 /**
@@ -74,11 +163,15 @@ function ds_search_search_page($results) {
 
   // Render results.
   foreach ($results as $result) {
-    $build[$result->nid] = node_view($result, 'search_result');
+    $build[$result->nid] = node_view($result, variable_get('ds_search_view_mode', 'search_result'));
   }
 
   // Render pager.
   $build['pager'] = array('#markup' => theme('pager', array('tags' => NULL)));
+
+  // CSS and JS
+  drupal_add_css(drupal_get_path('module', 'ds_search') . '/ds_search.css');
+  drupal_add_js(drupal_get_path('module', 'ds_search') . '/ds_search.js');
 
   return $build;
 }
@@ -123,9 +216,14 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
 /**
  * Search on behalf of Apache Solr.
  */
-function apachesolr_ds_search_execute($keys = NULL, $conditions = NULL) {
-  // @todo test this.
-  return apachesolr_search_search_execute($keys, $conditions);
+function apachesolr_search_ds_search_execute($keys = NULL, $conditions = NULL) {
+  $find = apachesolr_search_search_execute($keys, $conditions);
+  $results = array();
+  foreach ($find as $item) {
+    // @todo store the node into apachesolr.
+    $results[$item['node']->nid] = node_load($item['node']->nid);
+  }
+  return $results;
 }
 
 /**
