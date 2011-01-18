@@ -13,8 +13,7 @@ function ds_search_help($path, $arg) {
   switch ($path) {
     case 'admin/structure/ds/search':
       $output = '<dl>';
-      $output .= '<dt>' . t('Search settings for display suite') . '</dt>';
-      //$output .= '<dd>' . t("") . '</dd>';
+      $output .= '<dt>' . t('Display suite defines its own search type. You need to enable it at !url and select the engine underneath you wish to use.', array('!url' => l('search settings', 'admin/config/search/settings'))) . '</dt>';
       $output .= '</dl>';
       return $output;
   }
@@ -71,7 +70,7 @@ function ds_search_settings($form, $form_state) {
   $form['general']['ds_search_view_mode'] = array(
     '#type' => 'select',
     '#title' => t('View mode'),
-    '#description' => 'Select another view mode in favor of the default search build mode. You can hide the search results build mode with matrix form afterwards.',
+    '#description' => 'Select another view mode in favor of the default search view mode.',
     '#default_value' => variable_get('ds_search_view_mode', 'search_result'),
     '#options' => $view_mode_options,
   );
