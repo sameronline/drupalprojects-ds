@@ -53,6 +53,9 @@ function ds_search_settings($form, $form_state) {
     }
   }
 
+  // Let other modules alter the engines.
+  drupal_alter('ds_search_engine', $engine_options);
+
   $form['general']['ds_search_type'] = array(
     '#type' => 'select',
     '#title' => t('Search engine'),
@@ -104,7 +107,7 @@ function ds_search_settings($form, $form_state) {
     '#type' => 'textfield',
     '#title' => t('HTML selector'),
     '#description' => t('Enter the css selector, if not sure, leave this by default.'),
-    '#default_value' => variable_get('nd_search_highlight_selector', '.buildmode-3'),
+    '#default_value' => variable_get('nd_search_highlight_selector', 'search-result'),
   );
 
   if (module_exists('apachesolr')) {
@@ -222,50 +225,6 @@ function apachesolr_search_ds_search_execute($keys = NULL, $conditions = NULL) {
   foreach ($find as $item) {
     // @todo store the node into apachesolr.
     $results[$item['node']->nid] = node_load($item['node']->nid);
-  }
-  return $results;
-}
-
-/**
- * Search on behalf of Lucene API.
- */
-function luceneapi_ds_search_execute($keys = NULL, $conditions = NULL) {
-  // @todo test this.
-  $results = array();
-  try {
-    if (!$index = luceneapi_index_open('luceneapi_node')) {
-      throw new LuceneAPI_Exception(t('Error opening index.'));
-    }
-
-    // Executes search, builds results array.
-    $hits = luceneapi_do_search($index, $keys);
-    foreach ($hits as $hit) {
-      try {
-
-        // Loads the body of the node, throws exception on errors.
-        // NOTE: this is more efficient than $hit->nid
-        $nid = $index->getDocument($hit->id)->getFieldValue('nid');
-        if (!$node = node_load($nid)) {
-          throw new LuceneAPI_Exception(t('Error loading node.'));
-        }
-        $results[$nid] = $node;
-      }
-      catch (Exception $e) {
-        $result = array(
-          'type' => '',
-          'title' => t('Error loading page'),
-          'score' => $hit->score,
-          'snippet' => t('The contents of the page could not be retrieved.'),
-          'positive_keys' => array(),
-        );
-      }
-
-      $results[] = $result;
-    }
-
-  }
-  catch (Exception $e) {
-    watchdog_exception('luceneapi', $e);
   }
   return $results;
 }
