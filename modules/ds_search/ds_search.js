@@ -9,10 +9,12 @@ Drupal.behaviors.DSSearchHighlight = {
   attach: function (context) {
     var selector = Drupal.settings.ds_search['selector'];
     var search = Drupal.settings.ds_search['search'];
+    var $selector = $(selector);
     // Split word.
+    
     words = search.split(' ');
     for (i = 0; i < words.length; i++) {
-      $(selector).highlight(words[i]);
+      $selector.highlight(words[i]);
     }
   }
 };

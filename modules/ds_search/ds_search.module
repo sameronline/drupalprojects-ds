@@ -107,7 +107,7 @@ function ds_search_settings($form, $form_state) {
     '#type' => 'textfield',
     '#title' => t('HTML selector'),
     '#description' => t('Enter the css selector, if not sure, leave this by default.'),
-    '#default_value' => variable_get('nd_search_highlight_selector', 'search_result'),
+    '#default_value' => variable_get('ds_search_highlight_selector', '.search-result'),
   );
 
   if (module_exists('apachesolr')) {
