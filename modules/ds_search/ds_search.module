@@ -148,6 +148,9 @@ function ds_search_search_info() {
  * Implements hook_search_execute().
  */
 function ds_search_search_execute($keys = NULL, $conditions = NULL) {
+  // Save the keys in case we need them later on.
+  ds_search_get_keys($keys);
+
   // We will call an extra function which handles the actual search.
   // In some cases, we simply copied a lot from the original hook,
   // because some modules already called drupal_render and were unsetting
@@ -155,6 +158,21 @@ function ds_search_search_execute($keys = NULL, $conditions = NULL) {
   // hook_search_page ourselves and be as flexible as we need to be.
   $ds_search_type = variable_get('ds_search_type', 'node') . '_ds_search_execute';
   return $ds_search_type($keys, $conditions);
+}
+
+/**
+ * Save or get the search keys.
+ */
+function ds_search_get_keys($keys = NULL) {
+  static $run, $saved_keys = FALSE;
+
+  if (!$run) {
+    $run = TRUE;
+    $saved_keys = $keys;
+  }
+  else {
+    return $saved_keys;
+  }
 }
 
 /**
@@ -218,8 +236,7 @@ function ds_search_extra_variables() {
   if ($end > $total) $end = $total;
 
   // @todo where is search_get_keys ?
-  //$keys = trim(search_get_keys());
-  $keys = arg(2);
+  $keys = trim(ds_search_get_keys());
 
   // Send the right extra variable.
   switch ($type) {
