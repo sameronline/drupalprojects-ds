@@ -92,7 +92,7 @@ function ds_search_settings($form, $form_state) {
       'search_totals_from_to_end' => t('Totals + start to end')
     ),
     '#title' => t('Extra variables'),
-    '#description' => t('Choose an extra variable to display on the results screen. Only applicable if override search page above is enabled'),
+    '#description' => t('Choose an extra variable to display on the results screen.'),
     '#default_value' => variable_get('ds_search_variables', 'none'),
   );
 
@@ -107,7 +107,7 @@ function ds_search_settings($form, $form_state) {
     '#type' => 'textfield',
     '#title' => t('HTML selector'),
     '#description' => t('Enter the css selector, if not sure, leave this by default.'),
-    '#default_value' => variable_get('nd_search_highlight_selector', 'search-result'),
+    '#default_value' => variable_get('nd_search_highlight_selector', 'search_result'),
   );
 
   if (module_exists('apachesolr')) {
@@ -164,19 +164,78 @@ function ds_search_search_execute($keys = NULL, $conditions = NULL) {
 function ds_search_search_page($results) {
   $build = array();
 
-  // Render results.
+  // Search results title.
+  if (variable_get('ds_search_show_title', FALSE)) {
+    $build['search_title'] = array('#markup' => '<h2>'. t('Search results') .'</h2>');
+  }
+
+  // Extra variables.
+  if (variable_get('ds_search_variables', 'none') != 'none') {
+    $build['search_extra'] = array('#markup' => '<div class="ds-search-extra">'. ds_search_extra_variables() .'</div>');
+  }
+
+  // Results.
   foreach ($results as $result) {
     $build[$result->nid] = node_view($result, variable_get('ds_search_view_mode', 'search_result'));
   }
 
-  // Render pager.
+  // Pager.
   $build['pager'] = array('#markup' => theme('pager', array('tags' => NULL)));
 
-  // CSS and JS
-  drupal_add_css(drupal_get_path('module', 'ds_search') . '/ds_search.css');
-  drupal_add_js(drupal_get_path('module', 'ds_search') . '/ds_search.js');
+  // CSS and JS.
+  if (variable_get('ds_search_highlight', FALSE)) {
+    drupal_add_css(drupal_get_path('module', 'ds_search') . '/ds_search.css');
+    drupal_add_js(drupal_get_path('module', 'ds_search') . '/ds_search.js');
+    drupal_add_js(array(
+      'ds_search' => array(
+        'selector' => check_plain(variable_get('ds_search_highlight_selector', '.search-result')),
+        'search' => check_plain(arg(2)),
+      ),
+    ), 'setting');
+  }
 
   return $build;
+}
+
+/**
+ * Return the extra variables.
+ */
+function ds_search_extra_variables() {
+  $type = variable_get('ds_search_variables', 'none');
+
+  // Define the number of results being shown on a page.
+  // We rely on the apache solr rows for now.
+  $items_per_page = variable_get('apachesolr_rows', 10);
+
+  // Get the current page.
+  $current_page = isset($_REQUEST['page']) ? $_REQUEST['page']+1 : 1;
+
+  // Get the total number of results from the $GLOBALS.
+  $total = $GLOBALS['pager_total_items'][0];
+
+  // Perform calculation
+  $start = $items_per_page * $current_page - ($items_per_page - 1);
+  $end = $items_per_page * $current_page;
+  if ($end > $total) $end = $total;
+
+  // @todo where is search_get_keys ?
+  //$keys = trim(search_get_keys());
+  $keys = arg(2);
+
+  // Send the right extra variable.
+  switch ($type) {
+    case 'search_totals':
+      return t('Total results: @total.', array('@total' => $total));
+      break;
+
+    case 'search_totals_plus_keywords':
+      return t('Your search for "<strong>@search</strong>" gave back @total results.', array('@search' => $keys, '@total' => $total));
+      break;
+
+    case 'search_totals_from_to_end':
+      return t('Displaying @start - @end of @total results.', array('@start' => $start, '@end' => $end, '@total' => $total));
+      break;
+  }
 }
 
 /**

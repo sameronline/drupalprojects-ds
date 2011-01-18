@@ -1,17 +1,21 @@
 /* $Id$ */
 
+(function($) {
+
 /**
  * Highlight words in search results with jQuery.
  */
-Drupal.behaviors.DSSearchHighlight = function(context) {
-  var selector = Drupal.settings.nd_search['selector'];
-  var search = Drupal.settings.nd_search['search'];
-  // Split word.
-  words = search.split(' ');
-  for (i = 0; i < words.length; i++) {
-    $(selector).highlight(words[i]);
+Drupal.behaviors.DSSearchHighlight = {
+  attach: function (context) {
+    var selector = Drupal.settings.ds_search['selector'];
+    var search = Drupal.settings.ds_search['search'];
+    // Split word.
+    words = search.split(' ');
+    for (i = 0; i < words.length; i++) {
+      $(selector).highlight(words[i]);
+    }
   }
-}
+};
 
 /*
 
@@ -36,7 +40,7 @@ jQuery.fn.highlight = function(pat) {
    var pos = node.data.toUpperCase().indexOf(pat);
    if (pos >= 0) {
     var spannode = document.createElement('span');
-    spannode.className = 'nd-search-highlight';
+    spannode.className = 'ds-search-highlight';
     var middlebit = node.splitText(pos);
     var endbit = middlebit.splitText(pat.length);
     var middleclone = middlebit.cloneNode(true);
@@ -56,3 +60,6 @@ jQuery.fn.highlight = function(pat) {
   innerHighlight(this, pat.toUpperCase());
  });
 };
+
+})(jQuery);
+
