@@ -417,7 +417,13 @@ function ds_field_attach_view_alter(&$build, $context) {
     );
   }
 
-  ds_determine_layout_variables($entity_type, $bundle, $view_mode, 'css', $build['#attached']);
+  // Add path to css file for this layout.
+  if ($layout = ds_determine_layout_variables($entity_type, $bundle, $view_mode)) {
+    if (!isset($build['#attached']['css'])) {
+      $build['#attached']['css'] = array();
+    }
+    $build['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
+  }
 }
 
 /**
@@ -427,12 +433,11 @@ function ds_field_attach_view_alter(&$build, $context) {
  * to every entity that is themeable to modify the theme_hook_suggestions key.
  */
 function ds_preprocess_entity(&$variables) {
-
-  ds_determine_layout_variables($variables['elements']['#entity_type'], $variables['elements']['#bundle'], $variables['elements']['#view_mode'], 'theme_hook_suggestions', $variables);
-
-  if (isset($variables['ds_layout'])) {
-    foreach ($variables['ds_layout']['regions'] as $region_name => $region) {
-      $variables[$region_name] = ds_render_region($variables['content'], $region_name, $variables['ds_layout']);
+  if ($layout = ds_determine_layout_variables($variables['elements']['#entity_type'], $variables['elements']['#bundle'], $variables['elements']['#view_mode'])) {
+    // Add template files for hook_theme_suggestions and also the regions.
+    $variables['theme_hook_suggestions'][] = $layout['layout'];
+    foreach ($layout['regions'] as $region_name => $region) {
+      $variables[$region_name] = ds_render_region($variables['content'], $region_name, $layout);
     }
   }
 }
@@ -445,47 +450,40 @@ function ds_preprocess_entity(&$variables) {
  *   The name of the bundle.
  * @param $view_mode
  *   The name of the view mode.
- * @param $variables
- *   The variables to add either the css file or theme_hook_suggestions.
- * @param $type
- *   The type of variables to ad$outputd to (can be css or theme_hook_suggestions).
+ * @return $layout
+ *   Array of layout variables for the regions.
  */
-function ds_determine_layout_variables($entity_type, $bundle, $view_mode, $type, &$variables) {
-  // @todo keep static
-  $layout = array();
-  $entity_info = entity_get_info();
+function ds_determine_layout_variables($entity_type, $bundle, $view_mode) {
 
-  $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-  $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
+  static $layouts = array();
+  $layout_key = $entity_type . '_' . $bundle . '_' . $view_mode;
 
-  // Check if a layout is configured.
-  if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode])) {
-    $layout = $entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode];
-  }
+  if (!isset($layouts[$layout_key])) {
 
-  // In case $view_mode is not form and not found, check if we have a default layout,
-  // but only if the view mode settings aren't overridden for this view mode.
-  if ($view_mode != 'default' && !$overriden && isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'])) {
-    $layout = $entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'];
-  }
+    $entity_info = entity_get_info();
 
-  if (!empty($layout)) {
+    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
+    $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
 
-    // Add path to css file for this layout.
-    if ($type == 'css') {
-      $css_file = $layout['path'] . '/' . $layout['layout'] . '.css';
-      if (!isset($variables['css'])) {
-        $variables['css'] = array();
-      }
-      $variables['css'][] = $css_file;
+    // Check if a layout is configured.
+    if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode])) {
+      $layouts[$layout_key] = $entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode];
     }
 
-    // Add template files for hook_theme_suggestions and also the regions.
-    if ($type == 'theme_hook_suggestions') {
-      $variables['ds_layout'] = $layout;
-      $variables['theme_hook_suggestions'][] = $layout['layout'];
+    // In case $view_mode is not form and not found, check if we have a default layout,
+    // but only if the view mode settings aren't overridden for this view mode.
+    if ($view_mode != 'default' && !$overriden && isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'])) {
+      $layouts[$layout_key] = $entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'];
     }
+
+    // Register the false return value as well.
+    if (!isset($layouts[$layout_key])) {
+      $layouts[$layout_key] = FALSE;
+    }
+
   }
+
+  return $layouts[$layout_key];
 }
 
 function ds_render_region($content, $region, $layout) {
