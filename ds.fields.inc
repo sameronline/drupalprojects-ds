@@ -348,7 +348,6 @@ function ds_delete_field_confirm_submit($form, &$form_state) {
     ->execute();
 
   // Clear cache.
-  // TODO check this.
   cache_clear_all();
 
   // Redirect.

@@ -23,35 +23,61 @@
  *
  *
  * @return $fields
- *   A collection of fields which keys are the entity type name and value
- *   a collection field which keys are the field name and value a collection
- *   of field properties.
+ *   A collection of fields which keys are the entity type name and values
+ *   a collection fields.
  *
  * @see ds_get_fields()
  */
 function hook_ds_fields($entity_type, $bundle, $view_mode) {
   $fields = array();
 
-  // @todo document the keys above.
   $fields['title'] = array(
+
+    // title: title of the field
     'title' => t('Title'),
-    // Type can either be
+
+    // type: type of field
     // - DS_FIELD_TYPE_THEME : calls a theming function
     // - DS_FIELD_TYPE_FUNCTION : calls a custom function
     // - DS_FIELD_TYPE_CODE : calls theme_ds_eval_code
     // - DS_FIELD_TYPE_BLOCK : calls theme_eval_block.
     'type' => DS_FIELD_TYPE_FUNCTION,
-    // File is an optional file in which the function resides.
+
+    // file: an optional file in which the function resides.
     // Only for DS_FIELD_TYPE_FUNCTION.
     'file' => 'optional_filename',
+
+    // status: status of the field.
+    // - DS_FIELD_STATUS_STATIC : static field
+    // - DS_FIELD_STATUS_DEFAULT : default field
     'status' => DS_FIELD_STATUS_STATIC,
-    // Function name, only for DS_FIELD_TYPE_FUNCTION.
+
+    // function: only for DS_FIELD_TYPE_FUNCTION.
     'function' => 'theme_ds_title_field',
+
+    // properties: can have different keys.
     'properties' => array(
+
+      // formatters: optional if a a function is used.
       'formatters' => array(
         'node_title_nolink_h1' => t('H1 title'),
         'node_title_link_h1' => t('H1 title, linked to node'),
       ),
+
+      // code: optional, only for code field.
+      'code' => 'my code here',
+
+      // use_token: optional, only for code field.
+      'code' => TRUE, // or FALSE,
+
+      // block: the module and delta of the block, only for block fields.
+      'block' => 'user-menu',
+
+      // block_render: block render type, only for block fields.
+      // - DS_BLOCK_CONTENT : render through block template file.
+      // - DS_BLOCK_TITLE_CONTENT : render only title and content.
+      // - DS_BLOCK_CONTENT : render only content.
+      'block_render' => DS_BLOCK_CONTENT,
     )
   );
 
