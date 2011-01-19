@@ -122,6 +122,25 @@ function ds_ds_layouts() {
 }
 
 /**
+ * Implements hook_ds_fields().
+ */
+function ds_ds_fields($entity_type, $bundle, $view_mode) {
+  $fields = array();
+  $custom_fields = ds_custom_fields();
+  foreach ($custom_fields as $key => $field) {
+    if (isset($field->entities[$entity_type])) {
+      $fields[$key] = array(
+        'title' => $field->label,
+        'type' => $field->type,
+        'properties' => (array) $field->properties,
+      );
+    }
+  }
+
+  return array($entity_type => $fields);
+}
+
+/**
  * Load our own entity implementatios for fields, registry etc.
  *
  * @param $return
@@ -168,25 +187,24 @@ function ds_load_entity_implementations($return = FALSE) {
 function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache = TRUE) {
 
   static $static_fields, $ds_fields_cached = array();
-  static $run = FALSE;
+  static $loaded = FALSE;
 
-  if (!$run) {
-    $run = TRUE;
-    // Load our own entity implementations
-    ds_load_entity_implementations();
-    // Get all fields from cache.
-    // @todo consider moving field configurations to the entity.
-    // needs a proof of concept with benchmarks, memory profiling and kcachegrind calls.
+  // Get stuff from cache if possible.
+  if (!$loaded) {
+    $loaded = TRUE;
     if ($cache = cache_get('ds_fields_cached', 'cache')) {
-      $ds_fields_cached = $cache->data;
+      $ds_fields_cached = $static_fields = $cache->data;
     }
   }
 
   if (!isset($static_fields[$entity_type][$bundle][$view_mode])) {
 
     // Do we have them cached or not ?
-    // This takes a few iterations of a site before everything will be in it,
+    // This takes a few iterations of a site before everything will be in it.
     if (!isset($ds_fields_cached[$entity_type][$bundle][$view_mode]) || $reset) {
+
+      // Load our own entity implementations
+      ds_load_entity_implementations();
 
       // Get all fields.
       $fields = array();
@@ -199,22 +217,6 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
               $fields = array_merge($field_results, $fields);
             }
           }
-        }
-      }
-
-      // Fields in database.
-      // @todo refactor / cache this, in fact, this complete function needs to be refactored :)
-      // @todo all stuff should be objects, not arrays (see properties here)
-      // @todo move this do ds_ds_fields().
-      $custom_fields = ds_custom_fields();
-      foreach ($custom_fields as $key => $field) {
-        if (isset($field->entities[$entity_type])) {
-          $fields[$key] = array(
-            'title' => $field->label,
-            'type' => $field->type,
-            // TODO status field
-            'properties' => (array) $field->properties,
-          );
         }
       }
 

@@ -198,8 +198,7 @@ function ds_shared_form_submit($form, &$form_state) {
     ->condition('field', $field->field)
     ->execute();
 
-  // Save field en clear entity info cache and rebuild menu.
-  // TODO check this
+  // Save field and clear entity info cache and rebuild menu.
   drupal_write_record('ds_fields', $field);
   cache_clear_all();
 
