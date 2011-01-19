@@ -130,8 +130,8 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $view_mode = isset($form['#view_mode']) ? $form['#view_mode'] : 'form';
 
   // Determine layout variables.
-  $layout = $form_state['values']['layout'];
-  $old_layout = $form_state['values']['old_layout'];
+  $layout = $form_state['values']['display_suite']['layout'];
+  $old_layout = $form_state['values']['display_suite']['old_layout'];
   $new_layout = ($layout != $old_layout) || empty($old_layout);
 
   // Save layout and add regions if necessary.
@@ -139,7 +139,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $record->entity_type = $entity_type;
   $record->bundle = $bundle;
   $record->view_mode = $view_mode;
-  $record->layout = $form_state['values']['layout'];
+  $record->layout = $layout;
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
@@ -166,6 +166,10 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       }
       $record->settings['regions'][$field['region']][] = $key;
       $record->settings['fields'][$key] = $field['region'];
+    }
+    $record->settings['classes'] = array();
+    foreach (array_keys($form['fields']['#regions']) as $region) {
+      $record->settings['classes'][$region] = $form_state['values']['display_suite'][$region];
     }
     $record->settings = serialize($record->settings);
     drupal_write_record('ds_layouts', $record, array('entity_type', 'bundle', 'view_mode', 'layout'));
@@ -242,26 +246,42 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     $layout_options[$key] = $layout['label'];
   }
 
+  $form['display_suite'] = array(
+    '#type' => 'vertical_tabs',
+    '#theme_wrappers' => array('vertical_tabs'),
+    '#prefix' => '<div>',
+    '#suffix' => '</div>',
+    '#tree' => TRUE,
+  );
+  $form['#attached']['js'][] = 'misc/form.js';
+  $form['#attached']['js'][] = 'misc/collapse.js';
+
   // Add layouts form.
-  // @todo convert to db_select();
-  $layout = db_query('SELECT layout, settings FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
-  $form['ds_layouts'] = array(
+  $form['display_suite']['ds_layouts'] = array(
     '#type' => 'fieldset',
     '#title' => t('Layout for !bundle in !view_mode', array('!bundle' => $bundle, '!view_mode' => $view_mode)),
     '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#collapsed' => FALSE,
+    '#parents' => array('display_suite'),
   );
 
-  if (!empty($layout)) {
+  // @todo convert to db_select();
+  $layout = db_query('SELECT layout, settings FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
+
+  if (!empty($layout) && isset($layout->layout)) {
     $chosen_layout = $ds_layouts[$layout->layout];
     $layout_string = $layout->layout;
     $suggestions = '- ' . $layout_string .'-'. $entity_type .'.tpl.php<br />';
     $suggestions .= '- ' . $layout_string .'-'. $entity_type .'-'. $bundle .'.tpl.php<br />';
     $suggestions .= '- ' . $layout_string .'-'. $entity_type .'-'. $bundle .'-' . $view_mode .'.tpl.php<br />';
     $form['ds_layouts']['#description'] = t('You have selected the %layout_label layout. The default template can be found in %path', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
+
+    $layout->settings = unserialize($layout->settings);
+    $layout->regions = $chosen_layout['regions'];
+    $form['#ds_layout'] = $layout;
   }
 
-  $form['ds_layouts']['layout'] = array(
+  $form['display_suite']['ds_layouts']['layout'] = array(
     '#type' => 'select',
     '#title' => t('Select a layout'),
     '#options' => $layout_options,
@@ -269,21 +289,32 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   );
 
   if (!empty($layout)) {
-    $form['ds_layouts']['suggestions'] = array(
+    $form['display_suite']['ds_layouts']['suggestions'] = array(
       '#markup' => '<p>' . t('Possible template suggestions are: <br />!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p>',
     );
+    // Add extra classes for the regions to have more control while theming.
+    $form['display_suite']['ds_classes'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Extra classes for regions'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#parents' => array('display_suite'),
+    );
+    foreach (array_keys($layout->settings['regions']) as $region) {
+      $form['display_suite']['ds_classes'][$region] = array(
+        '#type' => 'textfield',
+        '#title' => t('Class for @region', array('@region' => $region)),
+        '#default_value' => isset($layout->settings['classes'], $layout->settings['classes'][$region]) ? $layout->settings['classes'][$region] : '',
+        '#size' => 60,
+        '#maxlength' => 80,
+      );
+    }
   }
 
-  $form['ds_layouts']['old_layout'] = array(
+  $form['display_suite']['ds_layouts']['old_layout'] = array(
     '#type' => 'value',
-    '#value' => isset($layout->layout) ? $layout->layout : 0
+    '#value' => isset($layout->layout) ? $layout->layout : 0,
   );
-
-  if (isset($layout->layout)) {
-    $layout->settings = unserialize($layout->settings);
-    $layout->regions = $chosen_layout['regions'];
-    $form['#ds_layout'] = $layout;
-  }
 
   // Add submit handler
   $form['#submit'][] = 'ds_field_ui_layouts_save';
