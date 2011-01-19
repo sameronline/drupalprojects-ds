@@ -123,10 +123,12 @@ function hook_ds_layouts() {
  * Themes can also define extra layouts.
  *
  * Create a ds_layouts folder and then a folder name that will
- * be the key for the layouts. The folder should hold 3 files:
+ * be used as key for the layout. The folder should at least have 2 files:
  *
  * - layout_key.inc
  * - layout-key.tpl.php
+ *
+ * The css file is optional.
  * - layout_key.css
  *
  * e.g.
