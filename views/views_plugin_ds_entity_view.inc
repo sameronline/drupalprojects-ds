@@ -131,6 +131,13 @@ class views_plugin_ds_entity_view extends views_plugin_row {
         '#options' => $sort_options,
         '#default_value' => $this->options['grouping_fieldset']['group_field'],
       );
+
+      $form['grouping_fieldset']['group_field_function'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Heading function',
+        '#description' => 'The value of the field can be in a very raw format (eg, date created). Enter a custom function which you can use to format that value. The value and the object will be passed into that function eg. <em>custom_function($raw_value, $object);</em>',
+        '#default_value' => $this->options['grouping_fieldset']['group_field_function'],
+      );
     }
     else {
       $form['grouping_fieldset']['grouping']['#disabled'] = TRUE;

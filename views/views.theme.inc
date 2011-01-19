@@ -31,7 +31,8 @@ function template_preprocess_ds_row_entity(&$vars) {
   // also supported if there is a sort handler.
   else {
 
-    // @todo see if we can make this a bit more sane
+    // @todo see if we can make this a bit more sane, maybe different plugins or
+    // even a style plugin ?
 
     static $nrs, $grouping = array();
     $group_value_content = '';
@@ -62,11 +63,18 @@ function template_preprocess_ds_row_entity(&$vars) {
 
     // Keep a static grouping for this view.
     if (isset($options['grouping']) && $options['grouping']) {
-      $group_value = $vars['view']->result[$nrs[$view_name]]->$options['grouping_fieldset']['group_field'];
-      if (!isset($grouping[$view_name][$group_value])) {
-        // @todo make the theming of this group_value configurable.
+      $raw_group_value = $vars['view']->result[$nrs[$view_name]]->$options['grouping_fieldset']['group_field'];
+      if (!isset($grouping[$view_name][$raw_group_value])) {
+        $group_value = $raw_group_value;
+        // Special function to format the heading value.
+        if (!empty($options['grouping_fieldset']['group_field_function'])) {
+          $function = $options['grouping_fieldset']['group_field_function'];
+          if (function_exists($function)) {
+            $group_value = $function($raw_group_value, $vars['object']);
+          }
+        }
         $group_value_content = '<h2 class="grouping-title">'. $group_value .'</h2>';
-        $grouping[$view_name][$group_value] = $group_value;
+        $grouping[$view_name][$raw_group_value] = $raw_group_value;
       }
     }
 
