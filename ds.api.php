@@ -94,5 +94,32 @@ function hook_ds_layouts() {
 }
 
 /**
+ * Theme an entity coming from the views entity plugin.
+ *
+ * @param $vars
+ *   An array of variables from the views preprocess functions.
+ * @param $view_mode
+ *   The name of the view mode.
+ */
+function ds_views_row_ENTITY_NAME(&$vars, $view_mode) {
+  $nid = $vars['row']->{$vars['field_alias']};
+  $node = node_load($nid);
+  $vars['object'] = drupal_render(node_view($node, $view_mode));
+}
+
+/**
+ * Theme an entity through an advanced function coming from the views entity plugin.
+ *
+ * @param $vars
+ *   An array of variables from the views preprocess functions.
+ * @param $view_mode
+ *   The name of the view mode.
+ */
+function ds_views_row_adv_VIEWS_NAME(&$vars, $view_mode) {
+  // You can do whatever you want to here.
+  $vars['object'] = 'This is what I want for christmas.';
+}
+
+/**
  * @} End of "addtogroup hooks".
  */
