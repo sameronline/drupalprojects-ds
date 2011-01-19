@@ -37,8 +37,7 @@ function ds_help($path, $arg) {
   switch ($path) {
     case 'admin/structure/ds':
       $output = '<dl>';
-      $output .= '<dt>' . t('Display Suite') . '</dt>';
-      //$output .= '<dd>' . t("") . '</dd>';
+      $output .= '<dt>' . t('Manage view modes and fields for all your entities, as well as optional configuration options exposed by optional modules. Managing the display of your content is handled on the "manage display" screens provided by Field UI.') . '</dt>';
       $output .= '</dl>';
       return $output;
   }
