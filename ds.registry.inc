@@ -281,5 +281,15 @@ function _ds_ds_layouts() {
     ),
   );
 
+  // Get layouts defined in the default theme.
+  $theme = variable_get('theme_default');
+  $theme_layouts = file_scan_directory(drupal_get_path('theme', $theme) . '/ds_layouts', '/inc/');
+  foreach ($theme_layouts as $file => $values) {
+    include_once(DRUPAL_ROOT . '/' . $file);
+    $function = 'ds_' . $values->name;
+    $layouts[$values->name] = $function();
+    $layouts[$values->name]['path'] = str_replace('/' . $values->filename, '', $file);
+  }
+
   return $layouts;
 }

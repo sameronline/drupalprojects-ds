@@ -15,11 +15,11 @@
  * Define custom fields.
  *
  * @param $entity_type
- *   The name of the entity which we are requesting fields for, eg 'node'.
+ *   The name of the entity which we are requesting fields for, e.g. 'node'.
  * @param $bundle
- *   The name of the bundle in the entity, eg 'article'.
+ *   The name of the bundle in the entity, e.g. 'article'.
  * @param $view_mode
- *   The name of the view mode, eg 'full'.
+ *   The name of the view mode, e.g. 'full'.
  *
  *
  * @return $fields
@@ -118,6 +118,38 @@ function hook_ds_layouts() {
 
   return $layouts;
 }
+
+/**
+ * Themes can also define extra layouts.
+ *
+ * Create a ds_layouts folder and then a folder name that will
+ * be the key for the layouts. The folder should hold 3 files:
+ *
+ * - layout_key.inc
+ * - layout-key.tpl.php
+ * - layout_key.css
+ *
+ * e.g.
+ * bartik/ds_layouts/bartik_ds/bartik_ds.inc
+ *                            /bartik-ds.tpl.php
+ *                            /bartik_ds.css
+ *
+ * bartik_ds.inc must look like this:
+ *
+
+  // Fuction name is ds_LAYOUT_KEY
+  function ds_bartik_ds() {
+    return array(
+      'label' => t('Bartik DS'),
+      'regions' => array(
+        // The key of this region name is also the variable used in
+        // the template to print the content of that region.
+        'bartik' => t('Bartik DS'),
+      ),
+    );
+  }
+
+ */
 
 /**
  * Theme an entity coming from the views entity plugin.
