@@ -235,7 +235,7 @@ function ds_search_extra_variables() {
   $end = $items_per_page * $current_page;
   if ($end > $total) $end = $total;
 
-  // @todo where is search_get_keys ?
+  // Get the search keys.
   $keys = trim(ds_search_get_keys());
 
   // Send the right extra variable.
