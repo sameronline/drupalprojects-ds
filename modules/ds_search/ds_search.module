@@ -255,6 +255,30 @@ function ds_search_extra_variables() {
 }
 
 /**
+ * Implementation of hook_apachesolr_update_index().
+ */
+function ds_search_apachesolr_update_index(&$document, $node) {
+  // Creme de la creme: Put the full node object in the index,
+  // so no node_loads are needed for results in the Apache Solr engine.
+  $document->addField('tm_node', serialize(node_load($node->nid)));
+}
+
+/**
+ * Implementation of hook_modify_query().
+ */
+function ds_search_apachesolr_modify_query(DrupalSolrQueryInterface $query, $caller) {
+
+  // Get the node from the index.
+  $query->params['fl'] .= ',tm_node';
+
+  // Search per language.
+  if (variable_get('ds_search_apachesolr_language', FALSE)) {
+    global $language;
+    $query->add_filter('language', $language->language);
+  }
+}
+
+/**
  * Search on behalf of Drupal Core.
  */
 function node_ds_search_execute($keys = NULL, $conditions = NULL) {
@@ -298,8 +322,12 @@ function apachesolr_search_ds_search_execute($keys = NULL, $conditions = NULL) {
   $find = apachesolr_search_search_execute($keys, $conditions);
   $results = array();
   foreach ($find as $item) {
-    // @todo store the node into apachesolr.
-    $results[$item['node']->nid] = node_load($item['node']->nid);
+    // @todo This sometimes failes, try to find out why.
+    $node = @unserialize($item['fields']['tm_node'][0]);
+    if (!isset($node->nid)) {
+      $node = node_load($item['node']->nid);
+    }
+    $results[$item['node']->nid] = $node;
   }
   return $results;
 }
