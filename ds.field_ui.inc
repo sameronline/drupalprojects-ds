@@ -169,6 +169,10 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     }
     $record->settings['classes'] = array();
     foreach (array_keys($form['fields']['#regions']) as $region) {
+      // Ignore hidden region.
+      if ($region == 'hidden') {
+        continue;
+      }
       $record->settings['classes'][$region] = $form_state['values']['display_suite'][$region];
     }
     $record->settings = serialize($record->settings);
