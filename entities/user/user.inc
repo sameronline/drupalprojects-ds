@@ -26,7 +26,7 @@ function user_ds_fields($entity_type, $bundle, $view_mode) {
     'title' => 'Username',
     'type' => DS_FIELD_TYPE_FUNCTION,
     'status' => DS_FIELD_STATUS_STATIC,
-    'function' => 'theme_ds_title_field',
+    'function' => 'ds_render_title_field',
     'properties' => array(
       'formatters' => array(
         'user_title_nolink_h1' => t('H1 title'),

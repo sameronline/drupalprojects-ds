@@ -510,6 +510,29 @@ function ds_render_region($content, $region, $layout) {
 }
 
 /**
+ * Render custom code field.
+ *
+ * @param $field
+ *   The field with all its properties.
+ */
+function ds_render_code_field($field) {
+  if (isset($field['properties']['code'])) {
+    // @todo we should check here on the code format. if php module and format is ok
+    //  is enabled use ds_eval() (but rename to _ds_eval(). or maybe even create our
+    // own php filter (only difference is that we can pass on the object).
+    $value = ds_eval($field['properties']['code']['value'], $field['entity']);
+    // Token support - check on token property so we don't run every single field through token.
+    if (isset($field['properties']['use_token']) && $field['properties']['use_token'] == TRUE) {
+      // @todo Currently only works for node entities, maybe only give code fields and tokens
+      // only the ability to attach to only one entity instead of multiple and pass on the
+      // entity in the properties ?
+      $value = token_replace($value, array('node' => $field['entity']));
+    }
+    return $value;
+  }
+}
+
+/**
  * Wrapper function around PHP eval(). We don't use php_eval
  * because custom fields might need properties from the current
  * entity.
@@ -546,28 +569,6 @@ function ds_eval($code, $entity) {
   $theme_path = $old_theme_path;
 
   return $output;
-}
-
-/**
- * Render custom code field.
- *
- * @param $field
- *   The field with all its properties.
- */
-function ds_render_code_field($field) {
-  if (isset($field['properties']['code'])) {
-    // @todo we should check here on the code format. if php module and format is ok
-    //  is enabled use ds_eval() (but rename to _ds_eval().
-    $value = ds_eval($field['properties']['code']['value'], $field['entity']);
-    // Token support - check on token property so we don't run every single field through token.
-    if (isset($field['properties']['use_token']) && $field['properties']['use_token'] == TRUE) {
-      // @todo Currently only works for node entities, maybe only give code fields and tokens
-      // only the ability to attach to only one entity instead of multiple and pass on the
-      // entity in the properties ?
-      $value = token_replace($value, array('node' => $field['entity']));
-    }
-    return $value;
-  }
 }
 
 /**
@@ -615,7 +616,7 @@ function ds_render_block_field($field) {
  * @param $field
  *   The field array.
  */
-function theme_ds_title_field($field) {
+function ds_render_title_field($field) {
   $output = '';
   $formatter = explode('_', $field['formatter']);
 
@@ -629,6 +630,8 @@ function theme_ds_title_field($field) {
     }
     else {
       // @todo won't work with users or any other entity ...
+      // pass more stuff into the properties of the fields. same for
+      // the uri above, makes it much less ugly and faster.
       $path = 'node/' . $field['entity']->nid;
     }
     $output = l($output, $path);
