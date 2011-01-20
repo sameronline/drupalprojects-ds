@@ -288,7 +288,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#default_value' => isset($layout->layout) ? $layout->layout : '',
   );
 
-  if (!empty($layout)) {
+  if (!empty($layout) && isset($layout->regions)) {
     $form['display_suite']['ds_layouts']['suggestions'] = array(
       '#markup' => '<p>' . t('Possible template suggestions are: <br />!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p>',
     );
@@ -300,7 +300,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
       '#collapsed' => TRUE,
       '#parents' => array('display_suite'),
     );
-    foreach (array_keys($layout->settings['regions']) as $region) {
+    foreach (array_keys($layout->regions) as $region) {
       $form['display_suite']['ds_classes'][$region] = array(
         '#type' => 'textfield',
         '#title' => t('Class for @region', array('@region' => $region)),
