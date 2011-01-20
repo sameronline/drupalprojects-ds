@@ -558,12 +558,13 @@ function ds_render_code_field($field) {
   if (isset($field['properties']['code'])) {
     // @todo we should check here on the code format. if php module and format is ok
     //  is enabled use ds_eval() (but rename to _ds_eval().
-    // otherwhise use a filter function
     $value = ds_eval($field['properties']['code']['value'], $field['entity']);
     // Token support - check on token property so we don't run every single field through token.
-    // @todo this doesn't work yet.
-    if (module_exists('token') && isset($field['properties']['token']) && $field['properties']['token'] == TRUE) {
-      $value = token_replace($value, $field['object_type'], $field['entity']);
+    if (isset($field['properties']['use_token']) && $field['properties']['use_token'] == TRUE) {
+      // @todo Currently only works for node entities, maybe only give code fields and tokens
+      // only the ability to attach to only one entity instead of multiple and pass on the
+      // entity in the properties ?
+      $value = token_replace($value, array('node' => $field['entity']));
     }
     return $value;
   }
