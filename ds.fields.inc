@@ -198,9 +198,9 @@ function ds_shared_form_submit($form, &$form_state) {
     ->condition('field', $field->field)
     ->execute();
 
-  // Save field and clear entity info cache and rebuild menu.
+  // Save field and clear ds_fields_cached.
   drupal_write_record('ds_fields', $field);
-  cache_clear_all();
+  cache_clear_all('ds_fields_cached', 'cache');
 
   // Redirect.
   $form_state['redirect'] = 'admin/structure/ds/fields';
@@ -342,13 +342,13 @@ function ds_delete_field_confirm_submit($form, &$form_state) {
 
   $field = $form['#field'];
 
-  // Remove view mode.
+  // Remove field.
   db_delete('ds_fields')
     ->condition('field', $field->field)
     ->execute();
 
   // Clear cache.
-  cache_clear_all();
+  cache_clear_all('ds_fields_cached', 'cache');
 
   // Redirect.
   $form_state['redirect'] = 'admin/structure/ds/fields';
