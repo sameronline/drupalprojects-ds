@@ -179,13 +179,14 @@ class views_plugin_ds_entity_view extends views_plugin_row {
   }
 
   /**
-   * Preload all nodes.
+   * Preload all entities.
    */
   function pre_render($values) {
     $nids = array();
     foreach ($values as $row) {
       $nids[] = $row->{$this->field_alias};
     }
+    // @todo this only works with nodes of course ...
     $this->nodes = node_load_multiple($nids);
   }
 }
