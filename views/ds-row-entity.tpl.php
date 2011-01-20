@@ -1,4 +1,4 @@
 <?php
 // $Id$
 
-print $data_object;
+print $data_object;?>

@@ -104,24 +104,11 @@ function _ds_menu() {
  * Implements hook_theme().
  */
 function _ds_theme() {
-
-  // Display Suite theme functions.
-  $theme_functions = array(
-    // Evaluate code.
-    'ds_eval_code' => array(
-      'variables' => array('field' => NULL),
-    ),
-    // Evaluate block.
-    'ds_eval_block' => array(
-      'variables' => array('field' => NULL),
-    ),
-  );
+  $theme_functions = array();
 
   // Layouts
   $layouts = module_invoke_all('ds_layouts');
   foreach ($layouts as $key => $layout) {
-
-    // Default HTML template.
     $theme_functions[$key] = array(
       'render element' => 'elements',
       'template' => 'layouts/' . $key . '/' . strtr($key, '_', '-'),

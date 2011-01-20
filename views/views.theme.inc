@@ -31,9 +31,6 @@ function template_preprocess_ds_row_entity(&$vars) {
   // also supported if there is a sort handler.
   else {
 
-    // @todo see if we can make this a bit more sane, maybe different plugins or
-    // even a style plugin ?
-
     static $nrs, $grouping = array();
     $group_value_content = '';
     $view_name = $vars['view']->name .'_'. $vars['view']->current_display;

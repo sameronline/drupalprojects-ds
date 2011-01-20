@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Provies the Display suite views entity style plugin.
+ * Provides the Display suite views entity style plugin.
  */
 
 /**
@@ -178,6 +178,9 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     $form_state['values']['row_options']['advanced'] = $form_state['values']['row_options']['advanced_fieldset']['advanced'];
   }
 
+  /**
+   * Preload all nodes.
+   */
   function pre_render($values) {
     $nids = array();
     foreach ($values as $row) {

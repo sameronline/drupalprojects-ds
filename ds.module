@@ -321,6 +321,11 @@ function ds_custom_fields() {
  *   The markup of the field used for output.
  */
 function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_mode) {
+  // @todo do we really need al these params ?
+  // @todo it seems every field comes through this one, although sometimes format should be hidden.
+  // we're not saving this right in field_ui.inc (ie, if a field has no layout, it should have format
+  // set to hidden, no matter what.
+
   static $included_files = array();
 
   $field['entity'] = $entity;
@@ -337,6 +342,14 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
     case DS_FIELD_TYPE_THEME:
       $format = (isset($field['formatter'])) ? $field['formatter'] : key($field['properties']['formatters']);
       return theme($format, $field);
+
+    case DS_FIELD_TYPE_CODE:
+      return ds_render_code_field($field);
+
+    case DS_FIELD_TYPE_BLOCK:
+      return ds_render_block_field($field);
+      break;
+
   }
 }
 
@@ -499,11 +512,14 @@ function ds_render_region($content, $region, $layout) {
 /**
  * Wrapper function around PHP eval(). We don't use php_eval
  * because custom fields might need properties from the current
- * object.
+ * entity.
  *
- * @param string $code The code to evaluate from the custom field.
- * @param stdClass $object An object to use for evaluation.
- * @return string $output The output from eval.
+ * @param $code
+ *   The code to evaluate from the custom field.
+ * @param $object
+ *   An object to use for evaluation.
+ * @return $output
+ *   The output from eval.
  */
 function ds_eval($code, $entity) {
   global $theme_path, $theme_info, $conf;
@@ -533,58 +549,60 @@ function ds_eval($code, $entity) {
 }
 
 /**
- * Evaluate custom code.
- *
- * @todo rename to something else, we really need to check with content_format!
+ * Render custom code field.
  *
  * @param $field
  *   The field with all its properties.
  */
-function theme_ds_eval_code($field) {
+function ds_render_code_field($field) {
   if (isset($field['properties']['code'])) {
-    $value = ds_eval($field['properties']['code'], $field['entity']);
+    // @todo we should check here on the code format. if php module and format is ok
+    //  is enabled use ds_eval() (but rename to _ds_eval().
+    // otherwhise use a filter function
+    $value = ds_eval($field['properties']['code']['value'], $field['entity']);
     // Token support - check on token property so we don't run every single field through token.
+    // @todo this doesn't work yet.
     if (module_exists('token') && isset($field['properties']['token']) && $field['properties']['token'] == TRUE) {
-      $value = token_replace($value, $field['object_type'], $field['object']);
+      $value = token_replace($value, $field['object_type'], $field['entity']);
     }
     return $value;
   }
 }
 
 /**
- * Evaluate block field.
+ * Render a block field.
  *
  * @param $field
  *   The field array.
  */
-function theme_ds_eval_block($field) {
+function ds_render_block_field($field) {
   if (isset($field['properties'])) {
     list($module, $delta) = explode('|', $field['properties']['block']);
-    $block = module_invoke($module, 'block', 'view', $delta);
+    $block = module_invoke($module, 'block_view', $delta);
     if (!empty($block)) {
-      switch ($field['properties']['render']) {
+      switch ($field['properties']['block_render']) {
         case DS_BLOCK_TEMPLATE:
           global $theme_key;
           $block = (object) $block;
           $block->region = NULL;
           $block->module = $module;
           $block->delta = $delta;
-          // @todo convert to db_select().
           $block_title = db_query("SELECT title FROM {block} WHERE module = :module AND delta = :delta AND theme = :theme", array(':module' => $module, ':delta' => $delta, ':theme' => $theme_key))->fetchField();
           if (!empty($block_title)) {
             $block->subject = $block_title == '<none>' ? '' : check_plain($block_title);
           }
-          $content = theme('block', $block);
+          $elements = array('elements' => array('#block' => $block));
+          return theme('block', $elements);
           break;
         case DS_BLOCK_TITLE_CONTENT:
           $content = '<h2 class="block-title">'. $block['subject'] .'</h2>';
           $content .= $block['content'];
+          return $content;
           break;
         case DS_BLOCK_CONTENT:
-          $content = $block['content'];
+          return $block['content'];
           break;
       }
-      return $content;
     }
   }
 }
@@ -609,6 +627,7 @@ function theme_ds_title_field($field) {
       $path = $field['entity']->uri['path'];
     }
     else {
+      // @todo won't work with users or any other entity ...
       $path = 'node/' . $field['entity']->nid;
     }
     $output = l($output, $path);

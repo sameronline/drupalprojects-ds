@@ -285,7 +285,7 @@ function ds_edit_block_field_form($form, &$form_state, $custom_block = '') {
     '#options' => $blocks,
     '#title' => t('Block'),
     '#required' => TRUE,
-    '#default_value' => isset($field->properties->block) ? $field->properties->block : '',
+    '#default_value' => isset($custom_block->properties->block) ? $custom_block->properties->block : '',
   );
   $form['block_identity']['block_render'] = array(
     '#type' => 'select',
@@ -296,7 +296,7 @@ function ds_edit_block_field_form($form, &$form_state, $custom_block = '') {
     ),
     '#title' => t('Block render'),
     '#required' => TRUE,
-    '#default_value' => isset($field->properties->block_render) ? $field->properties->block_render : '',
+    '#default_value' => isset($custom_block->properties->block_render) ? $custom_block->properties->block_render : '',
   );
 
   $form['#validate'][] = 'ds_block_field_form_validate';
