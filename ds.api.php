@@ -128,11 +128,11 @@ function hook_ds_layouts() {
  * Create a ds_layouts folder and then a folder name that will
  * be used as key for the layout. The folder should at least have 2 files:
  *
- * - layout_key.inc
- * - layout-key.tpl.php
+ * - key.inc
+ * - key.tpl.php
  *
  * The css file is optional.
- * - layout_key.css
+ * - key.css
  *
  * e.g.
  * bartik/ds_layouts/bartik_ds/bartik_ds.inc
