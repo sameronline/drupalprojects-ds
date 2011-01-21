@@ -157,7 +157,11 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   // Update existing layout.
   elseif (!empty($layout)) {
     $record->settings = array();
-    foreach ($form_state['values']['fields'] as $key => $field) {
+
+    $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
+
+    // Ignore the Field group module.
+    foreach ($fields as $key => $field) {
       if ($key == '_add_new_group') {
         continue;
       }
@@ -407,3 +411,23 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form) {
   // Add fields submit handler.
   $form['#submit'][] = 'ds_field_ui_fields_save';
 }
+
+/**
+ * Utility function to sort a multidimensional array by a value in a sub-array.
+ *
+ * @param $a
+ *   The array to sort.
+ * @param $subkey
+ *   The subkey to sort by.
+ */
+function _ds_sort_fields($a, $subkey) {
+  foreach($a as $k=>$v) {
+    $b[$k] = $v[$subkey];
+  }
+  asort($b);
+  foreach($b as $key=>$val) {
+    $c[$key] = $a[$key];
+  }
+  return $c;
+}
+

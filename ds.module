@@ -408,7 +408,6 @@ function ds_field_attach_view_alter(&$build, $context) {
 
     $field['formatter'] = $format;
     $field_value = ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_mode);
-
     $build[$key] = array(
       '#theme' => 'field',
       '#field_type' => 'ds',
