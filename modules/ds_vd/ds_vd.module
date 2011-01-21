@@ -114,6 +114,9 @@ function ds_vd_ds_fields($entity_type, $bundle, $view_mode) {
 function ds_vd_preprocess_views_view(&$vars) {
 
   // @todo this doesn't work at all for now.
+  // We can probably just run ds_preprocess_entity() and some way
+  // of ds_field_attach_view_alter()
+  // but with some changes to the function I guess.
   return;
 
   $view_object = new stdClass();
