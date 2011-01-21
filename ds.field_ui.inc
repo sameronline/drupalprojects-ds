@@ -421,11 +421,11 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form) {
  *   The subkey to sort by.
  */
 function _ds_sort_fields($a, $subkey) {
-  foreach($a as $k=>$v) {
+  foreach ($a as $k => $v) {
     $b[$k] = $v[$subkey];
   }
   asort($b);
-  foreach($b as $key=>$val) {
+  foreach ($b as $key => $val) {
     $c[$key] = $a[$key];
   }
   return $c;
