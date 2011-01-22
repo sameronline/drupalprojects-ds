@@ -153,10 +153,9 @@ function ds_edit_view_mode_form_submit($form, &$form_state) {
     ->execute();
 
   // Save view mode en clear entity info cache and rebuild menu.
-  // @todo this seems not the trick ...
   drupal_write_record('ds_view_modes', $view_mode);
   cache_clear_all('entity_info', 'cache', TRUE);
-  menu_rebuild();
+  variable_set('menu_rebuild_needed', TRUE);
 
   // Redirect.
   $form_state['redirect'] = 'admin/structure/ds/view_modes';
@@ -198,9 +197,8 @@ function ds_delete_view_mode_confirm_submit($form, &$form_state) {
     ->execute();
 
   // Clear cache and rebuild menu.
-  // @todo this seems not the trick ...
   cache_clear_all('entity_info', 'cache', TRUE);
-  menu_rebuild();
+  variable_set('menu_rebuild_needed', TRUE);
 
   // Redirect.
   $form_state['redirect'] = 'admin/structure/ds/view_modes';
