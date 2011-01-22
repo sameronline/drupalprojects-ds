@@ -152,8 +152,10 @@ function ds_edit_view_mode_form_submit($form, &$form_state) {
     ->condition('view_mode', $view_mode->view_mode)
     ->execute();
 
-  // Save view mode en clear entity info cache and rebuild menu.
+  // Save the new view mode.
   drupal_write_record('ds_view_modes', $view_mode);
+
+  // Clear entity info cache and trigger menu build on next request.
   cache_clear_all('entity_info', 'cache', TRUE);
   variable_set('menu_rebuild_needed', TRUE);
 
@@ -196,7 +198,7 @@ function ds_delete_view_mode_confirm_submit($form, &$form_state) {
     ->condition('view_mode', $view_mode->view_mode)
     ->execute();
 
-  // Clear cache and rebuild menu.
+  // Clear entity info cache and trigger menu build on next request.
   cache_clear_all('entity_info', 'cache', TRUE);
   variable_set('menu_rebuild_needed', TRUE);
 
