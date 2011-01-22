@@ -279,10 +279,11 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   if (!empty($layout) && isset($layout->layout)) {
     $chosen_layout = $ds_layouts[$layout->layout];
     $layout_string = $layout->layout;
-    $suggestions = '- ' . $layout_string .'-'. $entity_type .'.tpl.php<br />';
+    $selected = t('You have selected the %layout_label layout. The default template can be found in %path', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
+    $suggestions = 'Possible template suggestions are: <br />';
+    $suggestions .= '- ' . $layout_string .'-'. $entity_type .'.tpl.php<br />';
     $suggestions .= '- ' . $layout_string .'-'. $entity_type .'-'. $bundle .'.tpl.php<br />';
     $suggestions .= '- ' . $layout_string .'-'. $entity_type .'-'. $bundle .'-' . $view_mode .'.tpl.php<br />';
-    $form['ds_layouts']['#description'] = t('You have selected the %layout_label layout. The default template can be found in %path', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
 
     $layout->settings = unserialize($layout->settings);
     $layout->regions = $chosen_layout['regions'];
@@ -298,7 +299,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
 
   if (!empty($layout) && isset($layout->regions)) {
     $form['display_suite']['ds_layouts']['suggestions'] = array(
-      '#markup' => '<p>' . t('Possible template suggestions are: <br />!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p>',
+      '#markup' => '<p>' . $selected . '</p><p>' . t('!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p>',
     );
     // Add extra classes for the regions to have more control while theming.
     $form['display_suite']['ds_classes'] = array(
