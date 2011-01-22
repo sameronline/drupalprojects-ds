@@ -120,6 +120,11 @@ function ds_search_settings($form, $form_state) {
     '#type' => 'fieldset',
     '#title' => t('Drupal core'),
     '#description' => t('These settings are only applicable if the search engine is set to Node.'),
+    '#states' => array(
+      'visible' => array(
+        'select[name="ds_search_type"]' => array('value' => 'node'),
+      ),
+    ),
   );
 
   $form['node']['ds_search_node_form_alter'] = array(
@@ -131,20 +136,25 @@ function ds_search_settings($form, $form_state) {
 
   if (module_exists('apachesolr')) {
 
-    $form['apachesolr'] = array(
+    $form['apachesolr_search'] = array(
       '#type' => 'fieldset',
       '#title' => t('Apache Solr'),
       '#description' => t('These settings are only applicable if the search engine is set to Apache Solr.'),
+      '#states' => array(
+        'visible' => array(
+          'select[name="ds_search_type"]' => array('value' => 'apachesolr_search'),
+        ),
+      ),
     );
 
-    $form['apachesolr']['ds_search_apachesolr_form_alter'] = array(
+    $form['apachesolr_search']['ds_search_apachesolr_form_alter'] = array(
       '#type' => 'checkbox',
       '#title' => t('Form alter'),
       '#description' => t('Toggle this checkbox if you want to run the Apache Solr form alter function on the basic search form. This will enable features like "Did you mean?" and the "Retain filter" checkbox.'),
       '#default_value' => variable_get('ds_search_apachesolr_form_alter', FALSE),
     );
 
-    $form['apachesolr']['ds_search_apachesolr_hide_current_filters'] = array(
+    $form['apachesolr_search']['ds_search_apachesolr_hide_current_filters'] = array(
       '#type' => 'checkbox',
       '#title' => t('Hide Retain filters'),
       '#description' => t('Toggle this checkbox if you want to hide the "Retain current filters" checkbox.'),
@@ -162,7 +172,21 @@ function ds_search_search_info() {
   return array(
     'title' => 'Content',
     'path' => 'content',
+    'conditions_callback' => 'ds_search_conditions',
   );
+}
+
+/**
+ * Implementation of a search_view() conditions callback.
+ */
+function ds_search_conditions() {
+  $conditions = array();
+
+  // Needed for Apache Solr.
+  if (isset($_GET['filters']) && trim($_GET['filters'])) {
+    $conditions['filters'] = trim($_GET['filters']);
+  }
+  return $conditions;
 }
 
 /**
@@ -251,7 +275,7 @@ function ds_search_extra_variables() {
   $current_page = isset($_REQUEST['page']) ? $_REQUEST['page']+1 : 1;
 
   // Get the total number of results from the $GLOBALS.
-  $total = $GLOBALS['pager_total_items'][0];
+  $total = isset($GLOBALS['pager_total_items'][0]) ? $GLOBALS['pager_total_items'][0] : 0;
 
   // Perform calculation
   $start = $items_per_page * $current_page - ($items_per_page - 1);
