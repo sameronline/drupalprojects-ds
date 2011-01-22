@@ -154,7 +154,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     $form['advanced_fieldset']['advanced'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use the advanced build mode selector'),
-      '#description' => t('This gives you the opportunity to have full control of a list for really advanced features.<br /> There is no UI for this, you need to create a function named like this: <strong><em>ds_views_row_adv_@VIEWSNAME(&$variables, $view_mode)</em></strong>.<br />See <a href="http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME">http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME</a> for an example.', array('@VIEWSNAME' => $this->view->name)),
+      '#description' => t('This gives you the opportunity to have full control of a list for really advanced features.<br /> There is no UI for this, you need to create a function named like this: <strong><em>ds_views_row_adv_@VIEWSNAME($entity, $view_mode)</em></strong>.<br />See <a href="http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME">http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME</a> for an example.', array('@VIEWSNAME' => $this->view->name)),
       '#default_value' => $this->options['advanced'],
     );
   }
@@ -182,11 +182,94 @@ class views_plugin_ds_entity_view extends views_plugin_row {
    * Preload all entities.
    */
   function pre_render($values) {
-    $nids = array();
+    $ids = array();
     foreach ($values as $row) {
-      $nids[] = $row->{$this->field_alias};
+      $ids[] = $row->{$this->field_alias};
     }
-    // @todo this only works with nodes of course ...
-    $this->nodes = node_load_multiple($nids);
+
+    // Load all nodes.
+    if ($this->base_table == 'node') {
+      $this->entities = node_load_multiple($ids);
+    }
   }
+
+  /**
+   * Render each $row.
+   */
+  function render($row) {
+
+    // The advanced selector searches for a function called
+    // ds_views_row_adv_VIEWSNAME. Return the row immediately.
+    if ($this->options['advanced']) {
+      $row_function = 'ds_views_row_adv_'. $this->view->name;
+      return $row_function($this->entities[$id], $this->options['view_mode']);
+    }
+
+    // Keep a static number and group array.
+    static $nrs, $grouping = array();
+    $view_name = $this->view->name .'_'. $this->view->current_display;
+    $group_value_content = '';
+
+    // Default view mode.
+    $view_mode = $this->options['view_mode'];
+
+    // Keep a static number for this view.
+    if (!isset($nrs[$view_name])) {
+      $nrs[$view_name] = 0;
+    }
+
+    // Change the view mode per row.
+    if ($this->options['changing']) {
+      // Check for paging to determine the view mode.
+      if (isset($_GET['page']) && isset($this->options['changing_fieldset']['allpages']) && !$this->options['changing_fieldset']['allpages']) {
+        $view_mode = $this->options['view_mode'];
+      }
+      else {
+        $view_mode = $this->options['changing_fieldset']['item_'. $nrs[$view_name]];
+      }
+    }
+
+    // Call the function.
+    $row_function = 'ds_views_row_'. $this->base_table;
+    $content = $row_function($this->entities[$row->{$this->field_alias}], $view_mode);
+
+    // @todo this isn't working yet.
+    // Keep a static grouping for this view.
+    if ($this->options['grouping']) {
+      $raw_group_value = $vars['view']->result[$nrs[$view_name]]->$options['grouping_fieldset']['group_field'];
+      if (!isset($grouping[$view_name][$raw_group_value])) {
+        $group_value = $raw_group_value;
+        // Special function to format the heading value.
+        if (!empty($options['grouping_fieldset']['group_field_function'])) {
+          $function = $options['grouping_fieldset']['group_field_function'];
+          if (function_exists($function)) {
+            $group_value = $function($raw_group_value, $vars['object']);
+          }
+        }
+        $group_value_content = '<h2 class="grouping-title">'. $group_value .'</h2>';
+        $grouping[$view_name][$raw_group_value] = $raw_group_value;
+      }
+    }
+
+    // Grouping or not ?
+    if (!empty($grouping[$view_name])) {
+      if (!empty($group_value_content)) {
+        $vars['data_object'] = $group_value_content;
+      }
+      $vars['data_object'] .= '<div class="grouping-content">'. $vars['object'] .'</div>';
+    }
+
+    // Increment the number for this view.
+    $nrs[$view_name]++;
+
+    // Finally return the content.
+    return $content;
+  }
+}
+
+/**
+ * Render the node through the views entity plugin.
+ */
+function ds_views_row_node($entity, $view_mode) {
+  return drupal_render(node_view($entity, $view_mode));
 }

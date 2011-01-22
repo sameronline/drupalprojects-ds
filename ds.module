@@ -96,13 +96,10 @@ function ds_entity_info_alter(&$entity_info) {
 }
 
 /**
- * Implementation of hook_views_api().
+ * Implements ds_views_api().
  */
 function ds_views_api() {
-  return array(
-    'api' => '3',
-    'path' => drupal_get_path('module', 'ds'),
-  );
+  return array('api' => 3);
 }
 
 /**
