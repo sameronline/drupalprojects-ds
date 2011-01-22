@@ -69,25 +69,28 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       '#type' => 'fieldset',
       '#title' => t('Alternating view mode'),
       '#collapsible' => TRUE,
-      '#collapsed' => !$this->options['alternate'],
+      '#collapsed' => !$this->options['alternating'],
     );
-    $form['alternating_fieldset']['alternate'] = array(
+    $form['alternating_fieldset']['alternating'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use the changing view mode selector'),
-      '#default_value' => $this->options['changing'],
+      '#default_value' => $this->options['alternating'],
     );
     $form['alternating_fieldset']['allpages'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use this configuration on every page. Otherwhise the default view mode is used as soon you browse away from the first page of this view.'),
       '#default_value' => (isset($this->options['alternating_fieldset']['allpages'])) ? $this->options['alternating_fieldset']['allpages'] : FALSE,
     );
+
     $limit = $this->view->display_handler->get_option('items_per_page');
+    $pager = $this->view->display_handler->get_plugin('pager');
+    $limit = (isset($pager->options['items_per_page'])) ? $pager->options['items_per_page'] : 0;
     if ($limit == 0 || $limit > 20) {
       $form['alternating_fieldset']['disabled'] = array(
         '#markup' => t('This option is disabled because you have unlimited items or listing more than 20 items.'),
       );
-      $form['changing_fieldset']['changing']['#disabled'] = TRUE;
-      $form['changing_fieldset']['allpages']['#disabled'] = TRUE;
+      $form['alternating_fieldset']['alternating']['#disabled'] = TRUE;
+      $form['alternating_fieldset']['allpages']['#disabled'] = TRUE;
     }
     else {
       $i = 1;
@@ -96,7 +99,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
         $form['alternating_fieldset']['item_'. $a] = array(
           '#title' => 'Item '. $i,
           '#type' => 'select',
-          '#default_value' => (isset($this->options['alternating_fieldset']['item_'. $a])) ? $this->options['changing_fieldset']['item_'. $a] : 'teaser',
+          '#default_value' => (isset($this->options['alternating_fieldset']['item_'. $a])) ? $this->options['alternating_fieldset']['item_'. $a] : 'teaser',
           '#options' => $view_mode_options,
         );
         $limit--;
@@ -173,7 +176,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
    */
   function options_submit($form, &$form_state) {
     $form_state['values']['row_options']['view_mode'] = $form_state['values']['row_options']['default_fieldset']['view_mode'];
-    $form_state['values']['row_options']['alternating'] = $form_state['values']['row_options']['alternating_fieldset']['alternate'];
+    $form_state['values']['row_options']['alternating'] = $form_state['values']['row_options']['alternating_fieldset']['alternating'];
     $form_state['values']['row_options']['grouping'] = $form_state['values']['row_options']['grouping_fieldset']['grouping'];
     $form_state['values']['row_options']['advanced'] = $form_state['values']['row_options']['advanced_fieldset']['advanced'];
   }
@@ -202,48 +205,42 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     // ds_views_row_adv_VIEWSNAME. Return the row immediately.
     if ($this->options['advanced']) {
       $row_function = 'ds_views_row_adv_'. $this->view->name;
-      return $row_function($this->entities[$id], $this->options['view_mode']);
+      return $row_function($this->entities[$row->{$this->field_alias}], $this->options['view_mode']);
     }
 
-    // Keep a static number and group array.
-    static $nrs, $grouping = array();
+    // Keep a static group array.
+    static $grouping = array();
     $view_name = $this->view->name .'_'. $this->view->current_display;
     $group_value_content = '';
 
     // Default view mode.
     $view_mode = $this->options['view_mode'];
 
-    // Keep a static number for this view.
-    if (!isset($nrs[$view_name])) {
-      $nrs[$view_name] = 0;
-    }
-
     // Change the view mode per row.
-    if ($this->options['changing']) {
+    if ($this->options['alternating']) {
       // Check for paging to determine the view mode.
-      if (isset($_GET['page']) && isset($this->options['changing_fieldset']['allpages']) && !$this->options['changing_fieldset']['allpages']) {
+      if (isset($_GET['page']) && isset($this->options['alternating_fieldset']['allpages']) && !$this->options['alternating_fieldset']['allpages']) {
         $view_mode = $this->options['view_mode'];
       }
       else {
-        $view_mode = $this->options['changing_fieldset']['item_'. $nrs[$view_name]];
+        $view_mode = $this->options['alternating_fieldset']['item_'. $this->view->row_index];
       }
     }
 
-    // Call the function.
-    $row_function = 'ds_views_row_'. $this->base_table;
+    // Call the row render function.
+    $row_function = 'ds_views_row_render_'. $this->base_table;
     $content = $row_function($this->entities[$row->{$this->field_alias}], $view_mode);
 
-    // @todo this isn't working yet.
     // Keep a static grouping for this view.
     if ($this->options['grouping']) {
-      $raw_group_value = $vars['view']->result[$nrs[$view_name]]->$options['grouping_fieldset']['group_field'];
+      $raw_group_value = $row->{$this->options['grouping_fieldset']['group_field']};
       if (!isset($grouping[$view_name][$raw_group_value])) {
         $group_value = $raw_group_value;
         // Special function to format the heading value.
-        if (!empty($options['grouping_fieldset']['group_field_function'])) {
-          $function = $options['grouping_fieldset']['group_field_function'];
+        if (!empty($this->options['grouping_fieldset']['group_field_function'])) {
+          $function = $this->options['grouping_fieldset']['group_field_function'];
           if (function_exists($function)) {
-            $group_value = $function($raw_group_value, $vars['object']);
+            $group_value = $function($raw_group_value, $this->entities[$row->{$this->field_alias}]);
           }
         }
         $group_value_content = '<h2 class="grouping-title">'. $group_value .'</h2>';
@@ -251,18 +248,15 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       }
     }
 
-    // Grouping or not ?
+    // Grouping.
     if (!empty($grouping[$view_name])) {
       if (!empty($group_value_content)) {
-        $vars['data_object'] = $group_value_content;
+        $content = $group_value_content . $content;
       }
-      $vars['data_object'] .= '<div class="grouping-content">'. $vars['object'] .'</div>';
+      $content = '<div class="grouping-content">'. $content .'</div>';
     }
 
-    // Increment the number for this view.
-    $nrs[$view_name]++;
-
-    // Finally return the content.
+    // Return the content.
     return $content;
   }
 }
@@ -270,6 +264,6 @@ class views_plugin_ds_entity_view extends views_plugin_row {
 /**
  * Render the node through the views entity plugin.
  */
-function ds_views_row_node($entity, $view_mode) {
+function ds_views_row_render_node($entity, $view_mode) {
   return drupal_render(node_view($entity, $view_mode));
 }
