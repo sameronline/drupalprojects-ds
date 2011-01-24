@@ -7,6 +7,11 @@
  */
 ?>
 <div class="<?php print $classes;?> clearfix">
+
+  <?php if (isset($title_suffix['contextual_links'])): ?>
+  <?php print render($title_suffix['contextual_links']); ?>
+  <?php endif; ?>
+
   <header class="group-header">
     <?php print $header; ?>
   </header>
