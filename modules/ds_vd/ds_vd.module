@@ -154,7 +154,7 @@ function ds_vd_preprocess_views_view(&$vars) {
 
 
 /**
- * Function used for theming the node title, user name etc. Note that
+ * Function used for theming the views title, user name etc. Note that
  * this is a function so it can't be overridden by a phptemplate function.
  *
  * @param $field
