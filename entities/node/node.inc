@@ -21,7 +21,7 @@
 function node_ds_fields($entity_type, $bundle, $view_mode) {
   $fields = array();
 
-  // Title
+  // Title.
   $fields['title'] = array(
     'title' => t('Title'),
     'type' => DS_FIELD_TYPE_FUNCTION,
@@ -43,8 +43,7 @@ function node_ds_fields($entity_type, $bundle, $view_mode) {
     )
   );
 
-  // Links
-  // @todo test this.
+  // Links.
   $fields['links'] = array(
     'title' => t('Links'),
     'type' => DS_FIELD_TYPE_IGNORE,
@@ -52,7 +51,6 @@ function node_ds_fields($entity_type, $bundle, $view_mode) {
   );
 
   // Comments.
-  // @todo check in_preview.
   if (module_exists('comment') && ($view_mode == 'full' || $view_mode == 'default')) {
     $fields['comments'] = array(
       'title' => t('Comments'),
@@ -61,7 +59,7 @@ function node_ds_fields($entity_type, $bundle, $view_mode) {
     );
   }
 
-  // Read more link - let's also add 'add new comment by default'
+  // Read more link.
   $fields['read_more'] = array(
     'title' => t('Read more'),
     'type' => DS_FIELD_TYPE_CODE,

@@ -19,4 +19,5 @@
   <div class="group-right">
     <?php print $right; ?>
   </div>
+
 </div>
