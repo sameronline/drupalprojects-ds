@@ -10,15 +10,15 @@
  * Implements hook_enable().
  */
 function ds_enable() {
-  $format_exists = (bool) db_query_range('SELECT 1 FROM {filter_format} WHERE name = :name', 0, 1, array(':name' => 'Display Suite PHP code'))->fetchField();
+  $format_exists = (bool) db_query_range('SELECT 1 FROM {filter_format} WHERE name = :name', 0, 1, array(':name' => 'Display Suite code'))->fetchField();
   // Add a Display Suite code text format, if it does not exist. Do this only for the
   // first install (or if the format has been manually deleted) as there is no
   // reliable method to identify the format in an uninstall hook or in
   // subsequent clean installs.
   if (!$format_exists) {
-    $php_format = array(
+    $ds_format = array(
       'format' => 'ds_code',
-      'name' => 'Display Suite PHP code',
+      'name' => 'Display Suite code',
       // 'Plain text' format is installed with a weight of 10 by default. Use a
       // higher weight here to ensure that this format will not be the default
       // format for anyone.
@@ -31,10 +31,10 @@ function ds_enable() {
         ),
       ),
     );
-    $php_format = (object) $php_format;
-    filter_format_save($php_format);
+    $ds_format = (object) $ds_format;
+    filter_format_save($ds_format);
 
-    drupal_set_message(t('A <a href="@php-code">Display Suite PHP code</a> text format has been created.', array('@php-code' => url('admin/config/content/formats/' . $php_format->format))));
+    drupal_set_message(t('A <a href="@ds-code">Display Suite code</a> text format has been created.', array('@ds-code' => url('admin/config/content/formats/' . $ds_format->format))));
   }
 }
 
@@ -42,7 +42,7 @@ function ds_enable() {
  * Implements hook_disable().
  */
 function ds_disable() {
-  drupal_set_message(t('The Display Suite module has been disabled. Any existing content that was using the Display Suite PHP filter will now be visible in plain text. This might pose a security risk by exposing sensitive information, if any, used in the PHP code.'));
+  drupal_set_message(t('The Display Suite module has been disabled. Any existing content that was using the Display Suite filter will now be visible in plain text. This might pose a security risk by exposing sensitive information, if any, used in the PHP code.'));
 }
 
 /**

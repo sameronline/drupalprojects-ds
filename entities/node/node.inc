@@ -66,9 +66,6 @@ function node_ds_fields($entity_type, $bundle, $view_mode) {
     'type' => DS_FIELD_TYPE_CODE,
     'status' => DS_FIELD_STATUS_DEFAULT,
     'properties' => array(
-      'formatters' => array(
-        'ds_eval_code' => t('Default'),
-      ),
       // @todo theme this no ? // or use new tokens in Drupal Core
       // actually yes, this should be better, because php will be disabled by default.
       // ditch the ds_eval_code too.
