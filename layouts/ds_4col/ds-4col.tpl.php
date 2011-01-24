@@ -12,19 +12,19 @@
   <?php print render($title_suffix['contextual_links']); ?>
   <?php endif; ?>
 
-  <div class="group-first">
+  <div class="group-first <?php print $first_classes; ?>">
     <?php print $first; ?>
   </div>
 
-  <div class="group-second">
+  <div class="group-second <?php print $second_classes; ?>">
     <?php print $second; ?>
   </div>
 
-  <div class="group-third">
+  <div class="group-third <?php print $third_classes; ?>">
     <?php print $third; ?>
   </div>
 
-  <div class="group-fourth">
+  <div class="group-fourth <?php print $fourth_classes; ?>">
     <?php print $fourth; ?>
   </div>
 </div>
