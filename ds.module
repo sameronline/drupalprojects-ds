@@ -512,6 +512,38 @@ function ds_render_region($content, $region, $layout) {
 }
 
 /**
+ * Implements hook_filter_info().
+ *
+ * Provide PHP code filter. Use with care.
+ */
+function ds_filter_info() {
+  $filters['ds_code'] = array(
+    'title' => t('Display Suite PHP evaluator'),
+    'description' => t('Executes a piece of PHP code through Display Suite. The usage of this filter should be restricted to administrators only!'),
+    'process callback' => 'ds_eval',
+    'tips callback' => '_ds_filter_tips',
+    'cache' => FALSE,
+  );
+  return $filters;
+}
+
+/**
+ * Tips callback for php filter.
+ */
+function _ds_filter_tips($filter, $format, $long = FALSE) {
+  global $base_url;
+  if ($long) {
+    $output = '<h4>' . t('Using custom PHP code with Display Suite') . '</h4>';
+    $output .= '<p>The entity object is passed to the evaluation function. $entity->nid will give you the node nid in case this field is used on a Node.</p>';
+    $output .= '<p>Do not use this filter with other filters in a text format.</p>';
+    return $output;
+  }
+  else {
+    return t('You may post Display Suite PHP code. You should include &lt;?php ?&gt; tags. The $entity object is available.');
+  }
+}
+
+/**
  * Render custom code field.
  *
  * @param $field
@@ -519,10 +551,12 @@ function ds_render_region($content, $region, $layout) {
  */
 function ds_render_code_field($field) {
   if (isset($field['properties']['code'])) {
-    // @todo we should check here on the code format. if php module and format is ok
-    //  is enabled use ds_eval() (but rename to _ds_eval(). or maybe even create our
-    // own php filter (only difference is that we can pass on the object).
-    $value = ds_eval($field['properties']['code']['value'], $field['entity']);
+    if ($field['properties']['code']['format'] != 'ds_code') {
+      $value = check_markup($field['properties']['code']['value'], $field['properties']['code']['value']);
+    }
+    else {
+      $value = ds_eval($field['properties']['code']['value'], $field['entity']);
+    }
     // Token support - check on token property so we don't run every single field through token.
     if (isset($field['properties']['use_token']) && $field['properties']['use_token'] == TRUE) {
       // @todo Currently only works for node entities, maybe only give code fields and tokens
@@ -535,9 +569,9 @@ function ds_render_code_field($field) {
 }
 
 /**
- * Wrapper function around PHP eval(). We don't use php_eval
- * because custom fields might need properties from the current
- * entity.
+ * Wrapper function around PHP eval(). We don't use php_eval from
+ * the PHP module because custom fields might need properties from
+ * the current entity.
  *
  * @param $code
  *   The code to evaluate from the custom field.

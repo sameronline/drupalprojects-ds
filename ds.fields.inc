@@ -216,7 +216,6 @@ function ds_edit_custom_field_form($form, &$form_state, $custom_field = '') {
   $form['code'] = array(
     '#type' => 'text_format',
     '#title' => t('Field code'),
-    '#description' => t('If you are able to insert PHP code, the $entity variable is available to use. Eg $entity->nid is the id of a node.'),
     '#default_value' => isset($custom_field->properties->code['value']) ? $custom_field->properties->code['value'] : '',
     '#format' => isset($custom_field->properties->code['format']) ? $custom_field->properties->code['format'] : 1,
     '#base_type' => 'textarea',
