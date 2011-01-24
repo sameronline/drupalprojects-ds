@@ -441,8 +441,8 @@ function ds_preprocess_entity(&$variables) {
     foreach ($layout['regions'] as $region_name => $region) {
       $variables[$region_name] = ds_render_region($variables['content'], $region_name, $layout);
     }
-    foreach ($layout['settings']['classes'] as $key => $class) {
-      $variables[$key . '_classes'] = $class;
+    foreach ($layout['settings']['classes'] as $key => $classes) {
+      $variables[$key . '_classes'] = !empty($classes) ? implode(' ', $classes) : '';
     }
   }
 }
