@@ -281,9 +281,9 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     $layout_string = $layout->layout;
     $selected = t('You have selected the %layout_label layout. The default template can be found in %path', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
     $suggestions = 'Possible template suggestions are: <br />';
-    $suggestions .= '- ' . $layout_string .'-'. $entity_type .'.tpl.php<br />';
-    $suggestions .= '- ' . $layout_string .'-'. $entity_type .'-'. $bundle .'.tpl.php<br />';
-    $suggestions .= '- ' . $layout_string .'-'. $entity_type .'-'. $bundle .'-' . $view_mode .'.tpl.php<br />';
+    $suggestions .= '- ' . $layout_string .'--'. $entity_type .'.tpl.php<br />';
+    $suggestions .= '- ' . $layout_string .'--'. $entity_type .'-'. $bundle .'.tpl.php<br />';
+    $suggestions .= '- ' . $layout_string .'--'. $entity_type .'-'. $bundle .'-' . $view_mode .'.tpl.php<br />';
 
     $layout->settings = unserialize($layout->settings);
     $layout->regions = $chosen_layout['regions'];

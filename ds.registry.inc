@@ -194,6 +194,7 @@ function _ds_ds_layouts() {
         'left' => t('Left'),
         'right' => t('Right')
       ),
+      'css' => TRUE,
     ),
     'ds_2col_stacked' => array(
       'label' => t('Two column stacked'),
@@ -204,6 +205,7 @@ function _ds_ds_layouts() {
         'right' => t('Right'),
         'footer' => t('Footer'),
       ),
+      'css' => TRUE,
     ),
     'ds_3col' => array(
       'label' => t('Three column - 25/50/25'),
@@ -213,6 +215,7 @@ function _ds_ds_layouts() {
         'middle' => t('Middle'),
         'right' => t('Right'),
       ),
+      'css' => TRUE,
     ),
     'ds_3col_equal_width' => array(
       'label' => t('Three column - equal width'),
@@ -222,6 +225,7 @@ function _ds_ds_layouts() {
         'middle' => t('Middle'),
         'right' => t('Right'),
       ),
+      'css' => TRUE,
     ),
     'ds_3col_stacked' => array(
       'label' => t('Three column stacked - 25/50/25'),
@@ -233,6 +237,7 @@ function _ds_ds_layouts() {
         'right' => t('Right'),
         'footer' => t('Footer'),
       ),
+      'css' => TRUE,
     ),
     'ds_3col_stacked_equal_width' => array(
       'label' => t('Three column stacked - equal width'),
@@ -244,6 +249,7 @@ function _ds_ds_layouts() {
         'right' => t('Right'),
         'footer' => t('Footer'),
       ),
+      'css' => TRUE,
     ),
     'ds_3col_stacked_html5' => array(
       'label' => t('Three column stacked - 25/50/25 (HTML5)'),
@@ -255,6 +261,7 @@ function _ds_ds_layouts() {
         'right' => t('Right'),
         'footer' => t('Footer'),
       ),
+      'css' => TRUE,
     ),
     'ds_4col' => array(
       'label' => t('Four column - equal width'),
@@ -265,6 +272,7 @@ function _ds_ds_layouts() {
         'third' => t('Third'),
         'fourth' => t('Fourth'),
       ),
+       'css' => TRUE,
     ),
   );
 

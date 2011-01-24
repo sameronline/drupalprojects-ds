@@ -151,6 +151,8 @@ function hook_ds_layouts() {
         // the template to print the content of that region.
         'bartik' => t('Bartik DS'),
       ),
+      // Add this if there is a default css file.
+      'css' => TRUE,
     );
   }
 
