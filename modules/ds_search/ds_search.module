@@ -336,7 +336,7 @@ function ds_search_apachesolr_update_index(&$document, $node) {
 }
 
 /**
- * Implements hook_modify_query().
+ * Implements hook_apachesolr_modify_query().
  */
 function ds_search_apachesolr_modify_query(DrupalSolrQueryInterface $query, $caller) {
 
