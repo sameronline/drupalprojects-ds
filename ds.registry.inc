@@ -22,6 +22,16 @@ function _ds_menu() {
     'file path' => drupal_get_path('module', 'system'),
   );
 
+  // Custom styles.
+  $items['admin/structure/ds/styles'] = array(
+    'title' => 'Styles',
+    'description' => 'Define classes which you can use as classes for regions.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_styles_form'),
+    'file' => 'ds.styles.inc',
+    'access arguments' => array('admin_display_suite'),
+  );
+
   // Custom view modes.
   $items['admin/structure/ds/view_modes'] = array(
     'title' => 'View modes',

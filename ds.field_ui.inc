@@ -311,11 +311,11 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     );
     foreach (array_keys($layout->regions) as $region) {
       $form['display_suite']['ds_classes'][$region] = array(
-        '#type' => 'textfield',
+        '#type' => 'select',
+        '#multiple' => TRUE,
+        '#options' => _ds_styles(),
         '#title' => t('Class for @region', array('@region' => $region)),
         '#default_value' => isset($layout->settings['classes'], $layout->settings['classes'][$region]) ? $layout->settings['classes'][$region] : '',
-        '#size' => 60,
-        '#maxlength' => 80,
       );
     }
   }
@@ -412,6 +412,34 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form) {
   // Add fields submit handler.
   $form['#submit'][] = 'ds_field_ui_fields_save';
 }
+
+/**
+ * Return styles.
+ */
+function _ds_styles() {
+  static $run = FALSE;
+  static $styles = array();
+
+  if (!$run) {
+    $region_styles = trim(variable_get('ds_styles_regions', ''));
+    if (!empty($region_styles)) {
+      // @todo multiple select has become smarter in D7 no ? so
+      // none can probably be ditched ..
+      $styles[''] = t('None');
+      $region_styles = explode("\n", $region_styles);
+      foreach ($region_styles as $key => $value) {
+        $classes = explode("|", $value);
+        $key = trim($classes[0]);
+        $name = isset($classes[1]) ? trim($classes[1]) : $key;
+        $styles[$key] = $name;
+      }
+    }
+    $run = TRUE;
+  }
+
+  return $styles;
+}
+
 
 /**
  * Utility function to sort a multidimensional array by a value in a sub-array.

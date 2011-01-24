@@ -31,19 +31,6 @@ define('DS_BLOCK_TITLE_CONTENT', 2);
 define('DS_BLOCK_CONTENT', 3);
 
 /**
- * Implements hook_help().
- */
-function ds_help($path, $arg) {
-  switch ($path) {
-    case 'admin/structure/ds':
-      $output = '<dl>';
-      $output .= '<dt>' . t('Manage view modes and fields for all your entities, as well as optional configuration options exposed by optional modules. Managing the display of your content is handled on the "manage display" screens provided by Field UI.') . '</dt>';
-      $output .= '</dl>';
-      return $output;
-  }
-}
-
-/**
  * Implements hook_permission().
  */
 function ds_permission() {
