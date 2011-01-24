@@ -161,15 +161,15 @@ function hook_ds_layouts() {
 /**
  * Theme an entity coming from the views entity plugin.
  *
- * @param $vars
- *   An array of variables from the views preprocess functions.
+ * @param $entity
+ *   The complete entity.
  * @param $view_mode
  *   The name of the view mode.
  */
-function ds_views_row_ENTITY_NAME(&$vars, $view_mode) {
+function ds_views_row_ENTITY_NAME($entity, $view_mode) {
   $nid = $vars['row']->{$vars['field_alias']};
   $node = node_load($nid);
-  $vars['object'] = drupal_render(node_view($node, $view_mode));
+  return drupal_render(node_view($node, $view_mode));
 }
 
 /**
