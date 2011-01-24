@@ -51,7 +51,7 @@ function node_ds_fields($entity_type, $bundle, $view_mode) {
   );
 
   // Comments.
-  // @todo check in_preview
+  // @todo check in_preview.
   if (module_exists('comment') && ($view_mode == 'full' || $view_mode == 'default')) {
     $fields['comments'] = array(
       'title' => t('Comments'),
@@ -66,10 +66,10 @@ function node_ds_fields($entity_type, $bundle, $view_mode) {
     'type' => DS_FIELD_TYPE_CODE,
     'status' => DS_FIELD_STATUS_DEFAULT,
     'properties' => array(
-      // @todo theme this no ? // or use new tokens in Drupal Core
-      // actually yes, this should be better, because php will be disabled by default.
-      // ditch the ds_eval_code too.
-      'code' => '<?php echo l(t("Read more"), "node/$entity->nid"); ?>'
+      'code' => array(
+        'value' => '<?php echo l("Read more", "node/" . $entity->nid); ?>',
+        'format' => 'ds_code',
+      ),
     ),
   );
 
