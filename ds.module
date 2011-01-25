@@ -433,13 +433,20 @@ function ds_field_attach_view_alter(&$build, $context) {
  */
 function ds_preprocess_entity(&$variables) {
   if ($layout = ds_determine_layout_variables($variables['elements']['#entity_type'], $variables['elements']['#bundle'], $variables['elements']['#view_mode'])) {
+
+    $render_container = 'content';
+    // Hard-referenced user exception.
+    if ($variables['elements']['#entity_type'] == 'user') {
+      $render_container = 'user_profile';
+    }
+
     // Add template files for hook_theme_suggestions and also the regions.
     $variables['theme_hook_suggestions'][] = $layout['layout'];
     $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'];
     $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
     $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
     foreach ($layout['regions'] as $region_name => $region) {
-      $variables[$region_name] = ds_render_region($variables['content'], $region_name, $layout);
+      $variables[$region_name] = ds_render_region($variables[$render_container], $region_name, $layout);
     }
     foreach ($layout['settings']['classes'] as $key => $classes) {
       $variables[$key . '_classes'] = !empty($classes) ? implode(' ', $classes) : '';
@@ -644,8 +651,11 @@ function ds_render_block_field($field) {
  *   The field array.
  */
 function ds_render_title_field($field) {
+
   $output = '';
   $formatter = explode('_', $field['formatter']);
+
+  $entity_type = isset($field['entity_type']) ? $field['entity_type'] : 'node';
 
   // Basic string.
   $output = $field['entity']->{$formatter[1]};
@@ -659,7 +669,13 @@ function ds_render_title_field($field) {
       // @todo won't work with users or any other entity ...
       // pass more stuff into the properties of the fields. same for
       // the uri above, makes it much less ugly and faster.
-      $path = 'node/' . $field['entity']->nid;
+      //
+      // If we keep it like this, which i don't like, there is no
+      // validation at all on a front end display. Things can easily go wrong.
+      // This is fast-cached statically in entity_get_info.
+      $entity_info = entity_get_info($entity_type);
+      $idKey = $entity_info['entity keys']['id'];
+      $path = $entity_type . '/' . $field['entity']->{$idKey};
     }
     $output = l($output, $path);
   }
