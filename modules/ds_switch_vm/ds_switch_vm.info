@@ -1,0 +1,6 @@
+; $Id$
+name = "Switch view mode"
+description = "Switch view modes on a per node basis."
+core = "7.x"
+package = "Display suite"
+dependencies[] = ds
