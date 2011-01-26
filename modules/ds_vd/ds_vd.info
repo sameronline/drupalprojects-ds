@@ -1,5 +1,5 @@
 ; $Id$
-name = "Display suite Views"
+name = "Views"
 description = "Extend the display options for Views lists."
 core = "7.x"
 package = "Display suite"
