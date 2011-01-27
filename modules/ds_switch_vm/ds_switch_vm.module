@@ -30,30 +30,6 @@ function ds_switch_vm_node_view_alter(&$build) {
   }
 }
 
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function ds_switch_vm_form_node_type_form_alter(&$form, $form_state, $form_id) {
-  if (isset($form['type'])) {
-
-    // Get the view modes.
-    $ds_vm = ds_entity_view_modes('node');
-    foreach ($ds_vm as $key => $item) {
-      if ($key !== 'full') {
-        $options[$key] = $item['label'];
-      }
-    }
-
-    $form['display']['ds_switch_vm_map'] = array(
-      '#type' => 'checkboxes',
-      '#title' => t('Allow switching inidividual node full page view build mode to one of these'),
-      '#default_value' => variable_get('ds_switch_vm_map_'. $form['#node_type']->type, array()),
-      '#options' => $options,
-      '#description' => t('Not checking any view modes, will disable this feature in the node edit form.'),
-    );
-  }
-}
-
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -62,9 +38,20 @@ function ds_switch_vm_form_node_form_alter(&$form, $form_state, $form_id) {
 
   if (user_access('ds_switch_vm ' . $form['#node']->type) ) {
 
-    // Find the allowed_map
-    $allowed_map = variable_get('ds_switch_vm_map_' . $form['#node']->type, FALSE);
-    if ($allowed_map && is_array($allowed_map) && count($allowed_map)) {
+    $view_mode_settings = field_view_mode_settings('node', $form['#node']->type);
+
+    // Get the view modes.
+    $options = array('' => t('Default'));
+    $ds_vm = ds_entity_view_modes('node');
+    foreach ($ds_vm as $key => $item) {
+      $overriden = (!empty($view_mode_settings[$key]['custom_settings']) ? TRUE : FALSE);
+      if ($overriden) {
+        $options[$key] = $item['label'];
+      }
+    }
+
+    // Only fire if we have more than 1 option.
+    if (count($options) > 1) {
       $node = $form['#node'];
       $form['ds_switch'] = array(
         '#type' => 'fieldset',
@@ -74,15 +61,6 @@ function ds_switch_vm_form_node_form_alter(&$form, $form_state, $form_id) {
         '#group' => 'additional_settings',
         '#weight' => 100,
       );
-
-      // Get the view modes.
-      $options = array('' => t('Default'));
-      $ds_vm = ds_entity_view_modes('node');
-      foreach ($ds_vm as $key => $item) {
-        if (in_array($key, $allowed_map)) {
-          $options[$key] = $item['label'];
-        }
-      }
 
       $form['ds_switch']['ds_switch_vm'] = array(
         '#type' => 'select',

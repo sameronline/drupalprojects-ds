@@ -30,14 +30,8 @@ function ds_switch_vm_install() {
  * Implementation of hook_uninstall().
  */
 function ds_switch_vm_uninstall() {
-  $ret = array();
-
   // Drop field in node revision table.
   db_drop_field('node_revision', 'ds_switch_vm');
-
-  // Remove maps
-  db_query("DELETE FROM {variable} WHERE name LIKE 'ds_switch_vm\_%%'");
-  cache_clear_all('variables', 'cache');
 }
 
 /**
