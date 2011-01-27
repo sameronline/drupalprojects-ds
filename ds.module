@@ -440,6 +440,10 @@ function ds_preprocess_entity(&$variables) {
       $render_container = 'user_profile';
     }
 
+    // Add view mode classes.
+    $variables['classes_array'][] = 'view-mode-' . $variables['elements']['#view_mode'];
+
+
     // Add template files for hook_theme_suggestions and also the regions.
     $variables['theme_hook_suggestions'][] = $layout['layout'];
     $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'];
