@@ -116,6 +116,7 @@ function hook_ds_layouts() {
       'regions' => array(
         'foo_content' => t('Content'),
       ),
+      'css' => TRUE,
     ),
   );
 
