@@ -446,17 +446,16 @@ function ds_preprocess_entity(&$variables) {
     }
     $variables['classes_array'][] = 'view-mode-' . $variables['elements']['#view_mode'];
 
-
     // Add template files for hook_theme_suggestions and also the regions.
     $variables['theme_hook_suggestions'][] = $layout['layout'];
     $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'];
     $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
     $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
     foreach ($layout['regions'] as $region_name => $region) {
+      // Create the region content.
       $variables[$region_name] = ds_render_region($variables[$render_container], $region_name, $layout);
-    }
-    foreach ($layout['settings']['classes'] as $key => $classes) {
-      $variables[$key . '_classes'] = !empty($classes) ? implode(' ', $classes) : '';
+      // Create classes for each region.
+      $variables[$region_name . '_classes'] = (!empty($layout['settings']['classes'][$region_name])) ? implode('', $layout['settings']['classes'][$region_name]) : '';
     }
   }
 }
