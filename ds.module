@@ -377,6 +377,13 @@ function ds_get_fields_configuration($entity_type, $bundle, $view_mode) {
  * Implements hook_field_attach_view_alter().
  */
 function ds_field_attach_view_alter(&$build, $context) {
+
+  // If views and core doesn't send information along on the entity,
+  // Display suite doesn't have a context to render the fields.
+  if (!isset($build['#entity_type']) && !isset($build['#bundle'])) {
+    return;
+  }
+
   // @TODO try to keep the fields static in case we need to add them over and over ?
   $entity_type = $build['#entity_type'];
   $bundle = $build['#bundle'];
