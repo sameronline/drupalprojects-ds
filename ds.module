@@ -313,6 +313,10 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
   static $included_files = array();
 
   $field['entity'] = $entity;
+  $field['entity_type'] = $entity_type;
+  $field['bundle'] = $bundle;
+  $field['view_mode'] = $view_mode;
+
 
   switch ($field['type']) {
     case DS_FIELD_TYPE_FUNCTION:
@@ -660,8 +664,7 @@ function ds_render_title_field($field) {
 
   $output = '';
   $formatter = explode('_', $field['formatter']);
-
-  $entity_type = isset($field['entity_type']) ? $field['entity_type'] : 'node';
+  $entity_type = $field['entity_type'];
 
   // Basic string.
   $output = $field['entity']->{$formatter[1]};
@@ -672,16 +675,11 @@ function ds_render_title_field($field) {
       $path = $field['entity']->uri['path'];
     }
     else {
-      // @todo won't work with users or any other entity ...
-      // pass more stuff into the properties of the fields. same for
-      // the uri above, makes it much less ugly and faster.
-      //
-      // If we keep it like this, which i don't like, there is no
-      // validation at all on a front end display. Things can easily go wrong.
-      // This is fast-cached statically in entity_get_info.
+      // Todo use entity_uri().
+      // Used for node, user and taxonomy.
       $entity_info = entity_get_info($entity_type);
-      $idKey = $entity_info['entity keys']['id'];
-      $path = $entity_type . '/' . $field['entity']->{$idKey};
+      $id_key = $entity_info['entity keys']['id'];
+      $path = $entity_type . '/' . $field['entity']->{$id_key};
     }
     $output = l($output, $path);
   }
