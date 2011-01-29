@@ -454,8 +454,8 @@ function ds_preprocess_entity(&$variables) {
     foreach ($layout['regions'] as $region_name => $region) {
       // Create the region content.
       $variables[$region_name] = ds_render_region($variables[$render_container], $region_name, $layout);
-      // Create classes for each region.
-      $variables[$region_name . '_classes'] = (!empty($layout['settings']['classes'][$region_name])) ? implode('', $layout['settings']['classes'][$region_name]) : '';
+      // Create classes for this region.
+      $variables[$region_name . '_classes'] = implode('', $layout['settings']['classes'][$region_name]);
     }
   }
 }

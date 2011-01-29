@@ -32,6 +32,15 @@ function _ds_menu() {
     'access arguments' => array('admin_display_suite'),
   );
 
+  // Custom styles.
+  $items['admin/structure/ds/layout'] = array(
+    'title' => 'Layout',
+    'description' => 'Displays an overview of all entities.',
+    'page callback' => 'ds_layout_list',
+    'file' => 'ds.layout.inc',
+    'access arguments' => array('admin_display_suite'),
+  );
+
   // Custom view modes.
   $items['admin/structure/ds/view_modes'] = array(
     'title' => 'View modes',
