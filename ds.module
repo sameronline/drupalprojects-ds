@@ -305,7 +305,6 @@ function ds_custom_fields() {
  *   The markup of the field used for output.
  */
 function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_mode) {
-  // @todo do we really need al these params ?
   // @todo it seems every field comes through this one, although sometimes format should be hidden.
   // we're not saving this right in field_ui.inc (ie, if a field has no layout, it should have format
   // set to hidden, no matter what.
