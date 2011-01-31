@@ -724,10 +724,46 @@ function ds_render_author_field($field) {
 }
 
 /**
+ * Return the picture.
+ */
+function ds_return_picture($entity) {
+  $picture = '';
+  if (!empty($entity->picture)) {
+    $picture = $entity->picture;
+  }
+  elseif (variable_get('user_picture_default', '')) {
+    $picture = variable_get('user_picture_default', '');
+  }
+  return $picture;
+}
+
+/**
  * Render a user picture.
  */
 function ds_render_user_picture($field) {
-  return '<p>picture coming soon</p>';
+  $picture = ds_return_picture($field['entity']);
+
+  if (!empty($picture)) {
+    $variables = array();
+    $name = !empty($account->name) ? $account->name : variable_get('anonymous', t('Anonymous'));
+    $alt = t("@user's picture", array('@user' => $name));
+    $variables = array('path' => $picture->uri, 'alt' => $alt, 'title' => $alt);
+
+    if (module_exists('image')) {
+      $variables['style_name'] = str_replace('ds_picture_', '', $field['formatter']);
+      $image = theme('image_style', $variables);
+    }
+    else {
+      $image = theme('image', $variables);
+    }
+
+    if (!empty($field['entity']->uid) && user_access('access user profiles')) {
+      return l($image, 'user/'. $field['entity']->uid, array('html' => TRUE));
+    }
+    else {
+      return $image;
+    }
+  }
 }
 
 /**
