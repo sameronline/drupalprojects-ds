@@ -724,6 +724,13 @@ function ds_render_author_field($field) {
 }
 
 /**
+ * Render a user picture.
+ */
+function ds_render_user_picture($field) {
+  return '<p>picture coming soon</p>';
+}
+
+/**
  * Render a date field.
  */
 function ds_render_date_field($field) {

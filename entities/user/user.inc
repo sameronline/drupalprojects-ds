@@ -43,5 +43,23 @@ function user_ds_fields($entity_type, $bundle, $view_mode) {
     )
   );
 
+  // Created time.
+  if (module_exists('image')) {
+    $styles = image_styles();
+    $picture_formatters = array();
+    foreach ($styles as $formatter) {
+      $picture_formatters['ds_picture_'. $formatter['name']] = ucfirst(str_replace('_', ' ', $formatter['name']));
+    }
+    $fields['ds_user_picture'] = array(
+      'title' => t('User picture'),
+      'type' => DS_FIELD_TYPE_FUNCTION,
+      'status' => DS_FIELD_STATUS_STATIC,
+      'function' => 'ds_render_user_picture',
+      'properties' => array(
+        'formatters' => $picture_formatters,
+      ),
+    );
+  }
+
   return array('user' => $fields);
 }
