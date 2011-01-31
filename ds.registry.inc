@@ -183,7 +183,6 @@ function _ds_entity_info_alter(&$entity_info) {
 
   // Add layout if applicable.
   $ds_layouts = module_invoke_all('ds_layouts');
-  // @todo convert to db_select().
   $results = db_query('SELECT entity_type, bundle, view_mode, layout, settings FROM {ds_layouts}')->fetchAll();
   foreach ($results as $row) {
     $layout = $ds_layouts[$row->layout];
@@ -295,8 +294,19 @@ function _ds_ds_layouts() {
     ),
   );
 
-  // Get layouts defined in the default theme.
+  // Get layouts defined in the default theme and base theme (if applicable).
   $theme = variable_get('theme_default');
+  _ds_layouts_scan_theme($theme, $layouts);
+  $all_themes = list_themes();
+  $theme_info = $all_themes[$theme];
+  if (isset($theme_info->base_theme) && !empty($theme_info->base_theme)) {
+    _ds_layouts_scan_theme($theme_info->base_theme, $layouts);
+  }
+
+  return $layouts;
+}
+
+function _ds_layouts_scan_theme($theme, &$layouts) {
   $theme_layouts = file_scan_directory(drupal_get_path('theme', $theme) . '/ds_layouts', '/inc/');
   foreach ($theme_layouts as $file => $values) {
     include_once(DRUPAL_ROOT . '/' . $file);
@@ -304,6 +314,4 @@ function _ds_ds_layouts() {
     $layouts[$values->name] = $function();
     $layouts[$values->name]['path'] = str_replace('/' . $values->filename, '', $file);
   }
-
-  return $layouts;
 }

@@ -144,7 +144,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $record->bundle = $bundle;
   $record->view_mode = $view_mode;
   $record->layout = $layout;
-  $record->settings = array('hide_empty_regions' => $hide_empty_regions);
+  $record->settings = serialize(array('hide_empty_regions' => $hide_empty_regions));
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
@@ -289,7 +289,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   // @todo convert to db_select();
   $layout = db_query('SELECT layout, settings FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
 
-  if (!empty($layout) && isset($layout->layout)) {
+  if (!empty($layout) && isset($layout->layout) && isset($ds_layouts[$layout->layout])) {
     $chosen_layout = $ds_layouts[$layout->layout];
     $layout_string = $layout->layout;
     $selected = t('You have selected the %layout_label layout. The default template can be found in %path', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
@@ -297,7 +297,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     $suggestions .= '- ' . $layout_string .'--'. $entity_type .'.tpl.php<br />';
     $suggestions .= '- ' . $layout_string .'--'. $entity_type .'-'. $bundle .'.tpl.php<br />';
     $suggestions .= '- ' . $layout_string .'--'. $entity_type .'-'. $bundle .'-' . $view_mode .'.tpl.php<br />';
-
     $layout->settings = unserialize($layout->settings);
     $layout->regions = $chosen_layout['regions'];
     $form['#ds_layout'] = $layout;
