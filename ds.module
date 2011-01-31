@@ -320,7 +320,6 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
 
   switch ($field['type']) {
     case DS_FIELD_TYPE_FUNCTION:
-      // @todo test with file key
       if (isset($field['file']) && !isset($included_files[$field['file']])) {
         $included_files[$field['file']] = TRUE;
         include $field['file'];
@@ -332,7 +331,7 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
       return theme($format, $field);
 
     case DS_FIELD_TYPE_CODE:
-      return ds_render_code_field($field, $entity_type);
+      return ds_render_code_field($field);
 
     case DS_FIELD_TYPE_BLOCK:
       return ds_render_block_field($field);
@@ -527,6 +526,16 @@ function ds_determine_layout_variables($entity_type, $bundle, $view_mode) {
   return $layouts[$layout_key];
 }
 
+/**
+ * Render a region.
+ *
+ * @param $content
+ *   An array of content fields.
+ * @param $region
+ *   The name of region to render.
+ * @param $layout
+ *   The layout definition.
+ */
 function ds_render_region($content, $region, $layout) {
   $output = '';
   if (isset($layout['settings']['regions'][$region])) {
@@ -571,31 +580,6 @@ function _ds_filter_tips($filter, $format, $long = FALSE) {
 }
 
 /**
- * Render custom code field.
- *
- * @param $field
- *   The field with all its properties.
- * @param $entity_type
- *   The name of the entity field.
- */
-function ds_render_code_field($field, $entity_type) {
-  if (isset($field['properties']['code'])) {
-    $format = (isset($field['properties']['code']['format'])) ? $field['properties']['code']['format'] : 'plain_text';
-    if ($format != 'ds_code') {
-      $value = check_markup($field['properties']['code']['value'], $format);
-    }
-    else {
-      $value = ds_php_eval($field['properties']['code']['value'], $field['entity']);
-    }
-    // Token support - check on token property so we don't run every single field through token.
-    if (isset($field['properties']['use_token']) && $field['properties']['use_token'] == TRUE) {
-      $value = token_replace($value, array($entity_type => $field['entity']));
-    }
-    return $value;
-  }
-}
-
-/**
  * Wrapper function around PHP eval(). We don't use php_eval from
  * the PHP module because custom fields might need properties from
  * the current entity.
@@ -635,10 +619,27 @@ function ds_php_eval($code, $entity) {
 }
 
 /**
+ * Render a code field.
+ */
+function ds_render_code_field($field) {
+  if (isset($field['properties']['code'])) {
+    $format = (isset($field['properties']['code']['format'])) ? $field['properties']['code']['format'] : 'plain_text';
+    if ($format != 'ds_code') {
+      $value = check_markup($field['properties']['code']['value'], $format);
+    }
+    else {
+      $value = ds_php_eval($field['properties']['code']['value'], $field['entity']);
+    }
+    // Token support - check on token property so we don't run every single field through token.
+    if (isset($field['properties']['use_token']) && $field['properties']['use_token'] == TRUE) {
+      $value = token_replace($value, array($field['entity_type'] => $field['entity']));
+    }
+    return $value;
+  }
+}
+
+/**
  * Render a block field.
- *
- * @param $field
- *   The field array.
  */
 function ds_render_block_field($field) {
   if (isset($field['properties'])) {
@@ -673,11 +674,7 @@ function ds_render_block_field($field) {
 }
 
 /**
- * Function used for theming the node title, user name etc. Note that
- * this is a function so it can't be overridden by a phptemplate function.
- *
- * @param $field
- *   The field array.
+ * Render a title field.
  */
 function ds_render_title_field($field) {
 
@@ -710,4 +707,26 @@ function ds_render_title_field($field) {
   }
 
   return $output;
+}
+
+/**
+ * Render an author field.
+ */
+function ds_render_author_field($field) {
+
+  if ($field['formatter'] == 'author') {
+    return $field['entity']->name;
+  }
+
+  if ($field['formatter'] == 'author_linked') {
+    return theme('username', array('account' => $field['entity']));
+  }
+}
+
+/**
+ * Render a date field.
+ */
+function ds_render_date_field($field) {
+  $date_format = str_replace('ds_post_date_', '', $field['formatter']);
+  return format_date($field['entity']->created, $date_format);
 }

@@ -72,5 +72,35 @@ function node_ds_fields($entity_type, $bundle, $view_mode) {
     ),
   );
 
+  // Author.
+  $fields['author'] = array(
+    'title' => t('Author'),
+    'type' => DS_FIELD_TYPE_FUNCTION,
+    'status' => DS_FIELD_STATUS_STATIC,
+    'function' => 'ds_render_author_field',
+    'properties' => array(
+      'formatters' => array(
+        'author' => t('Author'),
+        'author_linked' => t('Author linked to profile')
+      ),
+    ),
+  );
+
+  // Created time.
+  $format_types = system_get_date_types();
+  $date_formatters = array();
+  foreach ($format_types as $formatter) {
+    $date_formatters['ds_post_date_'. $formatter['type']] = t($formatter['title']);
+  }
+  $fields['post_date'] = array(
+    'title' => t('Post date'),
+    'type' => DS_FIELD_TYPE_FUNCTION,
+    'status' => DS_FIELD_STATUS_STATIC,
+    'function' => 'ds_render_date_field',
+    'properties' => array(
+      'formatters' => $date_formatters,
+    ),
+  );
+
   return array('node' => $fields);
 }
