@@ -144,7 +144,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $record->bundle = $bundle;
   $record->view_mode = $view_mode;
   $record->layout = $layout;
-  $record->settings = serialize(array('hide_empty_regions' => $hide_empty_regions));
+  $record->settings = array('hide_empty_regions' => $hide_empty_regions);
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
@@ -157,6 +157,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
   if ($new_layout && !empty($layout)) {
     // Save new layout.
+    $record->settings = serialize($record->settings);
     drupal_write_record('ds_layouts', $record);
   }
   // Update existing layout.
