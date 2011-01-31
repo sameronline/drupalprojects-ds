@@ -194,6 +194,11 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     if ($this->base_table == 'node') {
       $this->entities = node_load_multiple($ids);
     }
+
+    // Load all users.
+    if ($this->base_table == 'user') {
+      $this->entities = user_load_multiple($ids);
+    }
   }
 
   /**
@@ -266,4 +271,11 @@ class views_plugin_ds_entity_view extends views_plugin_row {
  */
 function ds_views_row_render_node($entity, $view_mode) {
   return drupal_render(node_view($entity, $view_mode));
+}
+
+/**
+ * Render the user through the views entity plugin.
+ */
+function ds_views_row_render_user($entity, $view_mode) {
+  return drupal_render(user_view($entity, $view_mode));
 }
