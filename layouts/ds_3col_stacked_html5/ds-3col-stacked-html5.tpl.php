@@ -12,23 +12,33 @@
   <?php print render($title_suffix['contextual_links']); ?>
   <?php endif; ?>
 
-  <header class="group-header <?php print $header_classes; ?>">
-    <?php print $header; ?>
-  </header>
+  <?php if ($header): ?>
+    <header class="group-header <?php print $header_classes; ?>">
+      <?php print $header; ?>
+    </header>
+  <?php endif; ?>
 
-  <aside class="group-left <?php print $left_classes; ?>">
-    <?php print $left; ?>
-  </aside>
+  <?php if ($left): ?>
+    <aside class="group-left <?php print $left_classes; ?>">
+      <?php print $left; ?>
+    </aside>
+  <?php endif; ?>
 
-  <section class="group-middle <?php print $middle_classes; ?>">
-    <?php print $middle; ?>
-  </section>
+  <?php if ($middle): ?>
+    <section class="group-middle <?php print $middle_classes; ?>">
+      <?php print $middle; ?>
+    </section>
+  <?php endif; ?>
 
-  <aside class="group-right <?php print $right_classes; ?>">
-    <?php print $right; ?>
-  </aside>
+  <?php if ($right): ?>
+    <aside class="group-right <?php print $right_classes; ?>">
+      <?php print $right; ?>
+    </aside>
+  <?php endif; ?>
 
-  <footer class="group-footer <?php print $footer_classes; ?>">
-    <?php print $footer; ?>
-  </footer>
+  <?php if ($footer): ?>
+    <footer class="group-footer <?php print $footer_classes; ?>">
+      <?php print $footer; ?>
+    </footer>
+  <?php endif; ?>
 </div>

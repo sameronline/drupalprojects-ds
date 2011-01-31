@@ -12,15 +12,21 @@
   <?php print render($title_suffix['contextual_links']); ?>
   <?php endif; ?>
 
-  <div class="group-left <?php print $left_classes;?>">
-    <?php print $left; ?>
-  </div>
+  <?php if ($left): ?>
+    <div class="group-left <?php print $left_classes;?>">
+      <?php print $left; ?>
+    </div>
+  <?php endif; ?>
 
-  <div class="group-middle <?php print $middle_classes;?>">
-    <?php print $middle; ?>
-  </div>
+  <?php if ($middle): ?>
+    <div class="group-middle <?php print $middle_classes;?>">
+      <?php print $middle; ?>
+    </div>
+  <?php endif; ?>
 
-  <div class="group-right <?php print $right_classes;?>">
-    <?php print $right; ?>
-  </div>
+  <?php if ($right): ?>
+    <div class="group-right <?php print $right_classes;?>">
+      <?php print $right; ?>
+    </div>
+  <?php endif; ?>
 </div>

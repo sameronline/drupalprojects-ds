@@ -30,6 +30,9 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
 
   // Alter the text of the custom display settings.
   $form['modes']['view_modes_custom']['#description'] = t('<a href="!url">Create new view modes</a>', array('!url' => url('admin/structure/ds/view_modes')));
+  $form['display_suite']['modes'] = $form['modes'];
+  $form['display_suite']['modes']['#weight'] = -10;
+  unset($form['modes']);
 }
 
 /**
@@ -131,6 +134,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
   // Determine layout variables.
   $layout = $form_state['values']['display_suite']['layout'];
+  $hide_empty_regions = $form_state['values']['display_suite']['hide_empty_regions'];
   $old_layout = $form_state['values']['display_suite']['old_layout'];
   $new_layout = ($layout != $old_layout) || empty($old_layout);
 
@@ -140,6 +144,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $record->bundle = $bundle;
   $record->view_mode = $view_mode;
   $record->layout = $layout;
+  $record->settings = array('hide_empty_regions' => $hide_empty_regions);
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
@@ -156,7 +161,6 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   }
   // Update existing layout.
   elseif (!empty($layout)) {
-    $record->settings = array();
 
     $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
 
@@ -181,6 +185,15 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     }
     $record->settings = serialize($record->settings);
     drupal_write_record('ds_layouts', $record, array('entity_type', 'bundle', 'view_mode', 'layout'));
+  }
+}
+
+/**
+ * Move the view modes so Field UI can handle them.
+ */
+function ds_field_ui_layouts_validate($form, &$form_state) {
+  if (isset($form_state['values']['display_suite']['modes']['view_modes_custom'])) {
+    $form_state['values']['view_modes_custom'] = $form_state['values']['display_suite']['modes']['view_modes_custom'];
   }
 }
 
@@ -290,11 +303,20 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     $form['#ds_layout'] = $layout;
   }
 
+
   $form['display_suite']['ds_layouts']['layout'] = array(
     '#type' => 'select',
     '#title' => t('Select a layout'),
     '#options' => $layout_options,
     '#default_value' => isset($layout->layout) ? $layout->layout : '',
+    '#weight' => -1,
+  );
+
+  $form['display_suite']['ds_layouts']['hide_empty_regions'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Do not render empty regions'),
+    '#default_value' => isset($layout->settings['hide_empty_regions']) ? $layout->settings['hide_empty_regions'] : FALSE,
+    '#weight' => 0,
   );
 
   if (!empty($layout) && isset($layout->regions)) {
@@ -325,7 +347,8 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#value' => isset($layout->layout) ? $layout->layout : 0,
   );
 
-  // Add submit handler
+  // Add validate and submit handlers.
+  $form['#validate'][] = 'ds_field_ui_layouts_validate';
   $form['#submit'][] = 'ds_field_ui_layouts_save';
 }
 
