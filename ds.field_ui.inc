@@ -29,7 +29,7 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   $form['#process'][] = 'ds_field_ui_regions';
 
   // Alter the text of the custom display settings.
-  $form['modes']['view_modes_custom']['#description'] = t('<a href="!url">Create new view modes</a>', array('!url' => url('admin/structure/ds/view_modes')));
+  $form['modes']['view_modes_custom']['#description'] = t('<a href="!url">Manage view modes</a>', array('!url' => url('admin/structure/ds/view_modes')));
   $form['display_suite']['modes'] = $form['modes'];
   $form['display_suite']['modes']['#weight'] = -10;
   unset($form['modes']);
@@ -313,7 +313,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
 
   $form['display_suite']['ds_layouts']['hide_empty_regions'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Do not render empty regions'),
+    '#title' => t('Hide empty regions'),
     '#default_value' => isset($layout->settings['hide_empty_regions']) ? $layout->settings['hide_empty_regions'] : FALSE,
     '#weight' => 0,
   );
@@ -344,7 +344,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
         );
       }
     }
-    $form['display_suite']['ds_classes']['info'] = array('#markup' => l(t('Configure styles'), 'admin/structure/ds/styles'));
+    $form['display_suite']['ds_classes']['info'] = array('#markup' => l(t('Manage region styles'), 'admin/structure/ds/styles'));
   }
 
   $form['display_suite']['ds_layouts']['old_layout'] = array(

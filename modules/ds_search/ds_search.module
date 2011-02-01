@@ -162,6 +162,18 @@ function ds_search_settings($form, $form_state) {
     );
   }
 
+  $form['user'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('User search'),
+  );
+
+  $form['user']['ds_user_override_search_page'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Override user search page'),
+    '#description' => t('Toggle this checkbox if you want Display suite to render user search results.'),
+    '#default_value' => variable_get('ds_user_override_search_page', FALSE),
+  );
+
   return system_settings_form($form);
 }
 
@@ -227,7 +239,66 @@ function ds_search_get_keys($keys = NULL) {
  */
 function ds_search_search_page($results) {
   $build = array();
+  ds_build_shared_page_variables($build);
 
+  foreach ($results as $result) {
+    $build['results'][$result->nid] = node_view($result, variable_get('ds_search_view_mode', 'search_result'));
+  }
+
+  return $build;
+}
+
+/**
+ * Override search results page for users.
+ */
+if (variable_get('ds_user_override_search_page', FALSE)) {
+  function user_search_page($results) {
+    $output = '';
+    global $base_url;
+
+    ds_build_shared_page_variables(&$build);
+
+    $uids = array();
+    foreach ($results as $key => $result) {
+      $uid = FALSE;
+
+      // Try to get the uid from the $result['link'];
+      $path = explode('/', $result['link']);
+      $uid = end($path);
+
+      // Lookup drupal path, we are most likely having an alias.
+      if (!is_numeric($uid)) {
+        $path = str_replace($base_url .'/', '', $result['link']);
+        $alias = drupal_get_normal_path($path);
+        $path = explode('/', $alias);
+        $uid = end($path);
+      }
+
+      if (is_numeric($uid)) {
+        $uids[] = $uid;
+      }
+
+      // Return all uids.
+      if (!empty($uids)) {
+        $accounts = user_load_multiple($uids);
+        foreach ($accounts as $account) {
+          $build['results'][$account->uid] = user_view($account, variable_get('ds_search_view_mode', 'search_result'));
+        }
+      }
+    }
+
+    // Return output.
+    return $build;
+  }
+}
+
+/**
+ * Build shared page variables.
+
+ * @param $build
+ *   The build array.
+ */
+function ds_build_shared_page_variables(&$build) {
   // Search results title.
   if (variable_get('ds_search_show_title', FALSE)) {
     $build['search_title'] = array('#markup' => '<h2>'. t('Search results') .'</h2>');
@@ -235,13 +306,11 @@ function ds_search_search_page($results) {
 
   // Extra variables.
   if (variable_get('ds_search_variables', 'none') != 'none') {
-    $build['search_extra'] = array('#markup' => '<div class="ds-search-extra">'. ds_search_extra_variables() .'</div>');
+    $build['search_extra'] = array('#markup' => '<div class="ds-search-extra">'. ds_search_extra_variables(arg(2)) .'</div>');
   }
 
-  // Results.
-  foreach ($results as $result) {
-    $build[$result->nid] = node_view($result, variable_get('ds_search_view_mode', 'search_result'));
-  }
+  // Search results.
+  $build['results'] = array();
 
   // Pager.
   $build['pager'] = array('#markup' => theme('pager', array('tags' => NULL)));
@@ -257,14 +326,12 @@ function ds_search_search_page($results) {
       ),
     ), 'setting');
   }
-
-  return $build;
 }
 
 /**
  * Return the extra variables.
  */
-function ds_search_extra_variables() {
+function ds_search_extra_variables($arg_keys = NULL) {
   $type = variable_get('ds_search_variables', 'none');
 
   // Define the number of results being shown on a page.
@@ -283,7 +350,7 @@ function ds_search_extra_variables() {
   if ($end > $total) $end = $total;
 
   // Get the search keys.
-  $keys = trim(ds_search_get_keys());
+  $keys = empty($arg_keys) ? trim(ds_search_get_keys()) : $arg_keys;
 
   // Send the right extra variable.
   switch ($type) {
@@ -307,7 +374,7 @@ function ds_search_extra_variables() {
 function ds_search_form_search_form_alter(&$form, $form_state) {
 
   // Drupal core
-  if (variable_get('ds_search_type', 'node') == 'node') {
+  if (variable_get('ds_search_type', 'node') == 'node' && $form['module']['#value'] == 'node') {
     if (variable_get('ds_search_node_form_alter', FALSE)) {
       $form['module']['#value'] = 'node';
       node_form_search_form_alter($form, $form_state);
@@ -315,7 +382,7 @@ function ds_search_form_search_form_alter(&$form, $form_state) {
   }
 
   // Apache Solr.
-  if (variable_get('ds_search_type', 'node') == 'apachesolr_search') {
+  if (variable_get('ds_search_type', 'node') == 'apachesolr_search' && $form['module']['#value'] == 'apachesolr_search') {
     if (variable_get('ds_search_apachesolr_form_alter', FALSE)) {
       $form['module']['#value'] = 'apachesolr_search';
       apachesolr_search_form_search_form_alter($form, $form_state);
