@@ -44,6 +44,20 @@ function user_ds_fields($entity_type, $bundle, $view_mode) {
   );
 
   // User picture
+  if (variable_get('user_signatures', 0)) {
+    $fields['user_signature'] = array(
+      'title' => t('User signature'),
+      'type' => DS_FIELD_TYPE_FUNCTION,
+      'status' => DS_FIELD_STATUS_STATIC,
+      'function' => 'ds_render_markup',
+      'properties' => array(
+        'key' => 'signature',
+        'format' => 'signature_format',
+      ),
+    );
+  }
+
+  // User picture
   if (variable_get('user_pictures', 0)) {
     $key = 'user_picture';
     $type = DS_FIELD_TYPE_IGNORE;

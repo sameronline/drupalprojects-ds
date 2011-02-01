@@ -316,7 +316,6 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
   $field['bundle'] = $bundle;
   $field['view_mode'] = $view_mode;
 
-
   switch ($field['type']) {
     case DS_FIELD_TYPE_FUNCTION:
       if (isset($field['file']) && !isset($included_files[$field['file']])) {
@@ -401,25 +400,28 @@ function ds_field_attach_view_alter(&$build, $context) {
 
     $field['formatter'] = $format;
     $field_value = ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_mode);
-    $build[$key] = array(
-      '#theme' => 'field',
-      '#field_type' => 'ds',
-      '#title' => $field['title'],
-      '#weight' => isset($field_values[$key]['weight']) ? $field_values[$key]['weight'] : 0,
-      '#label_display' => isset($field_values[$key]['label']) ? $field_values[$key]['label'] : 'inline',
-      '#field_name' => $key,
-      '#bundle' => $bundle,
-      '#entity_type' => $entity_type,
-      '#access' => TRUE,
-      '#items' => array(
-        0 => array(
-          'value' => $field_value,
+
+    if ($field_value) {
+      $build[$key] = array(
+        '#theme' => 'field',
+        '#field_type' => 'ds',
+        '#title' => $field['title'],
+        '#weight' => isset($field_values[$key]['weight']) ? $field_values[$key]['weight'] : 0,
+        '#label_display' => isset($field_values[$key]['label']) ? $field_values[$key]['label'] : 'inline',
+        '#field_name' => $key,
+        '#bundle' => $bundle,
+        '#entity_type' => $entity_type,
+        '#access' => TRUE,
+        '#items' => array(
+          0 => array(
+            'value' => $field_value,
+          ),
         ),
-      ),
-      0 => array(
-        '#markup' => $field_value,
-      ),
-    );
+        0 => array(
+          '#markup' => $field_value,
+        ),
+      );
+    }
   }
 
   // Add path to css file for this layout.
@@ -719,6 +721,15 @@ function ds_render_author_field($field) {
 
   if ($field['formatter'] == 'author_linked') {
     return theme('username', array('account' => $field['entity']));
+  }
+}
+
+/**
+ * Render a markup field.
+ */
+function ds_render_markup($field) {
+  if (isset($field['entity']->{$field['properties']['key']}) && isset($field['entity']->{$field['properties']['format']})) {
+    return check_markup($field['entity']->{$field['properties']['key']}, $field['entity']->{$field['properties']['format']}, '', TRUE);;
   }
 }
 

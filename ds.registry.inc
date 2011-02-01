@@ -93,6 +93,15 @@ function _ds_menu() {
     'type' => MENU_LOCAL_ACTION,
     'weight' => 0,
   );
+  $items['admin/structure/ds/fields/delete'] = array(
+    'title' => 'Delete a field',
+    'description' => 'Delete a field.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_delete_field_confirm'),
+    'file' => 'ds.fields.inc',
+    'access arguments' => array('admin_fields'),
+    'type' => MENU_CALLBACK,
+  );
   // Block can be disabled.
   if (module_exists('block')) {
     $items['admin/structure/ds/fields/manage_block'] = array(
@@ -106,15 +115,6 @@ function _ds_menu() {
       'weight' => 1,
     );
   }
-  $items['admin/structure/ds/fields/delete'] = array(
-    'title' => 'Delete a field',
-    'description' => 'Delete a field.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_delete_field_confirm'),
-    'file' => 'ds.fields.inc',
-    'access arguments' => array('admin_fields'),
-    'type' => MENU_CALLBACK,
-  );
 
   return $items;
 }
@@ -235,7 +235,7 @@ function _ds_ds_layouts() {
         'footer' => t('Footer'),
       ),
       'css' => TRUE,
-    ),    
+    ),
     'ds_3col' => array(
       'label' => t('Three column - 25/50/25'),
       'path' => $path . '/layouts/ds_3col',
