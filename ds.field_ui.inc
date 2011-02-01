@@ -303,7 +303,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     $form['#ds_layout'] = $layout;
   }
 
-
   $form['display_suite']['ds_layouts']['layout'] = array(
     '#type' => 'select',
     '#title' => t('Select a layout'),
@@ -323,6 +322,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     $form['display_suite']['ds_layouts']['suggestions'] = array(
       '#markup' => '<p>' . $selected . '</p><p>' . t('!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p>',
     );
+
     // Add extra classes for the regions to have more control while theming.
     $form['display_suite']['ds_classes'] = array(
       '#type' => 'fieldset',
@@ -331,15 +331,20 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
       '#collapsed' => TRUE,
       '#parents' => array('display_suite'),
     );
-    foreach (array_keys($layout->regions) as $region) {
-      $form['display_suite']['ds_classes'][$region] = array(
-        '#type' => 'select',
-        '#multiple' => TRUE,
-        '#options' => _ds_styles(),
-        '#title' => t('Class for @region', array('@region' => $region)),
-        '#default_value' => isset($layout->settings['classes'], $layout->settings['classes'][$region]) ? $layout->settings['classes'][$region] : '',
-      );
+
+    $styles = _ds_styles();
+    if (!empty($styles)) {
+      foreach (array_keys($layout->regions) as $region) {
+        $form['display_suite']['ds_classes'][$region] = array(
+          '#type' => 'select',
+          '#multiple' => TRUE,
+          '#options' => $styles,
+          '#title' => t('Class for @region', array('@region' => $region)),
+          '#default_value' => isset($layout->settings['classes'], $layout->settings['classes'][$region]) ? $layout->settings['classes'][$region] : '',
+        );
+      }
     }
+    $form['display_suite']['ds_classes']['info'] = array('#markup' => l(t('Configure styles'), 'admin/structure/ds/styles'));
   }
 
   $form['display_suite']['ds_layouts']['old_layout'] = array(
