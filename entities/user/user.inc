@@ -44,25 +44,33 @@ function user_ds_fields($entity_type, $bundle, $view_mode) {
   );
 
   // User picture
-  $picture_formatters = array();
-  if (module_exists('image')) {
-    $styles = image_styles();
-    foreach ($styles as $formatter) {
-      $picture_formatters['ds_picture_'. $formatter['name']] = ucfirst(str_replace('_', ' ', $formatter['name']));
+  if (variable_get('user_pictures', 0)) {
+    $key = 'user_picture';
+    $type = DS_FIELD_TYPE_IGNORE;
+    $picture_formatters = array();
+    if (module_exists('image')) {
+      $key = 'ds_user_picture';
+      $type = DS_FIELD_TYPE_FUNCTION;
+      $styles = image_styles();
+      foreach ($styles as $formatter) {
+        $picture_formatters['ds_picture_'. $formatter['name']] = ucfirst(str_replace('_', ' ', $formatter['name']));
+      }
+    }
+    else {
+      $picture_formatters['default'] = t('Default');
+    }
+    $fields[$key] = array(
+      'title' => t('User picture'),
+      'type' => $type,
+      'status' => DS_FIELD_STATUS_STATIC,
+      'properties' => array(
+        'formatters' => $picture_formatters,
+      ),
+    );
+    if ($type == DS_FIELD_TYPE_FUNCTION) {
+      $fields[$key]['function'] = 'ds_render_user_picture';
     }
   }
-  else {
-    $picture_formatters['default'] = t('Default');
-  }
-  $fields['ds_user_picture'] = array(
-    'title' => t('User picture'),
-    'type' => DS_FIELD_TYPE_FUNCTION,
-    'status' => DS_FIELD_STATUS_STATIC,
-    'function' => 'ds_render_user_picture',
-    'properties' => array(
-      'formatters' => $picture_formatters,
-    ),
-  );
 
   return array('user' => $fields);
 }

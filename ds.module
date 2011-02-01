@@ -728,7 +728,12 @@ function ds_render_author_field($field) {
 function ds_return_picture($entity) {
   $picture = '';
   if (!empty($entity->picture)) {
-    $picture = $entity->picture;
+    if (is_numeric($entity->picture)) {
+      return file_load($entity->picture);
+    }
+    else {
+      $picture = $entity->picture;
+    }
   }
   elseif (variable_get('user_picture_default', '')) {
     $picture = variable_get('user_picture_default', '');
