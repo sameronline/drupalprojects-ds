@@ -728,8 +728,10 @@ function ds_render_author_field($field) {
  * Render a markup field.
  */
 function ds_render_markup($field) {
-  if (isset($field['entity']->{$field['properties']['key']}) && isset($field['entity']->{$field['properties']['format']})) {
-    return check_markup($field['entity']->{$field['properties']['key']}, $field['entity']->{$field['properties']['format']}, '', TRUE);;
+  if (isset($field['entity']->{$field['properties']['key']})) {
+    // Check for format, and let's take filtered_html as a sane default.
+    $format = isset($field['entity']->{$field['properties']['format']}) ? $field['entity']->{$field['properties']['format']} : 'filtered_html';
+    return check_markup($field['entity']->{$field['properties']['key']}, $format, '', TRUE);;
   }
 }
 
