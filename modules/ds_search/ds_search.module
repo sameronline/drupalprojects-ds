@@ -253,10 +253,10 @@ function ds_search_search_page($results) {
  */
 if (variable_get('ds_user_override_search_page', FALSE)) {
   function user_search_page($results) {
-    $output = '';
+    $build = array();
     global $base_url;
 
-    ds_build_shared_page_variables(&$build);
+    ds_build_shared_page_variables($build);
 
     $uids = array();
     foreach ($results as $key => $result) {
