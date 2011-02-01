@@ -13,13 +13,13 @@
   <?php endif; ?>
 
   <?php if ($left): ?>
-    <div class="group-left <?php print $left_classes; ?>">
+    <div class="group-left<?php print $left_classes; ?>">
       <?php print $left; ?>
     </div>
   <?php endif; ?>
 
   <?php if ($right): ?>
-    <div class="group-right <?php print $right_classes; ?>">
+    <div class="group-right<?php print $right_classes; ?>">
       <?php print $right; ?>
     </div>
   <?php endif; ?>

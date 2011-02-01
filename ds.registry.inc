@@ -225,6 +225,17 @@ function _ds_ds_layouts() {
       ),
       'css' => TRUE,
     ),
+    'ds_2col_stacked_fluid' => array(
+      'label' => t('Two column stacked - fluid'),
+      'path' => $path . '/layouts/ds_2col_stacked_fluid',
+      'regions' => array(
+        'header' => t('Header'),
+        'left' => t('Left'),
+        'right' => t('Right'),
+        'footer' => t('Footer'),
+      ),
+      'css' => TRUE,
+    ),    
     'ds_3col' => array(
       'label' => t('Three column - 25/50/25'),
       'path' => $path . '/layouts/ds_3col',

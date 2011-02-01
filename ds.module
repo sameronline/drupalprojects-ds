@@ -476,7 +476,7 @@ function ds_preprocess_entity(&$variables) {
       }
 
       // Create classes for this region.
-      $variables[$region_name . '_classes'] = implode('', $layout['settings']['classes'][$region_name]);
+      $variables[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' '. implode('', $layout['settings']['classes'][$region_name]) : '';
     }
   }
 }

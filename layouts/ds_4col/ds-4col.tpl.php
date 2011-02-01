@@ -13,25 +13,25 @@
   <?php endif; ?>
 
   <?php if ($first): ?>
-    <div class="group-first <?php print $first_classes; ?>">
+    <div class="group-first<?php print $first_classes; ?>">
       <?php print $first; ?>
     </div>
   <?php endif; ?>
 
   <?php if ($second): ?>
-    <div class="group-second <?php print $second_classes; ?>">
+    <div class="group-second<?php print $second_classes; ?>">
       <?php print $second; ?>
     </div>
   <?php endif; ?>
 
   <?php if ($third): ?>
-    <div class="group-third <?php print $third_classes; ?>">
+    <div class="group-third<?php print $third_classes; ?>">
       <?php print $third; ?>
     </div>
   <?php endif; ?>
 
   <?php if ($fourth): ?>
-    <div class="group-fourth <?php print $fourth_classes; ?>">
+    <div class="group-fourth<?php print $fourth_classes; ?>">
       <?php print $fourth; ?>
     </div>
   <?php endif; ?>
