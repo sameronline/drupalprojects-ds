@@ -8,15 +8,6 @@
 
 /**
  * Implements hook_ds_fields().
- *
- * @param $entity_type
- *   The name of the entity type
- * @param $bundle
- *   The name of the bundle.
- * @param $view_mode
- *   The name of the view mode.
- * @return $fields
- *   A collection of fields.
  */
 function user_ds_fields($entity_type, $bundle, $view_mode) {
   $fields = array();
