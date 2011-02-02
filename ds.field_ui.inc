@@ -182,7 +182,9 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       if ($region == 'hidden') {
         continue;
       }
-      $record->settings['classes'][$region] = $form_state['values']['display_suite'][$region];
+      if (isset($form_state['values']['display_suite'][$region])) {
+        $record->settings['classes'][$region] = $form_state['values']['display_suite'][$region];
+      }
     }
     $record->settings = serialize($record->settings);
     drupal_write_record('ds_layouts', $record, array('entity_type', 'bundle', 'view_mode', 'layout'));
