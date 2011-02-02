@@ -34,7 +34,7 @@ function user_ds_fields($entity_type, $bundle, $view_mode) {
     )
   );
 
-  // User picture
+  // User signature
   if (variable_get('user_signatures', 0)) {
     $fields['user_signature'] = array(
       'title' => t('User signature'),

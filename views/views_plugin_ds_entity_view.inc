@@ -28,7 +28,6 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     $base_table_fields = array(
       'node' => 'nid',
       'user' => 'uid',
-      'comment' => 'cid',
       'apachesolr' => 'nid',
     );
     return $base_table_fields[$this->base_table];

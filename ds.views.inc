@@ -19,6 +19,7 @@ function ds_views_plugins() {
         'help' => t('Display the entity with the Display suite module.'),
         'handler' => 'views_plugin_ds_entity_view',
         'path' => $path .'/views',
+        'base' => array('node', 'user', 'apachesolr'),
         'theme' => 'ds_row_entity',
         'uses options' => TRUE,
         'type' => 'normal',

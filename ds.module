@@ -317,6 +317,11 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
   $field['view_mode'] = $view_mode;
 
   switch ($field['type']) {
+
+    case DS_FIELD_TYPE_PREPROCESS:
+      $entity->preprocess_fields[] = $key;
+      break;
+
     case DS_FIELD_TYPE_FUNCTION:
       if (isset($field['file']) && !isset($included_files[$field['file']])) {
         $included_files[$field['file']] = TRUE;
@@ -333,7 +338,6 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
 
     case DS_FIELD_TYPE_BLOCK:
       return ds_render_block_field($field);
-      break;
 
   }
 }
@@ -449,6 +453,13 @@ function ds_preprocess_entity(&$variables) {
     // Hard-referenced user exception.
     if ($variables['elements']['#entity_type'] == 'user') {
       $render_container = 'user_profile';
+    }
+
+    // Move any preprocess fields to render container.
+    if (isset($variables[$variables['elements']['#entity_type']]->preprocess_fields)) {
+      foreach ($variables[$variables['elements']['#entity_type']]->preprocess_fields as $key => $field) {
+        $variables[$render_container][$field] = $variables[$field];
+      }
     }
 
     // Add view mode classes.
@@ -762,7 +773,7 @@ function ds_render_user_picture($field) {
 
   if (!empty($picture)) {
     $variables = array();
-    $name = !empty($account->name) ? $account->name : variable_get('anonymous', t('Anonymous'));
+    $name = !empty($field['entity']->name) ? $field['entity']->name : variable_get('anonymous', t('Anonymous'));
     $alt = t("@user's picture", array('@user' => $name));
     $variables = array('path' => $picture->uri, 'alt' => $alt, 'title' => $alt);
 
