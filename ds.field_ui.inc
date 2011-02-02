@@ -243,6 +243,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   }
 
   // Clear the ds_fields_configuration cache.
+  cache_clear_all('ds_fields_cached', 'cache');
   cache_clear_all('ds_fields_configuration', 'cache');
 
   // Clear entity cache.
