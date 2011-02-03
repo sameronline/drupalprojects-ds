@@ -67,37 +67,6 @@ function ds_theme() {
 }
 
 /**
- * Implements hook_entity_info_alter().
- */
-function ds_theme_registry_alter(&$theme_registry) {
-  module_load_include('inc', 'ds', 'ds.registry');
-  _ds_theme_registry_alter($theme_registry);
-}
-
-/**
- * Implements hook_entity_info_alter().
- */
-function ds_entity_info_alter(&$entity_info) {
-  module_load_include('inc', 'ds', 'ds.registry');
-  _ds_entity_info_alter($entity_info);
-}
-
-/**
- * Implements ds_views_api().
- */
-function ds_views_api() {
-  return array('api' => 3);
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
-  form_load_include($form_state, 'inc', 'ds', 'ds.field_ui');
-  ds_field_ui_fields_layouts($form, $form_state);
-}
-
-/**
  * Implements hook_ds_layouts().
  */
 function ds_ds_layouts() {
@@ -122,6 +91,37 @@ function ds_ds_fields($entity_type, $bundle, $view_mode) {
   }
 
   return array($entity_type => $fields);
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function ds_views_api() {
+  return array('api' => 3);
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function ds_theme_registry_alter(&$theme_registry) {
+  module_load_include('inc', 'ds', 'ds.registry');
+  _ds_theme_registry_alter($theme_registry);
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function ds_entity_info_alter(&$entity_info) {
+  module_load_include('inc', 'ds', 'ds.registry');
+  _ds_entity_info_alter($entity_info);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
+  form_load_include($form_state, 'inc', 'ds', 'ds.field_ui');
+  ds_field_ui_fields_layouts($form, $form_state);
 }
 
 /**
@@ -568,7 +568,7 @@ function ds_filter_info() {
     'title' => t('Display Suite evaluator'),
     'description' => t('Executes a piece of content, which may contain PHP code, through Display Suite evaluator. The usage of this filter should be restricted to administrators only and no other filters can be enabled in a format!'),
     'process callback' => 'ds_php_eval',
-    'tips callback' => '_ds_filter_tips',
+    'tips callback' => 'ds_filter_tips',
     'cache' => FALSE,
   );
   return $filters;
@@ -577,7 +577,7 @@ function ds_filter_info() {
 /**
  * Tips callback for php filter.
  */
-function _ds_filter_tips($filter, $format, $long = FALSE) {
+function ds_filter_tips($filter, $format, $long = FALSE) {
   global $base_url;
   if ($long) {
     $output = '<h4>' . t('Using custom code with Display Suite') . '</h4>';
@@ -703,8 +703,7 @@ function ds_render_title_field($field) {
       $path = $field['entity']->uri['path'];
     }
     else {
-      // Todo use entity_uri().
-      // Used for node, user and taxonomy.
+      // Works for node and user.
       $entity_info = entity_get_info($entity_type);
       $id_key = $entity_info['entity keys']['id'];
       $path = $entity_type . '/' . $field['entity']->{$id_key};
