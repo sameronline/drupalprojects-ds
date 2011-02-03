@@ -15,6 +15,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     parent::init($view, $display, $options);
     $this->base_table = $view->base_table;
     // Special case for apachesolr_views.
+    // @todo We're doing strange stuff also with users, define that all here, will make more sense
     if ($this->base_table == 'apachesolr') {
       $this->base_table = 'node';
     }
