@@ -27,7 +27,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
   function ds_views_3_support() {
     $base_table_fields = array(
       'node' => 'nid',
-      'user' => 'uid',
+      'users' => 'uid',
       'apachesolr' => 'nid',
     );
     return $base_table_fields[$this->base_table];
@@ -44,7 +44,10 @@ class views_plugin_ds_entity_view extends views_plugin_row {
 
   function options_form(&$form, &$form_state) {
     $view_mode_options = array();
-    $entity_view_modes = ds_entity_view_modes($this->view->base_table);
+    $entity_type = $this->view->base_table;
+    // In case we're working with users, change the entity type variable.
+    if ($entity_type == 'users') $entity_type = 'user';
+    $entity_view_modes = ds_entity_view_modes($entity_type);
     foreach ($entity_view_modes as $key => $view_mode) {
       $view_mode_options[$key] = $view_mode['label'];
     }
@@ -195,7 +198,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     }
 
     // Load all users.
-    if ($this->base_table == 'user') {
+    if ($this->base_table == 'users') {
       $this->entities = user_load_multiple($ids);
     }
   }
@@ -275,6 +278,6 @@ function ds_views_row_render_node($entity, $view_mode) {
 /**
  * Render the user through the views entity plugin.
  */
-function ds_views_row_render_user($entity, $view_mode) {
+function ds_views_row_render_users($entity, $view_mode) {
   return drupal_render(user_view($entity, $view_mode));
 }
