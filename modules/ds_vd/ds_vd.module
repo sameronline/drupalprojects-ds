@@ -11,16 +11,12 @@
  */
 function ds_vd_ds_fields($entity_type, $bundle, $view_mode) {
 
-  $all_fields = array();
-
-  $vd_fields = array(
+  $fields = array(
     'admin_links' => array(
       'title' => t('Admin links'),
       'type' => DS_FIELD_TYPE_PREPROCESS,
       'status' => DS_FIELD_STATUS_STATIC,
-      'properties' => array(
-        'css-class' => 'views-admin-links views-hide',
-      ),
+
     ),
     'title' => array(
       'title' => t('Views title'),
@@ -87,25 +83,7 @@ function ds_vd_ds_fields($entity_type, $bundle, $view_mode) {
     ),
   );
 
-  $all_fields['vd'] = $vd_fields;
-
-  // Views attach support.
-  if (module_exists('views_attach')) {
-    $extras = views_attach_content_extra_fields($type_name);
-    if (!empty($extras)) {
-      $vd_attach = array();
-      foreach ($extras as $key => $value) {
-        $vd_attach[$key] = array(
-          'title' => ($value['label'] != 'None') ? $value['label'] : str_replace('Attached view:', '', $value['description']),
-          'type' => DS_FIELD_TYPE_IGNORE,
-          'status' => DS_FIELD_STATUS_STATIC,
-        );
-      }
-      $all_fields['nd'] = $vd_attach;
-    }
-  }
-
-  return $all_fields;
+  return array('views' => $fields);
 }
 
 /**
@@ -117,6 +95,7 @@ function ds_vd_preprocess_views_view(&$vars) {
   // We can probably just run ds_preprocess_entity() and some way
   // of ds_field_attach_view_alter()
   // but with some changes to the function I guess.
+  //dsm($vars);
   return;
 
   $view_object = new stdClass();

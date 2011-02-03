@@ -172,7 +172,7 @@ function _ds_entity_info_alter(&$entity_info) {
   foreach ($custom_view_modes as $view_mode_key => $view_mode_value) {
     $view_mode = array(
       'label' => check_plain($view_mode_value->label),
-      'custom settings' => TRUE,
+      'custom settings' => FALSE,
     );
     foreach ($view_mode_value->entities as $entity_type) {
       if (isset($entity_info[$entity_type])) {
