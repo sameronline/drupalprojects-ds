@@ -217,6 +217,7 @@ function ds_edit_custom_field_form($form, &$form_state, $custom_field = '') {
     '#type' => 'text_format',
     '#title' => t('Field code'),
     '#default_value' => isset($custom_field->properties->code['value']) ? $custom_field->properties->code['value'] : '',
+    // @todo custom format should be put ds code
     '#format' => isset($custom_field->properties->code['format']) ? $custom_field->properties->code['format'] : 1,
     '#base_type' => 'textarea',
     '#required' => TRUE,
