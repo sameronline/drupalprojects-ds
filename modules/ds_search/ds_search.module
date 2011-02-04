@@ -189,6 +189,21 @@ function ds_search_search_info() {
 }
 
 /**
+ * Implements hook_node_update_index().
+ */
+function ds_search_update_index() {
+  ds_search_invoke_node_search('update_index');
+}
+
+/**
+ * Implements hook_search_status().
+ */
+function ds_search_search_status() {
+  $status = ds_search_invoke_node_search('search_status');
+  return $status;
+}
+
+/**
  * Implementation of a search_view() conditions callback.
  */
 function ds_search_conditions() {
@@ -232,6 +247,23 @@ function ds_search_get_keys($keys = NULL) {
   else {
     return $saved_keys;
   }
+}
+
+/**
+ * Invoke a given search hook on the node module.
+ */
+function ds_search_invoke_node_search($hook) {
+
+  $enabled_search_modules = variable_get('search_active_modules', array());
+
+  // If node search is enabled, core is invoking it.
+  if (isset($enabled_search_modules['node']) && $enabled_search_modules['node'] !== 0) {
+    return;
+  }
+
+  $result = module_invoke('node', $hook);
+  return $result;
+
 }
 
 /**
