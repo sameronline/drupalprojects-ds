@@ -458,7 +458,18 @@ function ds_preprocess_entity(&$variables) {
     // Move any preprocess fields to render container.
     if (isset($variables[$variables['elements']['#entity_type']]->preprocess_fields)) {
       foreach ($variables[$variables['elements']['#entity_type']]->preprocess_fields as $key => $field) {
+
+        // Process RDF if the module is enabled before moving preprocess fields.
+        if (module_exists('rdf')) {
+          rdf_process($variables, $field);
+          // Remove it so we can unset the field later on.
+          unset($variables['rdf_template_variable_attributes_array'][$field]);
+        }
+
+        // Move the field to content so we can render them, remove it
+        // because we don't need it anymore.
         $variables[$render_container][$field] = $variables[$field];
+        unset($variables[$field]);
       }
     }
 
