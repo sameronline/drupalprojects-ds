@@ -1,0 +1,23 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Fields tests
+ */
+
+class dsFields extends DrupalWebTestCase {
+
+  /**
+   * Implements getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => t('Fields'),
+      'description' => t('Tests for managing custom code and block fields.'),
+      'group' => t('Display suite'),
+    );
+  }
+
+
+}

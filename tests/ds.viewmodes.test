@@ -1,0 +1,58 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * View modes tests
+ */
+
+class dsViewModes extends DrupalWebTestCase {
+
+  /**
+   * Implements getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => t('View modes'),
+      'description' => t('Tests for managing custom view modes.'),
+      'group' => t('Display suite'),
+    );
+  }
+
+  /**
+   * Implementation of setUp().
+   */
+  function setUp() {
+    parent::setUp('ds');
+    $this->admin_user = $this->drupalCreateUser(array('admin_view_modes', 'access administration pages', 'administer content types', 'administer users'));
+    $this->drupalLogin($this->admin_user);
+  }
+
+  /**
+   * Test managing view modes.
+   */
+  function testManageViewModes() {
+
+    $edit = array(
+      'name' => 'Testing',
+      'view_name' => 'testing',
+      'entities[node]' => '1'
+    );
+
+    // Create a new view mode.
+    $this->drupalPost('admin/structure/ds/view_modes/manage', $edit, t('Save'));
+    $this->assertText(t('The view mode Testing has been saved'), t('Testing view mode has been saved'));
+
+    // Assert it's found on the Field UI for article.
+    $this->drupalGet('admin/structure/types/manage/article/display');
+    $this->assertRaw('display_suite[modes][view_modes_custom][testing]', t('Testing view mode found on node article.'));
+
+    // Assert it's not found on the Field UI for article.
+    $this->drupalGet('admin/config/people/accounts/display');
+    $this->assertNoRaw('display_suite[modes][view_modes_custom][testing]', t('Testing view mode not found on user.'));
+
+    // Enable view mode on article an configure default and testing.
+
+    // Use the switch view mode option to see the testing view mode on an article.
+  }
+}

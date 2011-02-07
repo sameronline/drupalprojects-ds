@@ -235,12 +235,20 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
 /**
  * Get entity view modes.
  *
- * @param $entity
- *   The name of the entity.
+ * @param $entity_type
+ *   The name of the entity type.
  */
-function ds_entity_view_modes($entity = NULL) {
-  if (!empty($entity)) {
-    $entity_info = entity_get_info($entity);
+function ds_entity_view_modes($entity_type = NULL) {
+  if (!empty($entity_type)) {
+    switch ($entity_type) {
+      // For taxonomy terms the base table and the entity type are different
+      case 'taxonomy_term_data':
+        $entity_info = entity_get_info('taxonomy_term');
+        break;
+      default:
+        $entity_info = entity_get_info($entity_type);
+        break;
+    }
     return $entity_info['view modes'];
   }
 }

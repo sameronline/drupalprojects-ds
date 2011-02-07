@@ -30,6 +30,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       'node' => 'nid',
       'users' => 'uid',
       'apachesolr' => 'nid',
+      'taxonomy_term_data' => 'tid',
     );
     return $base_table_fields[$this->base_table];
   }
@@ -193,14 +194,18 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       $ids[] = $row->{$this->field_alias};
     }
 
-    // Load all nodes.
-    if ($this->base_table == 'node') {
-      $this->entities = node_load_multiple($ids);
-    }
-
-    // Load all users.
-    if ($this->base_table == 'users') {
-      $this->entities = user_load_multiple($ids);
+    switch ($this->base_table) {
+      case 'node':
+        $this->entities = node_load_multiple($ids);
+        break;
+      case 'users':
+        $this->entities = user_load_multiple($ids);
+        break;
+      case 'taxonomy_term_data':
+        $this->entities = taxonomy_term_load_multiple($ids);
+        break;
+      default:
+        break;
     }
   }
 
@@ -270,15 +275,22 @@ class views_plugin_ds_entity_view extends views_plugin_row {
 }
 
 /**
- * Render the node through the views entity plugin.
+ * Render the node through the entity plugin.
  */
 function ds_views_row_render_node($entity, $view_mode) {
   return drupal_render(node_view($entity, $view_mode));
 }
 
 /**
- * Render the user through the views entity plugin.
+ * Render the user through the entity plugin.
  */
 function ds_views_row_render_users($entity, $view_mode) {
   return drupal_render(user_view($entity, $view_mode));
+}
+
+/**
+ * Render the taxonomy term through the entity plugin.
+ */
+function ds_views_row_render_taxonomy_term_data($entity, $view_mode) {
+  return drupal_render(taxonomy_term_view($entity, $view_mode));
 }

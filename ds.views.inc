@@ -15,11 +15,11 @@ function ds_views_plugins() {
     'module' => 'ds',
     'row' => array(
       'ds' => array(
-        'title' => t('Display suite entity'),
+        'title' => t('Display suite'),
         'help' => t('Display the entity with the Display suite module.'),
         'handler' => 'views_plugin_ds_entity_view',
         'path' => $path .'/views',
-        'base' => array('node', 'users', 'apachesolr'),
+        'base' => array('node', 'users', 'apachesolr', 'taxonomy_term_data'),
         'theme' => 'ds_row_entity',
         'uses options' => TRUE,
         'type' => 'normal',
