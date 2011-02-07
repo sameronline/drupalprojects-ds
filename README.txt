@@ -20,9 +20,9 @@ Entity cache - http://drupal.org/project/entitycache
 swentel - http://drupal.org/user/107403
 stalski - http://drupal.org/user/322618
 zuuperman - http://drupal.org/user/361625
+jyve - http://drupal.org/user/591438
 
 -- INSPIRATORS --
 
-jyve - http://drupal.org/user/591438
 mzenner - http://drupal.org/user/35077
 Wimmmmm - http://drupal.org/user/34940
