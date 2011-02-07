@@ -71,6 +71,7 @@ function ds_field_human_name($type) {
  * Manage a field. This will redirect to the exact form.
  */
 function ds_custom_manage($field_key = '') {
+  $redirect = '';
   $fields = ds_custom_fields();
   if (isset($fields[$field_key])) {
     $field = $fields[$field_key];
@@ -90,7 +91,7 @@ function ds_custom_manage($field_key = '') {
     }
   }
 
-  drupal_goto($redirect);
+  drupal_goto('admin/structure/ds/fields');
 }
 
 /**
@@ -218,7 +219,7 @@ function ds_edit_custom_field_form($form, &$form_state, $custom_field = '') {
     '#title' => t('Field code'),
     '#default_value' => isset($custom_field->properties->code['value']) ? $custom_field->properties->code['value'] : '',
     // @todo custom format should be put ds code
-    '#format' => isset($custom_field->properties->code['format']) ? $custom_field->properties->code['format'] : 1,
+    '#format' => isset($custom_field->properties->code['format']) ? $custom_field->properties->code['format'] : 'ds_code',
     '#base_type' => 'textarea',
     '#required' => TRUE,
   );

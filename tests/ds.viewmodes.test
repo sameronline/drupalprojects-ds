@@ -3,10 +3,10 @@
 
 /**
  * @file
- * View modes tests
+ * View modes tests.
  */
 
-class dsViewModes extends DrupalWebTestCase {
+class dsViewModesTests extends dsBaseTest {
 
   /**
    * Implements getInfo().
@@ -20,28 +20,21 @@ class dsViewModes extends DrupalWebTestCase {
   }
 
   /**
-   * Implementation of setUp().
-   */
-  function setUp() {
-    parent::setUp('ds');
-    $this->admin_user = $this->drupalCreateUser(array('admin_view_modes', 'access administration pages', 'administer content types', 'administer users'));
-    $this->drupalLogin($this->admin_user);
-  }
-
-  /**
    * Test managing view modes.
    */
   function testManageViewModes() {
 
     $edit = array(
       'name' => 'Testing',
-      'view_name' => 'testing',
+      'view_mode' => 'testing',
       'entities[node]' => '1'
     );
 
-    // Create a new view mode.
+    $this->dsCreateViewMode($edit);
+
+    // Create the same and assert it already exists.
     $this->drupalPost('admin/structure/ds/view_modes/manage', $edit, t('Save'));
-    $this->assertText(t('The view mode Testing has been saved'), t('Testing view mode has been saved'));
+    $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('View mode testing already exists.'));
 
     // Assert it's found on the Field UI for article.
     $this->drupalGet('admin/structure/types/manage/article/display');
@@ -51,8 +44,19 @@ class dsViewModes extends DrupalWebTestCase {
     $this->drupalGet('admin/config/people/accounts/display');
     $this->assertNoRaw('display_suite[modes][view_modes_custom][testing]', t('Testing view mode not found on user.'));
 
-    // Enable view mode on article an configure default and testing.
+    // Update testing label
+    $edit = array(
+      'name' => 'Testing 2',
+    );
+    $this->drupalPost('admin/structure/ds/view_modes/manage/testing', $edit, t('Save'));
+    $this->assertText(t('The view mode Testing 2 has been saved'), t('Testing label updated'));
 
-    // Use the switch view mode option to see the testing view mode on an article.
+    // Remove a view mode.
+    $this->drupalPost('admin/structure/ds/view_modes/delete/testing', array(), t('Delete'));
+    $this->assertText(t('The view mode Testing 2 has been deleted'), t('Testing view mode removed'));
+
+    // Assert the view mode is gone at the manage display screen.
+    $this->drupalGet('admin/structure/types/manage/article/display');
+    $this->assertNoRaw('display_suite[modes][view_modes_custom][testing]', t('Testing view mode found on node article.'));
   }
 }
