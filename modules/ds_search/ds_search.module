@@ -350,7 +350,7 @@ function ds_build_shared_page_variables(&$build) {
 
   // CSS and JS.
   if (variable_get('ds_search_highlight', FALSE)) {
-    drupal_add_css(drupal_get_path('module', 'ds_search') . '/ds_search.css');
+    drupal_add_css(drupal_get_path('module', 'ds_search') . '/ds_search.theme.css');
     drupal_add_js(drupal_get_path('module', 'ds_search') . '/ds_search.js');
     drupal_add_js(array(
       'ds_search' => array(
