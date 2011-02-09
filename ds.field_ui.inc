@@ -182,10 +182,12 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       if ($region == 'hidden') {
         continue;
       }
-      // Do not save empty string.
-      $classes = implode(' ', $form_state['values']['display_suite'][$region]);
-      if (!empty($classes)) {
-        $record->settings['classes'][$region] = $form_state['values']['display_suite'][$region];
+      if (isset($form_state['values']['display_suite'][$region])) {
+        // Do not save empty string.
+        $classes = implode(' ', $form_state['values']['display_suite'][$region]);
+        if (!empty($classes)) {
+          $record->settings['classes'][$region] = $form_state['values']['display_suite'][$region];
+        }
       }
     }
     $record->settings = serialize($record->settings);

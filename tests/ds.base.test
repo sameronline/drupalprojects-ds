@@ -13,7 +13,7 @@ class dsBaseTest extends DrupalWebTestCase {
    */
   function setUp() {
     parent::setUp('ds', 'ds_extras', 'ds_search');
-    $this->admin_user = $this->drupalCreateUser(array('admin_view_modes', 'admin_fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments'));
+    $this->admin_user = $this->drupalCreateUser(array('admin_view_modes', 'admin_fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access'));
     $this->drupalLogin($this->admin_user);
   }
 
@@ -71,9 +71,9 @@ class dsBaseTest extends DrupalWebTestCase {
   }
 
   /**
-   * Configure fields on a layout.
+   * Configure Field UI.
    */
-  function dsConfigureFields($edit, $url = 'admin/structure/types/manage/article/display') {
+  function dsConfigureUI($edit, $url = 'admin/structure/types/manage/article/display') {
     $this->drupalPost($url, $edit, t('Save'));
   }
 
@@ -101,7 +101,7 @@ class dsBaseTest extends DrupalWebTestCase {
    * @param $edit
    *   An optional array of field properties.
    */
-  function dsCreateCodeField($edit = array()) {
+  function dsCreateCodeField($edit = array(), $url = 'admin/structure/ds/fields/manage_custom') {
 
     $edit += array(
       'name' => 'Test field',
@@ -111,7 +111,7 @@ class dsBaseTest extends DrupalWebTestCase {
       'use_token' => '0',
     );
 
-    $this->drupalPost('admin/structure/ds/fields/manage_custom', $edit, t('Save'));
+    $this->drupalPost($url, $edit, t('Save'));
     $this->assertText(t('The field '. $edit['name'] .' has been saved'), t('!name field has been saved', array('!name' => $edit['name'])));
   }
 
@@ -121,17 +121,20 @@ class dsBaseTest extends DrupalWebTestCase {
    * @param $edit
    *   An optional array of field properties.
    */
-  function dsCreateBlockField($edit = array()) {
+  function dsCreateBlockField($edit = array(), $url = 'admin/structure/ds/fields/manage_block', $first = TRUE) {
 
     $edit += array(
       'name' => 'Test block field',
-      'field' => 'test_block_field',
       'entities[node]' => '1',
       'block' => 'node|recent',
       'block_render' => DS_BLOCK_TEMPLATE,
     );
 
-    $this->drupalPost('admin/structure/ds/fields/manage_block', $edit, t('Save'));
+    if ($first) {
+      $edit += array('field' => 'test_block_field');
+    }
+
+    $this->drupalPost($url, $edit, t('Save'));
     $this->assertText(t('The field '. $edit['name'] .' has been saved'), t('!name field has been saved', array('!name' => $edit['name'])));
   }
 }
@@ -349,7 +352,7 @@ class dsLayoutsStylesTests extends dsBaseTest {
     $this->dsSelectLayout($layout, $assert);
     $this->dsConfigureStyles();
     $this->dsSelectClasses();
-    $this->dsConfigureFields($fields);
+    $this->dsConfigureUI($fields);
 
     // Assert we have some configuration in our database.
     $count = db_query("SELECT COUNT(settings) FROM {ds_layouts} WHERE entity_type = 'node' AND bundle = 'article' AND view_mode = 'default'")->fetchField();
@@ -394,15 +397,15 @@ class dsLayoutsStylesTests extends dsBaseTest {
     $fields = array(
       'fields[comments][region]' => 'hidden',
     );
-    $this->dsConfigureFields($fields);
+    $this->dsConfigureUI($fields);
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw('group-footer', 'Template found (region footer)');
     $hide = array(
       'display_suite[hide_empty_regions]' => '1',
     );
 
-    $this->dsConfigureFields($hide);
+    $this->dsConfigureUI($hide);
     $this->drupalGet('node/' . $node->nid);
-    $this->assertNoRaw('group-footer', 'Template found (region footer)');
+    $this->assertNoRaw('group-footer', 'No region footer found');
   }
 }
