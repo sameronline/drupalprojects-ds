@@ -9,7 +9,7 @@
 /**
  * Implementation of hook_install().
  */
-function ds_switch_vm_install() {
+function ds_extras_install() {
   $ret = array();
 
   /*
@@ -17,31 +17,31 @@ function ds_switch_vm_install() {
    * @see http://drupal.org/node/185596
    */
   $schema['node_revision'] = array();
-  ds_switch_vm_schema_alter($schema);
+  ds_extras_schema_alter($schema);
   foreach ($schema['node_revision']['fields'] as $name => $spec) {
     db_add_field('node_revision', $name, $spec);
   }
 
   // Ensure that we get called as early as possible among the hooking modules.
-  db_query("UPDATE {system} SET weight = -99 WHERE name = 'ds_switch_vm'");
+  db_query("UPDATE {system} SET weight = -99 WHERE name = 'ds_extras'");
 }
 
 /**
  * Implementation of hook_uninstall().
  */
-function ds_switch_vm_uninstall() {
+function ds_extras_uninstall() {
   // Drop field in node revision table.
-  db_drop_field('node_revision', 'ds_switch_vm');
+  db_drop_field('node_revision', 'ds_switch');
 }
 
 /**
  * Implementation of hook_schema_alter().
  */
-function ds_switch_vm_schema_alter(&$schema) {
+function ds_extras_schema_alter(&$schema) {
 
-  // Add a field ds_switch_vm to the node_revision table in order to store the override.
+  // Add a field ds_extras to the node_revision table in order to store the override.
   if (isset($schema['node_revision'])) {
-    $schema['node_revision']['fields']['ds_switch_vm'] = array(
+    $schema['node_revision']['fields']['ds_switch'] = array(
       'type' => 'varchar',
       'length' => 255,
       'not null' => TRUE,
