@@ -125,7 +125,40 @@ function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
 }
 
 /**
- * Load our own entity implementatios for fields, registry etc.
+ * Implements hook_filter_info().
+ *
+ * Provide PHP code filter. Use with care.
+ */
+function ds_filter_info() {
+  $filters['ds_code'] = array(
+    'title' => t('Display Suite evaluator'),
+    'description' => t('Executes a piece of content, which may contain PHP code, through Display Suite evaluator. The usage of this filter should be restricted to administrators only and no other filters can be enabled in a format!'),
+    'process callback' => 'ds_php_eval',
+    'tips callback' => 'ds_filter_tips',
+    'cache' => FALSE,
+  );
+  return $filters;
+}
+
+/**
+ * Tips callback for php filter.
+ */
+function ds_filter_tips($filter, $format, $long = FALSE) {
+  global $base_url;
+  if ($long) {
+    $output = '<h4>' . t('Using custom code with Display Suite') . '</h4>';
+    $output .= '<p>Do not use this filter with other filters in a text format.</p>';
+    $output .= '<p>You may use PHP code also with this format. You should include &lt;?php ?&gt; tags.</p>';
+    $output .= '<p>The entity object is passed to the evaluation function. $entity->nid will give you the node nid in case this field is used on a Node.</p>';
+    return $output;
+  }
+  else {
+    return t('You may post Display Suite code. You should include &lt;?php ?&gt; tags when using PHP. The $entity object is available.');
+  }
+}
+
+/**
+ * Load our own entity implementations for fields, registry etc.
  *
  * @param $return
  *   Whether to return the enabled entities or not.
@@ -575,39 +608,6 @@ function ds_render_region($content, $region, $layout) {
     }
   }
   return $output;
-}
-
-/**
- * Implements hook_filter_info().
- *
- * Provide PHP code filter. Use with care.
- */
-function ds_filter_info() {
-  $filters['ds_code'] = array(
-    'title' => t('Display Suite evaluator'),
-    'description' => t('Executes a piece of content, which may contain PHP code, through Display Suite evaluator. The usage of this filter should be restricted to administrators only and no other filters can be enabled in a format!'),
-    'process callback' => 'ds_php_eval',
-    'tips callback' => 'ds_filter_tips',
-    'cache' => FALSE,
-  );
-  return $filters;
-}
-
-/**
- * Tips callback for php filter.
- */
-function ds_filter_tips($filter, $format, $long = FALSE) {
-  global $base_url;
-  if ($long) {
-    $output = '<h4>' . t('Using custom code with Display Suite') . '</h4>';
-    $output .= '<p>Do not use this filter with other filters in a text format.</p>';
-    $output .= '<p>You may use PHP code also with this format. You should include &lt;?php ?&gt; tags.</p>';
-    $output .= '<p>The entity object is passed to the evaluation function. $entity->nid will give you the node nid in case this field is used on a Node.</p>';
-    return $output;
-  }
-  else {
-    return t('You may post Display Suite code. You should include &lt;?php ?&gt; tags when using PHP. The $entity object is available.');
-  }
 }
 
 /**

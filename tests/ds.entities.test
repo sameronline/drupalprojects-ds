@@ -17,7 +17,7 @@ class dsNodeTests extends dsBaseTest {
   public static function getInfo() {
     return array(
       'name' => t('Node display'),
-      'description' => t('Tests for display of nodes on full page, switch, search and views.'),
+      'description' => t('Tests for display of nodes.'),
       'group' => t('Display suite'),
     );
   }
@@ -136,7 +136,6 @@ class dsNodeTests extends dsBaseTest {
     $this->drupalGet('node/' . $node->nid);
     $this->assertNoRaw('<h2>Recent content</h2>');
     $this->assertNoRaw('Recent content');
-
   }
 }
 
@@ -151,7 +150,7 @@ class dsUserTests extends dsBaseTest {
   public static function getInfo() {
     return array(
       'name' => t('User display'),
-      'description' => t('Tests for display of users on full page, search and views.'),
+      'description' => t('Tests for display of users.'),
       'group' => t('Display suite'),
     );
   }
@@ -193,7 +192,7 @@ class dsTaxonomyTests extends dsBaseTest {
   public static function getInfo() {
     return array(
       'name' => t('Taxonomy display'),
-      'description' => t('Tests for display of taxonomies on full page and views.'),
+      'description' => t('Tests for display of taxonomies.'),
       'group' => t('Display suite'),
     );
   }
