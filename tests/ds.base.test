@@ -13,8 +13,68 @@ class dsBaseTest extends DrupalWebTestCase {
    */
   function setUp() {
     parent::setUp('ds', 'ds_extras', 'ds_search');
-    $this->admin_user = $this->drupalCreateUser(array('admin_view_modes', 'admin_fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users'));
+    $this->admin_user = $this->drupalCreateUser(array('admin_view_modes', 'admin_fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments'));
     $this->drupalLogin($this->admin_user);
+  }
+
+  /**
+   * Select a layout.
+   */
+  function dsSelectLayout($edit = array(), $assert = array(), $url = 'admin/structure/types/manage/article/display') {
+
+    $edit += array(
+      'display_suite[layout]' => 'ds_2col_stacked',
+    );
+
+    $this->drupalPost($url, $edit, t('Save'));
+
+    $assert += array(
+      'regions' => array(
+        'header' => '<td colspan="8">' . t('Header') . '</td>',
+        'left' => '<td colspan="8">' . t('Left') . '</td>',
+        'right' => '<td colspan="8">' . t('Right') . '</td>',
+        'footer' => '<td colspan="8">' . t('Footer') . '</td>',
+      ),
+    );
+
+    foreach ($assert['regions'] as $region => $raw) {
+      $this->assertRaw($region, t('Region !region found', array('!region' => $region)));
+    }
+  }
+
+  /**
+   * Configure styles
+   */
+  function dsConfigureStyles($edit = array()) {
+
+    $edit += array(
+      'ds_styles_regions' => "class_name_1\nclass_name_2|Friendly name"
+    );
+
+    $this->drupalPost('admin/structure/ds/styles', $edit, t('Save configuration'));
+    $this->assertText(t('The configuration options have been saved.'), t('Styles configuration saved'));
+    $this->assertRaw('class_name_1', 'Class name 1 found');
+    $this->assertRaw('class_name_2', 'Class name 1 found');
+  }
+
+  /**
+   * Configure classes on a layout.
+   */
+  function dsSelectClasses($edit = array(), $url = 'admin/structure/types/manage/article/display') {
+
+    $edit += array(
+      "display_suite[header][]" => 'class_name_1',
+      "display_suite[footer][]" => 'class_name_2',
+    );
+
+    $this->drupalPost($url, $edit, t('Save'));
+  }
+
+  /**
+   * Configure fields on a layout.
+   */
+  function dsConfigureFields($edit, $url = 'admin/structure/types/manage/article/display') {
+    $this->drupalPost($url, $edit, t('Save'));
   }
 
   /**
@@ -235,5 +295,114 @@ class dsViewModesTests extends dsBaseTest {
     // Assert the view mode is gone at the manage display screen.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('display_suite[modes][view_modes_custom][testing]', t('Testing view mode found on node article.'));
+  }
+}
+
+/**
+ * Test managing of layouts and styles
+ */
+class dsLayoutsStylesTests extends dsBaseTest {
+
+  /**
+   * Implements getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => t('Layouts'),
+      'description' => t('Tests for managing layouts and classes on Field UI screen.'),
+      'group' => t('Display suite'),
+    );
+  }
+
+  /**
+   * Test selecting layouts, empty regions, classes and basic fields.
+   */
+  function testDStestLayouts() {
+
+    $this->dsCreateCodeField();
+    $this->dsCreateBlockField();
+
+    $layout = array(
+      'display_suite[layout]' => 'ds_2col_stacked',
+    );
+
+    $assert = array(
+      'regions' => array(
+        'header' => '<td colspan="8">' . t('Header') . '</td>',
+        'left' => '<td colspan="8">' . t('Left') . '</td>',
+        'right' => '<td colspan="8">' . t('Right') . '</td>',
+        'footer' => '<td colspan="8">' . t('Footer') . '</td>',
+      ),
+    );
+
+    $fields = array(
+      'fields[post_date][region]' => 'header',
+      'fields[author][region]' => 'left',
+      'fields[links][region]' => 'left',
+      'fields[body][region]' => 'right',
+      'fields[comments][region]' => 'footer',
+      'fields[test_field][region]' => 'left',
+      'fields[test_block_field][region]' => 'left',
+    );
+
+    // Setup first layout.
+    $this->dsSelectLayout($layout, $assert);
+    $this->dsConfigureStyles();
+    $this->dsSelectClasses();
+    $this->dsConfigureFields($fields);
+
+    // Assert we have some configuration in our database.
+    $count = db_query("SELECT COUNT(settings) FROM {ds_layouts} WHERE entity_type = 'node' AND bundle = 'article' AND view_mode = 'default'")->fetchField();
+    $this->assertEqual($count, 1, t('1 record found for layout serttings for node article'));
+
+    // Lookup settings and verify.
+    $data = unserialize(db_query("SELECT settings FROM {ds_layouts} WHERE entity_type = 'node' AND bundle = 'article' AND view_mode = 'default'")->fetchField());
+    $this->assertTrue(in_array('post_date', $data['regions']['header']), t('Post date is in header'));
+    $this->assertTrue(in_array('test_field', $data['regions']['left']), t('Test field is in left'));
+    $this->assertTrue(in_array('author', $data['regions']['left']), t('Author is in left'));
+    $this->assertTrue(in_array('links', $data['regions']['left']), t('Links is in left'));
+    $this->assertTrue(in_array('test_block_field', $data['regions']['left']), t('Test block field is in left'));
+    $this->assertTrue(in_array('body', $data['regions']['right']), t('Body is in right'));
+    $this->assertTrue(in_array('comments', $data['regions']['footer']), t('Comments is in footer'));
+    $this->assertTrue(in_array('class_name_1', $data['classes']['header']), t('Class name 1 is in header'));
+    $this->assertTrue(empty($data['classes']['left']), t('Left has no classes'));
+    $this->assertTrue(empty($data['classes']['right']), t('Right has classes'));
+    $this->assertTrue(in_array('class_name_2', $data['classes']['footer']), t('Class name 2 is in header'));
+
+    // Create a article node and verify settings.
+    $settings = array(
+      'type' => 'article',
+    );
+    $node = $this->drupalCreateNode($settings);
+    $this->drupalGet('node/' . $node->nid);
+
+    // Assert regions.
+    $this->assertRaw('group-header', 'Template found (region header)');
+    $this->assertRaw('group-header class_name_1', 'Class found (class_name_1)');
+    $this->assertRaw('group-left', 'Template found (region left)');
+    $this->assertRaw('group-right', 'Template found (region right)');
+    $this->assertRaw('group-footer', 'Template found (region footer)');
+    $this->assertRaw('group-footer class_name_2', 'Class found (class_name_2)');
+
+    // Assert custom fields.
+    $this->assertRaw('field-name-test-field', t('Custom field found'));
+    $this->assertRaw('Test field', t('Custom field found'));
+    $this->assertRaw('field-name-test-block-field', t('Custom block field found'));
+    $this->assertRaw('<h2>Recent content</h2>', t('Custom block field found'));
+
+    // Test empty regions checkbox.
+    $fields = array(
+      'fields[comments][region]' => 'hidden',
+    );
+    $this->dsConfigureFields($fields);
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertRaw('group-footer', 'Template found (region footer)');
+    $hide = array(
+      'display_suite[hide_empty_regions]' => '1',
+    );
+
+    $this->dsConfigureFields($hide);
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertNoRaw('group-footer', 'Template found (region footer)');
   }
 }

@@ -30,7 +30,7 @@ function ds_extras_menu_alter(&$items) {
 }
 
 /**
- * View an individual nodes.
+ * View an individual node.
  */
 function ds_extras_node_show($node, $message = NULL) {
   if ($message) {

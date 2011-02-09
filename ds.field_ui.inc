@@ -182,7 +182,9 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       if ($region == 'hidden') {
         continue;
       }
-      if (isset($form_state['values']['display_suite'][$region])) {
+      // Do not save empty string.
+      $classes = implode(' ', $form_state['values']['display_suite'][$region]);
+      if (!empty($classes)) {
         $record->settings['classes'][$region] = $form_state['values']['display_suite'][$region];
       }
     }
@@ -290,7 +292,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#parents' => array('display_suite'),
   );
 
-  // @todo convert to db_select();
   $layout = db_query('SELECT layout, settings FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
 
   if (!empty($layout) && isset($layout->layout) && isset($ds_layouts[$layout->layout])) {
