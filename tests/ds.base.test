@@ -12,9 +12,14 @@ class dsBaseTest extends DrupalWebTestCase {
    * Implementation of setUp().
    */
   function setUp() {
-    parent::setUp('ds', 'ds_extras', 'ds_search', 'search');
-    $this->admin_user = $this->drupalCreateUser(array('admin_view_modes', 'admin_fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'search content', 'administer search', 'use advanced search'));
+    parent::setUp('ds', 'ds_extras', 'ds_search');
+    $this->admin_user = $this->drupalCreateUser(array('admin_view_modes', 'admin_fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'search content', 'administer search', 'use advanced search', 'access content overview', 'access site reports'));
     $this->drupalLogin($this->admin_user);
+
+    // Enable the extra type module for searching.
+    variable_set('search_active_modules', array('node' => 0, 'user' => 'user', 'ds_search' => 'ds_search'));
+    variable_set('search_default_module', 'ds_search');
+    menu_rebuild();
   }
 
   /**

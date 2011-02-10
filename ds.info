@@ -6,4 +6,3 @@ package = "Display suite"
 files[] = views/views_plugin_ds_entity_view.inc
 files[] = tests/ds.base.test
 files[] = tests/ds.entities.test
-files[] = tests/ds.search.test
