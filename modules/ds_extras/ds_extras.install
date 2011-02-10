@@ -12,25 +12,17 @@
 function ds_extras_install() {
   $ret = array();
 
-  /*
-   * hook_schema_alter does not add fields to the database.
-   * @see http://drupal.org/node/185596
-   */
   $schema['node_revision'] = array();
   ds_extras_schema_alter($schema);
   foreach ($schema['node_revision']['fields'] as $name => $spec) {
     db_add_field('node_revision', $name, $spec);
   }
-
-  // Ensure that we get called as early as possible among the hooking modules.
-  db_query("UPDATE {system} SET weight = -99 WHERE name = 'ds_extras'");
 }
 
 /**
  * Implementation of hook_uninstall().
  */
 function ds_extras_uninstall() {
-  // Drop field in node revision table.
   db_drop_field('node_revision', 'ds_switch');
 }
 
@@ -39,7 +31,8 @@ function ds_extras_uninstall() {
  */
 function ds_extras_schema_alter(&$schema) {
 
-  // Add a field ds_extras to the node_revision table in order to store the override.
+  // Add a field ds_extras to the node_revision table in order
+  // to store the name of view mode to switch to.
   if (isset($schema['node_revision'])) {
     $schema['node_revision']['fields']['ds_switch'] = array(
       'type' => 'varchar',

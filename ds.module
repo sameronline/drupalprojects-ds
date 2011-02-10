@@ -51,6 +51,16 @@ function ds_permission() {
 }
 
 /**
+ * Implements hook_hook_info().
+ */
+function ds_hook_info() {
+  $hooks['ds_fields'] = array(
+    'group' => 'ds_fields',
+  );
+  return $hooks;
+}
+
+/**
  * Implements hook_menu().
  */
 function ds_menu() {
@@ -72,25 +82,6 @@ function ds_theme() {
 function ds_ds_layouts() {
   module_load_include('inc', 'ds', 'ds.registry');
   return _ds_ds_layouts();
-}
-
-/**
- * Implements hook_ds_fields().
- */
-function ds_ds_fields($entity_type, $bundle, $view_mode) {
-  $fields = array();
-  $custom_fields = ds_custom_fields();
-  foreach ($custom_fields as $key => $field) {
-    if (isset($field->entities[$entity_type])) {
-      $fields[$key] = array(
-        'title' => $field->label,
-        'type' => $field->type,
-        'properties' => (array) $field->properties,
-      );
-    }
-  }
-
-  return array($entity_type => $fields);
 }
 
 /**
@@ -158,34 +149,6 @@ function ds_filter_tips($filter, $format, $long = FALSE) {
 }
 
 /**
- * Load our own entity implementations for fields, registry etc.
- *
- * @param $return
- *   Whether to return the enabled entities or not.
- * @return $entities
- *   A collection of entities we support.
- */
-function ds_load_entity_implementations($return = FALSE) {
-  static $loaded, $entities = FALSE;
-
-  if (!$loaded) {
-    $loaded = TRUE;
-    $entities = array();
-    $entity_info = entity_get_info();
-    foreach ($entity_info as $entity_type => $info) {
-      $file = module_load_include('inc', 'ds', 'entities/' . $entity_type . '/' . $entity_type);
-      if ($file) {
-        $entities[] = $entity_type;
-      }
-    }
-  }
-
-  if ($return) {
-    return $entities;
-  }
-}
-
-/**
  * API function to get fields.
  *
  * @param $entity_type
@@ -219,9 +182,6 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
     // Do we have them cached or not ?
     // This takes a few iterations of a site before everything will be in it.
     if (!isset($ds_fields_cached[$entity_type][$bundle][$view_mode]) || $reset) {
-
-      // Load our own entity implementations
-      ds_load_entity_implementations();
 
       // Get all fields.
       $fields = array();
@@ -717,15 +677,22 @@ function ds_render_title_field($field) {
   $output = $field['entity']->{$formatter[1]};
 
   // Link.
+  // @todo put all this stuff into the properties ?
   if ($formatter[2] == 'link') {
     if (isset($field['entity']->uri['path'])) {
       $path = $field['entity']->uri['path'];
     }
     else {
-      // Works for node and user.
-      $entity_info = entity_get_info($entity_type);
-      $id_key = $entity_info['entity keys']['id'];
-      $path = $entity_type . '/' . $field['entity']->{$id_key};
+      // Term.
+      if ($entity_type == 'taxonomy_term') {
+        $path = 'taxonomy/term/' . $field['entity']->tid;
+      }
+      else {
+        // Node and user.
+        $entity_info = entity_get_info($entity_type);
+        $id_key = $entity_info['entity keys']['id'];
+        $path = $entity_type . '/' . $field['entity']->{$id_key};
+      }
     }
     $output = l($output, $path);
   }

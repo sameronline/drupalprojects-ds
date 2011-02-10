@@ -60,7 +60,7 @@ function ds_extras_node_show($node, $message = NULL) {
  */
 function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
 
-  if (user_access('ds_switch ' . $form['#node']->type) ) {
+  if (user_access('ds_switch ' . $form['#node']->type)) {
 
     $view_mode_settings = field_view_mode_settings('node', $form['#node']->type);
 
