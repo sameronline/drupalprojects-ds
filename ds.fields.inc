@@ -91,7 +91,7 @@ function ds_custom_manage($field_key = '') {
     }
   }
 
-  drupal_goto('admin/structure/ds/fields');
+  drupal_goto($redirect);
 }
 
 /**
