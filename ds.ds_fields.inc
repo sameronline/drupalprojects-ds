@@ -311,5 +311,8 @@ function ds_ds_fields($entity_type, $bundle, $view_mode) {
     )
   );
 
-  return array($entity_type => $fields[$entity_type]);
+  if (isset($fields[$entity_type])) {
+    return array($entity_type => $fields[$entity_type]);
+  }
+  return;
 }
