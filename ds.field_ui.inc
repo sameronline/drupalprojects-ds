@@ -75,6 +75,11 @@ function ds_field_ui_regions($form, $form_state) {
         'message' => t('No fields are displayed in this region'),
       );
     }
+
+    // Let other modules alter the regions.
+    // @todo document this in ds.api
+    drupal_alter('ds_layout_region', $region_options, $table['#regions']);
+
     $region_options['hidden'] = t('Disabled');
     $table['#regions']['hidden'] = array(
       'title' => t('Disabled'),
@@ -190,6 +195,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
         }
       }
     }
+
     $record->settings = serialize($record->settings);
     drupal_write_record('ds_layouts', $record, array('entity_type', 'bundle', 'view_mode', 'layout'));
   }
@@ -242,6 +248,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
 
     // Save the record.
     $record->field = $field;
+
     $record->settings = serialize($settings);
     drupal_write_record('ds_settings', $record);
   }

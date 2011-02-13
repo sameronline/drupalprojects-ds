@@ -299,15 +299,15 @@ function _ds_ds_layouts() {
   // Get layouts defined in the default theme and base theme (if applicable).
   $theme = variable_get('theme_default');
   $themes = list_themes();
-  
+
   $base_theme = array();
   $ancestor = $theme;
   while ($ancestor && isset($themes[$ancestor]->base_theme)) {
     $ancestor = $themes[$ancestor]->base_theme;
     $base_theme[] = $themes[$ancestor];
   }
-  
-  
+
+
   foreach (array_reverse($base_theme) as $base) {
     _ds_layouts_scan_theme($base->name, $layouts);
   }

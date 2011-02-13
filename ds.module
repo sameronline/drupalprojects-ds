@@ -449,7 +449,6 @@ function ds_field_attach_view_alter(&$build, $context) {
  */
 function ds_preprocess_entity(&$variables) {
   if ($layout = ds_determine_layout_variables($variables['elements']['#entity_type'], $variables['elements']['#bundle'], $variables['elements']['#view_mode'])) {
-
     $render_container = 'content';
     // Hard-referenced user exception.
     if ($variables['elements']['#entity_type'] == 'user') {

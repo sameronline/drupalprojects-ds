@@ -97,3 +97,52 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
     }
   }
 }
+
+/**
+ * Implements hook_block_info().
+ */
+function ds_extras_block_info() {
+  $blocks['ds_extras'] = array(
+    'info' => 'Display suite block',
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function ds_extras_block_view($delta = '') {
+  $block = array();
+  $block['subject'] = t('Display suite');
+  $block['content'] = drupal_static('ds_block_region');
+  return $block;
+}
+
+/**
+ * Implements hook_ds_layout_region_alter().
+ */
+function ds_extras_ds_layout_region_alter(&$region_options, &$regions) {
+  $region_options['block'] = t('Block');
+  $regions['block'] = array(
+    'title' => t('Block'),
+    'message' => t('No fields are displayed in this region'),
+  );
+}
+
+/**
+ * Implements hook_field_attach_view_alter().
+ */
+function ds_extras_field_attach_view_alter(&$build, $context) {
+  $block_data = &drupal_static('ds_block_region');
+  $entity_type = $build['#entity_type'];
+  $bundle = $build['#bundle'];
+  $view_mode = $context['view_mode'];
+  if ($layout = ds_determine_layout_variables($entity_type, $bundle, $view_mode)) {
+    if (isset($layout['settings']['regions']['block']) && !empty($layout['settings']['regions']['block'])) {
+      foreach ($layout['settings']['regions']['block'] as $key => $field) {
+        $block_data[] = $build[$field];
+        unset($build[$field]);
+      }
+    }
+  }
+}

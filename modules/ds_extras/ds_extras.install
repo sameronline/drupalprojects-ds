@@ -23,6 +23,7 @@ function ds_extras_install() {
  * Implementation of hook_uninstall().
  */
 function ds_extras_uninstall() {
+  variable_del('ds_extras_blocks');
   db_drop_field('node_revision', 'ds_switch');
 }
 

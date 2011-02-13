@@ -124,6 +124,24 @@ function hook_ds_layouts() {
 }
 
 /**
+ * Alter the region options in the field UI screen.
+ *
+ * This function is only called when a layout has been chosen.
+ *
+ * @param $region_options
+ *   A collection of regions for the select options of the fields.
+ * @param $regions
+ *   A collection of regions to be used in Field UI.
+ */
+function hook_ds_layout_region_alter(&$region_options, &$regions) {
+  $region_options['block'] = t('Block');
+  $regions['block'] = array(
+    'title' => t('Block'),
+    'message' => t('No fields are displayed in this region'),
+  );
+}
+
+/**
  * Themes can also define extra layouts.
  *
  * Create a ds_layouts folder and then a folder name that will
