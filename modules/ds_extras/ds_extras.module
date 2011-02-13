@@ -91,7 +91,9 @@ function ds_extras_settings($form) {
  * Submit callback: Extras settings screen.
  */
 function ds_extras_settings_submit($form, &$form_state) {
-  drupal_flush_all_caches();
+  // Clear module_implements cache and rebuild menu.
+  cache_clear_all('module_implements', 'cache_bootstrap');
+  menu_rebuild();
 }
 
 /**
