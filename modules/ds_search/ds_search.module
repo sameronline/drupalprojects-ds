@@ -187,8 +187,6 @@ function ds_search_search_info() {
 
 /**
  * Implements hook_node_update_index().
- *
- * @todo test with apache solr.
  */
 function ds_search_update_index() {
   ds_search_invoke_node_search('update_index');
