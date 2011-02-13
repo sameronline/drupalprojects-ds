@@ -194,6 +194,7 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
 function ds_extras_block_info() {
   $blocks['ds_extras'] = array(
     'info' => 'Region to block',
+    'cache' => DRUPAL_NO_CACHE,
   );
   return $blocks;
 }
