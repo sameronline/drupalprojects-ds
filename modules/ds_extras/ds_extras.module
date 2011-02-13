@@ -78,7 +78,7 @@ function ds_extras_settings($form) {
   $form['region']['ds_extras_region_to_block'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable'),
-    '#description' => t('Toggle this checkbox to enable the "Regions to block" functionality. With this feature, you can add new regions to the "Manage display" screens which will be printed into a block region.'),
+    '#description' => t('Toggle this checkbox to enable the "Regions to block" functionality. With this feature, a new region called "Block" will be added to the "Manage display" screens which contents will be rendered in a block. The block is called "Region to block" on the blocks overview page.'),
     '#default_value' => variable_get('ds_extras_region_to_block', FALSE),
   );
 
