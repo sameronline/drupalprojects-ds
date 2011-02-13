@@ -143,7 +143,7 @@ function _ds_theme() {
 function _ds_theme_registry_alter(&$theme_registry) {
 
   // Inject ds_preprocess_entity in all base theming functions. User profile is
-  // different than the rest, using user_profile though :(
+  // different than the rest, using user_profile though.
   $entity_info = entity_get_info();
   foreach ($entity_info as $entity => $info) {
     if ($entity_info[$entity]['fieldable']) {
@@ -298,12 +298,20 @@ function _ds_ds_layouts() {
 
   // Get layouts defined in the default theme and base theme (if applicable).
   $theme = variable_get('theme_default');
-  _ds_layouts_scan_theme($theme, $layouts);
-  $all_themes = list_themes();
-  $theme_info = $all_themes[$theme];
-  if (isset($theme_info->base_theme) && !empty($theme_info->base_theme)) {
-    _ds_layouts_scan_theme($theme_info->base_theme, $layouts);
+  $themes = list_themes();
+  
+  $base_theme = array();
+  $ancestor = $theme;
+  while ($ancestor && isset($themes[$ancestor]->base_theme)) {
+    $ancestor = $themes[$ancestor]->base_theme;
+    $base_theme[] = $themes[$ancestor];
   }
+  
+  
+  foreach (array_reverse($base_theme) as $base) {
+    _ds_layouts_scan_theme($base->name, $layouts);
+  }
+  _ds_layouts_scan_theme($theme, $layouts);
 
   return $layouts;
 }
