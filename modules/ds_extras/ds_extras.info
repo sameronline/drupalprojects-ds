@@ -4,3 +4,4 @@ description = "Contains extra features: switching view modes on a per node basis
 core = "7.x"
 package = "Display suite"
 dependencies[] = ds
+configure = admin/structure/ds/extras
