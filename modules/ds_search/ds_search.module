@@ -52,9 +52,6 @@ function ds_search_settings($form, $form_state) {
     }
   }
 
-  // Let other modules alter the engines.
-  drupal_alter('ds_search_engine', $engine_options);
-
   $form['general']['ds_search_type'] = array(
     '#type' => 'select',
     '#title' => t('Search engine'),
@@ -190,6 +187,8 @@ function ds_search_search_info() {
 
 /**
  * Implements hook_node_update_index().
+ *
+ * @todo test with apache solr.
  */
 function ds_search_update_index() {
   ds_search_invoke_node_search('update_index');

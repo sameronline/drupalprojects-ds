@@ -7,6 +7,94 @@
  */
 
 /**
+ * Implements hook_module_implements_alter().
+ */
+function ds_extras_module_implements_alter(&$implementations, $hook) {
+
+  // Because it's possible to turn on/off features for display suite.
+  // we'll unset hooks here if necessary which otherwhise do nothing at all.
+
+  // Disable the region to block feature.
+  $region_hooks = array(
+    'ds_layout_region_alter',
+    'field_attach_view_alter',
+    'block_info',
+    'block_view'
+  );
+  if (!variable_get('ds_extras_region_to_block', FALSE) && in_array($hook, $region_hooks)) {
+    unset($implementations['ds_extras']);
+  }
+
+  // Disable the switch view mode feature.
+  $switch_hooks = array(
+    'menu_alter',
+    'permission',
+    'form_node_form_alter',
+  );
+  if (!variable_get('ds_extras_switch_view_mode', FALSE) && in_array($hook, $switch_hooks)) {
+    unset($implementations['ds_extras']);
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ds_extras_menu() {
+  $items = array();
+
+  $items['admin/structure/ds/extras'] = array(
+    'title' => 'Extras',
+    'description' => 'Configure extra functionality for Display Suite',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_extras_settings'),
+    'access arguments' => array('admin_display_suite'),
+  );
+
+  return $items;
+}
+
+/**
+ * Menu callback: Display Suite extras settings.
+ */
+function ds_extras_settings($form) {
+
+  $form['switch'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Switch view modes'),
+  );
+
+  $form['switch']['ds_extras_switch_view_mode'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable'),
+    '#description' => t('Toggle this checkbox to enable the "Switch view mode" functionality. With this feature, you can change the view mode on a per node basis. A new tab on the node edit form will appear called "Display settings."'),
+    '#default_value' => variable_get('ds_extras_switch_view_mode', FALSE),
+  );
+
+  $form['region'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Block regions'),
+  );
+
+  $form['region']['ds_extras_region_to_block'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable'),
+    '#description' => t('Toggle this checkbox to enable the "Regions to block" functionality. With this feature, you can add new regions to the "Manage display" screens which will be printed into a block region.'),
+    '#default_value' => variable_get('ds_extras_region_to_block', FALSE),
+  );
+
+  $form = system_settings_form($form);
+  $form['#submit'][] = 'ds_extras_settings_submit';
+  return $form;
+}
+
+/**
+ * Submit callback: Extras settings screen.
+ */
+function ds_extras_settings_submit($form, &$form_state) {
+  drupal_flush_all_caches();
+}
+
+/**
  * Implements hook_permission().
  */
 function ds_extras_permission() {
@@ -103,7 +191,7 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
  */
 function ds_extras_block_info() {
   $blocks['ds_extras'] = array(
-    'info' => 'Display suite block',
+    'info' => 'Region to block',
   );
   return $blocks;
 }
@@ -112,10 +200,14 @@ function ds_extras_block_info() {
  * Implements hook_block_view().
  */
 function ds_extras_block_view($delta = '') {
-  $block = array();
-  $block['subject'] = t('Display suite');
-  $block['content'] = drupal_static('ds_block_region');
-  return $block;
+  $data = drupal_static('ds_block_region');
+
+  if (!empty($data)) {
+    $block = array();
+    $block['subject'] = t('Region to block');
+    $block['content'] = $data;
+    return $block;
+  }
 }
 
 /**
