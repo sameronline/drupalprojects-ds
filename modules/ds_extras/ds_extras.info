@@ -1,6 +1,6 @@
 ; $Id$
 name = "Extras"
-description = "Contains extra features: switching view modes on a per node basis and the region to block."
+description = "Contains additional features: switching view modes on a per node basis and exposing regions as blocks."
 core = "7.x"
 package = "Display suite"
 dependencies[] = ds
