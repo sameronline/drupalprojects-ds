@@ -77,8 +77,16 @@ function ds_field_ui_regions($form, $form_state) {
     }
 
     // Let other modules alter the regions.
-    // @todo document this in ds.api
-    drupal_alter('ds_layout_region', $region_options, $table['#regions']);
+    $context = array(
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+      'view_mode' => $view_mode
+    );
+    $region_info = array(
+      'region_options' => &$region_options,
+      'table_regions' => &$table['#regions'],
+    );
+    drupal_alter('ds_layout_region', $context, $region_info);
 
     $region_options['hidden'] = t('Disabled');
     $table['#regions']['hidden'] = array(
@@ -172,7 +180,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
     // Ignore the Field group module.
     foreach ($fields as $key => $field) {
-      if ($key == '_add_new_group') {
+      if ($key == '_add_new_group' || $key == '_add_new_block_region') {
         continue;
       }
       if (!isset($record->settings['regions'][$field['region']])) {

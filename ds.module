@@ -92,7 +92,7 @@ function ds_views_api() {
 }
 
 /**
- * Implements hook_entity_info_alter().
+ * Implements hook_theme_registry_alter().
  */
 function ds_theme_registry_alter(&$theme_registry) {
   module_load_include('inc', 'ds', 'ds.registry');

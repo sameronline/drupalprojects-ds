@@ -24,6 +24,7 @@ function ds_extras_install() {
  */
 function ds_extras_uninstall() {
   variable_del('ds_extras_region_to_block');
+  variable_del('ds_extras_region_blocks');
   variable_del('ds_extras_switch_view_mode');
   db_drop_field('node_revision', 'ds_switch');
 }

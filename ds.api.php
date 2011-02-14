@@ -128,15 +128,17 @@ function hook_ds_layouts() {
  *
  * This function is only called when a layout has been chosen.
  *
- * @param $region_options
- *   A collection of regions for the select options of the fields.
- * @param $regions
- *   A collection of regions to be used in Field UI.
+ * @param $context
+ *   A collection of keys for the context. The keys are 'entity_type',
+ *   'bundle' and 'view_mode'.
+ * @param $region_info
+ *   A collection of info for regions. The keys are 'region_options'
+ *   and 'table_regions'.
  */
-function hook_ds_layout_region_alter(&$region_options, &$regions) {
-  $region_options['block'] = t('Block');
-  $regions['block'] = array(
-    'title' => t('Block'),
+function hook_ds_layout_region_alter($context, &$region_info) {
+  $region_info['region_options'][$block_key] = $block['title'];
+  $region_info['table_regions'][$block_key] = array(
+    'title' => check_plain($block['title']),
     'message' => t('No fields are displayed in this region'),
   );
 }

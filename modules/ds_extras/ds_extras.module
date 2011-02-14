@@ -18,6 +18,7 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
   $region_hooks = array(
     'ds_layout_region_alter',
     'field_attach_view_alter',
+    'form_field_ui_display_overview_form',
     'block_info',
     'block_view'
   );
@@ -78,7 +79,7 @@ function ds_extras_settings($form) {
   $form['region']['ds_extras_region_to_block'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable'),
-    '#description' => t('Toggle this checkbox to enable the "Regions to block" functionality. With this feature, a new region called "Block" will be added to the "Manage display" screens which contents will be rendered in a block. The block is called "Region to block" on the blocks overview page.'),
+    '#description' => t('Toggle this checkbox to enable the "Regions to block" functionality. With this feature, you can create additional regions on the "Manage display" screens which will be exposed as blocks. <br /><strong>Note that it will not work on the default view mode</strong>.'),
     '#default_value' => variable_get('ds_extras_region_to_block', FALSE),
   );
 
@@ -192,10 +193,19 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
  * Implements hook_block_info().
  */
 function ds_extras_block_info() {
-  $blocks['ds_extras'] = array(
-    'info' => 'Region to block',
-    'cache' => DRUPAL_NO_CACHE,
-  );
+
+  $region_blocks = variable_get('ds_extras_region_blocks', array());
+
+  if (empty($region_blocks)) {
+    return array();
+  }
+
+  foreach ($region_blocks as $key => $block) {
+    $blocks[$key] = array(
+      'info' => $block['title'],
+      'cache' => DRUPAL_NO_CACHE,
+    );
+  }
   return $blocks;
 }
 
@@ -204,11 +214,12 @@ function ds_extras_block_info() {
  */
 function ds_extras_block_view($delta = '') {
   $data = drupal_static('ds_block_region');
+  $region_blocks = variable_get('ds_extras_region_blocks', array());
 
-  if (!empty($data)) {
+  if (!empty($data[$delta])) {
     $block = array();
-    $block['subject'] = t('Region to block');
-    $block['content'] = $data;
+    $block['subject'] = $region_blocks[$delta]['title'];
+    $block['content'] = $data[$delta];
     return $block;
   }
 }
@@ -216,27 +227,169 @@ function ds_extras_block_view($delta = '') {
 /**
  * Implements hook_ds_layout_region_alter().
  */
-function ds_extras_ds_layout_region_alter(&$region_options, &$regions) {
-  $region_options['block'] = t('Block');
-  $regions['block'] = array(
-    'title' => t('Block'),
-    'message' => t('No fields are displayed in this region'),
+function ds_extras_ds_layout_region_alter($context, &$region_info) {
+
+  $region_blocks = variable_get('ds_extras_region_blocks', array());
+  // Bail out if region_blocks is empty or we are working on default view mode.
+  if (empty($region_blocks) || $context['view_mode'] == 'default') {
+    return;
+  }
+
+  $entity_type = $context['entity_type'];
+  $bundle = $context['bundle'];
+  $view_mode = $context['view_mode'];
+
+  foreach ($region_blocks as $block_key => $block) {
+
+    if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
+      $region_info['region_options'][$block_key] = $block['title'];
+      $region_info['table_regions'][$block_key] = array(
+        'title' => check_plain($block['title']),
+        'message' => t('No fields are displayed in this region'),
+      );
+    }
+  }
+
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ds_extras_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
+
+  // Bail out if there is no layout or we are working on default view mode.
+  if (!isset($form['#ds_layout']) || $form['#view_mode'] == 'default') {
+    return;
+  }
+  $layout = $form['#ds_layout'];
+
+  // Get the entity_type, bundle and view mode.
+  $entity_type = $form['#entity_type'];
+  $bundle = $form['#bundle'];
+  $view_mode = $form['#view_mode'];
+
+  $region_blocks_options = array();
+  $region_blocks = variable_get('ds_extras_region_blocks', array());
+  foreach ($region_blocks as $key => $block) {
+    if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
+      $region_blocks_options[$key] = $block['title'];
+    }
+  }
+
+  $form['display_suite']['region_to_block'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Block regions'),
+    '#description' => t('Create additional regions in this layout which will be exposed as blocks.')
   );
+
+  $form['display_suite']['region_to_block']['new_block_region'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Region name'),
+    '#description' => t('Enter a name to create a new region.'),
+  );
+  $form['display_suite']['region_to_block']['new_block_region_key'] = array(
+    '#title' => t('Machine name'),
+    '#type' => 'machine_name',
+    '#default_value' => '',
+    '#maxlength' => 32,
+    '#required' => FALSE,
+    '#description' => t('The machine-readable name of this block region. This name must contain only lowercase letters and underscores. This name must be unique.'),
+    '#disabled' => FALSE,
+    '#machine_name' => array(
+      'exists' => 'ds_extras_region_to_block_unique',
+      'source' => array('display_suite', 'region_to_block', 'new_block_region'),
+    ),
+  );
+
+  if (!empty($region_blocks_options)) {
+    $form['display_suite']['region_to_block']['remove_block_region'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Remove'),
+      '#options' => $region_blocks_options,
+      '#description' => t('Toggle regions you want to remove. Make sure no fields are attached in that region anymore or you will not see them anymore.'),
+    );
+  }
+
+  $form['#submit'][] = 'ds_extras_block_submit';
+}
+
+/**
+ * Return unique region to block.
+ */
+function ds_extras_region_to_block_unique($name) {
+  $region_blocks = variable_get('ds_extras_region_blocks', array());
+  $value = strtr($name, array('-' => '_'));
+  return isset($region_blocks[$value]) ? TRUE : FALSE;
+}
+
+/**
+ * Submit callback: manage block regions.
+ */
+function ds_extras_block_submit($form, &$form_state) {
+
+  // Create new region.
+  if (!empty($form_state['values']['display_suite']['region_to_block']['new_block_region'])) {
+
+    // Get the entity_type, bundle and view mode.
+    $entity_type = $form['#entity_type'];
+    $bundle = $form['#bundle'];
+    $view_mode = $form['#view_mode'];
+
+    $block = array(
+      'title' => $form_state['values']['display_suite']['region_to_block']['new_block_region'],
+      'info' => "{$entity_type}_{$bundle}_{$view_mode}",
+    );
+
+    $block_key = $form_state['values']['display_suite']['region_to_block']['new_block_region_key'];
+    $region_blocks = variable_get('ds_extras_region_blocks', array());
+    $region_blocks[$block_key] = $block;
+    variable_set('ds_extras_region_blocks', $region_blocks);
+  }
+
+  // Remove a region.
+  if (isset($form_state['values']['display_suite']['region_to_block']['remove_block_region'])) {
+    $variable_set = FALSE;
+    $region_blocks = variable_get('ds_extras_region_blocks', array());
+    $remove = $form_state['values']['display_suite']['region_to_block']['remove_block_region'];
+    foreach ($remove as $key => $value) {
+      if ($key === $value) {
+        $variable_set = TRUE;
+        db_delete('block')
+          ->condition('delta', $key)
+          ->condition('module', 'ds_extras')
+          ->execute();
+        unset($region_blocks[$key]);
+      }
+    }
+
+    if ($variable_set) {
+      variable_set('ds_extras_region_blocks', $region_blocks);
+    }
+  }
 }
 
 /**
  * Implements hook_field_attach_view_alter().
  */
 function ds_extras_field_attach_view_alter(&$build, $context) {
+
   $block_data = &drupal_static('ds_block_region');
+  $region_blocks = variable_get('ds_extras_region_blocks', array());
+
+  if (empty($region_blocks)) {
+    return;
+  }
+
   $entity_type = $build['#entity_type'];
   $bundle = $build['#bundle'];
   $view_mode = $context['view_mode'];
   if ($layout = ds_determine_layout_variables($entity_type, $bundle, $view_mode)) {
-    if (isset($layout['settings']['regions']['block']) && !empty($layout['settings']['regions']['block'])) {
-      foreach ($layout['settings']['regions']['block'] as $key => $field) {
-        $block_data[] = $build[$field];
-        unset($build[$field]);
+    foreach ($region_blocks as $block_key => $block) {
+      if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}" && isset($layout['settings']['regions'][$block_key]) && !empty($layout['settings']['regions'][$block_key])) {
+        foreach ($layout['settings']['regions'][$block_key] as $key => $field) {
+          $block_data[$block_key][] = $build[$field];
+          unset($build[$field]);
+        }
       }
     }
   }
