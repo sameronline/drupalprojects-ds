@@ -70,7 +70,7 @@ class dsNodeTests extends dsBaseTest {
 
     // Configure teaser layout.
     $teaser = array(
-      'display_suite[layout]' => 'ds_2col',
+      'additional_settings[layout]' => 'ds_2col',
     );
     $teaser_assert = array(
       'regions' => array(

@@ -80,7 +80,6 @@ function ds_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
-      // TODO split up more (like label, format, class etc etc)
       'settings' => array(
         'description' => 'The settings for this field.',
         'type' => 'blob',

@@ -30,8 +30,8 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
 
   // Alter the text of the custom display settings.
   $form['modes']['view_modes_custom']['#description'] = t('<a href="!url">Manage view modes</a>', array('!url' => url('admin/structure/ds/view_modes')));
-  $form['display_suite']['modes'] = $form['modes'];
-  $form['display_suite']['modes']['#weight'] = -10;
+  $form['additional_settings']['modes'] = $form['modes'];
+  $form['additional_settings']['modes']['#weight'] = -10;
   unset($form['modes']);
 }
 
@@ -146,9 +146,9 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $view_mode = isset($form['#view_mode']) ? $form['#view_mode'] : 'form';
 
   // Determine layout variables.
-  $layout = $form_state['values']['display_suite']['layout'];
-  $hide_empty_regions = $form_state['values']['display_suite']['hide_empty_regions'];
-  $old_layout = $form_state['values']['display_suite']['old_layout'];
+  $layout = $form_state['values']['additional_settings']['layout'];
+  $hide_empty_regions = $form_state['values']['additional_settings']['hide_empty_regions'];
+  $old_layout = $form_state['values']['additional_settings']['old_layout'];
   $new_layout = ($layout != $old_layout) || empty($old_layout);
 
   // Save layout and add regions if necessary.
@@ -195,11 +195,11 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       if ($region == 'hidden') {
         continue;
       }
-      if (isset($form_state['values']['display_suite'][$region])) {
+      if (isset($form_state['values']['additional_settings'][$region])) {
         // Do not save empty string.
-        $classes = implode(' ', $form_state['values']['display_suite'][$region]);
+        $classes = implode(' ', $form_state['values']['additional_settings'][$region]);
         if (!empty($classes)) {
-          $record->settings['classes'][$region] = $form_state['values']['display_suite'][$region];
+          $record->settings['classes'][$region] = $form_state['values']['additional_settings'][$region];
         }
       }
     }
@@ -213,8 +213,8 @@ function ds_field_ui_layouts_save($form, &$form_state) {
  * Move the view modes so Field UI can handle them.
  */
 function ds_field_ui_layouts_validate($form, &$form_state) {
-  if (isset($form_state['values']['display_suite']['modes']['view_modes_custom'])) {
-    $form_state['values']['view_modes_custom'] = $form_state['values']['display_suite']['modes']['view_modes_custom'];
+  if (isset($form_state['values']['additional_settings']['modes']['view_modes_custom'])) {
+    $form_state['values']['view_modes_custom'] = $form_state['values']['additional_settings']['modes']['view_modes_custom'];
   }
 }
 
@@ -290,7 +290,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     $layout_options[$key] = $layout['label'];
   }
 
-  $form['display_suite'] = array(
+  $form['additional_settings'] = array(
     '#type' => 'vertical_tabs',
     '#theme_wrappers' => array('vertical_tabs'),
     '#prefix' => '<div>',
@@ -301,12 +301,12 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   $form['#attached']['js'][] = 'misc/collapse.js';
 
   // Add layouts form.
-  $form['display_suite']['ds_layouts'] = array(
+  $form['additional_settings']['ds_layouts'] = array(
     '#type' => 'fieldset',
     '#title' => t('Layout for !bundle in !view_mode', array('!bundle' => str_replace('_', ' ', $bundle), '!view_mode' => str_replace('_', ' ', $view_mode))),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#parents' => array('display_suite'),
+    '#parents' => array('additional_settings'),
   );
 
   $layout = db_query('SELECT layout, settings FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
@@ -324,7 +324,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     $form['#ds_layout'] = $layout;
   }
 
-  $form['display_suite']['ds_layouts']['layout'] = array(
+  $form['additional_settings']['ds_layouts']['layout'] = array(
     '#type' => 'select',
     '#title' => t('Select a layout'),
     '#options' => $layout_options,
@@ -332,7 +332,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#weight' => -1,
   );
 
-  $form['display_suite']['ds_layouts']['hide_empty_regions'] = array(
+  $form['additional_settings']['ds_layouts']['hide_empty_regions'] = array(
     '#type' => 'checkbox',
     '#title' => t('Hide empty regions'),
     '#default_value' => isset($layout->settings['hide_empty_regions']) ? $layout->settings['hide_empty_regions'] : FALSE,
@@ -340,23 +340,23 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   );
 
   if (!empty($layout) && isset($layout->regions)) {
-    $form['display_suite']['ds_layouts']['suggestions'] = array(
+    $form['additional_settings']['ds_layouts']['suggestions'] = array(
       '#markup' => '<p>' . $selected . '</p><p>' . t('!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p>',
     );
 
     // Add extra classes for the regions to have more control while theming.
-    $form['display_suite']['ds_classes'] = array(
+    $form['additional_settings']['ds_classes'] = array(
       '#type' => 'fieldset',
       '#title' => t('Extra classes for regions'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
-      '#parents' => array('display_suite'),
+      '#parents' => array('additional_settings'),
     );
 
     $styles = _ds_styles();
     if (!empty($styles)) {
       foreach (array_keys($layout->regions) as $region) {
-        $form['display_suite']['ds_classes'][$region] = array(
+        $form['additional_settings']['ds_classes'][$region] = array(
           '#type' => 'select',
           '#multiple' => TRUE,
           '#options' => $styles,
@@ -365,10 +365,10 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
         );
       }
     }
-    $form['display_suite']['ds_classes']['info'] = array('#markup' => l(t('Manage region styles'), 'admin/structure/ds/styles'));
+    $form['additional_settings']['ds_classes']['info'] = array('#markup' => l(t('Manage region styles'), 'admin/structure/ds/styles'));
   }
 
-  $form['display_suite']['ds_layouts']['old_layout'] = array(
+  $form['additional_settings']['ds_layouts']['old_layout'] = array(
     '#type' => 'value',
     '#value' => isset($layout->layout) ? $layout->layout : 0,
   );

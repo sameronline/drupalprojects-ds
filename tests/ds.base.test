@@ -12,7 +12,7 @@ class dsBaseTest extends DrupalWebTestCase {
    * Implementation of setUp().
    */
   function setUp() {
-    parent::setUp('ds', 'ds_extras');
+    parent::setUp('ds', 'ds_test' ,'ds_extras');
     $this->admin_user = $this->drupalCreateUser(array('admin_view_modes', 'admin_fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access'));
     $this->drupalLogin($this->admin_user);
   }
@@ -23,7 +23,7 @@ class dsBaseTest extends DrupalWebTestCase {
   function dsSelectLayout($edit = array(), $assert = array(), $url = 'admin/structure/types/manage/article/display') {
 
     $edit += array(
-      'display_suite[layout]' => 'ds_2col_stacked',
+      'additional_settings[layout]' => 'ds_2col_stacked',
     );
 
     $this->drupalPost($url, $edit, t('Save'));
@@ -63,8 +63,8 @@ class dsBaseTest extends DrupalWebTestCase {
   function dsSelectClasses($edit = array(), $url = 'admin/structure/types/manage/article/display') {
 
     $edit += array(
-      "display_suite[header][]" => 'class_name_1',
-      "display_suite[footer][]" => 'class_name_2',
+      "additional_settings[header][]" => 'class_name_1',
+      "additional_settings[footer][]" => 'class_name_2',
     );
 
     $this->drupalPost($url, $edit, t('Save'));
@@ -278,11 +278,11 @@ class dsViewModesTests extends dsBaseTest {
 
     // Assert it's found on the Field UI for article.
     $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertRaw('display_suite[modes][view_modes_custom][testing]', t('Testing view mode found on node article.'));
+    $this->assertRaw('additional_settings[modes][view_modes_custom][testing]', t('Testing view mode found on node article.'));
 
     // Assert it's not found on the Field UI for article.
     $this->drupalGet('admin/config/people/accounts/display');
-    $this->assertNoRaw('display_suite[modes][view_modes_custom][testing]', t('Testing view mode not found on user.'));
+    $this->assertNoRaw('additional_settings[modes][view_modes_custom][testing]', t('Testing view mode not found on user.'));
 
     // Update testing label
     $edit = array(
@@ -297,7 +297,7 @@ class dsViewModesTests extends dsBaseTest {
 
     // Assert the view mode is gone at the manage display screen.
     $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertNoRaw('display_suite[modes][view_modes_custom][testing]', t('Testing view mode found on node article.'));
+    $this->assertNoRaw('additional_settings[modes][view_modes_custom][testing]', t('Testing view mode found on node article.'));
   }
 }
 
@@ -326,7 +326,7 @@ class dsLayoutsStylesTests extends dsBaseTest {
     $this->dsCreateBlockField();
 
     $layout = array(
-      'display_suite[layout]' => 'ds_2col_stacked',
+      'additional_settings[layout]' => 'ds_2col_stacked',
     );
 
     $assert = array(
@@ -401,7 +401,7 @@ class dsLayoutsStylesTests extends dsBaseTest {
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw('group-footer', 'Template found (region footer)');
     $hide = array(
-      'display_suite[hide_empty_regions]' => '1',
+      'additional_settings[hide_empty_regions]' => '1',
     );
 
     $this->dsConfigureUI($hide);
