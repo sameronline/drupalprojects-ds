@@ -20,7 +20,7 @@ function ds_extras_menu() {
     'access arguments' => array('admin_display_suite'),
   );
 
-  if (!variable_get('ds_extras_vd', FALSE)) {
+  if (variable_get('ds_extras_vd', FALSE) && module_exists('field_ui') && module_exists('views')) {
     $items['admin/structure/ds/vd'] = array(
       'title' => 'Views displays',
       'description' => 'Manage your views templates.',
@@ -67,6 +67,8 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
   $vd_hooks = array(
     'field_extra_fields',
     'entity_info',
+    'ds_fields',
+    'ds_field_ui_process',
   );
   if (!variable_get('ds_extras_vd', FALSE) && in_array($hook, $vd_hooks)) {
     unset($implementations['ds_extras']);
@@ -110,8 +112,8 @@ function ds_extras_settings($form) {
   $form['views']['ds_extras_vd'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable'),
-    '#description' => t('Toggle this checkbox to enable the "Regions to block" functionality. With this feature, you can create additional regions on the "Manage display" screens which will be exposed as blocks. <br /><strong>Note that it will not work on the default view mode</strong>.'),
-    '#default_value' => variable_get('ds_extras_region_to_block', FALSE),
+    '#description' => t('Toggle this checkbox to enable the "Views displays" functionality. With this feature, you can use Display Suite to rearrange the template variables of any views display. A new menu item called "Views displays" will be available at !url.', array('!url' => l(url('admin/structure/ds'), 'admin/structure/ds', array('absolute' => TRUE)))),
+    '#default_value' => variable_get('ds_extras_vd', FALSE),
   );
 
   $form = system_settings_form($form);
@@ -435,12 +437,11 @@ function ds_extras_entity_info() {
   $return = array(
     'ds_views' => array(
       'label' => t('Display suite Views'),
-      'fieldable' => FALSE,
       'bundle keys' => array(
         'bundle' => 'type',
       ),
       'bundles' => array(
-        'ds_vd_default' => array(),
+        'views' => array(),
       ),
     ),
   );
@@ -454,11 +455,11 @@ function ds_extras_field_extra_fields() {
 
   // Register a single field so fields for vd be picked
   // up nicely in the display overview form.
-  $extra['ds_views']['ds_vd_default'] = array(
+  $extra['ds_views']['views'] = array(
     'display' => array(
       'title' => array(
         'label' => t('Title'),
-        'description' => t('Title test.'),
+        'description' => t('Title'),
         'weight' => 10,
       ),
     ),
@@ -471,6 +472,8 @@ function ds_extras_field_extra_fields() {
  * Implements hook_preprocess_views_view().
  */
 function ds_extras_preprocess_views_view(&$variables) {
+
+  // @todo maybe we'd better inject this with theme_registry_alter ?
 
   // @todo this doesn't work at all for now.
   // We can probably just run ds_preprocess_entity() and some way
