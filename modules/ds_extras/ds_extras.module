@@ -7,6 +7,33 @@
  */
 
 /**
+ * Implements hook_menu().
+ */
+function ds_extras_menu() {
+  $items = array();
+
+  $items['admin/structure/ds/extras'] = array(
+    'title' => 'Extras',
+    'description' => 'Configure extra functionality for Display Suite.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_extras_settings'),
+    'access arguments' => array('admin_display_suite'),
+  );
+
+  if (!variable_get('ds_extras_vd', FALSE)) {
+    $items['admin/structure/ds/vd'] = array(
+      'title' => 'Views displays',
+      'description' => 'Manage your views templates.',
+      'page callback' => 'ds_extras_vd',
+      'file' => 'ds_extras.vd.inc',
+      'access arguments' => array('admin_display_suite'),
+    );
+  }
+
+  return $items;
+}
+
+/**
  * Implements hook_module_implements_alter().
  */
 function ds_extras_module_implements_alter(&$implementations, $hook) {
@@ -35,23 +62,15 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
   if (!variable_get('ds_extras_switch_view_mode', FALSE) && in_array($hook, $switch_hooks)) {
     unset($implementations['ds_extras']);
   }
-}
 
-/**
- * Implements hook_menu().
- */
-function ds_extras_menu() {
-  $items = array();
-
-  $items['admin/structure/ds/extras'] = array(
-    'title' => 'Extras',
-    'description' => 'Configure extra functionality for Display Suite.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_extras_settings'),
-    'access arguments' => array('admin_display_suite'),
+  // Disable the vd feature.
+  $vd_hooks = array(
+    'field_extra_fields',
+    'entity_info',
   );
-
-  return $items;
+  if (!variable_get('ds_extras_vd', FALSE) && in_array($hook, $vd_hooks)) {
+    unset($implementations['ds_extras']);
+  }
 }
 
 /**
@@ -77,6 +96,18 @@ function ds_extras_settings($form) {
   );
 
   $form['region']['ds_extras_region_to_block'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable'),
+    '#description' => t('Toggle this checkbox to enable the "Regions to block" functionality. With this feature, you can create additional regions on the "Manage display" screens which will be exposed as blocks. <br /><strong>Note that it will not work on the default view mode</strong>.'),
+    '#default_value' => variable_get('ds_extras_region_to_block', FALSE),
+  );
+
+  $form['views'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Views displays'),
+  );
+
+  $form['views']['ds_extras_vd'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable'),
     '#description' => t('Toggle this checkbox to enable the "Regions to block" functionality. With this feature, you can create additional regions on the "Manage display" screens which will be exposed as blocks. <br /><strong>Note that it will not work on the default view mode</strong>.'),
@@ -272,7 +303,7 @@ function ds_extras_form_field_ui_display_overview_form_alter(&$form, &$form_stat
   $region_blocks = variable_get('ds_extras_region_blocks', array());
   foreach ($region_blocks as $key => $block) {
     if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
-      $region_blocks_options[$key] = $block['title'];
+      $region_blocks_options[$key] = t('Remove') . ' '. $block['title'];
     }
   }
 
@@ -304,7 +335,7 @@ function ds_extras_form_field_ui_display_overview_form_alter(&$form, &$form_stat
   if (!empty($region_blocks_options)) {
     $form['additional_settings']['region_to_block']['remove_block_region'] = array(
       '#type' => 'checkboxes',
-      '#title' => t('Remove'),
+      '#title' => t('Existing block regions'),
       '#options' => $region_blocks_options,
       '#description' => t('Toggle regions you want to remove. Make sure no fields are attached in that region anymore or you will not see them anymore.'),
     );
@@ -393,4 +424,109 @@ function ds_extras_field_attach_view_alter(&$build, $context) {
       }
     }
   }
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function ds_extras_entity_info() {
+
+  // Register a views entity on behalf Views.
+  $return = array(
+    'ds_views' => array(
+      'label' => t('Display suite Views'),
+      'fieldable' => FALSE,
+      'bundle keys' => array(
+        'bundle' => 'type',
+      ),
+      'bundles' => array(
+        'ds_vd_default' => array(),
+      ),
+    ),
+  );
+  return $return;
+}
+
+/**
+ * Implements hook_field_extra_fields().
+ */
+function ds_extras_field_extra_fields() {
+
+  // Register a single field so fields for vd be picked
+  // up nicely in the display overview form.
+  $extra['ds_views']['ds_vd_default'] = array(
+    'display' => array(
+      'title' => array(
+        'label' => t('Title'),
+        'description' => t('Title test.'),
+        'weight' => 10,
+      ),
+    ),
+  );
+
+  return $extra;
+}
+
+/**
+ * Implements hook_preprocess_views_view().
+ */
+function ds_extras_preprocess_views_view(&$variables) {
+
+  // @todo this doesn't work at all for now.
+  // We can probably just run ds_preprocess_entity() and some way
+  // of ds_field_attach_view_alter()
+  // but with some changes to the function I guess.
+  //dsm($vars);
+
+//  dsm('jow');
+
+  return;
+
+  $view_object = new stdClass();
+  $view_object->type = $vars['view']->name .'_'. $vars['view']->current_display;
+  if (variable_get('vd_type_'. $view_object->type, FALSE)) {
+    return;
+  }
+
+  // Good to go.
+  $view = $vars['view'];
+  $vars['view']->build_mode = 'full';
+  $vars['view']->type = $view_object->type;
+  $view_object->build_mode = 'full';
+  $view_object->view = $view;
+
+  ds_build_fields_and_regions($view_object, 'vd');
+
+  if (!$view_object->render_by_ds) {
+    return;
+  }
+
+  if (!empty($view_object->ds_fields)) {
+    foreach ($view_object->ds_fields as $key => $field) {
+      if (!isset($view_object->preprocess_fields[$key])) {
+        $field_key = $key .'_rendered';
+        $vars[$field_key] = $view_object->{$field_key};
+      }
+    }
+  }
+
+  $vars['template_files'][] = 'vd';
+  $vars['regions'] = $view_object->regions;
+  $vars['views_content'] = ds_render_content($view_object, 'vd', $vars);
+}
+
+/**
+ * Function used for theming the views title, user name etc. Note that
+ * this is a function so it can't be overridden by a phptemplate function.
+ *
+ * @param $field
+ *   The field array.
+ *
+ * @todo convert this to theming function.
+ */
+function ds_vd_render_title_field($field) {
+  $output = '';
+  $formatter = explode('_', $field['formatter']);
+  $tag = $formatter[2];
+  return '<' . $tag . '>'. check_plain($field['entity']->view->display_handler->get_option('title')) .'</' . $tag . '>';
 }
