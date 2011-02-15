@@ -68,7 +68,6 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
     'field_extra_fields',
     'entity_info',
     'ds_fields',
-    'ds_field_ui_process',
   );
   if (!variable_get('ds_extras_vd', FALSE) && in_array($hook, $vd_hooks)) {
     unset($implementations['ds_extras']);

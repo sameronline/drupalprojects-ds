@@ -122,9 +122,6 @@ function ds_field_ui_regions($form, $form_state) {
     }
   }
 
-  // Let other modules alter the process.
-  drupal_alter('ds_field_ui_process', $form);
-
   return $form;
 }
 
