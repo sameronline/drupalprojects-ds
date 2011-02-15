@@ -436,14 +436,10 @@ function ds_extras_entity_info() {
   $return = array(
     'ds_views' => array(
       'label' => t('Display suite Views'),
-      'bundle keys' => array(
-        'bundle' => 'type',
-      ),
-      'bundles' => array(
-        'views' => array(),
-      ),
+      'bundles' => array(),
     ),
   );
+
   return $return;
 }
 
