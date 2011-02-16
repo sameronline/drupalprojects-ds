@@ -103,17 +103,19 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_region_to_block', FALSE),
   );
 
-  $form['views'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Views displays'),
-  );
+  if (module_exists('views')) {
+    $form['views'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Views displays'),
+    );
 
-  $form['views']['ds_extras_vd'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Enable'),
-    '#description' => t('Toggle this checkbox to enable the "Views displays" functionality. With this feature, you can use Display Suite to rearrange the template variables of any views display. A new menu item called "Views displays" will be available at !url.', array('!url' => l(url('admin/structure/ds'), 'admin/structure/ds', array('absolute' => TRUE)))),
-    '#default_value' => variable_get('ds_extras_vd', FALSE),
-  );
+    $form['views']['ds_extras_vd'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable'),
+      '#description' => t('Toggle this checkbox to enable the "Views displays" functionality. With this feature, you can use Display Suite to rearrange the template variables of any views display. A new menu item called "Views displays" will be available at !url.', array('!url' => l(url('admin/structure/ds'), 'admin/structure/ds', array('absolute' => TRUE)))),
+      '#default_value' => variable_get('ds_extras_vd', FALSE),
+    );
+  }
 
   $form = system_settings_form($form);
   $form['#submit'][] = 'ds_extras_settings_submit';
@@ -432,11 +434,21 @@ function ds_extras_field_attach_view_alter(&$build, $context) {
  */
 function ds_extras_entity_info() {
 
+  $bundles = array();
+  $result = db_query('SELECT vd, label FROM {ds_vd}');
+  foreach ($result as $row) {
+    $bundles[$row->vd] = array(
+      'label' => check_plain($row->label),
+      'admin' => array('path' => 'admin/structure/ds/vd/' . $row->vd),
+    );
+  }
+
   // Register a views entity on behalf Views.
   $return = array(
     'ds_views' => array(
       'label' => t('Display suite Views'),
-      'bundles' => array(),
+      'bundles' => $bundles,
+      'ds_display' => TRUE,
     ),
   );
 
@@ -448,9 +460,11 @@ function ds_extras_entity_info() {
  */
 function ds_extras_field_extra_fields() {
 
-  // Register a single field so fields for vd be picked
-  // up nicely in the display overview form.
-  $extra['ds_views']['views'] = array(
+  // Register a single field so fields for vd be are
+  // picked up nicely in the display overview form.
+  $bundle = arg(4);
+
+  $extra['ds_views'][$bundle] = array(
     'display' => array(
       'title' => array(
         'label' => t('Title'),

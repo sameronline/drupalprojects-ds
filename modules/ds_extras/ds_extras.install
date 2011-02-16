@@ -20,6 +20,35 @@ function ds_extras_install() {
 }
 
 /**
+ * Implements hook_schema().
+ */
+function ds_extras_schema() {
+
+  $schema['ds_vd'] = array(
+    'description' => 'The base table for views displays.',
+    'fields' => array(
+      'vd' => array(
+        'description' => 'The primary identifier for the views display.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'label' => array(
+        'description' => 'The label for the views display.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+    ),
+    'primary key' => array('vd'),
+  );
+
+  return $schema;
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function ds_extras_uninstall() {
