@@ -118,7 +118,8 @@ function ds_extras_vd_bundle_form_submit($form, &$form_state) {
   $record->label = $form['vd']['#options'][$record->vd];
   drupal_write_record('ds_vd', $record);
 
-  // Clear entity cache.
+  // Clear entity cache and field info fields cache.
+  cache_clear_all('field_info_fields', 'cache_field');
   cache_clear_all('entity_info', 'cache', TRUE);
 
   // Message and redirect.
@@ -179,7 +180,8 @@ function ds_extras_vd_bundle_remove_submit($form, &$form_state) {
     ->condition('bundle', $bundle)
     ->execute();
 
-  // Clear entity cache.
+  // Clear entity cache and field info fields cache.
+  cache_clear_all('field_info_fields', 'cache_field');
   cache_clear_all('entity_info', 'cache', TRUE);
 
   drupal_set_message(t('Bundle !label has been removed.', array('!label' => $label)));

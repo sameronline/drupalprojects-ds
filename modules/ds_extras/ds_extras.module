@@ -443,7 +443,7 @@ function ds_extras_entity_info() {
     );
   }
 
-  // Register a views entity on behalf Views.
+  // Register a views entity on behalf of Views.
   $return = array(
     'ds_views' => array(
       'label' => t('Display suite Views'),
@@ -459,20 +459,22 @@ function ds_extras_entity_info() {
  * Implements hook_field_extra_fields().
  */
 function ds_extras_field_extra_fields() {
+  $extra = array();
 
-  // Register a single field so fields for vd be are
+  // Register a single field so fields for vd are
   // picked up nicely in the display overview form.
-  $bundle = arg(4);
-
-  $extra['ds_views'][$bundle] = array(
-    'display' => array(
-      'title' => array(
-        'label' => t('Title'),
-        'description' => t('Title'),
-        'weight' => 10,
+  $result = db_query('SELECT vd FROM {ds_vd}');
+  foreach ($result as $row) {
+    $extra['ds_views'][$row->vd] = array(
+      'display' => array(
+        'title' => array(
+          'label' => t('Title'),
+          'description' => t('Title'),
+          'weight' => 10,
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   return $extra;
 }
