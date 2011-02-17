@@ -30,21 +30,23 @@ function ds_extras_vd($bundle = '', $action = '') {
 function ds_extras_vd_overview($entity_info) {
   $build = $rows = array();
 
-  foreach ($entity_info['bundles'] as $key => $value) {
+  if ($entity_info) {
+    foreach ($entity_info['bundles'] as $key => $value) {
 
-    // If no initial bundles were created, entity API will create
-    // one by default, so make sure we do not list that one.
-    if ($key == 'ds_views') {
-      continue;
+      // If no initial bundles were created, entity API will create
+      // one by default, so make sure we do not list that one.
+      if ($key == 'ds_views') {
+        continue;
+      }
+
+      $row = array();
+      $row[] = $value['label'];
+      $operations = l(t('Edit layout'), 'admin/structure/ds/vd/' . $key . '/display');
+      $operations .= ' - ' . l(t('Remove'), 'admin/structure/ds/vd/' . $key . '/remove');
+      $row[] = $operations;
+
+      $rows[$key] = $row;
     }
-
-    $row = array();
-    $row[] = $value['label'];
-    $operations = l(t('Edit layout'), 'admin/structure/ds/vd/' . $key . '/display');
-    $operations .= ' - ' . l(t('Remove'), 'admin/structure/ds/vd/' . $key . '/remove');
-    $row[] = $operations;
-
-    $rows[$key] = $row;
   }
 
   if (empty($rows)) {
