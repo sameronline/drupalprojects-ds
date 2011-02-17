@@ -484,49 +484,19 @@ function ds_extras_field_extra_fields() {
  */
 function ds_extras_preprocess_views_view(&$variables) {
 
-  // @todo maybe we'd better inject this with theme_registry_alter ?
+  if ($layout = ds_determine_layout_variables('ds_views', $variables['view']->name . '-' . $variables['view']->current_display, 'default')) {
+    $variables['elements']['#entity_type'] = $variables['#entity_type'] = 'ds_views';
+    $variables['elements']['#bundle'] = $variables['#bundle'] = $variables['view']->name . '-' . $variables['view']->current_display;
+    $variables['elements']['#view_mode'] = 'default';
 
-  // @todo this doesn't work at all for now.
-  // We can probably just run ds_preprocess_entity() and some way
-  // of ds_field_attach_view_alter()
-  // but with some changes to the function I guess.
-  //dsm($vars);
-
-//  dsm('jow');
-
-  return;
-
-  $view_object = new stdClass();
-  $view_object->type = $vars['view']->name .'_'. $vars['view']->current_display;
-  if (variable_get('vd_type_'. $view_object->type, FALSE)) {
-    return;
-  }
-
-  // Good to go.
-  $view = $vars['view'];
-  $vars['view']->build_mode = 'full';
-  $vars['view']->type = $view_object->type;
-  $view_object->build_mode = 'full';
-  $view_object->view = $view;
-
-  ds_build_fields_and_regions($view_object, 'vd');
-
-  if (!$view_object->render_by_ds) {
-    return;
-  }
-
-  if (!empty($view_object->ds_fields)) {
-    foreach ($view_object->ds_fields as $key => $field) {
-      if (!isset($view_object->preprocess_fields[$key])) {
-        $field_key = $key .'_rendered';
-        $vars[$field_key] = $view_object->{$field_key};
-      }
+    $variables['ds_views'] = $variables['view'];
+    ds_field_attach_view_alter($variables, array('view_mode' => 'default', 'entity' => $variables['view']));
+    ds_preprocess_entity($variables);
+    if (isset($variables['#attached'])) {
+      drupal_process_attached($variables);
     }
   }
 
-  $vars['template_files'][] = 'vd';
-  $vars['regions'] = $view_object->regions;
-  $vars['views_content'] = ds_render_content($view_object, 'vd', $vars);
 }
 
 /**
@@ -542,5 +512,5 @@ function ds_vd_render_title_field($field) {
   $output = '';
   $formatter = explode('_', $field['formatter']);
   $tag = $formatter[2];
-  return '<' . $tag . '>'. check_plain($field['entity']->view->display_handler->get_option('title')) .'</' . $tag . '>';
+  return '<' . $tag . '>'. check_plain($field['entity']->get_title()) .'</' . $tag . '>';
 }

@@ -484,8 +484,10 @@ function ds_preprocess_entity(&$variables) {
 
         // Move the field to content so we can render them, remove it
         // because we don't need it anymore.
-        $variables[$render_container][$field] = $variables[$field];
-        unset($variables[$field]);
+        if (isset($variables[$field])) {
+          $variables[$render_container][$field] = $variables[$field];
+          unset($variables[$field]);
+        }
       }
     }
 

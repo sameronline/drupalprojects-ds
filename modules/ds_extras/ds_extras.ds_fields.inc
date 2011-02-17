@@ -21,6 +21,7 @@ function ds_extras_ds_fields($entity_type, $bundle, $view_mode) {
       'title' => t('Views title'),
       'type' => DS_FIELD_TYPE_FUNCTION,
       'status' => DS_FIELD_STATUS_STATIC,
+      'function' => 'ds_vd_render_title_field',
       'properties' => array(
         'formatters' => array(
           'vd_title_h1' => t('H1 title'),
