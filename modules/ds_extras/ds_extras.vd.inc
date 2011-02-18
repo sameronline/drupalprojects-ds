@@ -148,6 +148,11 @@ function ds_extras_vd_field_ui($bundle) {
   // Deny access to view mode.
   $build['additional_settings']['modes']['#access'] = FALSE;
 
+  // Deny access to field_group if it exists.
+  if (module_exists('field_group')) {
+    unset($build['fields']['_add_new_group']);
+  }
+
   return $build;
 }
 
