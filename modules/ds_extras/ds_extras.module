@@ -45,7 +45,6 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
   $region_hooks = array(
     'ds_layout_region_alter',
     'field_attach_view_alter',
-    'form_field_ui_display_overview_form',
     'block_info',
     'block_view'
   );
@@ -73,6 +72,8 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
   if (!variable_get('ds_extras_vd', FALSE) && in_array($hook, $vd_hooks)) {
     unset($implementations['ds_extras']);
   }
+
+  // Disable
 }
 
 /**
@@ -137,14 +138,16 @@ function ds_extras_settings_submit($form, &$form_state) {
  */
 function ds_extras_permission() {
 
-  $permissions = array();
-  foreach (node_type_get_names() as $key => $name) {
-    $permissions['ds_switch ' . $key] = array(
-      'title' => t('Switch view modes on :type', array(':type' => $name))
-    );
+  // Extra check to make sure this doesn't get fired on install.
+  if (variable_get('ds_extras_switch_view_mode', FALSE)) {
+    $permissions = array();
+    foreach (node_type_get_names() as $key => $name) {
+      $permissions['ds_switch ' . $key] = array(
+        'title' => t('Switch view modes on :type', array(':type' => $name))
+      );
+    }
+    return $permissions;
   }
-
-  return $permissions;
 }
 
 /**
@@ -225,6 +228,74 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ds_extras_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
+
+  // Views displays.
+  if (variable_get('ds_extras_vd', FALSE)) {
+    // Add an additional submit callback.
+    $form['#submit'] = array_merge(array('ds_extras_vd_field_ui_submit'), $form['#submit']);
+  }
+
+  // If there is no layout or we are working on default view mode
+  // stop processing for the region to block plugin.
+  if ((!isset($form['#ds_layout']) || $form['#view_mode'] == 'default') && !variable_get('ds_extras_region_to_block', FALSE)) {
+    return;
+  }
+  $layout = $form['#ds_layout'];
+
+  // Get the entity_type, bundle and view mode.
+  $entity_type = $form['#entity_type'];
+  $bundle = $form['#bundle'];
+  $view_mode = $form['#view_mode'];
+
+  $region_blocks_options = array();
+  $region_blocks = variable_get('ds_extras_region_blocks', array());
+  foreach ($region_blocks as $key => $block) {
+    if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
+      $region_blocks_options[$key] = t('Remove') . ' '. $block['title'];
+    }
+  }
+
+  $form['additional_settings']['region_to_block'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Block regions'),
+    '#description' => t('Create additional regions in this layout which will be exposed as blocks.')
+  );
+
+  $form['additional_settings']['region_to_block']['new_block_region'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Region name'),
+    '#description' => t('Enter a name to create a new region.'),
+  );
+  $form['additional_settings']['region_to_block']['new_block_region_key'] = array(
+    '#title' => t('Machine name'),
+    '#type' => 'machine_name',
+    '#default_value' => '',
+    '#maxlength' => 32,
+    '#required' => FALSE,
+    '#description' => t('The machine-readable name of this block region. This name must contain only lowercase letters and underscores. This name must be unique.'),
+    '#disabled' => FALSE,
+    '#machine_name' => array(
+      'exists' => 'ds_extras_region_to_block_unique',
+      'source' => array('additional_settings', 'region_to_block', 'new_block_region'),
+    ),
+  );
+
+  if (!empty($region_blocks_options)) {
+    $form['additional_settings']['region_to_block']['remove_block_region'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Existing block regions'),
+      '#options' => $region_blocks_options,
+      '#description' => t('Toggle regions you want to remove. Make sure no fields are attached in that region anymore or you will not see them anymore.'),
+    );
+  }
+
+  $form['#submit'][] = 'ds_extras_block_submit';
+}
+
+/**
  * Implements hook_block_info().
  */
 function ds_extras_block_info() {
@@ -285,67 +356,6 @@ function ds_extras_ds_layout_region_alter($context, &$region_info) {
     }
   }
 
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function ds_extras_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
-
-  // Bail out if there is no layout or we are working on default view mode.
-  if (!isset($form['#ds_layout']) || $form['#view_mode'] == 'default') {
-    return;
-  }
-  $layout = $form['#ds_layout'];
-
-  // Get the entity_type, bundle and view mode.
-  $entity_type = $form['#entity_type'];
-  $bundle = $form['#bundle'];
-  $view_mode = $form['#view_mode'];
-
-  $region_blocks_options = array();
-  $region_blocks = variable_get('ds_extras_region_blocks', array());
-  foreach ($region_blocks as $key => $block) {
-    if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
-      $region_blocks_options[$key] = t('Remove') . ' '. $block['title'];
-    }
-  }
-
-  $form['additional_settings']['region_to_block'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Block regions'),
-    '#description' => t('Create additional regions in this layout which will be exposed as blocks.')
-  );
-
-  $form['additional_settings']['region_to_block']['new_block_region'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Region name'),
-    '#description' => t('Enter a name to create a new region.'),
-  );
-  $form['additional_settings']['region_to_block']['new_block_region_key'] = array(
-    '#title' => t('Machine name'),
-    '#type' => 'machine_name',
-    '#default_value' => '',
-    '#maxlength' => 32,
-    '#required' => FALSE,
-    '#description' => t('The machine-readable name of this block region. This name must contain only lowercase letters and underscores. This name must be unique.'),
-    '#disabled' => FALSE,
-    '#machine_name' => array(
-      'exists' => 'ds_extras_region_to_block_unique',
-      'source' => array('additional_settings', 'region_to_block', 'new_block_region'),
-    ),
-  );
-
-  if (!empty($region_blocks_options)) {
-    $form['additional_settings']['region_to_block']['remove_block_region'] = array(
-      '#type' => 'checkboxes',
-      '#title' => t('Existing block regions'),
-      '#options' => $region_blocks_options,
-      '#description' => t('Toggle regions you want to remove. Make sure no fields are attached in that region anymore or you will not see them anymore.'),
-    );
-  }
-
-  $form['#submit'][] = 'ds_extras_block_submit';
 }
 
 /**
@@ -460,11 +470,17 @@ function ds_extras_entity_info() {
  * Implements hook_theme_registry_alter().
  */
 function ds_extras_theme_registry_alter(&$theme_registry) {
-
   if (variable_get('ds_extras_vd', FALSE)) {
     $theme_registry['views_view']['preprocess functions'][] = 'ds_extras_preprocess_view';
   }
+}
 
+/**
+ * Submit callback after Field UI submission of a views display.
+ */
+function ds_extras_vd_field_ui_submit($form, &$form_state) {
+  // Add the 'type' key to the extra title key so we can ditch the notice.
+  $form_state['values']['fields']['title']['type'] = 'hidden';
 }
 
 /**
@@ -508,7 +524,6 @@ function ds_extras_preprocess_view(&$variables) {
       drupal_process_attached($variables);
     }
   }
-
 }
 
 /**
