@@ -10,5 +10,47 @@
  * Implements hook_install().
  */
 function ds_test_install() {
+  variable_set('ds_extras_region_to_block', TRUE);
   variable_set('ds_extras_switch_view_mode', TRUE);
+}
+
+/**
+ * Implements hook_ds_fields().
+ */
+/*function ds_extras_ds_fields($entity_type, $bundle, $view_mode) {
+
+}*/
+
+/**
+ * Implements hook_ds_fields_alter().
+ */
+/*function ds_extras_ds_fields_alter(&$fields) {
+
+}*/
+
+/**
+ * Implements hook_ds_layouts().
+ */
+function ds_extras_ds_layouts() {
+  $path = drupal_get_path('module', 'ds_test');
+  $layouts = array(
+    'dstest_1col' => array(
+      'label' => t('Test One column'),
+      'path' => $path . '/dstest_1col',
+      'regions' => array(
+        'ds_content' => t('Content'),
+      ),
+    ),
+    'dstest_2col' => array(
+      'label' => t('Test Two column'),
+      'path' => $path . '/dstest_2col',
+      'regions' => array(
+        'left' => t('Left'),
+        'right' => t('Right')
+      ),
+      'css' => TRUE,
+    ),
+  );
+
+  return $layouts;
 }

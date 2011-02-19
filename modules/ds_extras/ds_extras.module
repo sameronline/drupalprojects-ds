@@ -240,7 +240,7 @@ function ds_extras_form_field_ui_display_overview_form_alter(&$form, &$form_stat
 
   // If there is no layout or we are working on default view mode
   // stop processing for the region to block plugin.
-  if ((!isset($form['#ds_layout']) || $form['#view_mode'] == 'default') && !variable_get('ds_extras_region_to_block', FALSE)) {
+  if (!isset($form['#ds_layout']) || $form['#view_mode'] == 'default' || !variable_get('ds_extras_region_to_block', FALSE)) {
     return;
   }
   $layout = $form['#ds_layout'];

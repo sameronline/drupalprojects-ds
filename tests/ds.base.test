@@ -318,7 +318,7 @@ class dsLayoutsStylesTests extends dsBaseTest {
   }
 
   /**
-   * Test selecting layouts, empty regions, classes and basic fields.
+   * Test selecting layouts, empty regions, classes, region to block and basic fields.
    */
   function testDStestLayouts() {
 
@@ -407,5 +407,71 @@ class dsLayoutsStylesTests extends dsBaseTest {
     $this->dsConfigureUI($hide);
     $this->drupalGet('node/' . $node->nid);
     $this->assertNoRaw('group-footer', 'No region footer found');
+  }
+}
+
+
+/**
+ * Tests for Display Suite hookds.
+ */
+class dsHooksTests extends dsBaseTest {
+
+  /**
+   * Implements getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => t('Hooks'),
+      'description' => t('Tests for hooks: ds_fields, ds_fields_alter, ds_layouts.'),
+      'group' => t('Display suite'),
+    );
+  }
+
+
+  /**
+   * Test fields hooks.
+   */
+  function testDSFields() {
+
+  }
+
+  /**
+   * Test layouts hook.
+   */
+  function testDSLayouts() {
+
+    // Assert our 2 tests layouts are found.
+    $this->drupalGet('admin/structure/types/manage/article/display');
+    $this->assertRaw('Test One column', 'Test One column layout found');
+    $this->assertRaw('Test Two column', 'Test Two column layout found');
+
+    $layout = array(
+      'additional_settings[layout]' => 'dstest_2col',
+    );
+
+    $assert = array(
+      'regions' => array(
+        'left' => '<td colspan="8">' . t('Left') . '</td>',
+        'right' => '<td colspan="8">' . t('Right') . '</td>',
+      ),
+    );
+
+    $fields = array(
+      'fields[author][region]' => 'left',
+      'fields[links][region]' => 'left',
+      'fields[body][region]' => 'right',
+    );
+
+    $this->dsSelectLayout($layout, $assert);
+    $this->dsConfigureUI($fields);
+
+    // Create a node.
+    $settings = array('type' => 'article');
+    $node = $this->drupalCreateNode($settings);
+
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertRaw('group-left', 'Template found (region left)');
+    $this->assertRaw('group-right', 'Template found (region right)');
+    $this->assertRaw('dstest_2col.css', 'Css file included');
   }
 }
