@@ -13,7 +13,7 @@ class dsBaseTest extends DrupalWebTestCase {
    */
   function setUp() {
     parent::setUp('ds', 'ds_test' ,'ds_extras');
-    $this->admin_user = $this->drupalCreateUser(array('admin_view_modes', 'admin_fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access'));
+    $this->admin_user = $this->drupalCreateUser(array('admin_view_modes', 'admin_fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks'));
     $this->drupalLogin($this->admin_user);
   }
 
@@ -407,6 +407,51 @@ class dsLayoutsStylesTests extends dsBaseTest {
     $this->dsConfigureUI($hide);
     $this->drupalGet('node/' . $node->nid);
     $this->assertNoRaw('group-footer', 'No region footer found');
+
+    // Let's create a block field, enable the full mode first.
+    $edit = array('additional_settings[modes][view_modes_custom][full]' => '1');
+    $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
+
+    // Select layout.
+    $layout = array(
+      'additional_settings[layout]' => 'ds_2col',
+    );
+
+    $assert = array(
+      'regions' => array(
+        'left' => '<td colspan="8">' . t('Left') . '</td>',
+        'right' => '<td colspan="8">' . t('Right') . '</td>',
+      ),
+    );
+    $this->dsSelectLayout($layout, $assert, 'admin/structure/types/manage/article/display/full');
+
+    // Create new block field.
+    $edit = array(
+      'additional_settings[region_to_block][new_block_region]' => 'Block region',
+      'additional_settings[region_to_block][new_block_region_key]' => 'block_region',
+    );
+    $this->drupalPost('admin/structure/types/manage/article/display/full', $edit, t('Save'));
+    $this->assertRaw('<td colspan="8">' . t('Block region') . '</td>', 'Block region found');
+
+    // Configure fields
+    $fields = array(
+      'fields[author][region]' => 'left',
+      'fields[links][region]' => 'left',
+      'fields[body][region]' => 'right',
+      'fields[ds_test_field][region]' => 'block_region',
+    );
+    $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/display/full');
+
+    // Set block in sidebar
+    $edit = array(
+      'blocks[ds_extras_block_region][region]' => 'sidebar_first',
+    );
+    $this->drupalPost('admin/structure/block', $edit, t('Save blocks'));
+
+    // Asser the block is on the node page.
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertRaw('<h2>Block region</h2>', 'Block region found');
+    $this->assertText('Test code field on node ' . $node->nid, 'Post date in block');
   }
 }
 
