@@ -26,7 +26,10 @@ function ds_layout_list() {
       foreach ($entity['bundles'] as $bundle_type => $bundle) {
         $row = array();
 
-        $path = isset($bundle['admin']['real path']) ? $bundle['admin']['real path'] : $bundle['admin']['path'];
+        $path = isset($bundle['admin']['real path']) ? $bundle['admin']['real path'] : (isset($bundle['admin']['path']) ? $bundle['admin']['path'] : '');
+        if (empty($path)) {
+          continue;
+        }
 
         $row[] = $bundle['label'];
         $row[] = l(t('Manage display'), $path . '/display');
