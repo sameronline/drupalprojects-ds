@@ -11,8 +11,6 @@
  */
 function ds_ds_fields($entity_type, $bundle, $view_mode) {
 
-  // @todo cleanup, maybe keep static etc.
-
   $custom_fields = ds_custom_fields();
   foreach ($custom_fields as $key => $field) {
     if (isset($field->entities[$entity_type])) {

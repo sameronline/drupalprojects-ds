@@ -433,12 +433,43 @@ class dsHooksTests extends dsBaseTest {
    */
   function testDSFields() {
 
+    // Find the two extra fields from the test module on the node type.
+    $this->drupalGet('admin/structure/types/manage/article/display');
+    $this->assertText('Test code field from hook', 'Test field found on node.');
+    $this->assertText('Field altered', 'Test field altered found on node.');
+
+    // Fields can not be found on user.
+    $this->drupalGet('admin/config/people/accounts/fields');
+    $this->assertNoText('Test code field from hook', 'Test field not found on user.');
+    $this->assertNoText('Field altered', 'Test field altered not found on user.');
+
+    // Select layout.
+    $this->dsSelectLayout();
+
+    $fields = array(
+      'fields[author][region]' => 'left',
+      'fields[links][region]' => 'left',
+      'fields[body][region]' => 'right',
+      'fields[ds_test_field][region]' => 'right',
+    );
+
+    $this->dsSelectLayout();
+    $this->dsConfigureUI($fields);
+
+    // Create a node.
+    $settings = array('type' => 'article');
+    $node = $this->drupalCreateNode($settings);
+    $this->drupalGet('node/' . $node->nid);
+
+    $this->assertRaw('group-left', 'Template found (region left)');
+    $this->assertRaw('group-right', 'Template found (region right)');
+    $this->assertText('Test code field on node ' . $node->nid, 'Test code field found');
   }
 
   /**
    * Test layouts hook.
    */
-  function testDSLayouts() {
+  /*function testDSLayouts() {
 
     // Assert our 2 tests layouts are found.
     $this->drupalGet('admin/structure/types/manage/article/display');
@@ -473,5 +504,5 @@ class dsHooksTests extends dsBaseTest {
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
     $this->assertRaw('dstest_2col.css', 'Css file included');
-  }
+  }*/
 }
