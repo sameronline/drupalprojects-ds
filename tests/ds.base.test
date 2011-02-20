@@ -518,7 +518,7 @@ class dsHooksTests extends dsBaseTest {
   /**
    * Test layouts hook.
    */
-  /*function testDSLayouts() {
+  function testDSLayouts() {
 
     // Assert our 2 tests layouts are found.
     $this->drupalGet('admin/structure/types/manage/article/display');
@@ -553,5 +553,5 @@ class dsHooksTests extends dsBaseTest {
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
     $this->assertRaw('dstest_2col.css', 'Css file included');
-  }*/
+  }
 }

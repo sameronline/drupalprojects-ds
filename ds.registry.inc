@@ -130,7 +130,8 @@ function _ds_theme() {
   foreach ($layouts as $key => $layout) {
     $theme_functions[$key] = array(
       'render element' => 'elements',
-      'template' => 'layouts/' . $key . '/' . strtr($key, '_', '-'),
+      'template' => strtr($key, '_', '-'),
+      'path' => $layout['path'],
     );
   }
 
