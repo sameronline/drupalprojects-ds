@@ -428,7 +428,7 @@ function ds_extras_field_attach_view_alter(&$build, $context) {
   $entity_type = $build['#entity_type'];
   $bundle = $build['#bundle'];
   $view_mode = $context['view_mode'];
-  if ($layout = ds_determine_layout_variables($entity_type, $bundle, $view_mode)) {
+  if ($layout = ds_get_layout($entity_type, $bundle, $view_mode)) {
     foreach ($region_blocks as $block_key => $block) {
       if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}" && isset($layout['settings']['regions'][$block_key]) && !empty($layout['settings']['regions'][$block_key])) {
         foreach ($layout['settings']['regions'][$block_key] as $key => $field) {
@@ -512,7 +512,7 @@ function ds_extras_field_extra_fields() {
  */
 function ds_extras_preprocess_view(&$variables) {
 
-  if ($layout = ds_determine_layout_variables('ds_views', $variables['view']->name . '-' . $variables['view']->current_display, 'default')) {
+  if ($layout = ds_get_layout('ds_views', $variables['view']->name . '-' . $variables['view']->current_display, 'default')) {
     $variables['elements']['#entity_type'] = $variables['#entity_type'] = 'ds_views';
     $variables['elements']['#bundle'] = $variables['#bundle'] = $variables['view']->name . '-' . $variables['view']->current_display;
     $variables['elements']['#view_mode'] = 'default';
