@@ -364,8 +364,11 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
           '#default_value' => isset($layout->settings['classes'], $layout->settings['classes'][$region]) ? $layout->settings['classes'][$region] : '',
         );
       }
+      $form['additional_settings']['ds_classes']['info'] = array('#markup' => l(t('Manage region styles'), 'admin/structure/ds/styles'));
     }
-    $form['additional_settings']['ds_classes']['info'] = array('#markup' => l(t('Manage region styles'), 'admin/structure/ds/styles'));
+    else {
+      $form['additional_settings']['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any styles which can be used on regions.') . '</p><p>' . l(t('Manage region styles'), 'admin/structure/ds/styles') . '</p>');
+    }
   }
 
   $form['additional_settings']['ds_layouts']['old_layout'] = array(

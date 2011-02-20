@@ -24,7 +24,7 @@ function ds_enable() {
       // format for anyone.
       'weight' => 12,
       'filters' => array(
-        // Enable the PHP evaluator filter.
+        // Enable the DS evaluator filter.
         'ds_code' => array(
           'weight' => 0,
           'status' => 1,
