@@ -36,6 +36,32 @@ function ds_search_menu() {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function ds_search_theme() {
+  return array('ds_search_page' => array());
+}
+
+/**
+ * Search page theming.
+ */
+function theme_ds_search_page($build) {
+
+  // Check on empty search results.
+  if (empty($build['search_results'])) {
+
+    // Alter the title and extra variables.
+    if (!empty($build['search_title'])) {
+      $build['search_title']['#markup'] = '<h2>' . t('Your search yielded no results') . '</h2>';
+      unset($build['search_extra']);
+    }
+    $build['search_empty'] = array('#markup' => t('<ul><li>Check if your spelling is correct.</li><li>Remove quotes around phrases to search for each word individually. <em>bike shed</em> will often show more results than <em>&quot;bike shed&quot;</em>.</li><li>Consider loosening your query with <em>OR</em>. <em>bike OR shed</em> will often show more results than <em>bike shed</em>.</li></ul>'));
+  }
+
+  return $build;
+}
+
+/**
  * Menu callback: Display Suite search settings.
  */
 function ds_search_settings($form, $form_state) {
@@ -268,14 +294,14 @@ function ds_search_invoke_node_search($hook) {
  * Implements hook_search_page().
  */
 function ds_search_search_page($results) {
-  $build = array();
+  $build = array('#type' => 'node');
   ds_build_shared_page_variables($build);
 
   foreach ($results as $result) {
-    $build['results'][$result->nid] = node_view($result, variable_get('ds_search_view_mode', 'search_result'));
+    $build['search_results'][$result->nid] = node_view($result, variable_get('ds_search_view_mode', 'search_result'));
   }
 
-  return $build;
+  return theme('ds_search_page', $build);
 }
 
 /**
@@ -283,7 +309,7 @@ function ds_search_search_page($results) {
  */
 if (variable_get('ds_user_override_search_page', FALSE)) {
   function user_search_page($results) {
-    $build = array();
+    $build = array('#type' => 'user');
     global $base_url;
 
     ds_build_shared_page_variables($build);
@@ -318,7 +344,7 @@ if (variable_get('ds_user_override_search_page', FALSE)) {
     }
 
     // Return output.
-    return $build;
+    return theme('ds_search_page', $build);
   }
 }
 
@@ -340,10 +366,10 @@ function ds_build_shared_page_variables(&$build) {
   }
 
   // Search results.
-  $build['results'] = array();
+  $build['search_results'] = array();
 
   // Pager.
-  $build['pager'] = array('#markup' => theme('pager', array('tags' => NULL)));
+  $build['search_pager'] = array('#markup' => theme('pager', array('tags' => NULL)));
 
   // CSS and JS.
   if (variable_get('ds_search_highlight', FALSE)) {
