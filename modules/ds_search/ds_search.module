@@ -455,7 +455,7 @@ function ds_search_form_search_form_alter(&$form, $form_state) {
 function ds_search_apachesolr_update_index(&$document, $node) {
   // Creme de la creme: Put the full node object in the index,
   // so no node_loads are needed for results in the Apache Solr engine.
-  $document->addField('tm_node', serialize(node_load($node->nid)));
+  $document->addField('tm_node', urlencode(serialize(node_load($node->nid))));
 }
 
 /**
@@ -523,8 +523,7 @@ function apachesolr_search_ds_search_execute($keys = NULL, $conditions = NULL) {
   $find = apachesolr_search_search_execute($keys, $conditions);
   $results = array();
   foreach ($find as $item) {
-    // @todo This sometimes failes, try to find out why.
-    $node = @unserialize($item['fields']['tm_node'][0]);
+    $node = @unserialize(urldecode($item['fields']['tm_node'][0]));
     if (!isset($node->nid)) {
       $node = node_load($item['node']->nid);
     }
