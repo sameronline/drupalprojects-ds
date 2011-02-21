@@ -274,7 +274,9 @@ function ds_search_get_keys($keys = NULL) {
 
 /**
  * Invoke a given search hook on the node module.
- * @param $hook Hook to invoke.
+ *
+ * @param $hook
+ *   Hook to invoke.
  */
 function ds_search_invoke_node_search($hook) {
 
