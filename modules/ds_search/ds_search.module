@@ -281,8 +281,14 @@ function ds_search_invoke_node_search($hook) {
   $enabled_search_modules = variable_get('search_active_modules', array());
 
   // If node search is enabled, core is invoking it.
-  if (isset($enabled_search_modules['node']) && $enabled_search_modules['node'] !== 0) {
+  if (isset($enabled_search_modules['node']) && $enabled_search_modules['node'] === 'node') {
     return;
+  }
+  else {
+    $ds_search_type = variable_get('ds_search_type', 'node');
+    if ($ds_search_type != 'node') {
+      return;
+    }
   }
 
   $result = module_invoke('node', $hook);
