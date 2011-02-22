@@ -27,20 +27,17 @@ function ds_ds_fields($entity_type, $bundle, $view_mode) {
     'title' => t('Title'),
     'type' => DS_FIELD_TYPE_FUNCTION,
     'status' => DS_FIELD_STATUS_STATIC,
-    'function' => 'ds_render_title_field',
+    'function' => 'ds_render_field',
     'properties' => array(
-      'formatters' => array(
-        'node_title_nolink_h1' => t('H1 title'),
-        'node_title_link_h1' => t('H1 title, linked to node'),
-        'node_title_nolink_h2' => t('H2 title'),
-        'node_title_link_h2' => t('H2 title, linked to node'),
-        'node_title_nolink_h2_block' => t('H2 block title'),
-        'node_title_link_h2_block' => t('H2 block title, linked to node'),
-        'node_title_nolink_p' => t('Paragraph title'),
-        'node_title_link_p' => t('Paragraph title, linked to node'),
-        'node_title_nolink' => t('Plain text'),
-        'node_title_link' => t('Plain text, linked to node'),
+      'entity_path' => 'node',
+      'entity_id_key' => 'nid',
+      'entity_title_key' => 'title',
+      'settings' => array(
+        'link' => array('type' => 'select', 'options' => array('no', 'yes')),
+        'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
+        'class' => array('type' => 'textfield', 'description' => t('Put a class on the wrapper. Eg: block-title')),
       ),
+      'default' => array('wrapper' => 'h2', 'link' => 0, 'class' => ''),
     )
   );
 
@@ -60,17 +57,22 @@ function ds_ds_fields($entity_type, $bundle, $view_mode) {
     );
   }
 
-  // Read more link.
-  $fields['node']['read_more'] = array(
-    'title' => t('Read more'),
-    'type' => DS_FIELD_TYPE_CODE,
-    'status' => DS_FIELD_STATUS_DEFAULT,
+  // Node link.
+  $fields['node']['node_link'] = array(
+    'title' => t('Node link'),
+    'type' => DS_FIELD_TYPE_FUNCTION,
+    'status' => DS_FIELD_STATUS_STATIC,
+    'function' => 'ds_render_field',
     'properties' => array(
-      'code' => array(
-        'value' => '<?php echo l("Read more", "node/" . $entity->nid); ?>',
-        'format' => 'ds_code',
+      'entity_path' => 'node',
+      'entity_id_key' => 'nid',
+      'settings' => array(
+        'label' => array('type' => 'textfield', 'options' => array('no', 'yes')),
+        'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
+        'class' => array('type' => 'textfield', 'description' => t('Put a class on the wrapper. Eg: block-title')),
       ),
-    ),
+      'default' => array('label' => 'Read more', 'wrapper' => '', 'class' => '', 'link' => 1),
+    )
   );
 
   // Author.
@@ -221,26 +223,22 @@ function ds_ds_fields($entity_type, $bundle, $view_mode) {
     }
   }
 
-
   // Username
   $fields['user']['name'] = array(
     'title' => 'Username',
     'type' => DS_FIELD_TYPE_FUNCTION,
     'status' => DS_FIELD_STATUS_STATIC,
-    'function' => 'ds_render_title_field',
+    'function' => 'ds_render_field',
     'properties' => array(
-      'formatters' => array(
-        'user_name_nolink_h1' => t('H1 title'),
-        'user_name_link_h1' => t('H1 title, linked to user'),
-        'user_name_nolink_h2' => t('H2 title'),
-        'user_name_link_h2' => t('H2 title, linked to user'),
-        'user_name_nolink_h2_block' => t('H2 block title'),
-        'user_name_link_h2_block' => t('H2 block title, linked to user'),
-        'user_name_nolink_p' => t('Paragraph title'),
-        'user_name_link_p' => t('Paragraph title, linked to user'),
-        'user_name_nolink' => t('Plain text'),
-        'user_name_link' => t('Plain text, linked to user'),
+      'entity_path' => 'user',
+      'entity_id_key' => 'uid',
+      'entity_title_key' => 'name',
+      'settings' => array(
+        'link' => array('type' => 'select', 'options' => array('no', 'yes')),
+        'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
+        'class' => array('type' => 'textfield', 'description' => t('Put a class on the wrapper. Eg: block-title')),
       ),
+      'default' => array('wrapper' => 'h2', 'link' => 0, 'class' => ''),
     )
   );
 
@@ -292,20 +290,17 @@ function ds_ds_fields($entity_type, $bundle, $view_mode) {
     'title' => t('Title'),
     'type' => DS_FIELD_TYPE_FUNCTION,
     'status' => DS_FIELD_STATUS_STATIC,
-    'function' => 'ds_render_title_field',
+    'function' => 'ds_render_field',
     'properties' => array(
-      'formatters' => array(
-        'tax_name_nolink_h1' => t('H1 title'),
-        'tax_name_link_h1' => t('H1 title, linked to term'),
-        'tax_name_nolink_h2' => t('H2 title'),
-        'tax_name_link_h2' => t('H2 title, linked to term'),
-        'tax_name_nolink_h2_block' => t('H2 block title'),
-        'tax_name_link_h2_block' => t('H2 block title, linked to term'),
-        'tax_name_nolink_p' => t('Paragraph title'),
-        'tax_name_link_p' => t('Paragraph title, linked to term'),
-        'tax_name_nolink' => t('Plain text'),
-        'tax_name_link' => t('Plain text, linked to term'),
+      'entity_path' => 'taxonomy/term',
+      'entity_id_key' => 'tid',
+      'entity_title_key' => 'name',
+      'settings' => array(
+        'link' => array('type' => 'select', 'options' => array('no', 'yes')),
+        'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
+        'class' => array('type' => 'textfield', 'description' => t('Put a class on the wrapper. Eg: block-title')),
       ),
+      'default' => array('wrapper' => 'h2', 'link' => 0, 'class' => ''),
     )
   );
 

@@ -67,7 +67,7 @@ class dsSearchTests extends dsBaseTest {
       'fields[post_date][region]' => 'header',
       'fields[author][region]' => 'left',
       'fields[body][region]' => 'right',
-      'fields[read_more][region]' => 'footer',
+      'fields[node_link][region]' => 'footer',
     );
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/display/search_result');
 

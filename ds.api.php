@@ -67,6 +67,13 @@ function hook_ds_fields($entity_type, $bundle, $view_mode) {
         'node_title_link_h1' => t('H1 title, linked to node'),
       ),
 
+      // settings & default: optional if you have a settings form for your field.
+      'settings' => array(
+        'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
+        'link' => array('type' => 'select', 'options' => array('yes', 'no')),
+      ),
+      'default' => array('wrapper' => 'h2', 'link' => 0),
+
       // code: optional, only for code field.
       'code' => 'my code here',
 
@@ -98,6 +105,46 @@ function hook_ds_fields_alter(&$fields) {
   if (isset($fields['title'])) {
     $fields['title']['title'] = t('My title');
   }
+}
+
+/**
+ * Creates a summary for the field format configuration summary.
+ *
+ * As soon as you implement hook_ds_fields() and one of the fields
+ * has a settings key, Display Suite will call this hook for the summary.
+ *
+ * @param $field
+ *   The configuration of the field.
+ *
+ * @return $summary
+ *   The summary to show on the Field UI.
+ */
+function hook_ds_field_settings_summary($field) {
+  return 'Field summary';
+}
+
+/**
+ * Return a settings form for a Display Suite field.
+ *
+ * As soon as you implement hook_ds_fields() and one of the fields
+ * has a settings key, Display Suite will call this hook for field form.
+ *
+ * @param $field
+ *   The configuration of the field.
+ *
+ * @return $form
+ *   A form definition.
+ */
+function ds_ds_format_settings($field) {
+
+  // Saved formatter settings are on $field['formatter_settings'];
+  $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
+
+  $form['label'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Label'),
+    '#default_value' => $settings['label'],
+  );
 }
 
 /**

@@ -26,7 +26,6 @@ function ds_extras_ds_fields($entity_type, $bundle, $view_mode) {
         'formatters' => array(
           'vd_title_h1' => t('H1 title'),
           'vd_title_h2' => t('H2 title'),
-          'vd_title_h2_block' => t('H2 block title'),
           'vd_title_p' => t('Paragraph title'),
         ),
       )

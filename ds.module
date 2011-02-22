@@ -183,11 +183,13 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
   static $static_fields, $ds_fields_cached = array();
   static $loaded = FALSE;
 
-  // Get stuff from cache if possible.
+  // @todo revise this, something is not quite right here.
+
+  // Get fields from cache.
   if (!$loaded) {
     $loaded = TRUE;
-    if ($cache = cache_get('ds_fields_cached', 'cache')) {
-      $ds_fields_cached = $static_fields = $cache->data;
+    if (!$reset && $cached_fields = cache_get('ds_fields_cached', 'cache')) {
+      $ds_fields_cached = $static_fields = $cached_fields->data;
     }
   }
 
@@ -205,6 +207,10 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
         if (!empty($all_fields)) {
           foreach ($all_fields as $key => $field_results) {
             if ($key === $entity_type) {
+              // Add module key to field definition.
+              foreach ($field_results as $f => $d) {
+                $field_results[$f]['module'] = $module;
+              }
               $fields = array_merge($field_results, $fields);
             }
           }
@@ -417,6 +423,9 @@ function ds_field_attach_view_alter(&$build, $context) {
       continue;
     }
 
+    if (isset($field_values[$key]['formatter_settings'])) {
+      $field['formatter_settings'] = $field_values[$key]['formatter_settings'];
+    }
     $field['formatter'] = $format;
     $field_value = ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_mode);
 
@@ -463,8 +472,9 @@ function ds_field_attach_view_alter(&$build, $context) {
  */
 function ds_preprocess_entity(&$variables) {
   if ($layout = ds_get_layout($variables['elements']['#entity_type'], $variables['elements']['#bundle'], $variables['elements']['#view_mode'])) {
+
     $render_container = 'content';
-    // Hard-referenced user exception.
+    // Hard-coded user exception.
     if ($variables['elements']['#entity_type'] == 'user') {
       $render_container = 'user_profile';
     }
@@ -681,42 +691,43 @@ function ds_render_block_field($field) {
 }
 
 /**
- * Render a title field.
+ * Render a field.
  */
-function ds_render_title_field($field) {
+function ds_render_field($field) {
 
-  $output = '';
-  $formatter = explode('_', $field['formatter']);
-  $entity_type = $field['entity_type'];
+  $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : array();
+  $settings += $field['properties']['default'];
 
   // Basic string.
-  $output = $field['entity']->{$formatter[1]};
+  if (isset($settings['label'])) {
+    $output = t($settings['label']);
+  }
+  elseif (isset($field['entity']->{$field['properties']['entity_title_key']})) {
+    $output = $field['entity']->{$field['properties']['entity_title_key']};
+  }
+
+  if (!$output) {
+    return;
+  }
 
   // Link.
-  // @todo put all this stuff into the properties ?
-  if ($formatter[2] == 'link') {
+  if ($settings['link']) {
     if (isset($field['entity']->uri['path'])) {
       $path = $field['entity']->uri['path'];
     }
     else {
-      // Term.
-      if ($entity_type == 'taxonomy_term') {
-        $path = 'taxonomy/term/' . $field['entity']->tid;
-      }
-      else {
-        // Node and user.
-        $entity_info = entity_get_info($entity_type);
-        $id_key = $entity_info['entity keys']['id'];
-        $path = $entity_type . '/' . $field['entity']->{$id_key};
-      }
+      $entity_key = $field['properties']['entity_id_key'];
+      $entity_path = $field['properties']['entity_path'];
+      $path = $entity_path . '/' . $field['entity']->{$entity_key};
     }
     $output = l($output, $path);
   }
 
-  // Tags / class.
-  if (isset($formatter[3])) {
-    $class = (isset($formatter[4])) ? 'class="' . $formatter[4] . '-title"' : '';
-    $output = '<' . $formatter[3] . ' ' . $class . '>' . $output . '</' . $formatter[3] . '>';
+  // Wrapper and class.
+  if (!empty($settings['wrapper'])) {
+    $wrapper = $settings['wrapper'];
+    $class = (!empty($settings['class'])) ? ' class="' . $settings['class'] . '"' : '';
+    $output = '<' . $wrapper . $class . '>' . $output . '</' . $wrapper . '>';
   }
 
   return $output;

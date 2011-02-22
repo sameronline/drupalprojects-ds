@@ -72,8 +72,6 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
   if (!variable_get('ds_extras_vd', FALSE) && in_array($hook, $vd_hooks)) {
     unset($implementations['ds_extras']);
   }
-
-  // Disable
 }
 
 /**
@@ -129,6 +127,7 @@ function ds_extras_settings($form) {
  */
 function ds_extras_settings_submit($form, &$form_state) {
   // Clear module_implements cache and rebuild menu.
+  cache_clear_all('entity_info:', 'cache', TRUE);
   cache_clear_all('module_implements', 'cache_bootstrap');
   menu_rebuild();
 }
@@ -445,6 +444,10 @@ function ds_extras_field_attach_view_alter(&$build, $context) {
  */
 function ds_extras_entity_info() {
 
+  if (!variable_get('ds_extras_vd', FALSE)) {
+    return;
+  }
+
   $bundles = array();
   $result = db_query('SELECT vd, label FROM {ds_vd}');
   foreach ($result as $row) {
@@ -519,6 +522,14 @@ function ds_extras_preprocess_view(&$variables) {
 
     $variables['ds_views'] = $variables['view'];
     ds_field_attach_view_alter($variables, array('view_mode' => 'default', 'entity' => $variables['view']));
+
+    // Special case for views function fields.
+    if (isset($variables['view']->ds_vd)) {
+      foreach ($variables['view']->ds_vd as $key => $value) {
+        $variables[$key] = $value;
+      }
+    }
+
     ds_preprocess_entity($variables);
     if (isset($variables['#attached'])) {
       drupal_process_attached($variables);
@@ -539,5 +550,9 @@ function ds_vd_render_title_field($field) {
   $output = '';
   $formatter = explode('_', $field['formatter']);
   $tag = $formatter[2];
-  return '<' . $tag . '>'. check_plain($field['entity']->get_title()) .'</' . $tag . '>';
+  $output = '<' . $tag . '>'. check_plain($field['entity']->get_title()) .'</' . $tag . '>';
+
+  // Views is a special case here, we'll put it back in
+  $field['entity']->preprocess_fields[] = 'title';
+  $field['entity']->ds_vd['title'] = $output;
 }

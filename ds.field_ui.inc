@@ -11,6 +11,8 @@
  */
 function ds_field_ui_fields_layouts(&$form, &$form_state) {
 
+  // @todo fix the freaking colspans. (and let it behave with fieldgroup too).
+
   // Get the entity_type, bundle and view mode.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
@@ -20,7 +22,7 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, $form);
 
   // Add the fields.
-  _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form);
+  _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form, $form_state);
 
   // Attach js.
   $form['#attached']['js'][] = drupal_get_path('module', 'ds') . '/js/ds.js';
@@ -178,7 +180,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
     $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
 
-    // Ignore the Field group module.
+    // Ignore the Field group module and the region to block plugin.
     foreach ($fields as $key => $field) {
       if ($key == '_add_new_group' || $key == '_add_new_block_region') {
         continue;
@@ -189,6 +191,8 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       $record->settings['regions'][$field['region']][] = $key;
       $record->settings['fields'][$key] = $field['region'];
     }
+
+    // Save the region classes.
     $record->settings['classes'] = array();
     foreach (array_keys($form['fields']['#regions']) as $region) {
       // Ignore hidden region.
@@ -226,7 +230,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   // Setup some variables.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = isset($form['#view_mode']) ? $form['#view_mode'] : 'form';
+  $view_mode = $form['#view_mode'];
 
   // Delete previous field configuration configuration.
   db_delete('ds_settings')
@@ -254,6 +258,11 @@ function ds_field_ui_fields_save($form, &$form_state) {
     $settings['label'] = $field_values['label'];
     $settings['format'] = $field_values['format']['type'];
 
+    // Any formatter settings.
+    if (isset($form_state['formatter_settings'][$field])) {
+      $settings['formatter_settings'] = $form_state['formatter_settings'][$field];
+    }
+
     // Save the record.
     $record->field = $field;
 
@@ -267,6 +276,88 @@ function ds_field_ui_fields_save($form, &$form_state) {
 
   // Clear entity cache.
   cache_clear_all('entity_info', 'cache', TRUE);
+}
+
+/**
+ * Creates a summary for the field format configuration summary.
+ *
+ * @param $field
+ *   The configuration of the field.
+ *
+ * @return $summary
+ *   An markup array.
+ */
+function ds_field_settings_summary($field) {
+  $summary = module_invoke($field['module'], 'ds_field_format_summary', $field);
+  return array(
+    '#markup' => '<div class="field-formatter-summary">' . $summary . '</div>',
+    '#cell_attributes' => array('class' => array('field-formatter-summary-cell')),
+  );
+}
+
+/**
+ * Creates a form for Display Suite fields.
+ * .
+ * @param $field
+ *   The field definition.
+ *
+ * @return $form
+ *   A form definition.
+ */
+function ds_format_settings_form($field) {
+  return module_invoke($field['module'], 'ds_format_settings', $field);
+}
+
+/**
+ * Implements hook_ds_field_format_summary().
+ */
+function ds_ds_field_format_summary($field) {
+  $summary = '';
+  $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
+  foreach ($settings as $key => $value) {
+    if (!empty($value)) {
+      $value = is_numeric($value) ? ($value ? t('Yes') : t('No')) : $value;
+      $summary .= ucfirst(check_plain($key)) . ': ' . $value . '<br />';
+    }
+  }
+  return $summary;
+}
+
+/**
+ * Implements hook_ds_format_settings().
+ */
+function ds_ds_format_settings($field) {
+  $form = array();
+
+  $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
+
+  foreach ($field['properties']['settings'] as $key => $value) {
+
+    switch ($value['type']) {
+
+      case 'textfield':
+        $form[$key] = array(
+          '#type' => 'textfield',
+          '#title' => check_plain(ucfirst($key)),
+          '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
+          '#description' => isset($value['description']) ? check_plain($value['description']) : '',
+        );
+        break;
+
+      case 'select':
+        $form[$key] = array(
+          '#type' => 'select',
+          '#title' => check_plain(ucfirst($key)),
+          '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
+          '#options' => $value['options'],
+          '#description' => isset($value['description']) ? check_plain($value['description']) : '',
+        );
+        break;
+
+    }
+  }
+
+  return $form;
 }
 
 /**
@@ -392,8 +483,10 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
  *   The name of the view_mode
  * @param $form
  *   A collection of form properties.
+ * @param $form_state
+ *   A collection of form_state properties.
  */
-function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form) {
+function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_state) {
 
   // Get the fields.
   $fields = ds_get_fields($entity_type, $bundle, $view_mode, TRUE, FALSE);
@@ -411,11 +504,19 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form) {
   foreach ($fields as $key => $field) {
     $form['#ds_fields'][] = $key;
 
+    // Check on formatter settings.
+    if (isset($form_state['formatter_settings'][$key])) {
+      $field['formatter_settings'] = $form_state['formatter_settings'][$key];
+    }
+    elseif (isset($field_values[$key]['formatter_settings'])) {
+      $field['formatter_settings'] = $field_values[$key]['formatter_settings'];
+      $form_state['formatter_settings'][$key] = $field['formatter_settings'];
+    }
+
     $hidden = array('hidden' => t('<Hidden>'));
     $formatters = isset($field['properties']['formatters']) ? $hidden + $field['properties']['formatters'] : $hidden + array('default' => t('Default'));
 
     $table[$key] = array(
-      //'#parents' => array($key),
       '#row_type' => 'field',
       '#js_settings' => array('field'),
       '#region_callback' => 'field_ui_display_overview_row_region',
@@ -459,6 +560,71 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form) {
       'settings_summary' => array(),
       'settings_edit' => array(),
     );
+
+    // Not all fields have settings.
+    if (!isset($field['properties']['settings'])) {
+      continue;
+    }
+
+    $base_button = array(
+      '#submit' => array('field_ui_display_overview_multistep_submit'),
+      '#ajax' => array(
+        'callback' => 'field_ui_display_overview_multistep_js',
+        'wrapper' => 'field-display-overview-wrapper',
+        'effect' => 'fade',
+      ),
+      '#field_name' => $key,
+    );
+
+    if ($form_state['formatter_settings_edit'] == $key) {
+      $table[$key]['settings_edit'] = array(
+        '#type' => 'container',
+        '#attributes' => array('class' => array('field-formatter-settings-edit-form')),
+        '#parents' => array('fields', $key, 'settings_edit_form'),
+        '#weight' => -5,
+        'label' => array(
+          '#markup' => t('Field settings'),
+        ),
+        // Create a settings form where hooks can pick in.
+        'settings' => ds_format_settings_form($field),
+        'actions' => array(
+          '#type' => 'actions',
+          'save_settings' => $base_button + array(
+            '#type' => 'submit',
+            '#name' => $key . '_formatter_settings_update',
+            '#value' => t('Update'),
+            '#op' => 'update',
+          ),
+          'cancel_settings' => $base_button + array(
+            '#type' => 'submit',
+            '#name' => $key . '_formatter_settings_cancel',
+            '#value' => t('Cancel'),
+            '#op' => 'cancel',
+            // Do not check errors for the 'Cancel' button.
+            '#limit_validation_errors' => array(),
+          ),
+        ),
+      );
+      $table[$key]['#attributes']['class'][] = 'field-formatter-settings-editing';
+      $table[$key]['format']['type']['#attributes']['class'] = array('element-invisible');
+    }
+    else {
+      // After saving, the settings are updated here aswell. First we create
+      // the element for the table cell.
+      $table[$key]['settings_summary'] = ds_field_settings_summary($field);
+      // Add the configure button.
+      $table[$key]['settings_edit'] = $base_button + array(
+        '#type' => 'image_button',
+        '#name' => $key . '_group_settings_edit',
+        '#src' => 'misc/configure.png',
+        '#attributes' => array('class' => array('field-formatter-settings-edit'), 'alt' => t('Edit')),
+        '#op' => 'edit',
+        // Do not check errors for the 'Edit' button.
+        '#limit_validation_errors' => array(),
+        '#prefix' => '<div class="field-formatter-settings-edit-wrapper">',
+        '#suffix' => '</div>',
+      );
+    }
   }
 
   // Add fields submit handler.
@@ -475,8 +641,6 @@ function _ds_styles() {
   if (!$run) {
     $region_styles = trim(variable_get('ds_styles_regions', ''));
     if (!empty($region_styles)) {
-      // @todo multiple select has become smarter in D7 no ? so
-      // none can probably be ditched ..
       $styles[''] = t('None');
       $region_styles = explode("\n", $region_styles);
       foreach ($region_styles as $key => $value) {
@@ -503,7 +667,9 @@ function _ds_styles() {
  */
 function _ds_sort_fields($a, $subkey) {
   foreach ($a as $k => $v) {
-    $b[$k] = $v[$subkey];
+    if (isset($v[$subkey])) {
+      $b[$k] = $v[$subkey];
+    }
   }
   asort($b);
   foreach ($b as $key => $val) {
