@@ -49,8 +49,9 @@ function ds_disable() {
  * Implements hook_schema().
  */
 function ds_schema() {
+
   $schema['ds_settings'] = array(
-    'description' => 'The table that holds settings for the display of every entity.',
+    'description' => 'The table that holds field settings per display of every entity.',
     'fields' => array(
       'field' => array(
         'description' => 'The machine name of the field.',

@@ -22,15 +22,6 @@ class dsSearchTests extends dsBaseTest {
     );
   }
 
-  /**
-   * Debug helper function. Writes values away to a text file in the files directory.
-   */
-  function _debugHelper($value, $writetype = 'a+') {
-    $debug = fopen($this->originalFileDirectory .'/simpletestdebug.txt', 'a+');
-    fwrite($debug, print_r($value, TRUE) ."\n");
-    fclose($debug);
-  }
-
   function testDSSearch() {
 
     // Create nodes.
@@ -79,12 +70,6 @@ class dsSearchTests extends dsBaseTest {
       'fields[node_link][region]' => 'footer',
     );
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/display/search_result');
-
-  $fields = ds_get_fields('node', 'article', 'search_result');
-  $field_values = ds_get_fields_configuration('node', 'article', 'search_result');
-  $this->_debugHelper($fields);
-  $this->_debugHelper($field_values);
-
 
     // Configure ds search.
     $edit = array('ds_user_override_search_page' => '1');

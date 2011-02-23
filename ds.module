@@ -692,7 +692,7 @@ function ds_render_field($field) {
   if (isset($settings['link text'])) {
     $output = t($settings['link text']);
   }
-  elseif (isset($field['entity']->{$field['properties']['entity_render_key']})) {
+  elseif (isset($field['properties']['entity_render_key']) && isset($field['entity']->{$field['properties']['entity_render_key']})) {
     $output = $field['entity']->{$field['properties']['entity_render_key']};
   }
 
