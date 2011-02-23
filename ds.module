@@ -163,7 +163,7 @@ function ds_filter_tips($filter, $format, $long = FALSE) {
 }
 
 /**
- * API function to get fields.
+ * Get all fields.
  *
  * @param $entity_type
  *   The name of the entity.
@@ -308,6 +308,51 @@ function ds_custom_fields() {
 }
 
 /**
+ * Get a layout.
+ *
+ * @param $entity_type
+ *   The name of the entity.
+ * @param $bundle
+ *   The name of the bundle.
+ * @param $view_mode
+ *   The name of the view mode.
+ * @return $layout
+ *   Array of layout variables for the regions.
+ */
+function ds_get_layout($entity_type, $bundle, $view_mode) {
+
+  static $layouts = array();
+  $layout_key = $entity_type . '_' . $bundle . '_' . $view_mode;
+
+  if (!isset($layouts[$layout_key])) {
+
+    $entity_info = entity_get_info();
+
+    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
+    $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
+
+    // Check if a layout is configured.
+    if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode])) {
+      $layouts[$layout_key] = $entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode];
+    }
+
+    // In case $view_mode is not form and not found, check if we have a default layout,
+    // but only if the view mode settings aren't overridden for this view mode.
+    if ($view_mode != 'default' && !$overriden && isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'])) {
+      $layouts[$layout_key] = $entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'];
+    }
+
+    // Register the false return value as well.
+    if (!isset($layouts[$layout_key])) {
+      $layouts[$layout_key] = FALSE;
+    }
+
+  }
+
+  return $layouts[$layout_key];
+}
+
+/**
  * Get the value for a Display Suite field.
  *
  * @param $key
@@ -326,9 +371,6 @@ function ds_custom_fields() {
  *   The markup of the field used for output.
  */
 function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_mode) {
-  // @todo it seems every field comes through this one, although sometimes format should be hidden.
-  // we're not saving this right in field_ui.inc (ie, if a field has no layout, it should have format
-  // set to hidden, no matter what.
 
   static $included_files = array();
 
@@ -364,7 +406,7 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
 }
 
 /**
- * Get the configuration for field settings.
+ * Get the fields configuration.
  *
  * @param $entity_type
  *   The name of the entity.
@@ -381,10 +423,7 @@ function ds_get_fields_configuration($entity_type, $bundle, $view_mode) {
       $fields_configuration = $cache->data;
     }
     else {
-      $results = db_select('ds_settings', 'ds')
-                  ->fields('ds', array('field', 'entity_type', 'bundle', 'view_mode', 'settings'))
-                  ->execute();
-
+      $results = db_query('SELECT field, entity_type, bundle, view_mode, settings FROM {ds_settings}');
       foreach ($results as $row) {
         $fields_configuration[$row->entity_type][$row->bundle][$row->view_mode][$row->field] = unserialize($row->settings);
       }
@@ -406,7 +445,6 @@ function ds_field_attach_view_alter(&$build, $context) {
     return;
   }
 
-  // @TODO try to keep the fields static in case we need to add them over and over ?
   $entity_type = $build['#entity_type'];
   $bundle = $build['#bundle'];
   $view_mode = $context['view_mode'];
@@ -461,16 +499,15 @@ function ds_field_attach_view_alter(&$build, $context) {
 }
 
 /**
- * Implements hook_preprocess_entity().
+ * Add variables to an entity.
  *
- * This hook doesn't exists but is added in ds_theme_registry_alter()
- * to every entity that is themeable to modify the theme_hook_suggestions key.
+ * This function is added in ds_theme_registry_alter().
  */
-function ds_preprocess_entity(&$variables) {
+function ds_entity_variables(&$variables) {
   if ($layout = ds_get_layout($variables['elements']['#entity_type'], $variables['elements']['#bundle'], $variables['elements']['#view_mode'])) {
 
     $render_container = 'content';
-    // Hard-coded user exception.
+    // User uses user_profile as container.
     if ($variables['elements']['#entity_type'] == 'user') {
       $render_container = 'user_profile';
     }
@@ -486,7 +523,7 @@ function ds_preprocess_entity(&$variables) {
           unset($variables['rdf_template_variable_attributes_array'][$field]);
         }
 
-        // Move the field to content so we can render them, remove it
+        // Move the field to content so it renders, remove it
         // because we don't need it anymore.
         if (isset($variables[$field])) {
           $variables[$render_container][$field] = $variables[$field];
@@ -504,11 +541,13 @@ function ds_preprocess_entity(&$variables) {
     // Hide empty regions.
     $hide_empty_regions = $layout['settings']['hide_empty_regions'];
 
-    // Add template files for hook_theme_suggestions and also the regions.
+    // Add template suggestions.
     $variables['theme_hook_suggestions'][] = $layout['layout'];
     $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'];
     $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
     $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
+
+    // Create region variables based on the layout setting.
     foreach ($layout['regions'] as $region_name => $region) {
       // Create the region content.
       $variables[$region_name] = ds_render_region($variables[$render_container], $region_name, $layout);
@@ -521,55 +560,10 @@ function ds_preprocess_entity(&$variables) {
         $variables[$region_name] = '&nbsp;';
       }
 
-      // Create classes for this region.
+      // Add extras classes to the region.
       $variables[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' '. implode('', $layout['settings']['classes'][$region_name]) : '';
     }
   }
-}
-
-/**
- * Get the layout.
- *
- * @param $entity_type
- *   The name of the entity.
- * @param $bundle
- *   The name of the bundle.
- * @param $view_mode
- *   The name of the view mode.
- * @return $layout
- *   Array of layout variables for the regions.
- */
-function ds_get_layout($entity_type, $bundle, $view_mode) {
-
-  static $layouts = array();
-  $layout_key = $entity_type . '_' . $bundle . '_' . $view_mode;
-
-  if (!isset($layouts[$layout_key])) {
-
-    $entity_info = entity_get_info();
-
-    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-    $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
-
-    // Check if a layout is configured.
-    if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode])) {
-      $layouts[$layout_key] = $entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode];
-    }
-
-    // In case $view_mode is not form and not found, check if we have a default layout,
-    // but only if the view mode settings aren't overridden for this view mode.
-    if ($view_mode != 'default' && !$overriden && isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'])) {
-      $layouts[$layout_key] = $entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'];
-    }
-
-    // Register the false return value as well.
-    if (!isset($layouts[$layout_key])) {
-      $layouts[$layout_key] = FALSE;
-    }
-
-  }
-
-  return $layouts[$layout_key];
 }
 
 /**
@@ -697,8 +691,8 @@ function ds_render_field($field) {
   if (isset($settings['label'])) {
     $output = t($settings['label']);
   }
-  elseif (isset($field['entity']->{$field['properties']['entity_title_key']})) {
-    $output = $field['entity']->{$field['properties']['entity_title_key']};
+  elseif (isset($field['entity']->{$field['properties']['entity_render_key']})) {
+    $output = $field['entity']->{$field['properties']['entity_render_key']};
   }
 
   if (!$output) {

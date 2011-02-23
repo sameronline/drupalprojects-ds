@@ -180,11 +180,18 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
     $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
 
-    // Ignore the Field group module and the region to block plugin.
     foreach ($fields as $key => $field) {
+
+      // Ignore the Field group module and the region to block plugin.
       if ($key == '_add_new_group' || $key == '_add_new_block_region') {
         continue;
       }
+
+      // In case the region hidden, do not save.
+      if ($field['region'] == 'hidden') {
+        continue;
+      }
+
       if (!isset($record->settings['regions'][$field['region']])) {
         $record->settings['regions'][$field['region']] = array();
       }
@@ -195,10 +202,13 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     // Save the region classes.
     $record->settings['classes'] = array();
     foreach (array_keys($form['fields']['#regions']) as $region) {
+
       // Ignore hidden region.
       if ($region == 'hidden') {
         continue;
       }
+
+      // Check we the settings is defined.
       if (isset($form_state['values']['additional_settings'][$region])) {
         // Do not save empty string.
         $classes = implode(' ', $form_state['values']['additional_settings'][$region]);
@@ -278,7 +288,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
     drupal_write_record('ds_settings', $record);
   }
 
-  // Clear the ds_fields_configuration cache.
+  // Clear the ds_fields cache.
   cache_clear_all('ds_fields_cached', 'cache');
   cache_clear_all('ds_fields_configuration', 'cache');
 

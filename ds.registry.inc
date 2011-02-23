@@ -143,13 +143,13 @@ function _ds_theme() {
  */
 function _ds_theme_registry_alter(&$theme_registry) {
 
-  // Inject ds_preprocess_entity in all base theming functions. User profile is
-  // different than the rest, using user_profile though.
+  // Inject ds_entity_variables in all entity theming functions.
   $entity_info = entity_get_info();
   foreach ($entity_info as $entity => $info) {
     if (isset($entity_info[$entity]['fieldable']) && $entity_info[$entity]['fieldable']) {
+      // User uses user_profile for theming.
       if ($entity == 'user') $entity = 'user_profile';
-      $theme_registry[$entity]['preprocess functions'][] = 'ds_preprocess_entity';
+      $theme_registry[$entity]['preprocess functions'][] = 'ds_entity_variables';
     }
   }
 }

@@ -31,7 +31,7 @@ function ds_ds_fields($entity_type, $bundle, $view_mode) {
     'properties' => array(
       'entity_path' => 'node',
       'entity_id_key' => 'nid',
-      'entity_title_key' => 'title',
+      'entity_render_key' => 'title',
       'settings' => array(
         'link' => array('type' => 'select', 'options' => array('no', 'yes')),
         'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
@@ -232,7 +232,7 @@ function ds_ds_fields($entity_type, $bundle, $view_mode) {
     'properties' => array(
       'entity_path' => 'user',
       'entity_id_key' => 'uid',
-      'entity_title_key' => 'name',
+      'entity_render_key' => 'name',
       'settings' => array(
         'link' => array('type' => 'select', 'options' => array('no', 'yes')),
         'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
@@ -294,7 +294,7 @@ function ds_ds_fields($entity_type, $bundle, $view_mode) {
     'properties' => array(
       'entity_path' => 'taxonomy/term',
       'entity_id_key' => 'tid',
-      'entity_title_key' => 'name',
+      'entity_render_key' => 'name',
       'settings' => array(
         'link' => array('type' => 'select', 'options' => array('no', 'yes')),
         'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
