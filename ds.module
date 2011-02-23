@@ -684,18 +684,19 @@ function ds_render_block_field($field) {
  */
 function ds_render_field($field) {
 
+  $output = '';
   $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : array();
   $settings += $field['properties']['default'];
 
   // Basic string.
-  if (isset($settings['label'])) {
-    $output = t($settings['label']);
+  if (isset($settings['link text'])) {
+    $output = t($settings['link text']);
   }
   elseif (isset($field['entity']->{$field['properties']['entity_render_key']})) {
     $output = $field['entity']->{$field['properties']['entity_render_key']};
   }
 
-  if (!$output) {
+  if (empty($output)) {
     return;
   }
 
