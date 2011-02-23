@@ -59,7 +59,7 @@ function ds_ds_fields($entity_type, $bundle, $view_mode) {
 
   // Node link.
   $fields['node']['node_link'] = array(
-    'title' => t('Node link'),
+    'title' => t('Read more'),
     'type' => DS_FIELD_TYPE_FUNCTION,
     'status' => DS_FIELD_STATUS_STATIC,
     'function' => 'ds_render_field',
@@ -67,11 +67,11 @@ function ds_ds_fields($entity_type, $bundle, $view_mode) {
       'entity_path' => 'node',
       'entity_id_key' => 'nid',
       'settings' => array(
-        'label' => array('type' => 'textfield', 'options' => array('no', 'yes')),
+        'link text' => array('type' => 'textfield', 'options' => array('no', 'yes')),
         'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
         'class' => array('type' => 'textfield', 'description' => t('Put a class on the wrapper. Eg: block-title')),
       ),
-      'default' => array('label' => 'Read more', 'wrapper' => '', 'class' => '', 'link' => 1),
+      'default' => array('link text' => 'Read more', 'wrapper' => '', 'class' => '', 'link' => 1),
     )
   );
 
