@@ -336,8 +336,8 @@ function ds_field_settings_summary($field) {
  * @return $form
  *   A form definition.
  */
-function ds_format_settings_form($field) {
-  return module_invoke($field['module'], 'ds_format_settings', $field);
+function ds_field_settings_form($field) {
+  return module_invoke($field['module'], 'ds_field_settings_form', $field);
 }
 
 /**
@@ -358,7 +358,7 @@ function ds_ds_field_format_summary($field) {
 /**
  * Implements hook_ds_format_settings().
  */
-function ds_ds_format_settings($field) {
+function ds_ds_field_settings_form($field) {
   $form = array();
 
   $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
@@ -407,7 +407,7 @@ function ds_ds_format_settings($field) {
 function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
 
   $layout_options = array();
-  $ds_layouts = module_invoke_all('ds_layouts');
+  $ds_layouts = module_invoke_all('ds_layout_info');
   $layout_options = array('' => t(' - None - '));
   foreach ($ds_layouts as $key => $layout) {
     $layout_options[$key] = $layout['label'];
@@ -628,7 +628,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
           '#markup' => t('Field settings'),
         ),
         // Create a settings form where hooks can pick in.
-        'settings' => ds_format_settings_form($field),
+        'settings' => ds_field_settings_form($field),
         'actions' => array(
           '#type' => 'actions',
           'save_settings' => $base_button + array(

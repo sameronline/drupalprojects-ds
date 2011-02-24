@@ -159,9 +159,9 @@ function _ds_theme_registry_alter(&$theme_registry) {
  */
 function _ds_entity_info_alter(&$entity_info) {
 
-  // Add custom view modes to entities.
   ctools_include('export');
-  // @todo convert to ds_get_info that Stalski is writing.
+
+  // Add custom view modes to entities.
   $custom_view_modes = ctools_export_load_object('ds_view_modes');
   foreach ($custom_view_modes as $view_mode_key => $view_mode_value) {
     $view_mode = array(
@@ -176,7 +176,7 @@ function _ds_entity_info_alter(&$entity_info) {
   }
 
   // Add layout if applicable.
-  $ds_layouts = module_invoke_all('ds_layouts');
+  $ds_layouts = module_invoke_all('ds_layout_info');
   $results = db_query('SELECT entity_type, bundle, view_mode, layout, settings FROM {ds_layouts}')->fetchAll();
   foreach ($results as $row) {
     $layout = $ds_layouts[$row->layout];
@@ -187,9 +187,9 @@ function _ds_entity_info_alter(&$entity_info) {
 }
 
 /**
- * Implements hook_ds_layouts().
+ * Implements hook_ds_layout_info().
  */
-function _ds_ds_layouts() {
+function _ds_ds_layout_info() {
   $path = drupal_get_path('module', 'ds');
   $layouts = array(
     'ds_1col' => array(

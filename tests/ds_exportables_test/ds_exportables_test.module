@@ -21,9 +21,9 @@ function ds_exportables_test_ctools_plugin_api($module, $api) {
  */
 
 /**
- * Implementation of hook_ds_view_modes()
+ * Implementation of hook_ds_view_modes_info()
  */
-function ds_exportables_test_ds_view_modes() {
+function ds_exportables_test_ds_view_modes_info() {
   $ds_view_modes = array();
 
   $ds_view_mode = new stdClass;

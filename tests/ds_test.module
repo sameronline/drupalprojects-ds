@@ -15,9 +15,9 @@ function ds_test_install() {
 }
 
 /**
- * Implements hook_ds_fields().
+ * Implements hook_ds_fields_info().
  */
-function ds_test_ds_fields($entity_type, $bundle, $view_mode) {
+function ds_test_ds_fields_info($entity_type, $bundle, $view_mode) {
   if ($entity_type == 'node') {
     $fields['node']['ds_test_field'] = array(
       'title' => t('Test code field from hook'),
@@ -41,9 +41,9 @@ function dstest_render_test_field($field) {
 }
 
 /**
- * Implements hook_ds_fields_alter().
+ * Implements hook_ds_fields_info_alter().
  */
-function ds_test_ds_fields_alter(&$fields) {
+function ds_test_ds_fields_info_alter(&$fields) {
   if (isset($fields['ds_test_field_2'])) {
     $fields['ds_test_field_2']['title'] = 'Field altered';
   }

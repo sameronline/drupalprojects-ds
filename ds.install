@@ -50,7 +50,7 @@ function ds_disable() {
  */
 function ds_schema() {
 
-  $schema['ds_settings'] = array(
+  $schema['ds_field_settings'] = array(
     'description' => 'The table that holds field settings per display of every entity.',
 
     'fields' => array(
@@ -103,7 +103,7 @@ function ds_schema() {
     ),
   );
 
-  $schema['ds_layouts'] = array(
+  $schema['ds_layout_settings'] = array(
     'description' => 'The table that holds the layouts configuration.',
 
     // CTools export definitions.
@@ -172,10 +172,12 @@ function ds_schema() {
 
   $schema['ds_view_modes'] = array(
     'description' => 'The table that holds custom view modes managed by Display Suite.',
+
+    // CTools export definitions.
     'export' => array(
       'key' => 'view_mode',
       'identifier' => 'ds_view_mode',
-      'default hook' => 'ds_view_modes',
+      'default hook' => 'ds_view_modes_info',
       'can disable' => TRUE,
       'api' => array(
         'owner' => 'ds',
@@ -184,6 +186,7 @@ function ds_schema() {
         'current_version' => 1,
       ),
     ),
+
     'fields' => array(
       'view_mode' => array(
         'description' => 'The machine name of the view mode.',

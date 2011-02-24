@@ -28,7 +28,7 @@
  *
  * @see ds_get_fields()
  */
-function hook_ds_fields($entity_type, $bundle, $view_mode) {
+function hook_ds_fields_info($entity_type, $bundle, $view_mode) {
   $fields = array();
 
   $fields['title'] = array(
@@ -101,7 +101,7 @@ function hook_ds_fields($entity_type, $bundle, $view_mode) {
  * @param $fields
  *   An array with fields which can altered just before they are cached.
  */
-function hook_ds_fields_alter(&$fields) {
+function hook_ds_fields_info_alter(&$fields) {
   if (isset($fields['title'])) {
     $fields['title']['title'] = t('My title');
   }
