@@ -41,7 +41,7 @@ function ds_extras_vd_overview($entity_info) {
 
       $row = array();
       $row[] = $value['label'];
-      $operations = l(t('Edit layout'), 'admin/structure/ds/vd/' . $key . '/display');
+      $operations = l(t('Manage layout'), 'admin/structure/ds/vd/' . $key . '/display');
       $operations .= ' - ' . l(t('Remove'), 'admin/structure/ds/vd/' . $key . '/remove');
       $row[] = $operations;
 
