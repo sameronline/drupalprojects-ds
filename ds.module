@@ -85,7 +85,6 @@ function ds_ds_layouts() {
 }
 
 /**
-<<<<<<< ds.module
  * Implements hook_ctools_plugin_api().
  */
 function ds_ctools_plugin_api($owner, $api) {
