@@ -172,6 +172,18 @@ function ds_schema() {
 
   $schema['ds_view_modes'] = array(
     'description' => 'The table that holds custom view modes managed by Display Suite.',
+    'export' => array(
+      'key' => 'view_mode',
+      'identifier' => 'ds_view_mode',
+      'default hook' => 'ds_view_modes',
+      'can disable' => TRUE,
+      'api' => array(
+        'owner' => 'ds',
+        'api' => 'ds',
+        'minimum_version' => 1,
+        'current_version' => 1,
+      ),
+    ),
     'fields' => array(
       'view_mode' => array(
         'description' => 'The machine name of the view mode.',

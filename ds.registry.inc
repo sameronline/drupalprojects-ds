@@ -160,13 +160,15 @@ function _ds_theme_registry_alter(&$theme_registry) {
 function _ds_entity_info_alter(&$entity_info) {
 
   // Add custom view modes to entities.
-  $custom_view_modes = ds_custom_view_modes();
+  ctools_include('export');
+  // @todo convert to ds_get_info that Stalski is writing.
+  $custom_view_modes = ctools_export_load_object('ds_view_modes');
   foreach ($custom_view_modes as $view_mode_key => $view_mode_value) {
     $view_mode = array(
       'label' => check_plain($view_mode_value->label),
       'custom settings' => FALSE,
     );
-    foreach ($view_mode_value->entities as $entity_type) {
+    foreach (unserialize($view_mode_value->entities) as $entity_type) {
       if (isset($entity_info[$entity_type])) {
         $entity_info[$entity_type]['view modes'][$view_mode_key] = $view_mode;
       }

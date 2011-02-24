@@ -85,16 +85,13 @@ function ds_ds_layouts() {
 }
 
 /**
- * Ctools callback to load layouts settings info.
+<<<<<<< ds.module
+ * Implements hook_ctools_plugin_api().
  */
-function ds_layout_settings_info() {
-  $layout_settings = array();
-  $query = db_select('ds_layouts', 'dl')->fields('dl');
-  $result = $query->execute();
-  foreach ($result as $data) {
-    $layout_settings[] = $data;
+function ds_ctools_plugin_api($owner, $api) {
+  if ($owner == 'ds' && $api == 'plugins') {
+    return array('version' => 1);
   }
-  return $data;
 }
 
 /**
@@ -107,15 +104,6 @@ function ds_layout_settings_names() {
     $options[$item->id] = $item->layout . ' (' . $item->entity_type . ' / ' . $item->bundle . ' / ' . $item->view_mode . ')';
   }
   return $options;
-}
-
-/**
- * Implements hook_ctools_plugin_api().
- */
-function ds_ctools_plugin_api($owner, $api) {
-  if ($owner == 'ds' && $api == 'plugins') {
-    return array('version' => 1);
-  }
 }
 
 /**
@@ -298,24 +286,6 @@ function ds_entity_view_modes($entity_type = NULL) {
     }
     return $entity_info['view modes'];
   }
-}
-
-/**
- * Return the custom view modes defined by Display Suite.
- */
-function ds_custom_view_modes() {
-  $custom_view_modes = array();
-
-  $results = db_select('ds_view_modes', 'dsv')
-               ->fields('dsv', array('view_mode', 'label', 'entities'))
-               ->execute();
-
-  foreach ($results as $view_mode) {
-    $view_mode->entities = unserialize($view_mode->entities);
-    $custom_view_modes[$view_mode->view_mode] = $view_mode;
-  }
-
-  return $custom_view_modes;
 }
 
 /**
