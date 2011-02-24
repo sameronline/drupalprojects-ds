@@ -1,6 +1,6 @@
 ; $Id$
 name = ds_exportables_test export module
-description = Export objects from CTools
+description = Tests for exportables with Display Suite.
 dependencies[] = ds
-package = Chaos tool suite
+package = "Display suite"
 core = 7.x

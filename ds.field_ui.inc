@@ -165,7 +165,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
-    db_delete('ds_layouts')
+    db_delete('ds_layout_settings')
       ->condition('entity_type', $entity_type)
       ->condition('bundle', $bundle)
       ->condition('view_mode', $view_mode)
@@ -175,7 +175,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   if ($new_layout && !empty($layout)) {
     // Save new layout.
     $record->settings = serialize($record->settings);
-    drupal_write_record('ds_layouts', $record);
+    drupal_write_record('ds_layout_settings', $record);
   }
   // Update existing layout.
   elseif (!empty($layout)) {
@@ -221,7 +221,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     }
 
     $record->settings = serialize($record->settings);
-    drupal_write_record('ds_layouts', $record, array('entity_type', 'bundle', 'view_mode', 'layout'));
+    drupal_write_record('ds_layout_settings', $record, array('entity_type', 'bundle', 'view_mode', 'layout'));
 
     // Clear entity info cache.
     cache_clear_all('entity_info', 'cache', TRUE);
@@ -248,7 +248,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   $view_mode = $form['#view_mode'];
 
   // Delete previous field configuration configuration.
-  db_delete('ds_settings')
+  db_delete('ds_field_settings')
     ->condition('entity_type', $entity_type)
     ->condition('bundle', $bundle)
     ->condition('view_mode', $view_mode)
@@ -302,7 +302,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
     $record->field = $field;
 
     $record->settings = serialize($settings);
-    drupal_write_record('ds_settings', $record);
+    drupal_write_record('ds_field_settings', $record);
   }
 
   // Clear the ds_fields cache.

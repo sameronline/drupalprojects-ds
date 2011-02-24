@@ -53,6 +53,21 @@ function ds_schema() {
   $schema['ds_field_settings'] = array(
     'description' => 'The table that holds field settings per display of every entity.',
 
+    // CTools export definitions.
+    'export' => array(
+      'key' => 'id',
+      'identifier' => 'dsfieldsettings',
+      'default hook' => 'ds_field_settings_info',
+      'list callback' => 'ds_layout_settings_names',
+      'can disable' => TRUE,
+      'api' => array(
+        'owner' => 'ds',
+        'api' => 'ds',
+        'minimum_version' => 1,
+        'current_version' => 1,
+      ),
+    ),
+
     'fields' => array(
       'id' => array(
         'description' => 'The unique id this setting.',
@@ -214,6 +229,21 @@ function ds_schema() {
 
   $schema['ds_fields'] = array(
     'description' => 'The table that holds custom fields managed by Display Suite.',
+
+    // CTools export definitions.
+    'export' => array(
+      'key' => 'field',
+      'identifier' => 'ds_field',
+      'default hook' => 'ds_fields_info',
+      'can disable' => TRUE,
+      'api' => array(
+        'owner' => 'ds',
+        'api' => 'ds',
+        'minimum_version' => 1,
+        'current_version' => 1,
+      ),
+    ),
+
     'fields' => array(
       'field' => array(
         'description' => 'The machine name of the field.',

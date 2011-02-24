@@ -222,8 +222,8 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
 
       // Get all fields.
       $fields = array();
-      foreach (module_implements('ds_fields') as $module) {
-        $function = $module .'_ds_fields';
+      foreach (module_implements('ds_fields_info') as $module) {
+        $function = $module .'_ds_fields_info';
         $all_fields = $function($entity_type, $bundle, $view_mode);
         if (!empty($all_fields)) {
           foreach ($all_fields as $key => $field_results) {
@@ -239,7 +239,7 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
       }
 
       // Give modules a change to alter fields.
-      drupal_alter('ds_fields', $fields);
+      drupal_alter('ds_fields_alter', $fields);
 
       // If we reset, remove the old settings, otherwhise, save the new ones.
       if ($reset) {
@@ -426,7 +426,7 @@ function ds_get_fields_configuration($entity_type, $bundle, $view_mode) {
       $fields_configuration = $cache->data;
     }
     else {
-      $results = db_query('SELECT field, entity_type, bundle, view_mode, settings FROM {ds_settings}');
+      $results = db_query('SELECT field, entity_type, bundle, view_mode, settings FROM {ds_field_settings}');
       foreach ($results as $row) {
         $fields_configuration[$row->entity_type][$row->bundle][$row->view_mode][$row->field] = unserialize($row->settings);
       }

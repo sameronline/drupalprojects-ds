@@ -126,7 +126,7 @@ function _ds_theme() {
   $theme_functions = array();
 
   // Layouts
-  $layouts = module_invoke_all('ds_layouts');
+  $layouts = module_invoke_all('ds_layout_info');
   foreach ($layouts as $key => $layout) {
     $theme_functions[$key] = array(
       'render element' => 'elements',
@@ -177,7 +177,7 @@ function _ds_entity_info_alter(&$entity_info) {
 
   // Add layout if applicable.
   $ds_layouts = module_invoke_all('ds_layout_info');
-  $results = db_query('SELECT entity_type, bundle, view_mode, layout, settings FROM {ds_layouts}')->fetchAll();
+  $results = db_query('SELECT entity_type, bundle, view_mode, layout, settings FROM {ds_layout_settings}')->fetchAll();
   foreach ($results as $row) {
     $layout = $ds_layouts[$row->layout];
     $layout['layout'] = $row->layout;
