@@ -7,9 +7,9 @@
  */
 
 /**
- * Implements hook_ds_fields().
+ * Implements hook_ds_fields_info().
  */
-function ds_ds_fields($entity_type, $bundle, $view_mode) {
+function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
 
   $custom_fields = ds_custom_fields();
   foreach ($custom_fields as $key => $field) {

@@ -359,11 +359,11 @@ class dsLayoutsStylesTests extends dsBaseTest {
     $this->dsConfigureUI($fields);
 
     // Assert we have some configuration in our database.
-    $count = db_query("SELECT COUNT(settings) FROM {ds_layouts} WHERE entity_type = 'node' AND bundle = 'article' AND view_mode = 'default'")->fetchField();
+    $count = db_query("SELECT COUNT(settings) FROM {ds_layout_settings} WHERE entity_type = 'node' AND bundle = 'article' AND view_mode = 'default'")->fetchField();
     $this->assertEqual($count, 1, t('1 record found for layout serttings for node article'));
 
     // Lookup settings and verify.
-    $data = unserialize(db_query("SELECT settings FROM {ds_layouts} WHERE entity_type = 'node' AND bundle = 'article' AND view_mode = 'default'")->fetchField());
+    $data = unserialize(db_query("SELECT settings FROM {ds_layout_settings} WHERE entity_type = 'node' AND bundle = 'article' AND view_mode = 'default'")->fetchField());
     $this->assertTrue(in_array('post_date', $data['regions']['header']), t('Post date is in header'));
     $this->assertTrue(in_array('test_field', $data['regions']['left']), t('Test field is in left'));
     $this->assertTrue(in_array('author', $data['regions']['left']), t('Author is in left'));
