@@ -85,9 +85,9 @@ function ds_ds_layouts() {
 }
 
 /**
- * Implements hook_ds_layout_settings_info().
+ * Ctools callback to load layouts settings info.
  */
-function ds_ds_layout_settings_info() {
+function ds_layout_settings_info() {
   $layout_settings = array();
   $query = db_select('ds_layouts', 'dl')->fields('dl');
   $result = $query->execute();
@@ -113,7 +113,7 @@ function ds_layout_settings_names() {
  * Implements hook_ctools_plugin_api().
  */
 function ds_ctools_plugin_api($owner, $api) {
-  if ($owner == 'ds' && ($api == 'ds' || $api == 'plugins')) {
+  if ($owner == 'ds' && $api == 'plugins') {
     return array('version' => 1);
   }
 }
