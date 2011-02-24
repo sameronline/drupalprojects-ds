@@ -133,6 +133,7 @@ function ds_edit_view_mode_form_validate($form, &$form_state) {
   }
   $view_mode->entities = serialize($entities);
 
+  // @todo we should get all view modes here from all entities.
   $reserved_view_modes = array('form', 'default', 'full', 'teaser', 'search_result', 'search_index', 'rss');
   if (in_array($view_mode->view_mode, $reserved_view_modes)) {
     form_set_error('type', t('The machine-readable name %view_mode is reserved.', array('%view_mode' => $view_mode->view_mode)));
