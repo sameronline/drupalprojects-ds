@@ -265,6 +265,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   // ds_get_fields_configuration() will need a small adjustement
   // in that case that will first need to unserialize the settings
   // and create individual fields in it.
+  // Note the we NEED to drop the field column too!
   $record = new stdClass;
   $record->id = REQUEST_TIME; // change this.
   $record->entity_type = $entity_type;
