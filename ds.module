@@ -561,7 +561,7 @@ function ds_entity_variables(&$variables) {
       }
 
       // Add extras classes to the region.
-      $variables[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' '. implode('', $layout['settings']['classes'][$region_name]) : '';
+      $variables[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' '. implode(' ', $layout['settings']['classes'][$region_name]) : '';
     }
   }
 }
