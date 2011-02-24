@@ -53,6 +53,11 @@ function ds_schema() {
   $schema['ds_settings'] = array(
     'description' => 'The table that holds field settings per display of every entity.',
     'fields' => array(
+      'id' => array(
+        'description' => 'The unique id this setting.',
+        'type' => 'varchar',
+        'length' => 13,
+      ),
       'field' => array(
         'description' => 'The machine name of the field.',
         'type' => 'varchar',
@@ -88,6 +93,7 @@ function ds_schema() {
         'size' => 'big',
       ),
     ),
+    'primary key' => array('id'),
     'indexes' => array(
       'ds_field'        => array('field'),
       'ds_entity'       => array('entity_type'),
@@ -97,8 +103,13 @@ function ds_schema() {
   );
 
   $schema['ds_layouts'] = array(
-    'description' => 'The table that holds the published layouts for the display of every entity.',
+    'description' => 'The table that holds the layouts configuration.',
     'fields' => array(
+      'id' => array(
+        'description' => 'The unique id the layout.',
+        'type' => 'varchar',
+        'length' => 13,
+      ),
       'entity_type' => array(
         'description' => 'The name of the entity.',
         'type' => 'varchar',
@@ -134,6 +145,7 @@ function ds_schema() {
         'size' => 'big',
       ),
     ),
+    'primary key' => array('id'),
     'indexes' => array(
       'ds_entity'       => array('entity_type'),
       'ds_bundle'       => array('bundle'),

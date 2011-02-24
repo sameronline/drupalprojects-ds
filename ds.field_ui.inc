@@ -152,9 +152,11 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $hide_empty_regions = $form_state['values']['additional_settings']['hide_empty_regions'];
   $old_layout = $form_state['values']['additional_settings']['old_layout'];
   $new_layout = ($layout != $old_layout) || empty($old_layout);
+  $id = $form_state['values']['additional_settings']['id'];
 
   // Save layout and add regions if necessary.
   $record = new stdClass;
+  $record->id = $id;
   $record->entity_type = $entity_type;
   $record->bundle = $bundle;
   $record->view_mode = $view_mode;
@@ -220,6 +222,9 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
     $record->settings = serialize($record->settings);
     drupal_write_record('ds_layouts', $record, array('entity_type', 'bundle', 'view_mode', 'layout'));
+
+    // Clear entity info cache.
+    cache_clear_all('entity_info', 'cache', TRUE);
   }
 }
 
@@ -250,7 +255,18 @@ function ds_field_ui_fields_save($form, &$form_state) {
     ->execute();
 
   // Create a record to insert into the ds_settings table.
+  // This is funny, this needs to be refactored in that sense
+  // that we need to merge all fields into one record per
+  // entity_type , bundle , view_mode because now at this point
+  // every new id will have the same request time ..
+  // IMPORTANT we NEED to use the same id of the layout!
+  // Revert of a default layout will make sure we can revert
+  // in both tables.
+  // ds_get_fields_configuration() will need a small adjustement
+  // in that case that will first need to unserialize the settings
+  // and create individual fields in it.
   $record = new stdClass;
+  $record->id = REQUEST_TIME; // change this.
   $record->entity_type = $entity_type;
   $record->bundle = $bundle;
   $record->view_mode = $view_mode;
@@ -291,9 +307,6 @@ function ds_field_ui_fields_save($form, &$form_state) {
   // Clear the ds_fields cache.
   cache_clear_all('ds_fields_cached', 'cache');
   cache_clear_all('ds_fields_configuration', 'cache');
-
-  // Clear entity cache.
-  cache_clear_all('entity_info', 'cache', TRUE);
 }
 
 /**
@@ -418,7 +431,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#parents' => array('additional_settings'),
   );
 
-  $layout = db_query('SELECT layout, settings FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
+  $layout = db_query('SELECT id, layout, settings FROM {ds_layouts} WHERE entity_type = :entity_type AND bundle = :bundle AND view_mode = :view_mode', array(':entity_type' => $entity_type, ':bundle' => $bundle, ':view_mode' => $view_mode))->fetchObject();
 
   if (!empty($layout) && isset($layout->layout) && isset($ds_layouts[$layout->layout])) {
     $chosen_layout = $ds_layouts[$layout->layout];
@@ -480,6 +493,11 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     }
   }
 
+  $form['additional_settings']['ds_layouts']['id'] = array(
+    '#type' => 'value',
+    '#value' => isset($layout->id) ? $layout->id : REQUEST_TIME,
+  );
+
   $form['additional_settings']['ds_layouts']['old_layout'] = array(
     '#type' => 'value',
     '#value' => isset($layout->layout) ? $layout->layout : 0,
@@ -505,6 +523,11 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
  *   A collection of form_state properties.
  */
 function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_state) {
+
+  // Do not add the fields if there is no layout.
+  if (!isset($form['#ds_layout'])) {
+    return;
+  }
 
   // Get the fields.
   $fields = ds_get_fields($entity_type, $bundle, $view_mode, TRUE, FALSE);
