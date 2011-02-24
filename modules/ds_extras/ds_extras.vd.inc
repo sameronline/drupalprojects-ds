@@ -96,14 +96,14 @@ function ds_extras_vd_bundle_form($form, $form_state, $rows) {
 
   $form['vd'] = array(
     '#title' => t('Select view'),
-    '#description' => t('Select a views display that you want to layout with Display Suite.'),
+    '#description' => t('Select a Views display that you want to manage with Display Suite.'),
     '#type' => 'select',
     '#options' => $options,
   );
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Create layout'),
+    '#value' => t('Add'),
   );
 
   return $form;
