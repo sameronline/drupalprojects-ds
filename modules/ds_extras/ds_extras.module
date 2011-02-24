@@ -530,7 +530,7 @@ function ds_extras_preprocess_view(&$variables) {
       }
     }
 
-    ds_preprocess_entity($variables);
+    ds_entity_variables($variables);
     if (isset($variables['#attached'])) {
       drupal_process_attached($variables);
     }
