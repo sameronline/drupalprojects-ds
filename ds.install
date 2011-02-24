@@ -52,6 +52,7 @@ function ds_schema() {
 
   $schema['ds_settings'] = array(
     'description' => 'The table that holds field settings per display of every entity.',
+
     'fields' => array(
       'id' => array(
         'description' => 'The unique id this setting.',
@@ -104,6 +105,22 @@ function ds_schema() {
 
   $schema['ds_layouts'] = array(
     'description' => 'The table that holds the layouts configuration.',
+
+    // CTools export definitions.
+    'export' => array(
+      'key' => 'id',
+      'identifier' => 'dslayout',
+      'default hook' => 'ds_layout_settings_info',
+      'list callback' => 'ds_layout_settings_names',
+      'can disable' => TRUE,
+      'api' => array(
+        'owner' => 'ds',
+        'api' => 'ds',
+        'minimum_version' => 1,
+        'current_version' => 1,
+      ),
+    ),
+
     'fields' => array(
       'id' => array(
         'description' => 'The unique id the layout.',

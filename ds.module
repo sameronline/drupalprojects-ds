@@ -85,6 +85,40 @@ function ds_ds_layouts() {
 }
 
 /**
+ * Implements hook_ds_layout_settings_info().
+ */
+function ds_ds_layout_settings_info() {
+  $layout_settings = array();
+  $query = db_select('ds_layouts', 'dl')->fields('dl');
+  $result = $query->execute();
+  foreach ($result as $data) {
+    $layout_settings[] = $data;
+  }
+  return $data;
+}
+
+/**
+ * Ctools callback to have list with id, name pairs.
+ */
+function ds_layout_settings_names() {
+  $options = array();
+  $items = ctools_export_crud_load_all('ds_layouts');
+  foreach ($items as $item) {
+    $options[$item->id] = $item->layout . ' (' . $item->entity_type . ' / ' . $item->bundle . ' / ' . $item->view_mode . ')';
+  }
+  return $options;
+}
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function ds_ctools_plugin_api($owner, $api) {
+  if ($owner == 'ds' && ($api == 'ds' || $api == 'plugins')) {
+    return array('version' => 1);
+  }
+}
+
+/**
  * Implements hook_views_api().
  */
 function ds_views_api() {
@@ -454,7 +488,7 @@ function ds_field_attach_view_alter(&$build, $context) {
   $field_values = ds_get_fields_configuration($entity_type, $bundle, $view_mode);
 
   foreach ($field_values as $key => $field) {
-
+if (!isset($fields[$key])) dsm($entity);
     $field = $fields[$key];
     $field['formatter'] = $field_values[$key]['format'];
 
