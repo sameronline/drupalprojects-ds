@@ -54,8 +54,8 @@ function ds_permission() {
  * Implements hook_hook_info().
  */
 function ds_hook_info() {
-  $hooks['ds_field_info'] = array(
-    'group' => 'ds_field_info',
+  $hooks['ds_fields_info'] = array(
+    'group' => 'ds_fields_info',
   );
   return $hooks;
 }
