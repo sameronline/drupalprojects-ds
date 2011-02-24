@@ -178,6 +178,8 @@ class dsFieldsTests extends dsBaseTest {
     $this->drupalPost('admin/structure/ds/fields/manage_custom', $edit, t('Save'));
     $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Field testing already exists.'));
 
+    $this->dsSelectLayout();
+
     // Assert it's found on the Field UI for article.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[test_field][weight]', t('Test field found on node article.'));
@@ -482,13 +484,20 @@ class dsHooksTests extends dsBaseTest {
    */
   function testDSFields() {
 
+    $this->dsSelectLayout();
+
     // Find the two extra fields from the test module on the node type.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertText('Test code field from hook', 'Test field found on node.');
     $this->assertText('Field altered', 'Test field altered found on node.');
 
+    $empty = array();
+    $edit = array('additional_settings[layout]' => 'ds_2col_stacked');
+    $this->dsSelectLayout($edit, $empty, 'admin/config/people/accounts/display');
+
+
     // Fields can not be found on user.
-    $this->drupalGet('admin/config/people/accounts/fields');
+    $this->drupalGet('admin/config/people/accounts/display');
     $this->assertNoText('Test code field from hook', 'Test field not found on user.');
     $this->assertNoText('Field altered', 'Test field altered not found on user.');
 

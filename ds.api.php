@@ -135,7 +135,7 @@ function hook_ds_field_settings_summary($field) {
  * @return $form
  *   A form definition.
  */
-function ds_ds_format_settings($field) {
+function hook_ds_field_settings_form($field) {
 
   // Saved formatter settings are on $field['formatter_settings'];
   $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
@@ -153,7 +153,7 @@ function ds_ds_format_settings($field) {
  * @return $layouts
  *   A collection of layouts.
  */
-function hook_ds_layouts() {
+function hook_ds_layout_info() {
   $path = drupal_get_path('module', 'foo');
 
   $layouts = array(

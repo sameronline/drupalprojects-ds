@@ -356,7 +356,7 @@ function ds_ds_field_format_summary($field) {
 }
 
 /**
- * Implements hook_ds_format_settings().
+ * Implements hook_ds_field_settings_form().
  */
 function ds_ds_field_settings_form($field) {
   $form = array();
