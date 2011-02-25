@@ -57,6 +57,7 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
   $custom_view_modes = ctools_export_load_object('ds_view_modes');
   if (isset($custom_view_modes[$view_mode])) {
     $view_mode = $custom_view_modes[$view_mode];
+    $view_mode->entities = unserialize($view_mode->entities);
   }
   else {
     $view_mode = new stdClass;
@@ -107,6 +108,8 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
     '#value' => t('Save')
   );
 
+  $form['existing'] = array('#type' => 'value', '#value' => !empty($view_mode->view_mode));
+
   return $form;
 }
 
@@ -141,7 +144,7 @@ function ds_edit_view_mode_form_validate($form, &$form_state) {
     }
   }
 
-  if (array_key_exists($view_mode->view_mode, $reserved)) {
+  if (array_key_exists($view_mode->view_mode, $reserved) && !isset($form_state['values']['existing'])) {
     form_set_error('type', t('The machine-readable name %view_mode is reserved.', array('%view_mode' => $view_mode->view_mode)));
   }
   else {

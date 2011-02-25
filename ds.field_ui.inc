@@ -172,13 +172,13 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $record->settings = array('hide_empty_regions' => $hide_empty_regions);
 
   // Remove old layout if necessary.
-  //if ($new_layout && !empty($old_layout)) {
+  if ($new_layout && !empty($old_layout)) {
     db_delete('ds_layout_settings')
       ->condition('entity_type', $entity_type)
       ->condition('bundle', $bundle)
       ->condition('view_mode', $view_mode)
       ->execute();
-  //}
+  }
 
   if ($new_layout && !empty($layout)) {
     // Save new layout.
