@@ -1,4 +1,3 @@
-; $Id$
 
 The extras module contains functionality that is not often used. It holds
 following functionality:

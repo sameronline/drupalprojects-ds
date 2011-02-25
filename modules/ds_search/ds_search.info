@@ -1,4 +1,3 @@
-; $Id$
 name = "Search display"
 description = "Extend the display options for search results for Drupal Core or Apache Solr."
 core = "7.x"

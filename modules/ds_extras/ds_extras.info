@@ -1,4 +1,3 @@
-; $Id$
 name = "Extras"
 description = "Contains additional features: switching view modes on a per node basis, exposing regions as blocks and Views displays."
 core = "7.x"

@@ -1,4 +1,3 @@
-; $Id$
 name = ds_exportables_test export module
 description = Tests for exportables with Display Suite.
 dependencies[] = ds
