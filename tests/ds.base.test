@@ -222,6 +222,8 @@ class dsFieldsTests extends dsBaseTest {
     $this->drupalPost('admin/structure/ds/fields/manage_block', $edit, t('Save'));
     $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Block test field already exists.'));
 
+    $this->dsSelectLayout();
+
     // Assert it's found on the Field UI for article.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[test_block_field][weight]', t('Test block field found on node article.'));

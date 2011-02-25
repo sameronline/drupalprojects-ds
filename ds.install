@@ -108,7 +108,6 @@ function ds_schema() {
         'size' => 'big',
       ),
     ),
-    'primary key' => array('id'),
     'indexes' => array(
       'ds_field'        => array('field'),
       'ds_entity'       => array('entity_type'),
@@ -176,7 +175,6 @@ function ds_schema() {
         'size' => 'big',
       ),
     ),
-    'primary key' => array('id'),
     'indexes' => array(
       'ds_entity'       => array('entity_type'),
       'ds_bundle'       => array('bundle'),

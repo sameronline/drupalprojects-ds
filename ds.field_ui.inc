@@ -137,6 +137,15 @@ function ds_field_ui_row_region($row) {
 }
 
 /**
+ * Move the view modes so Field UI can handle them.
+ */
+function ds_field_ui_layouts_validate($form, &$form_state) {
+  if (isset($form_state['values']['additional_settings']['modes']['view_modes_custom'])) {
+    $form_state['values']['view_modes_custom'] = $form_state['values']['additional_settings']['modes']['view_modes_custom'];
+  }
+}
+
+/**
  * Save the layout settings from the 'Manage display' screen.
  */
 function ds_field_ui_layouts_save($form, &$form_state) {
@@ -163,13 +172,13 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $record->settings = array('hide_empty_regions' => $hide_empty_regions);
 
   // Remove old layout if necessary.
-  if ($new_layout && !empty($old_layout)) {
+  //if ($new_layout && !empty($old_layout)) {
     db_delete('ds_layout_settings')
       ->condition('entity_type', $entity_type)
       ->condition('bundle', $bundle)
       ->condition('view_mode', $view_mode)
       ->execute();
-  }
+  //}
 
   if ($new_layout && !empty($layout)) {
     // Save new layout.
@@ -228,15 +237,6 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 }
 
 /**
- * Move the view modes so Field UI can handle them.
- */
-function ds_field_ui_layouts_validate($form, &$form_state) {
-  if (isset($form_state['values']['additional_settings']['modes']['view_modes_custom'])) {
-    $form_state['values']['view_modes_custom'] = $form_state['values']['additional_settings']['modes']['view_modes_custom'];
-  }
-}
-
-/**
  * Save the field settings from the 'Manage display' screen.
  */
 function ds_field_ui_fields_save($form, &$form_state) {
@@ -266,7 +266,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   // and create individual fields in it.
   // Note the we NEED to drop the field column too!
   $record = new stdClass;
-  $record->id = REQUEST_TIME; // change this.
+  $record->id = ''; // change this.
   $record->entity_type = $entity_type;
   $record->bundle = $bundle;
   $record->view_mode = $view_mode;

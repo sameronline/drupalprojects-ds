@@ -238,7 +238,7 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
       }
 
       // Give modules a change to alter fields.
-      drupal_alter('ds_fields_alter', $fields);
+      drupal_alter('ds_fields_info', $fields);
 
       // If we reset, remove the old settings, otherwhise, save the new ones.
       if ($reset) {
