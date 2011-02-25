@@ -182,7 +182,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
   if ($new_layout && !empty($layout)) {
     // Save new layout.
-    $record->settings = serialize($record->settings);
+    $record->settings = $record->settings;
     drupal_write_record('ds_layout_settings', $record);
   }
   // Update existing layout.
@@ -228,7 +228,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       }
     }
 
-    $record->settings = serialize($record->settings);
+    $record->settings = $record->settings;
     drupal_write_record('ds_layout_settings', $record, array('entity_type', 'bundle', 'view_mode', 'layout'));
 
     // Clear entity info cache.
@@ -300,7 +300,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
     // Save the record.
     $record->field = $field;
 
-    $record->settings = serialize($settings);
+    $record->settings = $settings;
     drupal_write_record('ds_field_settings', $record);
   }
 

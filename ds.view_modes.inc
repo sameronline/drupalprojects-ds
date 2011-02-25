@@ -21,7 +21,7 @@ function ds_custom_view_modes_list() {
       $row = array();
       $row[] = check_plain($view_mode_value->label);
       $row[] = $view_mode_key;
-      $row[] = ucwords(str_replace('_', ' ', implode(', ', unserialize($view_mode_value->entities))));
+      $row[] = ucwords(str_replace('_', ' ', implode(', ', $view_mode_value->entities)));
       $operations = l(t('Edit'), 'admin/structure/ds/view_modes/manage/' . $view_mode_key, array('alias' => TRUE));
       $operations .= ' - ' . l(t('Delete'), 'admin/structure/ds/view_modes/delete/' . $view_mode_key, array('alias' => TRUE));
       $row[] = $operations;
@@ -57,7 +57,6 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
   $custom_view_modes = ctools_export_load_object('ds_view_modes');
   if (isset($custom_view_modes[$view_mode])) {
     $view_mode = $custom_view_modes[$view_mode];
-    $view_mode->entities = unserialize($view_mode->entities);
   }
   else {
     $view_mode = new stdClass;
@@ -118,7 +117,6 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
  */
 function ds_view_mode_unique($name) {
   ctools_include('export');
-  // @todo convert to ds_get_info that Stalski is writing.
   $custom_view_modes = ctools_export_load_object('ds_view_modes');
   $value = strtr($name, array('-' => '_'));
   return isset($custom_view_modes[$value]) ? TRUE : FALSE;
@@ -148,7 +146,7 @@ function ds_edit_view_mode_form_validate($form, &$form_state) {
     form_set_error('type', t('The machine-readable name %view_mode is reserved.', array('%view_mode' => $view_mode->view_mode)));
   }
   else {
-    $view_mode->entities = serialize($entities);
+    $view_mode->entities = $entities;
     $form_state['view_mode'] = $view_mode;
   }
 }

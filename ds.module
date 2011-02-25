@@ -300,7 +300,7 @@ function ds_custom_fields() {
                  ->execute();
 
     foreach ($results as $field) {
-      $field->entities = unserialize($field->entities);
+      $field->entities = $field->entities;
       $field->properties = unserialize($field->properties);
       $custom_fields[$field->field] = $field;
     }

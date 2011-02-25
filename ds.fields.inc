@@ -11,7 +11,8 @@
 function ds_custom_fields_list() {
   $output = '';
 
-  $custom_fields = ds_custom_fields();
+  ctools_include('export');
+  $custom_fields = ctools_export_load_object('ds_fields');
   if (!empty($custom_fields)) {
 
     $rows = array();
@@ -97,7 +98,8 @@ function ds_custom_manage($field_key = '') {
  * Shared form for all all fields.
  */
 function ds_shared_form(&$form, $field) {
-  $custom_fields = ds_custom_fields();
+  ctools_include('export');
+  $custom_fields = ctools_export_load_object('ds_fields');
   if (isset($custom_fields[$field])) {
     $field = $custom_fields[$field];
   }
@@ -162,7 +164,8 @@ function ds_shared_form(&$form, $field) {
  * Return whether a field machine name is unique.
  */
 function ds_field_unique($name) {
-  $custom_fields = ds_custom_fields();
+  ctools_include('export');
+  $custom_fields = ctools_export_load_object('ds_fields');
   $value = strtr($name, array('-' => '_'));
   return isset($custom_fields[$value]) ? TRUE : FALSE;
 }
@@ -182,7 +185,7 @@ function ds_shared_form_validate($form, &$form_state) {
       unset($entities[$key]);
     }
   }
-  $field->entities = serialize($entities);
+  $field->entities = $entities;
   $form_state['field'] = $field;
 }
 
@@ -191,7 +194,7 @@ function ds_shared_form_validate($form, &$form_state) {
  */
 function ds_shared_form_submit($form, &$form_state) {
   $field = $form_state['field'];
-  $field->properties = serialize($field->properties);
+  $field->properties = $field->properties;
 
   // Delete previous field configuration.
   db_delete('ds_fields')
@@ -217,7 +220,6 @@ function ds_edit_custom_field_form($form, &$form_state, $custom_field = '') {
     '#type' => 'text_format',
     '#title' => t('Field code'),
     '#default_value' => isset($custom_field->properties->code['value']) ? $custom_field->properties->code['value'] : '',
-    // @todo custom format should be put ds code
     '#format' => isset($custom_field->properties->code['format']) ? $custom_field->properties->code['format'] : 'ds_code',
     '#base_type' => 'textarea',
     '#required' => TRUE,
@@ -317,9 +319,10 @@ function ds_block_field_form_validate($form, &$form_state) {
  * Confirmation custom field delete form
  */
 function ds_delete_field_confirm($form, &$form_state, $field = '') {
-  $fields = ds_custom_fields();
-  if (isset($fields[$field])) {
-    $field = $fields[$field];
+  ctools_include('export');
+  $custom_fields = ctools_export_load_object('ds_fields');
+  if (isset($custom_fields[$field])) {
+    $field = $custom_fields[$field];
     $form['#field'] = $field;
     return confirm_form($form,
       t('Are you sure you want to delete %field?', array('%field' => $field->label)),

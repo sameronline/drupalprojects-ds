@@ -167,7 +167,7 @@ function _ds_entity_info_alter(&$entity_info) {
       'label' => check_plain($view_mode_value->label),
       'custom settings' => FALSE,
     );
-    foreach (unserialize($view_mode_value->entities) as $entity_type) {
+    foreach ($view_mode_value->entities as $entity_type) {
       if (isset($entity_info[$entity_type])) {
         $entity_info[$entity_type]['view modes'][$view_mode_key] = $view_mode;
       }
@@ -176,11 +176,11 @@ function _ds_entity_info_alter(&$entity_info) {
 
   // Add layout if applicable.
   $ds_layouts = module_invoke_all('ds_layout_info');
-  $results = db_query('SELECT entity_type, bundle, view_mode, layout, settings FROM {ds_layout_settings}')->fetchAll();
-  foreach ($results as $row) {
+  $ds_layout_settings = ctools_export_load_object('ds_layout_settings');
+  foreach ($ds_layout_settings as $row) {
     $layout = $ds_layouts[$row->layout];
     $layout['layout'] = $row->layout;
-    $layout['settings'] = unserialize($row->settings);
+    $layout['settings'] = $row->settings;
     $entity_info[$row->entity_type]['bundles'][$row->bundle]['layouts'][$row->view_mode] = $layout;
   }
 }
