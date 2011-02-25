@@ -1,4 +1,3 @@
-// $Id$
 
 Drupal.behaviors.nd_buildmodes = function(context) {
 

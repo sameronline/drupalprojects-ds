@@ -1,4 +1,3 @@
-; $Id$
 name = "Display suite"
 description = "Core functions for the Display Suite module."
 core = "6.x"

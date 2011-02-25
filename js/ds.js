@@ -1,4 +1,3 @@
-// $Id$
 
 /**
  * Move a field in the fields table from one region to another via select list.
