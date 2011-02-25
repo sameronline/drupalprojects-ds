@@ -1,4 +1,3 @@
-; $Id$
 name = "Display suite UI"
 description = "Administrative interface to display suite. Without this module, you cannot manage your display settings, fields etc."
 core = "6.x"

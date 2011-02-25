@@ -1,4 +1,3 @@
-// $Id$
 
 Drupal.DisplaySuite = Drupal.DisplaySuite || {};
 Drupal.DisplaySuite.fieldopened = '';

@@ -1,4 +1,3 @@
-// $Id$
 
 /**
  * Toggle all buildmodes at once.

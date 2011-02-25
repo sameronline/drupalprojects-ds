@@ -1,4 +1,3 @@
-// $Id$
 
 /**
  * Toggle all exclude at once.
