@@ -49,11 +49,6 @@ function hook_ds_fields_info($entity_type, $bundle, $view_mode) {
     // Only for DS_FIELD_TYPE_FUNCTION.
     'file' => 'optional_filename',
 
-    // status: status of the field.
-    // - DS_FIELD_STATUS_STATIC  : static field
-    // - DS_FIELD_STATUS_DEFAULT : default field
-    'status' => DS_FIELD_STATUS_STATIC,
-
     // function: only for DS_FIELD_TYPE_FUNCTION.
     'function' => 'theme_ds_title_field',
 

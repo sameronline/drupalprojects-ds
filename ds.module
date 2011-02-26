@@ -15,14 +15,6 @@ define('DS_FIELD_TYPE_CODE', 5);
 define('DS_FIELD_TYPE_BLOCK', 6);
 
 /**
- * Constants for field statuses.
- */
-define('DS_FIELD_STATUS_STATIC', 1);
-define('DS_FIELD_STATUS_DEFAULT', 2);
-define('DS_FIELD_STATUS_CUSTOM', 3);
-define('DS_FIELD_STATUS_OVERRIDDEN', 4);
-
-/**
  * Constants for block fields rendering.
  */
 define('DS_BLOCK_TEMPLATE', 1);

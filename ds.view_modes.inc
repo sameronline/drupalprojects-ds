@@ -11,6 +11,7 @@
 function ds_custom_view_modes_list() {
   $output = '';
 
+  // @todo convert to helper function.
   ctools_include('export');
   $view_modes = ctools_export_load_object('ds_view_modes');
   if (!empty($view_modes)) {

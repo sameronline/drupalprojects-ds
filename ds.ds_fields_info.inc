@@ -25,7 +25,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   $fields['node']['title'] = array(
     'title' => t('Title'),
     'type' => DS_FIELD_TYPE_FUNCTION,
-    'status' => DS_FIELD_STATUS_STATIC,
     'function' => 'ds_render_field',
     'properties' => array(
       'entity_path' => 'node',
@@ -44,7 +43,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   $fields['node']['links'] = array(
     'title' => t('Links'),
     'type' => DS_FIELD_TYPE_IGNORE,
-    'status' => DS_FIELD_STATUS_STATIC,
   );
 
   // Comments.
@@ -52,7 +50,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
     $fields['node']['comments'] = array(
       'title' => t('Comments'),
       'type' => DS_FIELD_TYPE_IGNORE,
-      'status' => DS_FIELD_STATUS_STATIC,
     );
   }
 
@@ -60,7 +57,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   $fields['node']['node_link'] = array(
     'title' => t('Read more'),
     'type' => DS_FIELD_TYPE_FUNCTION,
-    'status' => DS_FIELD_STATUS_STATIC,
     'function' => 'ds_render_field',
     'properties' => array(
       'entity_path' => 'node',
@@ -78,7 +74,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   $fields['node']['author'] = array(
     'title' => t('Author'),
     'type' => DS_FIELD_TYPE_FUNCTION,
-    'status' => DS_FIELD_STATUS_STATIC,
     'function' => 'ds_render_author_field',
     'properties' => array(
       'formatters' => array(
@@ -97,7 +92,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   $fields['node']['post_date'] = array(
     'title' => t('Post date'),
     'type' => DS_FIELD_TYPE_FUNCTION,
-    'status' => DS_FIELD_STATUS_STATIC,
     'function' => 'ds_render_date_field',
     'properties' => array(
       'formatters' => $date_formatters,
@@ -123,7 +117,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
     $fields['node'][$key] = array(
       'title' => t('User picture'),
       'type' => $type,
-      'status' => DS_FIELD_STATUS_STATIC,
       'properties' => array(
         'formatters' => $picture_formatters,
       ),
@@ -137,7 +130,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   $fields['comment']['links'] = array(
     'title' => t('Links'),
     'type' => DS_FIELD_TYPE_IGNORE,
-    'status' => DS_FIELD_STATUS_STATIC,
   );
 
   // Created time.
@@ -149,7 +141,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   $fields['comment']['post_date'] = array(
     'title' => t('Post date'),
     'type' => DS_FIELD_TYPE_FUNCTION,
-    'status' => DS_FIELD_STATUS_STATIC,
     'function' => 'ds_render_date_field',
     'properties' => array(
       'formatters' => $date_formatters,
@@ -160,28 +151,24 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   $fields['comment']['permalink'] = array(
     'title' => t('Permalink'),
     'type' => DS_FIELD_TYPE_PREPROCESS,
-    'status' => DS_FIELD_STATUS_STATIC,
   );
 
   // Submitted.
   $fields['comment']['submitted'] = array(
     'title' => t('Submitted'),
     'type' => DS_FIELD_TYPE_PREPROCESS,
-    'status' => DS_FIELD_STATUS_STATIC,
   );
 
   // Title.
   $fields['comment']['title'] = array(
     'title' => t('Title'),
     'type' => DS_FIELD_TYPE_PREPROCESS,
-    'status' => DS_FIELD_STATUS_STATIC,
   );
 
   // Author.
   $fields['comment']['author'] = array(
     'title' => t('Author'),
     'type' => DS_FIELD_TYPE_PREPROCESS,
-    'status' => DS_FIELD_STATUS_STATIC,
   );
 
   // User signature.
@@ -189,7 +176,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
     $fields['comment']['signature'] = array(
       'title' => t('User signature'),
       'type' => DS_FIELD_TYPE_PREPROCESS,
-      'status' => DS_FIELD_STATUS_STATIC,
     );
   }
 
@@ -212,7 +198,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
     $fields['comment'][$key] = array(
       'title' => t('User picture'),
       'type' => $type,
-      'status' => DS_FIELD_STATUS_STATIC,
       'properties' => array(
         'formatters' => $picture_formatters,
       ),
@@ -226,7 +211,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   $fields['user']['name'] = array(
     'title' => 'Username',
     'type' => DS_FIELD_TYPE_FUNCTION,
-    'status' => DS_FIELD_STATUS_STATIC,
     'function' => 'ds_render_field',
     'properties' => array(
       'entity_path' => 'user',
@@ -246,7 +230,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
     $fields['user']['user_signature'] = array(
       'title' => t('User signature'),
       'type' => DS_FIELD_TYPE_FUNCTION,
-      'status' => DS_FIELD_STATUS_STATIC,
       'function' => 'ds_render_markup',
       'properties' => array(
         'key' => 'signature',
@@ -274,7 +257,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
     $fields['user'][$key] = array(
       'title' => t('User picture'),
       'type' => $type,
-      'status' => DS_FIELD_STATUS_STATIC,
       'properties' => array(
         'formatters' => $picture_formatters,
       ),
@@ -288,8 +270,6 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   $fields['taxonomy_term']['title'] = array(
     'title' => t('Title'),
     'type' => DS_FIELD_TYPE_FUNCTION,
-    'status' => DS_FIELD_STATUS_STATIC,
-    'function' => 'ds_render_field',
     'properties' => array(
       'entity_path' => 'taxonomy/term',
       'entity_id_key' => 'tid',
