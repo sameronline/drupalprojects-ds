@@ -18,5 +18,17 @@ class dsExportablesTests extends dsBaseTest {
     );
   }
 
+  /**
+   * Enables the exportables module.
+   */
+  function dsExportablesSetup() {
+    module_enable(array('ds_exportables_test'));
+  }
 
+  // Test view modes.
+  function testDSExportablesViewmodes() {
+    $this->dsExportablesSetup();
+    $this->drupalGet('admin/structure/ds/view_modes');
+    $this->assertText('Test exportables');
+  }
 }

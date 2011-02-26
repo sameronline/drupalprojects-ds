@@ -3,3 +3,4 @@ description = Tests for exportables with Display Suite.
 dependencies[] = ds
 package = "Display suite"
 core = 7.x
+hidden = TRUE
