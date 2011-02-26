@@ -1,4 +1,4 @@
-name = ds_exportables_test export module
+name = Display suite exportables test
 description = Tests for exportables with Display Suite.
 dependencies[] = ds
 package = "Display suite"

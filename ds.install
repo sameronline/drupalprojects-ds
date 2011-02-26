@@ -192,7 +192,7 @@ function ds_schema() {
       'key' => 'view_mode',
       'identifier' => 'ds_view_mode',
       'default hook' => 'ds_view_modes_info',
-      'can disable' => TRUE,
+      'can disable' => FALSE,
       'api' => array(
         'owner' => 'ds',
         'api' => 'ds',

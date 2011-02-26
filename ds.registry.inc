@@ -66,6 +66,15 @@ function _ds_menu() {
     'access arguments' => array('admin_view_modes'),
     'type' => MENU_CALLBACK,
   );
+  $items['admin/structure/ds/view_modes/revert'] = array(
+    'title' => 'Revert a view mode',
+    'description' => 'Revert a custom view mode.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_revert_view_mode_confirm'),
+    'file' => 'ds.view_modes.inc',
+    'access arguments' => array('admin_view_modes'),
+    'type' => MENU_CALLBACK,
+  );
 
   // Fields.
   $items['admin/structure/ds/fields'] = array(

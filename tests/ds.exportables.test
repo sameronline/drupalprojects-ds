@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Base functions and tests for Display Suite.
+ */
+
+class dsExportablesTests extends dsBaseTest {
+
+  /**
+   * Implements getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => t('Exportables'),
+      'description' => t('Tests for exportables in Display Suite.'),
+      'group' => t('Display suite'),
+    );
+  }
+
+
+}

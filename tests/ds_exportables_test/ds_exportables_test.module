@@ -30,7 +30,9 @@ function ds_exportables_test_ds_view_modes_info() {
   $ds_view_mode->api_version = 1;
   $ds_view_mode->view_mode = 'test_exportables';
   $ds_view_mode->label = 'Test exportables';
-  $ds_view_mode->entities = 'a:1:{s:4:"node";s:4:"node";}';
+  $ds_view_mode->entities = array(
+    'node' => 'node',
+  );
   $ds_view_modes['test_exportables'] = $ds_view_mode;
 
   return $ds_view_modes;

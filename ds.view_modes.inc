@@ -12,18 +12,24 @@ function ds_custom_view_modes_list() {
   $output = '';
 
   ctools_include('export');
-  // @todo convert to ds_get_info that Stalski is writing.
-  $custom_view_modes = ctools_export_load_object('ds_view_modes');
-  if (!empty($custom_view_modes)) {
+  $view_modes = ctools_export_load_object('ds_view_modes');
+  if (!empty($view_modes)) {
 
     $rows = array();
-    foreach ($custom_view_modes as $view_mode_key => $view_mode_value) {
+    foreach ($view_modes as $view_mode_key => $view_mode_value) {
+
       $row = array();
       $row[] = check_plain($view_mode_value->label);
       $row[] = $view_mode_key;
       $row[] = ucwords(str_replace('_', ' ', implode(', ', $view_mode_value->entities)));
       $operations = l(t('Edit'), 'admin/structure/ds/view_modes/manage/' . $view_mode_key, array('alias' => TRUE));
-      $operations .= ' - ' . l(t('Delete'), 'admin/structure/ds/view_modes/delete/' . $view_mode_key, array('alias' => TRUE));
+
+      if ($view_mode_value->export_type == 3) {
+        $operations .= ' - ' . l(t('Revert'), 'admin/structure/ds/view_modes/revert/' . $view_mode_key, array('alias' => TRUE));
+      }
+      elseif ($view_mode_value->export_type == 1) {
+        $operations .= ' - ' . l(t('Delete'), 'admin/structure/ds/view_modes/delete/' . $view_mode_key, array('alias' => TRUE));
+      }
       $row[] = $operations;
       $rows[] = $row;
     }
@@ -54,9 +60,9 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
 
   ctools_include('export');
   // @todo convert to ds_get_info that Stalski is writing.
-  $custom_view_modes = ctools_export_load_object('ds_view_modes');
-  if (isset($custom_view_modes[$view_mode])) {
-    $view_mode = $custom_view_modes[$view_mode];
+  $view_modes = ctools_export_load_object('ds_view_modes');
+  if (isset($view_modes[$view_mode])) {
+    $view_mode = $view_modes[$view_mode];
   }
   else {
     $view_mode = new stdClass;
@@ -117,9 +123,9 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
  */
 function ds_view_mode_unique($name) {
   ctools_include('export');
-  $custom_view_modes = ctools_export_load_object('ds_view_modes');
+  $view_modes = ctools_export_load_object('ds_view_modes');
   $value = strtr($name, array('-' => '_'));
-  return isset($custom_view_modes[$value]) ? TRUE : FALSE;
+  return isset($view_modes[$value]) ? TRUE : FALSE;
 }
 
 /**
@@ -157,7 +163,7 @@ function ds_edit_view_mode_form_validate($form, &$form_state) {
 function ds_edit_view_mode_form_submit($form, &$form_state) {
   $view_mode = $form_state['view_mode'];
 
-  // Delete previous view_mode configuration.
+  // Delete previous view_mode configuration (if any)
   db_delete('ds_view_modes')
     ->condition('view_mode', $view_mode->view_mode)
     ->execute();
@@ -175,17 +181,43 @@ function ds_edit_view_mode_form_submit($form, &$form_state) {
 }
 
 /**
- * Confirmation view mode delete form
+ * Menu callback: Confirmation view mode delete form.
  */
 function ds_delete_view_mode_confirm($form, &$form_state, $view_mode = '') {
+  return ds_remove_view_mode_confirm($form, $form_state, $view_mode, 'delete');
+}
+
+/**
+ * Menu callback: Confirmation view mode revert form.
+ */
+function ds_revert_view_mode_confirm($form, &$form_state, $view_mode = '') {
+  return ds_remove_view_mode_confirm($form, $form_state, $view_mode, 'revert');
+}
+
+/**
+ * Confirmation revert or remove form.
+ */
+function ds_remove_view_mode_confirm($form, &$form_state, $view_mode = '', $action = 'delete') {
   ctools_include('export');
-  // @todo convert to ds_get_info that Stalski is writing.
-  $custom_view_modes = ctools_export_load_object('ds_view_modes');
-  if (isset($custom_view_modes[$view_mode])) {
-    $view_mode = $custom_view_modes[$view_mode];
+  $view_modes = ctools_export_load_object('ds_view_modes');
+  if (isset($view_modes[$view_mode])) {
+    $view_mode = $view_modes[$view_mode];
+  }
+
+  $confirm = FALSE;
+  if (isset($view_mode->export_type)) {
+    if ($action == 'delete' && $view_mode->export_type != 2) {
+      $confirm = TRUE;
+    }
+    elseif ($action == 'revert' && $view_mode->export_type == 3) {
+      $confirm = TRUE;
+    }
+  }
+
+  if ($confirm) {
     $form['#view_mode'] = $view_mode;
     return confirm_form($form,
-      t('Are you sure you want to delete %view_mode?', array('%view_mode' => $view_mode->label)),
+      t('Are you sure you want to ' . $action . ' %view_mode?', array('%view_mode' => $view_mode->label)),
       'admin/structure/ds/view_modes',
       t('This action cannot be undone.'),
       t('Delete'),
@@ -193,7 +225,7 @@ function ds_delete_view_mode_confirm($form, &$form_state, $view_mode = '') {
     );
   }
   else {
-    drupal_set_message(t('Unknown view mode'));
+    drupal_set_message(t('This operation is not possible.'));
     drupal_goto('admin/structure/ds/view_modes');
   }
 }
@@ -202,10 +234,27 @@ function ds_delete_view_mode_confirm($form, &$form_state, $view_mode = '') {
  * Confirmed view mode delete submit callback.
  */
 function ds_delete_view_mode_confirm_submit($form, &$form_state) {
+  ds_remove_view_mode($form, $form_state, 'deleted');
+}
+
+/**
+ * Confirmed view mode revert submit callback.
+ */
+function ds_revert_view_mode_confirm_submit($form, &$form_state) {
+  ds_remove_view_mode($form, $form_state, 'reverted');
+}
+
+/**
+ * Remove a view mode from the database.
+ *
+ * @param $action
+ *   Whether we delete or remove the view mode.
+ */
+function ds_remove_view_mode($form, &$form_state, $action = 'deleted') {
 
   $view_mode = $form['#view_mode'];
 
-  // Remove view mode.
+  // Remove view mode from database.
   db_delete('ds_view_modes')
     ->condition('view_mode', $view_mode->view_mode)
     ->execute();
@@ -218,5 +267,5 @@ function ds_delete_view_mode_confirm_submit($form, &$form_state) {
 
   // Redirect.
   $form_state['redirect'] = 'admin/structure/ds/view_modes';
-  drupal_set_message(t('The view mode %view_mode has been deleted', array('%view_mode' => $view_mode->label)));
+  drupal_set_message(t('The view mode %view_mode has been ' . $action . '.', array('%view_mode' => $view_mode->label)));
 }
