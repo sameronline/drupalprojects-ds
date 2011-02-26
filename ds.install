@@ -55,7 +55,7 @@ function ds_schema() {
     // CTools export definitions.
     'export' => array(
       'key' => 'id',
-      'identifier' => 'dsfieldsetting',
+      'identifier' => 'ds_fieldsetting',
       'default hook' => 'ds_field_settings_info',
       'can disable' => TRUE,
       'api' => array(
@@ -115,7 +115,7 @@ function ds_schema() {
     // CTools export definitions.
     'export' => array(
       'key' => 'id',
-      'identifier' => 'dslayout',
+      'identifier' => 'ds_layout',
       'default hook' => 'ds_layout_settings_info',
       'can disable' => TRUE,
       'api' => array(

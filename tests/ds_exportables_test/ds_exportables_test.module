@@ -18,16 +18,16 @@ function ds_exportables_test_ctools_plugin_api($module, $api) {
  * Implementation of hook_ds_field_settings_info()
  */
 function ds_exportables_test_ds_field_settings_info() {
-  $dsfieldsettings = array();
+  $ds_fieldsettings = array();
 
-  $dsfieldsetting = new stdClass;
-  $dsfieldsetting->disabled = FALSE; /* Edit this to true to make a default dsfieldsetting disabled initially */
-  $dsfieldsetting->api_version = 1;
-  $dsfieldsetting->id = 'node|article|default';
-  $dsfieldsetting->entity_type = 'node';
-  $dsfieldsetting->bundle = 'article';
-  $dsfieldsetting->view_mode = 'default';
-  $dsfieldsetting->settings = array(
+  $ds_fieldsetting = new stdClass;
+  $ds_fieldsetting->disabled = FALSE; /* Edit this to true to make a default dsfieldsetting disabled initially */
+  $ds_fieldsetting->api_version = 1;
+  $ds_fieldsetting->id = 'node|article|default';
+  $ds_fieldsetting->entity_type = 'node';
+  $ds_fieldsetting->bundle = 'article';
+  $ds_fieldsetting->view_mode = 'default';
+  $ds_fieldsetting->settings = array(
     'title' => array(
       'weight' => '0',
       'label' => 'hidden',
@@ -44,26 +44,26 @@ function ds_exportables_test_ds_field_settings_info() {
       'format' => 'default',
     ),
   );
-  $dsfieldsettings['node|article|default'] = $dsfieldsetting;
+  $ds_fieldsettings['node|article|default'] = $ds_fieldsetting;
 
-  return $dsfieldsettings;
+  return $ds_fieldsettings;
 }
 
 /**
  * Implementation of hook_ds_layout_settings_info()
  */
 function ds_exportables_test_ds_layout_settings_info() {
-  $dslayouts = array();
+  $ds_layouts = array();
 
-  $dslayout = new stdClass;
-  $dslayout->disabled = FALSE; /* Edit this to true to make a default dslayout disabled initially */
-  $dslayout->api_version = 1;
-  $dslayout->id = 'node|article|default';
-  $dslayout->entity_type = 'node';
-  $dslayout->bundle = 'article';
-  $dslayout->view_mode = 'default';
-  $dslayout->layout = 'ds_2col';
-  $dslayout->settings = array(
+  $ds_layout = new stdClass;
+  $ds_layout->disabled = FALSE; /* Edit this to true to make a default dslayout disabled initially */
+  $ds_layout->api_version = 1;
+  $ds_layout->id = 'node|article|default';
+  $ds_layout->entity_type = 'node';
+  $ds_layout->bundle = 'article';
+  $ds_layout->view_mode = 'default';
+  $ds_layout->layout = 'ds_2col';
+  $ds_layout->settings = array(
     'hide_empty_regions' => 0,
     'regions' => array(
       'left' => array(
@@ -81,9 +81,9 @@ function ds_exportables_test_ds_layout_settings_info() {
     ),
     'classes' => array(),
   );
-  $dslayouts['node|article|default'] = $dslayout;
+  $ds_layouts['node|article|default'] = $ds_layout;
 
-  return $dslayouts;
+  return $ds_layouts;
 }
 
 /**
