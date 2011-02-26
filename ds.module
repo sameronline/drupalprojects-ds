@@ -87,9 +87,9 @@ function ds_ctools_plugin_api($owner, $api) {
 /**
  * Ctools callback to have list with id, name pairs.
  */
-function ds_layout_settings_names() {
+function ds_ctools_settings_names() {
   $options = array();
-  $items = ctools_export_crud_load_all('ds_layouts');
+  $items = ctools_export_crud_load_all('ds_layout_settings');
   foreach ($items as $item) {
     $options[$item->id] = $item->layout . ' (' . $item->entity_type . ' / ' . $item->bundle . ' / ' . $item->view_mode . ')';
   }
@@ -417,9 +417,15 @@ function ds_get_fields_configuration($entity_type, $bundle, $view_mode) {
       $fields_configuration = $cache->data;
     }
     else {
-      $results = db_query('SELECT field, entity_type, bundle, view_mode, settings FROM {ds_field_settings}');
-      foreach ($results as $row) {
-        $fields_configuration[$row->entity_type][$row->bundle][$row->view_mode][$row->field] = unserialize($row->settings);
+      ctools_include('export');
+      $ds_field_settings = ctools_export_load_object('ds_field_settings');
+      foreach ($ds_field_settings as $id => $settings) {
+        if (!isset($settings->settings)) {
+          continue;
+        }
+        foreach ($settings->settings as $field => $field_settings) {
+          $fields_configuration[$settings->entity_type][$settings->bundle][$settings->view_mode][$field] = $field_settings;
+        }
       }
       cache_set('ds_fields_configuration', $fields_configuration);
     }

@@ -31,7 +31,7 @@ function _ds_menu() {
     'access arguments' => array('admin_display_suite'),
   );
 
-  // Custom styles.
+  // Layout overview.
   $items['admin/structure/ds/layout'] = array(
     'title' => 'Layout',
     'description' => 'Displays an overview of all entities.',
@@ -40,11 +40,21 @@ function _ds_menu() {
     'access arguments' => array('admin_display_suite'),
   );
 
-  // Custom view modes.
+  // Revert layout.
+  $items['admin/structure/ds/revert-layout'] = array(
+    'title' => 'Revert layout',
+    'description' => 'Revert layout and field settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_revert_layout_field_settings_form'),
+    'file' => 'ds.field_ui.inc',
+    'access arguments' => array('admin_display_suite'),
+  );
+
+  // View modes.
   $items['admin/structure/ds/view_modes'] = array(
     'title' => 'View modes',
-    'description' => 'Manage custom view modes for all content.',
-    'page callback' => 'ds_custom_view_modes_list',
+    'description' => 'Manage view modes for all content.',
+    'page callback' => 'ds_view_modes_list',
     'file' => 'ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
   );
@@ -68,7 +78,7 @@ function _ds_menu() {
   );
   $items['admin/structure/ds/view_modes/revert'] = array(
     'title' => 'Revert a view mode',
-    'description' => 'Revert a custom view mode.',
+    'description' => 'Revert a view mode.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_revert_view_mode_confirm'),
     'file' => 'ds.view_modes.inc',

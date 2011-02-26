@@ -6,12 +6,11 @@
  */
 
 /**
- * Shows the list of custom view modes.
+ * Shows the list of view modes.
  */
-function ds_custom_view_modes_list() {
+function ds_view_modes_list() {
   $output = '';
 
-  // @todo convert to helper function.
   ctools_include('export');
   $view_modes = ctools_export_load_object('ds_view_modes');
   if (!empty($view_modes)) {
@@ -260,7 +259,7 @@ function ds_remove_view_mode($form, &$form_state, $action = 'deleted') {
     ->condition('view_mode', $view_mode->view_mode)
     ->execute();
 
-  // @todo remove any stale data (ds_settings).
+  // @todo remove any stale data (ds_field_settings and layout).
 
   // Clear entity info cache and trigger menu build on next request.
   cache_clear_all('entity_info', 'cache', TRUE);

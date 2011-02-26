@@ -50,14 +50,13 @@ function ds_disable() {
 function ds_schema() {
 
   $schema['ds_field_settings'] = array(
-    'description' => 'The table that holds field settings per display of every entity.',
+    'description' => 'The table that holds display suite field settings per display.',
 
     // CTools export definitions.
     'export' => array(
       'key' => 'id',
-      'identifier' => 'dsfieldsettings',
+      'identifier' => 'dsfieldsetting',
       'default hook' => 'ds_field_settings_info',
-      'list callback' => 'ds_layout_settings_names',
       'can disable' => TRUE,
       'api' => array(
         'owner' => 'ds',
@@ -71,14 +70,7 @@ function ds_schema() {
       'id' => array(
         'description' => 'The unique id this setting.',
         'type' => 'varchar',
-        'length' => 13,
-      ),
-      'field' => array(
-        'description' => 'The machine name of the field.',
-        'type' => 'varchar',
-        'length' => 32,
-        'not null' => TRUE,
-        'default' => '',
+        'length' => 255,
       ),
       'entity_type' => array(
         'description' => 'The name of the entity.',
@@ -102,15 +94,15 @@ function ds_schema() {
         'default' => '',
       ),
       'settings' => array(
-        'description' => 'The settings for this field.',
+        'description' => 'The display suite field settings for this layout.',
         'type' => 'blob',
         'not null' => FALSE,
         'size' => 'big',
         'serialize' => TRUE,
       ),
     ),
+    'primary key' => array('id'),
     'indexes' => array(
-      'ds_field'        => array('field'),
       'ds_entity'       => array('entity_type'),
       'ds_bundle'       => array('bundle'),
       'ds_view_mode'    => array('view_mode'),
@@ -125,7 +117,6 @@ function ds_schema() {
       'key' => 'id',
       'identifier' => 'dslayout',
       'default hook' => 'ds_layout_settings_info',
-      'list callback' => 'ds_layout_settings_names',
       'can disable' => TRUE,
       'api' => array(
         'owner' => 'ds',
@@ -139,7 +130,7 @@ function ds_schema() {
       'id' => array(
         'description' => 'The unique id the layout.',
         'type' => 'varchar',
-        'length' => 13,
+        'length' => 255,
       ),
       'entity_type' => array(
         'description' => 'The name of the entity.',
@@ -177,6 +168,7 @@ function ds_schema() {
         'serialize' => TRUE,
       ),
     ),
+    'primary key' => array('id'),
     'indexes' => array(
       'ds_entity'       => array('entity_type'),
       'ds_bundle'       => array('bundle'),
