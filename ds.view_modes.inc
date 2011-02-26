@@ -220,7 +220,7 @@ function ds_remove_view_mode_confirm($form, &$form_state, $view_mode = '', $acti
       t('Are you sure you want to ' . $action . ' %view_mode?', array('%view_mode' => $view_mode->label)),
       'admin/structure/ds/view_modes',
       t('This action cannot be undone.'),
-      t('Delete'),
+      t(ucfirst($action)),
       t('Cancel')
     );
   }
