@@ -37,7 +37,7 @@ function ds_extras_menu() {
  */
 function ds_extras_module_implements_alter(&$implementations, $hook) {
 
-  // Because it's possible to turn on/off features for display suite.
+  // Because it's possible to turn on/off features for DS extras,
   // we'll unset hooks here if necessary which otherwhise do nothing at all.
 
   // Disable the region to block feature.
