@@ -65,7 +65,7 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
   $vd_hooks = array(
     'field_extra_fields',
     'entity_info',
-    'ds_fields',
+    'ds_fields_info',
     'theme_registry_alter',
     'ctools_plugin_api',
   );
