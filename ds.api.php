@@ -30,13 +30,13 @@ function hook_ds_field_settings_info() {
   $ds_fieldsettings = array();
 
   $ds_fieldsetting = new stdClass;
-  $ds_fieldsetting->disabled = FALSE; /* Edit this to true to make a default dsfieldsetting disabled initially */
-  $ds_fieldsetting->api_version = 1;
-  $ds_fieldsetting->id = 'node|article|default';
-  $ds_fieldsetting->entity_type = 'node';
-  $ds_fieldsetting->bundle = 'article';
-  $ds_fieldsetting->view_mode = 'default';
-  $ds_fieldsetting->settings = array(
+  $dsfieldsetting->disabled = FALSE; /* Edit this to true to make a default dsfieldsetting disabled initially */
+  $dsfieldsetting->api_version = 1;
+  $dsfieldsetting->id = 'node|article|default';
+  $dsfieldsetting->entity_type = 'node';
+  $dsfieldsetting->bundle = 'article';
+  $dsfieldsetting->view_mode = 'default';
+  $dsfieldsetting->settings = array(
     'title' => array(
       'weight' => '0',
       'label' => 'hidden',
@@ -53,9 +53,9 @@ function hook_ds_field_settings_info() {
       'format' => 'default',
     ),
   );
-  $ds_fieldsettings['node|article|default'] = $ds_fieldsetting;
+  $dsfieldsettings['node|article|default'] = $dsfieldsetting;
 
-  return $ds_fieldsettings;
+  return $dsfieldsettings;
 }
 
 /**
@@ -66,17 +66,17 @@ function hook_ds_field_settings_info() {
  * can be overridden and reverted through the UI.
  */
 function hook_ds_layout_settings_info() {
-  $ds_layouts = array();
+  $dslayouts = array();
 
-  $ds_layout = new stdClass;
-  $ds_layout->disabled = FALSE; /* Edit this to true to make a default dslayout disabled initially */
-  $ds_layout->api_version = 1;
-  $ds_layout->id = 'node|article|default';
-  $ds_layout->entity_type = 'node';
-  $ds_layout->bundle = 'article';
-  $ds_layout->view_mode = 'default';
-  $ds_layout->layout = 'ds_2col';
-  $ds_layout->settings = array(
+  $dslayout = new stdClass;
+  $dslayout->disabled = FALSE; /* Edit this to true to make a default dslayout disabled initially */
+  $dslayout->api_version = 1;
+  $dslayout->id = 'node|article|default';
+  $dslayout->entity_type = 'node';
+  $dslayout->bundle = 'article';
+  $dslayout->view_mode = 'default';
+  $dslayout->layout = 'ds_2col';
+  $dslayout->settings = array(
     'hide_empty_regions' => 0,
     'regions' => array(
       'left' => array(
@@ -94,9 +94,9 @@ function hook_ds_layout_settings_info() {
     ),
     'classes' => array(),
   );
-  $ds_layouts['node|article|default'] = $ds_layout;
+  $dslayouts['node|article|default'] = $dslayout;
 
-  return $ds_layouts;
+  return $dslayouts;
 }
 
 /**
@@ -123,7 +123,8 @@ function hook_ds_view_modes_info() {
 }
 
 /**
- * Define custom fields.
+ * Define fields. These fields are not overridable through the interface.
+ * If you want those, look at hook_ds_custom_fields_info().
  *
  * @param $entity_type
  *   The name of the entity which we are requesting fields for, e.g. 'node'.
@@ -199,6 +200,40 @@ function hook_ds_fields_info($entity_type, $bundle, $view_mode) {
 
   return array('node' => $fields);
 
+}
+
+/**
+ * Define custom fields which can be overridden through the UI and which
+ * are exportable. The keys are almost the same as in hook_ds_fields_info()
+ * except that field_type is limited and you need an entities key.
+ */
+function hook_ds_custom_fields_info() {
+  $ds_fields = array();
+
+  $ds_field = new stdClass;
+  $ds_field->api_version = 1;
+  $ds_field->field = 'custom_field';
+  $ds_field->label = 'Custom field';
+
+  // Field type: either block or code
+  // DS_FIELD_TYPE_CODE: 5
+  // DS_FIELD_TYPE_BLOCK: 6
+  $ds_field->field_type = 5;
+
+  // Collection of entities on which this custom field can work on.
+  $ds_field->entities = array(
+    'node' => 'node',
+  );
+  $ds_field->properties = (object) array(
+    'code' => array(
+      'value' => '<? print "this is a custom field"; ?>',
+      'format' => 'ds_code',
+    ),
+    'use_token' => 0,
+  );
+  $ds_fields['custom_field'] = $ds_field;
+
+  return $ds_fields;
 }
 
 /**

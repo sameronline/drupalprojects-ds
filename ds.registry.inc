@@ -48,6 +48,7 @@ function _ds_menu() {
     'page arguments' => array('ds_revert_layout_field_settings_form'),
     'file' => 'ds.field_ui.inc',
     'access arguments' => array('admin_display_suite'),
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
   // View modes.
@@ -74,7 +75,7 @@ function _ds_menu() {
     'page arguments' => array('ds_delete_view_mode_confirm'),
     'file' => 'ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
-    'type' => MENU_CALLBACK,
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
   $items['admin/structure/ds/view_modes/revert'] = array(
     'title' => 'Revert a view mode',
@@ -83,7 +84,7 @@ function _ds_menu() {
     'page arguments' => array('ds_revert_view_mode_confirm'),
     'file' => 'ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
-    'type' => MENU_CALLBACK,
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
   // Fields.
@@ -118,7 +119,16 @@ function _ds_menu() {
     'page arguments' => array('ds_delete_field_confirm'),
     'file' => 'ds.fields.inc',
     'access arguments' => array('admin_fields'),
-    'type' => MENU_CALLBACK,
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+  );
+  $items['admin/structure/ds/fields/revert'] = array(
+    'title' => 'Revert a custom field',
+    'description' => 'Revert a custom field.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_revert_field_confirm'),
+    'file' => 'ds.fields.inc',
+    'access arguments' => array('admin_fields'),
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
   // Block can be disabled.
   if (module_exists('block')) {

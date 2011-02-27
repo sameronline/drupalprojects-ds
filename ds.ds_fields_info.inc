@@ -10,13 +10,14 @@
  */
 function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
 
-  $custom_fields = ds_custom_fields();
+  ctools_include('export');
+  $custom_fields = ctools_export_load_object('ds_fields');
   foreach ($custom_fields as $key => $field) {
     if (isset($field->entities[$entity_type])) {
       $fields[$entity_type][$key] = array(
         'title' => $field->label,
-        'type' => $field->type,
-        'properties' => (array) $field->properties,
+        'field_type' => $field->field_type,
+        'properties' => $field->properties,
       );
     }
   }
@@ -24,7 +25,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   // Node title.
   $fields['node']['title'] = array(
     'title' => t('Title'),
-    'type' => DS_FIELD_TYPE_FUNCTION,
+    'field_type' => DS_FIELD_TYPE_FUNCTION,
     'function' => 'ds_render_field',
     'properties' => array(
       'entity_path' => 'node',
@@ -42,21 +43,21 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   // Links.
   $fields['node']['links'] = array(
     'title' => t('Links'),
-    'type' => DS_FIELD_TYPE_IGNORE,
+    'field_type' => DS_FIELD_TYPE_IGNORE,
   );
 
   // Comments.
   if (module_exists('comment') && ($view_mode == 'full' || $view_mode == 'default')) {
     $fields['node']['comments'] = array(
       'title' => t('Comments'),
-      'type' => DS_FIELD_TYPE_IGNORE,
+      'field_type' => DS_FIELD_TYPE_IGNORE,
     );
   }
 
   // Node link.
   $fields['node']['node_link'] = array(
     'title' => t('Read more'),
-    'type' => DS_FIELD_TYPE_FUNCTION,
+    'field_type' => DS_FIELD_TYPE_FUNCTION,
     'function' => 'ds_render_field',
     'properties' => array(
       'entity_path' => 'node',
@@ -73,7 +74,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   // Author.
   $fields['node']['author'] = array(
     'title' => t('Author'),
-    'type' => DS_FIELD_TYPE_FUNCTION,
+    'field_type' => DS_FIELD_TYPE_FUNCTION,
     'function' => 'ds_render_author_field',
     'properties' => array(
       'formatters' => array(
@@ -91,7 +92,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   }
   $fields['node']['post_date'] = array(
     'title' => t('Post date'),
-    'type' => DS_FIELD_TYPE_FUNCTION,
+    'field_type' => DS_FIELD_TYPE_FUNCTION,
     'function' => 'ds_render_date_field',
     'properties' => array(
       'formatters' => $date_formatters,
@@ -116,7 +117,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
     }
     $fields['node'][$key] = array(
       'title' => t('User picture'),
-      'type' => $type,
+      'field_type' => $type,
       'properties' => array(
         'formatters' => $picture_formatters,
       ),
@@ -129,7 +130,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   // Comment Links.
   $fields['comment']['links'] = array(
     'title' => t('Links'),
-    'type' => DS_FIELD_TYPE_IGNORE,
+    'field_type' => DS_FIELD_TYPE_IGNORE,
   );
 
   // Created time.
@@ -140,7 +141,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   }
   $fields['comment']['post_date'] = array(
     'title' => t('Post date'),
-    'type' => DS_FIELD_TYPE_FUNCTION,
+    'field_type' => DS_FIELD_TYPE_FUNCTION,
     'function' => 'ds_render_date_field',
     'properties' => array(
       'formatters' => $date_formatters,
@@ -150,32 +151,32 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   // Permalink.
   $fields['comment']['permalink'] = array(
     'title' => t('Permalink'),
-    'type' => DS_FIELD_TYPE_PREPROCESS,
+    'field_type' => DS_FIELD_TYPE_PREPROCESS,
   );
 
   // Submitted.
   $fields['comment']['submitted'] = array(
     'title' => t('Submitted'),
-    'type' => DS_FIELD_TYPE_PREPROCESS,
+    'field_type' => DS_FIELD_TYPE_PREPROCESS,
   );
 
   // Title.
   $fields['comment']['title'] = array(
     'title' => t('Title'),
-    'type' => DS_FIELD_TYPE_PREPROCESS,
+    'field_type' => DS_FIELD_TYPE_PREPROCESS,
   );
 
   // Author.
   $fields['comment']['author'] = array(
     'title' => t('Author'),
-    'type' => DS_FIELD_TYPE_PREPROCESS,
+    'field_type' => DS_FIELD_TYPE_PREPROCESS,
   );
 
   // User signature.
   if (variable_get('user_signatures', 0)) {
     $fields['comment']['signature'] = array(
       'title' => t('User signature'),
-      'type' => DS_FIELD_TYPE_PREPROCESS,
+      'field_type' => DS_FIELD_TYPE_PREPROCESS,
     );
   }
 
@@ -197,7 +198,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
     }
     $fields['comment'][$key] = array(
       'title' => t('User picture'),
-      'type' => $type,
+      'field_type' => $type,
       'properties' => array(
         'formatters' => $picture_formatters,
       ),
@@ -210,7 +211,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   // Username
   $fields['user']['name'] = array(
     'title' => 'Username',
-    'type' => DS_FIELD_TYPE_FUNCTION,
+    'field_type' => DS_FIELD_TYPE_FUNCTION,
     'function' => 'ds_render_field',
     'properties' => array(
       'entity_path' => 'user',
@@ -229,7 +230,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   if (variable_get('user_signatures', 0)) {
     $fields['user']['user_signature'] = array(
       'title' => t('User signature'),
-      'type' => DS_FIELD_TYPE_FUNCTION,
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
       'function' => 'ds_render_markup',
       'properties' => array(
         'key' => 'signature',
@@ -256,7 +257,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
     }
     $fields['user'][$key] = array(
       'title' => t('User picture'),
-      'type' => $type,
+      'field_type' => $type,
       'properties' => array(
         'formatters' => $picture_formatters,
       ),
@@ -269,7 +270,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   // Taxonomy term title.
   $fields['taxonomy_term']['title'] = array(
     'title' => t('Title'),
-    'type' => DS_FIELD_TYPE_FUNCTION,
+    'field_type' => DS_FIELD_TYPE_FUNCTION,
     'properties' => array(
       'entity_path' => 'taxonomy/term',
       'entity_id_key' => 'tid',

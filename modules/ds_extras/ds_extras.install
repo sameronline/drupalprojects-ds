@@ -25,6 +25,21 @@ function ds_extras_schema() {
 
   $schema['ds_vd'] = array(
     'description' => 'The base table for views displays.',
+
+    // CTools export definitions.
+    'export' => array(
+      'key' => 'vd',
+      'identifier' => 'ds_vd',
+      'default hook' => 'ds_vd_info',
+      'can disable' => FALSE,
+      'api' => array(
+        'owner' => 'ds_extras',
+        'api' => 'ds_extras',
+        'minimum_version' => 1,
+        'current_version' => 1,
+      ),
+    ),
+
     'fields' => array(
       'vd' => array(
         'description' => 'The primary identifier for the views display.',

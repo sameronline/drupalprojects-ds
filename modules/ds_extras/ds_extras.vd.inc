@@ -29,6 +29,9 @@ function ds_extras_vd($bundle = '', $action = '') {
 function ds_extras_vd_overview($entity_info) {
   $build = $rows = array();
 
+  ctools_include('export');
+  $vd_settings = ctools_export_load_object('ds_vd');
+
   if ($entity_info) {
     foreach ($entity_info['bundles'] as $key => $value) {
 
@@ -41,7 +44,10 @@ function ds_extras_vd_overview($entity_info) {
       $row = array();
       $row[] = $value['label'];
       $operations = l(t('Manage layout'), 'admin/structure/ds/vd/' . $key . '/display');
-      $operations .= ' - ' . l(t('Remove'), 'admin/structure/ds/vd/' . $key . '/remove');
+
+      if (isset($vd_settings[$key]) && $vd_settings[$key]->export_type == 1) {
+        $operations .= ' - ' . l(t('Remove'), 'admin/structure/ds/vd/' . $key . '/remove');
+      }
       $row[] = $operations;
 
       $rows[$key] = $row;

@@ -20,12 +20,12 @@ function ds_test_ds_fields_info($entity_type, $bundle, $view_mode) {
   if ($entity_type == 'node') {
     $fields['node']['ds_test_field'] = array(
       'title' => t('Test code field from hook'),
-      'type' => DS_FIELD_TYPE_FUNCTION,
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
       'function' => 'dstest_render_test_field',
     );
     $fields['node']['ds_test_field_2'] = array(
       'title' => t('Test code field from hook 2'),
-      'type' => DS_FIELD_TYPE_FUNCTION,
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
       'function' => 'dstest_render_test_field',
     );
 

@@ -57,7 +57,7 @@ function ds_schema() {
       'key' => 'id',
       'identifier' => 'ds_fieldsetting',
       'default hook' => 'ds_field_settings_info',
-      'can disable' => TRUE,
+      'can disable' => FALSE,
       'api' => array(
         'owner' => 'ds',
         'api' => 'ds',
@@ -117,7 +117,7 @@ function ds_schema() {
       'key' => 'id',
       'identifier' => 'ds_layout',
       'default hook' => 'ds_layout_settings_info',
-      'can disable' => TRUE,
+      'can disable' => FALSE,
       'api' => array(
         'owner' => 'ds',
         'api' => 'ds',
@@ -226,8 +226,8 @@ function ds_schema() {
     'export' => array(
       'key' => 'field',
       'identifier' => 'ds_field',
-      'default hook' => 'ds_fields_info',
-      'can disable' => TRUE,
+      'default hook' => 'ds_custom_fields_info',
+      'can disable' => FALSE,
       'api' => array(
         'owner' => 'ds',
         'api' => 'ds',
@@ -251,7 +251,7 @@ function ds_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
-      'type' => array(
+      'field_type' => array(
         'description' => 'The type of of the field',
         'type' => 'int',
         'size' => 'small',

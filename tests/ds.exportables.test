@@ -62,7 +62,7 @@ class dsExportablesTests extends dsBaseTest {
   }
 
   // Test layout and field settings configuration.
-  function testDSLayoutFieldsettings() {
+  function testDSExportablesLayoutFieldsettings() {
     $this->dsExportablesSetup();
 
     $this->drupalGet('admin/structure/types/manage/article/display');
@@ -123,5 +123,38 @@ class dsExportablesTests extends dsBaseTest {
     $this->assertNoRaw('group-footer', 'Left region found');
     $this->assertRaw('<h3><a href="/node/1" class="active">Exportable</a></h3>', t('Default title with h3 found'));
     $this->assertRaw('<a href="/node/1" class="active">Read more</a>', t('Default read more found'));
+  }
+
+  // Test custom field exportables.
+  function testDSExportablesCustomFields() {
+    $this->dsExportablesSetup();
+
+    // Look for default custom field.
+    $this->drupalGet('admin/structure/ds/fields');
+    $this->assertText('Exportable field');
+    $this->drupalGet('admin/structure/types/manage/article/display');
+    $this->assertText('Exportable field');
+
+    // Override custom field.
+    // Update testing label
+    $edit = array(
+      'name' => 'Overridden field',
+    );
+    $this->drupalPost('admin/structure/ds/fields/manage_custom/ds_exportable_field', $edit, t('Save'));
+    $this->assertText(t('The field Overridden field has been saved'), t('Default exportable field label updated'));
+    $this->assertText('Overridden field');
+    $this->assertNoText('Exportable field');
+    $this->drupalGet('admin/structure/types/manage/article/display');
+    $this->assertText('Overridden field');
+    $this->assertNoText('Exportable field');
+
+    // Revert.
+    $edit = array();
+    $this->drupalPost('admin/structure/ds/fields/revert/ds_exportable_field', $edit, t('Revert'));
+    $this->assertText('The field Overridden field has been reverted', t('Field reverted'));
+    $this->assertText('Exportable field');
+    $this->drupalGet('admin/structure/types/manage/article/display');
+    $this->assertNoText('Overridden field');
+    $this->assertText('Exportable field');
   }
 }

@@ -9,13 +9,39 @@
  * Implements hook_ctools_plugin_api().
  */
 function ds_exportables_test_ctools_plugin_api($module, $api) {
-  if ($module == 'ds' && $api == 'ds') {
+  if (($module == 'ds' && $api == 'ds') || ($module == 'ds_extras' && $api == 'ds_extras')) {
     return array('version' => 1);
   }
 }
 
 /**
- * Implementation of hook_ds_field_settings_info()
+ * Implements hook_ds_custom_fields_info()
+ */
+function ds_exportables_test_ds_custom_fields_info() {
+ $ds_fields = array();
+
+  $ds_field = new stdClass;
+  $ds_field->api_version = 1;
+  $ds_field->field = 'ds_exportable_field';
+  $ds_field->label = 'Exportable field';
+  $ds_field->field_type = 5;
+  $ds_field->entities = array(
+    'node' => 'node',
+  );
+  $ds_field->properties = array(
+    'code' => array(
+      'value' => '<?php print "This is an exportable field"; ?>',
+      'format' => 'ds_code',
+    ),
+    'use_token' => 0,
+  );
+  $ds_fields['ds_exportable_field'] = $ds_field;
+
+  return $ds_fields;
+}
+
+/**
+ * Implements hook_ds_field_settings_info()
  */
 function ds_exportables_test_ds_field_settings_info() {
   $ds_fieldsettings = array();
@@ -103,4 +129,19 @@ function ds_exportables_test_ds_view_modes_info() {
   $ds_view_modes['test_exportables'] = $ds_view_mode;
 
   return $ds_view_modes;
+}
+
+/**
+ * Implements hook_ds_vd_info().
+ */
+function ds_exportables_test_ds_vd_info() {
+  $ds_vds = array();
+
+  $ds_vd = new stdClass;
+  $ds_vd->api_version = 1;
+  $ds_vd->vd = 'frontpage-page';
+  $ds_vd->label = 'Frontpage: Views displays';
+  $ds_vds['frontpage-page'] = $ds_vd;
+
+  return $ds_vds;
 }

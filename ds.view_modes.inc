@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Administrative functions for managing custom view modes for every entity.
+ * Administrative functions for managing view modes for every entity.
  */
 
 /**
