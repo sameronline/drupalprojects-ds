@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Display suite extras fields.
+ */
+
+/**
  * Implements hook_ds_fields().
  */
 function ds_extras_ds_fields($entity_type, $bundle, $view_mode) {

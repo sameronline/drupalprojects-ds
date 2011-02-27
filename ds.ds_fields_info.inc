@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Display suite fields
+ * Display suite fields.
  */
 
 /**
@@ -88,7 +88,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   $format_types = system_get_date_types();
   $date_formatters = array();
   foreach ($format_types as $formatter) {
-    $date_formatters['ds_post_date_'. $formatter['type']] = t($formatter['title']);
+    $date_formatters['ds_post_date_' . $formatter['type']] = t($formatter['title']);
   }
   $fields['node']['post_date'] = array(
     'title' => t('Post date'),
@@ -109,7 +109,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
       $type = DS_FIELD_TYPE_FUNCTION;
       $styles = image_styles();
       foreach ($styles as $formatter) {
-        $picture_formatters['ds_picture_'. $formatter['name']] = ucfirst(str_replace('_', ' ', $formatter['name']));
+        $picture_formatters['ds_picture_' . $formatter['name']] = drupal_ucfirst(str_replace('_', ' ', $formatter['name']));
       }
     }
     else {
@@ -137,7 +137,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   $format_types = system_get_date_types();
   $date_formatters = array();
   foreach ($format_types as $formatter) {
-    $date_formatters['ds_post_date_'. $formatter['type']] = t($formatter['title']);
+    $date_formatters['ds_post_date_' . $formatter['type']] = t($formatter['title']);
   }
   $fields['comment']['post_date'] = array(
     'title' => t('Post date'),
@@ -190,7 +190,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
       $type = DS_FIELD_TYPE_FUNCTION;
       $styles = image_styles();
       foreach ($styles as $formatter) {
-        $picture_formatters['ds_picture_'. $formatter['name']] = ucfirst(str_replace('_', ' ', $formatter['name']));
+        $picture_formatters['ds_picture_' . $formatter['name']] = drupal_ucfirst(str_replace('_', ' ', $formatter['name']));
       }
     }
     else {
@@ -249,7 +249,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
       $type = DS_FIELD_TYPE_FUNCTION;
       $styles = image_styles();
       foreach ($styles as $formatter) {
-        $picture_formatters['ds_picture_'. $formatter['name']] = ucfirst(str_replace('_', ' ', $formatter['name']));
+        $picture_formatters['ds_picture_' . $formatter['name']] = drupal_ucfirst(str_replace('_', ' ', $formatter['name']));
       }
     }
     else {

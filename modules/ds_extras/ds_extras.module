@@ -253,7 +253,7 @@ function ds_extras_form_field_ui_display_overview_form_alter(&$form, &$form_stat
   $region_blocks = variable_get('ds_extras_region_blocks', array());
   foreach ($region_blocks as $key => $block) {
     if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
-      $region_blocks_options[$key] = t('Remove') . ' '. $block['title'];
+      $region_blocks_options[$key] = t('Remove') . ' ' . $block['title'];
     }
   }
 
@@ -553,14 +553,12 @@ function ds_extras_preprocess_view(&$variables) {
  *
  * @param $field
  *   The field array.
- *
- * @todo convert this to theming function.
  */
 function ds_vd_render_title_field($field) {
   $output = '';
   $formatter = explode('_', $field['formatter']);
   $tag = $formatter[2];
-  $output = '<' . $tag . '>'. check_plain($field['entity']->get_title()) .'</' . $tag . '>';
+  $output = '<' . $tag . '>' . check_plain($field['entity']->get_title()) . '</' . $tag . '>';
 
   // Views is a special case here, we'll put it back in
   $field['entity']->preprocess_fields[] = 'title';

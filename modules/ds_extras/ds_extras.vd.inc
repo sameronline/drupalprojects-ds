@@ -94,7 +94,7 @@ function ds_extras_vd_bundle_form($form, $form_state, $rows) {
 
       $key = $view_key . '-' . $display_key;
       if (!isset($rows[$key])) {
-        $options[$key] = ucfirst($view->name) . ': ' . $display->display_title;
+        $options[$key] = drupal_ucfirst($view->name) . ': ' . $display->display_title;
       }
     }
   }
@@ -130,7 +130,7 @@ function ds_extras_vd_bundle_form_submit($form, &$form_state) {
   cache_clear_all('entity_info', 'cache', TRUE);
 
   // Message and redirect.
-  drupal_set_message(t('Bundle !label has been added.', array('!label' => $record->label)));
+  drupal_set_message(t('Bundle @label has been added.', array('@label' => $record->label)));
   $form_state['redirect'] = 'admin/structure/ds/vd';
 }
 
@@ -167,7 +167,7 @@ function ds_extras_vd_field_ui($bundle) {
 function ds_extras_vd_bundle_remove($form, $form_state, $bundle, $label) {
   $form['#bundle'] = $bundle;
   $form['#label'] = $label;
-  return confirm_form($form, t('Are you sure you want to remove bundle !label ?', array('!label' => $label)), 'admin/structure/ds/vd');
+  return confirm_form($form, t('Are you sure you want to remove bundle @label ?', array('@label' => $label)), 'admin/structure/ds/vd');
 }
 
 /**
@@ -197,5 +197,5 @@ function ds_extras_vd_bundle_remove_submit($form, &$form_state) {
   cache_clear_all('field_info_fields', 'cache_field');
   cache_clear_all('entity_info', 'cache', TRUE);
 
-  drupal_set_message(t('Bundle !label has been removed.', array('!label' => $label)));
+  drupal_set_message(t('Bundle @label has been removed.', array('@label' => $label)));
 }

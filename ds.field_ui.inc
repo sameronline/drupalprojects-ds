@@ -399,7 +399,7 @@ function ds_ds_field_format_summary($field) {
   foreach ($settings as $key => $value) {
     if (!empty($value)) {
       $value = is_numeric($value) ? ($value ? t('Yes') : t('No')) : $value;
-      $summary .= ucfirst(check_plain($key)) . ': ' . $value . '<br />';
+      $summary .= drupal_ucfirst(check_plain($key)) . ': ' . $value . '<br />';
     }
   }
   return $summary;
@@ -420,7 +420,7 @@ function ds_ds_field_settings_form($field) {
       case 'textfield':
         $form[$key] = array(
           '#type' => 'textfield',
-          '#title' => check_plain(ucfirst($key)),
+          '#title' => check_plain(drupal_drupal_ucfirst($key)),
           '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
           '#description' => isset($value['description']) ? check_plain($value['description']) : '',
         );
@@ -429,7 +429,7 @@ function ds_ds_field_settings_form($field) {
       case 'select':
         $form[$key] = array(
           '#type' => 'select',
-          '#title' => check_plain(ucfirst($key)),
+          '#title' => check_plain(drupal_ucfirst($key)),
           '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
           '#options' => $value['options'],
           '#description' => isset($value['description']) ? check_plain($value['description']) : '',
@@ -458,7 +458,8 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
 
   $layout_options = array();
   $ds_layouts = module_invoke_all('ds_layout_info');
-  $layout_options = array('' => t(' - None - '));
+  // @todo isn't core smarter about empty options ?
+  $layout_options = array('' => t('- None -'));
   foreach ($ds_layouts as $key => $layout) {
     $layout_options[$key] = $layout['label'];
   }
@@ -494,9 +495,9 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     $layout_string = $layout->layout;
     $selected = t('You have selected the %layout_label layout. The default template can be found in %path', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
     $suggestions = 'Possible template suggestions are: <br />';
-    $suggestions .= '- ' . $layout_string .'--'. $entity_type .'.tpl.php<br />';
-    $suggestions .= '- ' . $layout_string .'--'. $entity_type .'-'. $bundle .'.tpl.php<br />';
-    $suggestions .= '- ' . $layout_string .'--'. $entity_type .'-'. $bundle .'-' . $view_mode .'.tpl.php<br />';
+    $suggestions .= '- ' . $layout_string . '--' . $entity_type . '.tpl.php<br />';
+    $suggestions .= '- ' . $layout_string . '--' . $entity_type . '-' . $bundle . '.tpl.php<br />';
+    $suggestions .= '- ' . $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode . '.tpl.php<br />';
     $layout->settings = $layout->settings;
     $layout->regions = $chosen_layout['regions'];
     $form['#ds_layout'] = $layout;
@@ -512,7 +513,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
 
   if (isset($layout->export_type) && $layout->export_type == 3) {
     $form['additional_settings']['ds_layouts']['revert'] = array(
-      '#markup' => l('This layout is overridden. Click to revert to default settings.', 'admin/structure/ds/revert-layout/' . $form['#export_id'], array('query' => drupal_get_destination())),
+      '#markup' => l(t('This layout is overridden. Click to revert to default settings.'), 'admin/structure/ds/revert-layout/' . $form['#export_id'], array('query' => drupal_get_destination())),
       '#weight' => 0,
     );
   }

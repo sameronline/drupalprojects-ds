@@ -15,10 +15,10 @@ function ds_exportables_test_ctools_plugin_api($module, $api) {
 }
 
 /**
- * Implements hook_ds_custom_fields_info()
+ * Implements hook_ds_custom_fields_info().
  */
 function ds_exportables_test_ds_custom_fields_info() {
- $ds_fields = array();
+  $ds_fields = array();
 
   $ds_field = new stdClass;
   $ds_field->api_version = 1;
@@ -41,7 +41,7 @@ function ds_exportables_test_ds_custom_fields_info() {
 }
 
 /**
- * Implements hook_ds_field_settings_info()
+ * Implements hook_ds_field_settings_info().
  */
 function ds_exportables_test_ds_field_settings_info() {
   $ds_fieldsettings = array();
@@ -76,7 +76,7 @@ function ds_exportables_test_ds_field_settings_info() {
 }
 
 /**
- * Implementation of hook_ds_layout_settings_info()
+ * Implements hook_ds_layout_settings_info().
  */
 function ds_exportables_test_ds_layout_settings_info() {
   $ds_layouts = array();

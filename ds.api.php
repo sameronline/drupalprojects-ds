@@ -22,9 +22,9 @@ function hook_test_ctools_plugin_api($module, $api) {
 /**
  * Expose Display suite field settings.
  *
- * This hook are called by CTools. For this hook to work, you need
- * to implement hook_ctools_plugin_api(). The values of this hook
- * can be overridden and reverted through the UI.
+ * This hook is called by CTools. For this hook to work, you need
+ * hook_ctools_plugin_api(). The values of this hook can be overridden
+ * and reverted through the UI.
  */
 function hook_ds_field_settings_info() {
   $ds_fieldsettings = array();
@@ -61,9 +61,9 @@ function hook_ds_field_settings_info() {
 /**
  * Expose default layout settings info.
  *
- * This hook are called by CTools. For this hook to work, you need
- * to implement hook_ctools_plugin_api(). The values of this hook
- * can be overridden and reverted through the UI.
+ * This hook is called by CTools. For this hook to work, you need
+ * hook_ctools_plugin_api(). The values of this hook can be overridden
+ * and reverted through the UI.
  */
 function hook_ds_layout_settings_info() {
   $dslayouts = array();
@@ -102,9 +102,9 @@ function hook_ds_layout_settings_info() {
 /**
  * Expose default view modes.
  *
- * This hook are called by CTools. For this hook to work, you need
- * to implement hook_ctools_plugin_api(). The values of this hook
- * can be overridden and reverted through the UI.
+ * This hook is called by CTools. For this hook to work, you need
+ * hook_ctools_plugin_api(). The values of this hook can be overridden
+ * and reverted through the UI.
  */
 function hook_ds_view_modes_info() {
   $ds_view_modes = array();
@@ -208,8 +208,8 @@ function hook_ds_fields_info($entity_type, $bundle, $view_mode) {
  * except that field_type is limited and you need an entities key.
  *
  * This hook is called by CTools. For this hook to work, you need
- * to implement hook_ctools_plugin_api(). The values of this hook
- * can be overridden and reverted through the UI.
+ * hook_ctools_plugin_api(). The values of this hook can be overridden
+ * and reverted through the UI.
  */
 function hook_ds_custom_fields_info() {
   $ds_fields = array();
@@ -243,8 +243,9 @@ function hook_ds_custom_fields_info() {
 /**
  * Expose Views layouts definitions.
  *
- * This hooks are called by CTools. For this hook to work, you need
- * to implement hook_ctools_plugin_api().
+ * This hook is called by CTools. For this hook to work, you need
+ * hook_ctools_plugin_api(). The values of this hook can be overridden
+ * and reverted through the UI.
  */
 function ds_exportables_test_ds_vd_info() {
   $ds_vds = array();
@@ -273,7 +274,7 @@ function hook_ds_fields_info_alter(&$fields) {
 /**
  * Creates a summary for the field format configuration summary.
  *
- * As soon as you implement hook_ds_fields() and one of the fields
+ * As soon as you have hook_ds_fields and one of the fields
  * has a settings key, Display Suite will call this hook for the summary.
  *
  * @param $field
@@ -289,7 +290,7 @@ function hook_ds_field_settings_summary($field) {
 /**
  * Return a settings form for a Display Suite field.
  *
- * As soon as you implement hook_ds_fields() and one of the fields
+ * As soon as you have hook_ds_fields and one of the fields
  * has a settings key, Display Suite will call this hook for field form.
  *
  * @param $field

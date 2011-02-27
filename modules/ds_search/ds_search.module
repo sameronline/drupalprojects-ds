@@ -73,7 +73,7 @@ function ds_search_settings($form, $form_state) {
   $engine_options = array();
   foreach (module_implements('search_info') as $module) {
     if ($module != 'ds_search' && $module != 'user') {
-      $engine_options[$module] = ucfirst(str_replace('_', ' ', $module));
+      $engine_options[$module] = drupal_ucfirst(str_replace('_', ' ', $module));
     }
   }
 
@@ -331,7 +331,7 @@ if (variable_get('ds_user_override_search_page', FALSE)) {
 
       // Lookup drupal path, we are most likely having an alias.
       if (!is_numeric($uid)) {
-        $path = str_replace($base_url .'/', '', $result['link']);
+        $path = str_replace($base_url . '/', '', $result['link']);
         $alias = drupal_get_normal_path($path);
         $path = explode('/', $alias);
         $uid = end($path);
@@ -364,12 +364,12 @@ if (variable_get('ds_user_override_search_page', FALSE)) {
 function ds_build_shared_page_variables(&$build) {
   // Search results title.
   if (variable_get('ds_search_show_title', FALSE)) {
-    $build['search_title'] = array('#markup' => '<h2>'. t('Search results') .'</h2>');
+    $build['search_title'] = array('#markup' => '<h2>' . t('Search results') . '</h2>');
   }
 
   // Extra variables.
   if (variable_get('ds_search_variables', 'none') != 'none') {
-    $build['search_extra'] = array('#markup' => '<div class="ds-search-extra">'. ds_search_extra_variables(arg(2)) .'</div>');
+    $build['search_extra'] = array('#markup' => '<div class="ds-search-extra">' . ds_search_extra_variables(arg(2)) . '</div>');
   }
 
   // Search results.

@@ -135,7 +135,7 @@ function ds_module_implements_alter(&$implementations, $hook) {
   // when the view mode is 'search_index'. If you set display modes for
   // this view mode by hand, then the hook isn't needed. Since this
   // may be called hundreds of times on some pages, it's worth disabling it.
-  // @see http://drupal.org/node/834278
+  // See http://drupal.org/node/834278
   // This code is also in Performance hacks module, but it's not bad to
   // disable this too in Display Suite by default.
   if ($hook == 'field_display_node_alter') {
@@ -214,7 +214,7 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
       // Get all fields.
       $fields = array();
       foreach (module_implements('ds_fields_info') as $module) {
-        $function = $module .'_ds_fields_info';
+        $function = $module . '_ds_fields_info';
         $all_fields = $function($entity_type, $bundle, $view_mode);
         if (!empty($all_fields)) {
           foreach ($all_fields as $key => $field_results) {
@@ -538,7 +538,7 @@ function ds_entity_variables(&$variables) {
       }
 
       // Add extras classes to the region.
-      $variables[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' '. implode(' ', $layout['settings']['classes'][$region_name]) : '';
+      $variables[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
     }
   }
 }
@@ -592,7 +592,7 @@ function ds_php_eval($code, $entity) {
   }
 
   ob_start();
-  print eval('?>'. $code);
+  print eval('?>' . $code);
   $output = ob_get_contents();
   ob_end_clean();
 
@@ -645,7 +645,7 @@ function ds_render_block_field($field) {
         return theme('block', $elements);
         break;
       case DS_BLOCK_TITLE_CONTENT:
-        $content = '<h2 class="block-title">'. $block['subject'] .'</h2>';
+        $content = '<h2 class="block-title">' . $block['subject'] . '</h2>';
         $content .= $block['content'];
         return $content;
         break;
@@ -765,7 +765,7 @@ function ds_render_user_picture($field) {
     }
 
     if (!empty($field['entity']->uid) && user_access('access user profiles')) {
-      return l($image, 'user/'. $field['entity']->uid, array('html' => TRUE));
+      return l($image, 'user/' . $field['entity']->uid, array('html' => TRUE));
     }
     else {
       return $image;

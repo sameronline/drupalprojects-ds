@@ -6,7 +6,7 @@
  */
 
 /**
- * Implementation of hook_install().
+ * Implements hook_install().
  */
 function ds_extras_install() {
   $ret = array();
@@ -63,7 +63,7 @@ function ds_extras_schema() {
 }
 
 /**
- * Implementation of hook_uninstall().
+ * Implements hook_uninstall().
  */
 function ds_extras_uninstall() {
   variable_del('ds_extras_region_to_block');
@@ -74,7 +74,7 @@ function ds_extras_uninstall() {
 }
 
 /**
- * Implementation of hook_schema_alter().
+ * Implements hook_schema_alter().
  */
 function ds_extras_schema_alter(&$schema) {
 

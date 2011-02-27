@@ -99,10 +99,10 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       $i = 1;
       $a = 0;
       while ($limit != 0) {
-        $form['alternating_fieldset']['item_'. $a] = array(
-          '#title' => 'Item '. $i,
+        $form['alternating_fieldset']['item_' . $a] = array(
+          '#title' => t('Item @nr', array('@nr' => $i)),
           '#type' => 'select',
-          '#default_value' => (isset($this->options['alternating_fieldset']['item_'. $a])) ? $this->options['alternating_fieldset']['item_'. $a] : 'teaser',
+          '#default_value' => (isset($this->options['alternating_fieldset']['item_' . $a])) ? $this->options['alternating_fieldset']['item_' . $a] : 'teaser',
           '#options' => $view_mode_options,
         );
         $limit--;
@@ -128,8 +128,8 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     if (!empty($sorts)) {
       $sort_options = array();
       foreach ($sorts as $key => $sort) {
-        $sort_name = ucfirst(str_replace('_', ' ', $sort['table']) .' '. $sort['field']);
-        $sort_options[$sort['table'] .'_'. $sort['field']] = $sort_name;
+        $sort_name = drupal_ucfirst(str_replace('_', ' ', $sort['table']) . ' ' . $sort['field']);
+        $sort_options[$sort['table'] . '_' . $sort['field']] = $sort_name;
       }
 
       $form['grouping_fieldset']['group_field'] = array(
@@ -141,7 +141,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       $form['grouping_fieldset']['group_field_function'] = array(
         '#type' => 'textfield',
         '#title' => 'Heading function',
-        '#description' => 'The value of the field can be in a very raw format (eg, date created). Enter a custom function which you can use to format that value. The value and the object will be passed into that function eg. <em>custom_function($raw_value, $object);</em>',
+        '#description' => t('The value of the field can be in a very raw format (eg, date created). Enter a custom function which you can use to format that value. The value and the object will be passed into that function eg. <em>custom_function($raw_value, $object);</em>'),
         '#default_value' => $this->options['grouping_fieldset']['group_field_function'],
       );
     }
@@ -216,13 +216,13 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     // The advanced selector searches for a function called
     // ds_views_row_adv_VIEWSNAME. Return the row immediately.
     if ($this->options['advanced']) {
-      $row_function = 'ds_views_row_adv_'. $this->view->name;
+      $row_function = 'ds_views_row_adv_' . $this->view->name;
       return $row_function($this->entities[$row->{$this->field_alias}], $this->options['view_mode']);
     }
 
     // Keep a static group array.
     static $grouping = array();
-    $view_name = $this->view->name .'_'. $this->view->current_display;
+    $view_name = $this->view->name . '_' . $this->view->current_display;
     $group_value_content = '';
 
     // Default view mode.
@@ -235,12 +235,12 @@ class views_plugin_ds_entity_view extends views_plugin_row {
         $view_mode = $this->options['view_mode'];
       }
       else {
-        $view_mode = $this->options['alternating_fieldset']['item_'. $this->view->row_index];
+        $view_mode = $this->options['alternating_fieldset']['item_' . $this->view->row_index];
       }
     }
 
     // Call the row render function.
-    $row_function = 'ds_views_row_render_'. $this->base_table;
+    $row_function = 'ds_views_row_render_' . $this->base_table;
     $content = $row_function($this->entities[$row->{$this->field_alias}], $view_mode);
 
     // Keep a static grouping for this view.
@@ -255,7 +255,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
             $group_value = $function($raw_group_value, $this->entities[$row->{$this->field_alias}]);
           }
         }
-        $group_value_content = '<h2 class="grouping-title">'. $group_value .'</h2>';
+        $group_value_content = '<h2 class="grouping-title">' . $group_value . '</h2>';
         $grouping[$view_name][$raw_group_value] = $raw_group_value;
       }
     }
@@ -265,7 +265,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       if (!empty($group_value_content)) {
         $content = $group_value_content . $content;
       }
-      $content = '<div class="grouping-content">'. $content .'</div>';
+      $content = '<div class="grouping-content">' . $content . '</div>';
     }
 
     // Return the content.

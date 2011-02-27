@@ -283,7 +283,7 @@ function ds_edit_block_field_form($form, &$form_state, $custom_block = '') {
     $module_blocks = module_invoke($module, 'block_info');
     if ($module_blocks) {
       foreach ($module_blocks as $module_key => $info) {
-        $blocks[ucfirst($module)][$module .'|'. $module_key] = $info['info'];
+        $blocks[drupal_ucfirst($module)][$module . '|' . $module_key] = $info['info'];
       }
     }
   }
@@ -350,7 +350,7 @@ function ds_remove_fields_form($form, &$form_state, $field = '', $action = 'dele
       t('Are you sure you want to ' . $action . ' %field?', array('%field' => $field->label)),
       'admin/structure/ds/fields',
       t('This action cannot be undone.'),
-      t(ucfirst($action)),
+      t(drupal_ucfirst($action)),
       t('Cancel')
     );
   }
