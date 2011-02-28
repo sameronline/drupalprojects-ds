@@ -322,11 +322,8 @@ function ds_field_ui_fields_save($form, &$form_state) {
     // Field values.
     $field_values = $form_state['values']['fields'][$field];
 
-    // In case the region / format is hidden, do not save.
+    // In case the region is hidden, do not save.
     if (isset($field_values['region']) && $field_values['region'] == 'hidden') {
-      continue;
-    }
-    elseif ($field_values['format']['type'] == 'hidden') {
       continue;
     }
 
