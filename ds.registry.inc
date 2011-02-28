@@ -16,7 +16,7 @@ function _ds_menu() {
     'title' => 'Display suite',
     'description' => 'Manage configuration for Display Suite.',
     'page callback' => 'system_admin_menu_block_page',
-    'access arguments' => array('access administration pages'),
+    'access arguments' => array('admin_display_suite'),
     'file' => 'system.admin.inc',
     'file path' => drupal_get_path('module', 'system'),
   );
