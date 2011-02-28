@@ -6,9 +6,9 @@
  */
 
 /**
- * Implements hook_ds_fields().
+ * Implements hook_ds_fields_info().
  */
-function ds_extras_ds_fields($entity_type, $bundle, $view_mode) {
+function ds_extras_ds_fields_info($entity_type, $bundle, $view_mode) {
 
   if ($entity_type != 'ds_views') {
     return;

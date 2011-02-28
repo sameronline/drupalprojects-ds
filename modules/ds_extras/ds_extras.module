@@ -504,9 +504,10 @@ function ds_extras_field_extra_fields() {
 
   // Register a single field so fields for vd are
   // picked up nicely in the display overview form.
-  $result = db_query('SELECT vd FROM {ds_vd}');
-  foreach ($result as $row) {
-    $extra['ds_views'][$row->vd] = array(
+  ctools_include('export');
+  $vd_settings = ctools_export_load_object('ds_vd');
+  foreach ($vd_settings as $vd) {
+    $extra['ds_views'][$vd->vd] = array(
       'display' => array(
         'title' => array(
           'label' => t('Title'),
