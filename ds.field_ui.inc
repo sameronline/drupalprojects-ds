@@ -10,8 +10,6 @@
  */
 function ds_field_ui_fields_layouts(&$form, &$form_state) {
 
-  // @todo fix the freaking colspans. (and let it behave with fieldgroup too).
-
   // Get the entity_type, bundle and view mode.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
@@ -250,8 +248,14 @@ function ds_field_ui_layouts_save($form, &$form_state) {
         continue;
       }
 
-      // In case the region hidden, do not save.
+      // In case the region hidden, do not save. Also check if the
+      // field has a type key. This means it's from Field API and
+      // we need to reset that type to hidden so it doesn't get
+      // fired by Field API in the frontend.
       if ($field['region'] == 'hidden') {
+        if (isset($field['type'])) {
+          $form_state['values']['fields'][$key]['type'] = 'hidden';
+        }
         continue;
       }
 
@@ -564,9 +568,12 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#value' => isset($layout->layout) ? $layout->layout : 0,
   );
 
-  // Add validate and submit handlers.
+  // Add validate and submit handlers. Layout needs be first so
+  // we can reset the field type for Field API fields.
   $form['#validate'][] = 'ds_field_ui_layouts_validate';
-  $form['#submit'][] = 'ds_field_ui_layouts_save';
+  $submit = $form['#submit'];
+  $form['#submit'] = array('ds_field_ui_layouts_save');
+  $form['#submit'] = array_merge($form['#submit'], $submit);
 }
 
 /**

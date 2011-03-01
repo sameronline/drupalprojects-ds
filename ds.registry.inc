@@ -34,7 +34,7 @@ function _ds_menu() {
   // Layout overview.
   $items['admin/structure/ds/layout'] = array(
     'title' => 'Layout',
-    'description' => 'Displays an overview of all entities.',
+    'description' => 'Displays a list content types which can be layouted.',
     'page callback' => 'ds_layout_list',
     'file' => 'ds.layout.inc',
     'access arguments' => array('admin_display_suite'),
