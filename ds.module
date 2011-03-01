@@ -466,14 +466,10 @@ function ds_field_attach_view_alter(&$build, $context) {
 
   // Add path to css file for this layout.
   if (($layout = ds_get_layout($entity_type, $bundle, $view_mode)) && isset($layout['css']) && !isset($loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'])) {
-    if (!isset($build['#attached']['css'])) {
-      $build['#attached']['css'] = array();
-    }
-    if (isset($layout['css'])) {
-      $build['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
-    }
     // Register css file.
     $loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'] = TRUE;
+    // Add css file.
+    $build['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
   }
 }
 
