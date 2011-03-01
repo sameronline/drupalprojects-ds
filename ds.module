@@ -145,8 +145,6 @@ function ds_module_implements_alter(&$implementations, $hook) {
 
 /**
  * Implements hook_filter_info().
- *
- * Provide PHP code filter. Use with care.
  */
 function ds_filter_info() {
   $filters['ds_code'] = array(
@@ -160,7 +158,7 @@ function ds_filter_info() {
 }
 
 /**
- * Tips callback for php filter.
+ * Tips callback for Display Suite php filter.
  */
 function ds_filter_tips($filter, $format, $long = FALSE) {
   global $base_url;
@@ -317,7 +315,6 @@ function ds_get_layout($entity_type, $bundle, $view_mode) {
     if (!isset($layouts[$layout_key])) {
       $layouts[$layout_key] = FALSE;
     }
-
   }
 
   return $layouts[$layout_key];
@@ -342,6 +339,8 @@ function ds_get_layout($entity_type, $bundle, $view_mode) {
  *   The markup of the field used for output.
  */
 function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_mode) {
+
+  // @todo Possibly move this to attach_view_alter (after all the rest is done)
 
   static $included_files = array();
 
@@ -395,7 +394,7 @@ function ds_get_fields_configuration($entity_type, $bundle, $view_mode) {
     }
     else {
       ctools_include('export');
-      $ds_field_settings = ctools_export_load_object('ds_field_settings');
+      $ds_field_settings = ctools_export_crud_load_all('ds_field_settings');
       foreach ($ds_field_settings as $id => $settings) {
         if (!isset($settings->settings)) {
           continue;
@@ -515,7 +514,7 @@ function ds_entity_variables(&$variables) {
     }
     $variables['classes_array'][] = 'view-mode-' . $variables['elements']['#view_mode'];
 
-    // Hide empty regions.
+    // Hide empty regions variable.
     $hide_empty_regions = $layout['settings']['hide_empty_regions'];
 
     // Add template suggestions.
@@ -524,7 +523,7 @@ function ds_entity_variables(&$variables) {
     $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
     $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
 
-    // Create region variables based on the layout setting.
+    // Create region variables based on the layout settings.
     foreach ($layout['regions'] as $region_name => $region) {
       // Create the region content.
       $variables[$region_name] = ds_render_region($variables[$render_container], $region_name, $layout);

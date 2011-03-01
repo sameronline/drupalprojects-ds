@@ -30,7 +30,7 @@ function ds_extras_vd_overview($entity_info) {
   $build = $rows = array();
 
   ctools_include('export');
-  $vd_settings = ctools_export_load_object('ds_vd');
+  $vd_settings = ctools_export_crud_load_all('ds_vd');
 
   if ($entity_info) {
     foreach ($entity_info['bundles'] as $key => $value) {

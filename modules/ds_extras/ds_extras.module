@@ -459,7 +459,7 @@ function ds_extras_entity_info() {
 
   $bundles = array();
   ctools_include('export');
-  $vd_settings = ctools_export_load_object('ds_vd');
+  $vd_settings = ctools_export_crud_load_all('ds_vd');
   foreach ($vd_settings as $key => $vd) {
     $bundles[$vd->vd] = array(
       'label' => check_plain($vd->label),
@@ -505,7 +505,7 @@ function ds_extras_field_extra_fields() {
   // Register a single field so fields for vd are
   // picked up nicely in the display overview form.
   ctools_include('export');
-  $vd_settings = ctools_export_load_object('ds_vd');
+  $vd_settings = ctools_export_crud_load_all('ds_vd');
   foreach ($vd_settings as $vd) {
     $extra['ds_views'][$vd->vd] = array(
       'display' => array(

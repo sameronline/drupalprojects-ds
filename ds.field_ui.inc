@@ -42,7 +42,7 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
 function ds_revert_layout_field_settings_form(&$form, &$form_state, $id = '') {
   $layout = new stdClass();
   ctools_include('export');
-  $ds_layout_settings = ctools_export_load_object('ds_layout_settings');
+  $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
   if (isset($ds_layout_settings[$id])) {
     $layout = $ds_layout_settings[$id];
   }
@@ -248,9 +248,9 @@ function ds_field_ui_layouts_save($form, &$form_state) {
         continue;
       }
 
-      // In case the region hidden, do not save. Also check if the
-      // field has a type key. This means it's from Field API and
-      // we need to reset that type to hidden so it doesn't get
+      // If the field is in hidden region, do not save. Check if the
+      // field has a type key which means it's from Field API and
+      // we need to reset that type to 'hidden' so it doesn't get
       // fired by Field API in the frontend.
       if ($field['region'] == 'hidden') {
         if (isset($field['type'])) {
@@ -275,7 +275,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
         continue;
       }
 
-      // Check we the settings is defined.
+      // Additional classes on regions.
       if (isset($form_state['values']['additional_settings'][$region])) {
         // Do not save empty string.
         $classes = implode(' ', $form_state['values']['additional_settings'][$region]);
@@ -459,7 +459,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
 
   $layout_options = array();
   $ds_layouts = module_invoke_all('ds_layout_info');
-  // @todo isn't core smarter about empty options ?
   $layout_options = array('' => t('- None -'));
   foreach ($ds_layouts as $key => $layout) {
     $layout_options[$key] = $layout['label'];
@@ -484,9 +483,9 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#parents' => array('additional_settings'),
   );
 
-  $layout = new stdClass();
   ctools_include('export');
-  $ds_layout_settings = ctools_export_load_object('ds_layout_settings');
+  $layout = new stdClass();
+  $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
   if (isset($ds_layout_settings[$form['#export_id']])) {
     $layout = $ds_layout_settings[$form['#export_id']];
   }
@@ -569,7 +568,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   );
 
   // Add validate and submit handlers. Layout needs be first so
-  // we can reset the field type for Field API fields.
+  // we can reset the type key for Field API fields.
   $form['#validate'][] = 'ds_field_ui_layouts_validate';
   $submit = $form['#submit'];
   $form['#submit'] = array('ds_field_ui_layouts_save');

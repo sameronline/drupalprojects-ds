@@ -12,7 +12,7 @@ function ds_custom_fields_list() {
   $output = '';
 
   ctools_include('export');
-  $custom_fields = ctools_export_load_object('ds_fields');
+  $custom_fields = ctools_export_crud_load_all('ds_fields');
   if (!empty($custom_fields)) {
 
     $rows = array();
@@ -79,7 +79,7 @@ function ds_field_human_name($type) {
 function ds_custom_manage($field_key = '') {
   $redirect = '';
   ctools_include('export');
-  $custom_fields = ctools_export_load_object('ds_fields');
+  $custom_fields = ctools_export_crud_load_all('ds_fields');
   if (isset($custom_fields[$field_key])) {
     $field = $custom_fields[$field_key];
     switch ($field->field_type) {
@@ -106,7 +106,7 @@ function ds_custom_manage($field_key = '') {
  */
 function ds_shared_form(&$form, $field) {
   ctools_include('export');
-  $custom_fields = ctools_export_load_object('ds_fields');
+  $custom_fields = ctools_export_crud_load_all('ds_fields');
   if (isset($custom_fields[$field])) {
     $field = $custom_fields[$field];
   }
@@ -172,7 +172,7 @@ function ds_shared_form(&$form, $field) {
  */
 function ds_field_unique($name) {
   ctools_include('export');
-  $custom_fields = ctools_export_load_object('ds_fields');
+  $custom_fields = ctools_export_crud_load_all('ds_fields');
   $value = strtr($name, array('-' => '_'));
   return isset($custom_fields[$value]) ? TRUE : FALSE;
 }
@@ -342,7 +342,7 @@ function ds_revert_field_confirm($form, &$form_state, $field = '') {
  */
 function ds_remove_fields_form($form, &$form_state, $field = '', $action = 'delete') {
   ctools_include('export');
-  $custom_fields = ctools_export_load_object('ds_fields');
+  $custom_fields = ctools_export_crud_load_all('ds_fields');
   if (isset($custom_fields[$field])) {
     $field = $custom_fields[$field];
     $form['#field'] = $field;

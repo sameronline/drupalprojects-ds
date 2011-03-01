@@ -11,7 +11,7 @@
 function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
 
   ctools_include('export');
-  $custom_fields = ctools_export_load_object('ds_fields');
+  $custom_fields = ctools_export_crud_load_all('ds_fields');
   foreach ($custom_fields as $key => $field) {
     if (isset($field->entities[$entity_type])) {
       $fields[$entity_type][$key] = array(

@@ -190,7 +190,7 @@ function _ds_entity_info_alter(&$entity_info) {
   ctools_include('export');
 
   // Add custom view modes to entities.
-  $custom_view_modes = ctools_export_load_object('ds_view_modes');
+  $custom_view_modes = ctools_export_crud_load_all('ds_view_modes');
   foreach ($custom_view_modes as $view_mode_key => $view_mode_value) {
     $view_mode = array(
       'label' => check_plain($view_mode_value->label),
@@ -205,7 +205,7 @@ function _ds_entity_info_alter(&$entity_info) {
 
   // Add layout if applicable.
   $ds_layouts = module_invoke_all('ds_layout_info');
-  $ds_layout_settings = ctools_export_load_object('ds_layout_settings');
+  $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
   foreach ($ds_layout_settings as $row) {
     $layout = $ds_layouts[$row->layout];
     $layout['layout'] = $row->layout;
@@ -337,7 +337,6 @@ function _ds_ds_layout_info() {
     $ancestor = $themes[$ancestor]->base_theme;
     $base_theme[] = $themes[$ancestor];
   }
-
 
   foreach (array_reverse($base_theme) as $base) {
     _ds_layouts_scan_theme($base->name, $layouts);

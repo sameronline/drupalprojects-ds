@@ -12,7 +12,7 @@ function ds_view_modes_list() {
   $output = '';
 
   ctools_include('export');
-  $view_modes = ctools_export_load_object('ds_view_modes');
+  $view_modes = ctools_export_crud_load_all('ds_view_modes');
   if (!empty($view_modes)) {
 
     $rows = array();
@@ -60,7 +60,7 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
 
   ctools_include('export');
   // @todo convert to ds_get_info that Stalski is writing.
-  $view_modes = ctools_export_load_object('ds_view_modes');
+  $view_modes = ctools_export_crud_load_all('ds_view_modes');
   if (isset($view_modes[$view_mode])) {
     $view_mode = $view_modes[$view_mode];
   }
@@ -123,7 +123,7 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
  */
 function ds_view_mode_unique($name) {
   ctools_include('export');
-  $view_modes = ctools_export_load_object('ds_view_modes');
+  $view_modes = ctools_export_crud_load_all('ds_view_modes');
   $value = strtr($name, array('-' => '_'));
   return isset($view_modes[$value]) ? TRUE : FALSE;
 }
@@ -199,7 +199,7 @@ function ds_revert_view_mode_confirm($form, &$form_state, $view_mode = '') {
  */
 function ds_remove_view_mode_confirm($form, &$form_state, $view_mode = '', $action = 'delete') {
   ctools_include('export');
-  $view_modes = ctools_export_load_object('ds_view_modes');
+  $view_modes = ctools_export_crud_load_all('ds_view_modes');
   if (isset($view_modes[$view_mode])) {
     $view_mode = $view_modes[$view_mode];
   }
