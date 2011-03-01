@@ -415,6 +415,8 @@ function ds_get_fields_configuration($entity_type, $bundle, $view_mode) {
  */
 function ds_field_attach_view_alter(&$build, $context) {
 
+  static $loaded_css = array();
+
   // If views and core doesn't send information along on the entity,
   // Display suite doesn't have a context to render the fields.
   if (!isset($build['#entity_type']) && !isset($build['#bundle'])) {
@@ -463,14 +465,15 @@ function ds_field_attach_view_alter(&$build, $context) {
   }
 
   // Add path to css file for this layout.
-  // @todo this is happening every time .. maybe move this ?
-  if ($layout = ds_get_layout($entity_type, $bundle, $view_mode)) {
+  if (($layout = ds_get_layout($entity_type, $bundle, $view_mode)) && isset($layout['css']) && !isset($loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'])) {
     if (!isset($build['#attached']['css'])) {
       $build['#attached']['css'] = array();
     }
-    if (isset($layout['css']) && !isset($build['#attached']['css'][$layout['path'] . '/' . $layout['layout'] . '.css'])) {
+    if (isset($layout['css'])) {
       $build['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
     }
+    // Register css file.
+    $loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'] = TRUE;
   }
 }
 
