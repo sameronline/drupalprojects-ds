@@ -59,7 +59,6 @@ function ds_view_modes_list() {
 function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
 
   ctools_include('export');
-  // @todo convert to ds_get_info that Stalski is writing.
   $view_modes = ctools_export_crud_load_all('ds_view_modes');
   if (isset($view_modes[$view_mode])) {
     $view_mode = $view_modes[$view_mode];
@@ -259,7 +258,13 @@ function ds_remove_view_mode($form, &$form_state, $action = 'deleted') {
     ->condition('view_mode', $view_mode->view_mode)
     ->execute();
 
-  // @todo remove any stale data (ds_field_settings and layout).
+  // Remove layout and field settings for this view mode.
+  db_delete('ds_field_settings')
+    ->condition('view_mode', $view_mode->view_mode)
+    ->execute();
+  db_delete('ds_layout_settings')
+    ->condition('view_mode', $view_mode->view_mode)
+    ->execute();
 
   // Clear entity info cache and trigger menu build on next request.
   cache_clear_all('entity_info', 'cache', TRUE);
