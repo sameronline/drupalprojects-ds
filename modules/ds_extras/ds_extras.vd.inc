@@ -184,12 +184,12 @@ function ds_extras_vd_bundle_remove_submit($form, &$form_state) {
     ->execute();
 
   // Remove layout.
-  db_delete('ds_layouts')
+  db_delete('ds_layout_settings')
     ->condition('bundle', $bundle)
     ->execute();
 
   // Remove settings.
-  db_delete('ds_settings')
+  db_delete('ds_field_settings')
     ->condition('bundle', $bundle)
     ->execute();
 
