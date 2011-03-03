@@ -8,7 +8,7 @@
 /**
  * Implements hook_ds_fields_info().
  */
-function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
+function ds_ds_fields_info($entity_type) {
 
   ctools_include('export');
   $custom_fields = ctools_export_crud_load_all('ds_fields');
@@ -47,10 +47,13 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   );
 
   // Comments.
-  if (module_exists('comment') && ($view_mode == 'full' || $view_mode == 'default')) {
+  if (module_exists('comment')) {
     $fields['node']['comments'] = array(
       'title' => t('Comments'),
       'field_type' => DS_FIELD_TYPE_IGNORE,
+      'ui_limit' => array(
+        'view_mode' => array('full', 'default'),
+      ),
     );
   }
 

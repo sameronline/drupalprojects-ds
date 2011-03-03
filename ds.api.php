@@ -128,11 +128,6 @@ function hook_ds_view_modes_info() {
  *
  * @param $entity_type
  *   The name of the entity which we are requesting fields for, e.g. 'node'.
- * @param $bundle
- *   The name of the bundle in the entity, e.g. 'article'.
- * @param $view_mode
- *   The name of the view mode, e.g. 'full'.
- *
  *
  * @return $fields
  *   A collection of fields which keys are the entity type name and values
@@ -140,7 +135,7 @@ function hook_ds_view_modes_info() {
  *
  * @see ds_get_fields()
  */
-function hook_ds_fields_info($entity_type, $bundle, $view_mode) {
+function hook_ds_fields_info($entity_type) {
   $fields = array();
 
   $fields['title'] = array(
@@ -157,6 +152,13 @@ function hook_ds_fields_info($entity_type, $bundle, $view_mode) {
     //                            to drag and drop. The field itself will have
     //                            a theme function.
     'type' => DS_FIELD_TYPE_FUNCTION,
+
+    // ui_limit : only used for the manage display screen so
+    // you can limit fields to show based on bundles or view modes
+    'ui_limit' => array(
+      'bundle' => array('article', 'page'),
+      'view_mode' => array('full', 'default'),
+    ),
 
     // file: an optional file in which the function resides.
     // Only for DS_FIELD_TYPE_FUNCTION.

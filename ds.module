@@ -29,15 +29,15 @@ function ds_permission() {
     'admin_view_modes' => array(
       'title' => t('Administer view modes'),
       'description' => t('Create custom view modes for every entity.')
-    ),
+  ),
     'admin_fields' => array(
       'title' => t('Administer fields'),
       'description' => t('Create fields for every entity.')
-    ),
+  ),
     'admin_display_suite' => array(
       'title' => t('Administer Display Suite'),
       'description' => t('General permission for Display Suite settings pages.')
-    ),
+  ),
   );
 }
 
@@ -177,43 +177,34 @@ function ds_filter_tips($filter, $format, $long = FALSE) {
  *
  * @param $entity_type
  *   The name of the entity.
- * @param $bundle
- *   The name of bundle (ie, page or story for node types, profile for users)
- * @param $view_mode
- *   The name of view mode.
- * @param $reset
- *   Whether we need to reset the fields cache or not.
  * @param $cache
- *   Whether we need to cache the the fields or not.
+ *   Whether we need to get the fields from cache or not.
  * @return
  *   Collection of fields.
  */
-function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache = TRUE) {
+function ds_get_fields($entity_type, $cache = TRUE) {
 
-  static $static_fields, $ds_fields_cached = array();
+  static $static_fields, $fields_cached = array();
   static $loaded = FALSE;
-
-  // @todo revise this, something is not quite right here.
 
   // Get fields from cache.
   if (!$loaded) {
     $loaded = TRUE;
-    if (!$reset && $cached_fields = cache_get('ds_fields_cached', 'cache')) {
-      $ds_fields_cached = $static_fields = $cached_fields->data;
+    if ($cache && $cached_fields = cache_get('ds_fields')) {
+      $fields_cached = $static_fields = $cached_fields->data;
     }
   }
 
-  if (!isset($static_fields[$entity_type][$bundle][$view_mode])) {
+  if (!isset($static_fields[$entity_type])) {
 
     // Do we have them cached or not ?
-    // This takes a few iterations of a site before everything will be in it.
-    if (!isset($ds_fields_cached[$entity_type][$bundle][$view_mode]) || $reset) {
+    if (!isset($fields_cached[$entity_type])) {
 
-      // Get all fields.
+      // Get all fields for this entity type.
       $fields = array();
       foreach (module_implements('ds_fields_info') as $module) {
         $function = $module . '_ds_fields_info';
-        $all_fields = $function($entity_type, $bundle, $view_mode);
+        $all_fields = $function($entity_type);
         if (!empty($all_fields)) {
           foreach ($all_fields as $key => $field_results) {
             if ($key === $entity_type) {
@@ -230,29 +221,22 @@ function ds_get_fields($entity_type, $bundle, $view_mode, $reset = FALSE, $cache
       // Give modules a change to alter fields.
       drupal_alter('ds_fields_info', $fields);
 
-      // If we reset, remove the old settings, otherwhise, save the new ones.
-      if ($reset) {
-        unset($ds_fields_cached[$entity_type][$bundle][$view_mode]);
-      }
-      else {
-        $ds_fields_cached[$entity_type][$bundle][$view_mode] = $fields;
-      }
+      $fields_cached[$entity_type] = $fields;
 
-      // Cache the fields. This will happen a few times when the site
-      // has just flushed all cache tables.
+      // Cache the fields.
       if ($cache) {
-        cache_set('ds_fields_cached', $ds_fields_cached, 'cache');
+        cache_set('ds_fields', $fields_cached, 'cache');
       }
     }
     else {
-      $fields = $ds_fields_cached[$entity_type][$bundle][$view_mode];
+      $fields = $fields_cached[$entity_type];
     }
 
     // Store the fields statically.
-    $static_fields[$entity_type][$bundle][$view_mode] = $fields;
+    $static_fields[$entity_type] = $fields;
   }
 
-  return $static_fields[$entity_type][$bundle][$view_mode];
+  return isset($static_fields[$entity_type]) ? $static_fields[$entity_type] : array();
 }
 
 /**
@@ -340,8 +324,6 @@ function ds_get_layout($entity_type, $bundle, $view_mode) {
  */
 function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_mode) {
 
-  // @todo Possibly move this to attach_view_alter (after all the rest is done)
-
   static $included_files = array();
 
   $field['entity'] = $entity;
@@ -376,7 +358,7 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
 }
 
 /**
- * Get the fields configuration.
+ * Get the field settings.
  *
  * @param $entity_type
  *   The name of the entity.
@@ -385,29 +367,29 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
  * @param $view_mode
  *   The name of view mode.
  */
-function ds_get_fields_configuration($entity_type, $bundle, $view_mode) {
-  static $fields_configuration = NULL;
+function ds_get_field_settings($entity_type, $bundle, $view_mode) {
+  static $field_settings = NULL;
 
-  if (!isset($fields_configuration)) {
-    if ($cache = cache_get('ds_fields_configuration')) {
-      $fields_configuration = $cache->data;
+  if (!isset($field_settings)) {
+    if ($cache = cache_get('ds_field_settings')) {
+      $field_settings = $cache->data;
     }
     else {
       ctools_include('export');
       $ds_field_settings = ctools_export_crud_load_all('ds_field_settings');
-      foreach ($ds_field_settings as $id => $settings) {
-        if (!isset($settings->settings)) {
+      foreach ($ds_field_settings as $layout => $layout_settings) {
+        if (!isset($layout_settings->settings)) {
           continue;
         }
-        foreach ($settings->settings as $field => $field_settings) {
-          $fields_configuration[$settings->entity_type][$settings->bundle][$settings->view_mode][$field] = $field_settings;
+        foreach ($layout_settings->settings as $field => $settings) {
+          $field_settings[$layout_settings->entity_type][$layout_settings->bundle][$layout_settings->view_mode][$field] = $settings;
         }
       }
-      cache_set('ds_fields_configuration', $fields_configuration);
+      cache_set('ds_field_settings', $field_settings, 'cache');
     }
   }
 
-  return (isset($fields_configuration[$entity_type][$bundle][$view_mode])) ? $fields_configuration[$entity_type][$bundle][$view_mode] : (isset($fields_configuration[$entity_type][$bundle]['default']) ? $fields_configuration[$entity_type][$bundle]['default'] : array());
+  return (isset($field_settings[$entity_type][$bundle][$view_mode])) ? $field_settings[$entity_type][$bundle][$view_mode] : (isset($field_settings[$entity_type][$bundle]['default']) ? $field_settings[$entity_type][$bundle]['default'] : array());
 }
 
 /**
@@ -415,7 +397,7 @@ function ds_get_fields_configuration($entity_type, $bundle, $view_mode) {
  */
 function ds_field_attach_view_alter(&$build, $context) {
 
-  static $loaded_css = array();
+  static $loaded_css, $included_files = array();
 
   // If views and core doesn't send information along on the entity,
   // Display suite doesn't have a context to render the fields.
@@ -428,8 +410,8 @@ function ds_field_attach_view_alter(&$build, $context) {
   $view_mode = $context['view_mode'];
   $entity = $context['entity'];
 
-  $fields = ds_get_fields($entity_type, $bundle, $view_mode);
-  $field_values = ds_get_fields_configuration($entity_type, $bundle, $view_mode);
+  $fields = ds_get_fields($entity_type);
+  $field_values = ds_get_field_settings($entity_type, $bundle, $view_mode);
 
   foreach ($field_values as $key => $field) {
 
@@ -453,13 +435,13 @@ function ds_field_attach_view_alter(&$build, $context) {
         '#entity_type' => $entity_type,
         '#access' => TRUE,
         '#items' => array(
-          0 => array(
+      0 => array(
             'value' => $field_value,
-          ),
-        ),
-        0 => array(
+      ),
+      ),
+      0 => array(
           '#markup' => $field_value,
-        ),
+      ),
       );
     }
   }

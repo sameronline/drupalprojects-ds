@@ -77,8 +77,8 @@ function ds_revert_layout_field_settings_form_submit(&$form, &$form_state) {
     ->execute();
 
   // Clear the ds_fields cache.
-  cache_clear_all('ds_fields_cached', 'cache');
-  cache_clear_all('ds_fields_configuration', 'cache');
+  cache_clear_all('ds_fields', 'cache');
+  cache_clear_all('ds_field_settings', 'cache');
 
   // Clear entity info cache.
   cache_clear_all('entity_info', 'cache', TRUE);
@@ -323,7 +323,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   $fields = $form['#ds_fields'];
   foreach ($fields as $key => $field) {
 
-    // Field values.
+    // Field settings.
     $field_values = $form_state['values']['fields'][$field];
 
     // In case the region is hidden, do not save.
@@ -357,8 +357,8 @@ function ds_field_ui_fields_save($form, &$form_state) {
   }
 
   // Clear the ds_fields cache.
-  cache_clear_all('ds_fields_cached', 'cache');
-  cache_clear_all('ds_fields_configuration', 'cache');
+  cache_clear_all('ds_fields', 'cache');
+  cache_clear_all('ds_field_settings', 'cache');
 }
 
 /**
@@ -597,8 +597,8 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
   }
 
   // Get the fields.
-  $fields = ds_get_fields($entity_type, $bundle, $view_mode, TRUE, FALSE);
-  $field_values = ds_get_fields_configuration($entity_type, $bundle, $view_mode);
+  $fields = ds_get_fields($entity_type, FALSE);
+  $field_settings = ds_get_field_settings($entity_type, $bundle, $view_mode);
 
   $table = &$form['fields'];
   $form['#ds_fields'] = array();
@@ -610,14 +610,43 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
   );
 
   foreach ($fields as $key => $field) {
+
+    // Check on ui_limit.
+    if (isset($field['ui_limit'])) {
+
+      $continue = TRUE;
+
+      // Bundle limit.
+      if (isset($field['ui_limit']['bundle'])) {
+        foreach ($field['ui_limit']['bundle'] as $limit_bundle) {
+          if ($limit_bundle === $bundle) {
+            $continue = FALSE;
+          }
+        }
+      }
+
+      // View mode limit.
+      if (isset($field['ui_limit']['view_mode'])) {
+        foreach ($field['ui_limit']['view_mode'] as $limit_view_mode) {
+          if ($limit_view_mode === $view_mode) {
+            $continue = FALSE;
+          }
+        }
+      }
+
+      if ($continue) {
+        continue;
+      }
+    }
+
     $form['#ds_fields'][] = $key;
 
     // Check on formatter settings.
     if (isset($form_state['formatter_settings'][$key])) {
       $field['formatter_settings'] = $form_state['formatter_settings'][$key];
     }
-    elseif (isset($field_values[$key]['formatter_settings'])) {
-      $field['formatter_settings'] = $field_values[$key]['formatter_settings'];
+    elseif (isset($field_settings[$key]['formatter_settings'])) {
+      $field['formatter_settings'] = $field_settings[$key]['formatter_settings'];
       $form_state['formatter_settings'][$key] = $field['formatter_settings'];
     }
 
@@ -634,7 +663,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       ),
       'weight' => array(
         '#type' => 'textfield',
-        '#default_value' => isset($field_values[$key]['weight']) ? $field_values[$key]['weight'] : 0,
+        '#default_value' => isset($field_settings[$key]['weight']) ? $field_settings[$key]['weight'] : 0,
         '#size' => 3,
         '#attributes' => array('class' => array('field-weight')),
       ),
@@ -655,13 +684,13 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       'label' => array(
         '#type' => 'select',
         '#options' => $field_label_options,
-        '#default_value' => isset($field_values[$key]['label']) ? $field_values[$key]['label'] : 'hidden',
+        '#default_value' => isset($field_settings[$key]['label']) ? $field_settings[$key]['label'] : 'hidden',
       ),
       'format' => array(
         'type' => array(
           '#type' => 'select',
           '#options' => $formatters,
-          '#default_value' => isset($field_values[$key]['format']) ? $field_values[$key]['format'] : 'hidden',
+          '#default_value' => isset($field_settings[$key]['format']) ? $field_settings[$key]['format'] : 'hidden',
           '#attributes' => array('class' => array('field-formatter-type')),
         ),
       ),

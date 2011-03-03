@@ -16,7 +16,7 @@ function ds_test_install() {
 /**
  * Implements hook_ds_fields_info().
  */
-function ds_test_ds_fields_info($entity_type, $bundle, $view_mode) {
+function ds_test_ds_fields_info($entity_type) {
   if ($entity_type == 'node') {
     $fields['node']['ds_test_field'] = array(
       'title' => t('Test code field from hook'),
