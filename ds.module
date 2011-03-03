@@ -173,6 +173,71 @@ function ds_filter_tips($filter, $format, $long = FALSE) {
 }
 
 /**
+ * Get entity view modes.
+ *
+ * @param $entity_type
+ *   The name of the entity type.
+ */
+function ds_entity_view_modes($entity_type = NULL) {
+  if (!empty($entity_type)) {
+    switch ($entity_type) {
+      // For taxonomy terms the base table and the entity type are different
+      case 'taxonomy_term_data':
+        $entity_info = entity_get_info('taxonomy_term');
+        break;
+      default:
+        $entity_info = entity_get_info($entity_type);
+        break;
+    }
+    return $entity_info['view modes'];
+  }
+}
+
+/**
+ * Get a layout.
+ *
+ * @param $entity_type
+ *   The name of the entity.
+ * @param $bundle
+ *   The name of the bundle.
+ * @param $view_mode
+ *   The name of the view mode.
+ * @return $layout
+ *   Array of layout variables for the regions.
+ */
+function ds_get_layout($entity_type, $bundle, $view_mode) {
+
+  static $layouts = array();
+  $layout_key = $entity_type . '_' . $bundle . '_' . $view_mode;
+
+  if (!isset($layouts[$layout_key])) {
+
+    $entity_info = entity_get_info();
+
+    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
+    $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
+
+    // Check if a layout is configured.
+    if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode])) {
+      $layouts[$layout_key] = $entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode];
+    }
+
+    // In case $view_mode is not form and not found, check if we have a default layout,
+    // but only if the view mode settings aren't overridden for this view mode.
+    if ($view_mode != 'default' && !$overriden && isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'])) {
+      $layouts[$layout_key] = $entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'];
+    }
+
+    // Register the false return value as well.
+    if (!isset($layouts[$layout_key])) {
+      $layouts[$layout_key] = FALSE;
+    }
+  }
+
+  return $layouts[$layout_key];
+}
+
+/**
  * Get all fields.
  *
  * @param $entity_type
@@ -240,68 +305,38 @@ function ds_get_fields($entity_type, $cache = TRUE) {
 }
 
 /**
- * Get entity view modes.
- *
- * @param $entity_type
- *   The name of the entity type.
- */
-function ds_entity_view_modes($entity_type = NULL) {
-  if (!empty($entity_type)) {
-    switch ($entity_type) {
-      // For taxonomy terms the base table and the entity type are different
-      case 'taxonomy_term_data':
-        $entity_info = entity_get_info('taxonomy_term');
-        break;
-      default:
-        $entity_info = entity_get_info($entity_type);
-        break;
-    }
-    return $entity_info['view modes'];
-  }
-}
-
-/**
- * Get a layout.
+ * Get the field settings.
  *
  * @param $entity_type
  *   The name of the entity.
  * @param $bundle
- *   The name of the bundle.
+ *   The name of bundle (ie, page or story for node types, profile for users)
  * @param $view_mode
- *   The name of the view mode.
- * @return $layout
- *   Array of layout variables for the regions.
+ *   The name of view mode.
  */
-function ds_get_layout($entity_type, $bundle, $view_mode) {
+function ds_get_field_settings($entity_type, $bundle, $view_mode) {
+  static $field_settings = NULL;
 
-  static $layouts = array();
-  $layout_key = $entity_type . '_' . $bundle . '_' . $view_mode;
-
-  if (!isset($layouts[$layout_key])) {
-
-    $entity_info = entity_get_info();
-
-    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-    $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
-
-    // Check if a layout is configured.
-    if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode])) {
-      $layouts[$layout_key] = $entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode];
+  if (!isset($field_settings)) {
+    if ($cache = cache_get('ds_field_settings')) {
+      $field_settings = $cache->data;
     }
-
-    // In case $view_mode is not form and not found, check if we have a default layout,
-    // but only if the view mode settings aren't overridden for this view mode.
-    if ($view_mode != 'default' && !$overriden && isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'])) {
-      $layouts[$layout_key] = $entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'];
-    }
-
-    // Register the false return value as well.
-    if (!isset($layouts[$layout_key])) {
-      $layouts[$layout_key] = FALSE;
+    else {
+      ctools_include('export');
+      $ds_field_settings = ctools_export_crud_load_all('ds_field_settings');
+      foreach ($ds_field_settings as $layout => $layout_settings) {
+        if (!isset($layout_settings->settings)) {
+          continue;
+        }
+        foreach ($layout_settings->settings as $field => $settings) {
+          $field_settings[$layout_settings->entity_type][$layout_settings->bundle][$layout_settings->view_mode][$field] = $settings;
+        }
+      }
+      cache_set('ds_field_settings', $field_settings, 'cache');
     }
   }
 
-  return $layouts[$layout_key];
+  return (isset($field_settings[$entity_type][$bundle][$view_mode])) ? $field_settings[$entity_type][$bundle][$view_mode] : (isset($field_settings[$entity_type][$bundle]['default']) ? $field_settings[$entity_type][$bundle]['default'] : array());
 }
 
 /**
@@ -355,41 +390,6 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
       return ds_render_block_field($field);
 
   }
-}
-
-/**
- * Get the field settings.
- *
- * @param $entity_type
- *   The name of the entity.
- * @param $bundle
- *   The name of bundle (ie, page or story for node types, profile for users)
- * @param $view_mode
- *   The name of view mode.
- */
-function ds_get_field_settings($entity_type, $bundle, $view_mode) {
-  static $field_settings = NULL;
-
-  if (!isset($field_settings)) {
-    if ($cache = cache_get('ds_field_settings')) {
-      $field_settings = $cache->data;
-    }
-    else {
-      ctools_include('export');
-      $ds_field_settings = ctools_export_crud_load_all('ds_field_settings');
-      foreach ($ds_field_settings as $layout => $layout_settings) {
-        if (!isset($layout_settings->settings)) {
-          continue;
-        }
-        foreach ($layout_settings->settings as $field => $settings) {
-          $field_settings[$layout_settings->entity_type][$layout_settings->bundle][$layout_settings->view_mode][$field] = $settings;
-        }
-      }
-      cache_set('ds_field_settings', $field_settings, 'cache');
-    }
-  }
-
-  return (isset($field_settings[$entity_type][$bundle][$view_mode])) ? $field_settings[$entity_type][$bundle][$view_mode] : (isset($field_settings[$entity_type][$bundle]['default']) ? $field_settings[$entity_type][$bundle]['default'] : array());
 }
 
 /**
