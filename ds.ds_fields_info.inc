@@ -271,6 +271,7 @@ function ds_ds_fields_info($entity_type, $bundle, $view_mode) {
   $fields['taxonomy_term']['title'] = array(
     'title' => t('Title'),
     'field_type' => DS_FIELD_TYPE_FUNCTION,
+    'function' => 'ds_render_field',
     'properties' => array(
       'entity_path' => 'taxonomy/term',
       'entity_id_key' => 'tid',
