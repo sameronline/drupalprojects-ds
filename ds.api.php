@@ -155,10 +155,9 @@ function hook_ds_fields_info($entity_type) {
 
     // ui_limit : only used for the manage display screen so
     // you can limit fields to show based on bundles or view modes
-    'ui_limit' => array(
-      'bundle' => array('article', 'page'),
-      'view_mode' => array('full', 'default'),
-    ),
+    // the values are always in the form of $bundle|$view_mode
+    // You may use * to select all.
+    'ui_limit' => array('article|full', '*|search_index'),
 
     // file: an optional file in which the function resides.
     // Only for DS_FIELD_TYPE_FUNCTION.
