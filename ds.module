@@ -284,7 +284,7 @@ function ds_get_fields($entity_type, $cache = TRUE) {
       }
 
       // Give modules a change to alter fields.
-      drupal_alter('ds_fields_info', $fields);
+      drupal_alter('ds_fields_info', $fields, $entity_type);
 
       $fields_cached[$entity_type] = $fields;
 

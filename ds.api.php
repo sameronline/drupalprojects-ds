@@ -248,7 +248,7 @@ function hook_ds_custom_fields_info() {
  * hook_ctools_plugin_api(). The values of this hook can be overridden
  * and reverted through the UI.
  */
-function ds_exportables_test_ds_vd_info() {
+function hook_ds_vd_info() {
   $ds_vds = array();
 
   $ds_vd = new stdClass;
@@ -264,9 +264,11 @@ function ds_exportables_test_ds_vd_info() {
  * Alter fields defined by Display Suite
  *
  * @param $fields
- *   An array with fields which can altered just before they are cached.
+ *   An array with fields which can be altered just before they get cached.
+ * @param $entity_type
+ *   The name of the entity type.
  */
-function hook_ds_fields_info_alter(&$fields) {
+function hook_ds_fields_info_alter(&$fields, $entity_type) {
   if (isset($fields['title'])) {
     $fields['title']['title'] = t('My title');
   }

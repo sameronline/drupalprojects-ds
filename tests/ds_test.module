@@ -40,7 +40,7 @@ function dstest_render_test_field($field) {
 /**
  * Implements hook_ds_fields_info_alter().
  */
-function ds_test_ds_fields_info_alter(&$fields) {
+function ds_test_ds_fields_info_alter(&$fields, $entity_type) {
   if (isset($fields['ds_test_field_2'])) {
     $fields['ds_test_field_2']['title'] = 'Field altered';
   }
