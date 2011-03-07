@@ -44,7 +44,7 @@ function ds_extras_schema() {
       'vd' => array(
         'description' => 'The primary identifier for the views display.',
         'type' => 'varchar',
-        'length' => 64,
+        'length' => 128,
         'not null' => TRUE,
         'default' => '',
       ),
@@ -88,4 +88,11 @@ function ds_extras_schema_alter(&$schema) {
       'default' => '',
     );
   }
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function ds_extras_update_7001(&$sandbox) {
+  db_change_field('ds_vd', 'vd', 'vd', array('description' => 'The primary identifier for the views display.', 'type' => 'varchar', 'length' => 128, 'not null' => TRUE, 'default' => ''));
 }
