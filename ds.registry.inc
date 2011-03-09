@@ -248,7 +248,7 @@ function _ds_ds_layout_info() {
       'css' => TRUE,
     ),
     'ds_2col_stacked_fluid' => array(
-      'label' => t('Two column stacked - fluid'),
+      'label' => t('Fluid two column stacked'),
       'path' => $path . '/layouts/ds_2col_stacked_fluid',
       'regions' => array(
         'header' => t('Header'),
@@ -281,6 +281,18 @@ function _ds_ds_layout_info() {
     'ds_3col_stacked' => array(
       'label' => t('Three column stacked - 25/50/25'),
       'path' => $path . '/layouts/ds_3col_stacked',
+      'regions' => array(
+        'header' => t('Header'),
+        'left' => t('Left'),
+        'middle' => t('Middle'),
+        'right' => t('Right'),
+        'footer' => t('Footer'),
+      ),
+      'css' => TRUE,
+    ),
+    'ds_3col_stacked_fluid' => array(
+      'label' => t('Fluid three column stacked - 25/50/25'),
+      'path' => $path . '/layouts/ds_3col_stacked_fluid',
       'regions' => array(
         'header' => t('Header'),
         'left' => t('Left'),
