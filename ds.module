@@ -436,11 +436,11 @@ function ds_field_attach_view_alter(&$build, $context) {
         '#access' => TRUE,
         '#items' => array(
           0 => array(
-                'value' => $field_value,
+            'value' => $field_value,
           ),
         ),
         0 => array(
-            '#markup' => $field_value,
+          '#markup' => $field_value,
         ),
       );
     }
