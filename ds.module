@@ -435,13 +435,13 @@ function ds_field_attach_view_alter(&$build, $context) {
         '#entity_type' => $entity_type,
         '#access' => TRUE,
         '#items' => array(
-      0 => array(
-            'value' => $field_value,
-      ),
-      ),
-      0 => array(
-          '#markup' => $field_value,
-      ),
+          0 => array(
+                'value' => $field_value,
+          ),
+        ),
+        0 => array(
+            '#markup' => $field_value,
+        ),
       );
     }
   }
