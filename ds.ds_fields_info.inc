@@ -128,6 +128,24 @@ function ds_ds_fields_info($entity_type) {
     }
   }
 
+  // Book support.
+  if (module_exists('book')) {
+
+    $ui_limit = array();
+    $types = variable_get('book_allowed_types', array('book'));
+    foreach ($types as $type) {
+      $ui_limit[] = $type . '|full';
+    }
+
+    if (!empty($ui_limit)) {
+      $fields['node']['book_navigation'] = array(
+        'title' => t('Book navigation'),
+        'field_type' => DS_FIELD_TYPE_IGNORE,
+        'ui_limit' => $ui_limit,
+      );
+    }
+  }
+
   // Comment Links.
   $fields['comment']['links'] = array(
     'title' => t('Links'),

@@ -619,7 +619,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       foreach ($field['ui_limit'] as $limitation) {
 
         list($limit_bundle, $limit_view_mode) = explode('|', $limitation);
-        if ($limit_bundle == '*' || $limit_bundle = $bundle) {
+        if ($limit_bundle == '*' || $limit_bundle == $bundle) {
           if ($limit_view_mode == '*' || $limit_view_mode == $view_mode) {
             $continue = FALSE;
           }
