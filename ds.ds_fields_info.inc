@@ -10,6 +10,10 @@
  */
 function ds_ds_fields_info($entity_type) {
 
+  /* --------------------------------------------------------------
+     Custom fields.
+    -------------------------------------------------------------- */
+
   ctools_include('export');
   $custom_fields = ctools_export_crud_load_all('ds_fields');
   foreach ($custom_fields as $key => $field) {
@@ -21,6 +25,10 @@ function ds_ds_fields_info($entity_type) {
       );
     }
   }
+
+  /* --------------------------------------------------------------
+     General node fields.
+    -------------------------------------------------------------- */
 
   // Node title.
   $fields['node']['title'] = array(
@@ -128,7 +136,10 @@ function ds_ds_fields_info($entity_type) {
     }
   }
 
-  // Book support.
+  /* --------------------------------------------------------------
+     Book support.
+    -------------------------------------------------------------- */
+
   if (module_exists('book')) {
 
     $ui_limit = array();
@@ -146,86 +157,97 @@ function ds_ds_fields_info($entity_type) {
     }
   }
 
-  // Comment Links.
-  $fields['comment']['links'] = array(
-    'title' => t('Links'),
-    'field_type' => DS_FIELD_TYPE_IGNORE,
-  );
+  /* --------------------------------------------------------------
+     Comment support.
+    -------------------------------------------------------------- */
 
-  // Created time.
-  $format_types = system_get_date_types();
-  $date_formatters = array();
-  foreach ($format_types as $formatter) {
-    $date_formatters['ds_post_date_' . $formatter['type']] = t($formatter['title']);
-  }
-  $fields['comment']['post_date'] = array(
-    'title' => t('Post date'),
-    'field_type' => DS_FIELD_TYPE_FUNCTION,
-    'function' => 'ds_render_date_field',
-    'properties' => array(
-      'formatters' => $date_formatters,
-    ),
-  );
+  if (module_exists('comment')) {
 
-  // Permalink.
-  $fields['comment']['permalink'] = array(
-    'title' => t('Permalink'),
-    'field_type' => DS_FIELD_TYPE_PREPROCESS,
-  );
-
-  // Submitted.
-  $fields['comment']['submitted'] = array(
-    'title' => t('Submitted'),
-    'field_type' => DS_FIELD_TYPE_PREPROCESS,
-  );
-
-  // Title.
-  $fields['comment']['title'] = array(
-    'title' => t('Title'),
-    'field_type' => DS_FIELD_TYPE_PREPROCESS,
-  );
-
-  // Author.
-  $fields['comment']['author'] = array(
-    'title' => t('Author'),
-    'field_type' => DS_FIELD_TYPE_PREPROCESS,
-  );
-
-  // User signature.
-  if (variable_get('user_signatures', 0)) {
-    $fields['comment']['signature'] = array(
-      'title' => t('User signature'),
-      'field_type' => DS_FIELD_TYPE_PREPROCESS,
+    // Comment Links.
+    $fields['comment']['links'] = array(
+      'title' => t('Links'),
+      'field_type' => DS_FIELD_TYPE_IGNORE,
     );
-  }
 
-  // User picture
-  if (variable_get('user_pictures', 0)) {
-    $key = 'picture';
-    $type = DS_FIELD_TYPE_PREPROCESS;
-    $picture_formatters = array();
-    if (module_exists('image')) {
-      $key = 'ds_user_picture';
-      $type = DS_FIELD_TYPE_FUNCTION;
-      $styles = image_styles();
-      foreach ($styles as $formatter) {
-        $picture_formatters['ds_picture_' . $formatter['name']] = drupal_ucfirst(str_replace('_', ' ', $formatter['name']));
-      }
+    // Created time.
+    $format_types = system_get_date_types();
+    $date_formatters = array();
+    foreach ($format_types as $formatter) {
+      $date_formatters['ds_post_date_' . $formatter['type']] = t($formatter['title']);
     }
-    else {
-      $picture_formatters['default'] = t('Default');
-    }
-    $fields['comment'][$key] = array(
-      'title' => t('User picture'),
-      'field_type' => $type,
+    $fields['comment']['post_date'] = array(
+      'title' => t('Post date'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'ds_render_date_field',
       'properties' => array(
-        'formatters' => $picture_formatters,
+        'formatters' => $date_formatters,
       ),
     );
-    if ($type == DS_FIELD_TYPE_FUNCTION) {
-      $fields['comment'][$key]['function'] = 'ds_render_user_picture';
+
+    // Permalink.
+    $fields['comment']['permalink'] = array(
+      'title' => t('Permalink'),
+      'field_type' => DS_FIELD_TYPE_PREPROCESS,
+    );
+
+    // Submitted.
+    $fields['comment']['submitted'] = array(
+      'title' => t('Submitted'),
+      'field_type' => DS_FIELD_TYPE_PREPROCESS,
+    );
+
+    // Title.
+    $fields['comment']['title'] = array(
+      'title' => t('Title'),
+      'field_type' => DS_FIELD_TYPE_PREPROCESS,
+    );
+
+    // Author.
+    $fields['comment']['author'] = array(
+      'title' => t('Author'),
+      'field_type' => DS_FIELD_TYPE_PREPROCESS,
+    );
+
+    // User signature.
+    if (variable_get('user_signatures', 0)) {
+      $fields['comment']['signature'] = array(
+        'title' => t('User signature'),
+        'field_type' => DS_FIELD_TYPE_PREPROCESS,
+      );
+    }
+
+    // User picture
+    if (variable_get('user_pictures', 0)) {
+      $key = 'picture';
+      $type = DS_FIELD_TYPE_PREPROCESS;
+      $picture_formatters = array();
+      if (module_exists('image')) {
+        $key = 'ds_user_picture';
+        $type = DS_FIELD_TYPE_FUNCTION;
+        $styles = image_styles();
+        foreach ($styles as $formatter) {
+          $picture_formatters['ds_picture_' . $formatter['name']] = drupal_ucfirst(str_replace('_', ' ', $formatter['name']));
+        }
+      }
+      else {
+        $picture_formatters['default'] = t('Default');
+      }
+      $fields['comment'][$key] = array(
+        'title' => t('User picture'),
+        'field_type' => $type,
+        'properties' => array(
+          'formatters' => $picture_formatters,
+        ),
+      );
+      if ($type == DS_FIELD_TYPE_FUNCTION) {
+        $fields['comment'][$key]['function'] = 'ds_render_user_picture';
+      }
     }
   }
+
+  /* --------------------------------------------------------------
+     User support.
+    -------------------------------------------------------------- */
 
   // Username
   $fields['user']['name'] = array(
@@ -286,23 +308,29 @@ function ds_ds_fields_info($entity_type) {
     }
   }
 
-  // Taxonomy term title.
-  $fields['taxonomy_term']['title'] = array(
-    'title' => t('Title'),
-    'field_type' => DS_FIELD_TYPE_FUNCTION,
-    'function' => 'ds_render_field',
-    'properties' => array(
-      'entity_path' => 'taxonomy/term',
-      'entity_id_key' => 'tid',
-      'entity_render_key' => 'name',
-      'settings' => array(
-        'link' => array('type' => 'select', 'options' => array('no', 'yes')),
-        'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
-        'class' => array('type' => 'textfield', 'description' => t('Put a class on the wrapper. Eg: block-title')),
-      ),
-      'default' => array('wrapper' => 'h2', 'link' => 0, 'class' => ''),
-    )
-  );
+  /* --------------------------------------------------------------
+     Taxonomy support.
+    -------------------------------------------------------------- */
+
+  if (module_exists('taxonomy')) {
+    // Taxonomy term title.
+    $fields['taxonomy_term']['title'] = array(
+      'title' => t('Title'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'ds_render_field',
+      'properties' => array(
+        'entity_path' => 'taxonomy/term',
+        'entity_id_key' => 'tid',
+        'entity_render_key' => 'name',
+        'settings' => array(
+          'link' => array('type' => 'select', 'options' => array('no', 'yes')),
+          'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
+          'class' => array('type' => 'textfield', 'description' => t('Put a class on the wrapper. Eg: block-title')),
+        ),
+        'default' => array('wrapper' => 'h2', 'link' => 0, 'class' => ''),
+      )
+    );
+  }
 
   if (isset($fields[$entity_type])) {
     return array($entity_type => $fields[$entity_type]);
