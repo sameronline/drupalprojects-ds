@@ -450,6 +450,7 @@ function ds_field_attach_view_alter(&$build, $context) {
     // Register css file.
     $loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'] = TRUE;
     // Add css file.
+    // @todo not loaded anymore for theme layouts.
     $build['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
   }
 }
@@ -758,4 +759,40 @@ function ds_render_user_picture($field) {
 function ds_render_date_field($field) {
   $date_format = str_replace('ds_post_date_', '', $field['formatter']);
   return format_date($field['entity']->created, $date_format);
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function ds_field_formatter_info() {
+
+  $formatters = array();
+
+  // Add view modes of taxonomy to term formatters.
+  if (module_exists('taxonomy')) {
+    $view_modes = ds_entity_view_modes('taxonomy_term');
+    foreach ($view_modes as $key => $view_mode) {
+      $formatters['taxonomy_' . $key] = array(
+        'label' => t('View mode: ' . $view_mode['label']),
+        'field types' => array('taxonomy_term_reference'),
+      );
+    }
+  }
+
+  return $formatters;
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function ds_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $output = '';
+  $view_mode = str_replace('taxonomy_', '', $display['type']);
+  foreach ($items as $delta => $item) {
+
+    $output = taxonomy_term_view(taxonomy_term_load($item['tid']), $view_mode, $langcode);
+    $element[$delta] = array('#markup' => $output);
+  }
+
+  return $output;
 }
