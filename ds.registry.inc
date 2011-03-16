@@ -180,6 +180,11 @@ function _ds_theme_registry_alter(&$theme_registry) {
       $theme_registry[$entity]['preprocess functions'][] = 'ds_entity_variables';
     }
   }
+
+  // Support for Entity API.
+  if (isset($theme_registry['entity'])) {
+    $theme_registry['entity']['preprocess functions'][] = 'ds_entity_variables';
+  }
 }
 
 /**

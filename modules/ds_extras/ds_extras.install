@@ -16,6 +16,11 @@ function ds_extras_install() {
   foreach ($schema['node_revision']['fields'] as $name => $spec) {
     db_add_field('node_revision', $name, $spec);
   }
+
+  db_update('system')
+    ->fields(array('weight' => 1))
+    ->condition('name', 'ds_extras')
+    ->execute();
 }
 
 /**
@@ -93,6 +98,16 @@ function ds_extras_schema_alter(&$schema) {
 /**
  * Implements hook_update_N().
  */
-function ds_extras_update_7001(&$sandbox) {
+function ds_extras_update_7001() {
   db_change_field('ds_vd', 'vd', 'vd', array('description' => 'The primary identifier for the views display.', 'type' => 'varchar', 'length' => 128, 'not null' => TRUE, 'default' => ''));
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function ds_extras_update_7002() {
+  db_update('system')
+    ->fields(array('weight' => 1))
+    ->condition('name', 'ds_extras')
+    ->execute();
 }
