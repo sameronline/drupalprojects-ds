@@ -396,7 +396,7 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
  */
 function ds_field_attach_view_alter(&$build, $context) {
 
-  static $loaded_css, $included_files = array();
+  static $loaded_css = array();
 
   // If views and core doesn't send information along on the entity,
   // Display suite doesn't have a context to render the fields.
@@ -450,7 +450,6 @@ function ds_field_attach_view_alter(&$build, $context) {
     // Register css file.
     $loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'] = TRUE;
     // Add css file.
-    // @todo not loaded anymore for theme layouts.
     $build['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
   }
 }
@@ -789,10 +788,8 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
   $output = '';
   $view_mode = str_replace('taxonomy_', '', $display['type']);
   foreach ($items as $delta => $item) {
-
-    $output = taxonomy_term_view(taxonomy_term_load($item['tid']), $view_mode, $langcode);
-    $element[$delta] = array('#markup' => $output);
+    $build = taxonomy_term_view(taxonomy_term_load($item['tid']), $view_mode, $langcode);
+    $element[$delta] = $build;
   }
-
-  return $output;
+  return $element;
 }
