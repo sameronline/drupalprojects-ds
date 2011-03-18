@@ -79,21 +79,9 @@ function ds_ds_layout_info() {
  * Implements hook_ctools_plugin_api().
  */
 function ds_ctools_plugin_api($owner, $api) {
-  if ($owner == 'ds' && $api == 'plugins') {
+  if ($owner == 'ds' && $api == 'ds') {
     return array('version' => 1);
   }
-}
-
-/**
- * Ctools callback to have list with id, name pairs.
- */
-function ds_ctools_settings_names() {
-  $options = array();
-  $items = ctools_export_crud_load_all('ds_layout_settings');
-  foreach ($items as $item) {
-    $options[$item->id] = $item->layout . ' (' . $item->entity_type . ' / ' . $item->bundle . ' / ' . $item->view_mode . ')';
-  }
-  return $options;
 }
 
 /**
