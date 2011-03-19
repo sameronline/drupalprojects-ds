@@ -25,6 +25,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
   function ds_views_3_support() {
     $base_table_fields = array(
       'node' => 'nid',
+      'comment' => 'cid',  
       'users' => 'uid',
       'apachesolr' => 'nid',
       'taxonomy_term_data' => 'tid',
@@ -195,6 +196,9 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       case 'node':
         $this->entities = node_load_multiple($ids);
         break;
+      case 'comment': 
+        $this->entities = comment_load_multiple($ids); 
+        break; 
       case 'users':
         $this->entities = user_load_multiple($ids);
         break;
@@ -277,6 +281,14 @@ class views_plugin_ds_entity_view extends views_plugin_row {
 function ds_views_row_render_node($entity, $view_mode) {
   return drupal_render(node_view($entity, $view_mode));
 }
+
+/**
+ * Render the comment through the entity plugin.
+ */
+function ds_views_row_render_comment($entity, $view_mode) { 
+  $node = node_load($entity->nid); 
+  return drupal_render(comment_view($entity, $node, $view_mode)); 
+} 
 
 /**
  * Render the user through the entity plugin.
