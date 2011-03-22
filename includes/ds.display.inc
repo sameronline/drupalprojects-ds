@@ -617,11 +617,16 @@ function ds_plugins_display_submit($form, $form_state, &$display_settings) {
  * Return array of available label options.
  */
 function ds_label_options() {
-  return array(
+  $options = array(
     'above' => t('Above'),
     'inline' => t('Inline'),
     'hidden' => t('Hidden'),
   );
+
+  // Give modules a chance to alter label options.
+  drupal_alter('ds_label_options', $options);
+
+  return $options;
 }
 
 /**
