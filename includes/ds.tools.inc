@@ -382,6 +382,9 @@ function ds_export_stylesheet() {
 
           // Get any configured fields.
           $field_settings = ds_default_value($display_settings, $key, 'fields');
+          if (empty($field_settings)) {
+            continue;
+          }
           foreach ($field_settings as $field_key => $field) {
             if ($field['region'] != 'disabled') {
 
