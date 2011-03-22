@@ -608,6 +608,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     'inline' => t('Inline'),
     'hidden' => t('<Hidden>'),
   );
+  drupal_alter('ds_label_options', $field_label_options);
 
   foreach ($fields as $key => $field) {
 

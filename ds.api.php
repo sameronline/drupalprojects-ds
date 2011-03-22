@@ -358,6 +358,18 @@ function hook_ds_layout_region_alter($context, &$region_info) {
 }
 
 /**
+ * Alter the field label options. Note that you will either
+ * update the preprocess functions or the field.tpl.php file when
+ * adding new options.
+ *
+ * @param $field_label_options
+ *   A collection of field label options.
+ */
+function hook_ds_label_options_alter(&$field_label_options) {
+  $field_label_options['label_after'] = t('Label after field');
+}
+
+/**
  * Themes can also define extra layouts.
  *
  * Create a ds_layouts folder and then a folder name that will
