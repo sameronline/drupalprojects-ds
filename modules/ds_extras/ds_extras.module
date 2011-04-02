@@ -431,8 +431,10 @@ function ds_extras_field_attach_view_alter(&$build, $context) {
     foreach ($region_blocks as $block_key => $block) {
       if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}" && isset($layout['settings']['regions'][$block_key]) && !empty($layout['settings']['regions'][$block_key])) {
         foreach ($layout['settings']['regions'][$block_key] as $key => $field) {
-          $block_data[$block_key][] = $build[$field];
-          unset($build[$field]);
+          if (isset($build[$field])) {
+            $block_data[$block_key][] = $build[$field];
+            unset($build[$field]);
+          }
         }
       }
     }
