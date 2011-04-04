@@ -151,7 +151,7 @@ function hook_ds_fields_info($entity_type) {
     // - DS_FIELD_TYPE_IGNORE   : calls nothing, use this if you simple want
     //                            to drag and drop. The field itself will have
     //                            a theme function.
-    'type' => DS_FIELD_TYPE_FUNCTION,
+    'field_type' => DS_FIELD_TYPE_FUNCTION,
 
     // ui_limit : only used for the manage display screen so
     // you can limit fields to show based on bundles or view modes
