@@ -157,6 +157,7 @@ function hook_ds_fields_info($entity_type) {
     // you can limit fields to show based on bundles or view modes
     // the values are always in the form of $bundle|$view_mode
     // You may use * to select all.
+    // Make sure you use the machine name.
     'ui_limit' => array('article|full', '*|search_index'),
 
     // file: an optional file in which the function resides.
