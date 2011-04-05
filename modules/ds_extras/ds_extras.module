@@ -91,17 +91,19 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_switch_view_mode', FALSE),
   );
 
-  $form['region'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Block regions'),
-  );
+  if (module_exists('block')) {
+    $form['region'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Block regions'),
+    );
 
-  $form['region']['ds_extras_region_to_block'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Enable'),
-    '#description' => t('Toggle this checkbox to enable the "Regions to block" functionality. With this feature, you can create additional regions on the "Manage display" screens which will be exposed as blocks. <br /><strong>Note that it will not work on the default view mode</strong>.'),
-    '#default_value' => variable_get('ds_extras_region_to_block', FALSE),
-  );
+    $form['region']['ds_extras_region_to_block'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable'),
+      '#description' => t('Toggle this checkbox to enable the "Regions to block" functionality. With this feature, you can create additional regions on the "Manage display" screens which will be exposed as blocks. <br /><strong>Note that it will not work on the default view mode</strong>.'),
+      '#default_value' => variable_get('ds_extras_region_to_block', FALSE),
+    );
+  }
 
   if (module_exists('views')) {
     $form['views'] = array(
