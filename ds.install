@@ -16,6 +16,13 @@ function ds_install() {
 }
 
 /**
+ * Implements hook_uninstall().
+ */
+function ds_uninstall() {
+  variable_del('ds_styles_regions');
+}
+
+/**
  * Implements hook_enable().
  */
 function ds_enable() {
