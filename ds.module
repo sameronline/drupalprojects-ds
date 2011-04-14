@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Core functions for the Display Suite module.
  */
 
