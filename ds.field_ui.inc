@@ -33,10 +33,15 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   $form['#process'][] = 'ds_field_ui_regions';
 
   // Alter the text of the custom display settings.
-  $form['modes']['view_modes_custom']['#description'] = t('<a href="!url">Manage view modes</a>', array('!url' => url('admin/structure/ds/view_modes')));
-  $form['additional_settings']['modes'] = $form['modes'];
-  $form['additional_settings']['modes']['#weight'] = -10;
-  unset($form['modes']);
+  if (isset($form['modes'])) {
+    $form['modes']['view_modes_custom']['#description'] = t('<a href="!url">Manage view modes</a>', array('!url' => url('admin/structure/ds/view_modes')));
+    $form['additional_settings']['modes'] = $form['modes'];
+    $form['additional_settings']['modes']['#weight'] = -10;
+    unset($form['modes']);
+  }
+  else {
+    $form['additional_settings']['modes']['view_modes_custom']['#description'] = t('<a href="!url">Manage view modes</a>', array('!url' => url('admin/structure/ds/view_modes')));
+  }
 }
 
 /**
@@ -467,15 +472,18 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     $layout_options[$key] = $layout['label'];
   }
 
-  $form['additional_settings'] = array(
-    '#type' => 'vertical_tabs',
-    '#theme_wrappers' => array('vertical_tabs'),
-    '#prefix' => '<div>',
-    '#suffix' => '</div>',
-    '#tree' => TRUE,
-  );
-  $form['#attached']['js'][] = 'misc/form.js';
-  $form['#attached']['js'][] = 'misc/collapse.js';
+  // Add additional settings vertical tab.
+  if (!isset($form['additional_settings'])) {
+    $form['additional_settings'] = array(
+      '#type' => 'vertical_tabs',
+      '#theme_wrappers' => array('vertical_tabs'),
+      '#prefix' => '<div>',
+      '#suffix' => '</div>',
+      '#tree' => TRUE,
+    );
+    $form['#attached']['js'][] = 'misc/form.js';
+    $form['#attached']['js'][] = 'misc/collapse.js';
+  }
 
   // Add layouts form.
   $form['additional_settings']['ds_layouts'] = array(
