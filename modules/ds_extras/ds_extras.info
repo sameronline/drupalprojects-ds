@@ -1,5 +1,5 @@
 name = "Extras"
-description = "Contains additional features: switching view modes on a per node basis, exposing regions as blocks and Views displays."
+description = "Contains additional features: switching view modes on a per node basis, exposing regions as blocks, Fivestar and Views displays."
 core = "7.x"
 package = "Display suite"
 dependencies[] = ds

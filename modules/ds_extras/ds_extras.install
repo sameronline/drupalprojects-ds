@@ -75,7 +75,18 @@ function ds_extras_uninstall() {
   variable_del('ds_extras_region_blocks');
   variable_del('ds_extras_switch_view_mode');
   variable_del('ds_extras_vd');
+  variable_del('ds_extras_fivestar');
   db_drop_field('node_revision', 'ds_switch');
+
+  // Remove fivestar variables.
+  $types = node_type_get_names();
+  foreach ($types as $node_type => $name) {
+    $variable = 'fivestar_' . $node_type;
+    $enabled = variable_get('ds_' . $variable, 0);
+    variable_set($variable, $enabled);
+  }
+  db_query("DELETE FROM {variable} WHERE name LIKE 'ds_fivestar_%'");
+  cache_clear_all('variables', 'cache');
 }
 
 /**

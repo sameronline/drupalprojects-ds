@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.1 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1129208 by swentel: support for Fivestar in Extras module.
 - #1129228 by netsensei and swentel: create separate render function.
 - #1131364 by BrockBoland: fix documentation in ds.api.php for use_token.
 - #1124346 by codycraven and swentel: Fix racing conditions on additional settings.

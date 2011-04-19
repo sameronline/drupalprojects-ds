@@ -61,11 +61,19 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
     unset($implementations['ds_extras']);
   }
 
+  // Disable the fivestar feature
+  $fivestar_hooks = array(
+    'form_fivestar_node_type_tag_form_alter',
+    'fivestar_access',
+  );
+  if (!variable_get('ds_extras_fivestar', FALSE) && in_array($hook, $fivestar_hooks)) {
+    unset($implementations['ds_extras']);
+  }
+
   // Disable the vd feature.
   $vd_hooks = array(
     'field_extra_fields',
     'entity_info',
-    'ds_fields_info',
     'theme_registry_alter',
     'ctools_plugin_api',
   );
@@ -105,6 +113,20 @@ function ds_extras_settings($form) {
     );
   }
 
+  if (module_exists('fivestar')) {
+    $form['fivestar'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Fivestar'),
+    );
+
+    $form['fivestar']['ds_extras_fivestar'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable'),
+      '#description' => t('Toggle this checkbox to enable the "Fivestar" functionality. A field called "Fivestar" will be made available on the Manage Display screens.'),
+      '#default_value' => variable_get('ds_extras_fivestar', FALSE),
+    );
+  }
+
   if (module_exists('views')) {
     $form['views'] = array(
       '#type' => 'fieldset',
@@ -128,10 +150,68 @@ function ds_extras_settings($form) {
  * Submit callback: Extras settings screen.
  */
 function ds_extras_settings_submit($form, &$form_state) {
+  // Clear fields cache.
+  cache_clear_all('ds_fields', 'cache');
   // Clear module_implements cache and rebuild menu.
   cache_clear_all('entity_info:', 'cache', TRUE);
   cache_clear_all('module_implements', 'cache_bootstrap');
   menu_rebuild();
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ds_extras_form_fivestar_node_type_tag_form_alter(&$form, &$form_state, $form_id) {
+  // We need to alter the settings, because clickable or widget type
+  // will be chosen in the field display settings of the content type.
+  $node_type = $form_state['fivestar_node_type'];
+  if (variable_get('ds_fivestar_' . $node_type, 0)) {
+    $form['fivestar']['#default_value'] = TRUE;
+  }
+  $form['direct']['fivestar_position']['#access'] = FALSE;
+  $form['direct']['fivestar_position_teaser']['#access'] = FALSE;
+  $form['#submit'][] = 'ds_extras_fivestar_submit';
+}
+
+/**
+ * Submit callback, reset fivestar_nodetype if needed, but save
+ * an extra ds_fivestar_nodetype variable. This way, we are
+ * sure that the nodeapi of fivestar isn't fired.
+ */
+function ds_extras_fivestar_submit($form, $form_state) {
+  $values = $form_state['values'];
+  $node_type = $form_state['fivestar_node_type'];
+  $enabled = isset($values['fivestar']) && $values['fivestar'] == 1;
+  if ($enabled) {
+    variable_set('fivestar_' . $node_type, 0);
+  }
+  variable_set('ds_fivestar_' . $node_type, $enabled);
+}
+
+/**
+ * Implementation of hook_fivestar_access().
+ */
+function ds_extras_fivestar_access($type, $id, $tag, $uid) {
+  $node = node_load($id);
+  if ($type == 'node' && variable_get('ds_fivestar_' . $node->type, 0)) {
+    return TRUE;
+  }
+}
+
+/**
+ * Clickable fivestar.
+ */
+function ds_fivestar_render($field) {
+
+  $format = $field['formatter'];
+  if ($format == 'ds_fivestar_clickable') {
+    if (user_access('rate content') && fivestar_validate_target('node', $field['entity']->nid, 'vote')) {
+      return drupal_render(fivestar_widget_form($field['entity']));
+    }
+  }
+
+  // Fall through static if not allowed to rate or $format is not clickable.
+  return fivestar_static('node', $field['entity']->nid, $field['entity']->type);
 }
 
 /**
