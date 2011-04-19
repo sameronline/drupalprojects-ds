@@ -187,7 +187,7 @@ function hook_ds_fields_info($entity_type) {
       'code' => 'my code here',
 
       // use_token: optional, only for code field.
-      'code' => TRUE, // or FALSE,
+      'use_token' => TRUE, // or FALSE,
 
       // block: the module and delta of the block, only for block fields.
       'block' => 'user-menu',
