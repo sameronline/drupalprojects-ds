@@ -25,7 +25,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
   function ds_views_3_support() {
     $base_table_fields = array(
       'node' => 'nid',
-      'comment' => 'cid',  
+      'comment' => 'cid',
       'users' => 'uid',
       'apachesolr' => 'nid',
       'taxonomy_term_data' => 'tid',
@@ -44,7 +44,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
   }
 
   function options_form(&$form, &$form_state) {
-  
+
     $view_mode_options = array();
     $entity_type = $this->view->base_table;
     // In case we're working with users, change the entity type variable.
@@ -198,9 +198,9 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       case 'node':
         $this->entities = node_load_multiple($ids);
         break;
-      case 'comment': 
-        $this->entities = comment_load_multiple($ids); 
-        break; 
+      case 'comment':
+        $this->entities = comment_load_multiple($ids);
+        break;
       case 'users':
         $this->entities = user_load_multiple($ids);
         break;
@@ -244,8 +244,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     }
 
     // Call the row render function.
-    $row_function = 'ds_views_row_render_' . $this->base_table;
-    $content = $row_function($this->entities[$row->{$this->field_alias}], $view_mode);
+    $content = $this->ds_views_row_render_entity($view_mode, $row);
 
     // Keep a static grouping for this view.
     if ($this->options['grouping']) {
@@ -275,6 +274,23 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     // Return the content.
     return $content;
   }
+
+  /**
+   * Render a discrete entity based with the selected view mode.
+   *
+   * @param $view_mode
+   *   The view mode which is set in the Views' options.
+   * @param $row
+   *   The current active row object being rendered.
+   *
+   * @return $content
+   *   An entity view rendered as HTML
+   */
+  function ds_views_row_render_entity($view_mode, $row) {
+    $row_function = 'ds_views_row_render_' . $this->base_table;
+    $content = $row_function($this->entities[$row->{$this->field_alias}], $view_mode);
+    return $content;
+  }
 }
 
 /**
@@ -287,10 +303,10 @@ function ds_views_row_render_node($entity, $view_mode) {
 /**
  * Render the comment through the entity plugin.
  */
-function ds_views_row_render_comment($entity, $view_mode) { 
-  $node = node_load($entity->nid); 
-  return drupal_render(comment_view($entity, $node, $view_mode)); 
-} 
+function ds_views_row_render_comment($entity, $view_mode) {
+  $node = node_load($entity->nid);
+  return drupal_render(comment_view($entity, $node, $view_mode));
+}
 
 /**
  * Render the user through the entity plugin.
