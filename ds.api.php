@@ -339,6 +339,17 @@ function hook_ds_layout_info() {
 }
 
 /**
+ * Alter layouts found by Display Suite.
+ *
+ * @param $layouts
+ *   A array of layouts which keys are the layout and which values are
+ *   properties of that layout (label, path, regions and css).
+ */
+function hook_ds_layout_info_alter(&$layouts) {
+  unset($layouts['ds_2col']);
+}
+
+/**
  * Alter the region options in the field UI screen.
  *
  * This function is only called when a layout has been chosen.

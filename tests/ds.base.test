@@ -329,6 +329,11 @@ class dsLayoutsStylesTests extends dsBaseTest {
    */
   function testDStestLayouts() {
 
+    // Check that the ds_3col_equal_width layout is not available (through the alter).
+    $this->drupalGet('admin/structure/types/manage/article/display');
+    $this->assertNoRaw('ds_3col_stacked_equal_width', 'ds_3col_stacked_equal_width not available');
+
+    // Create code & block field.
     $this->dsCreateCodeField();
     $this->dsCreateBlockField();
 
@@ -455,7 +460,7 @@ class dsLayoutsStylesTests extends dsBaseTest {
     );
     $this->drupalPost('admin/structure/block', $edit, t('Save blocks'));
 
-    // Asser the block is on the node page.
+    // Assert the block is on the node page.
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw('<h2>Block region</h2>', 'Block region found');
     $this->assertText('Test code field on node ' . $node->nid, 'Post date in block');

@@ -183,7 +183,23 @@ function ds_entity_view_modes($entity_type = NULL) {
 }
 
 /**
- * Get a layout.
+ * Get Display suite layouts.
+ */
+function ds_get_layout_info() {
+  static $layouts = FALSE;
+
+  if (!$layouts) {
+    $layouts = module_invoke_all('ds_layout_info');
+
+    // Give modules a chance to alter the layouts information.
+    drupal_alter('ds_layout_info', $layouts);
+  }
+
+  return $layouts;
+}
+
+/**
+ * Get a layout for a given entity.
  *
  * @param $entity_type
  *   The name of the entity.

@@ -466,7 +466,7 @@ function ds_ds_field_settings_form($field) {
 function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
 
   $layout_options = array();
-  $ds_layouts = module_invoke_all('ds_layout_info');
+  $ds_layouts = ds_get_layout_info();
   $layout_options = array('' => t('- None -'));
   foreach ($ds_layouts as $key => $layout) {
     $layout_options[$key] = $layout['label'];

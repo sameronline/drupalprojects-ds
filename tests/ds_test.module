@@ -14,6 +14,13 @@ function ds_test_install() {
 }
 
 /**
+ * Implements hook_ds_layout_info_alter().
+ */
+function ds_test_ds_layout_info_alter(&$layouts) {
+  unset($layouts['ds_3col_stacked_equal_width']);
+}
+
+/**
  * Implements hook_ds_fields_info().
  */
 function ds_test_ds_fields_info($entity_type) {

@@ -154,7 +154,7 @@ function _ds_theme() {
   $theme_functions = array();
 
   // Layouts
-  $layouts = module_invoke_all('ds_layout_info');
+  $layouts = ds_get_layout_info();
   foreach ($layouts as $key => $layout) {
     $theme_functions[$key] = array(
       'render element' => 'elements',
@@ -209,7 +209,7 @@ function _ds_entity_info_alter(&$entity_info) {
   }
 
   // Add layout if applicable.
-  $ds_layouts = module_invoke_all('ds_layout_info');
+  $ds_layouts = ds_get_layout_info();
   $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
   foreach ($ds_layout_settings as $row) {
     $layout = $ds_layouts[$row->layout];
