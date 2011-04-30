@@ -154,6 +154,7 @@ function ds_extras_settings_submit($form, &$form_state) {
   cache_clear_all('ds_fields', 'cache');
   // Clear module_implements cache and rebuild menu.
   cache_clear_all('entity_info:', 'cache', TRUE);
+  cache_clear_all('theme_registry:', 'cache', TRUE);
   cache_clear_all('module_implements', 'cache_bootstrap');
   menu_rebuild();
 }
@@ -574,7 +575,7 @@ function ds_extras_entity_info() {
  */
 function ds_extras_theme_registry_alter(&$theme_registry) {
   if (variable_get('ds_extras_vd', FALSE)) {
-    $theme_registry['views_view']['preprocess functions'][] = 'ds_extras_preprocess_view';
+    $theme_registry['views_view']['preprocess functions'][] = 'ds_extras_preprocess_view_layout';
   }
 }
 
@@ -614,7 +615,7 @@ function ds_extras_field_extra_fields() {
 /**
  * Implements hook_preprocess_views_view().
  */
-function ds_extras_preprocess_view(&$variables) {
+function ds_extras_preprocess_view_layout(&$variables) {
 
   if ($layout = ds_get_layout('ds_views', $variables['view']->name . '-' . $variables['view']->current_display, 'default')) {
     $variables['elements']['#entity_type'] = $variables['#entity_type'] = 'ds_views';

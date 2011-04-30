@@ -7,6 +7,7 @@
 - #1131364 by BrockBoland: fix documentation in ds.api.php for use_token.
 - #1124346 by codycraven and swentel: Fix racing conditions on additional settings.
 - #1125250 by swentel: check on default user image.
+- Use another function to preprocess a view.
 - Optimized wording in extras settings screen.
 - Remove Obsolete CVS $Id$ tags and .DS_Store directory.
 
