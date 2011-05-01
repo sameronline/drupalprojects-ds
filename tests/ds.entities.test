@@ -135,5 +135,17 @@ class dsNodeTests extends dsBaseTest {
     $this->drupalGet('node/' . $node->nid);
     $this->assertNoRaw('<h2>Recent content</h2>');
     $this->assertNoRaw('Recent content');
+
+    // Remove the page title (we'll use the switch view mode functionality too for this).
+    $edit = array('additional_settings[ds_hide_page_title]' => '1');
+    $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display/teaser');
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertRaw('<h1 class="title" id="page-title">
+          '. $node->title . '        </h1>');
+    $edit = array('ds_switch' => 'teaser');
+    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertNoRaw('<h1 class="title" id="page-title">
+          '. $node->title . '        </h1>');
   }
 }

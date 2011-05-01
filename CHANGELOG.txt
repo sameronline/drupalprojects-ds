@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.1 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1142572 by swentel: add ability to hide the page title on full node view.
 - #1132682 by swentel: add hook_ds_layout_info_alter().
 - #1129208 by swentel: support for Fivestar in Extras module.
 - #1129228 by netsensei and swentel: create separate render function.

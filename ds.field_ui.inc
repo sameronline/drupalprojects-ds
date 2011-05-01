@@ -242,6 +242,11 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   if ($new_layout && !empty($layout)) {
     // Save new layout.
     $record->settings = $record->settings;
+
+    // Let other modules alter the layout settings.
+    drupal_alter('ds_layout_settings', $record, $form_state);
+
+    // Save the record.
     drupal_write_record('ds_layout_settings', $record);
   }
   // Update existing layout.
@@ -294,6 +299,9 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     }
 
     $record->settings = $record->settings;
+
+    // Let other modules alter the layout settings.
+    drupal_alter('ds_layout_settings', $record, $form_state);
 
     $l = $form['#ds_layout'];
     if ($l->export_type == 2) {

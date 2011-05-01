@@ -316,6 +316,18 @@ function hook_ds_field_settings_form($field) {
 }
 
 /**
+ * Alter the layout settings just before they get saved.
+ *
+ * @param $record
+ *   The record just before they get saved into the database.
+ * @param $form_state
+ *   The form_state values.
+ */
+function hook_ds_layout_settings_alter($record, $form_state) {
+  $record->settings['hide_page_title'] = TRUE;
+}
+
+/**
  * Define layouts from code.
  *
  * @return $layouts

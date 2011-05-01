@@ -6,24 +6,6 @@
  */
 
 /**
- * Implements hook_install().
- */
-function ds_extras_install() {
-  $ret = array();
-
-  $schema['node_revision'] = array();
-  ds_extras_schema_alter($schema);
-  foreach ($schema['node_revision']['fields'] as $name => $spec) {
-    db_add_field('node_revision', $name, $spec);
-  }
-
-  db_update('system')
-    ->fields(array('weight' => 1))
-    ->condition('name', 'ds_extras')
-    ->execute();
-}
-
-/**
  * Implements hook_schema().
  */
 function ds_extras_schema() {
@@ -68,6 +50,23 @@ function ds_extras_schema() {
 }
 
 /**
+ * Implements hook_install().
+ */
+function ds_extras_install() {
+
+  $schema['node_revision'] = array();
+  ds_extras_schema_alter($schema);
+  foreach ($schema['node_revision']['fields'] as $name => $spec) {
+    db_add_field('node_revision', $name, $spec);
+  }
+
+  db_update('system')
+    ->fields(array('weight' => 1))
+    ->condition('name', 'ds_extras')
+    ->execute();
+}
+
+/**
  * Implements hook_uninstall().
  */
 function ds_extras_uninstall() {
@@ -76,6 +75,7 @@ function ds_extras_uninstall() {
   variable_del('ds_extras_switch_view_mode');
   variable_del('ds_extras_vd');
   variable_del('ds_extras_fivestar');
+  variable_del('ds_extras_hide_page_title');
   db_drop_field('node_revision', 'ds_switch');
 
   // Remove fivestar variables.
@@ -122,3 +122,8 @@ function ds_extras_update_7002() {
     ->condition('name', 'ds_extras')
     ->execute();
 }
+
+/**
+ * Implements hook_update_N().
+ */
+function ds_extras_update_7003() {}

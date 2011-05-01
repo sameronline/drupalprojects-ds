@@ -17,6 +17,7 @@ function ds_extras_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_extras_settings'),
     'access arguments' => array('admin_display_suite'),
+    'file' => 'ds_extras.admin.inc',
   );
 
   if (variable_get('ds_extras_vd', FALSE) && module_exists('field_ui') && module_exists('views')) {
@@ -30,6 +31,22 @@ function ds_extras_menu() {
   }
 
   return $items;
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function ds_extras_theme_registry_alter(&$theme_registry) {
+
+  // Add views preprocess layout.
+  if (variable_get('ds_extras_vd', FALSE)) {
+    $theme_registry['views_view']['preprocess functions'][] = 'ds_extras_preprocess_view_layout';
+  }
+
+  // Add process page function.
+  if (variable_get('ds_extras_hide_page_title', FALSE)) {
+    $theme_registry['page']['process functions'][] = 'ds_extras_process_page_title';
+  }
 }
 
 /**
@@ -48,6 +65,14 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
     'block_view'
   );
   if (!variable_get('ds_extras_region_to_block', FALSE) && in_array($hook, $region_hooks)) {
+    unset($implementations['ds_extras']);
+  }
+
+  // Disable the switch view mode feature.
+  $hide_page_title_hooks = array(
+    'ds_layout_settings_alter',
+  );
+  if (!variable_get('ds_extras_hide_page_title', FALSE) && in_array($hook, $hide_page_title_hooks)) {
     unset($implementations['ds_extras']);
   }
 
@@ -74,7 +99,6 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
   $vd_hooks = array(
     'field_extra_fields',
     'entity_info',
-    'theme_registry_alter',
     'ctools_plugin_api',
   );
   if (!variable_get('ds_extras_vd', FALSE) && in_array($hook, $vd_hooks)) {
@@ -83,80 +107,149 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
 }
 
 /**
- * Menu callback: Display Suite extras settings.
+ * Implements hook_form_FORM_ID_alter().
  */
-function ds_extras_settings($form) {
+function ds_extras_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
 
-  $form['switch'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Custom view modes per node'),
-  );
+  // Views displays.
+  if (variable_get('ds_extras_vd', FALSE)) {
+    // Add an additional submit callback.
+    $form['#submit'] = array_merge(array('ds_extras_vd_field_ui_submit'), $form['#submit']);
+  }
 
-  $form['switch']['ds_extras_switch_view_mode'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Enable'),
-    '#description' => t('Toggle this checkbox to enable the "Switch view mode" functionality. With this feature, you can change the view mode on a per node basis. A new tab on the node edit form will appear called "Display settings."'),
-    '#default_value' => variable_get('ds_extras_switch_view_mode', FALSE),
-  );
-
-  if (module_exists('block')) {
-    $form['region'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Region to block'),
-    );
-
-    $form['region']['ds_extras_region_to_block'] = array(
+  // Hide page title functionality, currently only works on node.
+  if (isset($form['#ds_layout']) && $form['#entity_type'] == 'node' && ($form['#view_mode'] == 'full' || variable_get('ds_extras_switch_view_mode', FALSE)) &&  variable_get('ds_extras_hide_page_title', FALSE)) {
+    $form['additional_settings']['ds_layouts']['ds_hide_page_title'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Enable'),
-      '#description' => t('Toggle this checkbox to enable the "Region to block" functionality. With this feature, you can create additional regions on the "Manage display" screens which will be exposed as blocks. <br /><strong>Note that it will not work on the default view mode</strong>.'),
-      '#default_value' => variable_get('ds_extras_region_to_block', FALSE),
+      '#title' => t('Hide page title'),
+      '#default_value' => isset($form['#ds_layout']->settings['hide_page_title']) ? $form['#ds_layout']->settings['hide_page_title'] : FALSE,
+      '#description' => t('Hide the page title on the page view of this node. Note that this setting will only work when this view mode is used as the full page layout of a node.'),
+      '#weight' => 100,
     );
   }
 
-  if (module_exists('fivestar')) {
-    $form['fivestar'] = array(
+  // Region to block only fires if there is a layout and we're working on the
+  // a view mode which is not equal to default.
+  if (isset($form['#ds_layout']) && $form['#view_mode'] != 'default' && variable_get('ds_extras_region_to_block', FALSE)) {
+
+    $layout = $form['#ds_layout'];
+
+    // Get the entity_type, bundle and view mode.
+    $entity_type = $form['#entity_type'];
+    $bundle = $form['#bundle'];
+    $view_mode = $form['#view_mode'];
+
+    $region_blocks_options = array();
+    $region_blocks = variable_get('ds_extras_region_blocks', array());
+    foreach ($region_blocks as $key => $block) {
+      if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
+        $region_blocks_options[$key] = t('Remove') . ' ' . $block['title'];
+      }
+    }
+
+    $form['additional_settings']['region_to_block'] = array(
       '#type' => 'fieldset',
-      '#title' => t('Fivestar'),
+      '#title' => t('Block regions'),
+      '#description' => t('Create additional regions in this layout which will be exposed as blocks.')
     );
 
-    $form['fivestar']['ds_extras_fivestar'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Enable'),
-      '#description' => t('Toggle this checkbox to enable the "Fivestar" functionality. A field called "Fivestar" will be made available on the Manage Display screens.'),
-      '#default_value' => variable_get('ds_extras_fivestar', FALSE),
+    $form['additional_settings']['region_to_block']['new_block_region'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Region name'),
+      '#description' => t('Enter a name to create a new region.'),
     );
+    $form['additional_settings']['region_to_block']['new_block_region_key'] = array(
+      '#title' => t('Machine name'),
+      '#type' => 'machine_name',
+      '#default_value' => '',
+      '#maxlength' => 32,
+      '#required' => FALSE,
+      '#description' => t('The machine-readable name of this block region. This name must contain only lowercase letters and underscores. This name must be unique.'),
+      '#disabled' => FALSE,
+      '#machine_name' => array(
+        'exists' => 'ds_extras_region_to_block_unique',
+        'source' => array('additional_settings', 'region_to_block', 'new_block_region'),
+      ),
+    );
+
+    if (!empty($region_blocks_options)) {
+      $form['additional_settings']['region_to_block']['remove_block_region'] = array(
+        '#type' => 'checkboxes',
+        '#title' => t('Existing block regions'),
+        '#options' => $region_blocks_options,
+        '#description' => t('Toggle regions you want to remove. Make sure no fields are attached in that region anymore or you will not see them anymore.'),
+      );
+    }
+
+    $form['#submit'][] = 'ds_extras_block_submit';
   }
-
-  if (module_exists('views')) {
-    $form['views'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Views displays'),
-    );
-
-    $form['views']['ds_extras_vd'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Enable'),
-      '#description' => t('Toggle this checkbox to enable the "Views displays" functionality. With this feature, you can use Display Suite to rearrange the template variables of any views display. A new menu item called "Views displays" will be available at !url.', array('!url' => l(url('admin/structure/ds'), 'admin/structure/ds', array('absolute' => TRUE)))),
-      '#default_value' => variable_get('ds_extras_vd', FALSE),
-    );
-  }
-
-  $form = system_settings_form($form);
-  $form['#submit'][] = 'ds_extras_settings_submit';
-  return $form;
 }
 
 /**
- * Submit callback: Extras settings screen.
+ * Implements hook_field_attach_view_alter().
  */
-function ds_extras_settings_submit($form, &$form_state) {
-  // Clear fields cache.
-  cache_clear_all('ds_fields', 'cache');
-  // Clear module_implements cache and rebuild menu.
-  cache_clear_all('entity_info:', 'cache', TRUE);
-  cache_clear_all('theme_registry:', 'cache', TRUE);
-  cache_clear_all('module_implements', 'cache_bootstrap');
-  menu_rebuild();
+function ds_extras_field_attach_view_alter(&$build, $context) {
+
+  // If views and core doesn't send information along on the entity,
+  // Display suite doesn't have a context to render the fields.
+  if (!isset($build['#entity_type']) && !isset($build['#bundle'])) {
+    return;
+  }
+
+  $block_data = &drupal_static('ds_block_region');
+  $region_blocks = variable_get('ds_extras_region_blocks', array());
+
+  if (empty($region_blocks)) {
+    return;
+  }
+
+  $entity_type = $build['#entity_type'];
+  $bundle = $build['#bundle'];
+  $view_mode = $context['view_mode'];
+  if ($layout = ds_get_layout($entity_type, $bundle, $view_mode)) {
+    foreach ($region_blocks as $block_key => $block) {
+      if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}" && isset($layout['settings']['regions'][$block_key]) && !empty($layout['settings']['regions'][$block_key])) {
+        foreach ($layout['settings']['regions'][$block_key] as $key => $field) {
+          if (isset($build[$field])) {
+            $block_data[$block_key][] = $build[$field];
+            unset($build[$field]);
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Helper funtion to return the view mode for the current entity.
+ *
+ * The drupal_static is called in ds_extras_node_show to set
+ * the current view mode. Through this technique, the hide page
+ * title functionality can also work across other view modes
+ * if another one is chosen for the full page of the node.
+ */
+function ds_extras_get_view_mode() {
+  return drupal_static('ds_extras_view_mode', 'full');
+}
+
+/**
+ * Hide the page title for a full node page view.
+ */
+function ds_extras_process_page_title(&$variables) {
+  if (isset($variables['node']) && node_is_page($variables['node']) && arg(2) == '' && $layout = ds_get_layout('node', $variables['node']->type, ds_extras_get_view_mode())) {
+    if (isset($layout['settings']['hide_page_title']) && $layout['settings']['hide_page_title']) {
+      $variables['title'] = '';
+    }
+  }
+}
+
+/**
+ * Implements hook_ds_layout_settings_alter().
+ */
+function ds_extras_ds_layout_settings_alter($record, $form_state) {
+  if (isset($form_state['values']['additional_settings']['ds_hide_page_title'])) {
+    $record->settings['hide_page_title'] = $form_state['values']['additional_settings']['ds_hide_page_title'];
+  }
 }
 
 /**
@@ -263,6 +356,7 @@ function ds_extras_node_show($node, $message = NULL) {
 
   // For markup consistency with other pages, use node_view_multiple() rather than node_view().
   $view_mode = (!empty($node->ds_switch)) ? $node->ds_switch : 'full';
+  drupal_static('ds_extras_view_mode', $view_mode);
   return node_view_multiple(array($node->nid => $node), $view_mode);
 }
 
@@ -271,6 +365,7 @@ function ds_extras_node_show($node, $message = NULL) {
  */
 function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
 
+  // Switch full view mode.
   if (user_access('ds_switch ' . $form['#node']->type)) {
 
     $view_mode_settings = field_view_mode_settings('node', $form['#node']->type);
@@ -288,16 +383,19 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
     // Only fire if we have more than 1 option.
     if (count($options) > 1) {
       $node = $form['#node'];
-      $form['ds_switch'] = array(
-        '#type' => 'fieldset',
-        '#title' => t('Display settings'),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
-        '#group' => 'additional_settings',
-        '#weight' => 100,
-      );
 
-      $form['ds_switch']['ds_switch'] = array(
+      if (!isset($form['ds_extras'])) {
+        $form['ds_extras'] = array(
+          '#type' => 'fieldset',
+          '#title' => t('Display settings'),
+          '#collapsible' => TRUE,
+          '#collapsed' => TRUE,
+          '#group' => 'additional_settings',
+          '#weight' => 100,
+        );
+      }
+
+      $form['ds_extras']['ds_switch'] = array(
         '#type' => 'select',
         '#title' => t('View mode'),
         '#options' => $options,
@@ -307,74 +405,6 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
       );
     }
   }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function ds_extras_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
-
-  // Views displays.
-  if (variable_get('ds_extras_vd', FALSE)) {
-    // Add an additional submit callback.
-    $form['#submit'] = array_merge(array('ds_extras_vd_field_ui_submit'), $form['#submit']);
-  }
-
-  // If there is no layout or we are working on default view mode
-  // stop processing for the region to block plugin.
-  if (!isset($form['#ds_layout']) || $form['#view_mode'] == 'default' || !variable_get('ds_extras_region_to_block', FALSE)) {
-    return;
-  }
-  $layout = $form['#ds_layout'];
-
-  // Get the entity_type, bundle and view mode.
-  $entity_type = $form['#entity_type'];
-  $bundle = $form['#bundle'];
-  $view_mode = $form['#view_mode'];
-
-  $region_blocks_options = array();
-  $region_blocks = variable_get('ds_extras_region_blocks', array());
-  foreach ($region_blocks as $key => $block) {
-    if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
-      $region_blocks_options[$key] = t('Remove') . ' ' . $block['title'];
-    }
-  }
-
-  $form['additional_settings']['region_to_block'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Block regions'),
-    '#description' => t('Create additional regions in this layout which will be exposed as blocks.')
-  );
-
-  $form['additional_settings']['region_to_block']['new_block_region'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Region name'),
-    '#description' => t('Enter a name to create a new region.'),
-  );
-  $form['additional_settings']['region_to_block']['new_block_region_key'] = array(
-    '#title' => t('Machine name'),
-    '#type' => 'machine_name',
-    '#default_value' => '',
-    '#maxlength' => 32,
-    '#required' => FALSE,
-    '#description' => t('The machine-readable name of this block region. This name must contain only lowercase letters and underscores. This name must be unique.'),
-    '#disabled' => FALSE,
-    '#machine_name' => array(
-      'exists' => 'ds_extras_region_to_block_unique',
-      'source' => array('additional_settings', 'region_to_block', 'new_block_region'),
-    ),
-  );
-
-  if (!empty($region_blocks_options)) {
-    $form['additional_settings']['region_to_block']['remove_block_region'] = array(
-      '#type' => 'checkboxes',
-      '#title' => t('Existing block regions'),
-      '#options' => $region_blocks_options,
-      '#description' => t('Toggle regions you want to remove. Make sure no fields are attached in that region anymore or you will not see them anymore.'),
-    );
-  }
-
-  $form['#submit'][] = 'ds_extras_block_submit';
 }
 
 /**
@@ -496,45 +526,10 @@ function ds_extras_block_submit($form, &$form_state) {
 }
 
 /**
- * Implements hook_field_attach_view_alter().
- */
-function ds_extras_field_attach_view_alter(&$build, $context) {
-
-  // If views and core doesn't send information along on the entity,
-  // Display suite doesn't have a context to render the fields.
-  if (!isset($build['#entity_type']) && !isset($build['#bundle'])) {
-    return;
-  }
-
-  $block_data = &drupal_static('ds_block_region');
-  $region_blocks = variable_get('ds_extras_region_blocks', array());
-
-  if (empty($region_blocks)) {
-    return;
-  }
-
-  $entity_type = $build['#entity_type'];
-  $bundle = $build['#bundle'];
-  $view_mode = $context['view_mode'];
-  if ($layout = ds_get_layout($entity_type, $bundle, $view_mode)) {
-    foreach ($region_blocks as $block_key => $block) {
-      if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}" && isset($layout['settings']['regions'][$block_key]) && !empty($layout['settings']['regions'][$block_key])) {
-        foreach ($layout['settings']['regions'][$block_key] as $key => $field) {
-          if (isset($build[$field])) {
-            $block_data[$block_key][] = $build[$field];
-            unset($build[$field]);
-          }
-        }
-      }
-    }
-  }
-}
-
-/**
  * Implements hook_ctools_plugin_api().
  */
 function ds_extras_ctools_plugin_api($owner, $api) {
-  if ($owner == 'ds_extras' && $api == 'plugins') {
+  if ($owner == 'ds_extras' && $api == 'ds_extras') {
     return array('version' => 1);
   }
 }
@@ -568,15 +563,6 @@ function ds_extras_entity_info() {
   );
 
   return $return;
-}
-
-/**
- * Implements hook_theme_registry_alter().
- */
-function ds_extras_theme_registry_alter(&$theme_registry) {
-  if (variable_get('ds_extras_vd', FALSE)) {
-    $theme_registry['views_view']['preprocess functions'][] = 'ds_extras_preprocess_view_layout';
-  }
 }
 
 /**
