@@ -814,7 +814,7 @@ function _ds_styles($name = 'ds_styles_regions') {
         $classes = explode("|", $value);
         $key = trim($classes[0]);
         $friendly_name = isset($classes[1]) ? trim($classes[1]) : $key;
-        $styles[$name][$key] = $friendly_name;
+        $styles[$name][check_plain($key)] = $friendly_name;
       }
     }
   }

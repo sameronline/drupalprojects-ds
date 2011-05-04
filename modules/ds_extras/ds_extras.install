@@ -77,6 +77,7 @@ function ds_extras_uninstall() {
   variable_del('ds_extras_fivestar');
   variable_del('ds_extras_hide_page_title');
   variable_del('ds_extras_field_template');
+  variable_del('ds_styles_fields');
   variable_del('ft-default');
   db_drop_field('node_revision', 'ds_switch');
 

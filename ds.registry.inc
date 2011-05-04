@@ -24,7 +24,7 @@ function _ds_menu() {
   // Custom styles.
   $items['admin/structure/ds/styles'] = array(
     'title' => 'Styles',
-    'description' => 'Define classes which you can use as classes on regions.',
+    'description' => 'Define classes which you can use as classes on regions and fields (if available).',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_styles_form'),
     'file' => 'ds.styles.inc',

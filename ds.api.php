@@ -144,13 +144,15 @@ function hook_ds_fields_info($entity_type) {
     'title' => t('Title'),
 
     // type: type of field
-    // - DS_FIELD_TYPE_THEME    : calls a theming function.
-    // - DS_FIELD_TYPE_FUNCTION : calls a custom function.
-    // - DS_FIELD_TYPE_CODE     : calls ds_render_code_field().
-    // - DS_FIELD_TYPE_BLOCK    : calls ds_render_block_field().
-    // - DS_FIELD_TYPE_IGNORE   : calls nothing, use this if you simple want
-    //                            to drag and drop. The field itself will have
-    //                            a theme function.
+    // - DS_FIELD_TYPE_THEME      : calls a theming function.
+    // - DS_FIELD_TYPE_FUNCTION   : calls a custom function.
+    // - DS_FIELD_TYPE_CODE       : calls ds_render_code_field().
+    // - DS_FIELD_TYPE_BLOCK      : calls ds_render_block_field().
+    // - DS_FIELD_TYPE_PREPROCESS : calls nothing, just takes a key from the
+    //                              variable field that is passed on.
+    // - DS_FIELD_TYPE_IGNORE     : calls nothing, use this if you simple want
+    //                              to drag and drop. The field itself will have
+    //                              a theme function.
     'field_type' => DS_FIELD_TYPE_FUNCTION,
 
     // ui_limit : only used for the manage display screen so

@@ -25,7 +25,7 @@ Drupal.behaviors.settingsToggle = {
     
     // Bind on field template select button.
     $('.ds-extras-field-template').change(function() {
-      ds_show_custom_settings(this);
+      ds_show_expert_settings(this);
     });
     
     // Add click event to field settings link.
@@ -45,7 +45,7 @@ Drupal.behaviors.settingsToggle = {
       }
       else {
         // Slide down.
-        ds_show_custom_settings(settings, true);
+        ds_show_expert_settings(settings, true);
         settings.slideDown('normal');
       }
       // Store the opened setting.
@@ -55,7 +55,7 @@ Drupal.behaviors.settingsToggle = {
     /**
      * Show / hide settings on field template form.
      */
-    function ds_show_custom_settings(element, open) {
+    function ds_show_expert_settings(element, open) {
       if (undefined == open) {
         var field = $(element).parents('.field-template');
       }
@@ -63,7 +63,7 @@ Drupal.behaviors.settingsToggle = {
         field = element;
       }
       ft = $('.ds-extras-field-template', field).val();
-      if (ft == 'theme_ds_field_custom') {
+      if (ft == 'theme_ds_field_expert') {
         // Show second and third label.
         $('.lb .form-item:nth-child(2), .lb .form-item:nth-child(3)', field).show();
         // Remove margin from update button.
@@ -78,7 +78,15 @@ Drupal.behaviors.settingsToggle = {
         $('.ft-update', field).css({'margin-top': '10px'});
         // Hide wrappers.
         $('.ow, .fis, .fi', field).hide();
-      }      
+      }
+      
+      // Styles.
+      if (ft != 'theme_ds_field_expert' && ft != 'theme_ds_field_reset') {
+        $('.field-styles', field).show();
+      }
+      else {
+        $('.field-styles', field).hide();        
+      }
     }
   }
 };

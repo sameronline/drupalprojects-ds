@@ -33,6 +33,10 @@ class dsNodeTests extends dsBaseTest {
     $settings = array('type' => 'article');
     $node = $this->drupalCreateNode($settings);
 
+    // Create field styles.
+    $edit = array('ds_styles_fields' => "test_field_class\ntest_field_class_2|Field class 2");
+    $this->drupalPost('admin/structure/ds/styles', $edit, t('Save configuration'));
+
     // Create a token and php field.
     $token_field = array(
       'name' => 'Token field',
@@ -79,13 +83,16 @@ class dsNodeTests extends dsBaseTest {
   /**
    * Set the label.
    */
-  function entitiesSetLabel($label, $text = '') {
+  function entitiesSetLabelClass($label, $text = '', $class = '') {
     // Configure fields.
     $edit = array(
       'fields[body][label]' => $label,
     );
     if (!empty($text)) {
       $edit['fields[body][format][ft][lb]'] = $text;
+    }
+    if (!empty($class)) {
+      $edit['fields[body][format][ft][styles][]'] = $class;
     }
     $this->dsConfigureUI($edit);
   }
@@ -190,9 +197,9 @@ class dsNodeTests extends dsBaseTest {
   }
 
   /**
-   * Tests on field settings.
+   * Tests on field templates.
    */
-  function testDSFieldSettings() {
+  function testDSFieldTemplate() {
 
     // Get a node.
     $node = $this->entitiesTestSetup('hidden');
@@ -205,20 +212,21 @@ class dsNodeTests extends dsBaseTest {
     $this->assertRaw("<div class=\"field field-name-body field-type-text-with-summary field-label-hidden\"><div class=\"field-items\"><div class=\"field-item even\" property=\"content:encoded\"><p>" . $body_field . "</p>
 </div></div></div>");
 
-    $this->entitiesSetLabel('above');
+    $this->entitiesSetLabelClass('above');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"field field-name-body field-type-text-with-summary field-label-above\"><div class=\"field-label\">Body:&nbsp;</div><div class=\"field-items\"><div class=\"field-item even\" property=\"content:encoded\"><p>" . $body_field . "</p>
 </div></div></div>");
 
-    $this->entitiesSetLabel('above', 'My body');
+    $this->entitiesSetLabelClass('above', 'My body');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"field field-name-body field-type-text-with-summary field-label-above\"><div class=\"field-label\">My body:&nbsp;</div><div class=\"field-items\"><div class=\"field-item even\" property=\"content:encoded\"><p>" . $body_field . "</p>
 </div></div></div>");
 
-    $this->entitiesSetLabel('hidden');
+    $this->entitiesSetLabelClass('hidden', '', 'test_field_class');
     $this->drupalGet('node/' . $node->nid);
-    $this->assertRaw("<div class=\"field field-name-body field-type-text-with-summary field-label-hidden\"><div class=\"field-items\"><div class=\"field-item even\" property=\"content:encoded\"><p>" . $body_field . "</p>
+    $this->assertRaw("<div class=\"field field-name-body field-type-text-with-summary field-label-hidden test_field_class\"><div class=\"field-items\"><div class=\"field-item even\" property=\"content:encoded\"><p>" . $body_field . "</p>
 </div></div></div>");
+
     $this->entitiesClearFieldSettings();
 
     // -----------------------
@@ -232,27 +240,27 @@ class dsNodeTests extends dsBaseTest {
     $this->assertRaw("<div class=\"group-right\">
       <p>" . $body_field . "</p>");
 
-    $this->entitiesSetLabel('above');
+    $this->entitiesSetLabelClass('above');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
       <div class=\"label-above\">Body:&nbsp;</div><p>" . $body_field . "</p>");
 
-    $this->entitiesSetLabel('inline');
+    $this->entitiesSetLabelClass('inline');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
       <div class=\"label-inline\">Body:&nbsp;</div><p>" . $body_field . "</p>");
 
-    $this->entitiesSetLabel('above', 'My body');
+    $this->entitiesSetLabelClass('above', 'My body');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
       <div class=\"label-above\">My body:&nbsp;</div><p>" . $body_field . "</p>");
 
-    $this->entitiesSetLabel('inline', 'My body');
+    $this->entitiesSetLabelClass('inline', 'My body');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
       <div class=\"label-inline\">My body:&nbsp;</div><p>" . $body_field . "</p>");
 
-    $this->entitiesSetLabel('hidden');
+    $this->entitiesSetLabelClass('hidden');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
       <p>" . $body_field . "</p>");
@@ -444,31 +452,31 @@ class dsNodeTests extends dsBaseTest {
 </span></div></div>    </div>");
 
     // Label tests with custom function.
-    $this->entitiesSetLabel('above');
+    $this->entitiesSetLabelClass('above');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
       <div class=\"ow-class\"><div class=\"label-above\">Body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"field-item even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>    </div>");
 
-    $this->entitiesSetLabel('inline');
+    $this->entitiesSetLabelClass('inline');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
       <div class=\"ow-class\"><div class=\"label-inline\">Body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"field-item even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>    </div>");
 
-    $this->entitiesSetLabel('above', 'My body');
+    $this->entitiesSetLabelClass('above', 'My body');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
       <div class=\"ow-class\"><div class=\"label-above\">My body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"field-item even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>    </div>");
 
-    $this->entitiesSetLabel('inline', 'My body');
+    $this->entitiesSetLabelClass('inline', 'My body');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
       <div class=\"ow-class\"><div class=\"label-inline\">My body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"field-item even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>    </div>");
 
-    $this->entitiesSetLabel('hidden');
+    $this->entitiesSetLabelClass('hidden');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
       <div class=\"ow-class\"><div class=\"fi-class-2\"><span class=\"field-item even fi-class\"><p>" . $body_field . "</p>

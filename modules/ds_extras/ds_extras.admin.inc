@@ -33,12 +33,12 @@ function ds_extras_settings($form) {
   );
 
   $theme_functions = module_invoke_all('ds_field_theme_functions_info');
-  unset($theme_functions['theme_ds_field_custom']);
+  unset($theme_functions['theme_ds_field_expert']);
   $form['ft']['ds_extras_field_template_default']['ft-default'] = array(
     '#type' => 'select',
     '#options' => $theme_functions,
     '#default_value' => variable_get('ft-default', 'theme_field'),
-    '#description' => t('Select the default field template for every field. You can override this per field on the "Manage display" screens, where you also will be able to change all wrappers.<br /><em>Default</em> will output the field as defined in Drupal Core, <em>Reset</em> will strip all wrappers.<br />You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.'),
+    '#description' => t('Select the default field template for every field. You can override this per field on the "Manage display" screens.<br /><em>Default</em> will output the field as defined in Drupal Core, <em>Reset</em> will strip all wrappers. There is also an expert field template, which you can only select per field, to have full control over all wrappers.<br />On the <a href="!url">styles</a> form, you can configure extra styles which can be applied to the outer wrapper (they will be added to the <em>$classes</em> variable), except if you are using the reset or expert field template.<br />You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.<br />And last, but not least, you can now change the label of every field too. Note that, the classes for inline or above labels are not prefixed with <em>field-</em> in any field template except default.', array('!url' => url('admin/structure/ds/styles'))),
   );
 
   $form['switch'] = array(
@@ -132,6 +132,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
   if (variable_get('ds_extras_field_template', FALSE) && isset($form['#ds_layout'])) {
 
     $field_settings = $form['#field_settings'];
+    $field_styles = _ds_styles('ds_styles_fields');
     $functions = module_invoke_all('ds_field_theme_functions_info');
     $default_field_function = variable_get('ft-default', 'theme_field');
 
@@ -155,6 +156,26 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
           'class' => array('ds-extras-field-template'),
         ),
       );
+
+      // Field styles.
+      if (!empty($field_styles)) {
+        $field_styles_select = array(
+          '#type' => 'select',
+          '#multiple' => TRUE,
+          '#options' => $field_styles,
+          '#title' => t('Extra classes'),
+          '#default_value' => isset($field_settings[$key]['ft']['styles']) ? explode(' ', $field_settings[$key]['ft']['styles']) : array(),
+          '#prefix' => '<div class="field-styles">',
+          '#suffix' => '</div>',
+        );
+        $form['fields'][$key]['format']['ft']['styles'] = $field_styles_select;
+      }
+      else {
+        $form['fields'][$key]['format']['ft']['styles'] = array(
+          '#type' => 'value',
+          '#value' => array(''),
+        );
+      }
 
       // Wrappers and label.
       $wrappers = array(
@@ -352,21 +373,29 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
       $field_settings[$key]['ft']['func'] = $function;
     }
 
+    // Field styles.
+    if ($function != 'theme_ds_field_expert' && $function != 'theme_ds_field_reset') {
+      $classes = implode(' ', $values['styles']);
+      if (!empty($classes)) {
+        $field_settings[$key]['ft']['styles'] = $classes;
+      }
+    }
+
     // Label.
     if (isset($fields[$key]['label']) && $fields[$key]['label'] != 'hidden') {
       if (!empty($values['lb'])) {
         $field_settings[$key]['ft']['lb'] = $values['lb'];
       }
-      if (!(empty($values['lb-el'])) && $function == 'theme_ds_field_custom') {
+      if (!(empty($values['lb-el'])) && $function == 'theme_ds_field_expert') {
         $field_settings[$key]['ft']['lb-el'] = check_plain($values['lb-el']);
       }
-      if (!(empty($values['lb-cl'])) && $function == 'theme_ds_field_custom') {
+      if (!(empty($values['lb-cl'])) && $function == 'theme_ds_field_expert') {
         $field_settings[$key]['ft']['lb-cl'] = check_plain($values['lb-cl']);
       }
     }
 
     // Custom field configuration.
-    if ($function == 'theme_ds_field_custom') {
+    if ($function == 'theme_ds_field_expert') {
       foreach ($wrappers as $wrapper_key => $title) {
         if ($values[$wrapper_key]) {
           // Enable.

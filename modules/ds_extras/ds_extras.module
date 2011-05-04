@@ -65,6 +65,7 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
   // Disable the field template feature.
   $fs_hooks = array(
     'ds_field_settings_alter',
+    'form_ds_styles_form_alter',
   );
   if (!variable_get('ds_extras_field_template', FALSE) && in_array($hook, $fs_hooks)) {
     unset($implementations['ds_extras']);
@@ -169,7 +170,19 @@ function ds_extras_ds_field_theme_functions_info() {
   return array(
     'theme_field' => t('Default'),
     'theme_ds_field_reset' => t('Reset'),
-    'theme_ds_field_custom' => t('Custom'),
+    'theme_ds_field_expert' => t('Expert'),
+  );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ds_extras_form_ds_styles_form_alter(&$form, &$form_state) {
+  $form['ds_styles_fields'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Styles for fields'),
+    '#default_value' => variable_get('ds_styles_fields', ''),
+    '#description' => t('Configure styles which you can add to fields on the "manage display" screens. Add multiple styles line per line.<br />If you want to have a friendly name, separate class and friendly name by |, but this is not required. eg:<br /><em>class_name_1<br />class_name_2|Friendly name<br />class_name_3</em>')
   );
 }
 
@@ -187,10 +200,17 @@ function theme_ds_field($variables) {
     $field_settings[$variables['element']['#entity_type']][$variables['element']['#bundle']][$variables['element']['#view_mode']] = ds_get_field_settings($variables['element']['#entity_type'], $variables['element']['#bundle'], $variables['element']['#view_mode']);
   }
 
-  // Check if this field has custom output settings.
+  // Get the field name.
   $field_name = $variables['element']['#field_name'];
+
+  // Check if this field has custom output settings.
   if (isset($field_settings[$variables['element']['#entity_type']][$variables['element']['#bundle']][$variables['element']['#view_mode']][$field_name]['ft'])) {
     $config = $field_settings[$variables['element']['#entity_type']][$variables['element']['#bundle']][$variables['element']['#view_mode']][$field_name]['ft'];
+  }
+
+  // Styles
+  if (isset($config['styles'])) {
+    $variables['classes'] .= ' ' . $config['styles'];
   }
 
   // Alter the label if configured.
@@ -233,7 +253,7 @@ function theme_ds_field_reset($variables, $config) {
 /**
  * Custom output all HTML for the field.
  */
-function theme_ds_field_custom($variables, $config) {
+function theme_ds_field_expert($variables, $config) {
   $output = '';
 
   // Render the label if it's not hidden
