@@ -272,7 +272,7 @@ class dsNodeTests extends dsBaseTest {
 
     // With outer wrapper.
     $edit = array(
-      'fields[body][format][ft][function]' => 'theme_ds_field_custom',
+      'fields[body][format][ft][function]' => 'theme_ds_field_expert',
       'fields[body][format][ft][ow]' => '1',
       'fields[body][format][ft][ow-el]' => 'div'
     );
@@ -311,7 +311,7 @@ class dsNodeTests extends dsBaseTest {
 
     // With outer wrapper and field items wrapper.
     $edit = array(
-      'fields[body][format][ft][function]' => 'theme_ds_field_custom',
+      'fields[body][format][ft][function]' => 'theme_ds_field_expert',
       'fields[body][format][ft][ow]' => '1',
       'fields[body][format][ft][ow-el]' => 'div',
       'fields[body][format][ft][fis]' => '1',
@@ -387,7 +387,7 @@ class dsNodeTests extends dsBaseTest {
 
     // With field item div wrapper.
     $edit = array(
-      'fields[body][format][ft][function]' => 'theme_ds_field_custom',
+      'fields[body][format][ft][function]' => 'theme_ds_field_expert',
       'fields[body][format][ft][fi]' => '1',
     );
     $this->dsConfigureUI($edit);
