@@ -1,13 +1,49 @@
 <?php
 
 /**
+ * @file
+ * Display Suite Extras administrative functions.
+ */
+
+/**
  * Menu callback: Display Suite extras settings.
  */
 function ds_extras_settings($form) {
 
+  $form['ft'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Field templates'),
+  );
+
+  $form['ft']['ds_extras_field_template'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable'),
+    '#description' => t('Toggle this checkbox to enable the "Field templates" functionality. With this feature, you can change properties per field: classes, label and wrappers.'),
+    '#default_value' => variable_get('ds_extras_field_template', FALSE),
+  );
+
+  $form['ft']['ds_extras_field_template_default'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Default field template'),
+    '#states' => array(
+      'invisible' => array(
+        'input[name="ds_extras_field_template"]' => array('checked' => FALSE),
+      ),
+    ),
+  );
+
+  $theme_functions = module_invoke_all('ds_field_theme_functions_info');
+  unset($theme_functions['theme_ds_field_custom']);
+  $form['ft']['ds_extras_field_template_default']['ft-default'] = array(
+    '#type' => 'select',
+    '#options' => $theme_functions,
+    '#default_value' => variable_get('ft-default', 'theme_field'),
+    '#description' => t('Select the default field template for every field. You can override this per field on the "Manage display" screens, where you also will be able to change all wrappers.<br /><em>Default</em> will output the field as defined in Drupal Core, <em>Reset</em> will strip all wrappers.<br />You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.'),
+  );
+
   $form['switch'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Custom view modes per node'),
+    '#title' => t('Node switch view modes'),
   );
 
   $form['switch']['ds_extras_switch_view_mode'] = array(
@@ -25,7 +61,7 @@ function ds_extras_settings($form) {
   $form['hide_page_title']['ds_extras_hide_page_title'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable'),
-    '#description' => t('Toggle this checkbox to enable the "Hide page title" functionality. With this feature, you can select on the "Manage display" screens if the page title must be hidden or not. <br /><strong>Important: this will only work on the full page of a node.</strong>.'),
+    '#description' => t('Toggle this checkbox to enable the "Hide page title" functionality. With this feature, you can select on the "Manage display" screens if the page title must be hidden or not. <br /><strong>Important: this will only work on the full page of a node.</strong>'),
     '#default_value' => variable_get('ds_extras_hide_page_title', FALSE),
   );
 
@@ -80,11 +116,330 @@ function ds_extras_settings($form) {
  * Submit callback: Extras settings screen.
  */
 function ds_extras_settings_submit($form, &$form_state) {
-  // Clear fields cache.
   cache_clear_all('ds_fields', 'cache');
-  // Clear module_implements cache and rebuild menu.
   cache_clear_all('entity_info:', 'cache', TRUE);
   cache_clear_all('theme_registry:', 'cache', TRUE);
   cache_clear_all('module_implements', 'cache_bootstrap');
   menu_rebuild();
+}
+
+/**
+ * Alter Manage display screen.
+ */
+function ds_extras_field_ui_alter(&$form, &$form_state) {
+
+  // Field template.
+  if (variable_get('ds_extras_field_template', FALSE) && isset($form['#ds_layout'])) {
+
+    $field_settings = $form['#field_settings'];
+    $functions = module_invoke_all('ds_field_theme_functions_info');
+    $default_field_function = variable_get('ft-default', 'theme_field');
+
+    $i = 1;
+    foreach (element_children($form['fields']) as $key) {
+
+      $form['fields'][$key]['format']['ft'] = array(
+        '#prefix' => '<a href="" class="ft-link">' . t('Field template') . '</a><div class="field-template" id="ft-' . $i . '">',
+        '#suffix' => '</div>',
+      );
+      $i++;
+
+      $field_function = isset($field_settings[$key]['ft']['func']) ? $field_settings[$key]['ft']['func'] : $default_field_function;
+
+      // Functions.
+      $form['fields'][$key]['format']['ft']['function'] = array(
+        '#type' => 'select',
+        '#options' => $functions,
+        '#default_value' => $field_function,
+        '#attributes' => array(
+          'class' => array('ds-extras-field-template'),
+        ),
+      );
+
+      // Wrappers and label.
+      $wrappers = array(
+        'lb' => array(
+          'title' => t('Label'),
+            'states' => array(
+            'invisible' => array(
+              'select[name="fields[' . $key . '][label]"]' => array('value' => 'hidden'),
+            ),
+          ),
+        ),
+        'ow' => array('title' => t('Outer wrapper')),
+        'fis' => array('title' => t('Field items')),
+        'fi' => array('title' => t('Field item')),
+      );
+      foreach ($wrappers as $wrapper_key => $value) {
+        $form['fields'][$key]['format']['ft'][$wrapper_key] = array(
+          '#type' => 'checkbox',
+          '#title' => $value['title'],
+          '#prefix' => '<div class="ft-group ' . $wrapper_key . '">',
+          '#default_value' => isset($field_settings[$key]['ft'][$wrapper_key]) ? TRUE : FALSE,
+          '#description' => t('Toggle to enable'),
+        );
+        if (isset($value['states'])) {
+          $form['fields'][$key]['format']['ft'][$wrapper_key]['#states'] = $value['states'];
+        }
+        $form['fields'][$key]['format']['ft'][$wrapper_key . '-el'] = array(
+          '#type' => 'textfield',
+          '#title' => t('Element'),
+          '#size' => '10',
+          '#description' => t('E.g. div, span, h2 etc.'),
+          '#default_value' => isset($field_settings[$key]['ft'][$wrapper_key . '-el']) ? $field_settings[$key]['ft'][$wrapper_key . '-el'] : '',
+        );
+        if (isset($value['states'])) {
+          $form['fields'][$key]['format']['ft'][$wrapper_key . '-el']['#states'] = $value['states'];
+        }
+        $classes = array(
+          'field-name-' . strtr($key, '_', '-'),
+        );
+        $form['fields'][$key]['format']['ft'][$wrapper_key . '-cl'] = array(
+          '#type' => 'textfield',
+          '#title' => t('Classes'),
+          '#size' => '10',
+          '#suffix' => '</div><div class="clearfix"></div>',
+          '#default_value' => isset($field_settings[$key]['ft'][$wrapper_key . '-cl']) ? $field_settings[$key]['ft'][$wrapper_key . '-cl'] : '',
+          '#description' => t('Classes: !classes', array('!classes' => implode(', ', $classes))),
+        );
+        if (isset($value['states'])) {
+          $form['fields'][$key]['format']['ft'][$wrapper_key . '-cl']['#states'] = $value['states'];
+        }
+      }
+
+      $form['fields'][$key]['format']['ft']['update'] = array(
+        '#type' => 'button',
+        '#value' => t('Update'),
+        '#attributes' => array(
+          'class' => array('ft-update'),
+        ),
+      );
+
+      // Another label.
+      unset($form['fields'][$key]['format']['ft']['lb']['#description']);
+      $form['fields'][$key]['format']['ft']['lb']['#type'] = 'textfield';
+      $form['fields'][$key]['format']['ft']['lb']['#size'] = '10';
+      $form['fields'][$key]['format']['ft']['lb']['#default_value'] = isset($field_settings[$key]['ft']['lb']) ? $field_settings[$key]['ft']['lb'] : '';
+    }
+  }
+
+  // Views displays.
+  if (variable_get('ds_extras_vd', FALSE)) {
+    // Add an additional submit callback.
+    $form['#submit'] = array_merge(array('ds_extras_vd_field_ui_submit'), $form['#submit']);
+  }
+
+  // Hide page title functionality, currently only works on node.
+  if (isset($form['#ds_layout']) && $form['#entity_type'] == 'node' && ($form['#view_mode'] == 'full' || variable_get('ds_extras_switch_view_mode', FALSE)) &&  variable_get('ds_extras_hide_page_title', FALSE)) {
+    $form['additional_settings']['ds_layouts']['ds_hide_page_title'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Hide page title'),
+      '#default_value' => isset($form['#ds_layout']->settings['hide_page_title']) ? $form['#ds_layout']->settings['hide_page_title'] : FALSE,
+      '#weight' => 100,
+    );
+  }
+
+  // Region to block only fires if there is a layout and we're working on the
+  // a view mode which is not equal to default.
+  if (isset($form['#ds_layout']) && $form['#view_mode'] != 'default' && variable_get('ds_extras_region_to_block', FALSE)) {
+
+    $layout = $form['#ds_layout'];
+
+    // Get the entity_type, bundle and view mode.
+    $entity_type = $form['#entity_type'];
+    $bundle = $form['#bundle'];
+    $view_mode = $form['#view_mode'];
+
+    $region_blocks_options = array();
+    $region_blocks = variable_get('ds_extras_region_blocks', array());
+    foreach ($region_blocks as $key => $block) {
+      if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
+        $region_blocks_options[$key] = t('Remove') . ' ' . $block['title'];
+      }
+    }
+
+    $form['additional_settings']['region_to_block'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Block regions'),
+      '#description' => t('Create additional regions in this layout which will be exposed as blocks.')
+    );
+
+    $form['additional_settings']['region_to_block']['new_block_region'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Region name'),
+      '#description' => t('Enter a name to create a new region.'),
+    );
+    $form['additional_settings']['region_to_block']['new_block_region_key'] = array(
+      '#title' => t('Machine name'),
+      '#type' => 'machine_name',
+      '#default_value' => '',
+      '#maxlength' => 32,
+      '#required' => FALSE,
+      '#description' => t('The machine-readable name of this block region. This name must contain only lowercase letters and underscores. This name must be unique.'),
+      '#disabled' => FALSE,
+      '#machine_name' => array(
+        'exists' => 'ds_extras_region_to_block_unique',
+        'source' => array('additional_settings', 'region_to_block', 'new_block_region'),
+      ),
+    );
+
+    if (!empty($region_blocks_options)) {
+      $form['additional_settings']['region_to_block']['remove_block_region'] = array(
+        '#type' => 'checkboxes',
+        '#title' => t('Existing block regions'),
+        '#options' => $region_blocks_options,
+        '#description' => t('Toggle regions you want to remove. Make sure no fields are attached in that region anymore or you will not see them anymore.'),
+      );
+    }
+
+    $form['#submit'][] = 'ds_extras_block_submit';
+  }
+}
+
+/**
+ * Implements hook_ds_layout_region_alter().
+ */
+function ds_extras_ds_layout_region_alter($context, &$region_info) {
+
+  $region_blocks = variable_get('ds_extras_region_blocks', array());
+  // Bail out if region_blocks is empty or we are working on default view mode.
+  if (empty($region_blocks) || $context['view_mode'] == 'default') {
+    return;
+  }
+
+  $entity_type = $context['entity_type'];
+  $bundle = $context['bundle'];
+  $view_mode = $context['view_mode'];
+
+  foreach ($region_blocks as $block_key => $block) {
+
+    if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
+      $region_info['region_options'][$block_key] = $block['title'];
+      $region_info['table_regions'][$block_key] = array(
+        'title' => check_plain($block['title']),
+        'message' => t('No fields are displayed in this region'),
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_ds_field_settings_alter().
+ */
+function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state) {
+
+  $fields = $form_state['values']['fields'];
+  $default_field_function = variable_get('ft-default', 'theme_field');
+  $wrappers = array(
+    'ow' => t('Wrapper'),
+    'fis' => t('Field items'),
+    'fi' => t('Field item')
+  );
+
+  foreach ($fields as $key => $field) {
+
+    // Make sure we need to save anything for this field.
+    if (_ds_field_valid($key, $field, $form_state)) {
+      continue;
+    }
+
+    // Get the values.
+    $values = $fields[$key]['format']['ft'];
+
+    // Label.
+    if (isset($fields[$key]['label']) && $fields[$key]['label'] != 'hidden') {
+      if (!empty($values['lb'])) {
+        $field_settings[$key]['ft']['lb'] = $values['lb'];
+      }
+      if (!(empty($values['lb-el']))) {
+        $field_settings[$key]['ft']['lb-el'] = check_plain($values['lb-el']);
+      }
+      if (!(empty($values['lb-cl']))) {
+        $field_settings[$key]['ft']['lb-cl'] = check_plain($values['lb-cl']);
+      }
+    }
+
+    // Theme output function.
+    $function = $values['function'];
+    if ($function != $default_field_function) {
+      $field_settings[$key]['ft']['func'] = $function;
+    }
+
+    // Custom field configuration.
+    if ($function == 'theme_ds_field_custom') {
+      foreach ($wrappers as $wrapper_key => $title) {
+        if ($values[$wrapper_key]) {
+          // Enable.
+          $field_settings[$key]['ft'][$wrapper_key] = TRUE;
+          // Element.
+          $field_settings[$key]['ft'][$wrapper_key . '-el'] = !(empty($values[$wrapper_key . '-el'])) ? check_plain($values[$wrapper_key . '-el']) : 'div';
+          // Classess.
+          $field_settings[$key]['ft'][$wrapper_key . '-cl'] = !(empty($values[$wrapper_key . '-cl'])) ? check_plain($values[$wrapper_key . '-cl']) : '';
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Submit callback after Field UI submission of a views display.
+ */
+function ds_extras_vd_field_ui_submit($form, &$form_state) {
+  // Add the 'type' key to the extra title key so we can ditch the notice.
+  $form_state['values']['fields']['title']['type'] = 'hidden';
+}
+
+/**
+ * Submit callback: manage block regions.
+ */
+function ds_extras_block_submit($form, &$form_state) {
+
+  // Create new region.
+  if (!empty($form_state['values']['additional_settings']['region_to_block']['new_block_region'])) {
+
+    // Get the entity_type, bundle and view mode.
+    $entity_type = $form['#entity_type'];
+    $bundle = $form['#bundle'];
+    $view_mode = $form['#view_mode'];
+
+    $block = array(
+      'title' => $form_state['values']['additional_settings']['region_to_block']['new_block_region'],
+      'info' => "{$entity_type}_{$bundle}_{$view_mode}",
+    );
+
+    $block_key = $form_state['values']['additional_settings']['region_to_block']['new_block_region_key'];
+    $region_blocks = variable_get('ds_extras_region_blocks', array());
+    $region_blocks[$block_key] = $block;
+    variable_set('ds_extras_region_blocks', $region_blocks);
+  }
+
+  // Remove a region.
+  if (isset($form_state['values']['additional_settings']['region_to_block']['remove_block_region'])) {
+    $variable_set = FALSE;
+    $region_blocks = variable_get('ds_extras_region_blocks', array());
+    $remove = $form_state['values']['additional_settings']['region_to_block']['remove_block_region'];
+    foreach ($remove as $key => $value) {
+      if ($key === $value) {
+        $variable_set = TRUE;
+        db_delete('block')
+          ->condition('delta', $key)
+          ->condition('module', 'ds_extras')
+          ->execute();
+        unset($region_blocks[$key]);
+      }
+    }
+
+    if ($variable_set) {
+      variable_set('ds_extras_region_blocks', $region_blocks);
+    }
+  }
+}
+
+/**
+ * Return unique region to block.
+ */
+function ds_extras_region_to_block_unique($name) {
+  $region_blocks = variable_get('ds_extras_region_blocks', array());
+  $value = strtr($name, array('-' => '_'));
+  return isset($region_blocks[$value]) ? TRUE : FALSE;
 }

@@ -256,19 +256,8 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
     foreach ($fields as $key => $field) {
 
-      // Ignore the Field group module and the region to block plugin.
-      if ($key == '_add_new_group' || $key == '_add_new_block_region') {
-        continue;
-      }
-
-      // If the field is in hidden region, do not save. Check if the
-      // field has a type key which means it's from Field API and
-      // we need to reset that type to 'hidden' so it doesn't get
-      // fired by Field API in the frontend.
-      if ($field['region'] == 'hidden') {
-        if (isset($field['type'])) {
-          $form_state['values']['fields'][$key]['type'] = 'hidden';
-        }
+      // Make sure we need to save anything for this field.
+      if (_ds_field_valid($key, $field, $form_state)) {
         continue;
       }
 
@@ -360,6 +349,9 @@ function ds_field_ui_fields_save($form, &$form_state) {
 
     $field_settings[$field] = $settings;
   }
+
+  // Allow other modules to modify the field settings before they get saved.
+  drupal_alter('ds_field_settings', $field_settings, $form, $form_state);
 
   // Save the record.
   if (!empty($field_settings)) {
@@ -615,9 +607,10 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     return;
   }
 
-  // Get the fields.
+  // Get the fields and put them on the form.
   $fields = ds_get_fields($entity_type, FALSE);
   $field_settings = ds_get_field_settings($entity_type, $bundle, $view_mode);
+  $form['#field_settings'] = $field_settings;
 
   $table = &$form['fields'];
   $form['#ds_fields'] = array();
@@ -732,7 +725,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
         '#parents' => array('fields', $key, 'settings_edit_form'),
         '#weight' => -5,
         'label' => array(
-          '#markup' => t('Field settings'),
+          '#markup' => '<h3>' . t('Field settings') . '</h3>',
         ),
         // Create a settings form where hooks can pick in.
         'settings' => ds_field_settings_form($field),
@@ -781,30 +774,53 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 }
 
 /**
- * Return styles.
+ * Utility function to check if we need to save anything for this field.
  */
-function _ds_styles() {
-  static $run = FALSE;
-  static $styles = array();
+function _ds_field_valid($key, $field, &$form_state) {
+  $continue = FALSE;
 
-  if (!$run) {
-    $region_styles = trim(variable_get('ds_styles_regions', ''));
-    if (!empty($region_styles)) {
-      $styles[''] = t('None');
-      $region_styles = explode("\n", $region_styles);
-      foreach ($region_styles as $key => $value) {
-        $classes = explode("|", $value);
-        $key = trim($classes[0]);
-        $name = isset($classes[1]) ? trim($classes[1]) : $key;
-        $styles[$key] = $name;
-      }
-    }
-    $run = TRUE;
+  // Ignore the Field group module and the region to block plugin.
+  if ($key == '_add_new_group' || $key == '_add_new_block_region') {
+    $continue = TRUE;
   }
 
-  return $styles;
+  // If the field is in hidden region, do not save. Check if the
+  // field has a type key which means it's from Field API and
+  // we need to reset that type to 'hidden' so it doesn't get
+  // fired by Field API in the frontend.
+  if ($field['region'] == 'hidden') {
+    if (isset($field['type'])) {
+      $form_state['values']['fields'][$key]['type'] = 'hidden';
+    }
+    $continue = TRUE;
+  }
+
+  return $continue;
 }
 
+/**
+ * Utility function to return styles.
+ */
+function _ds_styles($name = 'ds_styles_regions') {
+  static $styles = array();
+
+  if (!isset($styles[$name])) {
+    $styles[$name] = array();
+    $custom_styles = trim(variable_get($name, ''));
+    if (!empty($custom_styles)) {
+      $styles[$name][''] = t('None');
+      $custom_styles = explode("\n", $custom_styles);
+      foreach ($custom_styles as $key => $value) {
+        $classes = explode("|", $value);
+        $key = trim($classes[0]);
+        $friendly_name = isset($classes[1]) ? trim($classes[1]) : $key;
+        $styles[$name][$key] = $friendly_name;
+      }
+    }
+  }
+
+  return $styles[$name];
+}
 
 /**
  * Utility function to sort a multidimensional array by a value in a sub-array.

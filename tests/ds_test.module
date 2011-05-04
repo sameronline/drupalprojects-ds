@@ -12,6 +12,7 @@ function ds_test_install() {
   variable_set('ds_extras_region_to_block', TRUE);
   variable_set('ds_extras_switch_view_mode', TRUE);
   variable_set('ds_extras_hide_page_title', TRUE);
+  variable_set('ds_extras_field_template', TRUE);
 }
 
 /**

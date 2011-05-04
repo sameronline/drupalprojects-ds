@@ -1,6 +1,70 @@
 
 (function($) {
 
+Drupal.DisplaySuite = Drupal.DisplaySuite || {};
+Drupal.DisplaySuite.fieldopened = '';
+  
+/**
+ * Field settings.
+ */
+Drupal.behaviors.settingsToggle = {
+  attach: function (context) {
+  
+    // remove click from link
+    $('.ft-link').click(function(e) {
+      e.preventDefault();
+    });
+
+    // Bind update button.
+    $('#field-display-overview .ft-update').click(function() {
+      var settings = $(this).parents('.field-template');
+      settings.hide();
+      $(this).parents('tr').removeClass('field-formatter-settings-editing');
+      return false;
+    });   
+    
+    // Bind on field template select button.
+    /*$('.ds-extras-field-template').change(function() {
+      ds_show_custom_settings(this);
+    });*/
+    
+    // Add click event to field settings link.
+    $('.ft-link').click(function() {
+      
+      $(this).parents('tr').siblings().removeClass('field-formatter-settings-editing');
+      $(this).parents('tr').addClass('field-formatter-settings-editing');
+      
+      var settings = $(this).siblings('.field-template');
+      if (Drupal.DisplaySuite.fieldopened != '' && Drupal.DisplaySuite.fieldopened != settings.attr('id')) {
+        $('#' + Drupal.DisplaySuite.fieldopened).hide();
+      }
+
+      if (settings.is(':visible')) {
+        $(this).parents('tr').removeClass('field-formatter-settings-editing');
+        settings.hide();
+      }
+      else {
+        // Slide down.
+        settings.slideDown('normal');
+      }
+      // Store the opened setting.
+      Drupal.DisplaySuite.fieldopened = settings.attr('id');
+    });
+    
+    /*function ds_show_custom_settings(element) {
+      ft = $('.ds-extras-field-template').val();
+      var field = $(element).parents('.field-template');
+      console.log(field);
+      if (ft == 'theme_ds_field_custom') {
+        $(field).siblings('.ft-group .ow').show();        
+      }
+      else {
+        $(field).siblings('ft-group .ow').hide();
+      }      
+    }*/
+  }
+};
+  
 /**
  * Row handlers for the 'Manage display' screen.
  */

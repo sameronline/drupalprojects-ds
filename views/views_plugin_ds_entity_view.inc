@@ -142,7 +142,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       $form['grouping_fieldset']['group_field_function'] = array(
         '#type' => 'textfield',
         '#title' => 'Heading function',
-        '#description' => t('The value of the field can be in a very raw format (eg, date created). Enter a custom function which you can use to format that value. The value and the object will be passed into that function eg. <em>custom_function($raw_value, $object);</em>'),
+        '#description' => check_plain(t('The value of the field can be in a very raw format (eg, date created). Enter a custom function which you can use to format that value. The value and the object will be passed into that function eg. <em>custom_function($raw_value, $object);</em>')),
         '#default_value' => isset($this->options['grouping_fieldset']['group_field_function']) ? $this->options['grouping_fieldset']['group_field_function'] : '',
       );
     }

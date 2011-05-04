@@ -276,6 +276,23 @@ function hook_ds_fields_info_alter(&$fields, $entity_type) {
 }
 
 /**
+ * Define theme functions for fields.
+ *
+ * This only is necessary when you're using the field settings
+ * plugin which comes with the DS extras module. This function
+ * will call the theming functions directly, not through
+ * theme('function', $variables); A function gets 2 parameters,
+ * the $variables and $config which are the configuration options
+ * for the current field: theme_ds_field_custom($variables, $config);
+ *
+ * @return $field_theme_functions
+ *   A collection of field theming functions.
+ */
+function hook_ds_field_theme_functions_info() {
+  return array('theme_field' => t('Theme field'));
+}
+
+/**
  * Creates a summary for the field format configuration summary.
  *
  * As soon as you have hook_ds_fields and one of the fields
@@ -316,15 +333,29 @@ function hook_ds_field_settings_form($field) {
 }
 
 /**
- * Alter the layout settings just before they get saved.
+ * Modify the layout settings just before they get saved.
  *
  * @param $record
- *   The record just before they get saved into the database.
+ *   The record just before it gets saved into the database.
  * @param $form_state
  *   The form_state values.
  */
 function hook_ds_layout_settings_alter($record, $form_state) {
   $record->settings['hide_page_title'] = TRUE;
+}
+
+/**
+ * Modify the field settings before they get saved.
+ *
+ * @param $field_settings
+ *   A collection of field settings which keys are fields.
+ * @param $form
+ *   The current form which is submitted.
+ * @param $form_state
+ *   The form state with all its values.
+ */
+function hook_ds_field_settings_alter(&$field_settings, $form, $form_state) {
+  $field_settings['title']['region'] = 'left';
 }
 
 /**
