@@ -118,7 +118,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
     }
 
     $row->label_class = 'label-field';
-    if ($element[$build_mode]['type']['#value'] == DS_FIELD_TYPE_GROUP) {
+    if ($element[$build_mode]['type']['#value'] == DS_FIELD_TYPE_GROUP || $element[$build_mode]['type']['#value'] == DS_FIELD_TYPE_MULTIGROUP ) {
       $row->label_class .= ' field-group';
       $row->class .= ' tabledrag-root';
     }
@@ -273,7 +273,7 @@ function template_preprocess_ds_display_overview_views_form(&$vars) {
     }
 
     $row->label_class = 'label-field';
-    if ($element[$build_mode]['type']['#value'] == DS_FIELD_TYPE_GROUP) {
+    if ($element[$build_mode]['type']['#value'] == DS_FIELD_TYPE_GROUP || $element[$build_mode]['type']['#value'] == DS_FIELD_TYPE_MULTIGROUP ) {
       $row->label_class .= ' field-group';
       $row->class .= ' tabledrag-root';
     }
