@@ -24,9 +24,9 @@ Drupal.behaviors.settingsToggle = {
     });   
     
     // Bind on field template select button.
-    /*$('.ds-extras-field-template').change(function() {
+    $('.ds-extras-field-template').change(function() {
       ds_show_custom_settings(this);
-    });*/
+    });
     
     // Add click event to field settings link.
     $('.ft-link').click(function() {
@@ -45,23 +45,41 @@ Drupal.behaviors.settingsToggle = {
       }
       else {
         // Slide down.
+        ds_show_custom_settings(settings, true);
         settings.slideDown('normal');
       }
       // Store the opened setting.
       Drupal.DisplaySuite.fieldopened = settings.attr('id');
     });
     
-    /*function ds_show_custom_settings(element) {
-      ft = $('.ds-extras-field-template').val();
-      var field = $(element).parents('.field-template');
-      console.log(field);
-      if (ft == 'theme_ds_field_custom') {
-        $(field).siblings('.ft-group .ow').show();        
+    /**
+     * Show / hide settings on field template form.
+     */
+    function ds_show_custom_settings(element, open) {
+      if (undefined == open) {
+        var field = $(element).parents('.field-template');
       }
       else {
-        $(field).siblings('ft-group .ow').hide();
+        field = element;
+      }
+      ft = $('.ds-extras-field-template', field).val();
+      if (ft == 'theme_ds_field_custom') {
+        // Show second and third label.
+        $('.lb .form-item:nth-child(2), .lb .form-item:nth-child(3)', field).show();
+        // Remove margin from update button.
+        $('.ft-update', field).css({'margin-top': '-10px'});
+        // Show wrappers.
+        $('.ow, .fis, .fi', field).show();
+      }
+      else {
+        // Hide second and third label.
+        $('.lb .form-item:nth-child(2), .lb .form-item:nth-child(3)', field).hide();
+        // Add margin on update button.
+        $('.ft-update', field).css({'margin-top': '10px'});
+        // Hide wrappers.
+        $('.ow, .fis, .fi', field).hide();
       }      
-    }*/
+    }
   }
 };
   

@@ -346,23 +346,23 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
     // Get the values.
     $values = $fields[$key]['format']['ft'];
 
+    // Theme output function.
+    $function = $values['function'];
+    if ($function != $default_field_function) {
+      $field_settings[$key]['ft']['func'] = $function;
+    }
+
     // Label.
     if (isset($fields[$key]['label']) && $fields[$key]['label'] != 'hidden') {
       if (!empty($values['lb'])) {
         $field_settings[$key]['ft']['lb'] = $values['lb'];
       }
-      if (!(empty($values['lb-el']))) {
+      if (!(empty($values['lb-el'])) && $function == 'theme_ds_field_custom') {
         $field_settings[$key]['ft']['lb-el'] = check_plain($values['lb-el']);
       }
-      if (!(empty($values['lb-cl']))) {
+      if (!(empty($values['lb-cl'])) && $function == 'theme_ds_field_custom') {
         $field_settings[$key]['ft']['lb-cl'] = check_plain($values['lb-cl']);
       }
-    }
-
-    // Theme output function.
-    $function = $values['function'];
-    if ($function != $default_field_function) {
-      $field_settings[$key]['ft']['func'] = $function;
     }
 
     // Custom field configuration.
