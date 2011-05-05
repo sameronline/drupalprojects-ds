@@ -139,8 +139,17 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
     $i = 1;
     foreach (element_children($form['fields']) as $key) {
 
+
+      // Check if the label is overridden - add the original too.
+      $form['fields'][$key]['human_name']['#prefix'] = '<div class="field-label-row"><input type="hidden" class="original-label" value="' . $form['fields'][$key]['human_name']['#markup'] . '">';
+      $form['fields'][$key]['human_name']['#suffix'] = '</div>';
+      if (isset($field_settings[$key]['ft']['lb'])) {
+        $form['fields'][$key]['human_name']['#markup'] = t('@label (Original: @original)', array('@label'=>$field_settings[$key]['ft']['lb'], '@original' => $form['fields'][$key]['human_name']['#markup']));
+      }
+
+      // Link to open settings.
       $form['fields'][$key]['format']['ft'] = array(
-        '#prefix' => '<a href="" class="ft-link">' . t('Field template') . '</a><div class="field-template" id="ft-' . $i . '">',
+        '#prefix' => '<a href="" class="ft-link">' . t('Label & field template') . '</a><div class="field-template" id="ft-' . $i . '">',
         '#suffix' => '</div>',
       );
       $i++;
@@ -149,6 +158,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 
       // Functions.
       $form['fields'][$key]['format']['ft']['function'] = array(
+        '#title' => t('Field template'),
         '#type' => 'select',
         '#options' => $functions,
         '#default_value' => $field_function,
@@ -240,6 +250,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
       unset($form['fields'][$key]['format']['ft']['lb']['#description']);
       $form['fields'][$key]['format']['ft']['lb']['#type'] = 'textfield';
       $form['fields'][$key]['format']['ft']['lb']['#size'] = '10';
+      $form['fields'][$key]['format']['ft']['lb']['#attributes'] = array('class' => array('label-change'));
       $form['fields'][$key]['format']['ft']['lb']['#default_value'] = isset($field_settings[$key]['ft']['lb']) ? $field_settings[$key]['ft']['lb'] : '';
     }
   }

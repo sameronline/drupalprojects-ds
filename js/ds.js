@@ -5,21 +5,36 @@ Drupal.DisplaySuite = Drupal.DisplaySuite || {};
 Drupal.DisplaySuite.fieldopened = '';
   
 /**
- * Field settings.
+ * Field template.
  */
 Drupal.behaviors.settingsToggle = {
-  attach: function (context) {
+  attach: function (context) {  
   
-    // remove click from link
+    // Remove click from link.
     $('.ft-link').click(function(e) {
       e.preventDefault();
     });
 
     // Bind update button.
     $('#field-display-overview .ft-update').click(function() {
+      
+      // Close the settings.
       var settings = $(this).parents('.field-template');
       settings.hide();
       $(this).parents('tr').removeClass('field-formatter-settings-editing');
+      
+      // Check the label.
+      var row = $(this).parents('tr');
+      var label = $('.label-change', settings).val();
+      var original = $('.original-label', row).val();
+      if (label != '') {
+        new_label = label + ' (Original: ' + original + ')<input type="hidden" class="original-label" value="' + original + '">';
+        $('.field-label-row', row).html(new_label);
+      }
+      else {
+        new_label = original + '<input type="hidden" class="original-label" value="' + original + '">';
+        $('.field-label-row', row).html(new_label);       
+      }
       return false;
     });   
     
@@ -52,9 +67,7 @@ Drupal.behaviors.settingsToggle = {
       Drupal.DisplaySuite.fieldopened = settings.attr('id');
     });
     
-    /**
-     * Show / hide settings on field template form.
-     */
+    // Show / hide settings on field template form.
     function ds_show_expert_settings(element, open) {
       if (undefined == open) {
         var field = $(element).parents('.field-template');
