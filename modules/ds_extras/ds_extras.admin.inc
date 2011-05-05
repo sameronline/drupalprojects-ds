@@ -158,7 +158,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 
       // Functions.
       $form['fields'][$key]['format']['ft']['function'] = array(
-        '#title' => t('Field template'),
+        '#title' => t('Choose a field template'),
         '#type' => 'select',
         '#options' => $functions,
         '#default_value' => $field_function,
@@ -173,7 +173,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
           '#type' => 'select',
           '#multiple' => TRUE,
           '#options' => $field_styles,
-          '#title' => t('Extra classes'),
+          '#title' => t('Choose a field style'),
           '#default_value' => isset($field_settings[$key]['ft']['styles']) ? explode(' ', $field_settings[$key]['ft']['styles']) : array(),
           '#prefix' => '<div class="field-styles">',
           '#suffix' => '</div>',
@@ -190,7 +190,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
       // Wrappers and label.
       $wrappers = array(
         'lb' => array(
-          'title' => t('Label'),
+          'title' => t('Use another label'),
             'states' => array(
             'invisible' => array(
               'select[name="fields[' . $key . '][label]"]' => array('value' => 'hidden'),
