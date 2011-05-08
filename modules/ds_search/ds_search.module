@@ -462,16 +462,17 @@ function ds_search_form_search_form_alter(&$form, $form_state) {
 function ds_search_apachesolr_update_index(&$document, $node) {
   // Creme de la creme: Put the full node object in the index,
   // so no node_loads are needed for results in the Apache Solr engine.
+  dsm($node);
   $document->addField('tm_node', urlencode(serialize(node_load($node->nid))));
 }
 
 /**
- * Implements hook_apachesolr_modify_query().
+ * Implements hook_apachesolr_query_alter().
  */
-function ds_search_apachesolr_modify_query(DrupalSolrQueryInterface $query, $caller) {
+function ds_search_apachesolr_query_alter($query) {
 
   // Get the node from the index.
-  $query->params['fl'] .= ',tm_node';
+  $query->addParam('fl', 'tm_node');
 
   // Search per language.
   if (variable_get('ds_search_language', FALSE)) {
@@ -532,9 +533,9 @@ function apachesolr_search_ds_search_execute($keys = NULL, $conditions = NULL) {
   foreach ($find as $item) {
     $node = @unserialize(urldecode($item['fields']['tm_node'][0]));
     if (!isset($node->nid)) {
-      $node = node_load($item['node']->nid);
+      $node = node_load($item['node']->entity_id);
     }
-    $results[$item['node']->nid] = $node;
+    $results[$item['node']->entity_id] = $node;
   }
   return $results;
 }
