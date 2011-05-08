@@ -802,7 +802,7 @@ function ds_field_formatter_info() {
  * Implements hook_field_formatter_view().
  */
 function ds_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
-  $output = '';
+  $element = array();
   $view_mode = str_replace('taxonomy_', '', $display['type']);
   foreach ($items as $delta => $item) {
     $build = taxonomy_term_view(taxonomy_term_load($item['tid']), $view_mode, $langcode);
