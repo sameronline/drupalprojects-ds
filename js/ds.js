@@ -78,7 +78,9 @@ Drupal.behaviors.settingsToggle = {
       ft = $('.ds-extras-field-template', field).val();
       if (ft == 'theme_ds_field_expert') {
         // Show second and third label.
-        $('.lb .form-item:nth-child(2), .lb .form-item:nth-child(3)', field).show();
+        if ($('.lb .form-item:nth-child(1)', field).is(':visible')) {
+          $('.lb .form-item:nth-child(2), .lb .form-item:nth-child(3)', field).show();
+        }
         // Remove margin from update button.
         $('.ft-update', field).css({'margin-top': '-10px'});
         // Show wrappers.

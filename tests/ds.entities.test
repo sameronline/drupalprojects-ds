@@ -393,7 +393,7 @@ class dsNodeTests extends dsBaseTest {
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
-      <div class=\"field-item even\"><p>" . $body_field . "</p>
+      <div class=\"even\"><p>" . $body_field . "</p>
 </div>    </div>");
 
     // With field item span wrapper.
@@ -404,7 +404,7 @@ class dsNodeTests extends dsBaseTest {
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
-      <span class=\"field-item even\"><p>" . $body_field . "</p>
+      <span class=\"even\"><p>" . $body_field . "</p>
 </span>    </div>");
 
     // With field item span wrapper and class.
@@ -416,7 +416,7 @@ class dsNodeTests extends dsBaseTest {
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
-      <span class=\"field-item even fi-class\"><p>" . $body_field . "</p>
+      <span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span>    </div>");
 
     // With fis and fi.
@@ -431,7 +431,7 @@ class dsNodeTests extends dsBaseTest {
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
-      <div class=\"fi-class-2\"><div class=\"field-item even fi-class\"><p>" . $body_field . "</p>
+      <div class=\"fi-class-2\"><div class=\"even fi-class\"><p>" . $body_field . "</p>
 </div></div>    </div>");
     // With all
     $edit = array(
@@ -448,38 +448,38 @@ class dsNodeTests extends dsBaseTest {
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
-      <div class=\"ow-class\"><div class=\"fi-class-2\"><span class=\"field-item even fi-class\"><p>" . $body_field . "</p>
+      <div class=\"ow-class\"><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>    </div>");
 
     // Label tests with custom function.
     $this->entitiesSetLabelClass('above');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
-      <div class=\"ow-class\"><div class=\"label-above\">Body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"field-item even fi-class\"><p>" . $body_field . "</p>
+      <div class=\"ow-class\"><div class=\"label-above\">Body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>    </div>");
 
     $this->entitiesSetLabelClass('inline');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
-      <div class=\"ow-class\"><div class=\"label-inline\">Body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"field-item even fi-class\"><p>" . $body_field . "</p>
+      <div class=\"ow-class\"><div class=\"label-inline\">Body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>    </div>");
 
     $this->entitiesSetLabelClass('above', 'My body');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
-      <div class=\"ow-class\"><div class=\"label-above\">My body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"field-item even fi-class\"><p>" . $body_field . "</p>
+      <div class=\"ow-class\"><div class=\"label-above\">My body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>    </div>");
 
     $this->entitiesSetLabelClass('inline', 'My body');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
-      <div class=\"ow-class\"><div class=\"label-inline\">My body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"field-item even fi-class\"><p>" . $body_field . "</p>
+      <div class=\"ow-class\"><div class=\"label-inline\">My body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>    </div>");
 
     $this->entitiesSetLabelClass('hidden');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
-      <div class=\"ow-class\"><div class=\"fi-class-2\"><span class=\"field-item even fi-class\"><p>" . $body_field . "</p>
+      <div class=\"ow-class\"><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>    </div>");
   }
 }

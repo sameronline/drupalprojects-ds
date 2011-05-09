@@ -149,7 +149,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 
       // Link to open settings.
       $form['fields'][$key]['format']['ft'] = array(
-        '#prefix' => '<a href="" class="ft-link">' . t('Label & field template') . '</a><div class="field-template" id="ft-' . $i . '">',
+        '#prefix' => '<a href="" class="ft-link">' . t('Field display') . '</a><div class="field-template" id="ft-' . $i . '">',
         '#suffix' => '</div>',
       );
       $i++;
@@ -190,11 +190,11 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
       // Wrappers and label.
       $wrappers = array(
         'lb' => array(
-          'title' => t('Use another label'),
+          'title' => t('Label'),
             'states' => array(
             'invisible' => array(
               'select[name="fields[' . $key . '][label]"]' => array('value' => 'hidden'),
-              ':input[name="fields[' . $key . '][format][ft][function]"]' => array('value' => 'theme_ds_field_expert'),
+              'select[name="fields[' . $key . '][format][ft][function]"]' => array('value' => 'theme_ds_field_expert'),
             ),
           ),
         ),

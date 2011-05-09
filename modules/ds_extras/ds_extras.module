@@ -293,7 +293,7 @@ function theme_ds_field_expert($variables, $config) {
   foreach ($variables['items'] as $delta => $item) {
     // Field item wrapper.
     if (isset($config['fi'])) {
-      $classes = 'field-item ' . ($delta % 2 ? 'odd' : 'even');
+      $classes = ($delta % 2 ? 'odd' : 'even');
       if (!empty($config['fi-cl'])) {
         $classes .= ' ' . $config['fi-cl'];
       }
