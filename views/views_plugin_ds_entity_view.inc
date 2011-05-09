@@ -29,6 +29,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       'users' => 'uid',
       'apachesolr' => 'nid',
       'taxonomy_term_data' => 'tid',
+      'file_managed' => 'fid',
     );
     return $base_table_fields[$this->base_table];
   }
@@ -47,8 +48,9 @@ class views_plugin_ds_entity_view extends views_plugin_row {
 
     $view_mode_options = array();
     $entity_type = $this->view->base_table;
-    // In case we're working with users, change the entity type variable.
+    // In case we're working with users or managed files, change the entity type variable.
     if ($entity_type == 'users') $entity_type = 'user';
+    if ($entity_type == 'file_managed') $entity_type = 'file';
     $entity_view_modes = ds_entity_view_modes($entity_type);
     foreach ($entity_view_modes as $key => $view_mode) {
       $view_mode_options[$key] = $view_mode['label'];
@@ -207,6 +209,8 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       case 'taxonomy_term_data':
         $this->entities = taxonomy_term_load_multiple($ids);
         break;
+      case 'file_managed' :
+        $this->entities = file_load_multiple($ids);
       default:
         break;
     }
@@ -320,4 +324,11 @@ function ds_views_row_render_users($entity, $view_mode) {
  */
 function ds_views_row_render_taxonomy_term_data($entity, $view_mode) {
   return drupal_render(taxonomy_term_view($entity, $view_mode));
+}
+
+/**
+ * Render the file through the entity plugin.
+ */
+function ds_views_row_render_file_managed($entity, $view_mode) {
+  return drupal_render(file_view($entity, $view_mode));
 }
