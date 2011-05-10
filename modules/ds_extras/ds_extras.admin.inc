@@ -208,7 +208,6 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
           '#title' => $value['title'],
           '#prefix' => '<div class="ft-group ' . $wrapper_key . '">',
           '#default_value' => isset($field_settings[$key]['ft'][$wrapper_key]) ? TRUE : FALSE,
-          '#description' => t('Toggle to enable'),
         );
         if (isset($value['states'])) {
           $form['fields'][$key]['format']['ft'][$wrapper_key]['#states'] = $value['states'];
