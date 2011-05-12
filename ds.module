@@ -803,7 +803,7 @@ function ds_field_formatter_info() {
  */
 function ds_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
   $element = array();
-  $view_mode = str_replace('taxonomy_', '', $display['type']);
+  $view_mode = (substr($display['type'], 0, 9) == 'taxonomy_') ? substr($display['type'], 9) : $display['type'];
   foreach ($items as $delta => $item) {
     $build = taxonomy_term_view(taxonomy_term_load($item['tid']), $view_mode, $langcode);
     $element[$delta] = $build;

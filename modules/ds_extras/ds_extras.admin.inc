@@ -17,8 +17,8 @@ function ds_extras_settings($form) {
 
   $form['ft']['ds_extras_field_template'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Enable'),
-    '#description' => t('Toggle this checkbox to enable the "Field templates" functionality. With this feature, you can change properties per field: classes, label and wrappers.'),
+    '#title' => t('Enable field templates'),
+    '#description' => t('Customize classes, label and wrappers per field.'),
     '#default_value' => variable_get('ds_extras_field_template', FALSE),
   );
 
@@ -48,8 +48,8 @@ function ds_extras_settings($form) {
 
   $form['switch']['ds_extras_switch_view_mode'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Enable'),
-    '#description' => t('Toggle this checkbox to enable the "Switch view mode" functionality. With this feature, you can change the view mode on a per node basis. A new tab on the node edit form will appear called "Display settings."'),
+    '#title' => t('Change view modes for individual nodes'),
+    '#description' => t('A new tab "Display settings" will appear on the content create form.'),
     '#default_value' => variable_get('ds_extras_switch_view_mode', FALSE),
   );
 
@@ -60,8 +60,8 @@ function ds_extras_settings($form) {
 
   $form['hide_page_title']['ds_extras_hide_page_title'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Enable'),
-    '#description' => t('Toggle this checkbox to enable the "Hide page title" functionality. With this feature, you can select on the "Manage display" screens if the page title must be hidden or not. <br /><strong>Important: this will only work on the full page of a node.</strong>'),
+    '#title' => t('Show option to hide the page title on "Manage displays" screens'),
+    '#description' => t('Note: this will only work on the full page of a node.'),
     '#default_value' => variable_get('ds_extras_hide_page_title', FALSE),
   );
 
@@ -73,8 +73,8 @@ function ds_extras_settings($form) {
 
     $form['region']['ds_extras_region_to_block'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Enable'),
-      '#description' => t('Toggle this checkbox to enable the "Region to block" functionality. With this feature, you can create additional regions on the "Manage display" screens which will be exposed as blocks. <br /><strong>Important: this will not work on the default view mode</strong>.'),
+      '#title' => t('Create additional regions exposed as block'),
+      '#description' => t('Note: this will not work on the default view mode.'),
       '#default_value' => variable_get('ds_extras_region_to_block', FALSE),
     );
   }
@@ -87,8 +87,7 @@ function ds_extras_settings($form) {
 
     $form['fivestar']['ds_extras_fivestar'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Enable'),
-      '#description' => t('Toggle this checkbox to enable the "Fivestar" functionality. A field called "Fivestar" will be made available on the Manage Display screens.'),
+      '#title' => t('Enable the Fivestar field'),
       '#default_value' => variable_get('ds_extras_fivestar', FALSE),
     );
   }
@@ -101,8 +100,8 @@ function ds_extras_settings($form) {
 
     $form['views']['ds_extras_vd'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Enable'),
-      '#description' => t('Toggle this checkbox to enable the "Views displays" functionality. With this feature, you can use Display Suite to rearrange the template variables of any views display. A new menu item called "Views displays" will be available at !url.', array('!url' => l(url('admin/structure/ds'), 'admin/structure/ds', array('absolute' => TRUE)))),
+      '#title' => t('Rearrange the template variables of any views display'),
+      '#description' => t('A new menu item called "Views displays" will be available at !url.', array('!url' => l(url('admin/structure/ds'), 'admin/structure/ds', array('absolute' => TRUE)))),
       '#default_value' => variable_get('ds_extras_vd', FALSE),
     );
   }
