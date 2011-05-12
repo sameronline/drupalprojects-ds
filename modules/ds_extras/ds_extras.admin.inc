@@ -10,19 +10,14 @@
  */
 function ds_extras_settings($form) {
 
-  $form['ft'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Field templates'),
-  );
-
-  $form['ft']['ds_extras_field_template'] = array(
+  $form['ds_extras_field_template'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable field templates'),
     '#description' => t('Customize classes, label and wrappers per field.'),
     '#default_value' => variable_get('ds_extras_field_template', FALSE),
   );
 
-  $form['ft']['ds_extras_field_template_default'] = array(
+  $form['ds_extras_field_template_default'] = array(
     '#type' => 'fieldset',
     '#title' => t('Default field template'),
     '#states' => array(
@@ -34,44 +29,29 @@ function ds_extras_settings($form) {
 
   $theme_functions = module_invoke_all('ds_field_theme_functions_info');
   unset($theme_functions['theme_ds_field_expert']);
-  $form['ft']['ds_extras_field_template_default']['ft-default'] = array(
+  $form['ds_extras_field_template_default']['ft-default'] = array(
     '#type' => 'select',
     '#options' => $theme_functions,
     '#default_value' => variable_get('ft-default', 'theme_field'),
     '#description' => t('Select the default field template for every field. You can override this per field on the "Manage display" screens.<br /><em>Default</em> will output the field as defined in Drupal Core, <em>Reset</em> will strip all wrappers. There is also an expert field template, which you can only select per field, to have full control over all wrappers.<br />On the <a href="!url">styles</a> form, you can configure extra styles which can be applied to the outer wrapper (they will be added to the <em>$classes</em> variable), except if you are using the reset or expert field template.<br />You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.<br />And last, but not least, you can now change the label of every field too. Note that, the classes for inline or above labels are not prefixed with <em>field-</em> in any field template except default.', array('!url' => url('admin/structure/ds/styles'))),
   );
 
-  $form['switch'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Node switch view modes'),
-  );
-
-  $form['switch']['ds_extras_switch_view_mode'] = array(
+  $form['ds_extras_switch_view_mode'] = array(
     '#type' => 'checkbox',
     '#title' => t('Change view modes for individual nodes'),
     '#description' => t('A new tab "Display settings" will appear on the content create form.'),
     '#default_value' => variable_get('ds_extras_switch_view_mode', FALSE),
   );
 
-  $form['hide_page_title'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Hide page title'),
-  );
-
-  $form['hide_page_title']['ds_extras_hide_page_title'] = array(
+  $form['ds_extras_hide_page_title'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Show option to hide the page title on "Manage displays" screens'),
-    '#description' => t('Note: this will only work on the full page of a node.'),
+    '#title' => t('Hide the page title'),
+    '#description' => t('An extra option will appear on the "Manage displays" screen. Note: this will only work on the full page of a node.'),
     '#default_value' => variable_get('ds_extras_hide_page_title', FALSE),
   );
 
   if (module_exists('block')) {
-    $form['region'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Region to block'),
-    );
-
-    $form['region']['ds_extras_region_to_block'] = array(
+    $form['ds_extras_region_to_block'] = array(
       '#type' => 'checkbox',
       '#title' => t('Create additional regions exposed as block'),
       '#description' => t('Note: this will not work on the default view mode.'),
@@ -79,30 +59,20 @@ function ds_extras_settings($form) {
     );
   }
 
-  if (module_exists('fivestar')) {
-    $form['fivestar'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Fivestar'),
-    );
-
-    $form['fivestar']['ds_extras_fivestar'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Enable the Fivestar field'),
-      '#default_value' => variable_get('ds_extras_fivestar', FALSE),
-    );
-  }
-
   if (module_exists('views')) {
-    $form['views'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Views displays'),
-    );
-
-    $form['views']['ds_extras_vd'] = array(
+    $form['ds_extras_vd'] = array(
       '#type' => 'checkbox',
       '#title' => t('Rearrange the template variables of any views display'),
       '#description' => t('A new menu item called "Views displays" will be available at !url.', array('!url' => l(url('admin/structure/ds'), 'admin/structure/ds', array('absolute' => TRUE)))),
       '#default_value' => variable_get('ds_extras_vd', FALSE),
+    );
+  }
+
+  if (module_exists('fivestar')) {
+    $form['ds_extras_fivestar'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable the Fivestar field'),
+      '#default_value' => variable_get('ds_extras_fivestar', FALSE),
     );
   }
 
