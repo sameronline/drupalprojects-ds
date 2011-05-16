@@ -94,7 +94,7 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
   $entity_options = array();
   $entities = entity_get_info();
   foreach ($entities as $entity_type => $entity_info) {
-    if ($entity_info['fieldable']) {
+    if (isset($entity_info['fieldable']) && $entity_info['fieldable']) {
       $entity_options[$entity_type] = drupal_ucfirst(str_replace('_', ' ', $entity_type));
     }
   }

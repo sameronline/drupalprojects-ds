@@ -4,6 +4,7 @@
 - #1143070 by neurojavi: Check on taxonomy formatters/view modes.
 - #1152232 by yoroy: remove unnecessary checkbox descriptions.
 - #1151858 by neurojavi: add file entity support to ds views plugin.
+- Fix notices in fields and view modes form on fieldable key.
 
 -------------------------------------------------------------------------------------
 7.x-1.1 09/05/2011
