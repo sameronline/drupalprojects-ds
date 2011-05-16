@@ -350,7 +350,10 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
     }
 
     // Get the values.
-    $values = $fields[$key]['format']['ft'];
+    $values = isset($fields[$key]['format']['ft']) ? $fields[$key]['format']['ft'] : array();
+    if (empty($values)) {
+      continue;
+    }
 
     // Theme output function.
     $function = $values['function'];

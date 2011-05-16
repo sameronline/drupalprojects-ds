@@ -788,7 +788,7 @@ function _ds_field_valid($key, $field, &$form_state) {
   // field has a type key which means it's from Field API and
   // we need to reset that type to 'hidden' so it doesn't get
   // fired by Field API in the frontend.
-  if ($field['region'] == 'hidden') {
+  if (isset($field['region']) && $field['region'] == 'hidden') {
     if (isset($field['type'])) {
       $form_state['values']['fields'][$key]['type'] = 'hidden';
     }
