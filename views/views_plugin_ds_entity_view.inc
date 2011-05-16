@@ -30,6 +30,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       'apachesolr' => 'nid',
       'taxonomy_term_data' => 'tid',
       'file_managed' => 'fid',
+      'micro' => 'mid',
     );
     return $base_table_fields[$this->base_table];
   }
@@ -209,9 +210,10 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       case 'taxonomy_term_data':
         $this->entities = taxonomy_term_load_multiple($ids);
         break;
-      case 'file_managed' :
+      case 'file_managed':
         $this->entities = file_load_multiple($ids);
-      default:
+      case 'micro':
+        $this->entities = entity_load($this->base_table, $ids);
         break;
     }
   }
@@ -332,3 +334,11 @@ function ds_views_row_render_taxonomy_term_data($entity, $view_mode) {
 function ds_views_row_render_file_managed($entity, $view_mode) {
   return drupal_render(file_view($entity, $view_mode));
 }
+
+/**
+ * Render the micro through the entity plugin.
+ */
+function ds_views_row_render_micro($entity, $view_mode) {
+  return drupal_render(micro_view($entity, $view_mode));
+}
+
