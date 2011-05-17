@@ -10,75 +10,119 @@
  */
 function ds_extras_settings($form) {
 
-  $form['ds_extras_field_template'] = array(
+  $form['additional_settings'] = array(
+    '#type' => 'vertical_tabs',
+    '#theme_wrappers' => array('vertical_tabs'),
+    '#prefix' => '<div>',
+    '#suffix' => '</div>',
+    '#tree' => TRUE,
+  );
+
+  $form['additional_settings']['fs1'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Field templates'),
+  );
+
+  $form['additional_settings']['fs1']['ds_extras_field_template'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable field templates'),
     '#description' => t('Customize classes, label and wrappers per field.'),
     '#default_value' => variable_get('ds_extras_field_template', FALSE),
   );
 
-  $form['ds_extras_field_template_default'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Default field template'),
-    '#states' => array(
-      'invisible' => array(
-        'input[name="ds_extras_field_template"]' => array('checked' => FALSE),
-      ),
-    ),
-  );
-
   $theme_functions = module_invoke_all('ds_field_theme_functions_info');
   unset($theme_functions['theme_ds_field_expert']);
-  $form['ds_extras_field_template_default']['ft-default'] = array(
+  $form['additional_settings']['fs1']['ft-default'] = array(
     '#type' => 'select',
+    '#title' => t('Default'),
     '#options' => $theme_functions,
     '#default_value' => variable_get('ft-default', 'theme_field'),
     '#description' => t('Select the default field template for every field. You can override this per field on the "Manage display" screens.<br /><em>Default</em> will output the field as defined in Drupal Core, <em>Reset</em> will strip all wrappers. There is also an expert field template, which you can only select per field, to have full control over all wrappers.<br />On the <a href="!url">styles</a> form, you can configure extra styles which can be applied to the outer wrapper (they will be added to the <em>$classes</em> variable), except if you are using the reset or expert field template.<br />You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.<br />And last, but not least, you can now change the label of every field too. Note that, the classes for inline or above labels are not prefixed with <em>field-</em> in any field template except default.', array('!url' => url('admin/structure/ds/styles'))),
   );
 
-  $form['ds_extras_switch_view_mode'] = array(
+  $form['additional_settings']['fs2'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Extra fields'),
+  );
+
+  $form['additional_settings']['fs2']['ds_extras_fields_extra'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Change view modes for individual nodes'),
-    '#description' => t('A new tab "Display settings" will appear on the content create form.'),
+    '#title' => t('Enable extra fields'),
+    '#description' => t('Make extra fields from other modules available on the "Manage display" screens.'),
+    '#default_value' => variable_get('ds_extras_fields_extra', FALSE),
+  );
+
+  $form['additional_settings']['fs2']['ds_extras_fields_extra_list'] = array(
+    '#type' => 'textarea',
+    '#description' => t('Enter fields line by line, where each line is a combination of entity type, bundle and field name. E.g. node|article|tweetbutton. It might be possible that the actual content of the field depends on configuration of that field/module.'),
+    '#default_value' => variable_get('ds_extras_fields_extra_list', FALSE),
+  );
+
+  $form['additional_settings']['fs3'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Other'),
+  );
+
+  $form['additional_settings']['fs3']['ds_extras_switch_view_mode'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Switch view mode'),
+    '#description' => t('Change view modes for individual nodes. A new tab "Display settings" will appear on the content create form.'),
     '#default_value' => variable_get('ds_extras_switch_view_mode', FALSE),
   );
 
-  $form['ds_extras_hide_page_title'] = array(
+  $form['additional_settings']['fs3']['ds_extras_hide_page_title'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Hide the page title'),
+    '#title' => t('Hide page title'),
     '#description' => t('An extra option will appear on the "Manage displays" screen. Note: this will only work on the full page of a node.'),
     '#default_value' => variable_get('ds_extras_hide_page_title', FALSE),
   );
 
   if (module_exists('block')) {
-    $form['ds_extras_region_to_block'] = array(
+    $form['additional_settings']['fs3']['ds_extras_region_to_block'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Create additional regions exposed as block'),
-      '#description' => t('Note: this will not work on the default view mode.'),
+      '#title' => t('Region to block'),
+      '#description' => t('Create additional regions exposed as block. Note: this will not work on the default view mode.'),
       '#default_value' => variable_get('ds_extras_region_to_block', FALSE),
     );
   }
 
   if (module_exists('views')) {
-    $form['ds_extras_vd'] = array(
+    $form['additional_settings']['fs3']['ds_extras_vd'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Rearrange the template variables of any views display'),
+      '#title' => t('Views displays'),
       '#description' => t('A new menu item called "Views displays" will be available at !url.', array('!url' => l(url('admin/structure/ds'), 'admin/structure/ds', array('absolute' => TRUE)))),
       '#default_value' => variable_get('ds_extras_vd', FALSE),
     );
   }
 
   if (module_exists('fivestar')) {
-    $form['ds_extras_fivestar'] = array(
+    $form['additional_settings']['fs3']['ds_extras_fivestar'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Enable the Fivestar field'),
+      '#title' => t('Fivestar field'),
       '#default_value' => variable_get('ds_extras_fivestar', FALSE),
     );
   }
 
+  $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/ds_extras.js';
+
   $form = system_settings_form($form);
   $form['#submit'][] = 'ds_extras_settings_submit';
   return $form;
+}
+
+/**
+ * Validate callback: Extras settings screen.
+ */
+function ds_extras_settings_validate($form, &$form_state) {
+  foreach ($form_state['values']['additional_settings'] as $tab => $value) {
+    if (is_array($value)) {
+      foreach ($value as $variable => $val) {
+        $form_state['values'][$variable] = $val;
+      }
+    }
+    unset($form_state['values']['additional_settings'][$tab]);
+  }
+  unset($form_state['values']['additional_settings']);
 }
 
 /**
@@ -110,10 +154,12 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 
 
       // Check if the label is overridden - add the original too.
-      $form['fields'][$key]['human_name']['#prefix'] = '<div class="field-label-row"><input type="hidden" class="original-label" value="' . $form['fields'][$key]['human_name']['#markup'] . '">';
-      $form['fields'][$key]['human_name']['#suffix'] = '</div>';
-      if (isset($field_settings[$key]['ft']['lb'])) {
-        $form['fields'][$key]['human_name']['#markup'] = t('@label (Original: @original)', array('@label'=>$field_settings[$key]['ft']['lb'], '@original' => $form['fields'][$key]['human_name']['#markup']));
+      if (isset($form['fields'][$key]['human_name'])) {
+        $form['fields'][$key]['human_name']['#prefix'] = '<div class="field-label-row"><input type="hidden" class="original-label" value="' . $form['fields'][$key]['human_name']['#markup'] . '">';
+        $form['fields'][$key]['human_name']['#suffix'] = '</div>';
+        if (isset($field_settings[$key]['ft']['lb'])) {
+          $form['fields'][$key]['human_name']['#markup'] = t('@label (Original: @original)', array('@label'=>$field_settings[$key]['ft']['lb'], '@original' => $form['fields'][$key]['human_name']['#markup']));
+        }
       }
 
       // Link to open settings.

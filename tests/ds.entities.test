@@ -233,7 +233,7 @@ class dsNodeTests extends dsBaseTest {
     // Reset theming function.
     // -----------------------
     $edit = array(
-      'ft-default' => 'theme_ds_field_reset',
+      'additional_settings[fs1][ft-default]' => 'theme_ds_field_reset',
     );
     $this->drupalPost('admin/structure/ds/extras', $edit, t('Save configuration'));
     $this->drupalGet('node/' . $node->nid);

@@ -111,7 +111,6 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
 
   // Disable the vd feature.
   $vd_hooks = array(
-    'field_extra_fields',
     'entity_info',
     'ctools_plugin_api',
   );
@@ -594,18 +593,40 @@ function ds_extras_field_extra_fields() {
 
   // Register a single field so fields for vd are
   // picked up nicely in the display overview form.
-  ctools_include('export');
-  $vd_settings = ctools_export_crud_load_all('ds_vd');
-  foreach ($vd_settings as $vd) {
-    $extra['ds_views'][$vd->vd] = array(
-      'display' => array(
-        'title' => array(
-          'label' => t('Title'),
-          'description' => t('Title'),
-          'weight' => 10,
+  if (variable_get('ds_extras_vd')) {
+    ctools_include('export');
+    $vd_settings = ctools_export_crud_load_all('ds_vd');
+    foreach ($vd_settings as $vd) {
+      $extra['ds_views'][$vd->vd] = array(
+        'display' => array(
+          'title' => array(
+            'label' => t('Title'),
+            'description' => t('Title'),
+            'weight' => 10,
+          ),
         ),
-      ),
-    );
+      );
+    }
+  }
+
+  // Extra fields.
+  if (variable_get('ds_extras_fields_extra')) {
+    $fields = explode("\n", variable_get('ds_extras_fields_extra_list', FALSE));
+    foreach ($fields as $field) {
+      $field = trim($field);
+      if (!empty($field)) {
+        list($entity, $bundle, $field_name) = explode('|', $field);
+        $extra[check_plain($entity)][check_plain($bundle)] = array(
+          'display' => array(
+            $field_name => array(
+              'label' => ucfirst(check_plain($field_name)),
+              'description' => ucfirst(check_plain($field_name)),
+              'weight' => 0,
+            )
+          ),
+        );
+      }
+    }
   }
 
   return $extra;
