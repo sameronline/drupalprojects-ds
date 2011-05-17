@@ -152,7 +152,6 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
     $i = 1;
     foreach (element_children($form['fields']) as $key) {
 
-
       // Check if the label is overridden - add the original too.
       if (isset($form['fields'][$key]['human_name'])) {
         $form['fields'][$key]['human_name']['#prefix'] = '<div class="field-label-row"><input type="hidden" class="original-label" value="' . $form['fields'][$key]['human_name']['#markup'] . '">';
