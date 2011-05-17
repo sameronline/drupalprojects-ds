@@ -6,6 +6,7 @@
 - #1151858 by neurojavi: add file entity support to ds views plugin.
 - #1155148 by swentel: fix notices on entities.
 - #1136542 by swentel: add micro support.
+- #1160014 by swentel: add option to remove all theme hook suggestions.
 - Cleanup admin settings screen of Extras module.
 - New Extras feature: extra fields.
 - Fix notices in fields and view modes form on fieldable key.

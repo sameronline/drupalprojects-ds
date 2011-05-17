@@ -30,6 +30,13 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_field_template', FALSE),
   );
 
+  $form['additional_settings']['fs1']['ft-kill'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Remove theme suggestions'),
+    '#default_value' => variable_get('ft-kill', FALSE),
+    '#description' => t('Remove all theme suggestions from fields. If unsure, leave disabled.'),
+  );
+
   $theme_functions = module_invoke_all('ds_field_theme_functions_info');
   unset($theme_functions['theme_ds_field_expert']);
   $form['additional_settings']['fs1']['ft-default'] = array(
