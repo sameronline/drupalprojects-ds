@@ -373,10 +373,12 @@ function ds_extras_ds_layout_region_alter($context, &$region_info) {
 
     if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
       $region_info['region_options'][$block_key] = $block['title'];
-      $region_info['table_regions'][$block_key] = array(
-        'title' => check_plain($block['title']),
-        'message' => t('No fields are displayed in this region'),
-      );
+      if (isset($region_info['table_regions'])) {
+        $region_info['table_regions'][$block_key] = array(
+          'title' => check_plain($block['title']),
+          'message' => t('No fields are displayed in this region'),
+        );
+      }
     }
   }
 }

@@ -9,6 +9,7 @@
  * Adds the Display Suite fields and layouts to the form.
  */
 function ds_field_ui_fields_layouts(&$form, &$form_state) {
+  global $base_url, $base_path;
 
   // Get the entity_type, bundle and view mode.
   $entity_type = $form['#entity_type'];
@@ -31,6 +32,28 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
 
   // Add process function to add the regions.
   $form['#process'][] = 'ds_field_ui_regions';
+
+  // Add a destination so we can get back if layout has been changed.
+  $form['ds_source'] = array(
+    '#type' => 'hidden',
+    '#value' => $base_url . $base_path,
+  );
+  $form['ds_destination'] = array(
+    '#type' => 'hidden',
+    '#value' => drupal_get_destination(),
+  );
+  $form['ds_entity_type'] = array(
+    '#type' => 'hidden',
+    '#value' => $entity_type,
+  );
+  $form['ds_bundle'] = array(
+    '#type' => 'hidden',
+    '#value' => $bundle,
+  );
+  $form['ds_view_mode'] = array(
+    '#type' => 'hidden',
+    '#value' => $view_mode,
+  );
 
   // Alter the text of the custom display settings.
   if (isset($form['modes'])) {
@@ -203,6 +226,186 @@ function ds_field_ui_layouts_validate($form, &$form_state) {
   if (isset($form_state['values']['additional_settings']['modes']['view_modes_custom'])) {
     $form_state['values']['view_modes_custom'] = $form_state['values']['additional_settings']['modes']['view_modes_custom'];
   }
+}
+
+/**
+ * Get a layout for a given entity.
+ *
+ * @param $entity_type
+ *   The name of the entity.
+ * @param $bundle
+ *   The name of the bundle.
+ * @param $view_mode
+ *   The name of the view mode.
+ */
+function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundle = '', $view_mode = '', $new_layout = '') {
+
+  $odl_layout = NULL;
+  if (!empty($entity_type) && !empty($bundle) && !empty($view_mode)) {
+    $old_layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE);
+  }
+  $all_layouts = ds_get_layout_info();
+
+  if ($old_layout && isset($all_layouts[$new_layout])) {
+
+    $new_layout_key = $new_layout;
+    $new_layout = $all_layouts[$new_layout];
+
+    $form['#entity_type'] = $entity_type;
+    $form['#bundle'] = $bundle;
+    $form['#view_mode'] = $view_mode;
+    $form['#old_layout'] = $old_layout;
+    $form['#new_layout'] = $new_layout;
+    $form['#new_layout_key'] = $new_layout_key;
+    $form['#export_id'] = $entity_type . '|' . $bundle . '|' . $view_mode;
+
+    $form['info'] = array(
+      '#markup' => t('You are changing from %old to %new layout for !bundle in !view_mode view mode. On this screen, you can map the old regions to the new regions.', array('%old' => $old_layout['label'], '%new' => $new_layout['label'], '!bundle' => $bundle, '!view_mode' => $view_mode)),
+    );
+
+    // Old region options.
+    $regions = array();
+    foreach ($old_layout['regions'] as $key => $title) {
+      $regions[$key] = $title;
+    }
+
+    // Let other modules alter the regions.
+    // Let's loaed ds_extras.admin.inc if needed.
+    module_load_include('inc', 'ds_extras', 'ds_extras.admin');
+
+    // For old regions.
+    $context = array(
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+      'view_mode' => $view_mode,
+    );
+    $region_info = array(
+      'region_options' => $regions,
+    );
+    drupal_alter('ds_layout_region', $context, $region_info);
+    $regions = $region_info['region_options'];
+
+    // For new regions.
+    $region_info = array(
+      'region_options' => $new_layout['regions'],
+    );
+    drupal_alter('ds_layout_region', $context, $region_info);
+    $new_layout['regions'] = $region_info['region_options'];
+    $form['#new_layout']['regions'] = $new_layout['regions'];
+
+    // Create field selects. Use previous region as default value.
+    foreach ($new_layout['regions'] as $region => $region_title) {
+      $form['ds_' . $region] = array(
+        '#type' => 'select',
+        '#multiple' => TRUE,
+        '#title' => $region_title,
+        '#options' => $regions,
+        '#default_value' => $region,
+      );
+    }
+
+    $form['actions'] = array('#type' => 'actions');
+    $form['actions']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save'),
+    );
+    $form['actions']['cancel'] = array(
+      '#type' => 'link',
+      '#title' => t('Cancel'),
+      '#href' => isset($_REQUEST['destination']) ? $_REQUEST['destination'] : '',
+    );
+  }
+  else {
+    $form['nothing'] = array('#markup' => t('No valid configuration found.'));
+  }
+
+  return $form;
+}
+
+/**
+ * Validate callback: make sure old regions can not be mapped more than once.
+ */
+function ds_field_ui_layout_change_validate($form, &$form_state) {
+  $layout = $form['#old_layout'];
+  $new_layout = $form['#new_layout'];
+
+  $mappings = array();
+  foreach ($new_layout['regions'] as $new_region => $region_title) {
+    $values = $form_state['values']['ds_' . $new_region];
+    foreach ($values as $old_region) {
+      if (!isset($mappings[$old_region])) {
+        $mappings[$old_region] = $old_region;
+        if (!isset($mappings['new'][$new_region])) {
+          $mappings['new'][$new_region] = array();
+        }
+        $mappings['new'][$new_region][$old_region] = $old_region;
+      }
+      else {
+        form_set_error('ds_' . $new_region, t('You can not map old regions into multiple new regions.'));
+        break;
+      }
+    }
+  }
+
+  // Save the mappings so we can re-use in the submit callback.
+  $form_state['mappings'] = $mappings['new'];
+}
+
+/**
+ * Submit callback: save the layout change.
+ */
+function ds_field_ui_layout_change_submit($form, &$form_state) {
+
+  // Prepare some variables.
+  $old_layout = $form['#old_layout'];
+  $new_layout = $form['#new_layout'];
+  $new_layout_key = $form['#new_layout_key'];
+  $entity_type = $form['#entity_type'];
+  $bundle = $form['#bundle'];
+  $view_mode = $form['#view_mode'];
+  $mappings = $form_state['mappings'];
+
+  // Create new record.
+  $record = new stdClass();
+  $record->id = $form['#export_id'];
+  $record->entity_type = $entity_type;
+  $record->bundle = $bundle;
+  $record->view_mode = $view_mode;
+  $record->layout = $new_layout_key;
+  $record->settings = $old_layout['settings'];
+  unset($record->settings['regions']);
+  unset($record->settings['fields']);
+
+  // Remap.
+  foreach ($mappings as $new_region => $old_regions) {
+    foreach ($old_regions as $region_key) {
+      if (isset($old_layout['settings']['regions'][$region_key])) {
+        foreach ($old_layout['settings']['regions'][$region_key] as $field_key => $field) {
+          if (!isset($record->settings['regions'][$new_region])) {
+            $record->settings['regions'][$new_region] = array();
+          }
+          $record->settings['regions'][$new_region][] = $field;
+          $record->settings['fields'][$field] = $new_region;
+        }
+      }
+    }
+  }
+
+  // Remove old record.
+  db_delete('ds_layout_settings')
+    ->condition('entity_type', $entity_type)
+    ->condition('bundle', $bundle)
+    ->condition('view_mode', $view_mode)
+    ->execute();
+
+  // Save new record.
+  drupal_write_record('ds_layout_settings', $record);
+
+  // Clear entity info cache.
+  cache_clear_all('entity_info', 'cache', TRUE);
+
+  // Show message.
+  drupal_set_message(t('The layout change has been saved.'));
 }
 
 /**
@@ -522,10 +725,20 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#weight' => -1,
   );
 
+  // Apply button.
+  if (isset($layout->layout)) {
+    $form['additional_settings']['ds_layouts']['ds_layout_apply'] = array(
+      '#type' => 'submit',
+      '#value' => t('Apply'),
+      '#disabled' => TRUE,
+      '#weight' => 0,
+    );
+  }
+
   if (isset($layout->export_type) && $layout->export_type == 3) {
     $form['additional_settings']['ds_layouts']['revert'] = array(
       '#markup' => l(t('This layout is overridden. Click to revert to default settings.'), 'admin/structure/ds/revert-layout/' . $form['#export_id'], array('query' => drupal_get_destination())),
-      '#weight' => 0,
+      '#weight' => 1,
     );
   }
 
@@ -533,7 +746,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#type' => 'checkbox',
     '#title' => t('Hide empty regions'),
     '#default_value' => isset($layout->settings['hide_empty_regions']) ? $layout->settings['hide_empty_regions'] : FALSE,
-    '#weight' => 1,
+    '#weight' => 2,
   );
 
   if (!empty($layout) && isset($layout->regions)) {

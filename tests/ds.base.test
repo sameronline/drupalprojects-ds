@@ -464,6 +464,34 @@ class dsLayoutsStylesTests extends dsBaseTest {
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw('<h2>Block region</h2>', 'Block region found');
     $this->assertText('Test code field on node ' . $node->nid, 'Post date in block');
+
+    // Change layout via admin/structure/ds/layout-change.
+    // First verify that header and footer are not here.
+    $this->drupalGet('admin/structure/types/manage/article/display/full');
+    $this->assertNoRaw('<td colspan="8">' . t('Header') . '</td>', 'Header region not found');
+    $this->assertNoRaw('<td colspan="8">' . t('Footer') . '</td>', 'Footer region not found');
+
+    // Remap the regions.
+    $edit = array(
+      'ds_header[]' => array('left'),
+      'ds_left[]' => array(),
+      'ds_right[]' => array(),
+      'ds_footer[]' => array('right', 'block_region'),
+      'ds_block_region[]' => array(),
+    );
+    $this->drupalPost('admin/structure/ds/change-layout/node/article/full/ds_2col_stacked', $edit, t('Save'), array('query' => array('destination' => 'admin/structure/types/manage/article/display/full')));
+
+    // Verify new regions.
+    $this->assertRaw('<td colspan="8">' . t('Header') . '</td>', 'Header region found');
+    $this->assertRaw('<td colspan="8">' . t('Footer') . '</td>', 'Footer region found');
+    $this->assertRaw('<td colspan="8">' . t('Block region') . '</td>', 'Footer region found');
+
+    // Verify settings.
+    $data = unserialize(db_query("SELECT settings FROM {ds_layout_settings} WHERE entity_type = 'node' AND bundle = 'article' AND view_mode = 'full'")->fetchField());
+    $this->assertTrue(in_array('author', $data['regions']['header']), t('Author is in header'));
+    $this->assertTrue(in_array('links', $data['regions']['header']), t('Links field is in header'));
+    $this->assertTrue(in_array('body', $data['regions']['footer']), t('Body field is in footer'));
+    $this->assertTrue(in_array('ds_test_field', $data['regions']['footer']), t('Test field is in footer'));
   }
 }
 

@@ -305,3 +305,8 @@ function ds_update_7001() {
     ->condition('name', 'ds')
     ->execute();
 }
+
+/**
+ * Implements hook_update_N().
+ */
+function ds_update_7002() {}

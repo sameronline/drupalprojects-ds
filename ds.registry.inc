@@ -40,6 +40,17 @@ function _ds_menu() {
     'access arguments' => array('admin_display_suite'),
   );
 
+  // Change layout.
+  $items['admin/structure/ds/change-layout'] = array(
+    'title' => 'Change layout',
+    'description' => 'Act on layout change to move fields elsewhere',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_field_ui_layout_change'),
+    'access arguments' => array('admin_display_suite'),
+    'file' => 'ds.field_ui.inc',
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+  );
+
   // Revert layout.
   $items['admin/structure/ds/revert-layout'] = array(
     'title' => 'Revert layout',
