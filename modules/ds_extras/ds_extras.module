@@ -73,7 +73,7 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
   // Because it's possible to turn on/off features for DS extras,
   // we'll unset hooks here if necessary which otherwhise do nothing at all.
 
-  // Disable the field template feature.
+  // Field template
   $fs_hooks = array(
     'ds_field_settings_alter',
     'form_ds_styles_form_alter',
@@ -82,7 +82,15 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
     unset($implementations['ds_extras']);
   }
 
-  // Disable the region to block feature.
+  // Contextual
+  $fs_hooks = array(
+    'contextual_links_view_alter',
+  );
+  if ((!variable_get('ds_extras_contextual', FALSE) && in_array($hook, $fs_hooks)) || !module_exists('field_ui')) {
+    unset($implementations['ds_extras']);
+  }
+
+  // Region to block
   $region_hooks = array(
     'ds_layout_region_alter',
     'field_attach_view_alter',
@@ -93,7 +101,7 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
     unset($implementations['ds_extras']);
   }
 
-  // Disable the switch view mode feature.
+  // Hide page title
   $hide_page_title_hooks = array(
     'ds_layout_settings_alter',
   );
@@ -101,7 +109,7 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
     unset($implementations['ds_extras']);
   }
 
-  // Disable the switch view mode feature.
+  // Switch view mode
   $switch_hooks = array(
     'menu_alter',
     'permission',
@@ -111,7 +119,7 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
     unset($implementations['ds_extras']);
   }
 
-  // Disable the fivestar feature
+  // Fivestar
   $fivestar_hooks = array(
     'form_fivestar_node_type_tag_form_alter',
     'fivestar_access',
@@ -120,7 +128,7 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
     unset($implementations['ds_extras']);
   }
 
-  // Disable the vd feature.
+  // Views displays
   $vd_hooks = array(
     'entity_info',
     'ctools_plugin_api',
@@ -363,6 +371,41 @@ function ds_extras_process_page_title(&$variables) {
 function ds_extras_ds_layout_settings_alter($record, $form_state) {
   if (isset($form_state['values']['additional_settings']['ds_hide_page_title'])) {
     $record->settings['hide_page_title'] = $form_state['values']['additional_settings']['ds_hide_page_title'];
+  }
+}
+
+/**
+ * Implements hook_contextual_links_view_alter().
+ */
+function ds_extras_contextual_links_view_alter(&$element, $items) {
+
+  if (isset($element['#element']['#entity_type'])) {
+    $entity_type = $element['#element']['#entity_type'];
+    $bundle = $element['#element']['#bundle'];
+    $view_mode = $element['#element']['#view_mode'];
+
+    // Check if we have a configured layout. Do not fallback to default.
+    $layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE);
+
+    // Get the manage display URI.
+    $admin_path = _field_ui_bundle_admin_path($entity_type, $bundle);
+
+    // Check view mode settings.
+    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
+    $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
+
+    if (empty($layout) && !$overriden) {
+      $admin_path .= '/display';
+    }
+    else {
+      $admin_path .= '/display/' . $view_mode;
+    }
+
+    $element['#links']['manage-layout'] = array(
+      'title' => t('Layout'),
+      'href' => $admin_path,
+      'query' => drupal_get_destination(),
+    );
   }
 }
 
@@ -660,8 +703,8 @@ function ds_extras_field_extra_fields() {
         $extra[check_plain($entity)][check_plain($bundle)] = array(
           'display' => array(
             $field_name => array(
-              'label' => ucfirst(check_plain($field_name)),
-              'description' => ucfirst(check_plain($field_name)),
+              'label' => drupal_ucfirst(check_plain($field_name)),
+              'description' => drupal_ucfirst(check_plain($field_name)),
               'weight' => 0,
             )
           ),

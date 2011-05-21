@@ -10,6 +10,7 @@
 - #1163046 by swentel: map old regions to new regions when changing layout.
 - Cleanup admin settings screen of Extras module.
 - New Extras feature: extra fields.
+- New Extras feature: contextual links to manage display screens.
 - Fix notices in fields and view modes form on fieldable key.
 
 -------------------------------------------------------------------------------------

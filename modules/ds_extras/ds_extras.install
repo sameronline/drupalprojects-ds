@@ -82,6 +82,7 @@ function ds_extras_uninstall() {
   variable_del('ds_extras_fields_extra_list');
   variable_del('ft-default');
   variable_del('ft-kill');
+  variable_del('ds_extras_contextual');
   db_drop_field('node_revision', 'ds_switch');
 
   // Remove fivestar variables.

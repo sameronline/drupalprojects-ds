@@ -77,6 +77,15 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_switch_view_mode', FALSE),
   );
 
+  if (module_exists('contextual') && module_exists('field_ui')) {
+    $form['additional_settings']['fs3']['ds_extras_contextual'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Contextual links'),
+      '#description' => t('Add contextual links (if possible) to manage the layout.'),
+      '#default_value' => variable_get('ds_extras_contextual', FALSE),
+    );
+  }
+
   $form['additional_settings']['fs3']['ds_extras_hide_page_title'] = array(
     '#type' => 'checkbox',
     '#title' => t('Hide page title'),
@@ -164,7 +173,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
         $form['fields'][$key]['human_name']['#prefix'] = '<div class="field-label-row"><input type="hidden" class="original-label" value="' . $form['fields'][$key]['human_name']['#markup'] . '">';
         $form['fields'][$key]['human_name']['#suffix'] = '</div>';
         if (isset($field_settings[$key]['ft']['lb'])) {
-          $form['fields'][$key]['human_name']['#markup'] = t('@label (Original: @original)', array('@label'=>$field_settings[$key]['ft']['lb'], '@original' => $form['fields'][$key]['human_name']['#markup']));
+          $form['fields'][$key]['human_name']['#markup'] = t('@label (Original: @original)', array('@label' => $field_settings[$key]['ft']['lb'], '@original' => $form['fields'][$key]['human_name']['#markup']));
         }
       }
 
