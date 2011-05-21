@@ -270,9 +270,6 @@ function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundl
     }
 
     // Let other modules alter the regions.
-    // Let's loaed ds_extras.admin.inc if needed.
-    module_load_include('inc', 'ds_extras', 'ds_extras.admin');
-
     // For old regions.
     $context = array(
       'entity_type' => $entity_type,

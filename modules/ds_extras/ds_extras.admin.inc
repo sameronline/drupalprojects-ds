@@ -355,35 +355,6 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 }
 
 /**
- * Implements hook_ds_layout_region_alter().
- */
-function ds_extras_ds_layout_region_alter($context, &$region_info) {
-
-  $region_blocks = variable_get('ds_extras_region_blocks', array());
-  // Bail out if region_blocks is empty or we are working on default view mode.
-  if (empty($region_blocks) || $context['view_mode'] == 'default') {
-    return;
-  }
-
-  $entity_type = $context['entity_type'];
-  $bundle = $context['bundle'];
-  $view_mode = $context['view_mode'];
-
-  foreach ($region_blocks as $block_key => $block) {
-
-    if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
-      $region_info['region_options'][$block_key] = $block['title'];
-      if (isset($region_info['table_regions'])) {
-        $region_info['table_regions'][$block_key] = array(
-          'title' => check_plain($block['title']),
-          'message' => t('No fields are displayed in this region'),
-        );
-      }
-    }
-  }
-}
-
-/**
  * Implements hook_ds_field_settings_alter().
  */
 function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state) {
