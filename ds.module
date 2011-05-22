@@ -635,7 +635,12 @@ function ds_render_ctools_field($field) {
       if ($show_title) {
         $content .= '<h2>' . $data->title . '</h2>';
       }
-      $content .= drupal_render($data->content);
+      if (is_array($data->content)) {
+        $content .= drupal_render($data->content);
+      }
+      else {
+        $content .= $data->content;
+      }
       return $content;
     }
   }
