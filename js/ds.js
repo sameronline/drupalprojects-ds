@@ -38,6 +38,30 @@ Drupal.behaviors.layoutChange = {
 };
 
 /**
+ * Ctools selection content.
+ */
+Drupal.behaviors.CToolsSelection = {
+  attach: function (context) {
+    if ($('#ctools-content-selection').length > 0) {
+      $('#ctools-content-selection .section-link').click(function() {
+        $('#ctools-content-selection .content').hide();
+        container = $(this).attr('id') + '-container';
+        console.log(container);
+        $('#' + container).show();
+        return false;
+      });
+    }
+  }
+};
+
+/**
+ * Save the CTools content configuration.
+ */
+$.fn.dsCtoolsContentConfiguration = function (configuration) {
+  $(this[0]).val(configuration);
+}
+
+/**
  * Field template.
  */
 Drupal.behaviors.settingsToggle = {

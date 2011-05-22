@@ -67,6 +67,8 @@ function ds_field_human_name($type) {
       return t('Code field');
     case DS_FIELD_TYPE_BLOCK:
       return t('Block field');
+    case DS_FIELD_TYPE_CTOOLS:
+      return t('Ctools field');
   }
 
   // Fallback
@@ -89,6 +91,10 @@ function ds_custom_manage($field_key = '') {
 
       case DS_FIELD_TYPE_BLOCK:
         $redirect = 'admin/structure/ds/fields/manage_block/' . $field_key;
+        break;
+
+      case DS_FIELD_TYPE_CTOOLS:
+        $redirect = 'admin/structure/ds/fields/manage_ctools/' . $field_key;
         break;
 
       default:
@@ -182,7 +188,7 @@ function ds_field_unique($name) {
  */
 function ds_shared_form_validate($form, &$form_state) {
   $field = new stdClass;
-  $field->properties = new stdClass;
+  $field->properties = array();
   $field->field = $form_state['values']['field'];
   $field->label = $form_state['values']['name'];
 
@@ -267,9 +273,30 @@ function ds_edit_custom_field_form($form, &$form_state, $custom_field = '') {
  */
 function ds_custom_field_form_validate($form, &$form_state) {
   $form_state['field']->field_type = DS_FIELD_TYPE_CODE;
-  $form_state['field']->properties = array();
   $form_state['field']->properties['code'] = $form_state['values']['code'];
   $form_state['field']->properties['use_token'] = $form_state['values']['use_token'];
+}
+
+/**
+ * Manage a CTools field.
+ */
+function ds_edit_ctools_field_form($form, &$form_state, $ctools_field = '') {
+  $custom_field = ds_shared_form($form, $ctools_field);
+  $form['info'] = array(
+    '#markup' => t('The content of this field is configurable on the "Manage display" screens.'),
+    '#weight' => -10,
+  );
+  $form['#validate'][] = 'ds_ctools_field_form_validate';
+  return $form;
+}
+
+/**
+ * CTools field form validation.
+ */
+function ds_ctools_field_form_validate($form, &$form_state) {
+  $form_state['field']->field_type = DS_FIELD_TYPE_CTOOLS;
+  $form_state['field']->properties['default'] = array();
+  $form_state['field']->properties['settings'] = array('show_title' => array('type' => 'checkbox'), 'ctools' => array('type' => 'ctools'));
 }
 
 /**

@@ -123,6 +123,23 @@ function _ds_menu() {
     'type' => MENU_LOCAL_ACTION,
     'weight' => 0,
   );
+  $items['admin/structure/ds/fields/manage_ctools'] = array(
+    'title' => 'Add a CTools field',
+    'description' => 'Manage a CTools field',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_edit_ctools_field_form'),
+    'file' => 'ds.fields.inc',
+    'access arguments' => array('admin_view_modes'),
+    'type' => MENU_LOCAL_ACTION,
+    'weight' => 1,
+  );
+  $items['admin/structure/ds/fields/manage_ctools/content'] = array(
+    'title' => 'Ctools field content',
+    'page callback' => 'ds_ctools_content',
+    'file' => 'ds.field_ui.inc',
+    'access arguments' => array('admin_display_suite'),
+    'type' => MENU_CALLBACK,
+  );
   $items['admin/structure/ds/fields/delete'] = array(
     'title' => 'Delete a field',
     'description' => 'Delete a field.',
@@ -151,7 +168,7 @@ function _ds_menu() {
       'file' => 'ds.fields.inc',
       'access arguments' => array('admin_view_modes'),
       'type' => MENU_LOCAL_ACTION,
-      'weight' => 1,
+      'weight' => 2,
     );
   }
 

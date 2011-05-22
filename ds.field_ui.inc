@@ -606,9 +606,13 @@ function ds_ds_field_format_summary($field) {
   $summary = '';
   $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
   foreach ($settings as $key => $value) {
-    if (!empty($value)) {
+    if ($key == 'ctools') {
+      $conf = unserialize($value);
+      $summary .= t('Type: !type', array('!type' => $conf['subtype']));
+    }
+    elseif (!empty($value)) {
       $value = is_numeric($value) ? ($value ? t('Yes') : t('No')) : $value;
-      $summary .= drupal_ucfirst(check_plain($key)) . ': ' . $value . '<br />';
+      $summary .= str_replace('_', ' ', drupal_ucfirst(check_plain($key))) . ': ' . $value . '<br />';
     }
   }
   return $summary;
@@ -645,10 +649,199 @@ function ds_ds_field_settings_form($field) {
         );
         break;
 
+      case 'checkbox':
+        $form[$key] = array(
+          '#type' => 'checkbox',
+          '#title' => str_replace('_', ' ', check_plain(drupal_ucfirst($key))),
+          '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
+          '#description' => isset($value['description']) ? check_plain($value['description']) : '',
+        );
+        break;
+
+      case 'ctools':
+        // @todo update / remove / multiple
+        ctools_include('modal');
+        ctools_modal_add_js();
+        $form['select'] = array(
+          '#markup' => l('Select content', 'admin/structure/ds/fields/manage_ctools/content', array('attributes' => array('class' => 'ctools-use-modal'))),
+        );
+        $form[$key] = array(
+          '#type' => 'hidden',
+          '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
+        );
+        break;
     }
   }
 
   return $form;
+}
+
+/**
+ * Return the configuration settings for the CTools field.
+ */
+function ds_ctools_content($type_name = '', $subtype_name = '') {
+
+  ctools_include('modal');
+  ctools_include('ajax');
+  ctools_include('content');
+
+  $commands = array();
+  $content_type = ctools_get_content_type($type_name);
+  $subtype = ctools_content_get_subtype($content_type, $subtype_name);
+  $configuration = ctools_content_get_defaults($content_type, $subtype);
+
+  $url = 'admin/structure/ds/fields/manage_ctools/content';
+  if (!empty($type_name) && !empty($subtype_name)) {
+    $url .= '/' . $type_name . '/' . $subtype_name;
+  }
+  $form_info = array(
+    'path' => $url,
+    'show cancel' => TRUE,
+    'cancel callback' => 'ds_ctools_content_cancel',
+    'finish callback' => 'ds_ctools_content_finish',
+  );
+  $form_state = array(
+    'ajax' => TRUE,
+    'modal' => TRUE,
+    'modal return' => TRUE,
+  );
+
+  // Call the content form.
+  $output = ctools_content_form('add', $form_info, $form_state, $content_type, $subtype_name, $subtype, $configuration);
+
+  // Dismiss the modal.
+  if (!empty($form_state['complete'])) {
+    $configuration = array(
+      'conf' => $form_state['conf'],
+      'type' => $type_name,
+      'subtype' => $subtype_name,
+    );
+    $commands[] = ctools_modal_command_dismiss();
+    // @todo get right field
+    $commands[] = ajax_command_invoke('input[name="fields[ctools_content][settings_edit_form][settings][ctools]"]', 'dsCtoolsContentConfiguration', array(serialize($configuration)));
+  }
+  elseif ($output === FALSE || !empty($form_state['cancel'])) {
+    $commands[] = ds_ctools_content_select();
+  }
+  else {
+    $commands = ctools_modal_form_render($form_state, $output);
+  }
+
+  print ajax_render($commands);
+  ajax_footer();
+  exit;
+}
+
+/**
+ * Select content.
+ */
+function ds_ctools_content_select() {
+
+  // Get content types.
+  $content_types = ctools_content_get_available_types();
+
+  $categories = $category_names = $ordered = array();
+
+  foreach ($content_types as $type_name => $subtypes) {
+    foreach ($subtypes as $subtype_name => $content_type) {
+      list($category_key, $category) = ds_ctools_get_category($content_type);
+
+      if (empty($categories[$category_key])) {
+        $categories[$category_key] = array(
+          'title' => $category,
+          'content' => array(),
+        );
+        $category_names[$category_key] = $category;
+      }
+
+      $content_title = filter_xss_admin($content_type['title']);
+
+      // Ensure content with the same title doesn't overwrite each other.
+      while (isset($categories[$category_key]['content'][$content_title])) {
+        $content_title .= '-';
+      }
+
+      $categories[$category_key]['content'][$content_title] = $content_type;
+      $categories[$category_key]['content'][$content_title]['type_name'] = $type_name;
+      $categories[$category_key]['content'][$content_title]['subtype_name'] = $subtype_name;
+    }
+  }
+
+  // Now sort
+  natcasesort($category_names);
+  foreach ($category_names as $category => $name) {
+    $ordered[$category] = $categories[$category];
+  }
+
+  $left = '';
+  $right = '<div class="content">' . t('Content options are divided by category. Please select a category from the left to proceed.') . '</div>';
+  foreach ($ordered as $section => $section_content) {
+    // Section.
+    if ($section == 'root') {
+      $section_content['title'] = t('Content');
+    }
+    $left .= '<div class="section"><a href="" id="' . $section . '" class="section-link">' . $section_content['title'] . '</a></div>';
+    // Content.
+    $right .= '<div id="' . $section . '-container" class="selection-hide content">';
+    $right .= '<h2>' . $section_content['title'] . '</h2>';
+    foreach ($section_content['content'] as $key => $value) {
+      $right .= '<div class="content-item">';
+      $variables = array(
+        'path' => ctools_content_admin_icon($value),
+      );
+      $right .= theme('image', $variables) . '&nbsp;';
+      $right .= ctools_ajax_text_button($key, 'admin/structure/ds/fields/manage_ctools/content/' . $value['type_name'] . '/' . $value['subtype_name'], $key);
+      $right .= '</div>';
+    }
+    $right .= '</div>';
+  }
+
+  // Create output.
+  $output = '<div id="ctools-content-selection">';
+  $output .= '<div id="left">' . $left . '</div>';
+  $output .= '<div id="right">' . $right . '</div>';
+  $output .= '</div>';
+
+  return ctools_modal_command_display(t('Select content'), $output);
+}
+
+/**
+ * Helper function to get the category.
+ */
+function ds_ctools_get_category($content_type) {
+  if (isset($content_type['top level'])) {
+    $category = 'root';
+  }
+  else if (isset($content_type['category'])) {
+    if (is_array($content_type['category'])) {
+      list($category, $weight) = $content_type['category'];
+    }
+    else {
+      $category = $content_type['category'];
+    }
+  }
+  else {
+    $category = t('Uncategorized');
+  }
+
+  return array(preg_replace('/[^a-z0-9]/', '-', strtolower($category)), $category);
+}
+
+
+/**
+ * Handle the 'finish' click on the add/edit field form wizard.
+ */
+function ds_ctools_content_finish(&$form_state) {
+  $form_state['complete'] = TRUE;
+  return;
+}
+
+/**
+ * Handle the 'cancel' click on the add/edit field form wizard.
+ */
+function ds_ctools_content_cancel(&$form_state) {
+  $form_state['cancel'] = TRUE;
+  return;
 }
 
 /**

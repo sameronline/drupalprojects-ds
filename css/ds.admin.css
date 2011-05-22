@@ -4,6 +4,9 @@
  * Administration CSS for Display Suite.
  */
 
+/**
+ * Field template.
+ */
 .field-template {
   display: none;
   min-width: 450px;
@@ -21,4 +24,47 @@
 .ft-group div.form-item {
   float: left;
   width: 130px;
+}
+
+/**
+ * Modal
+ */
+div.ctools-modal-content .modal-header {
+  padding: 5px;
+  background-color: #E1E2DC;
+}
+
+div.ctools-modal-content a.close {
+  color: #000;
+}
+
+div.ctools-modal-content .modal-title {
+  font-weight: normal;
+  color: #000;
+}
+
+div.ctools-modal-content .modal-header img {
+  display: none;
+}
+
+/**
+ * CTools content selection.
+ */
+#ctools-content-selection #left {
+  float: left;
+  width: 30%;	
+}
+
+#ctools-content-selection #right {
+  float: left;
+  width: 70%; 
+}
+
+#ctools-content-selection .selection-hide {
+	display: none;
+}
+
+#ctools-content-selection .content-item {
+  width: 35%;
+  float: left;	
 }
