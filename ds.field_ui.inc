@@ -662,7 +662,6 @@ function ds_ds_field_settings_form($field) {
         // @todo update / remove / multiple
         ctools_include('modal');
         ctools_modal_add_js();
-        dsm($field);
         $form['select'] = array(
           '#markup' => l('Select content', 'admin/structure/ds/fields/manage_ctools/content/' . $field['name'], array('attributes' => array('class' => 'ctools-use-modal'))),
         );
