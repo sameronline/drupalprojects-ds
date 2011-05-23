@@ -664,8 +664,6 @@ function ds_render_ctools_field($field) {
     // Create CTools content.
     $keywords = $args = $context = array();
     if (!empty($arguments)) {
-      ctools_include('context');
-      $context = ctools_context_create('entity:'. $field['entity_type'], $field['entity']);
       $arguments = explode(',', $arguments);
       foreach ($arguments as $arg) {
         $args[] = $field['entity']->{$arg};
