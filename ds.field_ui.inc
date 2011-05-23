@@ -928,7 +928,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   if (!empty($layout) && isset($layout->layout) && isset($ds_layouts[$layout->layout])) {
     $chosen_layout = $ds_layouts[$layout->layout];
     $layout_string = $layout->layout;
-    if (!empty($chosen_layout->flexible)) {
+    if (empty($chosen_layout['flexible'])) {
       $selected = t('You have selected the %layout_label layout. The default template can be found in %path', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
       $suggestions = 'Possible template suggestions are: <br />';
       $suggestions .= '- ' . $layout_string . '--' . $entity_type . '.tpl.php<br />';
@@ -974,7 +974,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#title' => t('Hide empty regions'),
     '#default_value' => isset($layout->settings['hide_empty_regions']) ? $layout->settings['hide_empty_regions'] : FALSE,
     '#weight' => 2,
-    '#access' => !empty($chosen_layout->flexible),
+    '#access' => empty($chosen_layout['flexible']),
   );
 
   if (!empty($layout) && isset($layout->regions)) {
@@ -989,7 +989,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
       '#parents' => array('additional_settings'),
-      '#access' => !empty($chosen_layout->flexible),
+      '#access' => empty($chosen_layout['flexible']),
     );
 
     $styles = _ds_styles();
