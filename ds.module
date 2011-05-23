@@ -627,10 +627,10 @@ function ds_render_ctools_field($field) {
     // Get variables.
     $show_title = $field['formatter_settings']['show_title'];
     $title_wrapper = trim($field['formatter_settings']['title_wrapper']);
-    $configuration = unserialize($field['formatter_settings']['ctools']);
-    $type = $configuration['type'];
-    $subtype = $configuration['subtype'];
-    $conf = $configuration['conf'];
+    $ctools = unserialize($field['formatter_settings']['ctools']);
+    $type = $ctools['type'];
+    $subtype = $ctools['subtype'];
+    $conf = $ctools['conf'];
 
     // Include CTools content.
     ctools_include('content');

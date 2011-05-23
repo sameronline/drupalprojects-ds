@@ -662,8 +662,9 @@ function ds_ds_field_settings_form($field) {
         // @todo update / remove / multiple
         ctools_include('modal');
         ctools_modal_add_js();
+        dsm($field);
         $form['select'] = array(
-          '#markup' => l('Select content', 'admin/structure/ds/fields/manage_ctools/content', array('attributes' => array('class' => 'ctools-use-modal'))),
+          '#markup' => l('Select content', 'admin/structure/ds/fields/manage_ctools/content/' . $field['name'], array('attributes' => array('class' => 'ctools-use-modal'))),
         );
         $form[$key] = array(
           '#type' => 'hidden',
@@ -679,7 +680,7 @@ function ds_ds_field_settings_form($field) {
 /**
  * Return the configuration settings for the CTools field.
  */
-function ds_ctools_content($type_name = '', $subtype_name = '') {
+function ds_ctools_content($field_name = '', $type_name = '', $subtype_name = '', $step = NULL) {
 
   ctools_include('modal');
   ctools_include('ajax');
@@ -690,9 +691,13 @@ function ds_ctools_content($type_name = '', $subtype_name = '') {
   $subtype = ctools_content_get_subtype($content_type, $subtype_name);
   $configuration = ctools_content_get_defaults($content_type, $subtype);
 
-  $url = 'admin/structure/ds/fields/manage_ctools/content';
+  watchdog('step', 's ' . $step .' p');
+  $url = 'admin/structure/ds/fields/manage_ctools/content/' . $field_name;
   if (!empty($type_name) && !empty($subtype_name)) {
     $url .= '/' . $type_name . '/' . $subtype_name;
+    if (!empty($step)) {
+      $url .= '/' . $step;
+    }
   }
   $form_info = array(
     'path' => $url,
@@ -701,13 +706,14 @@ function ds_ctools_content($type_name = '', $subtype_name = '') {
     'finish callback' => 'ds_ctools_content_finish',
   );
   $form_state = array(
+    'contexts' => NULL,
     'ajax' => TRUE,
     'modal' => TRUE,
     'modal return' => TRUE,
   );
 
   // Call the content form.
-  $output = ctools_content_form('add', $form_info, $form_state, $content_type, $subtype_name, $subtype, $configuration);
+  $output = ctools_content_form('add', $form_info, $form_state, $content_type, $subtype_name, $subtype, $configuration, $step);
 
   // Dismiss the modal.
   if (!empty($form_state['complete'])) {
@@ -717,11 +723,10 @@ function ds_ctools_content($type_name = '', $subtype_name = '') {
       'subtype' => $subtype_name,
     );
     $commands[] = ctools_modal_command_dismiss();
-    // @todo get right field
-    $commands[] = ajax_command_invoke('input[name="fields[ctools_content][settings_edit_form][settings][ctools]"]', 'dsCtoolsContentConfiguration', array(serialize($configuration)));
+    $commands[] = ajax_command_invoke('input[name="fields[' . $field_name . '][settings_edit_form][settings][ctools]"]', 'dsCtoolsContentConfiguration', array(serialize($configuration)));
   }
   elseif ($output === FALSE || !empty($form_state['cancel'])) {
-    $commands[] = ds_ctools_content_select();
+    $commands[] = ds_ctools_content_select($field_name);
   }
   else {
     $commands = ctools_modal_form_render($form_state, $output);
@@ -735,7 +740,7 @@ function ds_ctools_content($type_name = '', $subtype_name = '') {
 /**
  * Select content.
  */
-function ds_ctools_content_select() {
+function ds_ctools_content_select($field_name) {
 
   // Get content types.
   $content_types = ctools_content_get_available_types();
@@ -790,7 +795,7 @@ function ds_ctools_content_select() {
         'path' => ctools_content_admin_icon($value),
       );
       $right .= theme('image', $variables) . '&nbsp;';
-      $right .= ctools_ajax_text_button($key, 'admin/structure/ds/fields/manage_ctools/content/' . $value['type_name'] . '/' . $value['subtype_name'], $key);
+      $right .= ctools_ajax_text_button($key, 'admin/structure/ds/fields/manage_ctools/content/' . $field_name . '/' . $value['type_name'] . '/' . $value['subtype_name'], $key);
       $right .= '</div>';
     }
     $right .= '</div>';
@@ -1122,6 +1127,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     );
 
     if ($form_state['formatter_settings_edit'] == $key) {
+      $field['name'] = $key;
       $table[$key]['settings_edit'] = array(
         '#type' => 'container',
         '#attributes' => array('class' => array('field-formatter-settings-edit-form')),
