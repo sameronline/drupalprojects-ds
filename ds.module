@@ -511,13 +511,23 @@ function ds_entity_variables(&$variables) {
     // Hide empty regions variable.
     $hide_empty_regions = $layout['settings']['hide_empty_regions'];
 
-    // Check if this is a flexible layout or not.
-    if (empty($layout['flexible'])) {
+    // Check if this is a flexible panels layout.
+    if (!empty($layout['flexible'])) {
+      ctools_include('plugins', 'panels');
+      $variables['css_id'] = '';
+      $variables['settings'] = '';
+      $variables['display'] = '';
+      $variables['renderer'] = '';
+      $panels_layout = str_replace('panels-', '', $layout['layout']);
+      $variables['layout'] = panels_get_layout($panels_layout);
+      $variables['theme_hook_suggestion'] = 'panels_flexible';
+    }
+    else {
+      // Template layout.
       if (!isset($variables['classes_array'])) {
         $variables['classes_array'] = array();
       }
       $variables['classes_array'][] = 'view-mode-' . $variables['elements']['#view_mode'];
-
 
       // In case this is a panels layout, do a string replace.
       if (isset($layout['module']) && $layout['module'] == 'panels') {
@@ -528,17 +538,6 @@ function ds_entity_variables(&$variables) {
       $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'];
       $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
       $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
-    }
-    else {
-      // Panels layout.
-      ctools_include('plugins', 'panels');
-      $variables['css_id'] = '';
-      $variables['settings'] = '';
-      $variables['display'] = '';
-      $variables['renderer'] = '';
-      $panels_layout = str_replace('panels-', '', $layout['layout']);
-      $variables['layout'] = panels_get_layout($panels_layout);
-      $variables['theme_hook_suggestion'] = 'panels_flexible';
     }
 
     // Create region variables based on the layout settings.
