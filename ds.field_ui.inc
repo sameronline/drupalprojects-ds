@@ -756,6 +756,11 @@ function ds_ctools_content($action = 'add', $field_name = '', $type_name = '', $
 
 /**
  * Select content.
+ *
+ * @param $field_name
+ *   The name of the field.
+ * @param $action
+ *   The name of the action.
  */
 function ds_ctools_content_select($field_name, $action) {
 
