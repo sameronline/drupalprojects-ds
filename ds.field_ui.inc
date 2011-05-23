@@ -659,16 +659,33 @@ function ds_ds_field_settings_form($field) {
         break;
 
       case 'ctools':
-        // @todo update / remove / multiple
+        // @todo multiple
         ctools_include('modal');
+        ctools_include('object-cache');
         ctools_modal_add_js();
-        $form['select'] = array(
-          '#markup' => l('Select content', 'admin/structure/ds/fields/manage_ctools/content/' . $field['name'], array('attributes' => array('class' => 'ctools-use-modal'))),
-        );
         $form[$key] = array(
           '#type' => 'hidden',
           '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
+          '#weight' => 3,
         );
+        $action = 'add';
+        $args = '';
+        $conf = array();
+        $title = t('Select content');
+        if (isset($settings[$key])) {
+          $ctools = unserialize($settings['ctools']);
+          $type = $ctools['type'];
+          $subtype = $ctools['subtype'];
+          $args = '/' . $type . '/' . $subtype;
+          $action = 'edit';
+          $conf = $ctools['conf'];
+          $title = t('Edit content');
+        }
+        $form['select'] = array(
+          '#markup' => l($title, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field['name'] . $args, array('attributes' => array('class' => 'ctools-use-modal'))),
+          '#weight' => 2,
+        );
+        ctools_object_cache_set($field['name'], $field['name'], $conf);
         break;
     }
   }
@@ -679,18 +696,22 @@ function ds_ds_field_settings_form($field) {
 /**
  * Return the configuration settings for the CTools field.
  */
-function ds_ctools_content($field_name = '', $type_name = '', $subtype_name = '', $step = NULL) {
+function ds_ctools_content($action = 'add', $field_name = '', $type_name = '', $subtype_name = '', $step = NULL) {
 
   ctools_include('modal');
   ctools_include('ajax');
   ctools_include('content');
+  ctools_include('object-cache');
 
   $commands = array();
   $content_type = ctools_get_content_type($type_name);
   $subtype = ctools_content_get_subtype($content_type, $subtype_name);
   $configuration = ctools_content_get_defaults($content_type, $subtype);
+  if ($action == 'edit') {
+    $configuration = ctools_object_cache_get($field_name, $field_name);
+  }
 
-  $url = 'admin/structure/ds/fields/manage_ctools/content/' . $field_name;
+  $url = 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field_name;
   if (!empty($type_name) && !empty($subtype_name)) {
     $url .= '/' . $type_name . '/' . $subtype_name . '/%step';
   }
@@ -708,7 +729,7 @@ function ds_ctools_content($field_name = '', $type_name = '', $subtype_name = ''
   );
 
   // Call the content form.
-  $output = ctools_content_form('add', $form_info, $form_state, $content_type, $subtype_name, $subtype, $configuration, $step);
+  $output = ctools_content_form($action, $form_info, $form_state, $content_type, $subtype_name, $subtype, $configuration, $step);
 
   // Dismiss the modal.
   if (!empty($form_state['complete'])) {
@@ -719,9 +740,10 @@ function ds_ctools_content($field_name = '', $type_name = '', $subtype_name = ''
     );
     $commands[] = ctools_modal_command_dismiss();
     $commands[] = ajax_command_invoke('input[name="fields[' . $field_name . '][settings_edit_form][settings][ctools]"]', 'dsCtoolsContentConfiguration', array(serialize($configuration)));
+    ctools_object_cache_clear($field_name, $field_name);
   }
   elseif ($output === FALSE || !empty($form_state['cancel'])) {
-    $commands[] = ds_ctools_content_select($field_name);
+    $commands[] = ds_ctools_content_select($field_name, $action);
   }
   else {
     $commands = ctools_modal_form_render($form_state, $output);
@@ -735,7 +757,7 @@ function ds_ctools_content($field_name = '', $type_name = '', $subtype_name = ''
 /**
  * Select content.
  */
-function ds_ctools_content_select($field_name) {
+function ds_ctools_content_select($field_name, $action) {
 
   // Get content types.
   $content_types = ctools_content_get_available_types();
@@ -790,7 +812,7 @@ function ds_ctools_content_select($field_name) {
         'path' => ctools_content_admin_icon($value),
       );
       $right .= theme('image', $variables) . '&nbsp;';
-      $right .= ctools_ajax_text_button($key, 'admin/structure/ds/fields/manage_ctools/content/' . $field_name . '/' . $value['type_name'] . '/' . $value['subtype_name'], $key);
+      $right .= ctools_ajax_text_button($key, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field_name . '/' . $value['type_name'] . '/' . $value['subtype_name'], $key);
       $right .= '</div>';
     }
     $right .= '</div>';

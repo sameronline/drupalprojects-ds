@@ -46,7 +46,6 @@ Drupal.behaviors.CToolsSelection = {
       $('#ctools-content-selection .section-link').click(function() {
         $('#ctools-content-selection .content').hide();
         container = $(this).attr('id') + '-container';
-        console.log(container);
         $('#' + container).show();
         return false;
       });
