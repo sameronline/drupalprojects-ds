@@ -884,7 +884,16 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   $ds_layouts = ds_get_layout_info();
   $layout_options = array('' => t('- None -'));
   foreach ($ds_layouts as $key => $layout) {
-    $layout_options[$key] = $layout['label'];
+    $optgroup = 'Display suite';
+    if (!empty($layout['module'])) {
+      $optgroup = ucfirst($layout['module']);
+    }
+
+    if (!isset($layout_options[$optgroup])) {
+      $layout_options[$optgroup] = array();
+    }
+
+    $layout_options[$optgroup][$key] = $layout['label'];
   }
 
   // Add additional settings vertical tab.
@@ -958,6 +967,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#type' => 'checkbox',
     '#title' => t('Hide empty regions'),
     '#default_value' => isset($layout->settings['hide_empty_regions']) ? $layout->settings['hide_empty_regions'] : FALSE,
+    '#description' => t('This feature is not always supported.'),
     '#weight' => 2,
   );
 

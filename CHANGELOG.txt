@@ -9,6 +9,7 @@
 - #1160014 by swentel: add option to remove all theme hook suggestions.
 - #1163046 by swentel: map old regions to new regions when changing layout.
 - Cleanup admin settings screen of Extras module.
+- Support for Panels layouts.
 - New feature: CTools field.
 - New Extras feature: extra fields.
 - New Extras feature: contextual links to manage display screens.

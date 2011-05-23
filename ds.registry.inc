@@ -184,6 +184,12 @@ function _ds_theme() {
   // Layouts
   $layouts = ds_get_layout_info();
   foreach ($layouts as $key => $layout) {
+
+    // We don't need panel layouts to be registered.
+    if (isset($layout['module']) && $layout['module'] == 'panels') {
+      continue;
+    }
+
     $theme_functions[$key] = array(
       'render element' => 'elements',
       'template' => strtr($key, '_', '-'),
@@ -371,6 +377,25 @@ function _ds_ds_layout_info() {
        'css' => TRUE,
     ),
   );
+
+  // Support for panels.
+  if (module_exists('panels')) {
+    ctools_include('plugins', 'panels');
+    $panel_layouts = panels_get_layouts();
+    foreach ($panel_layouts as $key => $layout) {
+      if (isset($layout['regions'])) {
+        $layouts['panels-' . $key] = array(
+          'label' => $layout['title'],
+          'path' => $layout['path'],
+          'module' => 'panels',
+          'regions' => $layout['regions'],
+        );
+        if (!empty($layout['css'])) {
+          $layouts['panels-' . $key]['css'] = TRUE;
+        }
+      }
+    }
+  }
 
   // Get layouts defined in the default theme and base theme (if applicable).
   $theme = variable_get('theme_default');

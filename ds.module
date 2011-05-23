@@ -467,6 +467,9 @@ function ds_field_attach_view_alter(&$build, $context) {
     // Register css file.
     $loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'] = TRUE;
     // Add css file.
+    if (isset($layout['module']) && $layout['module'] == 'panels') {
+      $layout['layout'] = str_replace('panels-', '', $layout['layout']);
+    }
     $build['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
   }
 }
@@ -514,6 +517,11 @@ function ds_entity_variables(&$variables) {
     // Hide empty regions variable.
     $hide_empty_regions = $layout['settings']['hide_empty_regions'];
 
+    // In case this is a panels layout, add the variable to the $content variable.
+    if (isset($layout['module']) && $layout['module'] == 'panels') {
+      $layout['layout'] = str_replace('-', '_', $layout['layout']);
+    }
+
     // Add template suggestions.
     $variables['theme_hook_suggestions'][] = $layout['layout'];
     $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'];
@@ -531,6 +539,12 @@ function ds_entity_variables(&$variables) {
       }
       elseif (empty($variables[$region_name])) {
         $variables[$region_name] = '&nbsp;';
+      }
+
+      // In case this is a panels layout, add the variable to the $content variable.
+      if (isset($layout['module']) && $layout['module'] == 'panels') {
+        $variables['content'][$region_name] = $variables[$region_name];
+        unset($variables[$region_name]);
       }
 
       // Add extras classes to the region.
