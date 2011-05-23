@@ -690,13 +690,9 @@ function ds_ctools_content($field_name = '', $type_name = '', $subtype_name = ''
   $subtype = ctools_content_get_subtype($content_type, $subtype_name);
   $configuration = ctools_content_get_defaults($content_type, $subtype);
 
-  watchdog('step', 's ' . $step .' p');
   $url = 'admin/structure/ds/fields/manage_ctools/content/' . $field_name;
   if (!empty($type_name) && !empty($subtype_name)) {
-    $url .= '/' . $type_name . '/' . $subtype_name;
-    if (!empty($step)) {
-      $url .= '/' . $step;
-    }
+    $url .= '/' . $type_name . '/' . $subtype_name . '/%step';
   }
   $form_info = array(
     'path' => $url,
