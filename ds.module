@@ -635,8 +635,6 @@ function ds_render_ctools_field($field) {
     // Include CTools content.
     ctools_include('content');
     $keywords = $args = $context = array();
-    //$args['nid'] = $field['entity']->nid;
-    //$context['ctools_argument_nid_context'] = $field['entity']->nid;
     $data = ctools_content_render($type, $subtype, $conf, $keywords, $args, $context);
 
     // Return content.
