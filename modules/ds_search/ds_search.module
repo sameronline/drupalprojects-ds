@@ -462,7 +462,6 @@ function ds_search_form_search_form_alter(&$form, $form_state) {
 function ds_search_apachesolr_update_index(&$document, $node) {
   // Creme de la creme: Put the full node object in the index,
   // so no node_loads are needed for results in the Apache Solr engine.
-  dsm($node);
   $document->addField('tm_node', urlencode(serialize(node_load($node->nid))));
 }
 
