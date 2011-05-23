@@ -383,15 +383,30 @@ function _ds_ds_layout_info() {
     ctools_include('plugins', 'panels');
     $panel_layouts = panels_get_layouts();
     foreach ($panel_layouts as $key => $layout) {
+      // The easy ones.
       if (isset($layout['regions'])) {
         $layouts['panels-' . $key] = array(
           'label' => $layout['title'],
           'path' => $layout['path'],
           'module' => 'panels',
+          'flexible' => FALSE,
           'regions' => $layout['regions'],
         );
         if (!empty($layout['css'])) {
           $layouts['panels-' . $key]['css'] = TRUE;
+        }
+      }
+      // Flexible panel layouts, ignore the default flexible.
+      else {
+        if ($layout['name'] != 'flexible') {
+          $regions = panels_flexible_panels(array(), array(), $layout);
+          $layouts['panels-' . $key] = array(
+            'label' => $layout['title'],
+            'path' => $layout['path'],
+            'module' => 'panels',
+            'flexible' => TRUE,
+            'regions' => $regions,
+          );
         }
       }
     }

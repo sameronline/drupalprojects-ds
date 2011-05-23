@@ -508,33 +508,47 @@ function ds_entity_variables(&$variables) {
       }
     }
 
-    // Add view mode classes.
-    if (!isset($variables['classes_array'])) {
-      $variables['classes_array'] = array();
-    }
-    $variables['classes_array'][] = 'view-mode-' . $variables['elements']['#view_mode'];
-
     // Hide empty regions variable.
     $hide_empty_regions = $layout['settings']['hide_empty_regions'];
 
-    // In case this is a panels layout, add the variable to the $content variable.
-    if (isset($layout['module']) && $layout['module'] == 'panels') {
-      $layout['layout'] = str_replace('-', '_', $layout['layout']);
-    }
+    // Check if this is a flexible layout or not.
+    if (empty($layout['flexible'])) {
+      if (!isset($variables['classes_array'])) {
+        $variables['classes_array'] = array();
+      }
+      $variables['classes_array'][] = 'view-mode-' . $variables['elements']['#view_mode'];
 
-    // Add template suggestions.
-    $variables['theme_hook_suggestions'][] = $layout['layout'];
-    $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'];
-    $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
-    $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
+
+      // In case this is a panels layout, do a string replace.
+      if (isset($layout['module']) && $layout['module'] == 'panels') {
+        $layout['layout'] = str_replace('-', '_', $layout['layout']);
+      }
+
+      $variables['theme_hook_suggestions'][] = $layout['layout'];
+      $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'];
+      $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
+      $variables['theme_hook_suggestions'][] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
+    }
+    else {
+      // Panels layout.
+      ctools_include('plugins', 'panels');
+      $variables['css_id'] = '';
+      $variables['settings'] = '';
+      $variables['display'] = '';
+      $variables['renderer'] = '';
+      $panels_layout = str_replace('panels-', '', $layout['layout']);
+      $variables['layout'] = panels_get_layout($panels_layout);
+      $variables['theme_hook_suggestion'] = 'panels_flexible';
+    }
 
     // Create region variables based on the layout settings.
     foreach ($layout['regions'] as $region_name => $region) {
+
       // Create the region content.
       $variables[$region_name] = ds_render_region($variables[$render_container], $region_name, $layout);
 
       // Hide empty regions.
-      if ($hide_empty_regions && empty($variables[$region_name])) {
+      if ($hide_empty_regions && empty($variables[$region_name]) && empty($layout['flexible'])) {
         $variables[$region_name] = FALSE;
       }
       elseif (empty($variables[$region_name])) {
@@ -548,7 +562,9 @@ function ds_entity_variables(&$variables) {
       }
 
       // Add extras classes to the region.
-      $variables[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
+      if (empty($layout['flexible'])) {
+        $variables[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
+      }
     }
   }
 }

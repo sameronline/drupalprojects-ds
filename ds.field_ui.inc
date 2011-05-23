@@ -480,7 +480,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       // Additional classes on regions.
       if (isset($form_state['values']['additional_settings'][$region])) {
         // Do not save empty string.
-        $classes = implode(' ', $form_state['values']['additional_settings'][$region]);
+        $classes = is_array($form_state['values']['additional_settings'][$region]) ? implode(' ', $form_state['values']['additional_settings'][$region]) : array();
         if (!empty($classes)) {
           $record->settings['classes'][$region] = $form_state['values']['additional_settings'][$region];
         }
@@ -928,11 +928,17 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   if (!empty($layout) && isset($layout->layout) && isset($ds_layouts[$layout->layout])) {
     $chosen_layout = $ds_layouts[$layout->layout];
     $layout_string = $layout->layout;
-    $selected = t('You have selected the %layout_label layout. The default template can be found in %path', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
-    $suggestions = 'Possible template suggestions are: <br />';
-    $suggestions .= '- ' . $layout_string . '--' . $entity_type . '.tpl.php<br />';
-    $suggestions .= '- ' . $layout_string . '--' . $entity_type . '-' . $bundle . '.tpl.php<br />';
-    $suggestions .= '- ' . $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode . '.tpl.php<br />';
+    if (!empty($chosen_layout->flexible)) {
+      $selected = t('You have selected the %layout_label layout. The default template can be found in %path', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
+      $suggestions = 'Possible template suggestions are: <br />';
+      $suggestions .= '- ' . $layout_string . '--' . $entity_type . '.tpl.php<br />';
+      $suggestions .= '- ' . $layout_string . '--' . $entity_type . '-' . $bundle . '.tpl.php<br />';
+      $suggestions .= '- ' . $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode . '.tpl.php<br />';
+    }
+    else {
+      $suggestions = '';
+      $selected = t('You have selected the flexible %layout_label layout.', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
+    }
     $layout->settings = $layout->settings;
     $layout->regions = $chosen_layout['regions'];
     $form['#ds_layout'] = $layout;
@@ -967,8 +973,8 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#type' => 'checkbox',
     '#title' => t('Hide empty regions'),
     '#default_value' => isset($layout->settings['hide_empty_regions']) ? $layout->settings['hide_empty_regions'] : FALSE,
-    '#description' => t('This feature is not always supported.'),
     '#weight' => 2,
+    '#access' => !empty($chosen_layout->flexible),
   );
 
   if (!empty($layout) && isset($layout->regions)) {
@@ -983,6 +989,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
       '#parents' => array('additional_settings'),
+      '#access' => !empty($chosen_layout->flexible),
     );
 
     $styles = _ds_styles();

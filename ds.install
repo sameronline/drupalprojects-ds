@@ -173,7 +173,7 @@ function ds_schema() {
       'layout' => array(
         'description' => 'The name of the layout.',
         'type' => 'varchar',
-        'length' => 32,
+        'length' => 64,
         'not null' => TRUE,
         'default' => '',
       ),
@@ -307,6 +307,9 @@ function ds_update_7001() {
 }
 
 /**
- * Clears the cache.
+ * Updates the ds_layout_settings table.
  */
-function ds_update_7002() {}
+function ds_update_7002() {
+  $schema = ds_schema();
+  db_change_field('ds_layout_settings', 'layout', 'layout', $schema['ds_layout_settings']['fields']['layout']);
+}
