@@ -624,17 +624,27 @@ function ds_render_code_field($field) {
 function ds_render_ctools_field($field) {
   if (isset($field['formatter_settings']['ctools'])) {
 
+    ctools_include('content');
+
     // Get variables.
     $show_title = $field['formatter_settings']['show_title'];
     $title_wrapper = trim($field['formatter_settings']['title_wrapper']);
     $ctools = unserialize($field['formatter_settings']['ctools']);
+    $arguments = trim($field['formatter_settings']['arguments']);
     $type = $ctools['type'];
     $subtype = $ctools['subtype'];
     $conf = $ctools['conf'];
 
-    // Include CTools content.
-    ctools_include('content');
+    // Create CTools content.
     $keywords = $args = $context = array();
+    if (!empty($arguments)) {
+      ctools_include('context');
+      $context = ctools_context_create('entity:'. $field['entity_type'], $field['entity']);
+      $arguments = explode(',', $arguments);
+      foreach ($arguments as $arg) {
+        $args[] = $field['entity']->{$arg};
+      }
+    }
     $data = ctools_content_render($type, $subtype, $conf, $keywords, $args, $context);
 
     // Return content.
