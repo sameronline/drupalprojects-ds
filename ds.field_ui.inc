@@ -722,7 +722,7 @@ function ds_ctools_content($action = 'add', $field_name = '', $type_name = '', $
     'finish callback' => 'ds_ctools_content_finish',
   );
   $form_state = array(
-    'contexts' => NULL,
+    'contexts' => array(),
     'ajax' => TRUE,
     'modal' => TRUE,
     'modal return' => TRUE,
