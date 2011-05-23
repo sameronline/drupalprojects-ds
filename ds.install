@@ -297,7 +297,7 @@ function ds_schema() {
 }
 
 /**
- * Implements hook_update_N().
+ * Update the weight of Display Suite.
  */
 function ds_update_7001() {
   db_update('system')
@@ -307,6 +307,6 @@ function ds_update_7001() {
 }
 
 /**
- * Implements hook_update_N().
+ * Clears the cache.
  */
 function ds_update_7002() {}
