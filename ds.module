@@ -623,17 +623,27 @@ function ds_render_code_field($field) {
  */
 function ds_render_ctools_field($field) {
   if (isset($field['formatter_settings']['ctools'])) {
+
+    // Get variables.
     $show_title = $field['formatter_settings']['show_title'];
+    $title_wrapper = trim($field['formatter_settings']['title_wrapper']);
     $configuration = unserialize($field['formatter_settings']['ctools']);
     $type = $configuration['type'];
     $subtype = $configuration['subtype'];
     $conf = $configuration['conf'];
+
+    // Include CTools content.
     ctools_include('content');
-    $data = ctools_content_render($type, $subtype, $conf);
+    $keywords = $args = $context = array();
+    //$args['nid'] = $field['entity']->nid;
+    //$context['ctools_argument_nid_context'] = $field['entity']->nid;
+    $data = ctools_content_render($type, $subtype, $conf, $keywords, $args, $context);
+
+    // Return content.
     if (!empty($data->content)) {
       $content = '';
-      if ($show_title) {
-        $content .= '<h2>' . $data->title . '</h2>';
+      if ($show_title && !empty($title_wrapper)) {
+        $content .= '<' . check_plain($title_wrapper) . '>' . $data->title . '</' . check_plain($title_wrapper) . '>';
       }
       if (is_array($data->content)) {
         $content .= drupal_render($data->content);

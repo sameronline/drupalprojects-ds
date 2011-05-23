@@ -633,7 +633,7 @@ function ds_ds_field_settings_form($field) {
       case 'textfield':
         $form[$key] = array(
           '#type' => 'textfield',
-          '#title' => check_plain(drupal_ucfirst($key)),
+          '#title' => str_replace('_', ' ', check_plain(drupal_ucfirst($key))),
           '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
           '#description' => isset($value['description']) ? check_plain($value['description']) : '',
         );
