@@ -124,8 +124,8 @@ function _ds_menu() {
     'weight' => 0,
   );
   $items['admin/structure/ds/fields/manage_ctools'] = array(
-    'title' => 'Add a CTools field',
-    'description' => 'Manage a CTools field',
+    'title' => 'Add a dynamic field',
+    'description' => 'Manage a dynamic field',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_edit_ctools_field_form'),
     'file' => 'ds.fields.inc',
