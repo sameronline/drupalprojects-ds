@@ -680,9 +680,9 @@ function ds_ds_field_settings_form($field) {
           $conf = $ctools['conf'];
           $title = t('Edit content');
         }
-        $help = t('Use a property from the entity to send along as an argument, e.g. "nid".<br />This might be useful when embedding views.');
+        $help = t('Use a property from the entity to send along as an argument, e.g. "nid".<br />This might be useful when embedding views.<br />The "Pass on context" will pass the current entity along with the contexts that CTools needs.<br />Usually needed for specific content like node:field.');
         $form['select'] = array(
-          '#markup' => '<div class="description">' . $help . '</div>' . l($title, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field['name'] . $args, array('attributes' => array('class' => 'ctools-use-modal'))),
+          '#markup' => l($title, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field['entity_type'] . '/' . $field['name'] . $args, array('attributes' => array('class' => 'ctools-use-modal'))) . '<div class="description">' . $help . '</div>',
           '#weight' => 2,
         );
         ctools_object_cache_set($field['name'], $field['name'], $conf);
@@ -696,7 +696,7 @@ function ds_ds_field_settings_form($field) {
 /**
  * Return the configuration settings for the CTools field.
  */
-function ds_ctools_content($action = 'add', $field_name = '', $type_name = '', $subtype_name = '', $step = NULL) {
+function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '', $type_name = '', $subtype_name = '', $step = NULL) {
 
   ctools_include('modal');
   ctools_include('ajax');
@@ -711,7 +711,7 @@ function ds_ctools_content($action = 'add', $field_name = '', $type_name = '', $
     $configuration = ctools_object_cache_get($field_name, $field_name);
   }
 
-  $url = 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field_name;
+  $url = 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $entity_type . '/' . $field_name;
   if (!empty($type_name) && !empty($subtype_name)) {
     $url .= '/' . $type_name . '/' . $subtype_name . '/%step';
   }
@@ -721,6 +721,20 @@ function ds_ctools_content($action = 'add', $field_name = '', $type_name = '', $
     'cancel callback' => 'ds_ctools_content_cancel',
     'finish callback' => 'ds_ctools_content_finish',
   );
+
+  // Add entity context.
+  ctools_include('context');
+  $arguments = array(
+    array(
+      'keyword' => $entity_type,
+      'identifier' => ucfirst($entity_type) . ' being viewed',
+      'id' => 1,
+      'name' => 'entity_id:' . $entity_type,
+      'settings' => array(),
+    ),
+  );
+  $contexts = ctools_context_get_placeholders_from_argument($arguments);
+
   $form_state = array(
     'contexts' => array(),
     'ajax' => TRUE,
@@ -743,7 +757,7 @@ function ds_ctools_content($action = 'add', $field_name = '', $type_name = '', $
     ctools_object_cache_clear($field_name, $field_name);
   }
   elseif ($output === FALSE || !empty($form_state['cancel'])) {
-    $commands[] = ds_ctools_content_select($field_name, $action);
+    $commands[] = ds_ctools_content_select($contexts, $field_name, $action, $entity_type);
   }
   else {
     $commands = ctools_modal_form_render($form_state, $output);
@@ -757,15 +771,19 @@ function ds_ctools_content($action = 'add', $field_name = '', $type_name = '', $
 /**
  * Select content.
  *
+ * @param $contexts
+ *   A collection of contexts, usually the entity.
  * @param $field_name
  *   The name of the field.
  * @param $action
  *   The name of the action.
+ * @param $entity_type
+ *   The name of the entity type.
  */
-function ds_ctools_content_select($field_name, $action) {
+function ds_ctools_content_select($contexts, $field_name, $action, $entity_type) {
 
   // Get content types.
-  $content_types = ctools_content_get_available_types();
+  $content_types = ctools_content_get_available_types($contexts);
 
   $categories = $category_names = $ordered = array();
 
@@ -817,7 +835,7 @@ function ds_ctools_content_select($field_name, $action) {
         'path' => ctools_content_admin_icon($value),
       );
       $right .= theme('image', $variables) . '&nbsp;';
-      $right .= ctools_ajax_text_button($key, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field_name . '/' . $value['type_name'] . '/' . $value['subtype_name'], $key);
+      $right .= ctools_ajax_text_button($key, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $entity_type . '/' . $field_name . '/' . $value['type_name'] . '/' . $value['subtype_name'], $key);
       $right .= '</div>';
     }
     $right .= '</div>';
@@ -1167,6 +1185,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
     if ($form_state['formatter_settings_edit'] == $key) {
       $field['name'] = $key;
+      $field['entity_type'] = $entity_type;
       $table[$key]['settings_edit'] = array(
         '#type' => 'container',
         '#attributes' => array('class' => array('field-formatter-settings-edit-form')),

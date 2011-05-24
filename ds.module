@@ -651,30 +651,47 @@ function ds_render_ctools_field($field) {
   if (isset($field['formatter_settings']['ctools'])) {
 
     ctools_include('content');
+    ctools_include('context');
 
     // Get variables.
     $show_title = $field['formatter_settings']['show_title'];
+    $pass_context = $field['formatter_settings']['pass_on_context'];
     $title_wrapper = trim($field['formatter_settings']['title_wrapper']);
     $ctools = unserialize($field['formatter_settings']['ctools']);
     $arguments = trim($field['formatter_settings']['arguments']);
     $type = $ctools['type'];
     $subtype = $ctools['subtype'];
     $conf = $ctools['conf'];
+    $entity_type = $field['entity_type'];
+    $keywords = $args = $contexts = array();
 
-    // Create CTools content.
-    $keywords = $args = $context = array();
+    // Pass entity in the context.
+    if ($pass_context) {
+      $context_arguments = array(array(
+        'keyword' => $entity_type,
+        'identifier' => ucfirst($entity_type) . ' being viewed',
+        'id' => 1,
+        'name' => 'entity_id:' . $entity_type,
+        'settings' => array(),
+      ));
+      ctools_context_get_context_from_arguments($context_arguments, $contexts, array($field['entity']));
+    }
+
+    // Add arguments.
     if (!empty($arguments)) {
       $arguments = explode(',', $arguments);
       foreach ($arguments as $arg) {
         $args[] = $field['entity']->{$arg};
       }
     }
-    $data = ctools_content_render($type, $subtype, $conf, $keywords, $args, $context);
 
+    // Build the content.
+    $data = ctools_content_render($type, $subtype, $conf, $keywords, $args, $contexts);
     // Return content.
     if (!empty($data->content)) {
       $content = '';
-      if ($show_title && !empty($title_wrapper)) {
+      if ($show_title) {
+        if (empty($title_wrapper)) $title_wrapper = 'div';
         $content .= '<' . check_plain($title_wrapper) . '>' . $data->title . '</' . check_plain($title_wrapper) . '>';
       }
       if (is_array($data->content)) {
