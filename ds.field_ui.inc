@@ -736,7 +736,7 @@ function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '',
   $contexts = ctools_context_get_placeholders_from_argument($arguments);
 
   $form_state = array(
-    'contexts' => array(),
+    'contexts' => $contexts,
     'ajax' => TRUE,
     'modal' => TRUE,
     'modal return' => TRUE,
