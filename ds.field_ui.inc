@@ -680,7 +680,7 @@ function ds_ds_field_settings_form($field) {
           $conf = $ctools['conf'];
           $title = t('Edit content');
         }
-        $help = t('Use a property from the entity to send along as an argument.<br />E.g.: pass "nid" and a context will created from the node and nid will be passed as argument.<br />This might be useful when embedding views.');
+        $help = t('Use a property from the entity to send along as an argument, e.g. "nid".<br />This might be useful when embedding views.');
         $form['select'] = array(
           '#markup' => '<div class="description">' . $help . '</div>' . l($title, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field['name'] . $args, array('attributes' => array('class' => 'ctools-use-modal'))),
           '#weight' => 2,
