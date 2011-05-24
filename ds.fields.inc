@@ -68,7 +68,7 @@ function ds_field_human_name($type) {
     case DS_FIELD_TYPE_BLOCK:
       return t('Block field');
     case DS_FIELD_TYPE_CTOOLS:
-      return t('Ctools field');
+      return t('Dynamic field');
   }
 
   // Fallback
