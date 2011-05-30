@@ -296,7 +296,7 @@ function ds_edit_ctools_field_form($form, &$form_state, $ctools_field = '') {
 function ds_ctools_field_form_validate($form, &$form_state) {
   $form_state['field']->field_type = DS_FIELD_TYPE_CTOOLS;
   $form_state['field']->properties['default'] = array();
-  $form_state['field']->properties['settings'] = array('show_title' => array('type' => 'checkbox'), 'pass_on_context' => array('type' => 'checkbox'), 'title_wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')), 'arguments' => array('type' => 'textfield'), 'ctools' => array('type' => 'ctools'));
+  $form_state['field']->properties['settings'] = array('show_title' => array('type' => 'checkbox'), 'title_wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')), 'ctools' => array('type' => 'ctools'));
 }
 
 /**

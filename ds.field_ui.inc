@@ -608,7 +608,7 @@ function ds_ds_field_format_summary($field) {
   foreach ($settings as $key => $value) {
     if ($key == 'ctools') {
       $conf = unserialize($value);
-      $summary .= t('Type: !type', array('!type' => $conf['subtype']));
+      $summary .= t('Type: !type', array('!type' => drupal_ucfirst(str_replace('_', ' ', $conf['subtype']))));
     }
     elseif (!empty($value)) {
       $value = is_numeric($value) ? ($value ? t('Yes') : t('No')) : $value;
@@ -680,9 +680,8 @@ function ds_ds_field_settings_form($field) {
           $conf = $ctools['conf'];
           $title = t('Edit content');
         }
-        $help = t('Use a property from the entity to send along as an argument, e.g. "nid".<br />This might be useful when embedding views.<br />The "Pass on context" will pass the current entity along with the contexts that CTools needs.<br />Usually needed for specific content like node:field.');
         $form['select'] = array(
-          '#markup' => l($title, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field['entity_type'] . '/' . $field['name'] . $args, array('attributes' => array('class' => 'ctools-use-modal'))) . '<div class="description">' . $help . '</div>',
+          '#markup' => l($title, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field['entity_type'] . '/' . $field['name'] . $args, array('attributes' => array('class' => 'ctools-use-modal'))),
           '#weight' => 2,
         );
         ctools_object_cache_set($field['name'], $field['name'], $conf);
@@ -706,9 +705,12 @@ function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '',
   $commands = array();
   $content_type = ctools_get_content_type($type_name);
   $subtype = ctools_content_get_subtype($content_type, $subtype_name);
-  $configuration = ctools_content_get_defaults($content_type, $subtype);
-  if ($action == 'edit') {
-    $configuration = ctools_object_cache_get($field_name, $field_name);
+
+  if ($data = ctools_object_cache_get($field_name, $field_name)) {
+    $conf = $data;
+  }
+  else {
+    $conf = ctools_content_get_defaults($content_type, $subtype);
   }
 
   $url = 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $entity_type . '/' . $field_name;
@@ -718,8 +720,7 @@ function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '',
   $form_info = array(
     'path' => $url,
     'show cancel' => TRUE,
-    'cancel callback' => 'ds_ctools_content_cancel',
-    'finish callback' => 'ds_ctools_content_finish',
+    'next callback' => 'ds_ctools_content_next',
   );
 
   // Add entity context.
@@ -740,10 +741,11 @@ function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '',
     'ajax' => TRUE,
     'modal' => TRUE,
     'modal return' => TRUE,
+    'field_name' => $field_name,
   );
 
   // Call the content form.
-  $output = ctools_content_form($action, $form_info, $form_state, $content_type, $subtype_name, $subtype, $configuration, $step);
+  $output = ctools_content_form($action, $form_info, $form_state, $content_type, $subtype_name, $subtype, $conf, $step);
 
   // Dismiss the modal.
   if (!empty($form_state['complete'])) {
@@ -766,6 +768,13 @@ function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '',
   print ajax_render($commands);
   ajax_footer();
   exit;
+}
+
+/**
+ * Handle the 'next' click on the add/edit field form wizard.
+ */
+function ds_ctools_content_next(&$form_state) {
+  ctools_object_cache_set($form_state['field_name'], $form_state['field_name'], $form_state['conf']);
 }
 
 /**
@@ -870,23 +879,6 @@ function ds_ctools_get_category($content_type) {
   }
 
   return array(preg_replace('/[^a-z0-9]/', '-', strtolower($category)), $category);
-}
-
-
-/**
- * Handle the 'finish' click on the add/edit field form wizard.
- */
-function ds_ctools_content_finish(&$form_state) {
-  $form_state['complete'] = TRUE;
-  return;
-}
-
-/**
- * Handle the 'cancel' click on the add/edit field form wizard.
- */
-function ds_ctools_content_cancel(&$form_state) {
-  $form_state['cancel'] = TRUE;
-  return;
 }
 
 /**
