@@ -911,6 +911,12 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     $layout_options[$optgroup][$key] = $layout['label'];
   }
 
+  // If there is only one $optgroup, move it to the root.
+  if (count($layout_options) == 2) {
+    $options = $layout_options[$optgroup];
+    $layout_options = array_merge(array('' => t('- None -')), $options);
+  }
+
   // Add additional settings vertical tab.
   if (!isset($form['additional_settings'])) {
     $form['additional_settings'] = array(
