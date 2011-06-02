@@ -81,8 +81,17 @@ function ds_ds_layout_info() {
  * Implements hook_ctools_plugin_api().
  */
 function ds_ctools_plugin_api($owner, $api) {
-  if ($owner == 'ds' && $api == 'ds') {
+  if ($owner == 'ds' && ($api == 'ds' || $api == 'plugins')) {
     return array('version' => 1);
+  }
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function ds_ctools_plugin_directory($owner, $plugin_type) {
+  if ($owner == 'ctools' && $plugin_type == 'content_types') {
+    return 'plugins/' . $plugin_type;
   }
 }
 
@@ -322,7 +331,7 @@ function ds_get_fields($entity_type, $cache = TRUE) {
  * @param $view_mode
  *   The name of view mode.
  */
-function ds_get_field_settings($entity_type, $bundle, $view_mode) {
+function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRUE) {
   static $field_settings = NULL;
 
   if (!isset($field_settings)) {
@@ -344,7 +353,7 @@ function ds_get_field_settings($entity_type, $bundle, $view_mode) {
     }
   }
 
-  return (isset($field_settings[$entity_type][$bundle][$view_mode])) ? $field_settings[$entity_type][$bundle][$view_mode] : (isset($field_settings[$entity_type][$bundle]['default']) ? $field_settings[$entity_type][$bundle]['default'] : array());
+  return (isset($field_settings[$entity_type][$bundle][$view_mode])) ? $field_settings[$entity_type][$bundle][$view_mode] : (isset($field_settings[$entity_type][$bundle]['default']) && $default ? $field_settings[$entity_type][$bundle]['default'] : array());
 }
 
 /**

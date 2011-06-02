@@ -1066,7 +1066,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
   // Get the fields and put them on the form.
   $fields = ds_get_fields($entity_type, FALSE);
-  $field_settings = ds_get_field_settings($entity_type, $bundle, $view_mode);
+  $field_settings = ds_get_field_settings($entity_type, $bundle, $view_mode, FALSE);
   $form['#field_settings'] = $field_settings;
 
   $table = &$form['fields'];
