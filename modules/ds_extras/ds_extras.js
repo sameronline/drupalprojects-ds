@@ -1,6 +1,6 @@
 
 (function ($) {
-
+  
 Drupal.behaviors.DSExtrasSwitchViewmode = {
   attach: function (context) {
 
@@ -22,7 +22,7 @@ Drupal.behaviors.DSExtrasSwitchViewmode = {
             if (data.status) {
               old_view_mode = params[1];
               wrapper = $link.parents('.view-mode-' + old_view_mode);
-              wrapper.replaceWith(data.content);
+              Drupal.theme('DisplaySuiteSwitchViewmode', wrapper, data.content);
               Drupal.attachBehaviors();
             }
             else {
@@ -37,6 +37,18 @@ Drupal.behaviors.DSExtrasSwitchViewmode = {
       });
     }
   }
+};
+
+/**
+ * Theme function for a replacing content of Display Suite content wrapper.
+ *
+ * @param wrapper
+ *   The HTML object which needs to be replaced
+ * @param content
+ *   The new content
+ */
+Drupal.theme.prototype.DisplaySuiteSwitchViewmode = function (wrapper, content) {
+  wrapper.replaceWith(content);
 };
 
 })(jQuery);
