@@ -345,7 +345,7 @@ function ds_field_ui_layout_change_validate($form, &$form_state) {
   }
 
   // Save the mappings so we can re-use in the submit callback.
-  $form_state['mappings'] = $mappings['new'];
+  $form_state['mappings'] = isset($mappings['new']) ? $mappings['new'] : array();
 }
 
 /**

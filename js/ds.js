@@ -207,6 +207,9 @@ Drupal.fieldUIDisplayOverview.ds.prototype = {
    */
   regionChange: function (region) {
 
+    // Replace dashes with underscores.
+    region = region.replace('-', '_');
+    
     this.$regionSelect.val(region);    
 
     var refreshRows = {};

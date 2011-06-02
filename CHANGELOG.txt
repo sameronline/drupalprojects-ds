@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.2 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1175414 by swentel: fix issue with regions having dashes/underscores.
 - #1171408 by mverbaar: Add starter template and drush integration.
 - #1143070 by neurojavi: Check on taxonomy formatters/view modes.
 - #1152232 by yoroy: remove unnecessary checkbox descriptions.
