@@ -77,6 +77,13 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_switch_view_mode', FALSE),
   );
 
+  $form['additional_settings']['fs3']['ds_extras_switch_field'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Switch field'),
+    '#description' => t('Adds a field with links to switch view modes inline with Ajax. Only works for nodes at this time.'),
+    '#default_value' => variable_get('ds_extras_switch_field', FALSE),
+  );
+
   if (module_exists('contextual') && module_exists('field_ui')) {
     $form['additional_settings']['fs3']['ds_extras_contextual'] = array(
       '#type' => 'checkbox',
@@ -119,7 +126,7 @@ function ds_extras_settings($form) {
     );
   }
 
-  $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/ds_extras.js';
+  $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/ds_extras.admin.js';
 
   $form = system_settings_form($form);
   $form['#submit'][] = 'ds_extras_settings_submit';

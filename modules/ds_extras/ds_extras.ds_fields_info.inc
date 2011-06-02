@@ -9,7 +9,17 @@
  * Implements hook_ds_fields_info().
  */
 function ds_extras_ds_fields_info($entity_type) {
-  $node_fields = array();
+  $fields = array();
+
+  // Switch field support.
+  if (variable_get('ds_extras_switch_field', FALSE) && $entity_type == 'node') {
+    $fields[$entity_type]['ds_switch_field'] = array(
+      'title' => t('Switch view mode'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'ds_extras_switch_view_mode_field',
+      'properties' => array('settings' => array()),
+    );
+  }
 
   // Fivestar Support.
   if ($entity_type == 'node' && variable_get('ds_extras_fivestar', FALSE)) {
@@ -24,7 +34,7 @@ function ds_extras_ds_fields_info($entity_type) {
       }
     }
 
-    $node_fields['fivestar_widget'] = array(
+    $fields[$entity_type]['fivestar_widget'] = array(
       'title' => t('Fivestar'),
       'field_type' => DS_FIELD_TYPE_FUNCTION,
       'function' => 'ds_fivestar_render',
@@ -38,13 +48,9 @@ function ds_extras_ds_fields_info($entity_type) {
     );
   }
 
-  if (!empty($node_fields)) {
-    return array('node' => $node_fields);
-  }
-
   // DS Views.
   if ($entity_type == 'ds_views') {
-    $views_fields = array(
+    $fields[$entity_type] += array(
       'admin_links' => array(
         'title' => t('Admin links'),
         'field_type' => DS_FIELD_TYPE_PREPROCESS,
@@ -103,7 +109,9 @@ function ds_extras_ds_fields_info($entity_type) {
         'field_type' => DS_FIELD_TYPE_PREPROCESS,
       ),
     );
+  }
 
-    return array('ds_views' => $views_fields);
+  if (!empty($fields)) {
+    return $fields;
   }
 }

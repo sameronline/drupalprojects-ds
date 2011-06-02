@@ -15,6 +15,7 @@
 - New feature: Dynamic content field.
 - New Extras feature: extra fields.
 - New Extras feature: contextual links to manage display screens.
+- New Extras feature: switch view mode fields through ajax.
 - Fix notices in fields and view modes form on fieldable key.
 
 -------------------------------------------------------------------------------------

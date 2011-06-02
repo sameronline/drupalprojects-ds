@@ -295,7 +295,7 @@ function hook_ds_field_theme_functions_info() {
 }
 
 /**
- * Creates a summary for the field format configuration summary.
+ * Return configuration summary for the field format.
  *
  * As soon as you have hook_ds_fields and one of the fields
  * has a settings key, Display Suite will call this hook for the summary.
@@ -306,7 +306,7 @@ function hook_ds_field_theme_functions_info() {
  * @return $summary
  *   The summary to show on the Field UI.
  */
-function hook_ds_field_settings_summary($field) {
+function hook_ds_field_format_summary($field) {
   return 'Field summary';
 }
 

@@ -20,6 +20,16 @@ function ds_extras_menu() {
     'file' => 'ds_extras.admin.inc',
   );
 
+  if (variable_get('ds_extras_switch_field')) {
+    $items['ds-switch-view-mode'] = array(
+      'title' => 'Switch view',
+      'description' => 'Switches a view mode inline.',
+      'page callback' => 'ds_switch_view_mode_inline',
+      'access arguments' => array('access content'),
+      'type' => MENU_CALLBACK,
+    );
+  }
+
   if (variable_get('ds_extras_vd', FALSE) && module_exists('field_ui') && module_exists('views')) {
     $items['admin/structure/ds/vd'] = array(
       'title' => 'Views displays',
@@ -363,6 +373,115 @@ function ds_extras_process_page_title(&$variables) {
       $variables['title'] = '';
     }
   }
+}
+
+/**
+ * Switch view mode field.
+ */
+function ds_extras_switch_view_mode_field($field) {
+  $output = '';
+
+  if (isset($field['formatter_settings'])) {
+
+    $entity = $field['entity'];
+    $id = $entity->nid;
+    $url = $field['entity_type'] . '-' . $field['view_mode'] . '-' . $id . '-';
+    $switch = array();
+
+    foreach ($field['formatter_settings'] as $key => $value) {
+      if (!empty($value)) {
+        $class = 'switch-' . $key;
+        $switch[] = '<span class="' . $class .'"><a href="" class="' . $url . $key . '">' . check_plain(t($value)) . '</a></span>';
+      }
+    }
+
+    if (!empty($switch)) {
+      drupal_add_js(drupal_get_path('module', 'ds_extras') . '/ds_extras.js');
+      $output = '<div class="switch-view-mode-field">' . implode(' ', $switch) . '</div>';
+    }
+  }
+
+  return $output;
+}
+
+/**
+ * Implements hook_ds_field_format_summary().
+ */
+function ds_extras_ds_field_format_summary($field) {
+  if (isset($field['formatter_settings'])) {
+    foreach ($field['formatter_settings'] as $key => $value) {
+      if (!empty($value)) {
+        return t('Configured');
+        break;
+      }
+    }
+  }
+  return t('Not configured');
+}
+
+/**
+ * Implements hook_ds_field_settings_form().
+ */
+function ds_extras_ds_field_settings_form($field) {
+  $form = array();
+
+  $entity_type = $field['entity_type'];
+  $bundle = $field['bundle'];
+  $view_mode = $field['view_mode'];
+  $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : array();
+  $view_modes = ds_entity_view_modes($entity_type);
+
+  foreach ($view_modes as $key => $value) {
+
+    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
+    $visible = !empty($view_mode_settings[$key]['custom_settings']);
+
+    if ($visible) {
+      $form[$key] = array(
+        '#type' => 'textfield',
+        '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
+        '#size' => 20,
+        '#title' => $value['label'],
+      );
+    }
+  }
+
+  $form['info'] = array(
+    '#markup' => t('Enter a string for the build modes you want to switch. They will be localized.'),
+  );
+
+  return $form;
+}
+
+/**
+ * Switches to another view mode inline.
+ */
+function ds_switch_view_mode_inline() {
+
+  $content = '';
+  $status = TRUE;
+  $error = FALSE;
+
+  $id = $_REQUEST['id'];
+  $view_mode = $_REQUEST['view_mode'];
+  $entity_type = $_REQUEST['entity_type'];
+  $entity = entity_load($entity_type, array($id));
+
+  if (!$entity) {
+    $status = FALSE;
+    $error = t('Content was not found.');
+  }
+  else {
+    $content = drupal_render(node_view($entity[$id], $view_mode));
+  }
+
+  drupal_add_http_header('Content-Type', 'text/javascript; charset=utf-8');
+  print drupal_json_encode(array(
+    'status' => $status,
+    'content' => $content,
+    'errorMessage' => $error,
+  ));
+  exit();
 }
 
 /**

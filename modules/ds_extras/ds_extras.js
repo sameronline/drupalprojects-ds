@@ -1,43 +1,41 @@
 
 (function ($) {
 
-Drupal.behaviors.DSExtrasSummaries = {
+Drupal.behaviors.DSExtrasSwitchViewmode = {
   attach: function (context) {
-  
-    $('#edit-additional-settings-fs1', context).drupalSetSummary(function (context) {
-      var fieldtemplates = $('#edit-additional-settings-fs1-ds-extras-field-template', context);
 
-      if (fieldtemplates.is(':checked')) {
-        var fieldtemplate = $('#edit-additional-settings-fs1-ft-default option:selected').text();
-        return Drupal.t('Enabled') + ': ' + Drupal.t(fieldtemplate);
-      }
+    if ($('.switch-view-mode-field').length > 0) {
+      $('.switch-view-mode-field a').click(function() {
 
-      return Drupal.t('Disabled');
-    });
+        // Create an object.
+        var $link = $(this);
 
-    $('#edit-additional-settings-fs2', context).drupalSetSummary(function (context) {
-      var extra_fields = $('#edit-additional-settings-fs2-ds-extras-fields-extra', context);
+        // Get params from the class.
+        var params = $(this).attr('class').split('-');
 
-      if (extra_fields.is(':checked')) {
-        return Drupal.t('Enabled');
-      }
-
-      return Drupal.t('Disabled');
-    });
-    
-    
-    $('#edit-additional-settings-fs3', context).drupalSetSummary(function (context) {
-      var vals = [];
-
-      $('input:checked', context).parent().each(function () {
-        vals.push(Drupal.checkPlain($.trim($('.option', this).text())));
+        $.ajax({
+          type: 'GET',
+          url: Drupal.settings.basePath + 'ds-switch-view-mode',
+          data: {entity_type: params[0], view_mode: params[3], id: params[2]},
+          dataType: 'json',
+          success: function (data) {
+            if (data.status) {
+              old_view_mode = params[1];
+              wrapper = $link.parents('.view-mode-' + old_view_mode);
+              wrapper.replaceWith(data.content);
+              Drupal.attachBehaviors();
+            }
+            else {
+              alert(data.errorMessage);
+            }
+          },
+          error: function (xmlhttp) {
+            alert('An HTTP error '+ xmlhttp.status +' occurred.');            
+          }
+        });
+        return false;
       });
-
-      if (vals.length > 0) {
-        return vals.join(', ');
-      }
-      return Drupal.t('Disabled');
-    });
+    }
   }
 };
 

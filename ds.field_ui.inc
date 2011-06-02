@@ -1178,6 +1178,8 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     if ($form_state['formatter_settings_edit'] == $key) {
       $field['name'] = $key;
       $field['entity_type'] = $entity_type;
+      $field['bundle'] = $bundle;
+      $field['view_mode'] = $view_mode;
       $table[$key]['settings_edit'] = array(
         '#type' => 'container',
         '#attributes' => array('class' => array('field-formatter-settings-edit-form')),

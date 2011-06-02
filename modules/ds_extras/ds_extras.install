@@ -80,6 +80,7 @@ function ds_extras_uninstall() {
   variable_del('ds_styles_fields');
   variable_del('ds_extras_fields_extra');
   variable_del('ds_extras_fields_extra_list');
+  variable_del('ds_extras_switch_field');
   variable_del('ft-default');
   variable_del('ft-kill');
   variable_del('ds_extras_contextual');
