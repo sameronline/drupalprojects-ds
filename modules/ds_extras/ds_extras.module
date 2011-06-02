@@ -380,6 +380,7 @@ function ds_extras_process_page_title(&$variables) {
  */
 function ds_extras_switch_view_mode_field($field) {
   $output = '';
+  static $added = FALSE;
 
   if (isset($field['formatter_settings'])) {
 
@@ -396,7 +397,10 @@ function ds_extras_switch_view_mode_field($field) {
     }
 
     if (!empty($switch)) {
-      drupal_add_js(drupal_get_path('module', 'ds_extras') . '/ds_extras.js');
+      if (!$added) {
+        $add = TRUE;
+        drupal_add_js(drupal_get_path('module', 'ds_extras') . '/ds_extras.js');
+      }
       $output = '<div class="switch-view-mode-field">' . implode(' ', $switch) . '</div>';
     }
   }
