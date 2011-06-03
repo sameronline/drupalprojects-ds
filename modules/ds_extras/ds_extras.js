@@ -30,7 +30,7 @@ Drupal.behaviors.DSExtrasSwitchViewmode = {
             }
           },
           error: function (xmlhttp) {
-            alert('An HTTP error '+ xmlhttp.status +' occurred.');            
+            alert(Drupal.t('An HTTP error @status occurred.', {'@status': xmlhttp.status}));
           }
         });
         return false;

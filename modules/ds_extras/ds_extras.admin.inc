@@ -407,7 +407,7 @@ function ds_extras_ds_field_settings_form($field) {
         '#type' => 'textfield',
         '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
         '#size' => 20,
-        '#title' => $value['label'],
+        '#title' => check_plain($value['label']),
       );
     }
   }

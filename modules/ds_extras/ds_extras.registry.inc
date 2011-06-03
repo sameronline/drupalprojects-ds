@@ -6,7 +6,7 @@
  */
 
 /**
- * Implementation of hook_menu().
+ * Implements hook_menu().
  */
 function _ds_extras_menu() {
   $items = array();

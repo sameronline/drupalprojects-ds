@@ -6,7 +6,7 @@
  */
 
 /**
- * Implementation of hook_drush_command().
+ * Implements hook_drush_command().
  */
 function ds_drush_command() {
   $items = array();
@@ -116,7 +116,7 @@ function drush_ds_build($name = NULL) {
  * Prepare a string for use as a valid machine name.
  */
 function ds_prepare_machine_name($string) {
-  $machine_name = str_replace(' ', '_', strtolower($string));
+  $machine_name = str_replace(' ', '_', drupal_strtolower($string));
   // Remove characters not valid in function names.
   $machine_name = preg_replace('/[^a-z0-9_]/', '', $machine_name);
 

@@ -680,7 +680,7 @@ function ds_render_ctools_field($field) {
     if (isset($conf['context'])) {
       $context_arguments = array(array(
         'keyword' => $entity_type,
-        'identifier' => ucfirst($entity_type) . ' being viewed',
+        'identifier' => drupal_ucfirst($entity_type) . ' being viewed',
         'id' => 1,
         'name' => 'entity_id:' . $entity_type,
         'settings' => array(),

@@ -68,7 +68,7 @@ function ds_switch_view_mode_inline() {
  */
 function ds_extras_contextual_page_tab($object, $entity_type) {
 
-  switch($entity_type) {
+  switch ($entity_type) {
     case 'node':
       $bundle = $object->type;
       $view_mode = (!empty($object->ds_switch)) ? $object->ds_switch : 'full';

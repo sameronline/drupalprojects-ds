@@ -306,7 +306,7 @@ function ds_extras_switch_view_mode_field($field) {
     foreach ($field['formatter_settings'] as $key => $value) {
       if (!empty($value)) {
         $class = 'switch-' . $key;
-        $switch[] = '<span class="' . $class .'"><a href="" class="' . $url . $key . '">' . check_plain(t($value)) . '</a></span>';
+        $switch[] = '<span class="' . $class . '"><a href="" class="' . $url . $key . '">' . check_plain(t($value)) . '</a></span>';
       }
     }
 

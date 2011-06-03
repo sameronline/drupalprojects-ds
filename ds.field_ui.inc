@@ -728,7 +728,7 @@ function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '',
   $arguments = array(
     array(
       'keyword' => $entity_type,
-      'identifier' => ucfirst($entity_type) . ' being viewed',
+      'identifier' => drupal_ucfirst($entity_type) . ' being viewed',
       'id' => 1,
       'name' => 'entity_id:' . $entity_type,
       'settings' => array(),
@@ -866,7 +866,7 @@ function ds_ctools_get_category($content_type) {
   if (isset($content_type['top level'])) {
     $category = 'root';
   }
-  else if (isset($content_type['category'])) {
+  elseif (isset($content_type['category'])) {
     if (is_array($content_type['category'])) {
       list($category, $weight) = $content_type['category'];
     }
@@ -878,7 +878,7 @@ function ds_ctools_get_category($content_type) {
     $category = t('Uncategorized');
   }
 
-  return array(preg_replace('/[^a-z0-9]/', '-', strtolower($category)), $category);
+  return array(preg_replace('/[^a-z0-9]/', '-', drupal_strtolower($category)), $category);
 }
 
 /**
@@ -901,7 +901,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   foreach ($ds_layouts as $key => $layout) {
     $optgroup = 'Display suite';
     if (!empty($layout['module'])) {
-      $optgroup = ucfirst($layout['module']);
+      $optgroup = drupal_ucfirst($layout['module']);
     }
 
     if (!isset($layout_options[$optgroup])) {
