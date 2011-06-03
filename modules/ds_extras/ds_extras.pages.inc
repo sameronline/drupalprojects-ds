@@ -6,7 +6,7 @@
  */
 
 /**
- * View an individual node with the Switch field.
+ * Menu callback: show an individual node with the Switch field.
  */
 function ds_extras_node_show($node, $message = NULL) {
   if ($message) {
@@ -33,7 +33,7 @@ function ds_extras_node_show($node, $message = NULL) {
 }
 
 /**
- * Menu callback: Switches to another view mode inline.
+ * Menu callback: switches to another view mode inline.
  */
 function ds_switch_view_mode_inline() {
 
@@ -62,7 +62,6 @@ function ds_switch_view_mode_inline() {
   ));
   exit();
 }
-
 
 /**
  * Menu callback: redirect to manage display.
