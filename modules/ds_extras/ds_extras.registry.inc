@@ -61,6 +61,19 @@ function _ds_extras_menu() {
       'access arguments' => array('administer users'),
       'type' => MENU_LOCAL_TASK,
     );
+
+    if (module_exists('taxonomy')) {
+      $items['taxonomy/term/%taxonomy_term/layout'] = array(
+        'title' => 'Layout',
+        'description' => 'Manage your layout.',
+        'page callback' => 'ds_extras_contextual_page_tab',
+        'page arguments' => array(2, 'taxonomy_term'),
+        'access arguments' => array('administer taxonomy'),
+        'type' => MENU_LOCAL_TASK,
+        'weight' => 11,
+        'file' => 'ds_extras.pages.inc',
+      );
+    }
   }
 
   return $items;

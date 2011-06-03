@@ -80,6 +80,11 @@ function ds_extras_contextual_page_tab($object, $entity_type) {
       $view_mode = 'full';
       $destination = 'user/' . $object->uid;
       break;
+    case 'taxonomy_term':
+      $bundle = $object->vocabulary_machine_name;
+      $view_mode = 'full';
+      $destination = 'taxonomy/term/' . $object->tid;
+      break;
   }
 
   // Check if we have a configured layout. Do not fallback to default.
