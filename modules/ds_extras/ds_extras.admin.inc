@@ -371,6 +371,55 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 }
 
 /**
+ * Implements hook_ds_field_format_summary().
+ */
+function ds_extras_ds_field_format_summary($field) {
+  if (isset($field['formatter_settings'])) {
+    foreach ($field['formatter_settings'] as $key => $value) {
+      if (!empty($value)) {
+        return t('Configured');
+        break;
+      }
+    }
+  }
+  return t('Not configured');
+}
+
+/**
+ * Implements hook_ds_field_settings_form().
+ */
+function ds_extras_ds_field_settings_form($field) {
+  $form = array();
+
+  $entity_type = $field['entity_type'];
+  $bundle = $field['bundle'];
+  $view_mode = $field['view_mode'];
+  $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : array();
+  $view_modes = ds_entity_view_modes($entity_type);
+
+  foreach ($view_modes as $key => $value) {
+
+    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
+    $visible = !empty($view_mode_settings[$key]['custom_settings']);
+
+    if ($visible) {
+      $form[$key] = array(
+        '#type' => 'textfield',
+        '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
+        '#size' => 20,
+        '#title' => $value['label'],
+      );
+    }
+  }
+
+  $form['info'] = array(
+    '#markup' => t('Enter a string for the build modes you want to switch. They will be localized.'),
+  );
+
+  return $form;
+}
+
+/**
  * Implements hook_ds_field_settings_alter().
  */
 function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state) {
@@ -436,6 +485,15 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
         }
       }
     }
+  }
+}
+
+/**
+ * Implements hook_ds_layout_settings_alter().
+ */
+function ds_extras_ds_layout_settings_alter($record, $form_state) {
+  if (isset($form_state['values']['additional_settings']['ds_hide_page_title'])) {
+    $record->settings['hide_page_title'] = $form_state['values']['additional_settings']['ds_hide_page_title'];
   }
 }
 

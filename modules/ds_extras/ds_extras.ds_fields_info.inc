@@ -50,7 +50,7 @@ function ds_extras_ds_fields_info($entity_type) {
 
   // DS Views.
   if ($entity_type == 'ds_views') {
-    $fields[$entity_type] += array(
+    $fields[$entity_type] = array(
       'admin_links' => array(
         'title' => t('Admin links'),
         'field_type' => DS_FIELD_TYPE_PREPROCESS,

@@ -123,6 +123,10 @@ function ds_entity_info_alter(&$entity_info) {
  */
 function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
   form_load_include($form_state, 'inc', 'ds', 'ds.field_ui');
+  // Also load admin on behalf of DS extras when enabled.
+  if (module_exists('ds_extras')) {
+    form_load_include($form_state, 'inc', 'ds_extras', 'ds_extras.admin');
+  }
   ds_field_ui_fields_layouts($form, $form_state);
 }
 

@@ -9,143 +9,57 @@
  * Implements hook_menu().
  */
 function ds_extras_menu() {
-  $items = array();
+  module_load_include('inc', 'ds_extras', 'ds_extras.registry');
+  return _ds_extras_menu();
+}
 
-  $items['admin/structure/ds/extras'] = array(
-    'title' => 'Extras',
-    'description' => 'Configure extra functionality for Display Suite.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_extras_settings'),
-    'access arguments' => array('admin_display_suite'),
-    'file' => 'ds_extras.admin.inc',
-  );
+/**
+ * Implements hook_entity_info().
+ */
+function ds_extras_entity_info() {
+  module_load_include('inc', 'ds_extras', 'ds_extras.registry');
+  return _ds_extras_entity_info();
+}
 
-  if (variable_get('ds_extras_switch_field')) {
-    $items['ds-switch-view-mode'] = array(
-      'title' => 'Switch view',
-      'description' => 'Switches a view mode inline.',
-      'page callback' => 'ds_switch_view_mode_inline',
-      'access arguments' => array('access content'),
-      'type' => MENU_CALLBACK,
-    );
+/**
+ * Implements hook_permission().
+ */
+function ds_extras_permission() {
+
+  // Extra check to make sure this doesn't get fired on install.
+  if (variable_get('ds_extras_switch_view_mode', FALSE)) {
+    $permissions = array();
+    foreach (node_type_get_names() as $key => $name) {
+      $permissions['ds_switch ' . $key] = array(
+        'title' => t('Switch view modes on :type', array(':type' => $name))
+      );
+    }
+    return $permissions;
   }
+}
 
-  if (variable_get('ds_extras_vd', FALSE) && module_exists('field_ui') && module_exists('views')) {
-    $items['admin/structure/ds/vd'] = array(
-      'title' => 'Views displays',
-      'description' => 'Manage your views templates.',
-      'page callback' => 'ds_extras_vd',
-      'file' => 'ds_extras.vd.inc',
-      'access arguments' => array('admin_display_suite'),
-    );
-  }
-
-  return $items;
+/**
+ * Implements hook_menu_alter().
+ */
+function ds_extras_menu_alter(&$items) {
+  module_load_include('inc', 'ds_extras', 'ds_extras.registry');
+  _ds_extras_menu_alter($items);
 }
 
 /**
  * Implements hook_theme_registry_alter().
  */
 function ds_extras_theme_registry_alter(&$theme_registry) {
-
-  // Add views preprocess layout.
-  if (variable_get('ds_extras_vd', FALSE)) {
-    $theme_registry['views_view']['preprocess functions'][] = 'ds_extras_preprocess_view_layout';
-  }
-
-  // Add process page function.
-  if (variable_get('ds_extras_hide_page_title', FALSE)) {
-    $theme_registry['page']['process functions'][] = 'ds_extras_process_page_title';
-  }
-
-  // Change the default field theming function.
-  if (variable_get('ds_extras_field_template', FALSE)) {
-
-    // We change the default theme_field function by ours.
-    $theme_registry['field']['function'] = 'theme_ds_field';
-
-    // Kill all theme hook suggestions.
-    if (variable_get('ft-kill', FALSE)) {
-      foreach ($theme_registry as $key => $hook) {
-        if (isset($hook['base hook']) && $hook['base hook'] == 'field') {
-          unset($theme_registry[$key]);
-        }
-      }
-    }
-  }
+  module_load_include('inc', 'ds_extras', 'ds_extras.registry');
+  _ds_extras_theme_registry_alter($theme_registry);
 }
 
 /**
  * Implements hook_module_implements_alter().
  */
 function ds_extras_module_implements_alter(&$implementations, $hook) {
-
-  // Because it's possible to turn on/off features for DS extras,
-  // we'll unset hooks here if necessary which otherwhise do nothing at all.
-
-  // Field template
-  $fs_hooks = array(
-    'ds_field_settings_alter',
-    'form_ds_styles_form_alter',
-  );
-  if (!variable_get('ds_extras_field_template', FALSE) && in_array($hook, $fs_hooks)) {
-    unset($implementations['ds_extras']);
-  }
-
-  // Contextual
-  $fs_hooks = array(
-    'contextual_links_view_alter',
-  );
-  if ((!variable_get('ds_extras_contextual', FALSE) && in_array($hook, $fs_hooks)) || !module_exists('field_ui')) {
-    unset($implementations['ds_extras']);
-  }
-
-  // Region to block
-  $region_hooks = array(
-    'ds_layout_region_alter',
-    'field_attach_view_alter',
-    'block_info',
-    'block_view'
-  );
-  if (!variable_get('ds_extras_region_to_block', FALSE) && in_array($hook, $region_hooks)) {
-    unset($implementations['ds_extras']);
-  }
-
-  // Hide page title
-  $hide_page_title_hooks = array(
-    'ds_layout_settings_alter',
-  );
-  if (!variable_get('ds_extras_hide_page_title', FALSE) && in_array($hook, $hide_page_title_hooks)) {
-    unset($implementations['ds_extras']);
-  }
-
-  // Switch view mode
-  $switch_hooks = array(
-    'menu_alter',
-    'permission',
-    'form_node_form_alter',
-  );
-  if (!variable_get('ds_extras_switch_view_mode', FALSE) && in_array($hook, $switch_hooks)) {
-    unset($implementations['ds_extras']);
-  }
-
-  // Fivestar
-  $fivestar_hooks = array(
-    'form_fivestar_node_type_tag_form_alter',
-    'fivestar_access',
-  );
-  if (!variable_get('ds_extras_fivestar', FALSE) && in_array($hook, $fivestar_hooks)) {
-    unset($implementations['ds_extras']);
-  }
-
-  // Views displays
-  $vd_hooks = array(
-    'entity_info',
-    'ctools_plugin_api',
-  );
-  if (!variable_get('ds_extras_vd', FALSE) && in_array($hook, $vd_hooks)) {
-    unset($implementations['ds_extras']);
-  }
+  module_load_include('inc', 'ds_extras', 'ds_extras.registry');
+  _ds_extras_module_implements_alter($implementations, $hook);
 }
 
 /**
@@ -409,100 +323,11 @@ function ds_extras_switch_view_mode_field($field) {
 }
 
 /**
- * Implements hook_ds_field_format_summary().
- */
-function ds_extras_ds_field_format_summary($field) {
-  if (isset($field['formatter_settings'])) {
-    foreach ($field['formatter_settings'] as $key => $value) {
-      if (!empty($value)) {
-        return t('Configured');
-        break;
-      }
-    }
-  }
-  return t('Not configured');
-}
-
-/**
- * Implements hook_ds_field_settings_form().
- */
-function ds_extras_ds_field_settings_form($field) {
-  $form = array();
-
-  $entity_type = $field['entity_type'];
-  $bundle = $field['bundle'];
-  $view_mode = $field['view_mode'];
-  $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : array();
-  $view_modes = ds_entity_view_modes($entity_type);
-
-  foreach ($view_modes as $key => $value) {
-
-    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-    $visible = !empty($view_mode_settings[$key]['custom_settings']);
-
-    if ($visible) {
-      $form[$key] = array(
-        '#type' => 'textfield',
-        '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
-        '#size' => 20,
-        '#title' => $value['label'],
-      );
-    }
-  }
-
-  $form['info'] = array(
-    '#markup' => t('Enter a string for the build modes you want to switch. They will be localized.'),
-  );
-
-  return $form;
-}
-
-/**
- * Switches to another view mode inline.
- */
-function ds_switch_view_mode_inline() {
-
-  $content = '';
-  $status = TRUE;
-  $error = FALSE;
-
-  $id = $_REQUEST['id'];
-  $view_mode = $_REQUEST['view_mode'];
-  $entity_type = $_REQUEST['entity_type'];
-  $entity = entity_load($entity_type, array($id));
-
-  if (!$entity) {
-    $status = FALSE;
-    $error = t('Content was not found.');
-  }
-  else {
-    $content = drupal_render(node_view($entity[$id], $view_mode));
-  }
-
-  drupal_add_http_header('Content-Type', 'text/javascript; charset=utf-8');
-  print drupal_json_encode(array(
-    'status' => $status,
-    'content' => $content,
-    'errorMessage' => $error,
-  ));
-  exit();
-}
-
-/**
- * Implements hook_ds_layout_settings_alter().
- */
-function ds_extras_ds_layout_settings_alter($record, $form_state) {
-  if (isset($form_state['values']['additional_settings']['ds_hide_page_title'])) {
-    $record->settings['hide_page_title'] = $form_state['values']['additional_settings']['ds_hide_page_title'];
-  }
-}
-
-/**
  * Implements hook_contextual_links_view_alter().
  */
 function ds_extras_contextual_links_view_alter(&$element, $items) {
 
-  if (isset($element['#element']['#entity_type'])) {
+  if (isset($element['#element']['#entity_type']) && user_access('administer content types')) {
     $entity_type = $element['#element']['#entity_type'];
     $bundle = $element['#element']['#bundle'];
     $view_mode = $element['#element']['#view_mode'];
@@ -586,58 +411,6 @@ function ds_fivestar_render($field) {
 
   // Fall through static if not allowed to rate or $format is not clickable.
   return fivestar_static('node', $field['entity']->nid, $field['entity']->type);
-}
-
-/**
- * Implements hook_permission().
- */
-function ds_extras_permission() {
-
-  // Extra check to make sure this doesn't get fired on install.
-  if (variable_get('ds_extras_switch_view_mode', FALSE)) {
-    $permissions = array();
-    foreach (node_type_get_names() as $key => $name) {
-      $permissions['ds_switch ' . $key] = array(
-        'title' => t('Switch view modes on :type', array(':type' => $name))
-      );
-    }
-    return $permissions;
-  }
-}
-
-/**
- * Implements hook_menu_alter().
- */
-function ds_extras_menu_alter(&$items) {
-  // Use a custom callback for node/% to set the overriden view mode.
-  $items['node/%node']['page callback'] = 'ds_extras_node_show';
-}
-
-/**
- * View an individual node.
- */
-function ds_extras_node_show($node, $message = NULL) {
-  if ($message) {
-    drupal_set_title(t('Revision of %title from %date', array('%title' => $node->title, '%date' => format_date($node->revision_timestamp))), PASS_THROUGH);
-  }
-
-  // If there is a menu link to this node, the link becomes the last part
-  // of the active trail, and the link name becomes the page title.
-  // Thus, we must explicitly set the page title to be the node title.
-  drupal_set_title($node->title);
-  $uri = entity_uri('node', $node);
-  // Set the node path as the canonical URL to prevent duplicate content.
-  drupal_add_html_head_link(array('rel' => 'canonical', 'href' => url($uri['path'], $uri['options'])), TRUE);
-  // Set the non-aliased path as a default shortlink.
-  drupal_add_html_head_link(array('rel' => 'shortlink', 'href' => url($uri['path'], array_merge($uri['options'], array('alias' => TRUE)))), TRUE);
-
-  // Update the history table, stating that this user viewed this node.
-  node_tag_new($node);
-
-  // For markup consistency with other pages, use node_view_multiple() rather than node_view().
-  $view_mode = (!empty($node->ds_switch)) ? $node->ds_switch : 'full';
-  drupal_static('ds_extras_view_mode', $view_mode);
-  return node_view_multiple(array($node->nid => $node), $view_mode);
 }
 
 /**
@@ -759,37 +532,6 @@ function ds_extras_ctools_plugin_api($owner, $api) {
   if ($owner == 'ds_extras' && $api == 'ds_extras') {
     return array('version' => 1);
   }
-}
-
-/**
- * Implements hook_entity_info().
- */
-function ds_extras_entity_info() {
-
-  if (!variable_get('ds_extras_vd', FALSE)) {
-    return;
-  }
-
-  $bundles = array();
-  ctools_include('export');
-  $vd_settings = ctools_export_crud_load_all('ds_vd');
-  foreach ($vd_settings as $key => $vd) {
-    $bundles[$vd->vd] = array(
-      'label' => check_plain($vd->label),
-      'admin' => array('path' => 'admin/structure/ds/vd/' . $vd->vd),
-    );
-  }
-
-  // Register a views entity on behalf of Views.
-  $return = array(
-    'ds_views' => array(
-      'label' => t('Display suite Views'),
-      'bundles' => $bundles,
-      'ds_display' => TRUE,
-    ),
-  );
-
-  return $return;
 }
 
 /**
