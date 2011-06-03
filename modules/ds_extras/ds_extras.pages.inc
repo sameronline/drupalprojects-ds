@@ -51,7 +51,12 @@ function ds_switch_view_mode_inline() {
     $error = t('Content was not found.');
   }
   else {
-    $content = drupal_render(node_view($entity[$id], $view_mode));
+    if (node_access('view', $entity)) {
+      $content = drupal_render(node_view($entity[$id], $view_mode));
+    }
+    else {
+      $error = t('Access denied');
+    }
   }
 
   drupal_add_http_header('Content-Type', 'text/javascript; charset=utf-8');
