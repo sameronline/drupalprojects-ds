@@ -46,12 +46,12 @@ function ds_switch_view_mode_inline() {
   $entity_type = $_REQUEST['entity_type'];
   $entity = entity_load($entity_type, array($id));
 
-  if (!$entity) {
+  if (!isset($entity[$id])) {
     $status = FALSE;
     $error = t('Content was not found.');
   }
   else {
-    if (node_access('view', $entity)) {
+    if (node_access('view', $entity[$id])) {
       $content = drupal_render(node_view($entity[$id], $view_mode));
     }
     else {
