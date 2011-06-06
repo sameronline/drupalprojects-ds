@@ -413,7 +413,7 @@ function ds_extras_ds_field_settings_form($field) {
   }
 
   $form['info'] = array(
-    '#markup' => t('Enter a string for the build modes you want to switch. They will be localized.'),
+    '#markup' => t('Enter a label for the link for the view modes you want to switch. They will be localized.'),
   );
 
   return $form;
