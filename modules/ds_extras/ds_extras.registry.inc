@@ -42,9 +42,9 @@ function _ds_extras_menu() {
   }
 
   if (variable_get('ds_extras_contextual', FALSE) && module_exists('contextual') && module_exists('field_ui')) {
-    $items['node/%node/layout'] = array(
-      'title' => 'Layout',
-      'description' => 'Manage your layout.',
+    $items['node/%node/display'] = array(
+      'title' => 'Manage display',
+      'description' => 'Manage display of this content.',
       'page callback' => 'ds_extras_contextual_page_tab',
       'page arguments' => array(1, 'node'),
       'file' => 'ds_extras.pages.inc',
@@ -52,9 +52,9 @@ function _ds_extras_menu() {
       'type' => MENU_LOCAL_TASK,
     );
 
-    $items['user/%user/layout'] = array(
-      'title' => 'Layout',
-      'description' => 'Manage your layout.',
+    $items['user/%user/display'] = array(
+      'title' => 'Manage display',
+      'description' => 'Manage display of this user profile.',
       'page callback' => 'ds_extras_contextual_page_tab',
       'page arguments' => array(1, 'user'),
       'file' => 'ds_extras.pages.inc',
@@ -63,9 +63,9 @@ function _ds_extras_menu() {
     );
 
     if (module_exists('taxonomy')) {
-      $items['taxonomy/term/%taxonomy_term/layout'] = array(
-        'title' => 'Layout',
-        'description' => 'Manage your layout.',
+      $items['taxonomy/term/%taxonomy_term/display'] = array(
+        'title' => 'Manage display',
+        'description' => 'Manage display of this term.',
         'page callback' => 'ds_extras_contextual_page_tab',
         'page arguments' => array(2, 'taxonomy_term'),
         'access arguments' => array('administer taxonomy'),

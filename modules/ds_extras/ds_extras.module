@@ -349,8 +349,8 @@ function ds_extras_contextual_links_view_alter(&$element, $items) {
       $admin_path .= '/display/' . $view_mode;
     }
 
-    $element['#links']['manage-layout'] = array(
-      'title' => t('Layout'),
+    $element['#links']['manage-display'] = array(
+      'title' => t('Manage display'),
       'href' => $admin_path,
       'query' => drupal_get_destination(),
     );
