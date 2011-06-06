@@ -818,19 +818,26 @@ function ds_render_markup($field) {
  * Return the picture.
  */
 function ds_return_picture($entity) {
-  $picture = '';
+
+  // Gravatar support.
+  if (module_exists('gravatar')) {
+    if (!isset($entity->mail)) {
+      $entity->mail = '';
+    }
+    $entity->picture = _gravatar_get_account_user_picture($entity);
+  }
+
   if (!empty($entity->picture)) {
     if (is_numeric($entity->picture)) {
       return file_load($entity->picture);
     }
     else {
-      $picture = $entity->picture;
+      return $entity->picture;
     }
   }
   elseif (variable_get('user_picture_default', '')) {
-    $picture = variable_get('user_picture_default', '');
+    return variable_get('user_picture_default', '');
   }
-  return $picture;
 }
 
 /**
