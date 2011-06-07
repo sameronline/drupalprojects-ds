@@ -68,7 +68,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       '#type' => 'select',
       '#default_value' => $this->options['view_mode'],
       '#options' => $view_mode_options,
-      '#description' => t('Make sure you select a view mode which is compatible with the base table of this view which is %base_table. <br />Also note that if you excluded build modes, you will still see them listed here as it\'s possible to list different types in a view.', array('%base_table' => $this->view->base_table))
+      '#description' => t('Select the default view mode for this view.')
     );
 
     // Changing view modes.
@@ -163,7 +163,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     );
     $form['advanced_fieldset']['advanced'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Use the advanced build mode selector'),
+      '#title' => t('Use the advanced view mode selector'),
       '#description' => t('This gives you the opportunity to have full control of a list for really advanced features.<br /> There is no UI for this, you need to create a function named like this: <strong><em>ds_views_row_adv_@VIEWSNAME($entity, $view_mode)</em></strong>.<br />See <a href="http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME">http://drupal.org/node/697320#ds_views_row_adv_VIEWSNAME</a> for an example.', array('@VIEWSNAME' => $this->view->name)),
       '#default_value' => $this->options['advanced'],
     );
