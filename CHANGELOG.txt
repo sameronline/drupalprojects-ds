@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.2 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1187960 by askibinski: trigger solr on empty search.
 - #1184646 by swentel: make fields in non existing regions are visible in the UI.
 - #1166928 by swentel: support for gravatar.
 - #1175414 by swentel: fix issue with regions having dashes/underscores.

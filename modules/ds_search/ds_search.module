@@ -235,6 +235,12 @@ function ds_search_conditions() {
   if (isset($_GET['filters']) && trim($_GET['filters'])) {
     $conditions['filters'] = trim($_GET['filters']);
   }
+
+  if (variable_get('apachesolr_search_browse', 'browse') != 'none') {
+    // Set a condition so the search is triggered.
+    $conditions['apachesolr_search_browse'] = variable_get('apachesolr_search_browse', 'browse');
+  }
+
   return $conditions;
 }
 
