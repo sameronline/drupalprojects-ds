@@ -54,7 +54,7 @@ Drupal.behaviors.CToolsSelection = {
 };
 
 /**
- * Save the CTools content configuration.
+ * Save the Dynamic field content configuration.
  */
 $.fn.dsCtoolsContentConfiguration = function (configuration) {
   $(this[0]).val(configuration);
