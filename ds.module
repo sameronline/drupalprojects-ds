@@ -217,103 +217,102 @@ function ds_build_fields_and_regions(&$object, $module) {
     // Get all fields and settings for this build mode.
     $fields = ds_get_fields($module, $object->type, $object->build_mode, $api_info['extra']);
 
-      // Exclude depends on the region.
-      $region = (isset($field_setting['region'])) ? $field_setting['region'] : DS_DEFAULT_REGION;
+    // Exclude depends on the region.
+    $region = (isset($field_setting['region'])) ? $field_setting['region'] : DS_DEFAULT_REGION;
 
-      if ($region != 'disabled') {
+    if ($region != 'disabled') {
 
-        $field = isset($fields[$key]) ? $fields[$key] : array();
+      $field = isset($fields[$key]) ? $fields[$key] : array();
 
-        // Default class and extra class from the UI.
-        $class = isset($field['properties']['css-class']) ? $field['properties']['css-class'] : 'field-'. strtr($key, '_', '-');
-        if (isset($field_setting['css-class']) && !empty($field_setting['css-class'])) {
-          $class .= ' '. $field_setting['css-class'];
+      // Default class and extra class from the UI.
+      $class = isset($field['properties']['css-class']) ? $field['properties']['css-class'] : 'field-'. strtr($key, '_', '-');
+      if (isset($field_setting['css-class']) && !empty($field_setting['css-class'])) {
+        $class .= ' '. $field_setting['css-class'];
+      }
+      if ($field['type'] == DS_FIELD_TYPE_GROUP || $field['type']) {
+        $class .= ' field-group';
+      }
+
+      // Build field key.
+      $ds_fields[$key]['key'] = $key;
+      $ds_fields[$key]['region'] = $region;
+      $ds_fields[$key]['title'] = isset($field['title']) ? $field['title'] : '';
+      $ds_fields[$key]['class'] = $class;
+      $ds_fields[$key]['labelformat'] = (isset($field_setting['labelformat'])) ? $field_setting['labelformat'] : DS_DEFAULT_LABEL_FORMAT;
+      $ds_fields[$key]['type'] = empty($field) ? 'other' : 'ds';
+
+      // Check for weight in region and parent (if any). If a parent key is found, we'll unset the original
+      // field from the region it might be set in and we'll add that field to the group array.
+      $weight = (isset($field_setting['weight'])) ? $field_setting['weight'] : DS_DEFAULT_WEIGHT;
+      $parent = (isset($field_setting['parent'])) ? $field_setting['parent'] : '';
+      $ds_fields[$key]['weight'] = $weight;
+      $regions[$region][$key] = $weight;
+
+      if (!empty($parent)) {
+        // Remove the field from the $regions array.
+        unset($regions[$region][$key]);
+        // Get the form of the group and create a theme key.
+        $format = (isset($field_settings[$parent]['format'])) ? $field_settings[$parent]['format'] : 'ds_group_fieldset';
+        $ds_fields[$parent]['theme'] = $format;
+        $ds_groups[$parent][$key] = $weight;
+        //Support Multigroup
+        if($fields[$parent]['type'] == DS_FIELD_TYPE_MULTIGROUP){
+          $ds_groups[$parent]['multigroup']= TRUE;
         }
-        if ($field['type'] == DS_FIELD_TYPE_GROUP || $field['type']) {
-          $class .= ' field-group';
-        }
+      }
 
-        // Build field key.
-        $ds_fields[$key]['key'] = $key;
-        $ds_fields[$key]['region'] = $region;
-        $ds_fields[$key]['title'] = isset($field['title']) ? $field['title'] : '';
-        $ds_fields[$key]['class'] = $class;
-        $ds_fields[$key]['labelformat'] = (isset($field_setting['labelformat'])) ? $field_setting['labelformat'] : DS_DEFAULT_LABEL_FORMAT;
-        $ds_fields[$key]['type'] = empty($field) ? 'other' : 'ds';
+      // If the field is empty, just continue, the content will
+      // come from another module (most likely CCK).
+      if (empty($field)) {
+        continue;
+      }
 
-        // Check for weight in region and parent (if any). If a parent key is found, we'll unset the original
-        // field from the region it might be set in and we'll add that field to the group array.
-        $weight = (isset($field_setting['weight'])) ? $field_setting['weight'] : DS_DEFAULT_WEIGHT;
-        $parent = (isset($field_setting['parent'])) ? $field_setting['parent'] : '';
-        $ds_fields[$key]['weight'] = $weight;
-        $regions[$region][$key] = $weight;
+      // Change the title if this is configured and label is not hidden.
+      if (isset($field_setting['label_value']) && $ds_fields[$key]['labelformat'] != DS_DEFAULT_LABEL_FORMAT) {
+        $ds_fields[$key]['title'] = t(check_plain($field_setting['label_value']));
+      }
 
-        if (!empty($parent)) {
-          // Remove the field from the $regions array.
-          unset($regions[$region][$key]);
-          // Get the form of the group and create a theme key.
-          $format = (isset($field_settings[$parent]['format'])) ? $field_settings[$parent]['format'] : 'ds_group_fieldset';
-          $ds_fields[$parent]['theme'] = $format;
-          $ds_groups[$parent][$key] = $weight;
-          //Support Multigroup
-          if($fields[$parent]['type'] == DS_FIELD_TYPE_MULTIGROUP){
-            $ds_groups[$parent]['multigroup']= TRUE;
+      // Add extra properties.
+      $field['key'] = $key;
+      $field['module'] = $module;
+      $field['object'] = $object;
+      $field['object_type'] = $object_type;
+
+      // Create a $key_rendered variable.
+      $key_rendered = $key .'_rendered';
+
+      // Theming can either be done in preprocess, with a custom function or an
+      // existing formatter theming function. Always pass the $field as parameter.
+      switch ($field['type']) {
+        case DS_FIELD_TYPE_PREPROCESS:
+        case DS_FIELD_TYPE_IGNORE:
+          if (isset($field['properties']['key']) && !empty($field['properties']['key'])) {
+            $ds_preprocess_fields[$key] = array('type' => $field['type'], 'key' => $field['properties']['key']);
           }
-        }
-
-        // If the field is empty, just continue, the content will
-        // come from another module (most likely CCK).
-        if (empty($field)) {
-          continue;
-        }
-
-        // Change the title if this is configured and label is not hidden.
-        if (isset($field_setting['label_value']) && $ds_fields[$key]['labelformat'] != DS_DEFAULT_LABEL_FORMAT) {
-          $ds_fields[$key]['title'] = t(check_plain($field_setting['label_value']));
-        }
-
-        // Add extra properties.
-        $field['key'] = $key;
-        $field['module'] = $module;
-        $field['object'] = $object;
-        $field['object_type'] = $object_type;
-
-        // Create a $key_rendered variable.
-        $key_rendered = $key .'_rendered';
-
-        // Theming can either be done in preprocess, with a custom function or an
-        // existing formatter theming function. Always pass the $field as parameter.
-        switch ($field['type']) {
-          case DS_FIELD_TYPE_PREPROCESS:
-          case DS_FIELD_TYPE_IGNORE:
-            if (isset($field['properties']['key']) && !empty($field['properties']['key'])) {
-              $ds_preprocess_fields[$key] = array('type' => $field['type'], 'key' => $field['properties']['key']);
-            }
-            else {
-              $ds_preprocess_fields[$key] = $field['type'];
-            }
-            break;
-          case DS_FIELD_TYPE_CODE:
-            $format = (isset($field_setting['format'])) ? $field_setting['format'] : 'ds_eval_code';
-            $field['formatter'] = $format;
-            $object->{$key_rendered} = theme($format, $field);
-            break;
-          case DS_FIELD_TYPE_BLOCK:
-            $object->{$key_rendered} = theme('ds_eval_block', $field);
-            break;
-          case DS_FIELD_TYPE_FUNCTION:
-            if (isset($field['file'])) {
-              include_once($field['file']);
-            }
-            $function = (isset($field_setting['format'])) ? $field_setting['format'] : key($field['properties']['formatters']);
-            $object->{$key_rendered} = $function($field);
-            break;
-          case DS_FIELD_TYPE_THEME:
-            $format = (isset($field_setting['format'])) ? $field_setting['format'] : key($field['properties']['formatters']);
-            $field['formatter'] = $format;
-            $object->{$key_rendered} = theme($format, $field);
-            break;
-        }
+          else {
+            $ds_preprocess_fields[$key] = $field['type'];
+          }
+          break;
+        case DS_FIELD_TYPE_CODE:
+          $format = (isset($field_setting['format'])) ? $field_setting['format'] : 'ds_eval_code';
+          $field['formatter'] = $format;
+          $object->{$key_rendered} = theme($format, $field);
+          break;
+        case DS_FIELD_TYPE_BLOCK:
+          $object->{$key_rendered} = theme('ds_eval_block', $field);
+          break;
+        case DS_FIELD_TYPE_FUNCTION:
+          if (isset($field['file'])) {
+            include_once($field['file']);
+          }
+          $function = (isset($field_setting['format'])) ? $field_setting['format'] : key($field['properties']['formatters']);
+          $object->{$key_rendered} = $function($field);
+          break;
+        case DS_FIELD_TYPE_THEME:
+          $format = (isset($field_setting['format'])) ? $field_setting['format'] : key($field['properties']['formatters']);
+          $field['formatter'] = $format;
+          $object->{$key_rendered} = theme($format, $field);
+          break;
       }
     }
   }
