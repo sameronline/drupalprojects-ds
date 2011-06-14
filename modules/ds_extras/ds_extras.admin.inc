@@ -362,7 +362,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
         '#type' => 'checkboxes',
         '#title' => t('Existing block regions'),
         '#options' => $region_blocks_options,
-        '#description' => t('Toggle regions you want to remove. Make sure no fields are attached in that region anymore or you will not see them anymore.'),
+        '#description' => t('Toggle regions you want to remove.'),
       );
     }
 

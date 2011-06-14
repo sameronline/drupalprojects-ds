@@ -201,7 +201,7 @@ function ds_field_ui_regions($form, $form_state) {
       // Add region between parent_wrapper & label.
       $second = array_splice($row, 7);
       $row['region'] = $region;
-      $row['region']['#default_value'] = (isset($layout->settings['fields'][$name])) ? $layout->settings['fields'][$name] : 'hidden';
+      $row['region']['#default_value'] = (isset($layout->settings['fields'][$name]) && isset($region_options[$layout->settings['fields'][$name]])) ? $layout->settings['fields'][$name] : 'hidden';
       $row = array_merge($row, $second);
     }
   }
