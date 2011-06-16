@@ -32,8 +32,24 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
     $panel_layout = array_shift($menu['theme_arguments']);
   }
 
-  // Get the pieces of this page.
-  $layout = drupal_get_form('ds_panels_layout', $entity_type, $bundle, $view_mode, $ds_layout, $panel_layout, $layout_tab_first);
+  // Check the $panel_layout variable.
+  if (!empty($ds_layout)) {
+    $panel_layout = $ds_layout['settings']['layout'];
+  }
+
+  // If there's a ds layout and panel layout and the layout key is in the URI
+  // show the layout change form of panels, else return the form
+  // to select the form or update its settings.
+  if (!empty($ds_layout) && !empty($panel_layout) && $layout_tab_first) {
+    $display = panels_load_display($ds_layout['settings']['did']);
+    $display->context = ds_get_entity_context($entity_type);
+    $layout = panels_edit_layout($display, t('Save'), str_replace('/' . $panel_layout,'', $_GET['q']), 'ds_panels');
+  }
+  else {
+    $layout = drupal_get_form('ds_panels_layout', $entity_type, $bundle, $view_mode, $ds_layout, $panel_layout, $layout_tab_first);
+  }
+
+  // Content tab.
   $content = ds_panels_content($entity_type, $bundle, $view_mode, $ds_layout, $panel_layout);
 
   // Move all this stuff into nice vertical tabs.
@@ -171,23 +187,6 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     return $form;
   }
 
-  // If panel_layout is not empty and the layout key is in the URI
-  // show the layout change form of panels.
-  if (!empty($ds_layout) && !empty($panel_layout)) {
-    // @todo next does not work here yet, will probably have to redirect.
-    $display = panels_load_display($ds_layout['settings']['did']);
-    $display->context = ds_get_entity_context($entity_type);
-    $form['layout'] = array(
-      '#markup' => drupal_render(panels_edit_layout($display, t('Save'), $_GET['q'], 'ds_panels'))
-    );
-    return $form;
-  }
-
-  // Settings form.
-  if (!empty($ds_layout)) {
-    $panel_layout = $ds_layout['settings']['layout'];
-  }
-
   $form['ds_panels_layout']['layout'] = array(
     '#type' => 'value',
     '#value' => $panel_layout,
@@ -198,7 +197,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     '#title' => t('CSS ID'),
     '#size' => 30,
     '#description' => t('An ID that can be used by CSS to style the panel.'),
-    '#default_value' => isset($layout['settings']['css_id']) ? $layout['settings']['css_id'] : '',
+    '#default_value' => isset($ds_layout['settings']['css_id']) ? $ds_layout['settings']['css_id'] : '',
   );
 
   // Support for different rendering pipelines
@@ -213,7 +212,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     '#type' => 'radios',
     '#options' => $options,
     '#title' => t('Renderer'),
-    '#default_value' => isset($layout['settings']['css_id']) ? $layout['settings']['css_id'] : 'standard',
+    '#default_value' => isset($ds_layout['settings']['pipeline']) ? $ds_layout['settings']['pipeline'] : 'standard',
   );
 
   $form['ds_panels_layout']['actions']['save'] = array(
