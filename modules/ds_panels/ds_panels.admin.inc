@@ -44,6 +44,8 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
     $display = panels_load_display($ds_layout['settings']['did']);
     $display->context = ds_get_entity_context($entity_type);
     $layout = panels_edit_layout($display, t('Save'), str_replace('/' . $panel_layout,'', $_GET['q']), 'ds_panels');
+
+    // @todo make sure the new chose layout is also known in DS.
   }
   else {
     $layout = drupal_get_form('ds_panels_layout', $entity_type, $bundle, $view_mode, $ds_layout, $panel_layout, $layout_tab_first);
@@ -230,7 +232,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     );
     $form['ds_panels_layout']['actions']['layout_remove'] = array(
       '#type' => 'submit',
-      '#value' => t('Delete layout'),
+      '#value' => t('Remove layout'),
       '#submit' => array('ds_panels_layout_remove'),
     );
   }
