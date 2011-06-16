@@ -18,6 +18,9 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
 
   $form['#export_id'] = $entity_type . '|' . $bundle . '|' . $view_mode;
 
+  // Create vertical tabs.
+  ds_field_ui_create_vertical_tabs($form);
+
   // Add layout fieldset.
   _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, $form);
 
@@ -55,7 +58,26 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
     '#value' => $view_mode,
   );
 
-  // Alter the text of the custom display settings.
+}
+
+/**
+ * Create vertical tabs.
+ */
+function ds_field_ui_create_vertical_tabs(&$form) {
+
+  // Add additional settings vertical tab.
+  if (!isset($form['additional_settings'])) {
+    $form['additional_settings'] = array(
+      '#type' => 'vertical_tabs',
+      '#theme_wrappers' => array('vertical_tabs'),
+      '#prefix' => '<div>',
+      '#suffix' => '</div>',
+      '#tree' => TRUE,
+    );
+    $form['#attached']['js'][] = 'misc/form.js';
+    $form['#attached']['js'][] = 'misc/collapse.js';
+  }
+
   if (isset($form['modes'])) {
     $form['modes']['view_modes_custom']['#description'] = t('<a href="!url">Manage view modes</a>', array('!url' => url('admin/structure/ds/view_modes')));
     $form['additional_settings']['modes'] = $form['modes'];
@@ -694,6 +716,25 @@ function ds_ds_field_settings_form($field) {
 }
 
 /**
+ * Add entity contexts.
+ */
+function ds_get_entity_context($entity_type) {
+  ctools_include('context');
+  $arguments = array(
+    array(
+      'keyword' => $entity_type,
+      'identifier' => drupal_ucfirst($entity_type) . ' being viewed',
+      'id' => 1,
+      'name' => 'entity_id:' . $entity_type,
+      'settings' => array(),
+    ),
+  );
+  $contexts = ctools_context_get_placeholders_from_argument($arguments);
+
+  return $contexts;
+}
+
+/**
  * Return the configuration settings for the CTools field.
  */
 function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '', $type_name = '', $subtype_name = '', $step = NULL) {
@@ -724,21 +765,8 @@ function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '',
     'next callback' => 'ds_ctools_content_next',
   );
 
-  // Add entity context.
-  ctools_include('context');
-  $arguments = array(
-    array(
-      'keyword' => $entity_type,
-      'identifier' => drupal_ucfirst($entity_type) . ' being viewed',
-      'id' => 1,
-      'name' => 'entity_id:' . $entity_type,
-      'settings' => array(),
-    ),
-  );
-  $contexts = ctools_context_get_placeholders_from_argument($arguments);
-
   $form_state = array(
-    'contexts' => $contexts,
+    'contexts' => ds_get_entity_context($entity_type),
     'ajax' => TRUE,
     'modal' => TRUE,
     'modal return' => TRUE,
@@ -916,19 +944,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   if (count($layout_options) == 2) {
     $options = $layout_options[$optgroup];
     $layout_options = array_merge(array('' => t('- None -')), $options);
-  }
-
-  // Add additional settings vertical tab.
-  if (!isset($form['additional_settings'])) {
-    $form['additional_settings'] = array(
-      '#type' => 'vertical_tabs',
-      '#theme_wrappers' => array('vertical_tabs'),
-      '#prefix' => '<div>',
-      '#suffix' => '</div>',
-      '#tree' => TRUE,
-    );
-    $form['#attached']['js'][] = 'misc/form.js';
-    $form['#attached']['js'][] = 'misc/collapse.js';
   }
 
   // Add layouts form.
