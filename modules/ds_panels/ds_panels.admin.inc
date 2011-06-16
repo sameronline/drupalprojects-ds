@@ -61,12 +61,89 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
     '#markup' => drupal_render($layout)
   );
 
-  // Add the Custom display settings form.
+  // Add the Custom display settings form. We're just going to copy
+  // the code from Field UI, because otherwhise we need override to much.
   if ($view_mode == 'default') {
-    //$layout = drupal_get_form('ds_panels_layout', $entity_type, $bundle, $view_mode);
+    $view_modes = drupal_get_form('ds_panels_display_settings', $entity_type, $bundle);
+    $build['tabs']['view_modes'] = array(
+      '#type' => 'fieldset',
+      '#group' => 'tabs',
+      '#title' => t('Custom display settings'),
+      '#weight' => 10,
+    );
+    $build['tabs']['view_modes']['content'] = array(
+      '#markup' => drupal_render($view_modes)
+    );
   }
 
   return $build;
+}
+
+/**
+ * Form callback: Show custom display settings.
+ */
+function ds_panels_display_settings($form, $form_state, $entity_type, $bundle) {
+
+  $form['#entity_type'] = $entity_type;
+  $form['#bundle'] = $bundle;
+
+  $entity_info = entity_get_info($entity_type);
+  $view_modes = $entity_info['view modes'];
+  $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
+  foreach ($view_modes as $view_mode_name => $view_mode_info) {
+    $options[$view_mode_name] = $view_mode_info['label'];
+    if (!empty($view_mode_settings[$view_mode_name]['custom_settings'])) {
+      $default[] = $view_mode_name;
+    }
+  }
+
+  $form['view_modes_custom'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Use custom display settings for the following view modes'),
+    '#options' => $options,
+    '#default_value' => $default,
+    '#description' => t('<a href="!url">Manage view modes</a>', array('!url' => url('admin/structure/ds/view_modes')))
+  );
+  $form['modes_save'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+    '#submit' => array('ds_panels_display_settings_save'),
+  );
+  return $form;
+}
+
+/**
+ * Submit callback: save custom display settings.
+ */
+function ds_panels_display_settings_save($form, $form_state) {
+
+  $entity_type = $form['#entity_type'];
+  $bundle = $form['#bundle'];
+  module_load_include('inc', 'field_ui', 'field_ui.admin');
+
+  // Get current bundle settings.
+  $bundle_settings = field_bundle_settings($entity_type, $bundle);
+
+  $entity_info = entity_get_info($entity_type);
+  foreach ($form_state['values']['view_modes_custom'] as $view_mode_name => $value) {
+    // Display a message for each view mode newly configured to use custom
+    // settings.
+    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
+    if (!empty($value) && empty($view_mode_settings[$view_mode_name]['custom_settings'])) {
+      $view_mode_label = $entity_info['view modes'][$view_mode_name]['label'];
+      $path = _field_ui_bundle_admin_path($entity_type, $bundle) . "/display/$view_mode_name";
+      drupal_set_message(t('The %view_mode mode now uses custom display settings. You might want to <a href="@url">configure them</a>.', array('%view_mode' => $view_mode_label, '@url' => url($path))));
+      // Initialize the newly customized view mode with the display settings
+      // from the default view mode.
+      _field_ui_add_default_view_mode_settings($entity_type, $bundle, $view_mode_name, $bundle_settings);
+    }
+    $bundle_settings['view_modes'][$view_mode_name]['custom_settings'] = !empty($value);
+  }
+
+  // Save updated bundle settings.
+  field_bundle_settings($entity_type, $bundle, $bundle_settings);
+
+  drupal_set_message(t('Your settings have been saved.'));
 }
 
 /**
