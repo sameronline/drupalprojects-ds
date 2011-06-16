@@ -39,6 +39,16 @@ function ds_panels_view_mode_settings() {
  */
 function ds_panels_menu_alter(&$items) {
 
+  // No point in having custom fields & styles.
+  unset($items['admin/structure/ds/fields']);
+  unset($items['admin/structure/ds/fields/manage']);
+  unset($items['admin/structure/ds/fields/manage_custom']);
+  unset($items['admin/structure/ds/fields/manage_ctools']);
+  unset($items['admin/structure/ds/fields/manage_block']);
+  unset($items['admin/structure/ds/fields/delete']);
+  unset($items['admin/structure/ds/fields/revert']);
+  unset($items['admin/structure/ds/styles']);
+
   $ds_panels_path = drupal_get_path('module', 'ds_panels');
 
   // Convert all manage display screen callbacks.
@@ -105,6 +115,5 @@ function ds_panels_form_ds_extras_settings_alter(&$form, $form_state) {
   $form['additional_settings']['fs1']['#access'] = FALSE;
   $form['additional_settings']['fs2']['#access'] = FALSE;
   // @todo see what other stuff we have to disable (also in implements alter).
-  // We'll also menu_alter out other menu callbacks (like styles and fields).
   // need to find a solution for views displays also.
 }
