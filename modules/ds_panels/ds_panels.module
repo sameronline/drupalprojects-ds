@@ -3,10 +3,18 @@
 /**
  * @file
  * Uses the panels layout manager to style the view modes.
+ *
+ * Ideas/todo
+ * - Option to still use field UI on an entity/bundle/view mode base ? Now this is ruled out completely.
+ * - find out if we can make the ENTITY_view() functions do less.
+ * - add variants ?
+ * - add selection rules ?
+ * - add contexts ?
+ * - more ?
  */
 
 /**
- * Implementation of hook_menu().
+ * Implements hook_menu().
  */
 function ds_panels_menu() {
 
@@ -43,7 +51,6 @@ function ds_panels_menu_alter(&$items) {
 
   $ds_panels_path = drupal_get_path('module', 'ds_panels');
 
-  // Field ui can be enabled/disabled.
   if (module_exists('field_ui')) {
     // Convert all manage display screen callbacks.
     foreach (entity_get_info() as $entity_type => $entity_info) {
@@ -105,17 +112,6 @@ function ds_panels_theme_registry_alter(&$theme_registry) {
 }
 
 /**
- * Implements of hook_panels_dashboard_blocks().
- */
-function ds_panels_panels_dashboard_blocks(&$vars) {
-  $vars['links']['ds_panels'] = array(
-    'title' => l(t('Panel view modes'), 'admin/structure/ds/layout'),
-    'description' => t('Manage the layout of view modes for every entity.'),
-    'weight' => -3,
-  );
-}
-
-/**
  * Implements hook_module_implements_alter().
  */
 function ds_panels_module_implements_alter(&$implementations, $hook) {
@@ -139,6 +135,17 @@ function ds_panels_module_implements_alter(&$implementations, $hook) {
 }
 
 /**
+ * Implements hook_panels_dashboard_blocks().
+ */
+function ds_panels_panels_dashboard_blocks(&$vars) {
+  $vars['links']['ds_panels'] = array(
+    'title' => l(t('Panel view modes'), 'admin/structure/ds/layout'),
+    'description' => t('Manage the layout of view modes for every entity.'),
+    'weight' => -3,
+  );
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_panels_form_ds_extras_settings_alter(&$form, $form_state) {
@@ -156,7 +163,7 @@ function ds_panels_view_mode_settings() {
 }
 
 /**
- * Render the node through the Panels layout.
+ * Render the entity through the Panels layout.
  */
 function ds_panels_entity_variables(&$vars) {
   if (isset($vars['elements']) && $layout = ds_get_layout($vars['elements']['#entity_type'], $vars['elements']['#bundle'], $vars['elements']['#view_mode'])) {
@@ -168,14 +175,17 @@ function ds_panels_entity_variables(&$vars) {
     $contexts = array();
     ds_create_entity_context($entity_type, $entity, $contexts);
 
-    // Load panel.
+    // Load and prepare panel content.
+    // @todo create our own redender pipeline and always use that one ?
     $display = panels_load_display($layout['settings']['did']);
     $display->css_id = $layout['settings']['css_id'];
     $display->context = $contexts;
     $renderer = panels_get_renderer($layout['settings']['pipeline'], $display);
-    $output = panels_render_display($display, $renderer);
-
-    // Move to content.
-    $vars['content'] = array('#markup' => $output);
+    $renderer->prepare();
+    $renderer->render_panes();
+    $renderer->render_regions();
+    $renderer->add_meta();
+    $vars['theme_hook_suggestion'] = 'panels_' . $display->layout;
+    $vars['content'] = $renderer->rendered['regions'];
   }
 }
