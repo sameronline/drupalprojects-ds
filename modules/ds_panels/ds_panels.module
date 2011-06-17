@@ -27,19 +27,11 @@ function ds_panels_menu() {
 }
 
 /**
- * Menu callback: settings for DS panels.
- */
-function ds_panels_view_mode_settings() {
-  ctools_include('common', 'panels');
-  return drupal_get_form('panels_common_settings', 'panels_ds');
-}
-
-/**
  * Implementation of hook_menu_alter().
  */
 function ds_panels_menu_alter(&$items) {
 
-  // No point in having custom fields & styles.
+  // No point in having custom fields & styles if DS is enabled.
   unset($items['admin/structure/ds/fields']);
   unset($items['admin/structure/ds/fields/manage']);
   unset($items['admin/structure/ds/fields/manage_custom']);
@@ -51,34 +43,37 @@ function ds_panels_menu_alter(&$items) {
 
   $ds_panels_path = drupal_get_path('module', 'ds_panels');
 
-  // Convert all manage display screen callbacks.
-  foreach (entity_get_info() as $entity_type => $entity_info) {
-    if ($entity_info['fieldable']) {
-      foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
-        if (isset($bundle_info['admin'])) {
+  // Field ui can be enabled/disabled.
+  if (module_exists('field_ui')) {
+    // Convert all manage display screen callbacks.
+    foreach (entity_get_info() as $entity_type => $entity_info) {
+      if ($entity_info['fieldable']) {
+        foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
+          if (isset($bundle_info['admin'])) {
 
-          // Extract path information from the bundle.
-          $path = $bundle_info['admin']['path'];
+            // Extract path information from the bundle.
+            $path = $bundle_info['admin']['path'];
 
-          if (isset($bundle_info['admin']['bundle argument'])) {
-            $bundle_arg = $bundle_info['admin']['bundle argument'];
-            $bundle_pos = (string) $bundle_arg;
-          }
-          else {
-            $bundle_arg = $bundle_name;
-            $bundle_pos = '0';
-          }
+            if (isset($bundle_info['admin']['bundle argument'])) {
+              $bundle_arg = $bundle_info['admin']['bundle argument'];
+              $bundle_pos = (string) $bundle_arg;
+            }
+            else {
+              $bundle_arg = $bundle_name;
+              $bundle_pos = '0';
+            }
 
-          $items["$path/display"]['page callback'] = 'ds_panels_field_ui';
-          $items["$path/display"]['page arguments'] = array($entity_type, $bundle_arg, 'default');
-          $items["$path/display"]['file'] = 'ds_panels.admin.inc';
-          $items["$path/display"]['file path'] = $ds_panels_path;
+            $items["$path/display"]['page callback'] = 'ds_panels_field_ui';
+            $items["$path/display"]['page arguments'] = array($entity_type, $bundle_arg, 'default');
+            $items["$path/display"]['file'] = 'ds_panels.admin.inc';
+            $items["$path/display"]['file path'] = $ds_panels_path;
 
-          $view_modes = array('default' => array('label' => t('Default'))) + $entity_info['view modes'];
-          foreach ($view_modes as $view_mode => $view_mode_info) {
-            $items["$path/display/$view_mode"]['page arguments'] = array($entity_type, $bundle_arg, $view_mode);
-            $items["$path/display/$view_mode"]['file'] = 'ds_panels.admin.inc';
-            $items["$path/display/$view_mode"]['file path'] = $ds_panels_path;
+            $view_modes = array('default' => array('label' => t('Default'))) + $entity_info['view modes'];
+            foreach ($view_modes as $view_mode => $view_mode_info) {
+              $items["$path/display/$view_mode"]['page arguments'] = array($entity_type, $bundle_arg, $view_mode);
+              $items["$path/display/$view_mode"]['file'] = 'ds_panels.admin.inc';
+              $items["$path/display/$view_mode"]['file path'] = $ds_panels_path;
+            }
           }
         }
       }
@@ -87,7 +82,30 @@ function ds_panels_menu_alter(&$items) {
 }
 
 /**
- * Implementation of hook_panels_dashboard_blocks().
+ * Implements hook_theme_registry_alter().
+ */
+function ds_panels_theme_registry_alter(&$theme_registry) {
+
+  // Inject ds_panels_entity_variables in all entity theming functions
+  // and remove ds_entity_variables
+  $entity_info = entity_get_info();
+
+  foreach ($entity_info as $entity => $info) {
+    if (isset($entity_info[$entity]['fieldable']) && $entity_info[$entity]['fieldable']) {
+      // User uses user_profile for theming.
+      if ($entity == 'user') $entity = 'user_profile';
+      $theme_registry[$entity]['preprocess functions'][] = 'ds_panels_entity_variables';
+    }
+  }
+
+  // Support for Entity API.
+  if (isset($theme_registry['entity'])) {
+    $theme_registry['entity']['preprocess functions'][] = 'ds_panels_entity_variables';
+  }
+}
+
+/**
+ * Implements of hook_panels_dashboard_blocks().
  */
 function ds_panels_panels_dashboard_blocks(&$vars) {
   $vars['links']['ds_panels'] = array(
@@ -106,8 +124,16 @@ function ds_panels_module_implements_alter(&$implementations, $hook) {
     unset($implementations['ds_extras']);
     unset($implementations['field_group']);
   }
+  elseif ($hook == 'field_attach_view_alter') {
+    unset($implementations['ds']);
+    unset($implementations['ds_extras']);
+    unset($implementations['field_group']);
+  }
+  elseif ($hook == 'theme_registry_alter') {
+    unset($implementations['ds']);
+  }
   else {
-    // Unset all stuff of Extras module in case it's still enabled.
+    // Remove all hooks from Extras module in case it's still enabled.
     unset($implementations['ds_extras']);
   }
 }
@@ -119,4 +145,37 @@ function ds_panels_form_ds_extras_settings_alter(&$form, $form_state) {
   $form['additional_settings']['#access'] = FALSE;
   $form['actions']['#access'] = FALSE;
   $form['info'] = array('#markup' => t('It is adviced to disable the Extras module.'));
+}
+
+/**
+ * Menu callback: settings for DS panels.
+ */
+function ds_panels_view_mode_settings() {
+  ctools_include('common', 'panels');
+  return drupal_get_form('panels_common_settings', 'panels_ds');
+}
+
+/**
+ * Render the node through the Panels layout.
+ */
+function ds_panels_entity_variables(&$vars) {
+  if (isset($vars['elements']) && $layout = ds_get_layout($vars['elements']['#entity_type'], $vars['elements']['#bundle'], $vars['elements']['#view_mode'])) {
+
+    $entity_type = $vars['elements']['#entity_type'];
+    $entity = $vars[$vars['elements']['#entity_type']];
+    ctools_include('plugins', 'panels');
+
+    $contexts = array();
+    ds_create_entity_context($entity_type, $entity, $contexts);
+
+    // Load panel.
+    $display = panels_load_display($layout['settings']['did']);
+    $display->css_id = $layout['settings']['css_id'];
+    $display->context = $contexts;
+    $renderer = panels_get_renderer($layout['settings']['pipeline'], $display);
+    $output = panels_render_display($display, $renderer);
+
+    // Move to content.
+    $vars['content'] = array('#markup' => $output);
+  }
 }

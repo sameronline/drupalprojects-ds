@@ -16,7 +16,7 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
   // Extra the bundle name.
   $bundle = field_extract_bundle($entity_type, $bundle);
 
-  // Load ds.
+  // Load ds field ui.
   module_load_include('inc', 'ds', 'ds.field_ui');
 
   // Get the ds layout.
@@ -279,6 +279,7 @@ function ds_panels_layout_save($form, &$form_state) {
     'css_id' => $form_state['values']['css_id'],
     'layout' => $form_state['values']['layout'],
     'pipeline' => $form_state['values']['pipeline'],
+    'hide_empty_regions' => FALSE,
     'ds_panels' => TRUE,
   );
 

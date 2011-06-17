@@ -729,9 +729,8 @@ function ds_get_entity_context($entity_type) {
       'settings' => array(),
     ),
   );
-  $contexts = ctools_context_get_placeholders_from_argument($arguments);
 
-  return $contexts;
+  return ctools_context_get_placeholders_from_argument($arguments);
 }
 
 /**
@@ -765,8 +764,11 @@ function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '',
     'next callback' => 'ds_ctools_content_next',
   );
 
+  // Get entity context.
+  $contexts = ds_get_entity_context($entity_type);
+
   $form_state = array(
-    'contexts' => ds_get_entity_context($entity_type),
+    'contexts' => $contexts,
     'ajax' => TRUE,
     'modal' => TRUE,
     'modal return' => TRUE,

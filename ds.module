@@ -419,7 +419,6 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
  * Implements hook_field_attach_view_alter().
  */
 function ds_field_attach_view_alter(&$build, $context) {
-
   static $loaded_css = array();
 
   // If views and core doesn't send information along on the entity,
@@ -638,6 +637,23 @@ function ds_php_eval($code, $entity) {
 }
 
 /**
+ * Create entity context.
+ */
+function ds_create_entity_context($entity_type, $entity, &$contexts, $context_arguments = array()) {
+  ctools_include('context');
+  if (empty($context_arguments)) {
+    $context_arguments = array(array(
+      'keyword' => $entity_type,
+      'identifier' => drupal_ucfirst($entity_type) . ' being viewed',
+      'id' => 1,
+      'name' => 'entity_id:' . $entity_type,
+      'settings' => array(),
+    ));
+  }
+  ctools_context_get_context_from_arguments($context_arguments, $contexts, array($entity));
+}
+
+/**
  * Render a code field.
  */
 function ds_render_code_field($field) {
@@ -676,17 +692,8 @@ function ds_render_ctools_field($field) {
     $entity_type = $field['entity_type'];
     $keywords = $arguments = $contexts = array();
 
-    // Pass entity in the context.
-    if (isset($conf['context'])) {
-      $context_arguments = array(array(
-        'keyword' => $entity_type,
-        'identifier' => drupal_ucfirst($entity_type) . ' being viewed',
-        'id' => 1,
-        'name' => 'entity_id:' . $entity_type,
-        'settings' => array(),
-      ));
-      ctools_context_get_context_from_arguments($context_arguments, $contexts, array($field['entity']));
-    }
+    // Create entity context.
+    ds_create_entity_context($entity_type, $field['entity'], $contexts);
 
     // Build the content.
     $data = ctools_content_render($type, $subtype, $conf, $keywords, $arguments, $contexts);

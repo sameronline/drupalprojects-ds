@@ -246,9 +246,11 @@ function _ds_entity_info_alter(&$entity_info) {
   $ds_layouts = ds_get_layout_info();
   $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
   foreach ($ds_layout_settings as $row) {
+    $layout = array();
     if (!isset($row->settings['ds_panels'])) {
       $layout = $ds_layouts[$row->layout];
     }
+    $layout['layout'] = $row->layout;
     $layout['settings'] = $row->settings;
     $entity_info[$row->entity_type]['bundles'][$row->bundle]['layouts'][$row->view_mode] = $layout;
   }
