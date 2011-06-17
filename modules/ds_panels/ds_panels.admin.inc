@@ -43,9 +43,8 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
   if (!empty($ds_layout) && !empty($panel_layout) && $layout_tab_first) {
     $display = panels_load_display($ds_layout['settings']['did']);
     $display->context = ds_get_entity_context($entity_type);
-    $layout = panels_edit_layout($display, t('Save'), str_replace('/' . $panel_layout,'', $_GET['q']), 'ds_panels');
-
-    // @todo make sure the new chose layout is also known in DS.
+    $destination = str_replace('/' . $panel_layout,'', $_GET['q']);
+    $layout = panels_edit_layout($display, t('Save'), $destination, 'ds_panels');
   }
   else {
     $layout = drupal_get_form('ds_panels_layout', $entity_type, $bundle, $view_mode, $ds_layout, $panel_layout, $layout_tab_first);
@@ -165,7 +164,7 @@ function ds_panels_display_settings_save($form, $form_state) {
 }
 
 /**
- * Add the Panels layout/content manager.
+ * Return the Panels layout settings form.
  */
 function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode, $ds_layout, $panel_layout, $layout_tab_first) {
 
@@ -245,7 +244,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
 }
 
 /**
- * Return the panels content display.
+ * Return the panels content manager.
  */
 function ds_panels_content($entity_type, $bundle, $view_mode, $ds_layout, $panel_layout) {
 
@@ -307,7 +306,7 @@ function ds_panels_layout_save($form, &$form_state) {
   $record->entity_type = $entity_type;
   $record->bundle = $bundle;
   $record->view_mode = $view_mode;
-  $record->layout = $settings['layout'];
+  $record->layout = $form_state['values']['layout'];
   $record->settings = $settings;
   drupal_write_record('ds_layout_settings', $record);
 
@@ -328,6 +327,47 @@ function ds_panels_layout_save($form, &$form_state) {
  */
 function ds_panels_layout_change($form, &$form_state) {
   $form_state['redirect'] = $_GET['q'] . '/' . $form_state['values']['layout'];
+}
+
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ */
+function ds_panels_form_panels_change_layout_alter(&$form, $form_state) {
+  $form['submit']['#submit'][] = 'ds_panels_layout_change_submit';
+}
+
+/**
+ * Submit callback: update the layout.
+ */
+function ds_panels_layout_change_submit($form, $form_state) {
+
+  $menu = menu_get_item();
+  $entity_type = $menu['page_arguments'][0];
+  $bundle = field_extract_bundle($entity_type, $menu['page_arguments'][1]);
+  $view_mode = $menu['page_arguments'][2];
+
+  ctools_include('export');
+  $args = array(
+    'entity_type' => $entity_type,
+    'bundle' => $bundle,
+    'view_mode' => $view_mode,
+  );
+
+  $record = ctools_export_load_object('ds_layout_settings', 'conditions', $args);
+  if ($record) {
+
+    $lid = $entity_type . '|' . $bundle . '|' . $view_mode;
+    $record = $record[$lid];
+    $layout = $form_state['layout'];
+
+    // Update record.
+    $record->layout = $layout;
+    $record->settings['layout'] = $layout;
+    drupal_write_record('ds_layout_settings', $record, array('id'));
+
+    // Clear entity info cache.
+    cache_clear_all('entity_info', 'cache', TRUE);
+  }
 }
 
 /**
