@@ -334,6 +334,15 @@ function ds_panels_layout_change($form, &$form_state) {
  */
 function ds_panels_form_panels_change_layout_alter(&$form, $form_state) {
   $form['submit']['#submit'][] = 'ds_panels_layout_change_submit';
+  $form['back']['#value'] = t('Cancel');
+  $form['back']['#submit'] = array('ds_panels_layout_change_cancel');
+}
+
+/**
+ * Submit callback: Cancel the layout change.
+ */
+function ds_panels_layout_change_cancel($form, &$form_state) {
+  $form_state['redirect'] = $form_state['destination'];
 }
 
 /**
