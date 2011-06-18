@@ -6,7 +6,6 @@
  *
  * Ideas/todo
  * - Option to still use field UI on an entity/bundle/view mode base ? Now this is ruled out completely.
- * - find out if we can make the ENTITY_view() functions do less.
  * - add variants ?
  * - add selection rules ?
  * - add contexts ?
@@ -93,8 +92,7 @@ function ds_panels_menu_alter(&$items) {
  */
 function ds_panels_theme_registry_alter(&$theme_registry) {
 
-  // Inject ds_panels_entity_variables in all entity theming functions
-  // and remove ds_entity_variables
+  // Inject ds_panels_entity_variables in all entity theming functions.
   $entity_info = entity_get_info();
 
   foreach ($entity_info as $entity => $info) {
