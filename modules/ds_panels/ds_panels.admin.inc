@@ -106,22 +106,13 @@ function ds_panels_display_settings($form, $form_state, $entity_type, $bundle) {
   $form['#entity_type'] = $entity_type;
   $form['#bundle'] = $bundle;
 
-  $entity_info = entity_get_info($entity_type);
-  $view_modes = $entity_info['view modes'];
-  $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-  foreach ($view_modes as $view_mode_name => $view_mode_info) {
-    $options[$view_mode_name] = $view_mode_info['label'];
-    if (!empty($view_mode_settings[$view_mode_name]['custom_settings'])) {
-      $default[] = $view_mode_name;
-    }
-  }
-
-  if (!empty($default)) {
+  $view_modes = ds_panels_get_enabled_view_modes($entity_type, $bundle);
+  if (!empty($view_modes)) {
     $form['view_modes_custom'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Use custom display settings for the following view modes'),
-      '#options' => $options,
-      '#default_value' => $default,
+      '#options' => $view_modes['options'],
+      '#default_value' => $view_modes['default'],
       '#description' => t('<a href="!url">Manage view modes</a>', array('!url' => url('admin/structure/ds/view_modes')))
     );
     $form['modes_save'] = array(
@@ -131,6 +122,34 @@ function ds_panels_display_settings($form, $form_state, $entity_type, $bundle) {
     );
     return $form;
   }
+}
+
+/**
+ * Get enabled view modes for an entity_type and bundle.
+
+ * @param $entity_type
+ *   The name of the entity.
+ * @param $bundle
+ *   The name of the bundle
+ *
+ * @return $default
+ *   A collection of enabled view modes.
+ */
+function ds_panels_get_enabled_view_modes($entity_type, $bundle) {
+  $default = $options = array();
+  $entity_info = entity_get_info($entity_type);
+  $view_modes = $entity_info['view modes'];
+  $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
+  foreach ($view_modes as $view_mode_name => $view_mode_info) {
+    $options[$view_mode_name] = $view_mode_info['label'];
+    if (!empty($view_mode_settings[$view_mode_name]['custom_settings'])) {
+      $default[] = $view_mode_name;
+    }
+  }
+  return array(
+    'options' => $options,
+    'default' => $default
+  );
 }
 
 /**
@@ -182,6 +201,9 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
   ctools_include('plugins', 'panels');
   ctools_include('common', 'panels');
 
+  // Add css
+  $form['#attached']['css'][] = drupal_get_path('module', 'ds_panels') . '/ds_panels.admin.css';
+
   // When panel_layout is empty, render the layout selector with links.
   if (empty($ds_layout) && empty($panel_layout)) {
     $layout_tab_first = TRUE;
@@ -189,6 +211,36 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     $form['layout'] = array(
       '#markup' => '<p>' . t('Select a layout to use for !entity_type > !bundle > !view_mode.', array('!entity_type' => $entity_type, '!bundle' => $bundle, '!view_mode' => $view_mode)) . '</p>' . panels_common_print_layout_links($layouts, $_GET['q'], array('query' => $_GET))
     );
+
+    // See if we can clone from another view mode.
+    $options = array();
+    $view_modes = ds_panels_get_enabled_view_modes($entity_type, $bundle);
+    $view_modes['default'][] = 'default';
+    foreach ($view_modes['default'] as $view_mode_name) {
+      $view_mode_layout = ds_get_layout($entity_type, $bundle, $view_mode_name);
+      if ($view_mode_layout && isset($view_mode_layout['settings']['ds_panels'])) {
+        if ($view_mode_name != 'default') {
+          $options[$view_mode_name] = $view_modes['options'][$view_mode_name];
+        }
+        else {
+          $options['default'] = t('Default');
+        }
+      }
+    }
+
+    if (!empty($options)) {
+      $form['clone'] = array(
+        '#title' => t('Clone layout from existing view mode'),
+        '#type' => 'select',
+        '#options' => $options,
+      );
+      $form['clone_submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Clone'),
+        '#submit' => array('ds_panels_layout_clone'),
+      );
+    }
+
     return $form;
   }
 
@@ -293,9 +345,8 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
   // Check if we need to strip out the panel layout key.
   $form['#strip_off_layout_from_url'] = $layout_tab_first;
 
-  // Add javascript and css.
+  // Add javascript.
   $form['#attached']['js'][] = drupal_get_path('module', 'ds_panels') . '/ds_panels.admin.js';
-  $form['#attached']['css'][] = drupal_get_path('module', 'ds_panels') . '/ds_panels.admin.css';
 
   return $form;
 }
@@ -324,7 +375,7 @@ function ds_panels_content($entity_type, $bundle, $view_mode, $ds_layout, $panel
 /**
  * Submit callback: Save a layout.
  */
-function ds_panels_layout_save($form, &$form_state) {
+function ds_panels_layout_save($form, &$form_state, $clone = FALSE) {
 
   // Setup some variables.
   $entity_type = $form['#entity_type'];
@@ -438,6 +489,44 @@ function ds_panels_layout_save($form, &$form_state) {
   if ($form['#strip_off_layout_from_url']) {
     $form_state['redirect'] = str_replace('/' . $settings['layout'], '', $_GET['q']);
   }
+}
+
+/**
+ * Submit callback: clone an existing layout.
+ */
+function ds_panels_layout_clone($form, &$form_state) {
+  $clone = $form_state['values']['clone'];
+  $entity_type = $form['#entity_type'];
+  $bundle = $form['#bundle'];
+  $view_mode = $form['#view_mode'];
+
+  // Clone and save new display.
+  $layout = ds_get_layout($entity_type, $bundle, $clone);
+  $did = $layout['settings']['did'];
+  $original = panels_load_display($did);
+  $export = panels_export_display($original);
+  ob_start();
+  eval($export);
+  ob_end_clean();
+  panels_save_display($display);
+
+  // Save new layout record for ds.
+  $settings = $layout['settings'];
+  $settings['did'] = $display->did;
+  $record = new stdClass();
+  $record->id = $form['#export_id'];
+  $record->entity_type = $entity_type;
+  $record->bundle = $bundle;
+  $record->view_mode = $view_mode;
+  $record->layout = $settings['layout'];
+  $record->settings = $settings;
+  drupal_write_record('ds_layout_settings', $record);
+
+  // Clear entity info cache.
+  cache_clear_all('entity_info', 'cache', TRUE);
+
+  // Show message.
+  drupal_set_message(t('The layout has been cloned.'));
 }
 
 /**

@@ -8,3 +8,8 @@
 #ds-panels-layout legend {
 	display: block;
 }
+
+#ds-panels-layout .layout-link {
+	height: auto;
+	padding: 0;
+}

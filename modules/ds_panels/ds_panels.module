@@ -6,7 +6,6 @@
  *
  * Ideas/todo
  * - Option to still use field UI on an entity/bundle/view mode base ? Now this is ruled out completely.
- * - Clone panel from other view mode ?
  * - add variants ?
  * - add selection rules ?
  * - add contexts ?
@@ -149,7 +148,7 @@ function ds_panels_ds_panels_default_fields($entity_type, $bundle, $view_mode) {
       $fields['node_created'] = array('label' => t('Created date'), 'type' => 'node_created', 'subtype' => 'node_created');
       $fields['node_author'] = array('label' => t('Author'), 'type' => 'node_author', 'subtype' => 'node_author');
       $fields['node_links'] = array('label' => t('Links'), 'type' => 'node_links', 'subtype' => 'node_links');
-      if (module_exists('comment') && variable_get("comment_$bundle") != COMMENT_NODE_HIDDEN) {
+      if (module_exists('comment') && variable_get("comment_$bundle", COMMENT_NODE_OPEN) != COMMENT_NODE_HIDDEN) {
         $fields['node_comments'] = array('label' => t('Comments'), 'type' => 'node_comments', 'subtype' => 'node_comments');
         $fields['node_comment_form'] = array('label' => t('Comment form'), 'type' => 'node_comment_form', 'subtype' => 'node_comment_form');
       }
