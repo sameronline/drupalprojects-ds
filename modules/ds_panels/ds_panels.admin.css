@@ -1,0 +1,10 @@
+
+.vertical-tabs #ds-panels-layout fieldset.default-fallback {
+  margin: 1em 0;
+  padding: 2.5em 0 0;
+  border: 1px solid #CCCCCC;
+}
+
+#ds-panels-layout legend {
+	display: block;
+}
