@@ -245,7 +245,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
         $view_mode = $this->options['view_mode'];
       }
       else {
-        $view_mode = $this->options['alternating_fieldset']['item_' . $this->view->row_index];
+        $view_mode = isset($this->options['alternating_fieldset']['item_' . $this->view->row_index]) ? $this->options['alternating_fieldset']['item_' . $this->view->row_index] : $this->options['view_mode'];
       }
     }
 
