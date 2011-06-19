@@ -214,17 +214,10 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
 
     // See if we can clone from another view mode.
     $options = array();
-    $view_modes = ds_panels_get_enabled_view_modes($entity_type, $bundle);
-    $view_modes['default'][] = 'default';
-    foreach ($view_modes['default'] as $view_mode_name) {
-      $view_mode_layout = ds_get_layout($entity_type, $bundle, $view_mode_name);
-      if ($view_mode_layout && isset($view_mode_layout['settings']['ds_panels'])) {
-        if ($view_mode_name != 'default') {
-          $options[$view_mode_name] = $view_modes['options'][$view_mode_name];
-        }
-        else {
-          $options['default'] = t('Default');
-        }
+    $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
+    foreach ($ds_layout_settings as $row) {
+      if (isset($row->settings['ds_panels'])) {
+        $options[$row->id] = drupal_ucfirst($row->entity_type) . ' > ' . drupal_ucfirst($row->bundle) . ' > ' . drupal_ucfirst($row->view_mode);
       }
     }
 
@@ -495,14 +488,16 @@ function ds_panels_layout_save($form, &$form_state, $clone = FALSE) {
  * Submit callback: clone an existing layout.
  */
 function ds_panels_layout_clone($form, &$form_state) {
+  ctools_include('export');
+
   $clone = $form_state['values']['clone'];
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form['#view_mode'];
 
   // Clone and save new display.
-  $layout = ds_get_layout($entity_type, $bundle, $clone);
-  $did = $layout['settings']['did'];
+  $layout = ctools_export_crud_load('ds_layout_settings', $clone);
+  $did = $layout->settings['did'];
   $original = panels_load_display($did);
   $export = panels_export_display($original);
   ob_start();
@@ -511,7 +506,7 @@ function ds_panels_layout_clone($form, &$form_state) {
   panels_save_display($display);
 
   // Save new layout record for ds.
-  $settings = $layout['settings'];
+  $settings = $layout->settings;
   $settings['did'] = $display->did;
   $record = new stdClass();
   $record->id = $form['#export_id'];
