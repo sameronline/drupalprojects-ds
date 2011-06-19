@@ -205,11 +205,41 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
       '#default_value' => TRUE,
     );
 
-    $form['ds_panels_layout']['hide_title'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Hide pane titles.'),
-      '#default_value' => FALSE,
+    $form['ds_panels_layout']['fields'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Default fields'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#attributes' => array('class' => array('default-fallback')),
+      '#states' => array(
+        'visible' => array(
+          'input[name="add_default_fields"]' => array('checked' => TRUE),
+        ),
+      ),
     );
+
+    // Use prefix and suffixes to create a table here.
+    $form['ds_panels_layout']['fields']['configure'] = array(
+      '#prefix' => '<table><th>' . t('Field') . '</th><th>' . t('Hide pane title') . '</th>',
+      '#suffix' => '</table>',
+    );
+
+    module_load_include('inc', 'field_ui', 'field_ui.admin');
+    $fields = module_invoke_all('ds_panels_default_fields', $entity_type, $bundle, $view_mode);
+    foreach ($fields as $field_name => $field) {
+      $form['ds_panels_layout']['fields']['configure'][$field_name . '_enable'] = array(
+        '#type' => 'checkbox',
+        '#title' => $field['label'],
+        '#default_value' => TRUE,
+        '#prefix' => '<tr><td>',
+      );
+      $form['ds_panels_layout']['fields']['configure'][$field_name . '_hide_title'] = array(
+        '#type' => 'checkbox',
+        '#default_value' => TRUE,
+        '#prefix' => '</td><td>',
+        '#suffix' => '</td></tr>'
+      );
+    }
   }
 
   $form['ds_panels_layout']['layout'] = array(
@@ -263,8 +293,9 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
   // Check if we need to strip out the panel layout key.
   $form['#strip_off_layout_from_url'] = $layout_tab_first;
 
-  // Add javascript.
-  $form['#attached']['js'][] = drupal_get_path('module', 'ds_panels') . '/ds_panels.js';
+  // Add javascript and css.
+  $form['#attached']['js'][] = drupal_get_path('module', 'ds_panels') . '/ds_panels.admin.js';
+  $form['#attached']['css'][] = drupal_get_path('module', 'ds_panels') . '/ds_panels.admin.css';
 
   return $form;
 }
@@ -333,6 +364,10 @@ function ds_panels_layout_save($form, &$form_state) {
       $fields = module_invoke_all('ds_panels_default_fields', $entity_type, $bundle, $view_mode);
       foreach ($fields as $field_name => $field) {
 
+        if (!$form_state['values'][$field_name . '_enable']) {
+          continue;
+        }
+
         // Get a random region.
         $region = $regions[array_rand($regions)];
 
@@ -347,15 +382,16 @@ function ds_panels_layout_save($form, &$form_state) {
         $pane->panel = $region;
         $pane->shown = TRUE;
 
-        // Default configuration.
+        // Add configuration.
+        $pane->configuration['context'] = 'argument_entity_id:' . $entity_type . '_1';
+        if ($form_state['values'][$field_name . '_hide_title']) {
+          $pane->configuration['override_title'] = TRUE;
+          $pane->configuration['override_title_text'] = '';
+        }
         if (isset($field['field_name'])) {
           $field_display = field_get_display($field, $view_mode, array());
           $pane->configuration['formatter'] = $field_display['type'];
         }
-        $pane->configuration['context'] = 'argument_entity_id:' . $entity_type . '_1';
-        $pane->configuration['override_title'] = $form_state['values']['hide_title'];
-        $pane->configuration['override_title_text'] = '';
-
         // Add pane to content and panels key of display.
         $display->content[$pane_id] = $pane;
         $display->panels[$region][] = $pane_id;

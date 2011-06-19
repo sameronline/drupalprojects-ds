@@ -138,18 +138,20 @@ function ds_panels_panels_dashboard_blocks(&$vars) {
  * Implements hook_ds_panels_default_fields().
  */
 function ds_panels_ds_panels_default_fields($entity_type, $bundle, $view_mode) {
+
   // Get the fields from Field API.
   $fields = field_info_instances($entity_type, $bundle);
 
   // Add other fields like title, etc.
   switch ($entity_type) {
     case 'node':
-      $fields['node_title'] = array('type' => 'node_title', 'subtype' => 'node_title');
-      $fields['node_created'] = array('type' => 'node_created', 'subtype' => 'node_created');
-      $fields['node_links'] = array('type' => 'node_links', 'subtype' => 'node_links');
+      $fields['node_title'] = array('label' => t('Title'), 'type' => 'node_title', 'subtype' => 'node_title');
+      $fields['node_created'] = array('label' => t('Created date'), 'type' => 'node_created', 'subtype' => 'node_created');
+      $fields['node_author'] = array('label' => t('Author'), 'type' => 'node_author', 'subtype' => 'node_author');
+      $fields['node_links'] = array('label' => t('Links'), 'type' => 'node_links', 'subtype' => 'node_links');
       if (module_exists('comment') && variable_get("comment_$bundle") != COMMENT_NODE_HIDDEN) {
-        $fields['node_comment_form'] = array('type' => 'node_comment_form', 'subtype' => 'node_comment_form');
-        $fields['node_comments'] = array('type' => 'node_comments', 'subtype' => 'node_comments');
+        $fields['node_comments'] = array('label' => t('Comments'), 'type' => 'node_comments', 'subtype' => 'node_comments');
+        $fields['node_comment_form'] = array('label' => t('Comment form'), 'type' => 'node_comment_form', 'subtype' => 'node_comment_form');
       }
       break;
   }
