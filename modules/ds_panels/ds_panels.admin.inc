@@ -183,14 +183,23 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     $layout_tab_first = TRUE;
     $layouts = panels_common_get_allowed_layouts('ds_panels');
     $form['layout'] = array(
-      '#markup' => '<div>' . t('Select a layout to use for !entity_type > !bundle > !view_mode.', array('!entity_type' => $entity_type, '!bundle' => $bundle, '!view_mode' => $view_mode)) . '</div>' . panels_common_print_layout_links($layouts, $_GET['q'], array('query' => $_GET))
+      '#markup' => '<p>' . t('Select a layout to use for !entity_type > !bundle > !view_mode.', array('!entity_type' => $entity_type, '!bundle' => $bundle, '!view_mode' => $view_mode)) . '</p>' . panels_common_print_layout_links($layouts, $_GET['q'], array('query' => $_GET))
     );
     return $form;
   }
 
   $form['ds_panels_layout']['info'] = array(
-    '#markup' => t('Configure settings for the %layout layout.', array('%layout' => $panel_layout)),
+    '#markup' => '<p>' . t('Configure settings for the %layout layout.', array('%layout' => $panel_layout)) . '</p>',
   );
+
+  // First time creation of a layout.
+  if (!isset($ds_layout['settings']['did'])) {
+    $form['ds_panels_layout']['hide_title'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Hide pane titles'),
+      '#default_value' => FALSE,
+    );
+  }
 
   $form['ds_panels_layout']['layout'] = array(
     '#type' => 'value',
@@ -255,7 +264,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
 function ds_panels_content($entity_type, $bundle, $view_mode, $ds_layout, $panel_layout) {
 
   if (empty($ds_layout)) {
-    return array('#markup' => t('Select a layout first.'));
+    return array('#markup' => '<p>' . t('Select a layout first.')) . '</p>';
   }
 
   $did = $ds_layout['settings']['did'];
@@ -323,10 +332,13 @@ function ds_panels_layout_save($form, &$form_state) {
       $pane->pid = $pane_id;
       $pane->panel = $region;
       $pane->shown = TRUE;
-      // Add default formatter and entity_id context.
+
+      // Add default configuration.
       $field_display = field_get_display($field, $view_mode, array());
       $pane->configuration['formatter'] = $field_display['type'];
       $pane->configuration['context'] = 'argument_entity_id:' . $entity_type . '_1';
+      $pane->configuration['override_title'] = $form_state['values']['hide_title'];
+      $pane->configuration['override_title_text'] = '';
 
       // Add pane to content and panels key of display.
       $display->content[$pane_id] = $pane;
