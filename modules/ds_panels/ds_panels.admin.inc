@@ -82,15 +82,17 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
   // the code from Field UI, because otherwhise we need override to much.
   if ($view_mode == 'default') {
     $view_modes = drupal_get_form('ds_panels_display_settings', $entity_type, $bundle);
-    $build['tabs']['view_modes'] = array(
-      '#type' => 'fieldset',
-      '#group' => 'tabs',
-      '#title' => t('Custom display settings'),
-      '#weight' => 10,
-    );
-    $build['tabs']['view_modes']['content'] = array(
-      '#markup' => drupal_render($view_modes)
-    );
+    if (!empty($view_modes['view_modes_custom'])) {
+      $build['tabs']['view_modes'] = array(
+        '#type' => 'fieldset',
+        '#group' => 'tabs',
+        '#title' => t('Custom display settings'),
+        '#weight' => 10,
+      );
+      $build['tabs']['view_modes']['content'] = array(
+        '#markup' => drupal_render($view_modes)
+      );
+    }
   }
 
   return $build;
@@ -114,19 +116,21 @@ function ds_panels_display_settings($form, $form_state, $entity_type, $bundle) {
     }
   }
 
-  $form['view_modes_custom'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Use custom display settings for the following view modes'),
-    '#options' => $options,
-    '#default_value' => $default,
-    '#description' => t('<a href="!url">Manage view modes</a>', array('!url' => url('admin/structure/ds/view_modes')))
-  );
-  $form['modes_save'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save'),
-    '#submit' => array('ds_panels_display_settings_save'),
-  );
-  return $form;
+  if (!empty($default)) {
+    $form['view_modes_custom'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Use custom display settings for the following view modes'),
+      '#options' => $options,
+      '#default_value' => $default,
+      '#description' => t('<a href="!url">Manage view modes</a>', array('!url' => url('admin/structure/ds/view_modes')))
+    );
+    $form['modes_save'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save'),
+      '#submit' => array('ds_panels_display_settings_save'),
+    );
+    return $form;
+  }
 }
 
 /**
@@ -194,9 +198,16 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
 
   // First time creation of a layout.
   if (!isset($ds_layout['settings']['did'])) {
+
+    $form['ds_panels_layout']['add_default_fields'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Add default fields'),
+      '#default_value' => TRUE,
+    );
+
     $form['ds_panels_layout']['hide_title'] = array(
       '#type' => 'checkbox',
-      '#title' => t('The layout will be prepopulated with default fields. Toggle the checkbox to hide the pane titles by default for all fields.'),
+      '#title' => t('Hide pane titles.'),
       '#default_value' => FALSE,
     );
   }
@@ -312,39 +323,45 @@ function ds_panels_layout_save($form, &$form_state) {
     $display->layout = $settings['layout'];
     $display->context = ds_get_entity_context($entity_type);
 
-    // Get the first region of the chosen layout.
-    $layout = panels_get_layout($form_state['values']['layout']);
-    $region = key($layout['regions']);
+    // Add default fields if requested.
+    if ($form_state['values']['add_default_fields']) {
+      // Get the first region of the chosen layout.
+      $layout = panels_get_layout($form_state['values']['layout']);
+      $regions = array_keys($layout['regions']);
 
-    // TODO get other default fields like title, author etc.
+      // Get fields to be added on the new display.
+      $fields = module_invoke_all('ds_panels_default_fields', $entity_type, $bundle, $view_mode);
+      foreach ($fields as $field_name => $field) {
 
-    // Get the fields from Field API and add them as panes.
-    $fields = field_info_instances($entity_type, $bundle);
-    foreach ($fields as $field_name => $field) {
+        // Get a random region.
+        $region = $regions[array_rand($regions)];
 
-      // build pane_id.
-      $pane_id = 'new-' . $id;
+        // build pane_id.
+        $pane_id = 'new-' . $id;
 
-      // Create new pane.
-      $type = 'entity_field';
-      $subtype = $entity_type . ':' . $field_name;
-      $pane = panels_new_pane($type, $subtype, TRUE);
-      $pane->pid = $pane_id;
-      $pane->panel = $region;
-      $pane->shown = TRUE;
+        // Create new pane.
+        $type = (isset($field['field_name'])) ? 'entity_field' : $field['type'];
+        $subtype = (isset($field['field_name'])) ? $entity_type . ':' . $field_name : $field['subtype'];
+        $pane = panels_new_pane($type, $subtype, TRUE);
+        $pane->pid = $pane_id;
+        $pane->panel = $region;
+        $pane->shown = TRUE;
 
-      // Add default configuration.
-      $field_display = field_get_display($field, $view_mode, array());
-      $pane->configuration['formatter'] = $field_display['type'];
-      $pane->configuration['context'] = 'argument_entity_id:' . $entity_type . '_1';
-      $pane->configuration['override_title'] = $form_state['values']['hide_title'];
-      $pane->configuration['override_title_text'] = '';
+        // Default configuration.
+        if (isset($field['field_name'])) {
+          $field_display = field_get_display($field, $view_mode, array());
+          $pane->configuration['formatter'] = $field_display['type'];
+        }
+        $pane->configuration['context'] = 'argument_entity_id:' . $entity_type . '_1';
+        $pane->configuration['override_title'] = $form_state['values']['hide_title'];
+        $pane->configuration['override_title_text'] = '';
 
-      // Add pane to content and panels key of display.
-      $display->content[$pane_id] = $pane;
-      $display->panels[$region][] = $pane_id;
+        // Add pane to content and panels key of display.
+        $display->content[$pane_id] = $pane;
+        $display->panels[$region][] = $pane_id;
 
-      $id++;
+        $id++;
+      }
     }
 
     // Save display.
