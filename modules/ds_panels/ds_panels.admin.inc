@@ -183,10 +183,14 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     $layout_tab_first = TRUE;
     $layouts = panels_common_get_allowed_layouts('ds_panels');
     $form['layout'] = array(
-      '#markup' => panels_common_print_layout_links($layouts, $_GET['q'], array('query' => $_GET))
+      '#markup' => '<div>' . t('Select a layout to use for !entity_type > !bundle > !view_mode.', array('!entity_type' => $entity_type, '!bundle' => $bundle, '!view_mode' => $view_mode)) . '</div>' . panels_common_print_layout_links($layouts, $_GET['q'], array('query' => $_GET))
     );
     return $form;
   }
+
+  $form['ds_panels_layout']['info'] = array(
+    '#markup' => t('Configure settings for the %layout layout.', array('%layout' => $panel_layout)),
+  );
 
   $form['ds_panels_layout']['layout'] = array(
     '#type' => 'value',
@@ -237,7 +241,9 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
   }
 
   // Check if we need to strip out the panel layout key.
-  $form['#strip_off'] = $layout_tab_first;
+  $form['#strip_off_layout_from_url'] = $layout_tab_first;
+
+  // Add javascript.
   $form['#attached']['js'][] = drupal_get_path('module', 'ds_panels') . '/ds_panels.js';
 
   return $form;
@@ -283,12 +289,58 @@ function ds_panels_layout_save($form, &$form_state) {
     'ds_panels' => TRUE,
   );
 
-  // Panels display.
+  // Create Panels display if this is the first
+  // time we're saving the layout. We'll also add
+  // common fields as panes to the layout.
   if (!$form['#ds_panels_update']) {
+
+    $id = 1;
+
+    ctools_include('content');
+
+    // Create new display.
     $display = panels_new_display();
     $display->layout = $settings['layout'];
+    $display->context = ds_get_entity_context($entity_type);
+
+    // Get the first region of the chosen layout.
+    $layout = panels_get_layout($form_state['values']['layout']);
+    $region = key($layout['regions']);
+
+    // TODO get other default fields like title, author etc.
+
+    // Get the fields from Field API and add them as panes.
+    $fields = field_info_instances($entity_type, $bundle);
+    foreach ($fields as $field_name => $field) {
+
+      // build pane_id.
+      $pane_id = 'new-' . $id;
+
+      // Create new pane.
+      $type = 'entity_field';
+      $subtype = $entity_type . ':' . $field_name;
+      $pane = panels_new_pane($type, $subtype, TRUE);
+      $pane->pid = $pane_id;
+      $pane->panel = $region;
+      $pane->shown = TRUE;
+      // Add default formatter and entity_id context.
+      $field_display = field_get_display($field, $view_mode, array());
+      $pane->configuration['formatter'] = $field_display['type'];
+      $pane->configuration['context'] = 'argument_entity_id:' . $entity_type . '_1';
+
+      // Add pane to content and panels key of display.
+      $display->content[$pane_id] = $pane;
+      $display->panels[$region][] = $pane_id;
+
+      $id++;
+    }
+
+    // Save display.
     panels_save_display($display);
-    $settings['did'] = $display->did;
+    $did = $display->did;
+
+    // Add the display id to the layout settings for DS.
+    $settings['did'] = $did;
   }
   else {
     $settings['did'] = $form['#did'];
@@ -318,7 +370,7 @@ function ds_panels_layout_save($form, &$form_state) {
   drupal_set_message(t('The layout has been saved.'));
 
   // Strip off layout.
-  if ($form['#strip_off']) {
+  if ($form['#strip_off_layout_from_url']) {
     $form_state['redirect'] = str_replace('/' . $settings['layout'], '', $_GET['q']);
   }
 }
@@ -340,7 +392,7 @@ function ds_panels_form_panels_change_layout_alter(&$form, $form_state) {
 }
 
 /**
- * Submit callback: Cancel the layout change.
+ * Submit callback: cancel the layout change.
  */
 function ds_panels_layout_change_cancel($form, &$form_state) {
   $form_state['redirect'] = $form_state['destination'];

@@ -6,6 +6,7 @@
  *
  * Ideas/todo
  * - Option to still use field UI on an entity/bundle/view mode base ? Now this is ruled out completely.
+ * - Clone panel from other view mode ?
  * - add variants ?
  * - add selection rules ?
  * - add contexts ?

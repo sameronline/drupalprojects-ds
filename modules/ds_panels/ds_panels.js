@@ -6,6 +6,7 @@ Drupal.behaviors.PanelViewModes = {
     if ($('#edit-layout-remove').length > 0) {
       $('#edit-layout-remove').click(function() {
         return confirm(Drupal.t('Are you sure you want to remove the layout ?'));
+        return false;
       });
     }
   }
