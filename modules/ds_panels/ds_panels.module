@@ -39,16 +39,6 @@ function ds_panels_menu() {
  */
 function ds_panels_menu_alter(&$items) {
 
-  // No point in having custom fields & styles if DS is enabled.
-  unset($items['admin/structure/ds/fields']);
-  unset($items['admin/structure/ds/fields/manage']);
-  unset($items['admin/structure/ds/fields/manage_custom']);
-  unset($items['admin/structure/ds/fields/manage_ctools']);
-  unset($items['admin/structure/ds/fields/manage_block']);
-  unset($items['admin/structure/ds/fields/delete']);
-  unset($items['admin/structure/ds/fields/revert']);
-  unset($items['admin/structure/ds/styles']);
-
   $ds_panels_path = drupal_get_path('module', 'ds_panels');
 
   if (module_exists('field_ui')) {
@@ -142,15 +132,6 @@ function ds_panels_panels_dashboard_blocks(&$vars) {
     'description' => t('Manage the layout of view modes for every entity.'),
     'weight' => -3,
   );
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function ds_panels_form_ds_extras_settings_alter(&$form, $form_state) {
-  $form['additional_settings']['#access'] = FALSE;
-  $form['actions']['#access'] = FALSE;
-  $form['info'] = array('#markup' => t('It is adviced to disable the Extras module.'));
 }
 
 /**

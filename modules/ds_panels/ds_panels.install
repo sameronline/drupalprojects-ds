@@ -13,6 +13,4 @@ function ds_panels_install() {
     ->fields(array('weight' => 2))
     ->condition('name', 'ds_panels')
     ->execute();
-
-  drupal_set_message('You should disable the Extras module as it only provides functionality when using the Field UI.');
 }

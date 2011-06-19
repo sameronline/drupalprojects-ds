@@ -196,7 +196,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
   if (!isset($ds_layout['settings']['did'])) {
     $form['ds_panels_layout']['hide_title'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Hide pane titles'),
+      '#title' => t('The layout will be prepopulated with default fields. Toggle the checkbox to hide the pane titles by default for all fields.'),
       '#default_value' => FALSE,
     );
   }
@@ -264,7 +264,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
 function ds_panels_content($entity_type, $bundle, $view_mode, $ds_layout, $panel_layout) {
 
   if (empty($ds_layout)) {
-    return array('#markup' => '<p>' . t('Select a layout first.')) . '</p>';
+    return array('#markup' => '<p>' . t('Select a layout first.') . '</p>');
   }
 
   $did = $ds_layout['settings']['did'];
