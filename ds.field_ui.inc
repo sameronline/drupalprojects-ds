@@ -969,10 +969,10 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     $layout_string = $layout->layout;
     if (empty($chosen_layout['flexible'])) {
       $selected = t('You have selected the %layout_label layout. The default template can be found in %path', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
-      $suggestions = 'Possible template suggestions are: <br />';
-      $suggestions .= '- ' . $layout_string . '--' . $entity_type . '.tpl.php<br />';
-      $suggestions .= '- ' . $layout_string . '--' . $entity_type . '-' . $bundle . '.tpl.php<br />';
-      $suggestions .= '- ' . $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode . '.tpl.php<br />';
+      $suggestions = 'Possible template suggestions are:<ul>';
+      $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '.tpl.php</li>';
+      $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '-' . $bundle . '.tpl.php</li>';
+      $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode . '.tpl.php</li></ul>';
     }
     else {
       $suggestions = '';
