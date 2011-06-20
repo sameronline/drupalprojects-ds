@@ -201,6 +201,36 @@ function _ds_theme() {
 }
 
 /**
+ * Implements hook_features_api().
+ */
+function _ds_features_api() {
+  static $api = FALSE;
+
+  if (!$api) {
+    module_load_include('inc', 'features', 'includes/features.ctools');
+    $api = ctools_component_features_api('ds');
+    foreach ($api as $key => $value) {
+      switch($key) {
+        case 'ds_field_settings':
+          $api[$key]['name'] = 'Display suite field settings';
+          break;
+        case 'ds_layout_settings':
+          $api[$key]['name'] = 'Display suite layout settings';
+          break;
+        case 'ds_view_modes':
+          $api[$key]['name'] = 'Display suite view modes';
+          break;
+        case 'ds_fields':
+          $api[$key]['name'] = 'Display suite fields';
+          break;
+      }
+    }
+  }
+
+  return $api;
+}
+
+/**
  * Implements hook_theme_registry_alter().
  */
 function _ds_theme_registry_alter(&$theme_registry) {

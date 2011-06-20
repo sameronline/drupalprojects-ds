@@ -147,6 +147,14 @@ function ds_module_implements_alter(&$implementations, $hook) {
 }
 
 /**
+ * Implements hook_features_api().
+ */
+function ds_features_api() {
+  module_load_include('inc', 'ds', 'ds.registry');
+  return _ds_features_api();
+}
+
+/**
  * Implements hook_filter_info().
  */
 function ds_filter_info() {
