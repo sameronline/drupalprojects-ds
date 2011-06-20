@@ -265,9 +265,14 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
 
     // Use prefix and suffixes to create a table here.
     $form['ds_panels_layout']['fields']['configure'] = array(
-      '#prefix' => '<table><th>' . t('Field') . '</th><th>' . t('Hide pane title') . '</th>',
+      '#prefix' => '<table><th>' . t('Field') . '</th><th>' . t('Hide pane title') . '</th><th>' . t('Region') . '</th>',
       '#suffix' => '</table>',
     );
+
+    // Get the first region of the chosen layout.
+    $chosen_layout = panels_get_layout($panel_layout);
+    $region_options = $chosen_layout['regions'];
+    $region_keys = array_keys($chosen_layout['regions']);
 
     module_load_include('inc', 'field_ui', 'field_ui.admin');
     $fields = module_invoke_all('ds_panels_default_fields', $entity_type, $bundle, $view_mode);
@@ -281,6 +286,12 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
       $form['ds_panels_layout']['fields']['configure'][$field_name . '_hide_title'] = array(
         '#type' => 'checkbox',
         '#default_value' => TRUE,
+        '#prefix' => '</td><td>',
+      );
+      $form['ds_panels_layout']['fields']['configure'][$field_name . '_region'] = array(
+        '#type' => 'select',
+        '#options' => $region_options,
+        '#default_value' => $region_keys[array_rand($region_keys)],
         '#prefix' => '</td><td>',
         '#suffix' => '</td></tr>'
       );
@@ -400,9 +411,6 @@ function ds_panels_layout_save($form, &$form_state, $clone = FALSE) {
 
     // Add default fields if requested.
     if ($form_state['values']['add_default_fields']) {
-      // Get the first region of the chosen layout.
-      $layout = panels_get_layout($form_state['values']['layout']);
-      $regions = array_keys($layout['regions']);
 
       // Get fields to be added on the new display.
       $fields = module_invoke_all('ds_panels_default_fields', $entity_type, $bundle, $view_mode);
@@ -413,7 +421,7 @@ function ds_panels_layout_save($form, &$form_state, $clone = FALSE) {
         }
 
         // Get a random region.
-        $region = $regions[array_rand($regions)];
+        $region = $form_state['values'][$field_name . '_region'];
 
         // build pane_id.
         $pane_id = 'new-' . $id;
