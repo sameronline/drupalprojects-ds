@@ -259,8 +259,6 @@ function ds_panels_entity_variables(&$vars) {
       $display->entity_type = $entity_type;
       $display->bundle = $bundle;
       $display->view_mode = $view_mode;
-      $info = entity_extract_ids($entity_type, $entity);
-      $display->entity_id = $info[0];
       $displays[$did] = $display;
     }
     else {
@@ -268,6 +266,8 @@ function ds_panels_entity_variables(&$vars) {
     }
     $display->context = $contexts;
 
+    $info = entity_extract_ids($entity_type, $entity);
+    $display->entity_id = $info[0];
 
     // Load renderer.
     if (!isset($renderer)) {
