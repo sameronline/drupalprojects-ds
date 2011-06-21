@@ -3,13 +3,6 @@
 /**
  * @file
  * Uses the panels layout manager to style the view modes.
- *
- * Ideas/todo
- * - Option to still use field UI on an entity/bundle/view mode base ? Now this is ruled out completely.
- * - add variants ?
- * - add selection rules ?
- * - add contexts ?
- * - more ?
  */
 
 /**
@@ -31,6 +24,94 @@ function ds_panels_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Implements hook_flush_caches().
+ */
+function ds_panels_flush_caches() {
+  return array('cache_ds_panels');
+}
+
+/**
+ * Implements hook_panels_dashboard_blocks().
+ */
+function ds_panels_panels_dashboard_blocks(&$vars) {
+  $vars['links']['ds_panels'] = array(
+    'title' => l(t('Panel view modes'), 'admin/structure/ds/layout'),
+    'description' => t('Manage the layout of view modes for every entity.'),
+    'weight' => -3,
+  );
+}
+
+/**
+ * Implements hook_ds_panels_default_fields().
+ */
+function ds_panels_ds_panels_default_fields($entity_type, $bundle, $view_mode) {
+
+  // Get the fields from Field API.
+  $fields = field_info_instances($entity_type, $bundle);
+
+  // Add other fields like title, etc.
+  switch ($entity_type) {
+    case 'node':
+      $fields['node_title'] = array('label' => t('Title'), 'type' => 'node_title', 'subtype' => 'node_title');
+      $fields['node_created'] = array('label' => t('Created date'), 'type' => 'node_created', 'subtype' => 'node_created');
+      $fields['node_author'] = array('label' => t('Author'), 'type' => 'node_author', 'subtype' => 'node_author');
+      $fields['node_links'] = array('label' => t('Links'), 'type' => 'node_links', 'subtype' => 'node_links');
+      if (module_exists('comment') && variable_get("comment_$bundle", COMMENT_NODE_OPEN) != COMMENT_NODE_HIDDEN) {
+        $fields['node_comments'] = array('label' => t('Comments'), 'type' => 'node_comments', 'subtype' => 'node_comments');
+        $fields['node_comment_form'] = array('label' => t('Comment form'), 'type' => 'node_comment_form', 'subtype' => 'node_comment_form');
+      }
+      break;
+  }
+
+  return $fields;
+}
+
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function ds_panels_ctools_plugin_directory($module, $plugin) {
+  if ($plugin == 'cache') {
+    return 'plugins/' . $plugin;
+  }
+}
+
+/**
+ * Implements hook_ctools_plugin_type().
+ */
+function ds_panels_ctools_plugin_type() {
+  return array('cache' => array());
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function ds_panels_entity_update($entity, $type) {
+  _ds_panels_cache_clear($entity, $type);
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function ds_panels_entity_delete($entity, $type) {
+  _ds_panels_cache_clear($entity, $type);
+}
+
+/**
+ * Clears the entity display from cache_ds_panels bin.
+ *
+ * @param $entity
+ *   The full entity object.
+ * @param $type
+ *   The name of the $entity.
+ */
+function _ds_panels_cache_clear($entity, $type) {
+  $info = entity_extract_ids($type, $entity);
+  $cid = $type . ':' . $info[0];
+  cache_clear_all($cid, 'cache_ds_panels', TRUE);
 }
 
 /**
@@ -82,6 +163,13 @@ function ds_panels_menu_alter(&$items) {
  */
 function ds_panels_theme_registry_alter(&$theme_registry) {
 
+ /**
+  * @todo
+  * - See if we can make core do less on fields when there's stuff in the cache.
+  *   maybe we should really get rid from our entities preprocess function
+  *   and fully go for node_preprocess stuff or not ? (or whatever way we go)
+  */
+
   // Inject ds_panels_entity_variables in all entity theming functions.
   $entity_info = entity_get_info();
 
@@ -123,42 +211,6 @@ function ds_panels_module_implements_alter(&$implementations, $hook) {
 }
 
 /**
- * Implements hook_panels_dashboard_blocks().
- */
-function ds_panels_panels_dashboard_blocks(&$vars) {
-  $vars['links']['ds_panels'] = array(
-    'title' => l(t('Panel view modes'), 'admin/structure/ds/layout'),
-    'description' => t('Manage the layout of view modes for every entity.'),
-    'weight' => -3,
-  );
-}
-
-/**
- * Implements hook_ds_panels_default_fields().
- */
-function ds_panels_ds_panels_default_fields($entity_type, $bundle, $view_mode) {
-
-  // Get the fields from Field API.
-  $fields = field_info_instances($entity_type, $bundle);
-
-  // Add other fields like title, etc.
-  switch ($entity_type) {
-    case 'node':
-      $fields['node_title'] = array('label' => t('Title'), 'type' => 'node_title', 'subtype' => 'node_title');
-      $fields['node_created'] = array('label' => t('Created date'), 'type' => 'node_created', 'subtype' => 'node_created');
-      $fields['node_author'] = array('label' => t('Author'), 'type' => 'node_author', 'subtype' => 'node_author');
-      $fields['node_links'] = array('label' => t('Links'), 'type' => 'node_links', 'subtype' => 'node_links');
-      if (module_exists('comment') && variable_get("comment_$bundle", COMMENT_NODE_OPEN) != COMMENT_NODE_HIDDEN) {
-        $fields['node_comments'] = array('label' => t('Comments'), 'type' => 'node_comments', 'subtype' => 'node_comments');
-        $fields['node_comment_form'] = array('label' => t('Comment form'), 'type' => 'node_comment_form', 'subtype' => 'node_comment_form');
-      }
-      break;
-  }
-
-  return $fields;
-}
-
-/**
  * Menu callback: settings for DS panels.
  */
 function ds_panels_view_mode_settings() {
@@ -170,26 +222,86 @@ function ds_panels_view_mode_settings() {
  * Render the entity through the Panels layout.
  */
 function ds_panels_entity_variables(&$vars) {
+
+  static $displays = array();
+  static $renderer = NULL;
+
   if (isset($vars['elements']) && $layout = ds_get_layout($vars['elements']['#entity_type'], $vars['elements']['#bundle'], $vars['elements']['#view_mode'])) {
 
     $entity_type = $vars['elements']['#entity_type'];
+    $bundle = $vars['elements']['#bundle'];
+    $view_mode = $vars['elements']['#view_mode'];
     $entity = $vars[$vars['elements']['#entity_type']];
     ctools_include('plugins', 'panels');
 
     $contexts = array();
+    // Add entity context to begin with.
     ds_create_entity_context($entity_type, $entity, $contexts);
 
-    // Load and prepare panel content.
-    // @todo create our own redender pipeline and always use that one ?
-    $display = panels_load_display($layout['settings']['did']);
-    $display->css_id = $layout['settings']['css_id'];
+    // Load and prepare panel content. We will always use the
+    // standard renderer from Panels and call some of the methods
+    // ourselves here, except for the display caching which we'll
+    // handle ourself. Using the standard renderer for now
+    // ensures that we do not have to keep track of every commit
+    // on the Panels project (except when methods might change of course hehe).
+    // We do store the pipeline in the layout settings of ds though,
+    // because if there's anyone coming up with a patch later, we won't
+    // break existing configurations.
+    // @todo revise this. This is good since layout caching works
+    // but code is not clean enough.
+    // @todo seems like caching doesn't fire on teaser list ?
+
+    // Load the display.
+    $did = $layout['settings']['did'];
+    if (!isset($displays[$did])) {
+      $display = panels_load_display($did);
+      $display->css_id = $layout['settings']['css_id'];
+      $display->entity_type = $entity_type;
+      $display->bundle = $bundle;
+      $display->view_mode = $view_mode;
+      $info = entity_extract_ids($entity_type, $entity);
+      $display->entity_id = $info[0];
+      $displays[$did] = $display;
+    }
+    else {
+      $display = $displays[$did];
+    }
     $display->context = $contexts;
-    $renderer = panels_get_renderer($layout['settings']['pipeline'], $display);
-    $renderer->prepare();
-    $renderer->render_panes();
-    $renderer->render_regions();
+
+
+    // Load renderer.
+    if (!isset($renderer)) {
+      $pipeline = $layout['settings']['pipeline'];
+      $renderer = panels_get_renderer($pipeline, $display);
+    }
+
+    // Attach out-of-band data first.
     $renderer->add_meta();
+
+    if (empty($renderer->display->cache['method']) || !empty($renderer->display->skip_cache)) {
+      $renderer->prepare();
+      $renderer->render_panes();
+      $renderer->render_regions();
+      $content = $renderer->rendered['regions'];
+    }
+    else {
+      $cache = panels_get_cached_content($renderer->display, $renderer->display->args, $renderer->display->context);
+      if ($cache === FALSE) {
+        $renderer->prepare();
+        $renderer->render_panes();
+        $renderer->render_regions();
+        $content = $renderer->rendered['regions'];
+        $cache = new panels_cache_object();
+        $cache->set_content($content);
+        panels_set_cached_content($cache, $renderer->display, $renderer->display->args, $renderer->display->context);
+      }
+      $content = $cache->content;
+    }
+
+    // Add the panels template file as the theme hook suggestion.
     $vars['theme_hook_suggestion'] = 'panels_' . $display->layout;
-    $vars['content'] = $renderer->rendered['regions'];
+
+    // Overwrite $vars['content'].
+    $vars['content'] = $content;
   }
 }

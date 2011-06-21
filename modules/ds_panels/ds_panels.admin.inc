@@ -265,7 +265,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
 
     // Use prefix and suffixes to create a table here.
     $form['ds_panels_layout']['fields']['configure'] = array(
-      '#prefix' => '<table><th>' . t('Field') . '</th><th>' . t('Hide pane title') . '</th><th>' . t('Region') . '</th>',
+      '#prefix' => '<table id="ds-panels-layout-table"><th>' . t('Field') . '</th><th>' . t('Pane title') . '</th><th>' . t('Region') . '</th>',
       '#suffix' => '</table>',
     );
 
@@ -274,17 +274,20 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     $region_options = $chosen_layout['regions'];
     $region_keys = array_keys($chosen_layout['regions']);
 
+    $i = 1;
     module_load_include('inc', 'field_ui', 'field_ui.admin');
     $fields = module_invoke_all('ds_panels_default_fields', $entity_type, $bundle, $view_mode);
     foreach ($fields as $field_name => $field) {
+      $class = ($i % 2) ? 'odd' : 'even';
       $form['ds_panels_layout']['fields']['configure'][$field_name . '_enable'] = array(
         '#type' => 'checkbox',
         '#title' => $field['label'],
         '#default_value' => TRUE,
-        '#prefix' => '<tr><td>',
+        '#prefix' => '<tr class=' . $class . '><td>',
       );
       $form['ds_panels_layout']['fields']['configure'][$field_name . '_hide_title'] = array(
         '#type' => 'checkbox',
+        '#title' => t('Hide'),
         '#default_value' => TRUE,
         '#prefix' => '</td><td>',
       );
@@ -295,6 +298,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
         '#prefix' => '</td><td>',
         '#suffix' => '</td></tr>'
       );
+      $i++;
     }
   }
 
@@ -309,21 +313,6 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     '#size' => 30,
     '#description' => t('An ID that can be used by CSS to style the panel.'),
     '#default_value' => isset($ds_layout['settings']['css_id']) ? $ds_layout['settings']['css_id'] : '',
-  );
-
-  // Support for different rendering pipelines
-  $pipelines = panels_get_renderer_pipelines();
-
-  $options = array();
-  foreach ($pipelines as $name => $pipeline) {
-    $options[$name] = check_plain($pipeline->admin_title) . '<div class="description">' . check_plain($pipeline->admin_description) . '</div>';
-  }
-
-  $form['ds_panels_layout']['pipeline'] = array(
-    '#type' => 'radios',
-    '#options' => $options,
-    '#title' => t('Renderer'),
-    '#default_value' => isset($ds_layout['settings']['pipeline']) ? $ds_layout['settings']['pipeline'] : 'standard',
   );
 
   $form['ds_panels_layout']['actions']['save'] = array(
@@ -390,7 +379,7 @@ function ds_panels_layout_save($form, &$form_state, $clone = FALSE) {
   $settings = array(
     'css_id' => $form_state['values']['css_id'],
     'layout' => $form_state['values']['layout'],
-    'pipeline' => $form_state['values']['pipeline'],
+    'pipeline' => 'standard',
     'hide_empty_regions' => FALSE,
     'ds_panels' => TRUE,
   );

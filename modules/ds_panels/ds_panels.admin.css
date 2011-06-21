@@ -13,3 +13,16 @@
 	height: auto;
 	padding: 0;
 }
+
+#ds-panels-layout-table {
+  width: auto;
+}
+
+#ds-panels-layout-table td {
+	padding: 3px 5px;
+}
+
+#ds-panels-layout-table .form-item {
+	padding: 0 3px;
+	margin: 0;
+}
