@@ -247,8 +247,6 @@ function ds_panels_entity_variables(&$vars) {
     // We do store the pipeline in the layout settings of ds though,
     // because if there's anyone coming up with a patch later, we won't
     // break existing configurations.
-    // @todo revise this. This is good since layout caching works
-    // but code is not clean enough.
     // @todo seems like caching doesn't fire on teaser list ?
 
     // Load the display.
@@ -278,24 +276,27 @@ function ds_panels_entity_variables(&$vars) {
     // Attach out-of-band data first.
     $renderer->add_meta();
 
-    if (empty($renderer->display->cache['method']) || !empty($renderer->display->skip_cache)) {
+    $cache = FALSE;
+    $cacheable = isset($renderer->display->cache['method']) && !empty($renderer->display->cache['method']);
+    if ($cacheable) {
+      $cache = panels_get_cached_content($renderer->display, $renderer->display->args, $renderer->display->context);
+      if ($cache) {
+        $content = $cache->content;
+      }
+    }
+
+    // If no content is found from cache, call the $renderer
+    // methods. In display has a cache setting, store it into cache table.
+    if ($cache === FALSE) {
       $renderer->prepare();
       $renderer->render_panes();
       $renderer->render_regions();
       $content = $renderer->rendered['regions'];
-    }
-    else {
-      $cache = panels_get_cached_content($renderer->display, $renderer->display->args, $renderer->display->context);
-      if ($cache === FALSE) {
-        $renderer->prepare();
-        $renderer->render_panes();
-        $renderer->render_regions();
-        $content = $renderer->rendered['regions'];
+      if ($cacheable) {
         $cache = new panels_cache_object();
         $cache->set_content($content);
         panels_set_cached_content($cache, $renderer->display, $renderer->display->args, $renderer->display->context);
       }
-      $content = $cache->content;
     }
 
     // Add the panels template file as the theme hook suggestion.
