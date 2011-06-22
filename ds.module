@@ -230,7 +230,7 @@ function ds_build_fields_and_regions(&$object, $module) {
         if (isset($field_setting['css-class']) && !empty($field_setting['css-class'])) {
           $class .= ' '. $field_setting['css-class'];
         }
-        if ($field['type'] == DS_FIELD_TYPE_GROUP) {
+        if (isset($field['type']) && $field['type'] == DS_FIELD_TYPE_GROUP) {
           $class .= ' field-group';
         }
 
@@ -763,7 +763,7 @@ function ds_show_field($module, $type_name, $build_mode, $field) {
   static $show_fields = array();
   if (!isset($show_fields[$module][$type_name][$build_mode][$field])) {
     $display_settings = ds_get_settings($module, $type_name, $build_mode);
-    $show_fields[$module][$type_name][$field] = (isset($display_settings['fields'][$field]) && $display_settings['fields'][$field]['region'] != 'disabled') ? TRUE : FALSE;
+    $show_fields[$module][$type_name][$build_mode][$field] = (isset($display_settings['fields'][$field]) && $display_settings['fields'][$field]['region'] != 'disabled') ? TRUE : FALSE;
   }
   return $show_fields[$module][$type_name][$build_mode][$field];
 }

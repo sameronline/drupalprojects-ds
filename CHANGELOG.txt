@@ -7,6 +7,7 @@
 - #1004096 by swentel: deleting a build mode breaks synced build modes.
 - #1016664 by jstoller: Add field count variable to groups.
 - #1059336 by jstoller: Add field variables containing groups and regions.
+- #1194922 and 1194914 by swentel and dbeheydt: fix notices with new patch.
 - Hide the classes select box on views fields if there are no styles.
 
 -------------------------------------------------------------------------------------
