@@ -415,10 +415,18 @@ class dsLayoutsStylesTests extends dsBaseTest {
     $hide = array(
       'additional_settings[hide_empty_regions]' => '1',
     );
-
     $this->dsConfigureUI($hide);
     $this->drupalGet('node/' . $node->nid);
     $this->assertNoRaw('group-footer', 'No region footer found');
+
+    // Test disable sidebar regions.
+    $this->assertRaw('sidebar-first', 'Left sidebar found.');
+    $hide = array(
+      'additional_settings[hide_sidebars]' => '1',
+    );
+    $this->dsConfigureUI($hide);
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertNoRaw('sidebar-first', 'Left sidebar not found.');
 
     // Let's create a block field, enable the full mode first.
     $edit = array('additional_settings[modes][view_modes_custom][full]' => '1');

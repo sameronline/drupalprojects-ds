@@ -482,8 +482,14 @@ function ds_field_attach_view_alter(&$build, $context) {
     }
   }
 
-  // Add path to css file for this layout.
+  // Add path to css file for this layout and disable block regions if necessary.
   if (($layout = ds_get_layout($entity_type, $bundle, $view_mode)) && isset($layout['css']) && !isset($loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'])) {
+
+    // Disable blocks.
+    if (isset($layout['settings']['hide_sidebars']) && $layout['settings']['hide_sidebars']) {
+      ctools_set_no_blocks();
+    }
+
     // Register css file.
     $loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'] = TRUE;
     // Add css file.

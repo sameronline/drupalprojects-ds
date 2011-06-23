@@ -219,6 +219,34 @@ function ds_panels_view_mode_settings() {
 }
 
 /**
+ * Implements hook_entity_view_alter().
+ */
+function ds_panels_entity_view_alter(&$build, $entity_type) {
+  static $loaded = array();
+
+  // If views and core doesn't send information along on the entity,
+  // Display suite doesn't have a context to render the fields.
+  if (!isset($build['#entity_type']) && !isset($build['#bundle'])) {
+    return;
+  }
+
+  $bundle = $build['#bundle'];
+  $view_mode = $build['#view_mode'];
+
+  // Disable blocks.
+  if (($layout = ds_get_layout($entity_type, $bundle, $view_mode)) && isset($layout['settings']['hide_sidebars']) && !isset($loaded[$entity_type][$bundle][$view_mode])) {
+
+    // Store the setting.
+    $loaded[$entity_type][$bundle][$view_mode] = TRUE;
+
+    // Disable blocks.
+    if (isset($layout['settings']['hide_sidebars']) && $layout['settings']['hide_sidebars']) {
+      ctools_set_no_blocks();
+    }
+  }
+}
+
+/**
  * Render the entity through the Panels layout.
  */
 function ds_panels_entity_variables(&$vars) {
@@ -253,6 +281,7 @@ function ds_panels_entity_variables(&$vars) {
     $did = $layout['settings']['did'];
     if (!isset($displays[$did])) {
       $display = panels_load_display($did);
+      // @todo this doesn't work at all.
       $display->css_id = $layout['settings']['css_id'];
       $display->entity_type = $entity_type;
       $display->bundle = $bundle;

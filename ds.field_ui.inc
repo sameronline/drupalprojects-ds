@@ -440,6 +440,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   // Determine layout variables.
   $layout = $form_state['values']['additional_settings']['layout'];
   $hide_empty_regions = $form_state['values']['additional_settings']['hide_empty_regions'];
+  $hide_sidebars = $form_state['values']['additional_settings']['hide_sidebars'];
   $old_layout = $form_state['values']['additional_settings']['old_layout'];
   $new_layout = ($layout != $old_layout) || empty($old_layout);
 
@@ -450,7 +451,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $record->bundle = $bundle;
   $record->view_mode = $view_mode;
   $record->layout = $layout;
-  $record->settings = array('hide_empty_regions' => $hide_empty_regions);
+  $record->settings = array('hide_empty_regions' => $hide_empty_regions, 'hide_sidebars' => $hide_sidebars);
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
@@ -1014,6 +1015,14 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
     '#default_value' => isset($layout->settings['hide_empty_regions']) ? $layout->settings['hide_empty_regions'] : FALSE,
     '#weight' => 2,
     '#access' => empty($chosen_layout['flexible']),
+  );
+
+  $form['additional_settings']['ds_layouts']['hide_sidebars'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable Drupal blocks/regions'),
+    '#description' => t('Check this to have the page disable all sidebar regions displayed in the theme. Note that some themes support this setting better than others. If in doubt, try with stock themes to see.'),
+    '#default_value' => isset($layout->settings['hide_sidebars']) ? $layout->settings['hide_sidebars'] : FALSE,
+    '#weight' => 3,
   );
 
   if (!empty($layout) && isset($layout->regions)) {

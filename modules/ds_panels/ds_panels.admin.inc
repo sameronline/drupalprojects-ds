@@ -315,6 +315,13 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     '#default_value' => isset($ds_layout['settings']['css_id']) ? $ds_layout['settings']['css_id'] : '',
   );
 
+  $form['ds_panels_layout']['hide_sidebars'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable Drupal blocks/regions'),
+    '#description' => t('Check this to have the page disable all sidebar regions displayed in the theme. Note that some themes support this setting better than others. If in doubt, try with stock themes to see.'),
+    '#default_value' => isset($ds_layout['settings']['hide_sidebars']) ? $ds_layout['settings']['hide_sidebars'] : FALSE,
+  );
+
   $form['ds_panels_layout']['actions']['save'] = array(
     '#type' => 'submit',
     '#value' => t('Save layout'),
@@ -379,6 +386,7 @@ function ds_panels_layout_save($form, &$form_state, $clone = FALSE) {
   $settings = array(
     'css_id' => $form_state['values']['css_id'],
     'layout' => $form_state['values']['layout'],
+    'hide_sidebars' => $form_state['values']['hide_sidebars'],
     'pipeline' => 'standard',
     'hide_empty_regions' => FALSE,
     'ds_panels' => TRUE,

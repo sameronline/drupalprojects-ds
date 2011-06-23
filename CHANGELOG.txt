@@ -3,6 +3,7 @@
 -------------------------------------------------------------------------------------
 - #1193114 by swentel: make sure features don't list Display suite x times.
 - Panel view modes module: use Panels layouts to manage the view modes.
+- Hide sidebar blocks option.
 
 -------------------------------------------------------------------------------------
 7.x-1.2 14/06/2011
