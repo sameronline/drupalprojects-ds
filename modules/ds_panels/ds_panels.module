@@ -281,8 +281,6 @@ function ds_panels_entity_variables(&$vars) {
     $did = $layout['settings']['did'];
     if (!isset($displays[$did])) {
       $display = panels_load_display($did);
-      // @todo this doesn't work at all.
-      $display->css_id = $layout['settings']['css_id'];
       $display->entity_type = $entity_type;
       $display->bundle = $bundle;
       $display->view_mode = $view_mode;
@@ -330,6 +328,9 @@ function ds_panels_entity_variables(&$vars) {
 
     // Add the panels template file as the theme hook suggestion.
     $vars['theme_hook_suggestion'] = 'panels_' . $display->layout;
+
+    // Add css ID.
+    $vars['css_id'] = $layout['settings']['css_id'];
 
     // Overwrite $vars['content'].
     $vars['content'] = $content;
