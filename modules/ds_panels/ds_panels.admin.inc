@@ -29,8 +29,12 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode, $panel_layout = '
   // Load ds field ui.
   module_load_include('inc', 'ds', 'ds.field_ui');
 
-  // Get the ds layout.
+  // Get the ds layout. Make sure this does not break in case there was
+  // a layout already created with Field UI.
   $ds_layout = ds_get_layout($entity_type, $bundle, $view_mode, TRUE, $individual);
+  if (!empty($ds_layout) && !isset($ds_layout['settings']['ds_panels'])) {
+    $ds_layout = NULL;
+  }
 
   // Check if the layout is added as an extra argument in the URI.
   // Depending on the outcome, the selection tab will display

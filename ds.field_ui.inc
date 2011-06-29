@@ -963,6 +963,11 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
   if (isset($ds_layout_settings[$form['#export_id']])) {
     $layout = $ds_layout_settings[$form['#export_id']];
+    // Make sure this does not break in case there was
+    // a layout already created with Panel view modes.
+    if (isset($layout->settings['ds_panels'])) {
+      $layout = NULL;
+    }
   }
 
   if (!empty($layout) && isset($layout->layout) && isset($ds_layouts[$layout->layout])) {
