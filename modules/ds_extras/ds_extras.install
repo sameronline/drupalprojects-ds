@@ -102,7 +102,7 @@ function ds_extras_uninstall() {
  */
 function ds_extras_schema_alter(&$schema) {
 
-  // Add a field ds_extras to the node_revision table in order
+  // Add a field ds_switch to the node_revision table in order
   // to store the name of view mode to switch to.
   if (isset($schema['node_revision'])) {
     $schema['node_revision']['fields']['ds_switch'] = array(

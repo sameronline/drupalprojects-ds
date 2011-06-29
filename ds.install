@@ -177,6 +177,13 @@ function ds_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
+      'type' => array(
+        'description' => 'The type of the layout',
+        'type' => 'int',
+        'size' => 'small',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
       'settings' => array(
         'description' => 'The settings for this layout.',
         'type' => 'blob',
@@ -313,3 +320,12 @@ function ds_update_7002() {
   $schema = ds_schema();
   db_change_field('ds_layout_settings', 'layout', 'layout', $schema['ds_layout_settings']['fields']['layout']);
 }
+
+/**
+ * Adds type to the ds_layout_settings table.
+ */
+function ds_update_7003() {
+  $schema = ds_schema();
+  db_add_field('ds_layout_settings', 'type', $schema['ds_layout_settings']['fields']['type']);
+}
+
