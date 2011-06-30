@@ -1,6 +1,0 @@
-name = "Panel view modes"
-description = "Use panels instead of Field UI drag & drop screen to manage the layout of view modes of all entities."
-core = "7.x"
-package = "Display suite"
-dependencies[] = ds
-dependencies[] = panels

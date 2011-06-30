@@ -15,6 +15,16 @@ function ds_test_install() {
   variable_set('ds_extras_field_template', TRUE);
 }
 
+function ds_test_ctools_plugin_directory($module, $plugin) {
+  // Safety: go away if CTools is not at an appropriate version.
+  if (!module_invoke('ctools', 'api_version', PANELS_REQUIRED_CTOOLS_API)) {
+    return;
+  }
+  if ($module == 'panels') {
+    return 'plugins/' . $plugin;
+  }
+}
+
 /**
  * Implements hook_ds_layout_info_alter().
  */

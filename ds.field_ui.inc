@@ -454,7 +454,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $record->settings = array('hide_empty_regions' => $hide_empty_regions, 'hide_sidebars' => $hide_sidebars);
 
   // Remove old layout if necessary.
-  if ($new_layout && !empty($old_layout)) {
+  if (($new_layout && !empty($old_layout)) || $form['#panel']) {
     db_delete('ds_layout_settings')
       ->condition('entity_type', $entity_type)
       ->condition('bundle', $bundle)
@@ -462,7 +462,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       ->execute();
   }
 
-  if ($new_layout && !empty($layout)) {
+  if (($new_layout && !empty($layout)) || $form['#panel']) {
     // Save new layout.
     $record->settings = $record->settings;
 
@@ -961,12 +961,14 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
   ctools_include('export');
   $layout = new stdClass();
   $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
+  $form['#panel'] = FALSE;
   if (isset($ds_layout_settings[$form['#export_id']])) {
     $layout = $ds_layout_settings[$form['#export_id']];
     // Make sure this does not break in case there was
     // a layout already created with Panel view modes.
     if (isset($layout->settings['ds_panels'])) {
       $layout = NULL;
+      $form['#panel'] = TRUE;
     }
   }
 

@@ -80,19 +80,33 @@ function ds_extras_settings($form) {
     ),
   );
 
-  $form['additional_settings']['fs3'] = array(
+  if (module_exists('panels')) {
+    $form['additional_settings']['fs3'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Panel view modes'),
+    );
+
+    $form['additional_settings']['fs3']['ds_extras_panel_view_modes'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable Panels editor on view modes'),
+      '#description' => t('With this option, you can use the Panels editor instead of Field UI. It will default to the Panels editor, but you will still be able to switch back as well.'),
+      '#default_value' => variable_get('ds_extras_panel_view_modes', FALSE),
+    );
+  }
+
+  $form['additional_settings']['fs4'] = array(
     '#type' => 'fieldset',
     '#title' => t('Other'),
   );
 
-  $form['additional_settings']['fs3']['ds_extras_switch_view_mode'] = array(
+  $form['additional_settings']['fs4']['ds_extras_switch_view_mode'] = array(
     '#type' => 'checkbox',
     '#title' => t('Switch view mode'),
     '#description' => t('Change view modes for individual nodes. A new tab "Display settings" will appear on the content create form.'),
     '#default_value' => variable_get('ds_extras_switch_view_mode', FALSE),
   );
 
-  $form['additional_settings']['fs3']['ds_extras_switch_field'] = array(
+  $form['additional_settings']['fs4']['ds_extras_switch_field'] = array(
     '#type' => 'checkbox',
     '#title' => t('Switch view mode field'),
     '#description' => t('Adds a field with links to switch view modes inline with Ajax. Only works for nodes at this time.'),
@@ -100,7 +114,7 @@ function ds_extras_settings($form) {
   );
 
   if (module_exists('contextual') && module_exists('field_ui')) {
-    $form['additional_settings']['fs3']['ds_extras_contextual'] = array(
+    $form['additional_settings']['fs4']['ds_extras_contextual'] = array(
       '#type' => 'checkbox',
       '#title' => t('Contextual links'),
       '#description' => t('Add contextual links (if possible) to manage the layout.'),
@@ -108,7 +122,7 @@ function ds_extras_settings($form) {
     );
   }
 
-  $form['additional_settings']['fs3']['ds_extras_hide_page_title'] = array(
+  $form['additional_settings']['fs4']['ds_extras_hide_page_title'] = array(
     '#type' => 'checkbox',
     '#title' => t('Hide page title'),
     '#description' => t('An extra option will appear on the "Manage displays" screen of the "Full content" build mode.'),
@@ -116,7 +130,7 @@ function ds_extras_settings($form) {
   );
 
   if (module_exists('block')) {
-    $form['additional_settings']['fs3']['ds_extras_region_to_block'] = array(
+    $form['additional_settings']['fs4']['ds_extras_region_to_block'] = array(
       '#type' => 'checkbox',
       '#title' => t('Region to block'),
       '#description' => t('Create additional regions exposed as block. Note: this will not work on the default view mode.'),
@@ -125,7 +139,7 @@ function ds_extras_settings($form) {
   }
 
   if (module_exists('views')) {
-    $form['additional_settings']['fs3']['ds_extras_vd'] = array(
+    $form['additional_settings']['fs4']['ds_extras_vd'] = array(
       '#type' => 'checkbox',
       '#title' => t('Views displays'),
       '#description' => t('Manage the layout of your Views through a drag and drop interface at !url.', array('!url' => l(url('admin/structure/ds'), 'admin/structure/ds', array('absolute' => TRUE)))),
@@ -134,7 +148,7 @@ function ds_extras_settings($form) {
   }
 
   if (module_exists('fivestar')) {
-    $form['additional_settings']['fs3']['ds_extras_fivestar'] = array(
+    $form['additional_settings']['fs4']['ds_extras_fivestar'] = array(
       '#type' => 'checkbox',
       '#title' => t('Fivestar field'),
       '#default_value' => variable_get('ds_extras_fivestar', FALSE),
@@ -500,15 +514,6 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
         }
       }
     }
-  }
-}
-
-/**
- * Implements hook_ds_layout_settings_alter().
- */
-function ds_extras_ds_layout_settings_alter($record, $form_state) {
-  if (isset($form_state['values']['additional_settings']['ds_hide_page_title'])) {
-    $record->settings['hide_page_title'] = $form_state['values']['additional_settings']['ds_hide_page_title'];
   }
 }
 

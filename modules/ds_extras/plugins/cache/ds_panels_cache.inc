@@ -102,7 +102,7 @@ function ds_panels_cache_get_id($conf, $display, $args, $contexts, $pane) {
     $id .= ':' . $language->language;
   }
 
-  if(!empty($pane->configuration['use_pager'])) {
+  if (!empty($pane->configuration['use_pager'])) {
     $id .= ':p' . check_plain($_GET['page']);
   }
 

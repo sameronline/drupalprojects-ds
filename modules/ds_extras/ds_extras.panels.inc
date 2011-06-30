@@ -3,6 +3,9 @@
 /**
  * @file
  * Administrative functions for DS panels.
+ *
+ * @todo hide page title option on layout screen.
+ * @todo back button is broken.
  */
 
 /**
@@ -47,7 +50,7 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
   if (!empty($ds_layout) && !empty($panel_layout) && $layout_tab_first) {
     $display = panels_load_display($ds_layout['settings']['did']);
     $display->context = ds_get_entity_context($entity_type);
-    $destination = str_replace('/' . $panel_layout,'', $_GET['q']);
+    $destination = str_replace('/' . $panel_layout, '', $_GET['q']);
     $layout = panels_edit_layout($display, t('Save'), $destination, 'ds_panels');
   }
   else {
@@ -206,7 +209,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
   ctools_include('common', 'panels');
 
   // Add css
-  $form['#attached']['css'][] = drupal_get_path('module', 'ds_panels') . '/ds_panels.admin.css';
+  $form['#attached']['css'][] = drupal_get_path('module', 'ds_extras') . '/ds_extras.panels.admin.css';
 
   // When panel_layout is empty, render the layout selector with links.
   if (empty($ds_layout) && empty($panel_layout)) {
@@ -339,6 +342,15 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     $form['ds_panels_layout']['sticky'] = array('#value' => FALSE);
   }
 
+  if ($form['#entity_type'] == 'node' && ($form['#view_mode'] == 'full' || variable_get('ds_extras_switch_view_mode', FALSE)) &&  variable_get('ds_extras_hide_page_title', FALSE)) {
+    $form['ds_panels_layout']['ds_layouts']['ds_hide_page_title'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Hide page title'),
+      '#default_value' => isset($ds_layout['settings']['hide_page_title']) ? $ds_layout['settings']['hide_page_title'] : FALSE,
+      '#weight' => 100,
+    );
+  }
+
   $form['ds_panels_layout']['hide_sidebars'] = array(
     '#type' => 'checkbox',
     '#title' => t('Disable Drupal blocks/regions'),
@@ -370,7 +382,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
   $form['#strip_off_layout_from_url'] = $layout_tab_first;
 
   // Add javascript.
-  $form['#attached']['js'][] = drupal_get_path('module', 'ds_panels') . '/ds_panels.admin.js';
+  $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/ds_extras.panels.admin.js';
 
   return $form;
 }
@@ -502,6 +514,10 @@ function ds_panels_layout_save($form, &$form_state, $clone = FALSE) {
   $record->layout = $form_state['values']['layout'];
   $record->settings = $settings;
 
+  // Let other modules alter the layout settings.
+  drupal_alter('ds_layout_settings', $record, $form_state);
+
+  // Save layout record.
   drupal_write_record('ds_layout_settings', $record);
 
   // Clear entity info cache.
@@ -547,6 +563,11 @@ function ds_panels_layout_clone($form, &$form_state) {
   $record->view_mode = $view_mode;
   $record->layout = $settings['layout'];
   $record->settings = $settings;
+
+  // Let other modules alter the layout settings.
+  drupal_alter('ds_layout_settings', $record, $form_state);
+
+  // Save layout record.
   drupal_write_record('ds_layout_settings', $record);
 
   // Clear entity info cache.
@@ -564,9 +585,9 @@ function ds_panels_layout_change($form, &$form_state) {
 }
 
 /**
- * Implementation of hook_form_FORM_ID_alter().
+ * Implementats hook_form_FORM_ID_alter().
  */
-function ds_panels_form_panels_change_layout_alter(&$form, $form_state) {
+function ds_extras_form_panels_change_layout_alter(&$form, $form_state) {
   $form['submit']['#submit'][] = 'ds_panels_layout_change_submit';
   $form['back']['#value'] = t('Cancel');
   $form['back']['#submit'] = array('ds_panels_layout_change_cancel');

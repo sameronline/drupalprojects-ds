@@ -477,6 +477,15 @@ function ds_views_row_ENTITY_NAME($entity, $view_mode) {
 }
 
 /**
+ * Return fields to be added when creating a new display with the panels editor.
+ */
+function hook_ds_panels_default_fields($entity_type, $bundle, $view_mode) {
+  // Get the fields from Field API.
+  $fields = field_info_instances($entity_type, $bundle);
+  return $fields;
+}
+
+/**
  * Theme an entity through an advanced function coming from the views entity plugin.
  *
  * @param $vars

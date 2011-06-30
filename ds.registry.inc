@@ -210,7 +210,7 @@ function _ds_features_api() {
     module_load_include('inc', 'features', 'includes/features.ctools');
     $api = ctools_component_features_api('ds');
     foreach ($api as $key => $value) {
-      switch($key) {
+      switch ($key) {
         case 'ds_field_settings':
           $api[$key]['name'] = 'Display suite field settings';
           break;
