@@ -8,20 +8,10 @@
 /**
  * Manage display screen.
  */
-function ds_panels_field_ui($entity_type, $bundle, $view_mode, $panel_layout = '', $entity = NULL) {
-
-  $individual = $entity_id = FALSE;
-
-  if (!empty($entity)) {
-    $individual = TRUE;
-    $view_mode = 'full';
-    $ids = entity_extract_ids($entity_type, $entity);
-    $bundle = $ids[2];
-    $view_mode = 'ind_' . $ids[0];
-    $entity_id = $ids[0];
-  }
+function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
 
   $build = array();
+  $panel_layout = '';
 
   // Extra the bundle name.
   $bundle = field_extract_bundle($entity_type, $bundle);
@@ -31,7 +21,7 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode, $panel_layout = '
 
   // Get the ds layout. Make sure this does not break in case there was
   // a layout already created with Field UI.
-  $ds_layout = ds_get_layout($entity_type, $bundle, $view_mode, TRUE, $individual);
+  $ds_layout = ds_get_layout($entity_type, $bundle, $view_mode);
   if (!empty($ds_layout) && !isset($ds_layout['settings']['ds_panels'])) {
     $ds_layout = NULL;
   }
@@ -61,11 +51,11 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode, $panel_layout = '
     $layout = panels_edit_layout($display, t('Save'), $destination, 'ds_panels');
   }
   else {
-    $layout = drupal_get_form('ds_panels_layout', $entity_type, $bundle, $view_mode, $ds_layout, $panel_layout, $layout_tab_first, $individual, $entity_id);
+    $layout = drupal_get_form('ds_panels_layout', $entity_type, $bundle, $view_mode, $ds_layout, $panel_layout, $layout_tab_first);
   }
 
   // Content tab.
-  $content = ds_panels_content($entity_type, $bundle, $view_mode, $ds_layout, $panel_layout, $individual, $entity_id);
+  $content = ds_panels_content($entity_type, $bundle, $view_mode, $ds_layout, $panel_layout);
 
   // Move all this stuff into nice vertical tabs.
   $build['tabs'] = array(
@@ -203,15 +193,13 @@ function ds_panels_display_settings_save($form, $form_state) {
 /**
  * Return the Panels layout settings form.
  */
-function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode, $ds_layout, $panel_layout, $layout_tab_first, $individual, $entity_id) {
+function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode, $ds_layout, $panel_layout, $layout_tab_first) {
 
   $form['#entity_type'] = $entity_type;
   $form['#bundle'] = $bundle;
   $form['#view_mode'] = $view_mode;
   $form['#export_id'] = $entity_type . '|' . $bundle . '|' . $view_mode;
   $form['#ds_panels_update'] = !empty($ds_layout) ? TRUE : FALSE;
-  $form['#individual'] = $individual;
-  $form['#entity_id'] = $entity_id;
 
   // Include panel functions.
   ctools_include('plugins', 'panels');
@@ -229,27 +217,25 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     );
 
     // See if we can clone from another view mode.
-    if (!$individual) {
-      $options = array();
-      $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
-      foreach ($ds_layout_settings as $row) {
-        if (isset($row->settings['ds_panels'])) {
-          $options[$row->id] = drupal_ucfirst($row->entity_type) . ' > ' . drupal_ucfirst($row->bundle) . ' > ' . drupal_ucfirst($row->view_mode);
-        }
+    $options = array();
+    $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
+    foreach ($ds_layout_settings as $row) {
+      if (isset($row->settings['ds_panels'])) {
+        $options[$row->id] = drupal_ucfirst($row->entity_type) . ' > ' . drupal_ucfirst($row->bundle) . ' > ' . drupal_ucfirst($row->view_mode);
       }
+    }
 
-      if (!empty($options)) {
-        $form['clone'] = array(
-          '#title' => t('Clone layout from existing view mode'),
-          '#type' => 'select',
-          '#options' => $options,
-        );
-        $form['clone_submit'] = array(
-          '#type' => 'submit',
-          '#value' => t('Clone'),
-          '#submit' => array('ds_panels_layout_clone'),
-        );
-      }
+    if (!empty($options)) {
+      $form['clone'] = array(
+        '#title' => t('Clone layout from existing view mode'),
+        '#type' => 'select',
+        '#options' => $options,
+      );
+      $form['clone_submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Clone'),
+        '#submit' => array('ds_panels_layout_clone'),
+      );
     }
 
     return $form;
@@ -392,7 +378,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
 /**
  * Return the panels content manager.
  */
-function ds_panels_content($entity_type, $bundle, $view_mode, $ds_layout, $panel_layout, $entity_id) {
+function ds_panels_content($entity_type, $bundle, $view_mode, $ds_layout) {
 
   if (empty($ds_layout)) {
     return array('#markup' => '<p>' . t('Select a layout first.') . '</p>');
@@ -515,22 +501,11 @@ function ds_panels_layout_save($form, &$form_state, $clone = FALSE) {
   $record->view_mode = $view_mode;
   $record->layout = $form_state['values']['layout'];
   $record->settings = $settings;
-  $record->type = $form['#individual'];
 
   drupal_write_record('ds_layout_settings', $record);
 
   // Clear entity info cache.
-  if (!$form['#individual']) {
-    cache_clear_all('entity_info', 'cache', TRUE);
-  }
-  else {
-    // @todo check for entity entity type.
-    if (module_exists('entitycache')) {
-      cache_clear_all($form['#entity_id'], 'cache_entity_node');
-    }
-    cache_clear_all();
-    db_query("UPDATE {node_revision} SET ds_ind = 1 WHERE nid = :nid", array(':nid' => $form['#entity_id']));
-  }
+  cache_clear_all('entity_info', 'cache', TRUE);
 
   // Show message.
   drupal_set_message(t('The layout has been saved.'));
@@ -659,17 +634,7 @@ function ds_panels_layout_remove($form, $form_state) {
     ->execute();
 
   // Clear entity info cache.
-  if (!$form['#individual']) {
-    cache_clear_all('entity_info', 'cache', TRUE);
-  }
-  else {
-    // @todo check for entity_type for clearing cache.
-    if (module_exists('entitycache')) {
-      cache_clear_all($form['#entity_id'], 'cache_entity_node');
-    }
-    cache_clear_all();
-    db_query("UPDATE {node_revision} SET ds_ind = 0 WHERE nid = :nid", array(':nid' => $form['#entity_id']));
-  }
+  cache_clear_all('entity_info', 'cache', TRUE);
 
   // Show message.
   drupal_set_message(t('The layout has been removed.'));

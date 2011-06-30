@@ -13,38 +13,9 @@ function ds_panels_install() {
     ->fields(array('weight' => 2))
     ->condition('name', 'ds_panels')
     ->execute();
-
-  $schema['node_revision'] = array();
-  ds_extras_schema_alter($schema);
-  foreach ($schema['node_revision']['fields'] as $name => $spec) {
-    db_add_field('node_revision', $name, $spec);
-  }
 }
 
-/**
- * Implements hook_uninstall().
- */
-function ds_panels_uninstall() {
-  db_drop_field('node_revision', 'ds_ind');
-}
 
-/**
- * Implements hook_schema_alter().
- */
-function ds_panels_schema_alter(&$schema) {
-
-  // Add a field ds_ind to the node_revision table in order
-  // to indicate if this node is using an individual layout.
-  if (isset($schema['node_revision'])) {
-    $schema['node_revision']['fields']['ds_ind'] = array(
-      'description' => 'Whether this node is using an individual layout',
-      'type' => 'int',
-      'size' => 'small',
-      'not null' => TRUE,
-      'default' => 0,
-    );
-  }
-}
 
 /**
  * Implements hook_schema().

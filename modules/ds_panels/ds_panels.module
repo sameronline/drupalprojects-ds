@@ -23,40 +23,7 @@ function ds_panels_menu() {
     'type' => MENU_LOCAL_TASK,
   );
 
-  // 1126360 + tweet this cool shit when first version is working.
-  $items['node/%node/display-individual'] = array(
-    'title' => 'Manage individual display',
-    'description' => t('Manage the individual layout of the node.'),
-    'page callback' => 'ds_panels_field_ui',
-    'page arguments' => array('node', '', '', '', 1),
-    'access arguments' => array('manage individual node layout'),
-    'file' => 'ds_panels.admin.inc',
-    'type' => MENU_LOCAL_TASK,
-  );
-
-  /*$items['user/%user/layout'] = array(
-    'title' => 'Manage individual display',
-    'description' => t('Manage the individual layout of the user profile.'),
-    'page callback' => 'ds_panels_field_ui',
-    'page arguments' => array('user', '', '', 1),
-    'access arguments' => array('manage individual user layout'),
-    'file' => 'ds_panels.admin.inc',
-    'type' => MENU_LOCAL_TASK,
-  );*/
-
   return $items;
-}
-
-/**
- * Implements hook_permission().
- */
-function ds_panels_permission() {
-  return array(
-    'manage individual node layout' => array(
-      'title' => t('Manage node layout'),
-      'description' => t('Manage the layout of an individual node page view with the panels editor.')
-    ),
-  );
 }
 
 /**
@@ -266,16 +233,8 @@ function ds_panels_entity_view_alter(&$build, $entity_type) {
   $bundle = $build['#bundle'];
   $view_mode = $build['#view_mode'];
 
-  $individual = FALSE;
-  $view_mode = $build['#view_mode'];
-  $entity = $build['#node'];
-  if (isset($entity->ds_ind) && !empty($entity->ds_ind)) {
-    $individual = TRUE;
-    $view_mode = 'ind_' . $entity->nid; // @todo list id laters with extract ids.
-  }
-
   // Disable blocks.
-  if (($layout = ds_get_layout($entity_type, $bundle, $view_mode, TRUE, $individual)) && isset($layout['settings']['hide_sidebars']) && !isset($loaded[$entity_type][$bundle][$view_mode])) {
+  if (($layout = ds_get_layout($entity_type, $bundle, $view_mode)) && isset($layout['settings']['hide_sidebars']) && !isset($loaded[$entity_type][$bundle][$view_mode])) {
 
     // Store the setting.
     $loaded[$entity_type][$bundle][$view_mode] = TRUE;
@@ -295,16 +254,7 @@ function ds_panels_entity_variables(&$vars) {
   static $displays = array();
   static $renderer = NULL;
 
-  // Remove this function, we can do this in entity_view_alter!
-  $individual = FALSE;
-  $view_mode = $vars['elements']['#view_mode'];
-  $entity = $vars[$vars['elements']['#entity_type']];
-  if (isset($entity->ds_ind) && !empty($entity->ds_ind)) {
-    $individual = TRUE;
-    $view_mode = 'ind_' . $entity->nid; // @todo list id laters with extract ids.
-  }
-
-  if (isset($vars['elements']) && $layout = ds_get_layout($vars['elements']['#entity_type'], $vars['elements']['#bundle'], $view_mode, TRUE, $individual)) {
+  if (isset($vars['elements']) && $layout = ds_get_layout($vars['elements']['#entity_type'], $vars['elements']['#bundle'], $vars['elements']['#view_mode'])) {
 
     $entity_type = $vars['elements']['#entity_type'];
     $bundle = $vars['elements']['#bundle'];
