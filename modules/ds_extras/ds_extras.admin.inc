@@ -221,8 +221,12 @@ function ds_extras_select_layout_editor($entity_type, $bundle_arg, $view_mode) {
     return ds_panels_field_ui($entity_type, $bundle, $view_mode);
   }
   else {
-    module_load_include('inc', 'field_ui', 'field_ui.admin');
-    return drupal_get_form('field_ui_display_overview_form', $entity_type, $bundle, $view_mode);
+    // Use drupal_build_form instead of drupal_get_form.
+    $form_state = array();
+    $arguments = array($entity_type, $bundle, $view_mode);
+    $form_state['build_info']['args'] = $arguments;
+    form_load_include($form_state, 'inc', 'field_ui', 'field_ui.admin');
+    return drupal_build_form('field_ui_display_overview_form', $form_state);
   }
 }
 
