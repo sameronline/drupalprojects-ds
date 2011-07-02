@@ -110,11 +110,3 @@ function ds_extras_contextual_page_tab($object, $entity_type) {
 
   drupal_goto($admin_path, array('query' => array('destination' => $destination)));
 }
-
-/**
- * Menu callback: settings for DS panels.
- */
-function ds_extras_view_mode_settings() {
-  ctools_include('common', 'panels');
-  return drupal_get_form('panels_common_settings', 'panels_ds');
-}

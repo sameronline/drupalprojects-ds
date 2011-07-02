@@ -23,13 +23,13 @@ class dsBaseTest extends DrupalWebTestCase {
   /**
    * Select a layout.
    */
-  function dsSelectLayout($edit = array(), $assert = array(), $url = 'admin/structure/types/manage/article/display') {
+  function dsSelectLayout($edit = array(), $assert = array(), $url = 'admin/structure/types/manage/article/display', $options = array()) {
 
     $edit += array(
       'additional_settings[layout]' => 'ds_2col_stacked',
     );
 
-    $this->drupalPost($url, $edit, t('Save'));
+    $this->drupalPost($url, $edit, t('Save'), $options);
 
     $assert += array(
       'regions' => array(
@@ -519,7 +519,6 @@ class dsHooksTests extends dsBaseTest {
       'group' => t('Display suite'),
     );
   }
-
 
   /**
    * Test fields hooks.

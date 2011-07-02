@@ -89,8 +89,14 @@ function ds_extras_settings($form) {
     $form['additional_settings']['fs3']['ds_extras_panel_view_modes'] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable Panels editor on view modes'),
-      '#description' => t('With this option, you can use the Panels editor instead of Field UI. It will default to the Panels editor, but you will still be able to switch back as well.'),
+      '#description' => t('With this option, you can use the Panels editor instead of Field UI.'),
       '#default_value' => variable_get('ds_extras_panel_view_modes', FALSE),
+    );
+    $form['additional_settings']['fs3']['ds_extras_editor_switch'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Switch layout editor'),
+      '#description' => t('By default, the Panels editor will be used always. With this option, any layout configured already with Field UI will be kept, but you are able to switch back and forth.'),
+      '#default_value' => variable_get('ds_extras_editor_switch', FALSE),
     );
   }
 
@@ -175,6 +181,49 @@ function ds_extras_settings_validate($form, &$form_state) {
     unset($form_state['values']['additional_settings'][$tab]);
   }
   unset($form_state['values']['additional_settings']);
+}
+
+/**
+ * Select the editor depending on layout.
+ *
+ * @param $entity_type
+ *   The name of the entity type.
+ * @param $bundle_arg
+ *   The position of the bundle argument
+ * @param $view_mode
+ *   The name of the view mode.
+ */
+function ds_extras_select_layout_editor($entity_type, $bundle_arg, $view_mode) {
+
+  // Extra the bundle name.
+  $bundle = field_extract_bundle($entity_type, $bundle_arg);
+
+  // Check layout.
+  $layout = ds_get_layout($entity_type, $bundle, $view_mode);
+
+  // Check switch.
+  $panels_editor = TRUE;
+  if (variable_get('ds_extras_editor_switch')) {
+    if ($layout && !isset($layout['settings']['ds_panels'])) {
+      $panels_editor = FALSE;
+    }
+    if (isset($_GET['switch']) && $_GET['switch'] == 'field_ui') {
+      $panels_editor = FALSE;
+    }
+    if (isset($_GET['switch']) && $_GET['switch'] == 'panels') {
+      $panels_editor = TRUE;
+    }
+  }
+
+  // Select the layout editor.
+  if ($panels_editor) {
+    module_load_include('inc', 'ds_extras', 'ds_extras.panels');
+    return ds_panels_field_ui($entity_type, $bundle, $view_mode);
+  }
+  else {
+    module_load_include('inc', 'field_ui', 'field_ui.admin');
+    return drupal_get_form('field_ui_display_overview_form', $entity_type, $bundle, $view_mode);
+  }
 }
 
 /**
@@ -397,6 +446,31 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 
     $form['#submit'][] = 'ds_extras_block_submit';
   }
+
+  // Editor switch.
+  if (variable_get('ds_extras_editor_switch') && variable_get('ds_extras_panel_view_modes')) {
+
+    // Get the entity_type, bundle and view mode.
+    $entity_type = $form['#entity_type'];
+    $bundle = $form['#bundle'];
+    $view_mode = $form['#view_mode'];
+
+    $form['additional_settings']['editor_switch'] = array(
+      '#type' => 'fieldset',
+      '#group' => 'tabs',
+      '#title' => t('Switch editor'),
+      '#weight' => 10,
+    );
+    $query = array('switch' => 'panels');
+    $switch_link = l(t('Switch to Panels'), $_GET['q'], array('query' => $query));
+    $content = array(
+      '#markup' => '<p>' . t('Click on the link underneath to switch to Panels') . '</p><p>' . $switch_link . '</p>',
+    );
+    $form['additional_settings']['editor_switch']['content'] = array(
+      '#markup' => drupal_render($content)
+    );
+  }
+
 }
 
 /**

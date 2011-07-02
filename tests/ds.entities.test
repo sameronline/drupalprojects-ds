@@ -5,9 +5,6 @@
  * Entities tests
  */
 
-/**
- * Test node entity.
- */
 class dsNodeTests extends dsBaseTest {
 
   /**

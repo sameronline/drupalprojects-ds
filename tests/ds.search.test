@@ -5,9 +5,6 @@
  * Search tests
  */
 
-/**
- * Test node entity.
- */
 class dsSearchTests extends dsBaseTest {
 
   /**

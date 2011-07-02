@@ -3,27 +3,36 @@
 /**
  * @file
  * Administrative functions for DS panels.
- *
- * @todo hide page title option on layout screen.
- * @todo back button is broken.
  */
 
 /**
- * Manage display screen.
+ * Menu callback: settings for DS panels.
+ */
+function ds_panels_view_mode_settings() {
+  ctools_include('common', 'panels');
+  return drupal_get_form('panels_common_settings', 'panels_ds');
+}
+
+/**
+ * Manage display screen with panels editor.
+
+ * @param $entity_type
+ *   The name of the entity type.
+ * @param $bundle_arg
+ *   The name of the bundle.
+ * @param $view_mode
+ *   The name of the view mode.
  */
 function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
 
   $build = array();
   $panel_layout = '';
 
-  // Extra the bundle name.
-  $bundle = field_extract_bundle($entity_type, $bundle);
-
   // Load ds field ui.
   module_load_include('inc', 'ds', 'ds.field_ui');
 
-  // Get the ds layout. Make sure this does not break in case there was
-  // a layout already created with Field UI.
+  // Get the ds layout. Make sure this does not break in case
+  // there was a layout created with Field UI.
   $ds_layout = ds_get_layout($entity_type, $bundle, $view_mode);
   if (!empty($ds_layout) && !isset($ds_layout['settings']['ds_panels'])) {
     $ds_layout = NULL;
@@ -100,6 +109,24 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
         '#markup' => drupal_render($view_modes)
       );
     }
+  }
+
+  // Switch to Field UI.
+  if (variable_get('ds_extras_editor_switch') && variable_get('ds_extras_panel_view_modes')) {
+    $build['tabs']['editor_switch'] = array(
+      '#type' => 'fieldset',
+      '#group' => 'tabs',
+      '#title' => t('Switch editor'),
+      '#weight' => 10,
+    );
+    $query = array('switch' => 'field_ui');
+    $switch_link = l(t('Switch to Field UI'), $_GET['q'], array('query' => $query));
+    $content = array(
+      '#markup' => '<p>' . t('Click on the link underneath to switch to Field UI') . '</p><p>' . $switch_link . '</p>',
+    );
+    $build['tabs']['editor_switch']['content'] = array(
+      '#markup' => drupal_render($content)
+    );
   }
 
   return $build;

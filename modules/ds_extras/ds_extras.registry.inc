@@ -83,7 +83,7 @@ function _ds_extras_menu() {
       'description' => 'Configure which content is available to add to panel view mode displays.',
       'access arguments' => array('admin_display_suite'),
       'page callback' => 'ds_panels_view_mode_settings',
-      'file' => 'ds_extras.pages.inc',
+      'file' => 'ds_extras.panels.inc',
       'type' => MENU_LOCAL_TASK,
     );
   }
@@ -127,15 +127,20 @@ function _ds_extras_menu_alter(&$items) {
                 $bundle_pos = '0';
               }
 
-              $items["$path/display"]['page callback'] = 'ds_panels_field_ui';
+              // People can select whether they're going to use Field UI
+              // or the Panels editor. So, we are going to delegate
+              // this to a custom function which in that case is going
+              // to call the right layout callback.
+              $items["$path/display"]['page callback'] = 'ds_extras_select_layout_editor';
               $items["$path/display"]['page arguments'] = array($entity_type, $bundle_arg, 'default');
-              $items["$path/display"]['file'] = 'ds_extras.panels.inc';
+              $items["$path/display"]['file'] = 'ds_extras.admin.inc';
               $items["$path/display"]['file path'] = $ds_panels_path;
 
               $view_modes = array('default' => array('label' => t('Default'))) + $entity_info['view modes'];
               foreach ($view_modes as $view_mode => $view_mode_info) {
+                $items["$path/display/$view_mode"]['page callback'] = 'ds_extras_select_layout_editor';
                 $items["$path/display/$view_mode"]['page arguments'] = array($entity_type, $bundle_arg, $view_mode);
-                $items["$path/display/$view_mode"]['file'] = 'ds_extras.panels.inc';
+                $items["$path/display/$view_mode"]['file'] = 'ds_extras.admin.inc';
                 $items["$path/display/$view_mode"]['file path'] = $ds_panels_path;
               }
             }
