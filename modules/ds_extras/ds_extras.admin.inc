@@ -148,7 +148,7 @@ function ds_extras_settings($form) {
     $form['additional_settings']['fs4']['ds_extras_vd'] = array(
       '#type' => 'checkbox',
       '#title' => t('Views displays'),
-      '#description' => t('Manage the layout of your Views through a drag and drop interface at !url.', array('!url' => l(url('admin/structure/ds'), 'admin/structure/ds', array('absolute' => TRUE)))),
+      '#description' => t('Manage the layout of your Views templates and field rows with Field UI at !url.', array('!url' => l(url('admin/structure/ds/vd', array('absolute' => TRUE)), 'admin/structure/ds/vd'))),
       '#default_value' => variable_get('ds_extras_vd', FALSE),
     );
   }
@@ -381,7 +381,8 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 
   // Views displays.
   if (variable_get('ds_extras_vd', FALSE)) {
-    // Add an additional submit callback.
+    // Add an additional submit callback so we can ditch the extra title
+    // which is added by ds_extras_field_extra_fields().
     $form['#submit'] = array_merge(array('ds_extras_vd_field_ui_submit'), $form['#submit']);
   }
 

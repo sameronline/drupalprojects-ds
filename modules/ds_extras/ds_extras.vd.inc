@@ -86,7 +86,6 @@ function ds_extras_vd_bundle_form($form, $form_state, $rows) {
 
     // Loop through all displays.
     foreach ($view->display as $display_key => $display) {
-
       // Ignore default displays.
       if ($display_key == 'default') {
         continue;
@@ -94,14 +93,23 @@ function ds_extras_vd_bundle_form($form, $form_state, $rows) {
 
       $key = $view_key . '-' . $display_key;
       if (!isset($rows[$key])) {
-        $options[$key] = drupal_ucfirst($view->name) . ': ' . $display->display_title;
+        $name = drupal_ucfirst($view->name) . ': ' . $display->display_title;
+        $options[$key] = $name . ' (Views template)';
+
+        // Check for fields - seriously, find the right views method alright
+        if (isset($display->display_options['row_plugin']) && $display->display_options['row_plugin'] == 'ds_fields') {
+          $options[$key . '-fields'] = $name . ' (Fields)';
+        }
+        elseif (!isset($display->display_options['row_plugin']) && isset($view->display['default']->display_options['row_plugin']) && $view->display['default']->display_options['row_plugin'] == 'ds_fields') {
+          $options[$key . '-fields'] = $name . ' (Fields)';
+        }
       }
     }
   }
 
   $form['vd'] = array(
     '#title' => t('Select view'),
-    '#description' => t('Select a Views display that you want to manage with Display Suite.'),
+    '#description' => t('Select a View that you want to manage with Display Suite. If a View uses fields you can also select that view to select a layout and position the fields.'),
     '#type' => 'select',
     '#options' => $options,
   );
@@ -142,6 +150,12 @@ function ds_extras_vd_bundle_form_submit($form, &$form_state) {
  */
 function ds_extras_vd_field_ui($bundle) {
 
+  global $conf;
+
+  // Disable panels.
+  $conf['ds_extras_panel_view_modes'] = FALSE;
+  $conf['ds_extras_switch_editor'] = FALSE;
+
   // Use drupal_build_form instead of drupal_get_form.
   $form_state = array();
   $arguments = array('ds_views', $bundle, 'default');
@@ -150,7 +164,7 @@ function ds_extras_vd_field_ui($bundle) {
   form_load_include($form_state, 'inc', 'ds_extras', 'ds_extras.vd');
   $build = drupal_build_form('field_ui_display_overview_form', $form_state);
 
-  // Deny access to view mode.
+  // Deny access to view modes.
   $build['additional_settings']['modes']['#access'] = FALSE;
 
   // Deny access to field_group if it exists.
@@ -158,7 +172,61 @@ function ds_extras_vd_field_ui($bundle) {
     unset($build['fields']['_add_new_group']);
   }
 
+  // Deny access to disabling blocks and regions.
+  $build['additional_settings']['ds_layouts']['hide_sidebars']['#access'] = FALSE;
+
+  // Add info in case we're looking at a fields view.
+  $fields_check = explode('-', $bundle);
+  if (isset($fields_check[2])) {
+    if (!ds_get_layout('ds_views', $bundle, 'default')) {
+      $build['fields']['#access'] = FALSE;
+    }
+  }
+
   return $build;
+}
+
+/**
+ * Implements hook_ds_fields_ui_alter().
+ */
+function ds_extras_ds_fields_ui_alter(&$fields, $context) {
+
+  // @todo hide the label ?
+  // @todo add more info on the manage layout screen.
+  // @todo do not allow panel layouts.
+  // @todo only 1 suggestion is fine (in general for vd anyway).
+  // @todo hide table if no layout is chosen.
+
+  // Check on the $bundle string to see if the key 2 exists. If it exists,
+  // we'll call the view to put the fields of this view on and remove
+  // the fields which comes default by ds_extras_field_extra_fields()
+  // and only work for the views template.
+  $bundle = $context['bundle'];
+  $fields_check = explode('-', $bundle);
+
+  if (isset($fields_check[2])) {
+
+    $field_copy = array(
+      'title' => 'dummy',
+      'field_type' => DS_FIELD_TYPE_IGNORE,
+    );
+
+    // Remove the view template fields.
+    $remove_fields = ds_extras_ds_fields_info('ds_views');
+    foreach ($remove_fields['ds_views'] as $key => $properties) {
+      unset($fields[$key]);
+    }
+
+    // Get the view and its fields.
+    $view = views_get_view($fields_check[0]);
+    $view->set_display($fields_check[1]);
+    $fields = $view->display_handler->get_field_labels();
+    foreach ($fields as $field_key => $field_label) {
+      $field_properties = $field_copy;
+      $field_properties['title'] = $field_label;
+      $fields[$field_key] = $field_properties;
+    }
+  }
 }
 
 /**

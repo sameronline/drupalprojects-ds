@@ -291,6 +291,7 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
   $vd_hooks = array(
     'entity_info',
     'ctools_plugin_api',
+    'ds_fields_ui_alter',
   );
   if (!variable_get('ds_extras_vd', FALSE) && in_array($hook, $vd_hooks)) {
     unset($implementations['ds_extras']);

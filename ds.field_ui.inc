@@ -1106,6 +1106,16 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
   // Get the fields and put them on the form.
   $fields = ds_get_fields($entity_type, FALSE);
+
+  // Ultimate alter on Field UI fields, only used for edge cases.
+  $context = array(
+    'entity_type' => $entity_type,
+    'bundle' => $bundle,
+    'view_mode' => $view_mode,
+  );
+  drupal_alter('ds_fields_ui', $fields, $context);
+
+  // Get field settings.
   $field_settings = ds_get_field_settings($entity_type, $bundle, $view_mode, FALSE);
   $form['#field_settings'] = $field_settings;
 
