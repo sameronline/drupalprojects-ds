@@ -251,7 +251,7 @@ function ds_field_ui_layouts_validate($form, &$form_state) {
 }
 
 /**
- * Get a layout for a given entity.
+ * Change a layout for a given entity.
  *
  * @param $entity_type
  *   The name of the entity.
@@ -262,7 +262,7 @@ function ds_field_ui_layouts_validate($form, &$form_state) {
  */
 function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundle = '', $view_mode = '', $new_layout = '') {
 
-  $odl_layout = NULL;
+  $old_layout = NULL;
   if (!empty($entity_type) && !empty($bundle) && !empty($view_mode)) {
     $old_layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE);
   }
