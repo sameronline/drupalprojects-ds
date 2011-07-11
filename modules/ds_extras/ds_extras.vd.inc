@@ -200,8 +200,6 @@ function ds_extras_vd_field_ui($bundle) {
  */
 function ds_extras_ds_fields_ui_alter(&$fields, $context) {
 
-  // @todo hide the label ?
-
   // Check on the $bundle string to see if the key 2 exists. If it exists,
   // we'll call the view to put the fields of this view on and remove
   // the fields which comes default by ds_extras_field_extra_fields()
