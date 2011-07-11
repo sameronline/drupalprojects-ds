@@ -389,14 +389,14 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
       $group_fields = array();
 
       // Support for CCK 6.x-3.0 Multigroup
-      if ($fields['multigroup']){
+      if (isset($fields['multigroup']) && $fields['multigroup']) {
         $field_settings = ds_default_value($display_settings, 'fields');
         $group_content = ds_get_cck_multigroup_content($object, $group, $field_settings);
         foreach($fields as $key => $weight){
           unset($object->ds_fields[$key]);
         }
       }
-      else{
+      else {
         foreach ($fields as $key => $weight) {
           $field_content = '';
           if (is_array($vars[$key])){
