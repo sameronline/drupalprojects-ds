@@ -22,7 +22,7 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   ds_field_ui_create_vertical_tabs($form);
 
   // Add layout fieldset.
-  _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, $form);
+  _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, $form, $form_state);
 
   // Add the fields.
   _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form, $form_state);
@@ -925,13 +925,20 @@ function ds_ctools_get_category($content_type) {
  * @param $form
  *   A collection of form properties.
  */
-function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
+function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $form_state) {
 
   $layout_options = array();
   $ds_layouts = ds_get_layout_info();
   $layout_options = array('' => t('- None -'));
   foreach ($ds_layouts as $key => $layout) {
     $optgroup = 'Display suite';
+
+    // Panels can not be used on Views fields.
+    if (!empty($layout['module']) && $layout['module'] == 'panels' && isset($form_state['no_panels'])) {
+      continue;
+    }
+
+    // Create new layout optoin group.
     if (!empty($layout['module'])) {
       $optgroup = drupal_ucfirst($layout['module']);
     }
@@ -940,6 +947,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form) {
       $layout_options[$optgroup] = array();
     }
 
+    // Stack the layout.
     $layout_options[$optgroup][$key] = $layout['label'];
   }
 

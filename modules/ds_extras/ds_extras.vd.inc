@@ -159,6 +159,7 @@ function ds_extras_vd_field_ui($bundle) {
   $form_state = array();
   $arguments = array('ds_views', $bundle, 'default');
   $form_state['build_info']['args'] = $arguments;
+  $form_state['no_panels'] = TRUE;
   form_load_include($form_state, 'inc', 'field_ui', 'field_ui.admin');
   form_load_include($form_state, 'inc', 'ds_extras', 'ds_extras.vd');
   $build = drupal_build_form('field_ui_display_overview_form', $form_state);
@@ -191,10 +192,8 @@ function ds_extras_vd_field_ui($bundle) {
 function ds_extras_ds_fields_ui_alter(&$fields, $context) {
 
   // @todo hide the label ?
-  // @todo add more info on the manage layout screen.
-  // @todo do not allow panel layouts.
   // @todo only 1 suggestion is fine (in general for vd anyway).
-  // @todo clone view mode (currently only interesting for views)
+  // @todo clone view mode
 
   // Check on the $bundle string to see if the key 2 exists. If it exists,
   // we'll call the view to put the fields of this view on and remove
