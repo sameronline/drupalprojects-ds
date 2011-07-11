@@ -84,6 +84,8 @@ function ds_extras_vd_bundle_form($form, $form_state, $rows) {
       continue;
     }
 
+    $get_view = views_get_view($view->name);
+
     // Loop through all displays.
     foreach ($view->display as $display_key => $display) {
       // Ignore default displays.
@@ -96,11 +98,8 @@ function ds_extras_vd_bundle_form($form, $form_state, $rows) {
         $name = drupal_ucfirst($view->name) . ': ' . $display->display_title;
         $options[$key] = $name . ' (Views template)';
 
-        // Check for fields - seriously, find the right views method alright
-        if (isset($display->display_options['row_plugin']) && $display->display_options['row_plugin'] == 'ds_fields') {
-          $options[$key . '-fields'] = $name . ' (Fields)';
-        }
-        elseif (!isset($display->display_options['row_plugin']) && isset($view->display['default']->display_options['row_plugin']) && $view->display['default']->display_options['row_plugin'] == 'ds_fields') {
+        $get_view->set_display();
+        if ($get_view->display_handler->uses_fields()) {
           $options[$key . '-fields'] = $name . ' (Fields)';
         }
       }
@@ -195,7 +194,7 @@ function ds_extras_ds_fields_ui_alter(&$fields, $context) {
   // @todo add more info on the manage layout screen.
   // @todo do not allow panel layouts.
   // @todo only 1 suggestion is fine (in general for vd anyway).
-  // @todo hide table if no layout is chosen.
+  // @todo clone view mode (currently only interesting for views)
 
   // Check on the $bundle string to see if the key 2 exists. If it exists,
   // we'll call the view to put the fields of this view on and remove
