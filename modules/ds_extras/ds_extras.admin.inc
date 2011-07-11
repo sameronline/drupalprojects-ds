@@ -475,7 +475,6 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
       '#markup' => drupal_render($content)
     );
   }
-
 }
 
 /**

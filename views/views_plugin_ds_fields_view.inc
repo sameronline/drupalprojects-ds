@@ -80,8 +80,7 @@ function template_preprocess_ds_row_fields(&$vars) {
 
     // Classes array.
     $vars['classes_array'] = array();
-    // @todo better class
-    $vars['classes_array'][] = 'view-mode-default';
+    $vars['classes_array'][] = strtr($bundle, '_', '-');
 
     // Template suggestions.
     $vars['theme_hook_suggestions'][] = $layout['layout'];

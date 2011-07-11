@@ -593,6 +593,43 @@ function ds_field_ui_fields_save($form, &$form_state) {
 }
 
 /**
+ * Clone a fields layout.
+ */
+function ds_field_ui_layout_clone($form, &$form_state) {
+
+  $clone = $form_state['values']['additional_settings']['clone'];
+  $entity_type = $form['#entity_type'];
+  $bundle = $form['#bundle'];
+  $view_mode = $form['#view_mode'];
+
+  // Clone and save new display.
+  ctools_include('export');
+  $layout = ctools_export_crud_load('ds_layout_settings', $clone);
+
+  // Save new layout record for ds.
+  $settings = $layout->settings;
+  $record = new stdClass();
+  $record->id = $form['#export_id'];
+  $record->entity_type = $entity_type;
+  $record->bundle = $bundle;
+  $record->view_mode = $view_mode;
+  $record->layout = $layout->layout;
+  $record->settings = $settings;
+
+  // Let other modules alter the layout settings.
+  drupal_alter('ds_layout_settings', $record, $form_state);
+
+  // Save layout record.
+  drupal_write_record('ds_layout_settings', $record);
+
+  // Clear entity info cache.
+  cache_clear_all('entity_info', 'cache', TRUE);
+
+  // Show message.
+  drupal_set_message(t('The layout has been cloned.'));
+}
+
+/**
  * Creates a summary for the field format configuration summary.
  *
  * @param $field
@@ -988,7 +1025,9 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       $suggestions = 'Possible template suggestions are:<ul>';
       $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '.tpl.php</li>';
       $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '-' . $bundle . '.tpl.php</li>';
-      $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode . '.tpl.php</li></ul>';
+      if (!isset($form_state['no_view_mode_suggestions'])) {
+        $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode . '.tpl.php</li></ul>';
+      }
     }
     else {
       $suggestions = '';
@@ -1002,6 +1041,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   $form['additional_settings']['ds_layouts']['layout'] = array(
     '#type' => 'select',
     '#title' => t('Select a layout'),
+    '#description' => !isset($layout->layout) ? t('Hit the save button at the bottom to save the layout.') : '',
     '#options' => $layout_options,
     '#default_value' => isset($layout->layout) ? $layout->layout : '',
     '#weight' => -1,
@@ -1070,6 +1110,33 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     }
     else {
       $form['additional_settings']['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any styles which can be used on regions.') . '</p><p>' . l(t('Manage region styles'), 'admin/structure/ds/styles') . '</p>');
+    }
+  }
+  else {
+
+    // See if we can clone from another view mode.
+    $options = array();
+    $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
+    foreach ($ds_layout_settings as $row) {
+      if (!isset($row->settings['ds_panels'])) {
+        $options[$row->id] = drupal_ucfirst($row->entity_type) . ' > ' . drupal_ucfirst($row->bundle) . ' > ' . drupal_ucfirst($row->view_mode);
+      }
+    }
+
+    if (!empty($options)) {
+      $form['additional_settings']['ds_layouts']['clone'] = array(
+        '#title' => t('Or clone layout from existing view mode'),
+        '#type' => 'select',
+        '#options' => $options,
+        '#weight' => 20,
+        '#description' => t('Note that not all fields might be available.'),
+      );
+      $form['additional_settings']['ds_layouts']['clone_submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Clone'),
+        '#submit' => array('ds_field_ui_layout_clone'),
+        '#weight' => 21,
+      );
     }
   }
 

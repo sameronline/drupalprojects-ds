@@ -35,7 +35,14 @@ function _ds_extras_menu() {
     $items['admin/structure/ds/vd'] = array(
       'title' => 'Views displays',
       'description' => 'Manage your views templates.',
-      'page callback' => 'ds_extras_vd',
+      'page callback' => 'ds_extras_vd_overview',
+      'file' => 'ds_extras.vd.inc',
+      'access arguments' => array('admin_display_suite'),
+    );
+    $items['admin/structure/ds/vd/manage'] = array(
+      'title' => 'Manage layout',
+      'description' => 'Manage your views templates.',
+      'page callback' => 'ds_extras_vd_manage',
       'file' => 'ds_extras.vd.inc',
       'access arguments' => array('admin_display_suite'),
     );

@@ -6,27 +6,10 @@
  */
 
 /**
- * Manage the display of views.
- */
-function ds_extras_vd($bundle = '', $action = '') {
-
-  $entity_info = entity_get_info('ds_views');
-
-  if (!empty($bundle) && isset($entity_info['bundles'][$bundle]) && $action == 'remove') {
-    return drupal_get_form('ds_extras_vd_bundle_remove', $bundle, $entity_info['bundles'][$bundle]['label']);
-  }
-
-  if (!empty($bundle) && isset($entity_info['bundles'][$bundle]) && $action == 'display') {
-    return ds_extras_vd_field_ui($bundle);
-  }
-
-  return ds_extras_vd_overview($entity_info);
-}
-
-/**
  * Show the overview form and the selection list.
  */
-function ds_extras_vd_overview($entity_info) {
+function ds_extras_vd_overview() {
+  $entity_info = entity_get_info('ds_views');
   $build = $rows = array();
 
   ctools_include('export');
@@ -43,10 +26,10 @@ function ds_extras_vd_overview($entity_info) {
 
       $row = array();
       $row[] = $value['label'];
-      $operations = l(t('Manage layout'), 'admin/structure/ds/vd/' . $key . '/display');
+      $operations = l(t('Manage layout'), 'admin/structure/ds/vd/manage/' . $key . '/display');
 
       if (isset($vd_settings[$key]) && $vd_settings[$key]->export_type == 1) {
-        $operations .= ' - ' . l(t('Remove'), 'admin/structure/ds/vd/' . $key . '/remove');
+        $operations .= ' - ' . l(t('Remove'), 'admin/structure/ds/vd/manage/' . $key . '/remove');
       }
       $row[] = $operations;
 
@@ -97,11 +80,10 @@ function ds_extras_vd_bundle_form($form, $form_state, $rows) {
       if (!isset($rows[$key])) {
         $name = drupal_ucfirst($view->name) . ': ' . $display->display_title;
         $options[$key] = $name . ' (Views template)';
-
-        $get_view->set_display();
-        if ($get_view->display_handler->uses_fields()) {
-          $options[$key . '-fields'] = $name . ' (Fields)';
-        }
+      }
+      $get_view->set_display();
+      if ($get_view->display_handler->uses_fields() && !isset($rows[$key . '-fields'])) {
+        $options[$key . '-fields'] = $name . ' (Fields)';
       }
     }
   }
@@ -142,6 +124,30 @@ function ds_extras_vd_bundle_form_submit($form, &$form_state) {
 }
 
 /**
+ * Edit the display or remove a views display.
+ *
+ * @param $bundle
+ *   The name of the bundle
+ * @param $action
+ *   The action to take (edit or remove)
+ */
+function ds_extras_vd_manage($bundle = '', $action = '') {
+  $entity_info = entity_get_info('ds_views');
+
+  if (!empty($bundle) && isset($entity_info['bundles'][$bundle]) && $action == 'remove') {
+    return drupal_get_form('ds_extras_vd_bundle_remove', $bundle, $entity_info['bundles'][$bundle]['label']);
+  }
+
+  if (!empty($bundle) && isset($entity_info['bundles'][$bundle]) && $action == 'display') {
+    return ds_extras_vd_field_ui($bundle);
+  }
+
+  // Redirect to overview.
+  drupal_set_message(t('No view found to layout.'));
+  drupal_goto('admin/structure/ds/vd');
+}
+
+/**
  * Return Field UI display screen for a view and bundle.
  *
  * @param $bundle
@@ -149,9 +155,8 @@ function ds_extras_vd_bundle_form_submit($form, &$form_state) {
  */
 function ds_extras_vd_field_ui($bundle) {
 
+  // Disable editor switch.
   global $conf;
-
-  // Disable panels.
   $conf['ds_extras_panel_view_modes'] = FALSE;
   $conf['ds_extras_switch_editor'] = FALSE;
 
@@ -160,6 +165,7 @@ function ds_extras_vd_field_ui($bundle) {
   $arguments = array('ds_views', $bundle, 'default');
   $form_state['build_info']['args'] = $arguments;
   $form_state['no_panels'] = TRUE;
+  $form_state['no_view_mode_suggestions'] = TRUE;
   form_load_include($form_state, 'inc', 'field_ui', 'field_ui.admin');
   form_load_include($form_state, 'inc', 'ds_extras', 'ds_extras.vd');
   $build = drupal_build_form('field_ui_display_overview_form', $form_state);
@@ -174,6 +180,9 @@ function ds_extras_vd_field_ui($bundle) {
 
   // Deny access to disabling blocks and regions.
   $build['additional_settings']['ds_layouts']['hide_sidebars']['#access'] = FALSE;
+
+  // Deny access to switching editors.
+
 
   // Add info in case we're looking at a fields view.
   $fields_check = explode('-', $bundle);
@@ -192,8 +201,6 @@ function ds_extras_vd_field_ui($bundle) {
 function ds_extras_ds_fields_ui_alter(&$fields, $context) {
 
   // @todo hide the label ?
-  // @todo only 1 suggestion is fine (in general for vd anyway).
-  // @todo clone view mode
 
   // Check on the $bundle string to see if the key 2 exists. If it exists,
   // we'll call the view to put the fields of this view on and remove
