@@ -119,7 +119,7 @@ function _ds_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_edit_custom_field_form'),
     'file' => 'ds.fields.inc',
-    'access arguments' => array('admin_view_modes'),
+    'access arguments' => array('admin_fields'),
     'type' => MENU_LOCAL_ACTION,
     'weight' => 0,
   );
@@ -129,7 +129,7 @@ function _ds_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_edit_ctools_field_form'),
     'file' => 'ds.fields.inc',
-    'access arguments' => array('admin_view_modes'),
+    'access arguments' => array('admin_fields'),
     'type' => MENU_LOCAL_ACTION,
     'weight' => 1,
   );
@@ -139,6 +139,16 @@ function _ds_menu() {
     'file' => 'ds.field_ui.inc',
     'access arguments' => array('admin_display_suite'),
     'type' => MENU_CALLBACK,
+  );
+  $items['admin/structure/ds/fields/manage_preprocess'] = array(
+    'title' => 'Add a preprocess field',
+    'description' => 'Manage a preprocess field',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_edit_preprocess_field_form'),
+    'file' => 'ds.fields.inc',
+    'access arguments' => array('admin_fields'),
+    'type' => MENU_LOCAL_ACTION,
+    'weight' => 2,
   );
   $items['admin/structure/ds/fields/delete'] = array(
     'title' => 'Delete a field',
@@ -166,9 +176,9 @@ function _ds_menu() {
       'page callback' => 'drupal_get_form',
       'page arguments' => array('ds_edit_block_field_form'),
       'file' => 'ds.fields.inc',
-      'access arguments' => array('admin_view_modes'),
+      'access arguments' => array('admin_fields'),
       'type' => MENU_LOCAL_ACTION,
-      'weight' => 2,
+      'weight' => 3,
     );
   }
 
