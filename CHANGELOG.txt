@@ -3,7 +3,8 @@
 -------------------------------------------------------------------------------------
 - #1193114 by swentel: make sure features don't list Display suite x times.
 - #1192744 by swentel and mrfelton: load comments on nodes on views listings.
-- #1214238 by dylon: fix type in ds.field_ui.inc.
+- #1214238 by dylon: fix type in ds.field_ui.inc. 
+- #1207718 by BTMash: fix white page and facet api.
 - Views Field UI fields mode.
 - Panel view modes module: use Panels layouts to manage the view modes.
 - Hide sidebar blocks option.

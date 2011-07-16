@@ -236,6 +236,15 @@ function ds_search_conditions() {
     $conditions['filters'] = trim($_GET['filters']);
   }
 
+  // We may also have filters added by facet API module. The 'f'
+  // is determined by constant FacetapiAdapter::FILTER_KEY. Hard
+  // coded here to avoid extra class loading.
+  if (!empty($_GET['f']) && is_array($_GET['f'])) {
+    if (module_exists('facetapi')) {
+      $conditions['f'] = $_GET['f'];
+    }
+  }
+
   if (variable_get('apachesolr_search_browse', 'browse') != 'none') {
     // Set a condition so the search is triggered.
     $conditions['apachesolr_search_browse'] = variable_get('apachesolr_search_browse', 'browse');
@@ -535,6 +544,12 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
 function apachesolr_search_ds_search_execute($keys = NULL, $conditions = NULL) {
   $find = apachesolr_search_search_execute($keys, $conditions);
   $results = array();
+
+  // Make sure apachesolr_search_browse is not rendered.
+  if (isset($find['apachesolr_search_browse'])) {
+    unset($find['apachesolr_search_browse']);
+  }
+
   foreach ($find as $item) {
     $node = @unserialize(urldecode($item['fields']['tm_node'][0]));
     if (!isset($node->nid)) {
@@ -542,5 +557,6 @@ function apachesolr_search_ds_search_execute($keys = NULL, $conditions = NULL) {
     }
     $results[$item['node']->entity_id] = $node;
   }
+
   return $results;
 }
