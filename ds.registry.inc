@@ -465,7 +465,7 @@ function _ds_ds_layout_info() {
 }
 
 function _ds_layouts_scan_theme($theme, &$layouts) {
-  $theme_layouts = file_scan_directory(drupal_get_path('theme', $theme) . '/ds_layouts', '/inc/');
+  $theme_layouts = file_scan_directory(drupal_get_path('theme', $theme) . '/ds_layouts', '/inc$/');
   foreach ($theme_layouts as $file => $values) {
     include_once(DRUPAL_ROOT . '/' . $file);
     $function = 'ds_' . $values->name;
