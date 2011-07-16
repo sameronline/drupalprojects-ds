@@ -423,7 +423,7 @@ class dsLayoutsStylesTests extends dsBaseTest {
       'fields[comments][region]' => 'footer',
       'fields[test_field][region]' => 'left',
       'fields[test_block_field][region]' => 'left',
-      'fields[submitted]' => 'left',
+      'fields[submitted][region]' => 'left',
     );
 
     // Setup first layout.
