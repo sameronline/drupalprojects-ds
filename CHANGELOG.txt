@@ -6,6 +6,7 @@
 - #1214238 by dylon: fix type in ds.field_ui.inc. 
 - #1207718 by BTMash: fix white page and facet api.
 - #1218464 by muka: Better regular expression for finding themes.
+- #1218636 by swentel: fix issue in ds-build to create tpl files with hyphens.
 - Views Field UI fields mode.
 - Panel view modes module: use Panels layouts to manage the view modes.
 - Hide sidebar blocks option.
