@@ -612,7 +612,7 @@ function ds_panels_layout_change($form, &$form_state) {
 }
 
 /**
- * Implementats hook_form_FORM_ID_alter().
+ * Implements hook_form_FORM_ID_alter().
  */
 function ds_extras_form_panels_change_layout_alter(&$form, $form_state) {
   $form['submit']['#submit'][] = 'ds_panels_layout_change_submit';
