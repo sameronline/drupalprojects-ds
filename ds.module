@@ -514,8 +514,6 @@ function ds_entity_variables(&$vars) {
       return;
     }
 
-    //dsm($vars);
-
     $render_container = 'content';
     // User uses user_profile as container.
     if ($vars['elements']['#entity_type'] == 'user') {
