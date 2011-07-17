@@ -514,6 +514,8 @@ function ds_entity_variables(&$vars) {
       return;
     }
 
+    //dsm($vars);
+
     $render_container = 'content';
     // User uses user_profile as container.
     if ($vars['elements']['#entity_type'] == 'user') {
@@ -521,8 +523,13 @@ function ds_entity_variables(&$vars) {
     }
 
     // Move any preprocess fields to render container.
-    if (isset($vars[$vars['elements']['#entity_type']]->preprocess_fields)) {
-      foreach ($vars[$vars['elements']['#entity_type']]->preprocess_fields as $key => $field) {
+    // Inconsitency in taxonomy term naming.
+    $object = $vars['elements']['#entity_type'];
+    if ($vars['elements']['#entity_type'] == 'taxonomy_term') {
+      $object = 'term';
+    }
+    if (isset($vars[$object]->preprocess_fields)) {
+      foreach ($vars[$object]->preprocess_fields as $key => $field) {
 
         // Process RDF if the module is enabled before moving preprocess fields.
         if (module_exists('rdf')) {
