@@ -88,6 +88,8 @@ function ds_schema() {
         'description' => 'The unique id this setting.',
         'type' => 'varchar',
         'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
       ),
       'entity_type' => array(
         'description' => 'The name of the entity.',
@@ -148,6 +150,8 @@ function ds_schema() {
         'description' => 'The unique id the layout.',
         'type' => 'varchar',
         'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
       ),
       'entity_type' => array(
         'description' => 'The name of the entity.',
