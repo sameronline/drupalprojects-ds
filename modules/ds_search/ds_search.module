@@ -360,7 +360,7 @@ if (variable_get('ds_user_override_search_page', FALSE)) {
       if (!empty($uids)) {
         $accounts = user_load_multiple($uids);
         foreach ($accounts as $account) {
-          $build['results'][$account->uid] = user_view($account, variable_get('ds_search_view_mode', 'search_result'));
+          $build['search_results'][$account->uid] = user_view($account, variable_get('ds_search_view_mode', 'search_result'));
         }
       }
     }
