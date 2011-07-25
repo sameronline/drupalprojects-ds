@@ -105,9 +105,16 @@ function _ds_extras_menu_alter(&$items) {
 
   // Switch view mode.
   if (variable_get('ds_extras_switch_view_mode', FALSE)) {
-    $items['node/%node']['page callback'] = 'ds_extras_node_show';
+    $items['node/%node']['page callback'] = 'ds_extras_node_page_view';
     $items['node/%node']['file'] = 'ds_extras.pages.inc';
     $items['node/%node']['file path'] = drupal_get_path('module', 'ds_extras');
+  }
+
+  // Revision view mode.
+  if (variable_get('ds_extras_revision_view_mode', FALSE)) {
+    $items['node/%node/revisions/%/view']['page callback'] = 'ds_extras_revision_node_show';
+    $items['node/%node/revisions/%/view']['file'] = 'ds_extras.pages.inc';
+    $items['node/%node/revisions/%/view']['file path'] = drupal_get_path('module', 'ds_extras');
   }
 
   // Panel view modes.
@@ -189,6 +196,16 @@ function _ds_extras_entity_info() {
   return $return;
 }
 
+/**
+ * Implements hook_entity_info_alter().
+ */
+function _ds_extras_entity_info_alter(&$entity_info) {
+  $revision = array(
+    'label' => 'Revision',
+    'custom settings' => FALSE,
+  );
+  $entity_info['node']['view modes']['revision'] = $revision;
+}
 
 /**
  * Implements hook_theme_registry_alter().
@@ -282,6 +299,14 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
     'form_node_form_alter',
   );
   if (!variable_get('ds_extras_switch_view_mode', FALSE) && in_array($hook, $switch_hooks)) {
+    unset($implementations['ds_extras']);
+  }
+
+  // Revision view mode.
+  $revision_hooks = array(
+    'entity_info_alter',
+  );
+  if (!variable_get('ds_extras_revision_view_mode', FALSE) && in_array($hook, $revision_hooks)) {
     unset($implementations['ds_extras']);
   }
 

@@ -22,6 +22,14 @@ function ds_extras_entity_info() {
 }
 
 /**
+ * Implements hook_entity_info_alter().
+ */
+function ds_extras_entity_info_alter(&$entity_info) {
+  module_load_include('inc', 'ds_extras', 'ds_extras.registry');
+  return _ds_extras_entity_info_alter($entity_info);
+}
+
+/**
  * Implements hook_permission().
  */
 function ds_extras_permission() {

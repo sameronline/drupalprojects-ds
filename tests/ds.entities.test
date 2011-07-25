@@ -191,6 +191,44 @@ class dsNodeTests extends dsBaseTest {
     $this->drupalGet('node/' . $node->nid);
     $this->assertNoRaw('<h1 class="title" id="page-title">
           '. $node->title . '        </h1>');
+
+    // Test revisions. Enable the revision view mode
+    $edit = array('additional_settings[modes][view_modes_custom][revision]' => '1');
+    $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
+
+    // Select layout and configure fields.
+    $edit = array(
+      'additional_settings[layout]' => 'ds_2col',
+    );
+    $assert = array(
+      'regions' => array(
+        'left' => '<td colspan="8">' . t('Left') . '</td>',
+        'right' => '<td colspan="8">' . t('Right') . '</td>',
+      ),
+    );
+    $this->dsSelectLayout($edit, $assert, 'admin/structure/types/manage/article/display/revision');
+    $edit = array(
+      'fields[body][region]' => 'left',
+      'fields[links][region]' => 'right',
+      'fields[author][region]' => 'right',
+    );
+    $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display/revision');
+
+    // Create revision of the node.
+    $edit = array(
+      'revision' => TRUE,
+      'log' => 'Test revision',
+    );
+    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
+    $this->assertText('Revisions');
+
+    // Assert revision is using 2 col template.
+    $this->drupalGet('node/' . $node->nid . '/revisions/1/view');
+    $this->assertText('Body:', 'Body label');
+
+    // Assert full view is using stacked template.
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertNoText('Body:', 'Body label');
   }
 
   /**

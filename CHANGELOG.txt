@@ -9,6 +9,7 @@
 - #1218636 by swentel: fix issue in ds-build to create tpl files with hyphens.
 - #1146216 by swentel: bring preprocess fields in UI and fix taxonomy term preprocess.
 - #1221842 by swentel: fix minor warnings in schema definition.
+- #1191336 by swentel: override display of node revisions.
 - Use $search_result variable for user page as well so empty doesn't show up.
 - Views Field UI fields mode.
 - Panel view modes module: use Panels layouts to manage the view modes.
