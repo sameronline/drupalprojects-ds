@@ -205,18 +205,18 @@ class dsPanelViewModesTests extends dsBaseTest {
     $this->assertNoRaw('edit-additional-settings-layout');
     $this->drupalGet('admin/structure/types/manage/article/display/teaser');
     $this->assertNoRaw('edit-additional-settings-layout');
-    $this->drupalGet('admin/structure/types/manage/article/display?switch=field_ui');
+    $this->drupalGet('admin/structure/types/manage/article/display', array('query' => array('switch' => 'field_ui')));
     $this->assertNoRaw('edit-additional-settings-layout');
     // Enable switching and detection of configured layouts.
     variable_set('ds_extras_editor_switch', TRUE);
     $this->refreshVariables();
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('edit-additional-settings-layout');
-    $this->drupalGet('admin/structure/types/manage/article/display?switch=field_ui');
-    $this->assertNoRaw('edit-additional-settings-layout');
+    $this->drupalGet('admin/structure/types/manage/article/display', array('query' => array('switch' => 'field_ui')));
+    $this->assertRaw('edit-additional-settings-layout');
     $this->dsSelectLayout(array(), array(), 'admin/structure/types/manage/article/display', array('query' => array('switch' => 'field_ui')));
     $this->assertRaw('edit-additional-settings-layout');
-    $this->drupalGet('admin/structure/types/manage/article/display?switch=panels');
+    $this->drupalGet('admin/structure/types/manage/article/display', array('query' => array('switch' => 'panels')));
     $this->assertNoRaw('edit-additional-settings-layout');
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('edit-additional-settings-layout');
