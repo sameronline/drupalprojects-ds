@@ -9,6 +9,7 @@
 - #1059336 by jstoller: Add field variables containing groups and regions.
 - #1194922 and 1194914 by swentel and dbeheydt: fix notices with new patch.
 - #1221036 by jstoller: fix notice due to function param change in features.
+- #1230038 by swentel: fix (public) xss exploit.
 - Hide the classes select box on views fields if there are no styles.
 
 -------------------------------------------------------------------------------------
