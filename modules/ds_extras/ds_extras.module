@@ -808,7 +808,7 @@ function ds_extras_render_panel_layout(&$vars) {
     }
 
     // Add the panels template file as the theme hook suggestion.
-    $vars['theme_hook_suggestion'] = 'panels_' . $display->layout;
+    $vars['theme_hook_suggestion'] = $layout['settings']['theme'];
 
     // Add css ID.
     $vars['css_id'] = $layout['settings']['css_id'];

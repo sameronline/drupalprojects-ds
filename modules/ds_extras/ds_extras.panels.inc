@@ -525,6 +525,12 @@ function ds_panels_layout_save($form, &$form_state, $clone = FALSE) {
     $settings['did'] = $form['#did'];
   }
 
+  // Determine the theme function / template for this display.
+  $pipeline = $settings['pipeline'];
+  $display = panels_load_display($settings['did']);
+  $renderer = panels_get_renderer($pipeline, $display);
+  $settings['theme'] = $renderer->plugins['layout']['theme'];
+
   // Remove old record.
   db_delete('ds_layout_settings')
     ->condition('entity_type', $entity_type)
