@@ -457,14 +457,16 @@ function ds_panels_layout_save($form, &$form_state, $clone = FALSE) {
     'ds_panels' => TRUE,
   );
 
+  // Load content & context plugin.
+  ctools_include('content');
+  ctools_include('context');
+
   // Create Panels display if this is the first
   // time we're saving the layout. We'll also add
   // common fields as panes to the layout.
   if (!$form['#ds_panels_update']) {
 
     $id = 1;
-
-    ctools_include('content');
 
     // Create new display.
     $display = panels_new_display();
