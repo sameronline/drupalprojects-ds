@@ -250,7 +250,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     $options = array();
     $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
     foreach ($ds_layout_settings as $row) {
-      if (isset($row->settings['ds_panels'])) {
+      if ($row->entity_type == $entity_type && isset($row->settings['ds_panels'])) {
         $options[$row->id] = drupal_ucfirst($row->entity_type) . ' > ' . drupal_ucfirst($row->bundle) . ' > ' . drupal_ucfirst($row->view_mode);
       }
     }
@@ -584,6 +584,33 @@ function ds_panels_layout_clone($form, &$form_state) {
   ob_start();
   eval($export);
   ob_end_clean();
+
+  // Remove fields which are not on the bundle in case
+  // it is different. The entity type is ok since, it's
+  // not possible to clone from another entity type.
+  $original = explode('|', $clone);
+  if ($original[1] != $bundle) {
+    $orig_bundle_fields = field_info_instances($original[0], $original[1]);
+    $new_bundle_fields = field_info_instances($entity_type, $bundle);
+    $remove = array_diff(array_keys($orig_bundle_fields), array_keys($new_bundle_fields));
+    if (!empty($remove)) {
+      foreach ($display->content as $key => $field) {
+        if ($field->type == 'entity_field') {
+          $compare = str_replace($entity_type . ':', '', $field->subtype);
+          if (in_array($compare, $remove)) {
+            // Remove from content.
+            unset($display->content[$key]);
+            // Remove from panels.
+            $region = $field->panel;
+            $region_key = array_search($key, $display->panels[$region]);
+            unset($display->panels[$region][$region_key]);
+          }
+        }
+      }
+    }
+  }
+
+  // Save the display.
   panels_save_display($display);
 
   // Save new layout record for ds.
