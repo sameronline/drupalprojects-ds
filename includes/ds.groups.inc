@@ -114,7 +114,7 @@ function ds_fieldgroup_form($form_state, $module, $key = '', $fieldgroup = array
   if (isset($api_info['types']) && count($api_info['types']()) > 1) {
     $types = array();
     foreach ($api_info['types']() as $tkey => $type) {
-      $types[$tkey] = $type->name;
+      $types[$tkey] = check_plain($type->name);
     }
     $form['identity']['exclude'] = array(
       '#type' => 'checkboxes',

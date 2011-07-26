@@ -150,7 +150,7 @@ function ds_export(&$form_state) {
               continue;
             }
           }
-          $options[$module .'-'. $type->type] = $type->name;
+          $options[$module .'-'. $type->type] = check_plain($type->name);
           if ($global_exclude == TRUE) {
             $ds_variables[] = $module .'_type_'. $tkey;
           }

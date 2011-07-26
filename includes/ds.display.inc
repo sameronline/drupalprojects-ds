@@ -62,7 +62,7 @@ function ds_layout_overview() {
 
           // Any build modes found ?
           if (!empty($build_mode_rows)) {
-            $rows[] = array(array('data' => drupal_ucfirst($otype->name), 'colspan' => '3', 'class' => 'ds-row-title'));
+            $rows[] = array(array('data' => check_plain(drupal_ucfirst($otype->name)), 'colspan' => '3', 'class' => 'ds-row-title'));
             $rows = array_merge($rows, $build_mode_rows);
           }
         }
