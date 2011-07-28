@@ -30,6 +30,7 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
 
   // Load ds field ui.
   module_load_include('inc', 'ds', 'ds.field_ui');
+  module_load_include('inc', 'ds_extras', 'ds.admin');
 
   // Get the ds layout. Make sure this does not break in case
   // there was a layout created with Field UI.
@@ -341,6 +342,11 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     '#value' => $panel_layout,
   );
 
+  // Page title functionality, currently only works on nodes.
+  if ($form['#entity_type'] == 'node' && ($form['#view_mode'] == 'full' || variable_get('ds_extras_switch_view_mode', FALSE)) &&  variable_get('ds_extras_hide_page_title', FALSE)) {
+    $form['ds_panels_layout']['ds_layouts']['ds_page_title_options'] = _ds_extras_page_title_options($ds_layout['settings'], $entity_type);
+  }
+
   $form['ds_panels_layout']['css_id'] = array(
     '#type' => 'textfield',
     '#title' => t('CSS ID'),
@@ -367,15 +373,6 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
   }
   else {
     $form['ds_panels_layout']['sticky'] = array('#value' => FALSE);
-  }
-
-  if ($form['#entity_type'] == 'node' && ($form['#view_mode'] == 'full' || variable_get('ds_extras_switch_view_mode', FALSE)) &&  variable_get('ds_extras_hide_page_title', FALSE)) {
-    $form['ds_panels_layout']['ds_layouts']['ds_hide_page_title'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Hide page title'),
-      '#default_value' => isset($ds_layout['settings']['hide_page_title']) ? $ds_layout['settings']['hide_page_title'] : FALSE,
-      '#weight' => 100,
-    );
   }
 
   $form['ds_panels_layout']['hide_sidebars'] = array(

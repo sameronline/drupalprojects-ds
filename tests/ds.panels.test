@@ -169,11 +169,18 @@ class dsPanelViewModesTests extends dsBaseTest {
     // Test hide page title.
     $this->assertRaw('<h1 class="title" id="page-title">
           '. $node->title . '        </h1>');
-    $edit = array('ds_hide_page_title' => '1');
+    $edit = array('page_option_type' => '1');
     $this->DSpanelEditLayout($edit, 'full', '');
     $this->drupalGet('node/' . $node->nid);
     $this->assertNoRaw('<h1 class="title" id="page-title">
       '. $node->title . '        </h1>');
+
+    // Use page title substitutions.
+    $edit = array('page_option_type' => '1', 'page_option_title' => '%node:type');
+    $this->DSpanelEditLayout($edit, 'full', '');
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertNoRaw('<h1 class="title" id="page-title">
+      '. $node->type . '        </h1>');
 
     // Test panels with the switch view mode, so add a layout on default again.
     $edit = array('clone' => 'node|article|full');
@@ -188,12 +195,12 @@ class dsPanelViewModesTests extends dsBaseTest {
     $this->assertRaw('swentel-layout');
 
     // Test hide page title with the switch view mode.
-    $edit = array('ds_hide_page_title' => FALSE);
+    $edit = array('page_option_type' => '0');
     $this->DSpanelEditLayout($edit, 'teaser', '');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw('<h1 class="title" id="page-title">
           '. $node->title . '        </h1>');
-    $edit = array('ds_hide_page_title' => '1');
+    $edit = array('page_option_type' => '1');
     $this->DSpanelEditLayout($edit, 'teaser', '');
     $this->drupalGet('node/' . $node->nid);
     $this->assertNoRaw('<h1 class="title" id="page-title">

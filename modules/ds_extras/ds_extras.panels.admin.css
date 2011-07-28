@@ -1,5 +1,6 @@
 
-.vertical-tabs #ds-panels-layout fieldset.default-fallback {
+.vertical-tabs #ds-panels-layout fieldset.default-fallback,
+.vertical-tabs #ds-panels-layout fieldset#edit-page-option-contexts {
   margin: 1em 0;
   padding: 2.5em 0 0;
   border: 1px solid #CCCCCC;

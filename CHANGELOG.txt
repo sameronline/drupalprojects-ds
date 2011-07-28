@@ -7,14 +7,15 @@
 - #1207718 by BTMash: fix white page and facet api.
 - #1218464 by muka: Better regular expression for finding themes.
 - #1218636 by swentel: fix issue in ds-build to create tpl files with hyphens.
-- #1146216 by swentel: bring preprocess fields in UI and fix taxonomy term preprocess.
+- #1146216 by swentel: preprocess fields via UI and fix taxonomy term preprocess.
 - #1221842 by swentel: fix minor warnings in schema definition.
 - #1191336 by swentel: override display of node revisions.
 - #1227986 by swentel: use theme key of layout plugin.
+- #1222412 by swentel: extend page title options with substitutions.
 - Use $search_result variable for user page as well so empty doesn't show up.
-- Views Field UI fields mode.
 - Panel view modes module: use Panels layouts to manage the view modes.
 - Hide sidebar blocks option.
+- Views Field UI fields mode.
 
 -------------------------------------------------------------------------------------
 7.x-1.2 14/06/2011

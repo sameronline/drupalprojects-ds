@@ -137,8 +137,8 @@ function ds_extras_settings($form) {
 
   $form['additional_settings']['fs4']['ds_extras_hide_page_title'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Hide page title'),
-    '#description' => t('An extra option will appear on the "Manage displays" screen of the "Full content" build mode.'),
+    '#title' => t('Page title options'),
+    '#description' => t('An extra option to either, hide or manually set the page title will appear on the "Manage displays" screen of the "Full content" build mode.'),
     '#default_value' => variable_get('ds_extras_hide_page_title', FALSE),
   );
 
@@ -393,14 +393,9 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
     $form['#submit'] = array_merge(array('ds_extras_vd_field_ui_submit'), $form['#submit']);
   }
 
-  // Hide page title functionality, currently only works on node.
+  // Page title functionality, currently only works on nodes.
   if (isset($form['#ds_layout']) && $form['#entity_type'] == 'node' && ($form['#view_mode'] == 'full' || variable_get('ds_extras_switch_view_mode', FALSE)) &&  variable_get('ds_extras_hide_page_title', FALSE)) {
-    $form['additional_settings']['ds_layouts']['ds_hide_page_title'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Hide page title'),
-      '#default_value' => isset($form['#ds_layout']->settings['hide_page_title']) ? $form['#ds_layout']->settings['hide_page_title'] : FALSE,
-      '#weight' => 100,
-    );
+    $form['additional_settings']['ds_layouts']['ds_page_title_options'] = _ds_extras_page_title_options($form['#ds_layout']->settings, $form['#entity_type']);
   }
 
   // Region to block only fires if there is a layout and we're working on the
@@ -663,4 +658,65 @@ function ds_extras_region_to_block_unique($name) {
   $region_blocks = variable_get('ds_extras_region_blocks', array());
   $value = strtr($name, array('-' => '_'));
   return isset($region_blocks[$value]) ? TRUE : FALSE;
+}
+
+/**
+ * Helper function to show the page title options. Used in Field UI and Panels editor.
+ */
+function _ds_extras_page_title_options($settings, $entity_type) {
+
+  $return['page_option_type'] = array(
+    '#type' => 'select',
+    '#title' => t('Page title'),
+    '#options' => array(
+      '0' => t('Show'),
+      '1' => t('Hide'),
+      '2' => t('Manually set'),
+    ),
+    '#default_value' => isset($settings['hide_page_title']) ? $settings['hide_page_title'] : FALSE,
+    '#weight' => 100,
+  );
+
+  $contexts = ds_get_entity_context($entity_type);
+  $rows = array();
+  foreach ($contexts as $context) {
+    foreach (ctools_context_get_converters('%' . check_plain($context->keyword) . ':', $context) as $keyword => $title) {
+      $rows[] = array(
+        check_plain($keyword),
+        t('@identifier: @title', array('@title' => $title, '@identifier' => $context->identifier)),
+      );
+    }
+  }
+
+  $return['page_option_title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Title'),
+    '#default_value' => isset($settings['page_option_title']) ? $settings['page_option_title'] : '',
+    '#description' => t('The title, you may use substitutions in this title.'),
+    '#weight' => 101,
+    '#states' => array(
+      'visible' => array(
+        ':input[name="page_option_type"]' => array('value' => '2'),
+        ':input[name="additional_settings[ds_page_title_options][page_option_type]"]' => array('value' => '2'),
+      ),
+    ),
+  );
+
+  $header = array(t('Keyword'), t('Value'));
+  $return['page_option_contexts'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Substitutions'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#value' => theme('table', array('header' => $header, 'rows' => $rows)),
+    '#weight' => 102,
+    '#states' => array(
+      'visible' => array(
+        ':input[name="page_option_type"]' => array('value' => '2'),
+        ':input[name="additional_settings[ds_page_title_options][page_option_type]"]' => array('value' => '2'),
+      ),
+    ),
+  );
+
+  return $return;
 }

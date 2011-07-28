@@ -114,3 +114,16 @@ a.section-link {
   width: 50%;
   float: left;	
 }
+
+/**
+ * Fieldset in vertical tabs.
+ */
+.vertical-tabs fieldset#edit-additional-settings-ds-page-title-options-page-option-contexts {
+  margin: 1em 0;
+  padding: 2.5em 0 0;
+  border: 1px solid #CCCCCC;
+}
+
+#edit-additional-settings-ds-page-title-options-page-option-contexts legend {
+  display: block;
+}
