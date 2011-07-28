@@ -765,6 +765,7 @@ function ds_extras_render_panel_layout(&$vars) {
     // Add entity context to begin with.
     ds_create_entity_context($entity_type, $entity, $contexts);
 
+    // @todo make it work with flexible (or at least suppress errors).
     // @todo seems like caching doesn't fire on teaser list ?
 
     // Load the display.

@@ -193,7 +193,7 @@ class dsNodeTests extends dsBaseTest {
           '. $node->title . '        </h1>');
 
     // Use page title substitutions.
-    $edit = array('additional_settings[ds_page_title_options][page_option_type]' => '0', 'additional_settings[ds_page_title_options][page_option_title]' => '%node:type');
+    $edit = array('additional_settings[ds_page_title_options][page_option_type]' => '2', 'additional_settings[ds_page_title_options][page_option_title]' => '%node:type');
     $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display/teaser');
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw('<h1 class="title" id="page-title">

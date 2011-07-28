@@ -279,61 +279,64 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
   // First time creation of a layout.
   if (!isset($ds_layout['settings']['did'])) {
 
-    $form['ds_panels_layout']['add_default_fields'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Add default fields'),
-      '#default_value' => TRUE,
-    );
-
-    $form['ds_panels_layout']['fields'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Default fields'),
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-      '#attributes' => array('class' => array('default-fallback')),
-      '#states' => array(
-        'visible' => array(
-          'input[name="add_default_fields"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
-
-    // Use prefix and suffixes to create a table here.
-    $form['ds_panels_layout']['fields']['configure'] = array(
-      '#prefix' => '<table id="ds-panels-layout-table"><th>' . t('Field') . '</th><th>' . t('Pane title') . '</th><th>' . t('Region') . '</th>',
-      '#suffix' => '</table>',
-    );
-
     // Get the first region of the chosen layout.
     $chosen_layout = panels_get_layout($panel_layout);
-    $region_options = $chosen_layout['regions'];
-    $region_keys = array_keys($chosen_layout['regions']);
 
-    $i = 1;
-    module_load_include('inc', 'field_ui', 'field_ui.admin');
-    $fields = module_invoke_all('ds_panels_default_fields', $entity_type, $bundle, $view_mode);
-    foreach ($fields as $field_name => $field) {
-      $class = ($i % 2) ? 'odd' : 'even';
-      $form['ds_panels_layout']['fields']['configure'][$field_name . '_enable'] = array(
+    if (isset($chosen_layout['regions'])) {
+      $form['ds_panels_layout']['add_default_fields'] = array(
         '#type' => 'checkbox',
-        '#title' => $field['label'],
+        '#title' => t('Add default fields'),
         '#default_value' => TRUE,
-        '#prefix' => '<tr class=' . $class . '><td>',
       );
-      $form['ds_panels_layout']['fields']['configure'][$field_name . '_hide_title'] = array(
-        '#type' => 'checkbox',
-        '#title' => t('Hide'),
-        '#default_value' => TRUE,
-        '#prefix' => '</td><td>',
+
+      $form['ds_panels_layout']['fields'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Default fields'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+        '#attributes' => array('class' => array('default-fallback')),
+        '#states' => array(
+          'visible' => array(
+            'input[name="add_default_fields"]' => array('checked' => TRUE),
+          ),
+        ),
       );
-      $form['ds_panels_layout']['fields']['configure'][$field_name . '_region'] = array(
-        '#type' => 'select',
-        '#options' => $region_options,
-        '#default_value' => $region_keys[array_rand($region_keys)],
-        '#prefix' => '</td><td>',
-        '#suffix' => '</td></tr>'
+
+      // Use prefix and suffixes to create a table here.
+      $form['ds_panels_layout']['fields']['configure'] = array(
+        '#prefix' => '<table id="ds-panels-layout-table"><th>' . t('Field') . '</th><th>' . t('Pane title') . '</th><th>' . t('Region') . '</th>',
+        '#suffix' => '</table>',
       );
-      $i++;
+
+      $region_options = $chosen_layout['regions'];
+      $region_keys = array_keys($chosen_layout['regions']);
+
+      $i = 1;
+      module_load_include('inc', 'field_ui', 'field_ui.admin');
+      $fields = module_invoke_all('ds_panels_default_fields', $entity_type, $bundle, $view_mode);
+      foreach ($fields as $field_name => $field) {
+        $class = ($i % 2) ? 'odd' : 'even';
+        $form['ds_panels_layout']['fields']['configure'][$field_name . '_enable'] = array(
+          '#type' => 'checkbox',
+          '#title' => $field['label'],
+          '#default_value' => TRUE,
+          '#prefix' => '<tr class=' . $class . '><td>',
+        );
+        $form['ds_panels_layout']['fields']['configure'][$field_name . '_hide_title'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Hide'),
+          '#default_value' => TRUE,
+          '#prefix' => '</td><td>',
+        );
+        $form['ds_panels_layout']['fields']['configure'][$field_name . '_region'] = array(
+          '#type' => 'select',
+          '#options' => $region_options,
+          '#default_value' => $region_keys[array_rand($region_keys)],
+          '#prefix' => '</td><td>',
+          '#suffix' => '</td></tr>'
+        );
+        $i++;
+      }
     }
   }
 
@@ -471,7 +474,7 @@ function ds_panels_layout_save($form, &$form_state, $clone = FALSE) {
     $display->context = ds_get_entity_context($entity_type);
 
     // Add default fields if requested.
-    if ($form_state['values']['add_default_fields']) {
+    if (isset($form_state['values']['add_default_fields']) && $form_state['values']['add_default_fields']) {
 
       // Get fields to be added on the new display.
       $fields = module_invoke_all('ds_panels_default_fields', $entity_type, $bundle, $view_mode);
