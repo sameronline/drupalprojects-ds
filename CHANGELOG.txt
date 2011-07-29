@@ -13,6 +13,7 @@
 - #1227986 by swentel: use theme key of layout plugin.
 - #1222412 by swentel: extend page title options with substitutions.
 - #1225588 by swentel: add contextual links on block field.
+- #1233958 by swentel: add destination to 'Manage region styles'.
 - Use $search_result variable for user page as well so empty doesn't show up.
 - Panel view modes module: use Panels layouts to manage the view modes.
 - Hide sidebar blocks option.
