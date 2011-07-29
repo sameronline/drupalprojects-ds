@@ -155,6 +155,8 @@ function ds_extras_vd_manage($bundle = '', $action = '') {
  */
 function ds_extras_vd_field_ui($bundle) {
 
+  // @todo check with caching, templates and fields.
+
   // Disable editor switch.
   global $conf;
   $conf['ds_extras_panel_view_modes'] = FALSE;

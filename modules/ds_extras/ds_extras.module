@@ -765,7 +765,6 @@ function ds_extras_render_panel_layout(&$vars) {
     // Add entity context to begin with.
     ds_create_entity_context($entity_type, $entity, $contexts);
 
-    // @todo make it work with flexible (or at least suppress errors).
     // @todo seems like caching doesn't fire on teaser list ?
 
     // Load the display.
@@ -784,6 +783,34 @@ function ds_extras_render_panel_layout(&$vars) {
 
     $info = entity_extract_ids($entity_type, $entity);
     $display->entity_id = $info[0];
+
+    // Add the panels template file as the theme hook suggestion.
+    $vars['theme_hook_suggestion'] = $layout['settings']['theme'];
+
+    // Add css ID.
+    $vars['css_id'] = $layout['settings']['css_id'];
+
+    // Add classes.
+    $class = array();
+    $class[] = check_plain($layout['settings']['class']);
+
+    // Add sticky class.
+    if ($layout['settings']['sticky'] && $entity->sticky) {
+      $class[] = 'sticky';
+    }
+    $vars['class'] = !empty($class) ? ' ' . implode(' ', $class) : '';
+
+    // Flexible layouts.
+    // @todo make it work with flexible.
+    if ($layout['settings']['theme'] == 'panels_flexible') {
+      drupal_set_message('Flexible layouts are not supported yet for output.');
+      return;
+      $vars['settings'] = $vars['renderer'] = '';
+      $vars['display'] = $display;
+      $panels_layout = str_replace('panels-', '', $layout['layout']);
+      $vars['layout'] = panels_get_layout($panels_layout);
+      $vars['theme_hook_suggestion'] = 'panels_flexible';
+    }
 
     // Load renderer.
     if (!isset($renderer)) {
@@ -816,22 +843,6 @@ function ds_extras_render_panel_layout(&$vars) {
         panels_set_cached_content($cache, $renderer->display, $renderer->display->args, $renderer->display->context);
       }
     }
-
-    // Add the panels template file as the theme hook suggestion.
-    $vars['theme_hook_suggestion'] = $layout['settings']['theme'];
-
-    // Add css ID.
-    $vars['css_id'] = $layout['settings']['css_id'];
-
-    // Add classes.
-    $class = array();
-    $class[] = check_plain($layout['settings']['class']);
-
-    // Add sticky class.
-    if ($layout['settings']['sticky'] && $entity->sticky) {
-      $class[] = 'sticky';
-    }
-    $vars['class'] = !empty($class) ? ' ' . implode(' ', $class) : '';
 
     // Overwrite $vars['content'].
     $vars['content'] = $content;

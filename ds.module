@@ -763,6 +763,10 @@ function ds_render_block_field($field) {
           $block->subject = $block_title == '<none>' ? '' : check_plain($block_title);
         }
         $elements = array('elements' => array('#block' => $block, '#children' => $block->content));
+        // Add contextual links
+        if (module_exists('contextual') && user_access('access contextual links')) {
+          $elements['elements'] += array('#contextual_links' => array('block' => array('admin/structure/block/manage', array($block->module, $block->delta))));
+        }
         return theme('block', $elements);
         break;
       case DS_BLOCK_TITLE_CONTENT:

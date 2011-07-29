@@ -643,7 +643,15 @@ function ds_panels_layout_clone($form, &$form_state) {
  * Submit callback: Redirect to change the layout.
  */
 function ds_panels_layout_change($form, &$form_state) {
-  $form_state['redirect'] = $_GET['q'] . '/' . $form_state['values']['layout'];
+
+  $destination = '';
+
+  // In case there's a redirect, kill it and append it to the redirect.
+  if (isset($_GET['destination'])) {
+    $destination = $_GET['destination'];
+    unset($_GET['destination']);
+  }
+  $form_state['redirect'] = array($_GET['q'] . '/' . $form_state['values']['layout'], array('query' => array('destination' => $destination)));
 }
 
 /**
