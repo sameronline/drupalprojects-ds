@@ -14,11 +14,11 @@
 }
 
 .ds-extras-field-template {
-	margin-bottom: 1em;
+  margin-bottom: 1em;
 }
 
 .field-formatter-settings-editing .ft-link {
-	display: none;
+  display: none;
 }
 
 .ft-group div.form-item {
@@ -30,8 +30,8 @@
  * Limit
  */
 .limit-float {
-	float: left;
-	margin-right: 5px;
+  float: left;
+  margin-right: 5px;
 }
 
 /**
@@ -81,11 +81,11 @@ div.ctools-modal-content {
 }
 
 a.section-link {
-	display: block;
+  display: block;
 }
 
 #ctools-content-selection h2 {
-	color: #666;
+  color: #666;
 }
 
 .option-text-aligner .form-item {
