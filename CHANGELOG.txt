@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.3 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1194252 by swentel and zuuperman: hide colons on labels for reset and expert.
 - #1193114 by swentel: make sure features don't list Display suite x times.
 - #1192744 by swentel and mrfelton: load comments on nodes on views listings.
 - #1214238 by dylon: fix type in ds.field_ui.inc. 

@@ -225,6 +225,9 @@ function ds_field_ui_regions($form, $form_state) {
         unset($row['format']['type']['#options']['hidden']);
       }
 
+      // Add label class.
+      $row['label']['#attributes']['class'][] = 'label-change';
+
       // Add region between parent_wrapper & label.
       $second = array_splice($row, 7);
       $row['region'] = $region;

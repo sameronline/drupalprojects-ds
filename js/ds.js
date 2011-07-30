@@ -64,7 +64,11 @@ $.fn.dsCtoolsContentConfiguration = function (configuration) {
  * Field template.
  */
 Drupal.behaviors.settingsToggle = {
-  attach: function (context) {  
+  attach: function (context) {
+
+    if ($('.ft-link').length == 0) {
+      return;
+    }
 
     // Remove click from link.
     $('.ft-link').click(function(e) {
@@ -98,7 +102,7 @@ Drupal.behaviors.settingsToggle = {
     $('.ds-extras-field-template').change(function() {
       ds_show_expert_settings(this);
     });
-
+    
     // Add click event to field settings link.
     $('.ft-link').click(function() {
 
@@ -151,6 +155,14 @@ Drupal.behaviors.settingsToggle = {
         $('.ow, .fis, .fi', field).hide();
       }
 
+      // Colon.
+      if (ft == 'theme_field' || ft == 'theme_ds_field_reset') {
+        $('.colon-checkbox', field).parent().hide();
+      }
+      else if ($('.lb .form-item:nth-child(1)', field).is(':visible')) {
+        $('.colon-checkbox', field).parent().show();        
+      }
+      
       // Styles.
       if (ft != 'theme_ds_field_expert' && ft != 'theme_ds_field_reset') {
         $('.field-styles', field).show();
@@ -159,6 +171,16 @@ Drupal.behaviors.settingsToggle = {
         $('.field-styles', field).hide();
       }
     }
+    
+    $('.label-change').change(function() {
+      var field = $(this).parents('tr');
+      if ($('.field-template', field).length > 0) {
+        ft = $('.ds-extras-field-template', field).val();
+        if (ft == 'theme_field' || ft == 'theme_ds_field_reset') {
+          $('.colon-checkbox', field).parent().hide();
+        }
+      }
+    });
   }
 };
 

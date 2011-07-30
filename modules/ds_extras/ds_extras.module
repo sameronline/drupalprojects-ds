@@ -194,7 +194,11 @@ function theme_ds_field_reset($variables, $config) {
 
   // Render the label.
   if (!$variables['label_hidden']) {
-    $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'] . ':&nbsp;</div>';
+    $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
+    if (!variable_get('ft-kill-colon', FALSE)) {
+      $output .= ':&nbsp;';
+    }
+    $output .= '</div>';
   }
 
   // Render the items.
@@ -220,10 +224,18 @@ function theme_ds_field_expert($variables, $config) {
       else {
         $class = ' class="label-' . $variables['element']['#label_display'] . '"';
       }
-      $output .= '<' . $config['lb-el'] . $class . '>' . $variables['label'] . ':&nbsp;</' . $config['lb-el'] . '>';
+      $output .= '<' . $config['lb-el'] . $class . '>' . $variables['label'] . '"';
+      if (!isset($config['lb-col'])) {
+        $output .= ':&nbsp;';
+      }
+      $output .= '</' . $config['lb-el'] . '>';
     }
     else {
-      $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'] . ':&nbsp;</div>';
+      $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
+      if (!isset($config['lb-col'])) {
+        $output .= ':&nbsp;';
+      }
+      $output .= '</div>';
     }
   }
 

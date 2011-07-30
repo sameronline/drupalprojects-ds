@@ -45,6 +45,19 @@ function ds_extras_settings($form) {
     ),
   );
 
+  $form['additional_settings']['fs1']['ft-kill-colon'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hide colon'),
+    '#default_value' => variable_get('ft-kill-colon', FALSE),
+    '#description' => t('Hide the colon on the reset field template.'),
+    '#states' => array(
+      'visible' => array(
+        'select[name="additional_settings[fs1][ft-default]"]' => array('value' => 'theme_ds_field_reset'),
+        'input[name="additional_settings[fs1][ds_extras_field_template]"]' => array('checked' => TRUE),
+      ),
+    ),
+  );
+
   $form['additional_settings']['fs1']['ft-kill'] = array(
     '#type' => 'checkbox',
     '#title' => t('Remove theme suggestions'),
@@ -328,7 +341,28 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
         'fis' => array('title' => t('Field items')),
         'fi' => array('title' => t('Field item')),
       );
+
+      $colon_checkbox = FALSE;
       foreach ($wrappers as $wrapper_key => $value) {
+
+        // Hide colon.
+        if (!$colon_checkbox) {
+          $form['fields'][$key]['format']['ft']['lb-col'] = array(
+            '#type' => 'checkbox',
+            '#title' => t('Hide colon'),
+            '#default_value' => isset($field_settings[$key]['ft']['lb-col']) ? $field_settings[$key]['ft']['lb-col'] : FALSE,
+            '#attributes' => array(
+              'class' => array('colon-checkbox'),
+            ),
+            '#states' => array(
+              'invisible' => array(
+                'select[name="fields[' . $key . '][label]"]' => array('value' => 'hidden'),
+              ),
+            ),
+          );
+          $colon_checkbox = TRUE;
+        }
+
         $form['fields'][$key]['format']['ft'][$wrapper_key] = array(
           '#type' => 'checkbox',
           '#title' => $value['title'],
@@ -578,6 +612,9 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
       }
       if (!(empty($values['lb-cl'])) && $function == 'theme_ds_field_expert') {
         $field_settings[$key]['ft']['lb-cl'] = check_plain($values['lb-cl']);
+      }
+      if (!(empty($values['lb-col']))) {
+        $field_settings[$key]['ft']['lb-col'] = TRUE;
       }
     }
 
