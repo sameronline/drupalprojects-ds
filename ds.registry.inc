@@ -184,7 +184,7 @@ function _ds_menu() {
 
   // CTools Modal add field.
   $items['admin/structure/ds/%ctools_js/add_field/%'] = array(
-    'title' => t('Add field'),
+    'title' => 'Add field',
     'page callback' => 'ds_ajax_add_field',
     'page arguments' => array(3, 5),
     'access arguments' => array('admin_fields'),

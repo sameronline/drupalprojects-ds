@@ -40,28 +40,18 @@ function ds_panels_cache_set_cache($conf, $content, $display, $args, $contexts, 
 }
 
 /**
- * Clear cached content.
- *
- * Cache clears are always for an entire display, regardless of arguments.
+ * Clear cached content, clear the complete table since cache_clear_all()
+ * doesn't support left wildcards. This probably doesn't happen that much anyway.
  */
 function ds_panels_cache_clear_cache($display) {
-  $cid = 'panels_simple_cache';
-
-  // This is used in case this is an in-code display, which means did will be something like 'new-1'.
-  if (isset($display->owner) && isset($display->owner->id)) {
-    $cid .= ':' . $display->owner->id;
-  }
-  $cid .= ':' . $display->did;
-
-  cache_clear_all($cid, 'cache_ds_panels', TRUE);
+  cache_clear_all('*', 'cache_ds_panels', TRUE);
 }
 
 /**
  * Figure out an id for our cache based upon input and settings.
  */
 function ds_panels_cache_get_id($conf, $display, $args, $contexts, $pane) {
-  // @todo create better cid.
-  return $display->entity_type . ':' . $display->entity_id;
+  return $display->entity_type . ':' . $display->entity_id . ':' . $display->did;
 }
 
 /**
@@ -69,7 +59,10 @@ function ds_panels_cache_get_id($conf, $display, $args, $contexts, $pane) {
  */
 function ds_panels_cache_settings_form($conf, $display, $pid) {
 
-  $options = array('entity_updated' => t('When the individual node, user etc. is updated'));
+  $options = array(
+    'entity_updated' => t('When the individual node, user etc. is updated')
+  );
+
   $form['lifetime'] = array(
     '#title' => t('Lifetime'),
     '#type' => 'select',

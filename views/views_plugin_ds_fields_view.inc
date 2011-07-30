@@ -59,7 +59,7 @@ function template_preprocess_ds_row_fields(&$vars) {
   $bundle = $vars['view']->name . '-' . $vars['view']->current_display . '-fields';
   if (!isset($row_layout[$bundle])) {
 
-    // Register the layout, even if when it return false.
+    // Register the layout, even if when it returns false.
     $row_layout[$bundle] = ds_get_layout('ds_views', $bundle, 'default');
 
     // Add css.
@@ -96,8 +96,17 @@ function template_preprocess_ds_row_fields(&$vars) {
       $region_content = '';
       if (isset($layout['settings']['regions'][$region_name])) {
         foreach ($layout['settings']['regions'][$region_name] as $key => $field) {
-          // @todo We'll probably have to render label as well.
+          $region_content .= '<div class="views-field-' . $field . '">';
+          if (isset($view->field[$field]->options['label'])) {
+            $region_content .= '<div class="field-label">';
+            $region_content .= check_plain($view->field[$field]->options['label']);
+            if ($view->field[$field]->options['element_label_colon']) {
+              $region_content .= ':';
+            }
+            $region_content .= '</div>';
+          }
           $region_content .= $view->style_plugin->rendered_fields[$row_index][$field];
+          $region_content .= '</div>';
         }
       }
       $vars[$region_name] = $region_content;

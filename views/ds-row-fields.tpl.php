@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Dummy template file for Display Suite views fields.
  */
 

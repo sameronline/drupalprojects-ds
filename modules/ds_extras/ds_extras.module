@@ -817,7 +817,6 @@ function ds_extras_render_panel_layout(&$vars) {
     $renderer->add_meta();
 
     $cache = FALSE;
-    // @todo clear cache if display is updated and
     $cacheable = isset($renderer->display->cache['method']) && !empty($renderer->display->cache['method']);
     if ($cacheable) {
       $cache = panels_get_cached_content($renderer->display, $renderer->display->args, $renderer->display->context);

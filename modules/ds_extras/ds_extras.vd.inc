@@ -10,8 +10,6 @@
  */
 function ds_extras_vd_overview() {
 
-  // @todo test vd completely.
-
   $entity_info = entity_get_info('ds_views');
   $build = $rows = array();
 
@@ -80,11 +78,11 @@ function ds_extras_vd_bundle_form($form, $form_state, $rows) {
       }
 
       $key = $view_key . '-' . $display_key;
+      $name = drupal_ucfirst($view->name) . ': ' . $display->display_title;
       if (!isset($rows[$key])) {
-        $name = drupal_ucfirst($view->name) . ': ' . $display->display_title;
         $options[$key] = $name . ' (Views template)';
       }
-      $get_view->set_display();
+      $get_view->set_display($display_key);
       if ($get_view->display_handler->uses_fields() && !isset($rows[$key . '-fields'])) {
         $options[$key . '-fields'] = $name . ' (Fields)';
       }
@@ -93,7 +91,7 @@ function ds_extras_vd_bundle_form($form, $form_state, $rows) {
 
   $form['vd'] = array(
     '#title' => t('Select view'),
-    '#description' => t('Select a View that you want to manage with Display Suite. If a View uses fields you can also select that view to select a layout and position the fields.'),
+    '#description' => t('Select a View that you want to manage with Display Suite. If a View uses fields you can also select that view to select a layout and position the fields. Note that html for the label and field are limited.'),
     '#type' => 'select',
     '#options' => $options,
   );

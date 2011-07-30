@@ -28,7 +28,9 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form, $form_state);
 
   // Add extra fields.
-  _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, $form, $form_state);
+  if ($entity_type != 'ds_views') {
+    _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, $form, $form_state);
+  }
 
   // Attach js.
   $form['#attached']['js'][] = drupal_get_path('module', 'ds') . '/js/ds.js';
@@ -1405,7 +1407,7 @@ function _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, &$form, $
     $field_types['manage_block'] = t('Add a block field');
   }
 
-  foreach($field_types as $field_key => $field_title) {
+  foreach ($field_types as $field_key => $field_title) {
 
     $form['ctools_add_field_' . $field_key . '_url'] = array(
       '#type' => 'hidden',
@@ -1442,9 +1444,9 @@ function ds_ajax_add_field($js, $field_type) {
   ctools_include('ajax');
   ctools_include('modal');
 
-  module_load_include('inc','ds','ds.registry');
+  module_load_include('inc', 'ds', 'ds.registry');
 
-  switch($field_type) {
+  switch ($field_type) {
 
     case "manage_ctools":
       $title = t('Add a dynamic field');
@@ -1477,7 +1479,7 @@ function ds_ajax_add_field($js, $field_type) {
   );
 
   $output = NULL;
-  form_load_include($form_state, 'inc','ds', 'ds.fields');
+  form_load_include($form_state, 'inc', 'ds', 'ds.fields');
 
   $output = ctools_modal_form_wrapper($form_name, $form_state);
 
