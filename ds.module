@@ -614,8 +614,19 @@ function ds_entity_variables(&$vars) {
  */
 function ds_render_region($content, $region, $layout) {
   $output = '';
+
   if (isset($layout['settings']['regions'][$region])) {
     foreach ($layout['settings']['regions'][$region] as $key => $field) {
+
+      // Field limit.
+      if (isset($layout['settings']['limit']) && isset($layout['settings']['limit'][$field])) {
+        $limit = $layout['settings']['limit'][$field];
+        $count = count($content[$field]);
+        if ($count > $limit) {
+          $content[$field]['#items'] = array_slice($content[$field]['#items'], 0, $limit);
+        }
+      }
+
       $output .= render($content[$field]);
     }
   }

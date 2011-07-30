@@ -27,6 +27,14 @@
 }
 
 /**
+ * Limit
+ */
+.limit-float {
+	float: left;
+	margin-right: 5px;
+}
+
+/**
  * Modal
  */
 #modalBackdrop {

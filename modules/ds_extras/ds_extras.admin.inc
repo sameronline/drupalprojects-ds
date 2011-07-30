@@ -290,6 +290,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
       $form['fields'][$key]['format']['ft'] = array(
         '#prefix' => '<a href="" class="ft-link">' . t('Field display') . '</a><div class="field-template" id="ft-' . $i . '">',
         '#suffix' => '</div>',
+        '#weight' => 50,
       );
       $i++;
 

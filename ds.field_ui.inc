@@ -214,6 +214,16 @@ function ds_field_ui_regions($form, $form_state) {
       )
     );
 
+    $limit_items = array(
+      '#type' => 'textfield',
+      '#size' => 2,
+      '#default_value' => '',
+      '#weight' => 10,
+      '#default_value' => '#',
+      '#prefix' => '<div class="limit-float">',
+      '#suffix' => '</div><div class="clearfix"></div>',
+    );
+
     // Update existing rows by changing rowHandler and adding regions.
     foreach (element_children($table) as $name) {
       $row = &$table[$name];
@@ -227,6 +237,15 @@ function ds_field_ui_regions($form, $form_state) {
 
       // Add label class.
       $row['label']['#attributes']['class'][] = 'label-change';
+
+      // Limit items.
+      $field_info = field_info_field($name);
+      if (isset($field_info['cardinality']) && $field_info['cardinality'] != 1) {
+        $row['format']['type']['#prefix'] = '<div class="limit-float">';
+        $row['format']['type']['#suffix'] = '</div>';
+        $row['format']['limit'] = $limit_items;
+        $row['format']['limit']['#default_value'] = (isset($layout->settings['limit']) && isset($layout->settings['limit'][$name])) ? $layout->settings['limit'][$name] : '#';
+      }
 
       // Add region between parent_wrapper & label.
       $second = array_splice($row, 7);
@@ -497,6 +516,12 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       }
       $record->settings['regions'][$field['region']][] = $key;
       $record->settings['fields'][$key] = $field['region'];
+
+      // Save limit.
+      $limit = isset($field['format']['limit']) ? trim($field['format']['limit']) : '';
+      if (is_numeric($limit)) {
+        $record->settings['limit'][$key] = $limit;
+      }
     }
 
     // Save the region classes.

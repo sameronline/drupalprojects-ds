@@ -238,6 +238,8 @@ class dsNodeTests extends dsBaseTest {
     // Assert full view is using stacked template.
     $this->drupalGet('node/' . $node->nid);
     $this->assertNoText('Body:', 'Body label');
+
+    // Test formatter limit on article with tags.
   }
 
   /**

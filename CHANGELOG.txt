@@ -16,6 +16,7 @@
 - #1225588 by swentel: add contextual links on block field.
 - #1233958 by swentel: add destination to 'Manage region styles'.
 - #1218474 by muka, swentel: add field links directly from field UI.
+- Ability to limit number of items per formatter.
 - Use $search_result variable for user page as well so empty doesn't show up.
 - Panel view modes module: use Panels layouts to manage the view modes.
 - Hide sidebar blocks option.
