@@ -222,6 +222,10 @@ function ds_field_ui_regions($form, $form_state) {
       '#default_value' => '#',
       '#prefix' => '<div class="limit-float">',
       '#suffix' => '</div><div class="clearfix"></div>',
+      '#attributes' => array(
+        'alt' => t('Enter a number to limit the number of items. Leave empty to display them all.'),
+        'title' => t('Enter a number to limit the number of items. Leave empty to display them all.'),
+      ),
     );
 
     // Update existing rows by changing rowHandler and adding regions.
