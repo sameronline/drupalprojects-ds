@@ -243,8 +243,10 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
   if (empty($ds_layout) && empty($panel_layout)) {
     $layout_tab_first = TRUE;
     $layouts = panels_common_get_allowed_layouts('ds_panels');
+    // We don't allow the flexible builder from here directly.
+    unset($layouts['flexible']);
     $form['layout'] = array(
-      '#markup' => '<p>' . t('Select a layout to use for !entity_type > !bundle > !view_mode.', array('!entity_type' => $entity_type, '!bundle' => $bundle, '!view_mode' => $view_mode)) . '</p>' . panels_common_print_layout_links($layouts, $_GET['q'], array('query' => $_GET))
+      '#markup' => '<p>' . t('Select a layout to use for !entity_type > !bundle > !view_mode.<br />You can use flexible layouts, but you need to create them first at !flexible.', array('!entity_type' => $entity_type, '!bundle' => $bundle, '!view_mode' => $view_mode, '!flexible' => url('admin/structure/panels/layouts'))) . '</p>' . panels_common_print_layout_links($layouts, $_GET['q'], array('query' => $_GET))
     );
 
     // See if we can clone from another view mode.

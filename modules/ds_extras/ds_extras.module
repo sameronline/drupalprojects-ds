@@ -765,8 +765,6 @@ function ds_extras_render_panel_layout(&$vars) {
     // Add entity context to begin with.
     ds_create_entity_context($entity_type, $entity, $contexts);
 
-    // @todo seems like caching doesn't fire on teaser list ?
-
     // Load the display.
     $did = $layout['settings']['did'];
     if (!isset($displays[$did])) {
@@ -801,10 +799,7 @@ function ds_extras_render_panel_layout(&$vars) {
     $vars['class'] = !empty($class) ? ' ' . implode(' ', $class) : '';
 
     // Flexible layouts.
-    // @todo make it work with flexible.
     if ($layout['settings']['theme'] == 'panels_flexible') {
-      drupal_set_message('Flexible layouts are not supported yet for output.');
-      return;
       $vars['settings'] = $vars['renderer'] = '';
       $vars['display'] = $display;
       $panels_layout = str_replace('panels-', '', $layout['layout']);
@@ -822,7 +817,7 @@ function ds_extras_render_panel_layout(&$vars) {
     $renderer->add_meta();
 
     $cache = FALSE;
-    // @todo clear cache if display is updated.
+    // @todo clear cache if display is updated and
     $cacheable = isset($renderer->display->cache['method']) && !empty($renderer->display->cache['method']);
     if ($cacheable) {
       $cache = panels_get_cached_content($renderer->display, $renderer->display->args, $renderer->display->context);

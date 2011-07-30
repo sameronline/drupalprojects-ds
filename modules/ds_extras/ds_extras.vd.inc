@@ -9,6 +9,9 @@
  * Show the overview form and the selection list.
  */
 function ds_extras_vd_overview() {
+
+  // @todo test vd completely.
+
   $entity_info = entity_get_info('ds_views');
   $build = $rows = array();
 

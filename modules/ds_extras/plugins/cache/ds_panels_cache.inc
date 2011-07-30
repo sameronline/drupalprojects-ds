@@ -60,6 +60,7 @@ function ds_panels_cache_clear_cache($display) {
  * Figure out an id for our cache based upon input and settings.
  */
 function ds_panels_cache_get_id($conf, $display, $args, $contexts, $pane) {
+  // @todo create better cid.
   return $display->entity_type . ':' . $display->entity_id;
 }
 

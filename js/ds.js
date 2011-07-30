@@ -163,6 +163,13 @@ Drupal.behaviors.settingsToggle = {
 };
 
 /**
+ * Save the page after saving a new field.
+ */
+$.fn.dsRefreshDisplayTable = function () {
+  $('#edit-submit').click();
+}
+
+/**
  * Row handlers for the 'Manage display' screen.
  */
 Drupal.fieldUIDisplayOverview = Drupal.fieldUIDisplayOverview || {};
@@ -216,7 +223,7 @@ Drupal.fieldUIDisplayOverview.ds.prototype = {
     refreshRows[this.name] = this.$regionSelect.get(0);
 
     return refreshRows;
-  },
+  }
 };
 
 })(jQuery);

@@ -27,6 +27,9 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   // Add the fields.
   _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form, $form_state);
 
+  // Add extra fields.
+  _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, $form, $form_state);
+
   // Attach js.
   $form['#attached']['js'][] = drupal_get_path('module', 'ds') . '/js/ds.js';
 
@@ -1362,6 +1365,142 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
   // Add fields submit handler.
   $form['#submit'][] = 'ds_field_ui_fields_save';
+}
+
+/**
+ * Add tab for adding new fields on the fly.
+ *
+ * @param $entity_type
+ *   The name of the entity type.
+ * @param $bundle
+ *   The name of the bundle
+ * @param $view_mode
+ *   The name of the view_mode
+ * @param $form
+ *   A collection of form properties.
+ * @param $form_state
+ *   A collection of form_state properties.
+ */
+function _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, &$form, $form_state) {
+
+  $form['additional_settings']['add_custom_fields'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Add custom fields'),
+    '#description' => t('Click on one of the buttons to create new fields in an overlay. After saving, the screen will be saved and the new field will be available.') . '<p></p>',
+  );
+
+  // Include the CTools tools that we need.
+  ctools_include('ajax');
+  ctools_include('modal');
+
+  // Add CTools' javascript to the page.
+  ctools_modal_add_js();
+
+  $field_types = array(
+    'custom_field' => t('Add a field'),
+    'manage_ctools' => t('Add a dynamic field'),
+    'manage_preprocess' => t('Add a preprocess field'),
+  );
+  if (module_exists('block')) {
+    $field_types['manage_block'] = t('Add a block field');
+  }
+
+  foreach($field_types as $field_key => $field_title) {
+
+    $form['ctools_add_field_' . $field_key . '_url'] = array(
+      '#type' => 'hidden',
+      '#attributes' => array('class' => array('ctools_add_field_' . $field_key . '-url')),
+      '#value' => url('admin/structure/ds/nojs/add_field/' . $field_key),
+    );
+
+    $form['additional_settings']['add_custom_fields']['ctools_add_field_' . $field_key] = array(
+      '#type' => 'button',
+      '#value' => $field_title,
+      '#attributes' => array('class' => array('ctools-use-modal')),
+      '#id' => 'ctools_add_field_' . $field_key,
+    );
+  }
+}
+
+/**
+ * Handles ctools modal Add field
+ *
+ * @param $js
+ *  Whether js is used or not.
+ * @param $field_type
+ *   The name of the field type.
+ */
+function ds_ajax_add_field($js, $field_type) {
+
+  if (!$js) {
+    // We don't support degrading this from js because we're not
+    // using the server to remember the state of the table.
+    drupal_goto("admin/structure/ds/fields/" . $field_type);
+    return;
+  }
+
+  ctools_include('ajax');
+  ctools_include('modal');
+
+  module_load_include('inc','ds','ds.registry');
+
+  switch($field_type) {
+
+    case "manage_ctools":
+      $title = t('Add a dynamic field');
+      $form_name = "ds_edit_ctools_field_form";
+      break;
+
+    case "manage_preprocess":
+      $title = t('Add a preprocess field');
+      $form_name = "ds_edit_preprocess_field_form";
+      break;
+
+    case "manage_block":
+      $title = t('Add a block field');
+      $form_name = "ds_edit_block_field_form";
+      break;
+
+    default:
+      $title = t('Add a field');
+      $form_name = "ds_edit_custom_field_form";
+      $field_type = 'manage_custom';
+      break;
+  }
+
+  $form_state = array();
+  $form_state['build_info']['args'] = array();
+  $form_state += array(
+    'title' => $title,
+    'ajax' => TRUE,
+    're_render' => FALSE,
+  );
+
+  $output = NULL;
+  form_load_include($form_state, 'inc','ds', 'ds.fields');
+
+  $output = ctools_modal_form_wrapper($form_name, $form_state);
+
+  // Field is saved.
+  if ($form_state['executed']) {
+
+    $output = array();
+
+    // Do not print messages on screen.
+    if ($messages = theme('status_messages')) {
+      $output[] = ajax_command_append('#console', $messages);
+    }
+
+    // Close the modal.
+    $output[] = ctools_modal_command_dismiss();
+
+    // Call our own javascript function which will trigger a refresh of the table.
+    $output[] = ajax_command_invoke('#field-display-overview', 'dsRefreshDisplayTable');
+  }
+
+  drupal_add_http_header('Content-Type', 'application/json');
+  print ajax_render($output);
+  exit;
 }
 
 /**
