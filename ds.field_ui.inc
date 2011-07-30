@@ -1188,6 +1188,11 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     'bundle' => $bundle,
     'view_mode' => $view_mode,
   );
+  // Load views file if entity type is not ds_views.
+  // We need to cache the hook it's implementing.
+  if ($entity_type != 'ds_views' && module_exists('ds_extras') && variable_get('ds_extras_vd', FALSE)) {
+    module_load_include('inc', 'ds_extras', 'ds_extras.vd');
+  }
   drupal_alter('ds_fields_ui', $fields, $context);
 
   // Get field settings.

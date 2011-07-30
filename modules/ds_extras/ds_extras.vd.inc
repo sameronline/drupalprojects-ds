@@ -155,8 +155,6 @@ function ds_extras_vd_manage($bundle = '', $action = '') {
  */
 function ds_extras_vd_field_ui($bundle) {
 
-  // @todo check with caching, templates and fields.
-
   // Disable editor switch.
   global $conf;
   $conf['ds_extras_panel_view_modes'] = FALSE;
@@ -182,9 +180,6 @@ function ds_extras_vd_field_ui($bundle) {
 
   // Deny access to disabling blocks and regions.
   $build['additional_settings']['ds_layouts']['hide_sidebars']['#access'] = FALSE;
-
-  // Deny access to switching editors.
-
 
   // Add info in case we're looking at a fields view.
   $fields_check = explode('-', $bundle);
