@@ -14,7 +14,7 @@ function _ds_menu() {
   // Start page of Display Suite.
   $items['admin/structure/ds'] = array(
     'title' => 'Display suite',
-    'description' => 'Manage configuration for Display Suite.',
+    'description' => 'Manage configuration for Display suite like fields, view modes etc.',
     'page callback' => 'system_admin_menu_block_page',
     'access arguments' => array('admin_display_suite'),
     'file' => 'system.admin.inc',
