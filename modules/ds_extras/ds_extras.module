@@ -794,6 +794,7 @@ function ds_extras_render_panel_layout(&$vars) {
     $info = entity_extract_ids($entity_type, $entity);
     $display->entity_id = $info[0];
 
+    // @todo this trigger notices during tests - probably with change or clone.
     // Add the panels template file as the theme hook suggestion.
     $vars['theme_hook_suggestion'] = $layout['settings']['theme'];
 
