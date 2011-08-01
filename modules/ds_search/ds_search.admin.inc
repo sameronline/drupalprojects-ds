@@ -230,7 +230,7 @@ function ds_search_settings($form, $form_state) {
   }
 
   $active = variable_get('search_active_modules', array('node', 'user'));
-  if ($active['user'] !== 0) {
+  if (isset($active['user']) && $active['user'] !== 0) {
     $form['user'] = array(
       '#type' => 'fieldset',
       '#title' => t('User search'),
