@@ -639,6 +639,20 @@ function ds_field_ui_layout_clone($form, &$form_state) {
   $bundle = $form['#bundle'];
   $view_mode = $form['#view_mode'];
 
+  // Delete previous layout settings configuration.
+  db_delete('ds_layout_settings')
+    ->condition('entity_type', $entity_type)
+    ->condition('bundle', $bundle)
+    ->condition('view_mode', $view_mode)
+    ->execute();
+
+  // Delete previous field configuration configuration.
+  db_delete('ds_field_settings')
+    ->condition('entity_type', $entity_type)
+    ->condition('bundle', $bundle)
+    ->condition('view_mode', $view_mode)
+    ->execute();
+
   // Clone and save new display.
   ctools_include('export');
   $layout = ctools_export_crud_load('ds_layout_settings', $clone);
