@@ -332,12 +332,6 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
       $wrappers = array(
         'lb' => array(
           'title' => t('Label'),
-            'states' => array(
-            'invisible' => array(
-              'select[name="fields[' . $key . '][label]"]' => array('value' => 'hidden'),
-              'select[name="fields[' . $key . '][format][ft][function]"]' => array('value' => 'theme_ds_field_expert'),
-            ),
-          ),
         ),
         'ow' => array('title' => t('Outer wrapper')),
         'fis' => array('title' => t('Field items')),
@@ -356,11 +350,6 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
             '#attributes' => array(
               'class' => array('colon-checkbox'),
             ),
-            '#states' => array(
-              'invisible' => array(
-                'select[name="fields[' . $key . '][label]"]' => array('value' => 'hidden'),
-              ),
-            ),
           );
           $colon_checkbox = TRUE;
         }
@@ -371,9 +360,6 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
           '#prefix' => '<div class="ft-group ' . $wrapper_key . '">',
           '#default_value' => isset($field_settings[$key]['ft'][$wrapper_key]) ? TRUE : FALSE,
         );
-        if (isset($value['states'])) {
-          $form['fields'][$key]['format']['ft'][$wrapper_key]['#states'] = $value['states'];
-        }
         $form['fields'][$key]['format']['ft'][$wrapper_key . '-el'] = array(
           '#type' => 'textfield',
           '#title' => t('Element'),
@@ -381,9 +367,6 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
           '#description' => t('E.g. div, span, h2 etc.'),
           '#default_value' => isset($field_settings[$key]['ft'][$wrapper_key . '-el']) ? $field_settings[$key]['ft'][$wrapper_key . '-el'] : '',
         );
-        if (isset($value['states']) && $wrapper_key == 'lb') {
-          $form['fields'][$key]['format']['ft'][$wrapper_key . '-el']['#states'] = $value['states'];
-        }
         $classes = array(
           'field-name-' . strtr($key, '_', '-'),
         );
@@ -395,9 +378,6 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
           '#default_value' => isset($field_settings[$key]['ft'][$wrapper_key . '-cl']) ? $field_settings[$key]['ft'][$wrapper_key . '-cl'] : '',
           '#description' => t('Classes: !classes', array('!classes' => implode(', ', $classes))),
         );
-        if (isset($value['states'])) {
-          $form['fields'][$key]['format']['ft'][$wrapper_key . '-cl']['#states'] = $value['states'];
-        }
       }
 
       $form['fields'][$key]['format']['ft']['update'] = array(
@@ -410,11 +390,6 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 
       // Another label needs some other stuff.
       unset($form['fields'][$key]['format']['ft']['lb']['#description']);
-      $form['fields'][$key]['format']['ft']['lb']['#states'] = array(
-        'invisible' => array(
-          'select[name="fields[' . $key . '][label]"]' => array('value' => 'hidden'),
-        )
-      );
       $form['fields'][$key]['format']['ft']['lb']['#type'] = 'textfield';
       $form['fields'][$key]['format']['ft']['lb']['#size'] = '10';
       $form['fields'][$key]['format']['ft']['lb']['#attributes'] = array('class' => array('label-change'));

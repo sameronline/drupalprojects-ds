@@ -65,47 +65,42 @@ $.fn.dsCtoolsContentConfiguration = function (configuration) {
  */
 Drupal.behaviors.settingsToggle = {
   attach: function (context) {
-
-    if ($('.ft-link').length == 0) {
-      return;
-    }
-
-    // Remove click from link.
-    $('.ft-link').click(function(e) {
+        
+    // Bind on click.
+    $(context).find('#field-display-overview').find('.ft-link').once('ds-ft').bind('click', function(e) {
+      
       e.preventDefault();
-    });
+      
+      var fieldTemplate = $(this).next();
+      
+      // Bind update button.
+      fieldTemplate.find('.ft-update').click(function() {
+  
+        // Close the settings.
+        var settings = $(this).parents('.field-template');
+        settings.hide();
+        $(this).parents('tr').removeClass('field-formatter-settings-editing');
+  
+        // Check the label.
+        var row = $(this).parents('tr');
+        var label = $('.label-change', settings).val();
+        var original = $('.original-label', row).val();
+        if (label != '') {
+          new_label = label + ' (Original: ' + original + ')<input type="hidden" class="original-label" value="' + original + '">';
+          $('.field-label-row', row).html(new_label);
+        }
+        else {
+          new_label = original + '<input type="hidden" class="original-label" value="' + original + '">';
+          $('.field-label-row', row).html(new_label);
+        }
+        return false;
+      });      
 
-    // Bind update button.
-    $('#field-display-overview .ft-update').click(function() {
-
-      // Close the settings.
-      var settings = $(this).parents('.field-template');
-      settings.hide();
-      $(this).parents('tr').removeClass('field-formatter-settings-editing');
-
-      // Check the label.
-      var row = $(this).parents('tr');
-      var label = $('.label-change', settings).val();
-      var original = $('.original-label', row).val();
-      if (label != '') {
-        new_label = label + ' (Original: ' + original + ')<input type="hidden" class="original-label" value="' + original + '">';
-        $('.field-label-row', row).html(new_label);
-      }
-      else {
-        new_label = original + '<input type="hidden" class="original-label" value="' + original + '">';
-        $('.field-label-row', row).html(new_label);
-      }
-      return false;
-    });
-
-    // Bind on field template select button.
-    $('.ds-extras-field-template').change(function() {
-      ds_show_expert_settings(this);
-    });
+      // Bind on field template select button.
+      fieldTemplate.find('.ds-extras-field-template').change(function() {
+        ds_show_expert_settings(this);
+      })
     
-    // Add click event to field settings link.
-    $('.ft-link').click(function() {
-
       $(this).parents('tr').siblings().removeClass('field-formatter-settings-editing');
       $(this).parents('tr').addClass('field-formatter-settings-editing');
 
