@@ -182,12 +182,9 @@ function ds_extras_vd_field_ui($bundle) {
   // Deny access to disabling blocks and regions.
   $build['additional_settings']['ds_layouts']['hide_sidebars']['#access'] = FALSE;
 
-  // Add info in case we're looking at a fields view.
-  $fields_check = explode('-', $bundle);
-  if (isset($fields_check[2])) {
-    if (!ds_get_layout('ds_views', $bundle, 'default')) {
-      $build['fields']['#access'] = FALSE;
-    }
+  // Deny access to fields table if there's no layout.
+  if (!ds_get_layout('ds_views', $bundle, 'default')) {
+    $build['fields']['#access'] = FALSE;
   }
 
   return $build;
