@@ -231,15 +231,22 @@ Drupal.fieldUIDisplayOverview.ds.prototype = {
    */
   regionChange: function (region) {
 
-    // Replace dashes with underscores.
-    region = region.replace('-', '_');
-    
-    this.$regionSelect.val(region);    
+     // Replace dashes with underscores.
+     region = region.replace('-', '_');
 
-    var refreshRows = {};
-    refreshRows[this.name] = this.$regionSelect.get(0);
+     // Set the region of the select list.
+     this.$regionSelect.val(region);
 
-    return refreshRows;
+     // Prepare rows to be refreshed in the form.
+     var refreshRows = {};
+     refreshRows[this.name] = this.$regionSelect.get(0);
+
+     // If a row is handled by field_group module, loop through the children.
+     if ($(this.row).hasClass('field-group') && $.isFunction(Drupal.fieldUIDisplayOverview.group.prototype.regionChangeFields)) {
+       Drupal.fieldUIDisplayOverview.group.prototype.regionChangeFields(region, this, refreshRows);
+     }
+
+     return refreshRows;
   }
 };
 
