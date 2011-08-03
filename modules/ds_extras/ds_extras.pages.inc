@@ -33,9 +33,8 @@ function ds_extras_node_page_view($node) {
  * Menu callback: show an individual revision node using the revision view mode.
  */
 function ds_extras_revision_node_show($node, $message = NULL) {
-  if ($message) {
-    drupal_set_title(t('Revision of %title from %date', array('%title' => $node->title, '%date' => format_date($node->revision_timestamp))), PASS_THROUGH);
-  }
+
+  drupal_set_title(t('Revision of %title from %date', array('%title' => $node->title, '%date' => format_date($node->revision_timestamp))), PASS_THROUGH);
 
   // Update the history table, stating that this user viewed this node.
   node_tag_new($node);

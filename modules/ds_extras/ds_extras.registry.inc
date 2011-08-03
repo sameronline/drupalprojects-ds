@@ -112,9 +112,18 @@ function _ds_extras_menu_alter(&$items) {
 
   // Revision view mode.
   if (variable_get('ds_extras_revision_view_mode', FALSE)) {
-    $items['node/%node/revisions/%/view']['page callback'] = 'ds_extras_revision_node_show';
-    $items['node/%node/revisions/%/view']['file'] = 'ds_extras.pages.inc';
-    $items['node/%node/revisions/%/view']['file path'] = drupal_get_path('module', 'ds_extras');
+
+    // Do not conflict with the revisioning module.
+    if (module_exists('revisioning')) {
+      $items['node/%node/revisions/%vid/view']['page callback'] = 'ds_extras_revision_node_show';
+      $items['node/%node/revisions/%vid/view']['file'] = 'ds_extras.pages.inc';
+      $items['node/%node/revisions/%vid/view']['file path'] = drupal_get_path('module', 'ds_extras');
+    }
+    else {
+      $items['node/%node/revisions/%/view']['page callback'] = 'ds_extras_revision_node_show';
+      $items['node/%node/revisions/%/view']['file'] = 'ds_extras.pages.inc';
+      $items['node/%node/revisions/%/view']['file path'] = drupal_get_path('module', 'ds_extras');
+    }
   }
 
   // Panel view modes.
