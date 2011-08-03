@@ -352,11 +352,11 @@ function ds_edit_block_field_form($form, &$form_state, $custom_block = '') {
   $form['block_identity']['block_render'] = array(
     '#type' => 'select',
     '#options' => array(
-      DS_BLOCK_TEMPLATE => t('Render through block template'),
+      DS_BLOCK_TEMPLATE => t('Default'),
       DS_BLOCK_TITLE_CONTENT => t('Show block title + content'),
       DS_BLOCK_CONTENT => t('Show only block content'),
     ),
-    '#title' => t('Block render'),
+    '#title' => t('Layout'),
     '#required' => TRUE,
     '#default_value' => isset($custom_block->properties['block_render']) ? $custom_block->properties['block_render'] : '',
   );

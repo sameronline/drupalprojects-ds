@@ -1445,13 +1445,13 @@ function _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, &$form, $
   ctools_modal_add_js();
 
   $field_types = array(
-    'custom_field' => t('Add a field'),
+    'custom_field' => t('Add a code field'),
     'manage_ctools' => t('Add a dynamic field'),
-    'manage_preprocess' => t('Add a preprocess field'),
   );
   if (module_exists('block')) {
     $field_types['manage_block'] = t('Add a block field');
   }
+  $field_types['manage_preprocess'] = t('Add a preprocess field');
 
   foreach ($field_types as $field_key => $field_title) {
 
@@ -1510,7 +1510,7 @@ function ds_ajax_add_field($js, $field_type) {
       break;
 
     default:
-      $title = t('Add a field');
+      $title = t('Add a code field');
       $form_name = "ds_edit_custom_field_form";
       $field_type = 'manage_custom';
       break;
