@@ -834,11 +834,14 @@ function ds_render_field($field) {
     }
     $output = l($output, $path);
   }
+  else {
+    $output = check_plain($output);
+  }
 
   // Wrapper and class.
   if (!empty($settings['wrapper'])) {
-    $wrapper = $settings['wrapper'];
-    $class = (!empty($settings['class'])) ? ' class="' . $settings['class'] . '"' : '';
+    $wrapper = check_plain($settings['wrapper']);
+    $class = (!empty($settings['class'])) ? ' class="' . check_plain($settings['class']) . '"' : '';
     $output = '<' . $wrapper . $class . '>' . $output . '</' . $wrapper . '>';
   }
 

@@ -719,11 +719,11 @@ function ds_ds_field_format_summary($field) {
   foreach ($settings as $key => $value) {
     if ($key == 'ctools') {
       $conf = unserialize($value);
-      $summary .= t('Type: !type', array('!type' => drupal_ucfirst(str_replace('_', ' ', $conf['subtype']))));
+      $summary .= t('Type: !type', array('!type' => check_plain(drupal_ucfirst(str_replace('_', ' ', $conf['subtype'])))));
     }
     elseif (!empty($value)) {
-      $value = is_numeric($value) ? ($value ? t('Yes') : t('No')) : $value;
-      $summary .= str_replace('_', ' ', drupal_ucfirst(check_plain($key))) . ': ' . $value . '<br />';
+      $value = is_numeric($value) ? ($value ? t('Yes') : t('No')) : check_plain($value);
+      $summary .= str_replace('_', ' ', drupal_ucfirst(check_plain($key))) . ': ' . check_plain($value) . '<br />';
     }
   }
   return $summary;
