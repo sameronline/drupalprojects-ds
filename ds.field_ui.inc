@@ -1434,7 +1434,7 @@ function _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, &$form, $
   $form['additional_settings']['add_custom_fields'] = array(
     '#type' => 'fieldset',
     '#title' => t('Add custom fields'),
-    '#description' => t('Click on one of the buttons to create new fields in an overlay. After saving, the screen will be saved and the new field will be available.') . '<p></p>',
+    '#description' => t('Click on one of the buttons to create a new field. Note that these only appear if a layout has been selected.') . '<p></p>',
   );
 
   // Include the CTools tools that we need.
