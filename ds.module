@@ -436,11 +436,30 @@ function ds_field_attach_view_alter(&$build, $context) {
     return;
   }
 
+  // If no layout is configured, stop as well.
+  if (!ds_get_layout($build['#entity_type'], $build['#bundle'], $context['view_mode'])) {
+    return;
+  }
+
   $entity_type = $build['#entity_type'];
   $bundle = $build['#bundle'];
   $view_mode = $context['view_mode'];
   $entity = $context['entity'];
+  $layout = ds_get_layout($build['#entity_type'], $build['#bundle'], $context['view_mode']);
 
+  // Check on field limit.
+  if (isset($layout['settings']['limit'])) {
+    foreach ($layout['settings']['limit'] as $field => $limit) {
+      if (isset($build[$field])) {
+        $count = count($build[$field]['#items']);
+        if ($count > $limit) {
+          $build[$field]['#items'] = array_slice($build[$field]['#items'], 0, $limit);
+        }
+      }
+    }
+  }
+
+  // Add Display Suite display fields.
   $fields = ds_get_fields($entity_type);
   $field_values = ds_get_field_settings($entity_type, $bundle, $view_mode);
 
@@ -617,16 +636,6 @@ function ds_render_region($content, $region, $layout) {
 
   if (isset($layout['settings']['regions'][$region])) {
     foreach ($layout['settings']['regions'][$region] as $key => $field) {
-
-      // Field limit.
-      if (isset($layout['settings']['limit']) && isset($layout['settings']['limit'][$field])) {
-        $limit = $layout['settings']['limit'][$field];
-        $count = count($content[$field]);
-        if ($count > $limit) {
-          $content[$field]['#items'] = array_slice($content[$field]['#items'], 0, $limit);
-        }
-      }
-
       $output .= render($content[$field]);
     }
   }
