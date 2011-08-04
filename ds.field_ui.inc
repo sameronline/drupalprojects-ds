@@ -972,8 +972,8 @@ function ds_ctools_content_select($contexts, $field_name, $action, $entity_type)
 
   // Create output.
   $output = '<div id="ctools-content-selection">';
-  $output .= '<div id="left">' . $left . '</div>';
-  $output .= '<div id="right">' . $right . '</div>';
+  $output .= '<div id="ds-left">' . $left . '</div>';
+  $output .= '<div id="ds-right">' . $right . '</div>';
   $output .= '</div>';
 
   return ctools_modal_command_display(t('Select content'), $output);
