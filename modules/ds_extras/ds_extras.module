@@ -224,7 +224,7 @@ function theme_ds_field_expert($variables, $config) {
       else {
         $class = ' class="label-' . $variables['element']['#label_display'] . '"';
       }
-      $output .= '<' . $config['lb-el'] . $class . '>' . $variables['label'] . '"';
+      $output .= '<' . $config['lb-el'] . $class . '>' . $variables['label'];
       if (!isset($config['lb-col'])) {
         $output .= ':&nbsp;';
       }
