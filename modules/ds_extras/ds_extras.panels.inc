@@ -459,14 +459,17 @@ function ds_panels_layout_save($form, &$form_state, $clone = FALSE) {
     'ds_panels' => TRUE,
   );
 
-  // Load content & context plugin.
-  ctools_include('content');
-  ctools_include('context');
+  // Common panels functions.
+  ctools_include('common', 'panels');
 
   // Create Panels display if this is the first
   // time we're saving the layout. We'll also add
   // common fields as panes to the layout.
   if (!$form['#ds_panels_update']) {
+
+    // Content and context plugins.
+    ctools_include('content');
+    ctools_include('context');
 
     $id = 1;
 
@@ -530,10 +533,8 @@ function ds_panels_layout_save($form, &$form_state, $clone = FALSE) {
   }
 
   // Determine the theme function / template for this display.
-  $pipeline = $settings['pipeline'];
-  $display = panels_load_display($settings['did']);
-  $renderer = panels_get_renderer($pipeline, $display);
-  $settings['theme'] = $renderer->plugins['layout']['theme'];
+  $panel_layout = panels_get_layout($form_state['values']['layout']);
+  $settings['theme'] = $panel_layout['theme'];
 
   // Remove old record.
   db_delete('ds_layout_settings')
@@ -646,14 +647,14 @@ function ds_panels_layout_clone($form, &$form_state) {
  */
 function ds_panels_layout_change($form, &$form_state) {
 
-  $destination = '';
+  $destination = array();
 
   // In case there's a redirect, kill it and append it to the redirect.
-  if (isset($_GET['destination'])) {
-    $destination = $_GET['destination'];
+  if (isset($_GET['destination']) && !empty($_GET['destination'])) {
+    $destination = array('query' => array('destination' => $_GET['destination']));
     unset($_GET['destination']);
   }
-  $form_state['redirect'] = array($_GET['q'] . '/' . $form_state['values']['layout'], array('query' => array('destination' => $destination)));
+  $form_state['redirect'] = array($_GET['q'] . '/' . $form_state['values']['layout'], $destination);
 }
 
 /**
@@ -696,9 +697,19 @@ function ds_panels_layout_change_submit($form, $form_state) {
     $record = $record[$lid];
     $layout = $form_state['layout'];
 
-    // Update record.
+    // Determine the theme function / template for this display.
+    $panel_layout = panels_get_layout($layout);
+
+    // Update record object.
     $record->layout = $layout;
     $record->settings['layout'] = $layout;
+    $record->settings['theme'] = $panel_layout['theme'];
+    $record->settings['layout'] = $layout;
+
+    // Let other modules alter the layout settings.
+    drupal_alter('ds_layout_settings', $record, $form_state);
+
+    // Update record in database.
     drupal_write_record('ds_layout_settings', $record, array('id'));
 
     // Clear entity info cache.

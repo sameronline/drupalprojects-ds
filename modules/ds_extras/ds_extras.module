@@ -759,7 +759,6 @@ function ds_extras_entity_view_alter(&$build, $entity_type) {
  */
 function ds_extras_render_panel_layout(&$vars) {
   static $displays = array();
-  static $renderer = NULL;
 
   if (isset($vars['elements']) && $layout = ds_get_layout($vars['elements']['#entity_type'], $vars['elements']['#bundle'], $vars['elements']['#view_mode'])) {
 
@@ -820,10 +819,8 @@ function ds_extras_render_panel_layout(&$vars) {
     }
 
     // Load renderer.
-    if (!isset($renderer)) {
-      $pipeline = $layout['settings']['pipeline'];
-      $renderer = panels_get_renderer($pipeline, $display);
-    }
+    $pipeline = $layout['settings']['pipeline'];
+    $renderer = panels_get_renderer($pipeline, $display);
 
     // Attach out-of-band data first.
     $renderer->add_meta();

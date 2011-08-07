@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1227790 by swentel: fix various subtle problems with panels layouts.
 - #1239658 by tjhellmann and swentel: remove double quote when using custom label el.
 - #1238710 by swentel: do not conflict with core overlay css.
 - #1237064 by swentel: do not conflict with revisioning module.
