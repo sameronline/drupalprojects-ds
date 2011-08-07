@@ -319,15 +319,6 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
     unset($implementations['ds_extras']);
   }
 
-  // Fivestar
-  $fivestar_hooks = array(
-    'form_fivestar_node_type_tag_form_alter',
-    'fivestar_access',
-  );
-  if (!variable_get('ds_extras_fivestar', FALSE) && in_array($hook, $fivestar_hooks)) {
-    unset($implementations['ds_extras']);
-  }
-
   // Views displays
   $vd_hooks = array(
     'entity_info',

@@ -173,14 +173,6 @@ function ds_extras_settings($form) {
     );
   }
 
-  if (module_exists('fivestar')) {
-    $form['additional_settings']['fs4']['ds_extras_fivestar'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Fivestar field'),
-      '#default_value' => variable_get('ds_extras_fivestar', FALSE),
-    );
-  }
-
   $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/ds_extras.admin.js';
 
   $form = system_settings_form($form);
