@@ -114,7 +114,7 @@ function _ds_menu() {
     'type' => MENU_CALLBACK,
   );
   $items['admin/structure/ds/fields/manage_custom'] = array(
-    'title' => 'Add a field',
+    'title' => 'Add a code field',
     'description' => 'Manage a field',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_edit_custom_field_form'),
@@ -148,7 +148,7 @@ function _ds_menu() {
     'file' => 'ds.fields.inc',
     'access arguments' => array('admin_fields'),
     'type' => MENU_LOCAL_ACTION,
-    'weight' => 2,
+    'weight' => 3,
   );
   $items['admin/structure/ds/fields/delete'] = array(
     'title' => 'Delete a field',
@@ -178,7 +178,7 @@ function _ds_menu() {
       'file' => 'ds.fields.inc',
       'access arguments' => array('admin_fields'),
       'type' => MENU_LOCAL_ACTION,
-      'weight' => 3,
+      'weight' => 2,
     );
   }
 

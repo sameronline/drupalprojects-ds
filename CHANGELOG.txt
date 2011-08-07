@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1241936 by swentel: add missing tests.
 - #1240510 by swentel: Views row options missing in views export.
 - #1227790 by swentel: fix various subtle problems with panels layouts.
 - #1239658 by tjhellmann and swentel: remove double quote when using custom label el.

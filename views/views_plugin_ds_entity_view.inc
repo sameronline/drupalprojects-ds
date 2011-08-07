@@ -243,7 +243,9 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     // ds_views_row_adv_VIEWSNAME. Return the row immediately.
     if ($this->options['advanced']) {
       $row_function = 'ds_views_row_adv_' . $this->view->name;
-      return $row_function($this->entities[$row->{$this->field_alias}], $this->options['view_mode'], $load_comments);
+      if (function_exists($row_function)) {
+        return $row_function($this->entities[$row->{$this->field_alias}], $this->options['view_mode'], $load_comments);
+      }
     }
 
     // Keep a static group array.
