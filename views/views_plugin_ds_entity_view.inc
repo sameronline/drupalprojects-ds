@@ -42,6 +42,10 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     $options['changing'] = array('default' => FALSE);
     $options['grouping'] = array('default' => FALSE);
     $options['advanced'] = array('default' => FALSE);
+    $options['grouping_fieldset'] = array('default' => FALSE);
+    $options['default_fieldset'] = array('default' => FALSE);
+    $options['alternating_fieldset'] = array('default' => FALSE);
+    $options['advanced_fieldset'] = array('default' => FALSE);
     return $options;
   }
 
