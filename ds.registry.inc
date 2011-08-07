@@ -133,6 +133,16 @@ function _ds_menu() {
     'type' => MENU_LOCAL_ACTION,
     'weight' => 1,
   );
+  $items['admin/structure/ds/fields/manage_conditional'] = array(
+    'title' => 'Add a conditional field',
+    'description' => 'Manage a conditional field',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_edit_conditional_field_form'),
+    'file' => 'ds.fields.inc',
+    'access arguments' => array('admin_fields'),
+    'type' => MENU_LOCAL_ACTION,
+    'weight' => 2,
+  );
   $items['admin/structure/ds/fields/manage_ctools/content'] = array(
     'title' => 'Ctools field content',
     'page callback' => 'ds_ctools_content',
@@ -148,7 +158,7 @@ function _ds_menu() {
     'file' => 'ds.fields.inc',
     'access arguments' => array('admin_fields'),
     'type' => MENU_LOCAL_ACTION,
-    'weight' => 3,
+    'weight' => 4,
   );
   $items['admin/structure/ds/fields/delete'] = array(
     'title' => 'Delete a field',
@@ -178,7 +188,7 @@ function _ds_menu() {
       'file' => 'ds.fields.inc',
       'access arguments' => array('admin_fields'),
       'type' => MENU_LOCAL_ACTION,
-      'weight' => 2,
+      'weight' => 3,
     );
   }
 

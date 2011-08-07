@@ -71,6 +71,8 @@ function ds_field_human_name($type) {
       return t('Dynamic field');
     case DS_FIELD_TYPE_PREPROCESS:
       return t('Preprocess field');
+    case DS_FIELD_TYPE_CONDITIONAL:
+      return t('Conditional field');
   }
 
   // Fallback
@@ -303,6 +305,27 @@ function ds_ctools_field_form_validate($form, &$form_state) {
   $form_state['field']->field_type = DS_FIELD_TYPE_CTOOLS;
   $form_state['field']->properties['default'] = array();
   $form_state['field']->properties['settings'] = array('show_title' => array('type' => 'checkbox'), 'title_wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')), 'ctools' => array('type' => 'ctools'));
+}
+
+/**
+ * Manage a CTools field.
+ */
+function ds_edit_conditional_field_form($form, &$form_state, $conditional_field = '') {
+  $custom_field = ds_shared_form($form, $conditional_field);
+  $form['info'] = array(
+    '#markup' => t('Conditional display fields act as a group on the "Manage display" screens where you can drag fields as children underneath it. During the rendering of content, this field will render the first child that has content and ignore the others.'),
+    '#weight' => -10,
+  );
+  $form['#validate'][] = 'ds_conditional_field_form_validate';
+  return $form;
+}
+
+/**
+ * CTools field form validation.
+ */
+function ds_conditional_field_form_validate($form, &$form_state) {
+  $form_state['field']->field_type = DS_FIELD_TYPE_CONDITIONAL;
+  $form_state['field']->properties['default'] = array();
 }
 
 /**
