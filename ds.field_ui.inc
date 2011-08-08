@@ -1518,7 +1518,7 @@ function _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, &$form, $
   $form['additional_settings']['add_custom_fields'] = array(
     '#type' => 'fieldset',
     '#title' => t('Add custom fields'),
-    '#description' => t('Click on one of the buttons to create a new field. Note that these only appear if a layout has been selected.') . '<p></p>',
+    '#description' => t('Click on one of the buttons to create a new field.') . '<p></p>',
     '#access' => user_access('admin_fields'),
   );
 
