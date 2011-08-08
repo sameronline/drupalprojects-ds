@@ -15,7 +15,6 @@ define('DS_FIELD_TYPE_IGNORE', 4);
 define('DS_FIELD_TYPE_CODE', 5);
 define('DS_FIELD_TYPE_BLOCK', 6);
 define('DS_FIELD_TYPE_CTOOLS', 7);
-define('DS_FIELD_TYPE_CONDITIONAL', 8);
 
 /**
  * Constants for block fields rendering.
@@ -430,7 +429,6 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
  */
 function ds_field_attach_view_alter(&$build, $context) {
   static $loaded_css = array();
-  $conditionals = array();
 
   // If views and core doesn't send information along on the entity,
   // Display suite doesn't have a context to render the fields.
@@ -475,14 +473,6 @@ function ds_field_attach_view_alter(&$build, $context) {
     $field = $fields[$key];
     $field['formatter'] = $field_values[$key]['format'];
 
-    // Keep conditionals.
-    if ($field['field_type'] == DS_FIELD_TYPE_CONDITIONAL) {
-      if (isset($field_values[$key]['conditionals'])) {
-        $conditionals[$key] = $field_values[$key]['conditionals'];
-      }
-      continue;
-    }
-
     if (isset($field_values[$key]['formatter_settings'])) {
       $field['formatter_settings'] = $field_values[$key]['formatter_settings'];
     }
@@ -509,23 +499,6 @@ function ds_field_attach_view_alter(&$build, $context) {
           '#markup' => $field_value,
         ),
       );
-    }
-  }
-
-  // Handle conditionals.
-  if (!empty($conditionals)) {
-    foreach ($conditionals as $key => $conditions) {
-      $show = TRUE;
-      foreach ($conditions as $ckey => $cfield) {
-        if (isset($build[$cfield]) && !empty($build[$cfield]['#items'])) {
-          if ($show) {
-            $show = FALSE;
-          }
-          else {
-            $build[$cfield]['#access'] = FALSE;
-          }
-        }
-      }
     }
   }
 

@@ -51,7 +51,6 @@ class dsNodeTests extends dsBaseTest {
     );
     $this->dsCreateCodeField($token_field);
     $this->dsCreateCodeField($php_field);
-    $this->dsCreateConditionalField();
 
     // Select layout.
     $this->dsSelectLayout();
@@ -272,55 +271,6 @@ class dsNodeTests extends dsBaseTest {
     $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw('<h2>Hi, I am an article &lt;script&gt;alert(&#039;with a javascript tag in the title&#039;);&lt;/script&gt;</h2>');
-
-    // Test conditionals
-    $edit = array(
-      'title' => 'My article',
-    );
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
-    $edit = array(
-      'fields[conditional][region]' => 'left',
-      'fields[field_tags][region]' => 'left',
-      'fields[field_tags][weight]' => 0,
-      'fields[field_tags][format][limit]' => '',
-      'fields[field_tags][parent]' => 'conditional',
-      'fields[body][region]' => 'left',
-      'fields[body][weight]' => 1,
-      'fields[body][parent]' => 'conditional',
-    );
-    $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display');
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertText('Tag 1');
-    $this->assertText('Tag 2');
-    $this->assertNoText($node->body[$node->language][0]['value']);
-    $edit = array(
-      'field_tags[und]' => '',
-    );
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertText($node->body[$node->language][0]['value']);
-    $edit = array(
-      'fields[field_tags][weight]' => 1,
-      'fields[body][weight]' => 0,
-    );
-    $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display');
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertText($node->body[$node->language][0]['value']);
-    $edit = array(
-      'field_tags[und]' => 'Tag 1, Tag 2'
-    );
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertNoText('Tag 1');
-    $this->assertNoText('Tag 2');
-    $this->assertText($node->body[$node->language][0]['value']);
-    $edit = array(
-      'body[und][0][value]' => ''
-    );
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertText('Tag 1');
-    $this->assertText('Tag 2');
   }
 
   /**

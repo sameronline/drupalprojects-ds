@@ -28,7 +28,7 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form, $form_state);
 
   // Add extra fields.
-  if ($entity_type != 'ds_views' && isset($form['#ds_layout'])) {
+  if ($entity_type != 'ds_views') {
     _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, $form, $form_state);
   }
 
@@ -615,20 +615,6 @@ function ds_field_ui_fields_save($form, &$form_state) {
     $field_settings[$field] = $settings;
   }
 
-  // Check conditionals.
-  if (!empty($form['#ds_conditionals'])) {
-    $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
-    foreach ($fields as $key => $values) {
-      $parent_value = $values['parent'];
-      if (!empty($parent_value) && isset($form['#ds_conditionals'][$parent_value])) {
-        if (!isset($field_settings[$parent_value]['conditionals'])) {
-          $field_settings[$parent_value]['conditionals'] = array();
-        }
-        $field_settings[$parent_value]['conditionals'][] = $key;
-      }
-    }
-  }
-
   // Allow other modules to modify the field settings before they get saved.
   drupal_alter('ds_field_settings', $field_settings, $form, $form_state);
 
@@ -1049,11 +1035,6 @@ function ds_ajax_add_field($js, $field_type) {
       $form_name = "ds_edit_ctools_field_form";
       break;
 
-    case "manage_conditional":
-      $title = t('Add a conditional field');
-      $form_name = "ds_edit_conditional_field_form";
-      break;
-
     case "manage_preprocess":
       $title = t('Add a preprocess field');
       $form_name = "ds_edit_preprocess_field_form";
@@ -1357,8 +1338,6 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
   $table = &$form['fields'];
   $form['#ds_fields'] = array();
-  $form['#ds_conditionals'] = array();
-  $conditional_conf = array();
 
   $field_label_options = array(
     'above' => t('Above'),
@@ -1367,11 +1346,15 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
   );
   drupal_alter('ds_label_options', $field_label_options);
 
-  // Check on ui_limit.
   foreach ($fields as $key => $field) {
+
+    // Check on ui_limit.
     if (isset($field['ui_limit'])) {
+
       $continue = TRUE;
+
       foreach ($field['ui_limit'] as $limitation) {
+
         list($limit_bundle, $limit_view_mode) = explode('|', $limitation);
         if ($limit_bundle == '*' || $limit_bundle == $bundle) {
           if ($limit_view_mode == '*' || $limit_view_mode == $view_mode) {
@@ -1399,22 +1382,11 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     $hidden = array('hidden' => t('<Hidden>'));
     $formatters = isset($field['properties']['formatters']) ? $hidden + $field['properties']['formatters'] : $hidden + array('default' => t('Default'));
 
-    $field_classes = array('draggable', 'tabledrag-leaf');
-    if ($field['field_type'] == DS_FIELD_TYPE_CONDITIONAL) {
-      $field_classes = array('draggable', 'conditional-field');
-      $table['#parent_options'][$key] = $key;
-      $form['#ds_conditionals'][$key] = $key;
-      if (isset($field_settings[$key]['conditionals'])) {
-        foreach ($field_settings[$key]['conditionals'] as $ckey => $cfield) {
-          $conditional_conf[$cfield] = $key;
-        }
-      }
-    }
     $table[$key] = array(
       '#row_type' => 'field',
       '#js_settings' => array('field'),
       '#region_callback' => 'field_ui_display_overview_row_region',
-      '#attributes' => array('class' => $field_classes),
+      '#attributes' => array('class' => array('draggable', 'tabledrag-leaf')),
       'human_name' => array(
         '#markup' => check_plain($field['title']),
       ),
@@ -1525,15 +1497,6 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     }
   }
 
-  // Update rows accordingly to the parents.
-  foreach (element_children($table) as $name) {
-    // A conditional cannot be selected as its own parent.
-    $parent_options = $table['#parent_options'];
-    unset($parent_options[$name]);
-    $table[$name]['parent_wrapper']['parent']['#options'] = $parent_options;
-    $table[$name]['parent_wrapper']['parent']['#default_value'] = isset($conditional_conf[$name]) ? $conditional_conf[$name] : '';
-  }
-
   // Add fields submit handler.
   $form['#submit'][] = 'ds_field_ui_fields_save';
 }
@@ -1557,7 +1520,7 @@ function _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, &$form, $
   $form['additional_settings']['add_custom_fields'] = array(
     '#type' => 'fieldset',
     '#title' => t('Add custom fields'),
-    '#description' => t('Click on one of the buttons to create a new field.') . '<p></p>',
+    '#description' => t('Click on one of the buttons to create a new field. Note that these only appear if a layout has been selected.') . '<p></p>',
     '#access' => user_access('admin_fields'),
   );
 
@@ -1569,14 +1532,13 @@ function _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, &$form, $
   ctools_modal_add_js();
 
   $field_types = array(
-    'manage_custom' => t('Code field'),
-    'manage_ctools' => t('Dynamic field'),
-    'manage_conditional' => t('Conditional field'),
+    'custom_field' => t('Add a code field'),
+    'manage_ctools' => t('Add a dynamic field'),
   );
   if (module_exists('block')) {
-    $field_types['manage_block'] = t('Block field');
+    $field_types['manage_block'] = t('Add a block field');
   }
-  $field_types['manage_preprocess'] = t('Preprocess field');
+  $field_types['manage_preprocess'] = t('Add a preprocess field');
 
   foreach ($field_types as $field_key => $field_title) {
 
@@ -1653,24 +1615,15 @@ function _ds_styles($name = 'ds_styles_regions') {
  *   The subkey to sort by.
  */
 function _ds_sort_fields($a, $subkey) {
-
-  static $sorted = FALSE;
-  static $c = array();
-
-  if (!$sorted) {
-    foreach ($a as $k => $v) {
-      if (isset($v[$subkey])) {
-        $b[$k] = $v[$subkey];
-      }
+  foreach ($a as $k => $v) {
+    if (isset($v[$subkey])) {
+      $b[$k] = $v[$subkey];
     }
-    asort($b);
-    foreach ($b as $key => $val) {
-      $c[$key] = $a[$key];
-    }
-
-    $sorted = TRUE;
   }
-
+  asort($b);
+  foreach ($b as $key => $val) {
+    $c[$key] = $a[$key];
+  }
   return $c;
 }
 

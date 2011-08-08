@@ -33,22 +33,19 @@ class dsViewsTests extends dsBaseTest {
     // Create 3 nodes.
     $settings_1 = array(
       'type' => 'article',
-      'title' => 'Article 1',
-      'created' => REQUEST_TIME,
+      'title' => 'Article 1'
     );
     $node_1 = $this->drupalCreateNode($settings_1);
     $this->drupalPost('node/' . $node_1->nid . '/edit', $edit_tag_1, t('Save'));
     $settings_2 = array(
       'type' => 'article',
-      'title' => 'Article 2',
-      'created' => REQUEST_TIME +3600,
+      'title' => 'Article 2'
     );
     $node_2 = $this->drupalCreateNode($settings_2);
     $this->drupalPost('node/' . $node_2->nid . '/edit', $edit_tag_1, t('Save'));
     $settings_3 = array(
       'type' => 'article',
-      'title' => 'Article 3',
-      'created' => REQUEST_TIME + 7200
+      'title' => 'Article 3'
     );
     $node_3 = $this->drupalCreateNode($settings_3);
     $this->drupalPost('node/' . $node_3->nid . '/edit', $edit_tag_2, t('Save'));

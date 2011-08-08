@@ -182,27 +182,6 @@ class dsBaseTest extends DrupalWebTestCase {
     $this->drupalPost($url, $edit, t('Save'));
     $this->assertText(t('The field ' . $edit['name'] . ' has been saved'), t('!name field has been saved', array('!name' => $edit['name'])));
   }
-
-  /**
-   * Create a dynamic field.
-   *
-   * @param $edit
-   *   An optional array of field properties.
-   */
-  function dsCreateConditionalField($edit = array(), $url = 'admin/structure/ds/fields/manage_conditional', $first = TRUE) {
-
-    $edit += array(
-      'name' => 'Conditional',
-      'entities[node]' => '1',
-    );
-
-    if ($first) {
-      $edit += array('field' => 'conditional');
-    }
-
-    $this->drupalPost($url, $edit, t('Save'));
-    $this->assertText(t('The field ' . $edit['name'] . ' has been saved'), t('!name field has been saved', array('!name' => $edit['name'])));
-  }
 }
 
 /**
@@ -216,17 +195,16 @@ class dsFieldsTests extends dsBaseTest {
   public static function getInfo() {
     return array(
       'name' => t('Fields'),
-      'description' => t('Tests for managing custom code, dynamic, conditional, preprocess and block fields.'),
+      'description' => t('Tests for managing custom code, dynamic, preprocess and block fields.'),
       'group' => t('Display suite'),
     );
   }
 
   /**
-   * Test all Display Suite display fields.
+   * Test custom fields.
    */
-  function testDSDisplayFields() {
+  function testDSCustomFields() {
 
-    // Code field.
     $edit = array(
       'name' => 'Test field',
       'field' => 'test_field',
@@ -265,8 +243,13 @@ class dsFieldsTests extends dsBaseTest {
     // Assert the field is gone at the manage display screen.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('fields[test_field][weight]', t('Test field field not found on node article.'));
+  }
 
-    // Block field
+  /**
+   * Test custom blocks.
+   */
+  function testDSCustomBlocks() {
+
     $edit = array(
       'name' => 'Test block field',
       'field' => 'test_block_field',
@@ -305,8 +288,13 @@ class dsFieldsTests extends dsBaseTest {
     // Assert the block field is gone at the manage display screen.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('fields[test_block_field][weight]', t('Test block field not found on node article.'));
+  }
 
-    // Preprocess field
+  /**
+   * Test preprocess fields.
+   */
+  function testDSPreprocessFields() {
+
     $edit = array(
       'name' => 'Submitted',
       'field' => 'submitted',
@@ -316,7 +304,7 @@ class dsFieldsTests extends dsBaseTest {
     $this->dsCreatePreprocessField($edit);
 
     // Create the same and assert it already exists.
-    $this->drupalPost('admin/structure/ds/fields/manage_preprocess', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_custom', $edit, t('Save'));
     $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Submitted already exists.'));
 
     $this->dsSelectLayout();
@@ -343,8 +331,13 @@ class dsFieldsTests extends dsBaseTest {
     // Assert the field is gone at the manage display screen.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('fields[submitted][weight]', t('Submitted field not found on node article.'));
+  }
 
-    // Dynamic field
+  /**
+   * Test dynamic fields.
+   */
+  function testDSDynamicFields() {
+
     $edit = array(
       'name' => 'Dynamic',
       'field' => 'dynamic',
@@ -361,7 +354,7 @@ class dsFieldsTests extends dsBaseTest {
 
     // Assert it's found on the Field UI for article.
     $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertRaw('fields[dynamic][weight]', t('Dynamic found on node article.'));
+    $this->assertRaw('fields[dynamic][weight]', t('Submitted found on node article.'));
 
     // Assert it's not found on the Field UI for article.
     $this->drupalGet('admin/config/people/accounts/display');
@@ -376,50 +369,11 @@ class dsFieldsTests extends dsBaseTest {
 
     // Remove a field.
     $this->drupalPost('admin/structure/ds/fields/delete/dynamic', array(), t('Delete'));
-    $this->assertText(t('The field Uber dynamic has been deleted'), t('Dynamic removed'));
+    $this->assertText(t('The field Uber dynamic has been deleted'), t('Submitted removed'));
 
     // Assert the field is gone at the manage display screen.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('fields[dynamic][weight]', t('Dynamic field not found on node article.'));
-
-    // Conditional field
-    $edit = array(
-      'name' => 'Conditional',
-      'field' => 'conditional',
-      'entities[node]' => '1',
-    );
-
-    $this->dsCreateConditionalField($edit);
-
-    // Create the same and assert it already exists.
-    $this->drupalPost('admin/structure/ds/fields/manage_conditional', $edit, t('Save'));
-    $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Submitted already exists.'));
-
-    $this->dsSelectLayout();
-
-    // Assert it's found on the Field UI for article.
-    $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertRaw('fields[conditional][weight]', t('Conditional found on node article.'));
-
-    // Assert it's not found on the Field UI for article.
-    $this->drupalGet('admin/config/people/accounts/display');
-    $this->assertNoRaw('fields[conditional][weight]', t('Conditional not found on user.'));
-
-    // Update testing label
-    $edit = array(
-      'name' => 'Uber conditional',
-    );
-    $this->drupalPost('admin/structure/ds/fields/manage_conditional/conditional', $edit, t('Save'));
-    $this->assertText(t('The field Uber conditional has been saved'), t('Conditional label updated'));
-
-    // Remove a field.
-    $this->drupalPost('admin/structure/ds/fields/delete/conditional', array(), t('Delete'));
-    $this->assertText(t('The field Uber conditional has been deleted'), t('Conditional removed'));
-
-    // Assert the field is gone at the manage display screen.
-    $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertNoRaw('fields[conditional][weight]', t('Conditional field not found on node article.'));
-
   }
 }
 
@@ -511,7 +465,6 @@ class dsLayoutsStylesTests extends dsBaseTest {
     $this->dsCreateBlockField();
     $this->dsCreateDynamicField();
     $this->dsCreatePreprocessField();
-    $this->dsCreateConditionalField();
 
     $layout = array(
       'additional_settings[layout]' => 'ds_2col_stacked',
@@ -537,7 +490,6 @@ class dsLayoutsStylesTests extends dsBaseTest {
       'fields[submitted][region]' => 'left',
       'fields[dynamic][region]' => 'left',
       'fields[ds_extras_extra_test_field][region]' => 'header',
-      'fields[conditional][region]' => 'footer',
     );
 
     // Setup first layout.
@@ -561,7 +513,6 @@ class dsLayoutsStylesTests extends dsBaseTest {
     $this->assertTrue(in_array('submitted', $data['regions']['left']), t('Submitted field is in left'));
     $this->assertTrue(in_array('dynamic', $data['regions']['left']), t('Dynamic field is in left'));
     $this->assertTrue(in_array('body', $data['regions']['right']), t('Body is in right'));
-    $this->assertTrue(in_array('conditional', $data['regions']['footer']), t('Conditional is in footer'));
     $this->assertTrue(in_array('comments', $data['regions']['footer']), t('Comments is in footer'));
     $this->assertTrue(in_array('class_name_1', $data['classes']['header']), t('Class name 1 is in header'));
     $this->assertTrue(empty($data['classes']['left']), t('Left has no classes'));

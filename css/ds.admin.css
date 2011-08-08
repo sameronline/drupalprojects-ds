@@ -3,13 +3,6 @@
  * @file
  * Administration CSS for Display Suite.
  */
- 
-/**
- * General
- */
-.conditional-field {
-	font-weight: bold;
-}
 
 /**
  * Field template.
@@ -22,10 +15,6 @@
 
 .ds-extras-field-template {
   margin-bottom: 1em;
-}
-
-.ft-link {
-  font-weight: normal;
 }
 
 .field-formatter-settings-editing .ft-link {
