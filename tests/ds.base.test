@@ -201,9 +201,9 @@ class dsFieldsTests extends dsBaseTest {
   }
 
   /**
-   * Test custom fields.
+   * Test Display fields.
    */
-  function testDSCustomFields() {
+  function testDSFields() {
 
     $edit = array(
       'name' => 'Test field',
@@ -243,13 +243,8 @@ class dsFieldsTests extends dsBaseTest {
     // Assert the field is gone at the manage display screen.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('fields[test_field][weight]', t('Test field field not found on node article.'));
-  }
 
-  /**
-   * Test custom blocks.
-   */
-  function testDSCustomBlocks() {
-
+    // Block fields.
     $edit = array(
       'name' => 'Test block field',
       'field' => 'test_block_field',
@@ -288,13 +283,8 @@ class dsFieldsTests extends dsBaseTest {
     // Assert the block field is gone at the manage display screen.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('fields[test_block_field][weight]', t('Test block field not found on node article.'));
-  }
 
-  /**
-   * Test preprocess fields.
-   */
-  function testDSPreprocessFields() {
-
+    // Preprocess fields.
     $edit = array(
       'name' => 'Submitted',
       'field' => 'submitted',
@@ -331,13 +321,8 @@ class dsFieldsTests extends dsBaseTest {
     // Assert the field is gone at the manage display screen.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('fields[submitted][weight]', t('Submitted field not found on node article.'));
-  }
 
-  /**
-   * Test dynamic fields.
-   */
-  function testDSDynamicFields() {
-
+    // Dynamic fields.
     $edit = array(
       'name' => 'Dynamic',
       'field' => 'dynamic',
@@ -348,13 +333,13 @@ class dsFieldsTests extends dsBaseTest {
 
     // Create the same and assert it already exists.
     $this->drupalPost('admin/structure/ds/fields/manage_ctools', $edit, t('Save'));
-    $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Submitted already exists.'));
+    $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Dynamic already exists.'));
 
     $this->dsSelectLayout();
 
     // Assert it's found on the Field UI for article.
     $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertRaw('fields[dynamic][weight]', t('Submitted found on node article.'));
+    $this->assertRaw('fields[dynamic][weight]', t('Dynamic found on node article.'));
 
     // Assert it's not found on the Field UI for article.
     $this->drupalGet('admin/config/people/accounts/display');
@@ -369,7 +354,7 @@ class dsFieldsTests extends dsBaseTest {
 
     // Remove a field.
     $this->drupalPost('admin/structure/ds/fields/delete/dynamic', array(), t('Delete'));
-    $this->assertText(t('The field Uber dynamic has been deleted'), t('Submitted removed'));
+    $this->assertText(t('The field Uber dynamic has been deleted'), t('Dynamic removed'));
 
     // Assert the field is gone at the manage display screen.
     $this->drupalGet('admin/structure/types/manage/article/display');

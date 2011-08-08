@@ -24,11 +24,11 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   // Add layout fieldset.
   _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, $form, $form_state);
 
-  // Add the fields.
+  // Add the fields on the table.
   _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form, $form_state);
 
-  // Add extra fields.
-  if ($entity_type != 'ds_views') {
+  // Add buttons to add fields in overlay.
+  if ($entity_type != 'ds_views' && isset($form['#ds_layout']) && user_access('admin_fields')) {
     _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, $form, $form_state);
   }
 
@@ -1352,9 +1352,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     if (isset($field['ui_limit'])) {
 
       $continue = TRUE;
-
       foreach ($field['ui_limit'] as $limitation) {
-
         list($limit_bundle, $limit_view_mode) = explode('|', $limitation);
         if ($limit_bundle == '*' || $limit_bundle == $bundle) {
           if ($limit_view_mode == '*' || $limit_view_mode == $view_mode) {
