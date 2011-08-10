@@ -308,8 +308,9 @@ function ds_extras_process_page_title(&$variables) {
     }
     elseif (isset($layout['settings']['hide_page_title']) && $layout['settings']['hide_page_title'] == 2 && !empty($layout['settings']['page_option_title'])) {
       $contexts = array();
+      $entity = node_load(arg(1));
+      ds_create_entity_context('node', $entity, $contexts);
       $title = $layout['settings']['page_option_title'];
-      ds_create_entity_context('node', entity_load('node', array(arg(1))), $contexts);
       $variables['title'] = filter_xss_admin(ctools_context_keyword_substitute($title, array(), $contexts));
     }
   }
