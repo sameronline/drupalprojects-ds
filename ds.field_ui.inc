@@ -102,7 +102,7 @@ function ds_field_ui_create_vertical_tabs(&$form) {
 /**
  * Menu callback: Revert layout and field settings form.
  */
-function ds_revert_layout_field_settings_form(&$form, &$form_state, $id = '') {
+function ds_revert_layout_field_settings_form($form, &$form_state, $id = '') {
   $layout = new stdClass();
   ctools_include('export');
   $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
