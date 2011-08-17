@@ -423,7 +423,7 @@ function ds_search_apachesolr_query_alter($query) {
   // Search per language.
   if (variable_get('ds_search_language', FALSE)) {
     global $language;
-    $query->add_filter('language', $language->language);
+    $query->addFilter('ss_language', $language->language);
   }
 }
 
