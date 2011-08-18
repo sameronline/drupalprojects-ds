@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1252792 by swentel: Menu titles should be in hook_menu().
 - #1250862 by pfrenssen: Call to undefined method SolrBaseQuery::add_filter(). 
 - #1244896 by Jax: Fix reference error in layout revert form.
 - #1242058 by swentel: fivestar is no longer available on the content type.
