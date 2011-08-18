@@ -663,26 +663,31 @@ function ds_field_ui_layout_clone($form, &$form_state) {
   $layout = ctools_export_crud_load('ds_layout_settings', $clone);
 
   // Save new layout record for ds.
-  $settings = $layout->settings;
-  $record = new stdClass();
-  $record->id = $form['#export_id'];
-  $record->entity_type = $entity_type;
-  $record->bundle = $bundle;
-  $record->view_mode = $view_mode;
-  $record->layout = $layout->layout;
-  $record->settings = $settings;
+  if ($layout) {
+    $settings = $layout->settings;
+    $record = new stdClass();
+    $record->id = $form['#export_id'];
+    $record->entity_type = $entity_type;
+    $record->bundle = $bundle;
+    $record->view_mode = $view_mode;
+    $record->layout = $layout->layout;
+    $record->settings = $settings;
 
-  // Let other modules alter the layout settings.
-  drupal_alter('ds_layout_settings', $record, $form_state);
+    // Let other modules alter the layout settings.
+    drupal_alter('ds_layout_settings', $record, $form_state);
 
-  // Save layout record.
-  drupal_write_record('ds_layout_settings', $record);
+    // Save layout record.
+    drupal_write_record('ds_layout_settings', $record);
 
-  // Clear entity info cache.
-  cache_clear_all('entity_info', 'cache', TRUE);
+    // Clear entity info cache.
+    cache_clear_all('entity_info', 'cache', TRUE);
 
-  // Show message.
-  drupal_set_message(t('The layout has been cloned.'));
+    // Show message.
+    drupal_set_message(t('The layout has been cloned.'));
+  }
+  else {
+    drupal_set_message(t('No layout was cloned.'));
+  }
 }
 
 /**
