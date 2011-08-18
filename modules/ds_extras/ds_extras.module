@@ -387,7 +387,7 @@ function ds_extras_get_view_mode() {
  * Page title options for a full node page view.
  */
 function ds_extras_process_page_title(&$variables) {
-  if (isset($variables['node']) && node_is_page($variables['node']) && arg(2) == '' && $layout = ds_get_layout('node', $variables['node']->type, ds_extras_get_view_mode())) {
+  if (isset($variables['node']) && ((node_is_page($variables['node']) && arg(2) == '') || arg(2) == 'revisions') && $layout = ds_get_layout('node', $variables['node']->type, ds_extras_get_view_mode())) {
     if (isset($layout['settings']['hide_page_title']) && $layout['settings']['hide_page_title'] == 1) {
       $variables['title'] = '';
     }

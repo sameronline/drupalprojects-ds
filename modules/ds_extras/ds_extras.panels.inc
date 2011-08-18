@@ -349,7 +349,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
   );
 
   // Page title functionality, currently only works on nodes.
-  if ($form['#entity_type'] == 'node' && ($form['#view_mode'] == 'full' || variable_get('ds_extras_switch_view_mode', FALSE)) &&  variable_get('ds_extras_hide_page_title', FALSE)) {
+  if ($form['#entity_type'] == 'node' && ($form['#view_mode'] == 'full' || $form['#view_mode'] == 'revision' || variable_get('ds_extras_switch_view_mode', FALSE)) &&  variable_get('ds_extras_hide_page_title', FALSE)) {
     $form['ds_panels_layout']['ds_layouts']['ds_page_title_options'] = _ds_extras_page_title_options($ds_layout['settings'], $entity_type);
   }
 
@@ -582,65 +582,84 @@ function ds_panels_layout_clone($form, &$form_state) {
   $bundle = $form['#bundle'];
   $view_mode = $form['#view_mode'];
 
-  // Clone and save new display.
   $layout = ctools_export_crud_load('ds_layout_settings', $clone);
-  $did = $layout->settings['did'];
-  $original = panels_load_display($did);
-  $export = panels_export_display($original);
-  ob_start();
-  eval($export);
-  ob_end_clean();
 
-  // Remove fields which are not on the bundle in case
-  // it is different. The entity type is ok since, it's
-  // not possible to clone from another entity type.
-  $original = explode('|', $clone);
-  if ($original[1] != $bundle) {
-    $orig_bundle_fields = field_info_instances($original[0], $original[1]);
-    $new_bundle_fields = field_info_instances($entity_type, $bundle);
-    $remove = array_diff(array_keys($orig_bundle_fields), array_keys($new_bundle_fields));
-    if (!empty($remove)) {
-      foreach ($display->content as $key => $field) {
-        if ($field->type == 'entity_field') {
-          $compare = str_replace($entity_type . ':', '', $field->subtype);
-          if (in_array($compare, $remove)) {
-            // Remove from content.
-            unset($display->content[$key]);
-            // Remove from panels.
-            $region = $field->panel;
-            $region_key = array_search($key, $display->panels[$region]);
-            unset($display->panels[$region][$region_key]);
+  // Delete previous layout settings configuration.
+  db_delete('ds_layout_settings')
+    ->condition('entity_type', $entity_type)
+    ->condition('bundle', $bundle)
+    ->condition('view_mode', $view_mode)
+    ->execute();
+
+  // Delete previous field configuration configuration.
+  db_delete('ds_field_settings')
+    ->condition('entity_type', $entity_type)
+    ->condition('bundle', $bundle)
+    ->condition('view_mode', $view_mode)
+    ->execute();
+
+  if ($layout) {
+    $did = $layout->settings['did'];
+    $original = panels_load_display($did);
+    $export = panels_export_display($original);
+    ob_start();
+    eval($export);
+    ob_end_clean();
+
+    // Remove fields which are not on the bundle in case
+    // it is different. The entity type is ok since, it's
+    // not possible to clone from another entity type.
+    $original = explode('|', $clone);
+    if ($original[1] != $bundle) {
+      $orig_bundle_fields = field_info_instances($original[0], $original[1]);
+      $new_bundle_fields = field_info_instances($entity_type, $bundle);
+      $remove = array_diff(array_keys($orig_bundle_fields), array_keys($new_bundle_fields));
+      if (!empty($remove)) {
+        foreach ($display->content as $key => $field) {
+          if ($field->type == 'entity_field') {
+            $compare = str_replace($entity_type . ':', '', $field->subtype);
+            if (in_array($compare, $remove)) {
+              // Remove from content.
+              unset($display->content[$key]);
+              // Remove from panels.
+              $region = $field->panel;
+              $region_key = array_search($key, $display->panels[$region]);
+              unset($display->panels[$region][$region_key]);
+            }
           }
         }
       }
     }
+
+    // Save the display.
+    panels_save_display($display);
+
+    // Save new layout record for ds.
+    $settings = $layout->settings;
+    $settings['did'] = $display->did;
+    $record = new stdClass();
+    $record->id = $form['#export_id'];
+    $record->entity_type = $entity_type;
+    $record->bundle = $bundle;
+    $record->view_mode = $view_mode;
+    $record->layout = $settings['layout'];
+    $record->settings = $settings;
+
+    // Let other modules alter the layout settings.
+    drupal_alter('ds_layout_settings', $record, $form_state);
+
+    // Save layout record.
+    drupal_write_record('ds_layout_settings', $record);
+
+    // Clear entity info cache.
+    cache_clear_all('entity_info', 'cache', TRUE);
+
+    // Show message.
+    drupal_set_message(t('The layout has been cloned.'));
   }
-
-  // Save the display.
-  panels_save_display($display);
-
-  // Save new layout record for ds.
-  $settings = $layout->settings;
-  $settings['did'] = $display->did;
-  $record = new stdClass();
-  $record->id = $form['#export_id'];
-  $record->entity_type = $entity_type;
-  $record->bundle = $bundle;
-  $record->view_mode = $view_mode;
-  $record->layout = $settings['layout'];
-  $record->settings = $settings;
-
-  // Let other modules alter the layout settings.
-  drupal_alter('ds_layout_settings', $record, $form_state);
-
-  // Save layout record.
-  drupal_write_record('ds_layout_settings', $record);
-
-  // Clear entity info cache.
-  cache_clear_all('entity_info', 'cache', TRUE);
-
-  // Show message.
-  drupal_set_message(t('The layout has been cloned.'));
+  else {
+    drupal_set_message(t('No layout was cloned.'));
+  }
 }
 
 /**

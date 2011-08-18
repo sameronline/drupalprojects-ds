@@ -42,6 +42,7 @@ function ds_extras_revision_node_show($node, $message = NULL) {
   // Determine view mode.
   $layout = ds_get_layout('node', $node->type, 'revision', FALSE);
   $view_mode = ($layout) ? 'revision' : 'full';
+  drupal_static('ds_extras_view_mode', $view_mode);
 
   // For markup consistency with other pages, use node_view_multiple() rather than node_view().
   return node_view_multiple(array($node->nid => $node), $view_mode);
