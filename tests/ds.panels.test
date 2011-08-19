@@ -267,5 +267,17 @@ class dsPanelViewModesTests extends dsBaseTest {
     $this->drupalGet('node/' . $node_3->nid);
     $this->assertNoRaw('panel-2col-stacked clearfix panel-display');
     $this->assertRaw('panel-display panel-2col clearfix');
+
+    // Disable panels and verify that simply saving Field UI without layout does not
+    // trigger any notices in entity_info_alter and on display of entities itself.
+    variable_set('ds_extras_panel_view_modes', FALSE);
+    $this->refreshVariables();
+    cache_clear_all('ds_fields', 'cache');
+    cache_clear_all('entity_info:', 'cache', TRUE);
+    cache_clear_all('theme_registry:', 'cache', TRUE);
+    cache_clear_all('module_implements', 'cache_bootstrap');
+    menu_rebuild();
+    $this->drupalPost('admin/structure/types/manage/article/display', array(), t('Save'));
+    $this->drupalGet('node/' . $node_3->nid);
   }
 }

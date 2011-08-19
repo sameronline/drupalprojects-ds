@@ -1,6 +1,8 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1251076 by swentel: fix notices on simply changing field UI when a layout was
+                       already configured.
 - #1251330 by swentel: set title on revision view mode.
 - #1239436 by swentel: fix PDO exceptions on rare occasions.
 - #1252792 by swentel: Menu titles should be in hook_menu().

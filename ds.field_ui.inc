@@ -498,7 +498,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       ->execute();
   }
 
-  if (($new_layout && !empty($layout)) || $form['#panel']) {
+  if (($new_layout && !empty($layout)) || ($form['#panel'] && !empty($layout))) {
     // Save new layout.
     $record->settings = $record->settings;
 
