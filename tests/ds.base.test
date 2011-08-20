@@ -647,6 +647,15 @@ class dsLayoutsStylesTests extends dsBaseTest {
     $this->assertTrue(in_array('links', $data['regions']['header']), t('Links field is in header'));
     $this->assertTrue(in_array('body', $data['regions']['footer']), t('Body field is in footer'));
     $this->assertTrue(in_array('ds_test_field', $data['regions']['footer']), t('Test field is in footer'));
+
+    // Test that a default view mode with no layout is not affected by a disabled view mode.
+    $edit = array(
+      'additional_settings[layout]' => '',
+      'additional_settings[modes][view_modes_custom][full]' => FALSE,
+    );
+    $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertNoText('Test code field on node 1', 'No extra field');
   }
 }
 

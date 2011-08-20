@@ -430,7 +430,7 @@ function ds_get_layout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
     $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
 
     // Check if a layout is configured.
-    if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode])) {
+    if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode]) && ($overriden || $view_mode == 'default')) {
       $layouts[$layout_key] = $entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode];
     }
 
