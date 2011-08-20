@@ -89,7 +89,7 @@ function ds_search_ds_fields_info($entity_type) {
       'title' => t('Search info'),
       'field_type' => DS_FIELD_TYPE_FUNCTION,
       'function' => 'ds_search_extra_info',
-    	'ui_limit' => array('*|' . variable_get('ds_search_view_mode', 'search_result')),
+      'ui_limit' => array('*|' . variable_get('ds_search_view_mode', 'search_result')),
     );
   }
 
