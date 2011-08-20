@@ -732,7 +732,7 @@ function ds_ds_field_format_summary($field) {
     }
     elseif (!empty($value)) {
       $value = is_numeric($value) ? ($value ? t('Yes') : t('No')) : check_plain($value);
-      $summary .= str_replace('_', ' ', drupal_ucfirst(check_plain($key))) . ': ' . check_plain($value) . '<br />';
+      $summary .= ' ' . str_replace('_', ' ', drupal_ucfirst(check_plain($key))) . ': ' . check_plain($value) . '<br />';
     }
   }
   return $summary;
@@ -786,7 +786,7 @@ function ds_ds_field_settings_form($field) {
         $form[$key] = array(
           '#type' => 'hidden',
           '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
-          '#weight' => 3,
+          '#weight' => 2,
         );
         $action = 'add';
         $args = '';
@@ -803,8 +803,17 @@ function ds_ds_field_settings_form($field) {
         }
         $form['select'] = array(
           '#markup' => l($title, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field['entity_type'] . '/' . $field['name'] . $args, array('attributes' => array('class' => 'ctools-use-modal'))),
-          '#weight' => 2,
+          '#weight' => -10,
         );
+        $form['load_terms'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Load terms'),
+          '#description' => t('Toggle if you are embedding a view with term fields.'),
+          '#default_value' => isset($settings['load_terms']) ? $settings['load_terms'] : '',
+          '#weight' => -1,
+        );
+        $form['show_title']['#weight'] = 0;
+        $form['title_wrapper']['#weight'] = 1;
         ctools_object_cache_set($field['name'], $field['name'], $conf);
         break;
     }

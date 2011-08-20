@@ -911,6 +911,32 @@ function ds_render_code_field($field) {
 function ds_render_ctools_field($field) {
   if (isset($field['formatter_settings']['ctools'])) {
 
+    // Extreme use case where a taxonomy_term object is not
+    // loaded on the entity and triggers notices if a view is embedded
+    // with taxonomy term fields from the same object.
+    // see http://drupal.org/node/1238132 - To reproduce:
+    // 1) add 2 taxonomy field instances on a bundle
+    // 2) configure a ds layout showing only one
+    // 3) embed a view with the 2 taxonomies as fields.
+    if (isset($field['formatter_settings']['load_terms']) && $field['formatter_settings']['load_terms']) {
+      static $terms_loaded = array();
+      $language = $field['entity']->language;
+      $instances = field_info_instances($field['entity_type'], $field['bundle']);
+      foreach ($instances as $key => $instance) {
+        $info = field_info_field($key);
+        if ($info['module'] == 'taxonomy') {
+          foreach ($field['entity']->{$key}[$language] as $tkey => $item) {
+            if (isset($item['tid']) && !isset($item['taxonomy_term'])) {
+              if (!isset($terms_loaded[$item['tid']])) {
+                $terms_loaded[$item['tid']] = taxonomy_term_load($item['tid']);
+              }
+              $field['entity']->{$key}[$language][$tkey]['taxonomy_term'] = $terms_loaded[$item['tid']];
+            }
+          }
+        }
+      }
+    }
+
     ctools_include('content');
     ctools_include('context');
 
