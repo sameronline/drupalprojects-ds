@@ -646,21 +646,16 @@ function ds_extras_field_extra_fields() {
     }
   }
 
-  // Extra fields.
   if (variable_get('ds_extras_fields_extra')) {
     $fields = explode("\n", variable_get('ds_extras_fields_extra_list', FALSE));
     foreach ($fields as $field) {
       $field = trim($field);
       if (!empty($field)) {
         list($entity, $bundle, $field_name) = explode('|', $field);
-        $extra[check_plain($entity)][check_plain($bundle)] = array(
-          'display' => array(
-            $field_name => array(
-              'label' => drupal_ucfirst(check_plain($field_name)),
-              'description' => drupal_ucfirst(check_plain($field_name)),
-              'weight' => 0,
-            )
-          ),
+        $extra[check_plain($entity)][check_plain($bundle)]['display'][$field_name] = array(
+          'label' => drupal_ucfirst(str_replace('_', ' ', check_plain($field_name))),
+          'description' => drupal_ucfirst(str_replace('_', ' ', check_plain($field_name))),
+          'weight' => 0,
         );
       }
     }

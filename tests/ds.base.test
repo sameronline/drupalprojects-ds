@@ -483,6 +483,11 @@ class dsLayoutsStylesTests extends dsBaseTest {
     $this->dsSelectClasses();
     $this->dsConfigureUI($fields);
 
+    // Assert the two extra fields are found.
+    $this->drupalGet('admin/structure/types/manage/article/display');
+    $this->assertRaw('ds_extras_extra_test_field');
+    $this->assertRaw('ds_extras_second_field');
+
     // Assert we have some configuration in our database.
     $count = db_query("SELECT COUNT(settings) FROM {ds_layout_settings} WHERE entity_type = 'node' AND bundle = 'article' AND view_mode = 'default'")->fetchField();
     $this->assertEqual($count, 1, t('1 record found for layout serttings for node article'));
