@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1254224 by swentel: search snippet (only solr) and info field.
 - #1254736 by swentel: do not affect non configured default view mode with disabled view mode.
 - #1254894 by swentel: Extra fields was limited to one per bundle.
 - #1244336 by swentel: ds_field_attach_view_alter() should not run for panels.

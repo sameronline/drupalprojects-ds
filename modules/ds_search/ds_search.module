@@ -70,6 +70,59 @@ function theme_ds_search_page($build) {
 }
 
 /**
+ * Implements hook_ds_fields_info().
+ */
+function ds_search_ds_fields_info($entity_type) {
+  $fields = array();
+
+  if ($entity_type == 'node') {
+    if (variable_get('ds_search_type', 'node') == 'apachesolr_search') {
+      $fields['node']['search_snippet'] = array(
+        'title' => t('Snippet'),
+        'field_type' => DS_FIELD_TYPE_FUNCTION,
+        'function' => 'ds_search_snippet',
+        'ui_limit' => array('*|' . variable_get('ds_search_view_mode', 'search_result')),
+      );
+    }
+
+    $fields['node']['search_info'] = array(
+      'title' => t('Search info'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'ds_search_extra_info',
+    	'ui_limit' => array('*|' . variable_get('ds_search_view_mode', 'search_result')),
+    );
+  }
+
+  if (isset($fields[$entity_type])) {
+    return array($entity_type => $fields[$entity_type]);
+  }
+
+  return;
+}
+
+/**
+ * Returns the snippet field - only works for Apache Solr.
+ */
+function ds_search_snippet($field) {
+  if (isset($field['entity']->search_snippet)) {
+    return $field['entity']->search_snippet;
+  }
+}
+
+/**
+ * Returns the info field, just like default search.
+ */
+function ds_search_extra_info($field) {
+  $info = array();
+  $info['user'] = theme('username', array('account' => $field['entity']));
+  $info['date'] = format_date($field['entity']->changed, 'short');
+  if (isset($field['entity']->search_extra) && is_array($field['entity']->search_extra)) {
+    $info = array_merge($info, $field['entity']->search_extra);
+  }
+  return implode(' - ', $info);
+}
+
+/**
  * Implements hook_search_info().
  */
 function ds_search_search_info() {
@@ -466,7 +519,9 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
     ->execute();
   $results = array();
   foreach ($find as $item) {
-    $results[$item->sid] = node_load($item->sid);
+    $node = node_load($item->sid);
+    $node->search_extra = module_invoke_all('node_search_result', $node);
+    $results[$item->sid] = $node;
   }
   return $results;
 }
@@ -488,6 +543,9 @@ function apachesolr_search_ds_search_execute($keys = NULL, $conditions = NULL) {
     if (!isset($node->nid)) {
       $node = node_load($item['node']->entity_id);
     }
+    // Add the snippet and extra info on the object.
+    $node->search_snippet = $item['snippet'];
+    $node->search_extra = $item['extra'];
     $results[$item['node']->entity_id] = $node;
   }
 
