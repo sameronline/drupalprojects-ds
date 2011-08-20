@@ -655,7 +655,7 @@ class dsLayoutsStylesTests extends dsBaseTest {
     );
     $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
     $this->drupalGet('node/' . $node->nid);
-    $this->assertNoText('Test code field on node 1', 'No extra field');
+    $this->assertNoText('Test code field on node 1', 'No ds field from full view mode layout');
   }
 }
 
