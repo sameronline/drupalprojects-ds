@@ -232,7 +232,7 @@ function hook_ds_custom_fields_info() {
   $ds_field->entities = array(
     'node' => 'node',
   );
-  $ds_field->properties = (object) array(
+  $ds_field->properties = array(
     'code' => array(
       'value' => '<? print "this is a custom field"; ?>',
       'format' => 'ds_code',
