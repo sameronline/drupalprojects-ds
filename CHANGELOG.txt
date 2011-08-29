@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1263438 by pfrenssen: Apache Solr filter conditions need to be updated.
 - #1255710 by avr: API example "hook_ds_custom_fields_info" should not use object.
 - #1238132 by swentel: Embedding view with term references in fields results in errors.
 - #1254224 by swentel: search snippet (only solr) and info field.

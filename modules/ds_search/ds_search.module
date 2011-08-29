@@ -155,8 +155,8 @@ function ds_search_conditions() {
   $conditions = array();
 
   // Needed for Apache Solr.
-  if (isset($_GET['filters']) && trim($_GET['filters'])) {
-    $conditions['filters'] = trim($_GET['filters']);
+  if (!empty($_GET['fq']) && is_array($_GET['fq'])) {
+    $conditions['fq'] = $_GET['fq'];
   }
 
   // We may also have filters added by facet API module. The 'f'
