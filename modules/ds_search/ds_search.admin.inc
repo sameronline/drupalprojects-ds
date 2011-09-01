@@ -227,6 +227,18 @@ function ds_search_settings($form, $form_state) {
       '#description' => t('Hide the "Retain current filters" checkbox on search results.'),
       '#default_value' => variable_get('ds_search_apachesolr_hide_current_filters'),
     );
+
+    $form['apachesolr_search']['ds_search_apachesolr_current_filters_default'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Retain filters by default'),
+      '#description' => t('Retain the previously used filters when performing a new search.'),
+      '#default_value' => variable_get('ds_search_apachesolr_current_filters_default', FALSE),
+      '#states' => array(
+        'visible' => array(
+          'input[name="ds_search_apachesolr_hide_current_filters"]' => array('checked' => TRUE),
+        ),
+      ),
+    );
   }
 
   $active = variable_get('search_active_modules', array('node', 'user'));

@@ -451,7 +451,8 @@ function ds_search_form_search_form_alter(&$form, $form_state) {
       $form['module']['#value'] = 'apachesolr_search';
       apachesolr_search_form_search_form_alter($form, $form_state);
       if (variable_get('ds_search_apachesolr_hide_current_filters', FALSE)) {
-        $form['basic']['apachesolr_search']['retain-filters']['#access'] = FALSE;
+        $form['basic']['apachesolr_search']['retain-filters']['#type'] = 'value';
+        $form['basic']['apachesolr_search']['retain-filters']['#value'] = variable_get('ds_search_apachesolr_current_filters_default', FALSE);
       }
     }
   }

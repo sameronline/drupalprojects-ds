@@ -1,6 +1,8 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1266400 by pfrenssen: Provide a default setting for the 'Retain filters' checkbox 
+                         if this is hidden in solr search.
 - #1264508 by pfrenssen: Browser freezes on empty search and highlighting enabled.
 - #1263438 by pfrenssen: Apache Solr filter conditions need to be updated.
 - #1255710 by avr: API example "hook_ds_custom_fields_info" should not use object.
