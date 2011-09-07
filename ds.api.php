@@ -299,11 +299,11 @@ function hook_ds_fields_ui_alter(&$fields, $context) {
  * Define theme functions for fields.
  *
  * This only is necessary when you're using the field settings
- * plugin which comes with the DS extras module. This function
- * will call the theming functions directly, not through
- * theme('function', $variables); A function gets 2 parameters,
- * the $variables and $config which are the configuration options
- * for the current field: theme_ds_field_custom($variables, $config);
+ * plugin which comes with the DS extras module and you want to
+ * expose a special field theming function to the interface.
+ *
+ * The theme function gets $variables as the only parameter.
+ * The optional configuration through the UI is in $variables['ds-config'].
  *
  * @return $field_theme_functions
  *   A collection of field theming functions.

@@ -138,20 +138,10 @@ function _ds_extras_theme_registry_alter(&$theme_registry) {
     $theme_registry['page']['process functions'][] = 'ds_extras_process_page_title';
   }
 
-  // Change the default field theming function.
-  if (variable_get('ds_extras_field_template', FALSE)) {
-
-    // We change the default theme_field function by ours.
-    $theme_registry['field']['function'] = 'theme_ds_field';
-
-    // Kill all theme hook suggestions.
-    if (variable_get('ft-kill', FALSE)) {
-      foreach ($theme_registry as $key => $hook) {
-        if (isset($hook['base hook']) && $hook['base hook'] == 'field') {
-          unset($theme_registry[$key]);
-        }
-      }
-    }
+  // Check on field templates.
+  if (!variable_get('ds_extras_field_template', FALSE)) {
+    $key = array_search('ds_preprocess_field', $theme_registry['field']['preprocess functions']);
+    unset($theme_registry['field']['preprocess functions'][$key]);
   }
 
   // Inject ds_extras_render_panel_layout in all entity theming functions.
@@ -185,6 +175,7 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
   $fs_hooks = array(
     'ds_field_settings_alter',
     'form_ds_styles_form_alter',
+    'theme',
   );
   if (!variable_get('ds_extras_field_template', FALSE) && in_array($hook, $fs_hooks)) {
     unset($implementations['ds_extras']);

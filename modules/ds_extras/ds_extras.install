@@ -126,7 +126,6 @@ function ds_extras_uninstall() {
   variable_del('ds_extras_editor_switch');
   variable_del('ds_extras_revision_view_mode');
   variable_del('ft-default');
-  variable_del('ft-kill');
   variable_del('ft-kill-colon');
   variable_del('ds_extras_contextual');
   db_drop_field('node_revision', 'ds_switch');
@@ -177,4 +176,11 @@ function ds_extras_update_7003() {}
 function ds_extras_update_7004() {
   $schema = ds_extras_schema();
   db_create_table('cache_ds_panels', $schema['cache_ds_panels']);
+}
+
+/**
+ * Cleanup ft-kill variable.
+ */
+function ds_extras_update_7005() {
+  variable_del('ft-kill');
 }

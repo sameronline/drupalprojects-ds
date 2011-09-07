@@ -576,5 +576,16 @@ class dsNodeTests extends dsBaseTest {
     $this->assertRaw("<div class=\"group-right\">
       <div class=\"ow-class\"><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>    </div>");
+
+    // Use the test field theming function to test that this function is
+    // registered in the theme registry through ds_extras_theme().
+    $edit = array(
+      'fields[body][format][ft][function]' => 'ds_test_theming_function',
+    );
+
+    $this->dsConfigureUI($edit);
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertRaw("<div class=\"group-right\">
+      Testing field output through custom function    </div>");
   }
 }

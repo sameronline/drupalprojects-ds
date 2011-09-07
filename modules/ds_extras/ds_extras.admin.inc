@@ -58,18 +58,6 @@ function ds_extras_settings($form) {
     ),
   );
 
-  $form['additional_settings']['fs1']['ft-kill'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Remove theme suggestions'),
-    '#default_value' => variable_get('ft-kill', FALSE),
-    '#description' => t('Remove all theme suggestions from fields. If unsure, leave disabled.'),
-    '#states' => array(
-      'visible' => array(
-        'input[name="additional_settings[fs1][ds_extras_field_template]"]' => array('checked' => TRUE),
-      ),
-    ),
-  );
-
   $form['additional_settings']['fs2'] = array(
     '#type' => 'fieldset',
     '#title' => t('Extra fields'),

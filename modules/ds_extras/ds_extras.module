@@ -99,6 +99,21 @@ function ds_extras_menu() {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function ds_extras_theme() {
+  $theme_functions = array();
+  $field_functions = module_invoke_all('ds_field_theme_functions_info');
+  foreach ($field_functions as $key => $label) {
+    $theme_functions[$key] = array(
+      'render element' => 'element',
+      'function' => $key,
+    );
+  }
+  return $theme_functions;
+}
+
+/**
  * Implements hook_entity_info().
  */
 function ds_extras_entity_info() {
@@ -222,16 +237,13 @@ function ds_extras_form_ds_styles_form_alter(&$form, &$form_state) {
 }
 
 /**
- * Overriden function of theme_field().
- *
- * This function is replaced in ds_extras_theme_registry_alter()
- * for every field. By default theme_field() is called directly.
+ * Implements hook_preprocess_field().
  */
-function theme_ds_field($variables) {
+function ds_preprocess_field(&$variables) {
 
   // We need to be sure this field is in a layout which is rendered by DS.
   if (!ds_get_layout($variables['element']['#entity_type'], $variables['element']['#bundle'], $variables['element']['#view_mode'])) {
-    return theme_field($variables);
+    return;
   }
 
   $config = array();
@@ -246,11 +258,12 @@ function theme_ds_field($variables) {
   // Check if this field has custom output settings.
   if (isset($field_settings[$variables['element']['#entity_type']][$variables['element']['#bundle']][$variables['element']['#view_mode']][$field_name]['ft'])) {
     $config = $field_settings[$variables['element']['#entity_type']][$variables['element']['#bundle']][$variables['element']['#view_mode']][$field_name]['ft'];
+    $variables['ds-config'] = $config;
   }
 
   // Styles
   if (isset($config['styles'])) {
-    $variables['classes'] .= ' ' . $config['styles'];
+    $variables['classes_array'][] = $config['styles'];
   }
 
   // Alter the label if configured.
@@ -260,21 +273,25 @@ function theme_ds_field($variables) {
     }
   }
 
-  // Call the field output function.
-  // We're not babysitting here, the function must exist.
+  // Determine the field function. In case it's something different
+  // than theme_field, we'll add that function as a suggestion.
   if (isset($config['func'])) {
-    return $config['func']($variables, $config);
+    $variables['ds-config'] = $config;
+    $variables['theme_hook_suggestions'][] = $config['func'];
   }
-
-  // Default field function.
-  $default_field_function = variable_get('ft-default', 'theme_field');
-  return $default_field_function($variables, $config);
+  else {
+    $field_theme_function = variable_get('ft-default', 'theme_field');
+    if ($field_theme_function != 'theme_field') {
+      $variables['ds-config'] = $config;
+      $variables['theme_hook_suggestions'][] = $field_theme_function;
+    }
+  }
 }
 
 /**
  * Reset all HTML for the field.
  */
-function theme_ds_field_reset($variables, $config) {
+function theme_ds_field_reset($variables) {
   $output = '';
 
   // Render the label.
@@ -297,8 +314,10 @@ function theme_ds_field_reset($variables, $config) {
 /**
  * Custom output all HTML for the field.
  */
-function theme_ds_field_expert($variables, $config) {
+function theme_ds_field_expert($variables) {
   $output = '';
+
+  $config = $variables['ds-config'];
 
   // Render the label if it's not hidden
   if (!$variables['label_hidden']) {
