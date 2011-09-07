@@ -767,6 +767,7 @@ function ds_entity_variables(&$vars) {
       if (!isset($vars['classes_array'])) {
         $vars['classes_array'] = array();
       }
+      $vars['classes_array'][] = strtr($layout['layout'], '_', '-');
       $vars['classes_array'][] = 'view-mode-' . $vars['elements']['#view_mode'];
 
       // In case this is a panels layout, do a string replace.
