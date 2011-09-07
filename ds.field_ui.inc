@@ -9,7 +9,7 @@
  * Adds the Display Suite fields and layouts to the form.
  */
 function ds_field_ui_fields_layouts(&$form, &$form_state) {
-  global $base_url, $base_path;
+  global $base_root, $base_path;
 
   // Get the entity_type, bundle and view mode.
   $entity_type = $form['#entity_type'];
@@ -44,7 +44,7 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   // Add a destination so we can get back if layout has been changed.
   $form['ds_source'] = array(
     '#type' => 'hidden',
-    '#value' => $base_url . $base_path,
+    '#value' => $base_root . $base_path,
   );
   $form['ds_destination'] = array(
     '#type' => 'hidden',

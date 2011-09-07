@@ -1,6 +1,8 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1270634 by swentel: check on #view_mode index in contextual links.
+- #1269004 by adf1969 and swentel: use $base_root for subdir installs in ds_source.
 - #1259454 by swentel: add more help text for a preprocess field.
 - #1266400 by pfrenssen: Provide a default setting for the 'Retain filters' checkbox 
                          if this is hidden in solr search.

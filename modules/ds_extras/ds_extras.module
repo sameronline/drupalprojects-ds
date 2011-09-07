@@ -457,7 +457,7 @@ function ds_extras_contextual_links_view_alter(&$element, $items) {
   if (isset($element['#element']['#entity_type']) && user_access('administer content types')) {
     $entity_type = $element['#element']['#entity_type'];
     $bundle = $element['#element']['#bundle'];
-    $view_mode = $element['#element']['#view_mode'];
+    $view_mode = isset($element['#element']['#view_mode']) ? $element['#element']['#view_mode'] : 'default';
 
     // Check if we have a configured layout. Do not fallback to default.
     $layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE);
