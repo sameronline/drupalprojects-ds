@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1262706 by swentel: remove notices from enabling views displays.
 - #1258086 by swentel: Add layout as class in template files.
 - #1265920 by swentel: The theme's field.tpl.php should be found as well.
 - #1261582 by swentel: default to nid so views doesn't crash.

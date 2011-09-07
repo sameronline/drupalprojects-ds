@@ -239,7 +239,7 @@ function ds_extras_settings_submit($form, &$form_state) {
   cache_clear_all('theme_registry:', 'cache', TRUE);
   cache_clear_all('module_implements', 'cache_bootstrap');
   cache_clear_all('field_info_fields', 'cache_field');
-  menu_rebuild();
+  variable_set('menu_rebuild_needed', TRUE);
 }
 
 /**

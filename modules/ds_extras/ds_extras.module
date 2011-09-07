@@ -689,6 +689,7 @@ function ds_extras_field_extra_fields() {
 function ds_extras_preprocess_view_layout(&$variables) {
 
   if ($layout = ds_get_layout('ds_views', $variables['view']->name . '-' . $variables['view']->current_display, 'default')) {
+
     $variables['elements']['#entity_type'] = $variables['#entity_type'] = 'ds_views';
     $variables['elements']['#bundle'] = $variables['#bundle'] = $variables['view']->name . '-' . $variables['view']->current_display;
     $variables['elements']['#view_mode'] = 'default';
