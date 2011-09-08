@@ -184,8 +184,8 @@ class views_plugin_ds_entity_view extends views_plugin_row {
   /**
    * Validate view mode type selector.
    */
-  function options_validate($form, &$form_state) {
-    if (($form_state['values']['row_options']['alternating_fieldset']['alternate'] || $form_state['values']['row_options']['grouping_fieldset']['grouping']) && $form_state['values']['row_options']['advanced_fieldset']['advanced']) {
+  function options_validate(&$form, &$form_state) {
+    if (($form_state['values']['row_options']['alternating_fieldset']['alternating'] || $form_state['values']['row_options']['grouping_fieldset']['grouping']) && $form_state['values']['row_options']['advanced_fieldset']['advanced']) {
       form_set_error('advanced', t('You can not have changing/grouping and advanced enabled at the same time'));
     }
   }
@@ -193,7 +193,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
   /**
    * Reset all fieldsets except for changing.
    */
-  function options_submit($form, &$form_state) {
+  function options_submit(&$form, &$form_state) {
     $form_state['values']['row_options']['load_comments'] = $form_state['values']['row_options']['default_fieldset']['load_comments'];
     $form_state['values']['row_options']['view_mode'] = $form_state['values']['row_options']['default_fieldset']['view_mode'];
     $form_state['values']['row_options']['alternating'] = $form_state['values']['row_options']['alternating_fieldset']['alternating'];
