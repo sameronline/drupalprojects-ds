@@ -75,6 +75,11 @@ function _ds_theme_registry_alter(&$theme_registry) {
     }
   }
 
+  // Support for File Entity.
+  if (isset($theme_registry['file_entity'])) {
+    $theme_registry['file_entity']['preprocess functions'][] = 'ds_entity_variables';
+  }
+
   // Support for Entity API.
   if (isset($theme_registry['entity'])) {
     $theme_registry['entity']['preprocess functions'][] = 'ds_entity_variables';
