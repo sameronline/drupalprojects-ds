@@ -172,7 +172,11 @@ function hook_ds_fields_info($entity_type) {
     // properties: can have different keys.
     'properties' => array(
 
-      // formatters: optional if a a function is used.
+      // formatters: optional if a function is used.
+      // In case the field_type is DS_FIELD_TYPE_THEME, you also
+      // need to register these formatters as a theming function
+      // since the key will be called with theme('function').
+      // The value is the caption used in the selection config on Field UI.
       'formatters' => array(
         'node_title_nolink_h1' => t('H1 title'),
         'node_title_link_h1' => t('H1 title, linked to node'),
