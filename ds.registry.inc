@@ -91,6 +91,11 @@ function _ds_theme_registry_alter(&$theme_registry) {
  */
 function _ds_entity_info_alter(&$entity_info) {
 
+  // Make sure ds_view_modes table exists.
+  if (!db_table_exists('ds_view_modes')) {
+    return;
+  }
+
   ctools_include('export');
 
   // Add custom view modes to entities.
