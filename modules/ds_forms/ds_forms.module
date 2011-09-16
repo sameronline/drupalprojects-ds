@@ -69,10 +69,12 @@ function ds_forms_form_field_ui_field_overview_form_alter(&$form, &$form_state) 
 function ds_forms_field_extra_fields() {
   $extra = array();
 
-  $extra['node']['article']['form']['language'] = array(
-    'label' => 'Language',
-    'weight' => 0,
-  );
+  if (module_exists('translation')) {
+    $extra['node']['article']['form']['language'] = array(
+      'label' => 'Language',
+      'weight' => 0,
+    );
+  }
 
   return $extra;
 }
