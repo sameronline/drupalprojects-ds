@@ -1,0 +1,17 @@
+
+
+.ds-form .group-left {
+  float: left;
+  width: 70%;
+  padding: 0 5px;
+}
+
+.ds-form .group-right {
+  float: right;
+  width: auto;
+  padding: 0 5px;
+}
+
+.ds-form .group-footer {
+  clear: both;
+}

@@ -11,10 +11,6 @@
 function ds_layout_list() {
   $build = array();
 
-  // Info
-  $info = '<p>' . t('This is a list of all entities available in your Drupal website. Clicking on "Manage display" will bring you to the "Manage display" screens if the Field UI module is enabled.') . '</p>';
-  $build['info'] = array('#markup' => $info);
-
   // All entities.
   $rows = array();
   $entities = entity_get_info();
@@ -31,12 +27,20 @@ function ds_layout_list() {
         }
 
         $row[] = $bundle['label'];
+        if (module_exists('ds_forms')) {
+          if ($entity_type == 'node') {
+            $row[] = l(t('Manage forms'), $path . '/fields');
+          }
+          else {
+            $row[] = '';
+          }
+        }
         $row[] = l(t('Manage display'), $path . '/display');
         $entity_rows[] = $row;
       }
 
       if (!empty($entity_rows)) {
-        $rows[] = array(array('data' => $entity['label'], 'colspan' => '2', 'style' => 'background-color: #E1E2DC; border: 1px solid #BEBFB9;'));
+        $rows[] = array(array('data' => $entity['label'], 'colspan' => '3', 'style' => 'background-color: #E1E2DC; border: 1px solid #BEBFB9;'));
         $rows = array_merge($rows, $entity_rows);
       }
     }

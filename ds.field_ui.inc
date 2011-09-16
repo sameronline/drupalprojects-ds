@@ -25,10 +25,12 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, $form, $form_state);
 
   // Add the fields on the table.
-  _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form, $form_state);
+  if ($view_mode != 'form') {
+    _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form, $form_state);
+  }
 
   // Add buttons to add fields in overlay.
-  if ($entity_type != 'ds_views' && isset($form['#ds_layout']) && user_access('admin_fields')) {
+  if ($entity_type != 'ds_views' && isset($form['#ds_layout']) && user_access('admin_fields') && $view_mode != 'form') {
     _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, $form, $form_state);
   }
 
@@ -152,7 +154,7 @@ function ds_revert_layout_field_settings_form_submit(&$form, &$form_state) {
 }
 
 /**
- * Add Regions to 'Manage display' screen.
+ * Add Regions to 'Manage fields' or 'Manage display' screen.
  *
  * @param $form
  *   The form to add layout fieldset and extra display suite fields.
@@ -174,14 +176,28 @@ function ds_field_ui_regions($form, $form_state) {
 
     $table = &$form['fields'];
 
-    $table['#header'] = array(
-      t('Field'),
-      t('Weight'),
-      t('Parent'),
-      t('Region'),
-      t('Label'),
-      array('data' => t('Format'), 'colspan' => 3),
-    );
+    if ($view_mode != 'form') {
+      $table['#header'] = array(
+        t('Field'),
+        t('Weight'),
+        t('Parent'),
+        t('Region'),
+        t('Label'),
+        array('data' => t('Format'), 'colspan' => 3),
+      );
+    }
+    else {
+      $table['#header'] = array(
+        t('Label'),
+        t('Weight'),
+        t('Parent'),
+        t('Region'),
+        t('Name'),
+        t('Field'),
+        t('Widget'),
+        array('data' => t('Operations'), 'colspan' => 2),
+      );
+    }
 
     $table['#regions'] = array();
     foreach ($layout->regions as $region_key => $region_title) {
@@ -204,9 +220,9 @@ function ds_field_ui_regions($form, $form_state) {
     );
     drupal_alter('ds_layout_region', $context, $region_info);
 
-    $region_options['hidden'] = t('Disabled');
+    $region_options['hidden'] = $view_mode != 'form' ? t('Disabled') : t('Hidden');
     $table['#regions']['hidden'] = array(
-      'title' => t('Disabled'),
+      'title' => $view_mode != 'form' ? t('Disabled') : t('Hidden'),
       'message' => t('No fields are hidden.')
     );
 
@@ -249,15 +265,16 @@ function ds_field_ui_regions($form, $form_state) {
 
       // Limit items.
       $field_info = field_info_field($name);
-      if (isset($field_info['cardinality']) && $field_info['cardinality'] != 1) {
+      if (isset($field_info['cardinality']) && $field_info['cardinality'] != 1 && $view_mode != 'form') {
         $row['format']['type']['#prefix'] = '<div class="limit-float">';
         $row['format']['type']['#suffix'] = '</div>';
         $row['format']['limit'] = $limit_items;
         $row['format']['limit']['#default_value'] = (isset($layout->settings['limit']) && isset($layout->settings['limit'][$name])) ? $layout->settings['limit'][$name] : '#';
       }
 
-      // Add region between parent_wrapper & label.
-      $second = array_splice($row, 7);
+      // Add region.
+      $split = ($view_mode != 'form') ? 7 : 6;
+      $second = array_splice($row, $split);
       $row['region'] = $region;
       $row['region']['#default_value'] = (isset($layout->settings['fields'][$name]) && isset($region_options[$layout->settings['fields'][$name]])) ? $layout->settings['fields'][$name] : 'hidden';
       $row = array_merge($row, $second);
@@ -471,7 +488,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   // Get some default values.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = isset($form['#view_mode']) ? $form['#view_mode'] : 'form';
+  $view_mode = $form['#view_mode'];
 
   // Determine layout variables.
   $layout = $form_state['values']['additional_settings']['layout'];
@@ -516,7 +533,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     foreach ($fields as $key => $field) {
 
       // Make sure we need to save anything for this field.
-      if (_ds_field_valid($key, $field, $form_state)) {
+      if (_ds_field_valid($key, $field, $form_state, $view_mode)) {
         continue;
       }
 
@@ -1120,6 +1137,11 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   foreach ($ds_layouts as $key => $layout) {
     $optgroup = 'Display suite';
 
+    // Continue if view mode is form and the form property is not ok.
+    if ($view_mode == 'form' && (!isset($layout['form']) || (isset($layout['form']) && !$layout['form']))) {
+      continue;
+    }
+
     // Panels can not be used on Views fields.
     if (!empty($layout['module']) && $layout['module'] == 'panels' && isset($form_state['no_panels'])) {
       continue;
@@ -1227,7 +1249,8 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     '#title' => t('Disable Drupal blocks/regions'),
     '#description' => t('Check this to have the page disable all sidebar regions displayed in the theme. Note that some themes support this setting better than others. If in doubt, try with stock themes to see.'),
     '#default_value' => isset($layout->settings['hide_sidebars']) ? $layout->settings['hide_sidebars'] : FALSE,
-    '#weight' => 3,
+    '#access' => $view_mode != 'form',
+  	'#weight' => 3,
   );
 
   if (!empty($layout) && isset($layout->regions)) {
@@ -1264,29 +1287,31 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   }
   else {
 
-    // See if we can clone from another view mode.
-    $options = array();
-    $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
-    foreach ($ds_layout_settings as $row) {
-      if ($row->entity_type == $entity_type && !isset($row->settings['ds_panels'])) {
-        $options[$row->id] = drupal_ucfirst($row->entity_type) . ' > ' . drupal_ucfirst($row->bundle) . ' > ' . drupal_ucfirst($row->view_mode);
+    if ($view_mode != 'form') {
+      // See if we can clone from another view mode.
+      $options = array();
+      $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
+      foreach ($ds_layout_settings as $row) {
+        if ($row->entity_type == $entity_type && !isset($row->settings['ds_panels'])) {
+          $options[$row->id] = drupal_ucfirst($row->entity_type) . ' > ' . drupal_ucfirst($row->bundle) . ' > ' . drupal_ucfirst($row->view_mode);
+        }
       }
-    }
 
-    if (!empty($options)) {
-      $form['additional_settings']['ds_layouts']['clone'] = array(
-        '#title' => t('Or clone layout from existing view mode'),
-        '#type' => 'select',
-        '#options' => $options,
-        '#weight' => 20,
-        '#description' => t('Note that not all fields might be available.'),
-      );
-      $form['additional_settings']['ds_layouts']['clone_submit'] = array(
-        '#type' => 'submit',
-        '#value' => t('Clone'),
-        '#submit' => array('ds_field_ui_layout_clone'),
-        '#weight' => 21,
-      );
+      if (!empty($options)) {
+        $form['additional_settings']['ds_layouts']['clone'] = array(
+          '#title' => t('Or clone layout from existing view mode'),
+          '#type' => 'select',
+          '#options' => $options,
+          '#weight' => 20,
+          '#description' => t('Note that not all fields might be available.'),
+        );
+        $form['additional_settings']['ds_layouts']['clone_submit'] = array(
+          '#type' => 'submit',
+          '#value' => t('Clone'),
+          '#submit' => array('ds_field_ui_layout_clone'),
+          '#weight' => 21,
+        );
+      }
     }
   }
 
@@ -1571,11 +1596,11 @@ function _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, &$form, $
 /**
  * Utility function to check if we need to save anything for this field.
  */
-function _ds_field_valid($key, $field, &$form_state) {
+function _ds_field_valid($key, $field, &$form_state, $view_mode = 'default') {
   $continue = FALSE;
 
   // Ignore the Field group module and the region to block plugin.
-  if ($key == '_add_new_group' || $key == '_add_new_block_region') {
+  if ($key == '_add_new_group' || $key == '_add_new_field' || $key == '_add_new_block_region') {
     $continue = TRUE;
   }
 
@@ -1584,10 +1609,14 @@ function _ds_field_valid($key, $field, &$form_state) {
   // we need to reset that type to 'hidden' so it doesn't get
   // fired by Field API in the frontend.
   if (isset($field['region']) && $field['region'] == 'hidden') {
-    if (isset($field['type'])) {
+    if (isset($field['type']) && $view_mode != 'form') {
       $form_state['values']['fields'][$key]['type'] = 'hidden';
     }
-    $continue = TRUE;
+
+    // In case of a form, fields will be set with #access to FALSE.
+    if ($view_mode != 'form') {
+      $continue = TRUE;
+    }
   }
 
   return $continue;

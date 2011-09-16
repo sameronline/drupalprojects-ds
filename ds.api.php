@@ -399,6 +399,8 @@ function hook_ds_layout_info() {
         'foo_content' => t('Content'),
       ),
       'css' => TRUE,
+      // optional, form only applies to node form at this point.
+      'form' => TRUE,
     ),
   );
 
@@ -479,6 +481,8 @@ function hook_ds_label_options_alter(&$field_label_options) {
       ),
       // Add this if there is a default css file.
       'css' => TRUE,
+      // Add this if this template is for a node form.
+      'form' => TRUE,
     );
   }
 
