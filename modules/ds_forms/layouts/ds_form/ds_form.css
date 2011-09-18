@@ -1,13 +1,11 @@
-
-
 .ds-form .group-left {
   float: left;
-  width: 70%;
+  width: 69%;
 }
 
 .ds-form .group-right {
-  float: left;
-  width: 30%;
+  float: right;
+  width: 29%;
 }
 
 .ds-form .group-footer {
