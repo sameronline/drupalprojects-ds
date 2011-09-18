@@ -982,7 +982,7 @@ function ds_render_block_field($field) {
 
   list($module, $delta) = explode('|', $field['properties']['block']);
   $block = module_invoke($module, 'block_view', $delta);
-  if (is_array($block['content'])) {
+  if (isset($block['content']) && is_array($block['content'])) {
     $block['content'] = drupal_render($block['content']);
   }
   if (!empty($block)) {

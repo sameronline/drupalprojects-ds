@@ -69,9 +69,14 @@ function _ds_theme_registry_alter(&$theme_registry) {
   $entity_info = entity_get_info();
   foreach ($entity_info as $entity => $info) {
     if (isset($entity_info[$entity]['fieldable']) && $entity_info[$entity]['fieldable']) {
+
       // User uses user_profile for theming.
       if ($entity == 'user') $entity = 'user_profile';
-      $theme_registry[$entity]['preprocess functions'][] = 'ds_entity_variables';
+
+      // Only add preprocess functions if entity exposes theme function.
+      if (isset($theme_registry[$entity])) {
+        $theme_registry[$entity]['preprocess functions'][] = 'ds_entity_variables';
+      }
     }
   }
 

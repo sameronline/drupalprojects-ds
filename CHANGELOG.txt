@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1279478 by fadeddata: only add preprocess function if there is a theming function.
 - #1267050 by swentel: PDOException: Table ds_view_modes doesn't exist.
 - #1272508 by swentel: add support for File Entity.
 - #1262706 by swentel: remove notices from enabling views displays.
