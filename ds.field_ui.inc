@@ -1141,6 +1141,9 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     if ($view_mode == 'form' && (!isset($layout['form']) || (isset($layout['form']) && !$layout['form']))) {
       continue;
     }
+    elseif ($view_mode != 'form' && isset($layout['form']) && $layout['form']) {
+      continue;
+    }
 
     // Panels can not be used on Views fields.
     if (!empty($layout['module']) && $layout['module'] == 'panels' && isset($form_state['no_panels'])) {
