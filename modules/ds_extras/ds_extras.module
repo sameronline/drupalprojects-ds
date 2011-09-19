@@ -219,7 +219,8 @@ function ds_extras_field_attach_view_alter(&$build, $context) {
 function ds_extras_ds_field_theme_functions_info() {
   return array(
     'theme_field' => t('Default'),
-    'theme_ds_field_reset' => t('Reset'),
+    'theme_ds_field_reset' => t('Full Reset'),
+    'theme_ds_field_minimal' => t('Minimal'),  
     'theme_ds_field_expert' => t('Expert'),
   );
 }
@@ -307,6 +308,35 @@ function theme_ds_field_reset($variables) {
   foreach ($variables['items'] as $delta => $item) {
     $output .= drupal_render($item);
   }
+
+  return $output;
+}
+
+/**
+ * Provide minimal HTML for the field.
+ */
+function theme_ds_field_minimal($variables) {
+  $output = '';
+  
+  $config = $variables['ds-config'];
+  
+  // Add a simple wrapper.
+  $output .= '<div class="field field-name-'. strtr($variables['element']['#field_name'], '_', '-') .'">';
+  
+  // Render the label.
+  if (!$variables['label_hidden']) {
+    $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
+    if (!isset($config['lb-col'])) {
+      $output .= ':&nbsp;';
+    }
+    $output .= '</div>';
+  }
+
+  // Render the items.
+  foreach ($variables['items'] as $delta => $item) {
+    $output .= drupal_render($item);
+  }
+  $output .="</div>";
 
   return $output;
 }
