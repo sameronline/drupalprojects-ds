@@ -148,8 +148,7 @@ function ds_forms_render_region(&$content, $region, $layout) {
         $content[$field]['#access'] = FALSE;
       }
       else {
-        $output .= render($content[$field]);
-        hide($content[$field]);
+        $output .= drupal_render($content[$field]);
       }
     }
   }

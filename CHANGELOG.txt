@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1283910 by swentel: hide() is not always respected.
 - #1283256 by swentel: form layouts show up on manage display.
 - #1279478 by fadeddata: only add preprocess function if there is a theming function.
 - #1267050 by swentel: PDOException: Table ds_view_modes doesn't exist.

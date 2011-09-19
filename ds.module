@@ -825,7 +825,7 @@ function ds_render_region($content, $region, $layout) {
 
   if (isset($layout['settings']['regions'][$region])) {
     foreach ($layout['settings']['regions'][$region] as $key => $field) {
-      $output .= render($content[$field]);
+      $output .= drupal_render($content[$field]);
     }
   }
   return $output;
