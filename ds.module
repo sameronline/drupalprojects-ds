@@ -825,9 +825,22 @@ function ds_render_region($content, $region, $layout) {
 
   if (isset($layout['settings']['regions'][$region])) {
     foreach ($layout['settings']['regions'][$region] as $key => $field) {
-      $output .= drupal_render($content[$field]);
+
+      // Make sure the field exists.
+      if (!isset($content[$field])) {
+        continue;
+      }
+
+      // Safe-guard against strings.
+      if (is_string($content[$field])) {
+        $output .= $content[$field];
+      }
+      else {
+        $output .= drupal_render($content[$field]);
+      }
     }
   }
+
   return $output;
 }
 
