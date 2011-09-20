@@ -89,15 +89,20 @@ function ds_extras_settings($form) {
 
     $form['additional_settings']['fs3']['ds_extras_panel_view_modes'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Enable Panels editor on view modes'),
-      '#description' => t('With this option, you can use the Panels editor instead of Field UI.'),
+      '#title' => t('Use the Panels editor on the \'Manage Display\' screen'),
+      '#description' => t('Use the Panels editor instead of Field UI to manage your layout.'),
       '#default_value' => variable_get('ds_extras_panel_view_modes', FALSE),
     );
     $form['additional_settings']['fs3']['ds_extras_editor_switch'] = array(
       '#type' => 'checkbox',
       '#title' => t('Switch layout editor'),
-      '#description' => t('By default, the Panels editor will be used always. With this option, any layout configured already with Field UI will be kept, but you are able to switch back and forth.'),
+      '#description' => t('Keep the option to switch between Field UI or Panels. Note: any layout configured already with Field UI will be kept.'),
       '#default_value' => variable_get('ds_extras_editor_switch', FALSE),
+      '#states' => array(
+      'visible' => array(
+        'input[name="additional_settings[fs3][ds_extras_panel_view_modes]"]' => array('checked' => TRUE),
+      ),
+    ),
     );
   }
 
@@ -108,14 +113,14 @@ function ds_extras_settings($form) {
 
   $form['additional_settings']['fs4']['ds_extras_switch_view_mode'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Switch view mode'),
-    '#description' => t('Change view modes for individual nodes. A new tab "Display settings" will appear on the content create form.'),
+    '#title' => t('View mode per node'),
+    '#description' => t('Change view modes for individual nodes. A new tab \'Display settings\' will appear on the content create form.'),
     '#default_value' => variable_get('ds_extras_switch_view_mode', FALSE),
   );
 
   $form['additional_settings']['fs4']['ds_extras_switch_field'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Switch view mode field'),
+    '#title' => t('View mode switcher'),
     '#description' => t('Adds a field with links to switch view modes inline with Ajax. Only works for nodes at this time.'),
     '#default_value' => variable_get('ds_extras_switch_field', FALSE),
   );
@@ -139,7 +144,7 @@ function ds_extras_settings($form) {
   $form['additional_settings']['fs4']['ds_extras_hide_page_title'] = array(
     '#type' => 'checkbox',
     '#title' => t('Page title options'),
-    '#description' => t('An extra option to either, hide or manually set the page title will appear on the "Manage displays" screen of the "Full content" build mode.'),
+    '#description' => t('Hide or manually set the page title of the "Full content" view mode.'),
     '#default_value' => variable_get('ds_extras_hide_page_title', FALSE),
   );
 
@@ -156,7 +161,7 @@ function ds_extras_settings($form) {
     $form['additional_settings']['fs4']['ds_extras_vd'] = array(
       '#type' => 'checkbox',
       '#title' => t('Views displays'),
-      '#description' => t('Manage the layout of your Views templates and field rows with Field UI at !url.', array('!url' => l(url('admin/structure/ds/vd', array('absolute' => TRUE)), 'admin/structure/ds/vd'))),
+      '#description' => t('Manage the layout of your Views layout with Field UI at !url.', array('!url' => l(url('admin/structure/ds/vd', array('absolute' => TRUE)), 'admin/structure/ds/vd'))),
       '#default_value' => variable_get('ds_extras_vd', FALSE),
     );
   }
