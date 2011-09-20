@@ -27,7 +27,7 @@ function ds_forms_ds_layout_info() {
 
   $layouts = array(
     'ds_form' => array(
-      'label' => t('Form 2 column stacked'),
+      'label' => t('2 column stacked'),
       'path' => $path . '/layouts/ds_form',
       'regions' => array(
         'header' => t('Header'),
