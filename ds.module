@@ -940,6 +940,9 @@ function ds_render_ctools_field($field) {
       foreach ($instances as $key => $instance) {
         $info = field_info_field($key);
         if ($info['module'] == 'taxonomy') {
+          if (empty($field['entity']->{$key})) {
+            continue;
+          }
           foreach ($field['entity']->{$key}[$language] as $tkey => $item) {
             if (isset($item['tid']) && !isset($item['taxonomy_term'])) {
               if (!isset($terms_loaded[$item['tid']])) {
