@@ -69,6 +69,16 @@ function ds_menu() {
     'file path' => drupal_get_path('module', 'system'),
   );
 
+  // Emergency page
+  $items['admin/structure/ds/emergency'] = array(
+    'title' => 'Emergency',
+    'description' => 'Temporarily disable theming via Display suite.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_emergency'),
+    'access arguments' => array('admin_display_suite'),
+    'file' => 'ds.layout.inc',
+  );
+
   // Custom styles.
   $items['admin/structure/ds/styles'] = array(
     'title' => 'Styles',
@@ -613,6 +623,16 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
  */
 function ds_field_attach_view_alter(&$build, $context) {
   static $loaded_css = array();
+
+  // Global kill switch. In some edge cases, a view might
+  // be inserted into the view of an entity, in which the
+  // same entity is available as well. This is simply not
+  // possible, so you can temporarily disable DS completely
+  // by setting this variable, either from code or via
+  // the UI through admin/structure/ds/
+  if (variable_get('ds_disable', FALSE)) {
+    return;
+  }
 
   // If views and core doesn't send information along on the entity,
   // Display suite doesn't have a context to render the fields.

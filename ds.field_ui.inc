@@ -1295,6 +1295,10 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       $options = array();
       $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
       foreach ($ds_layout_settings as $row) {
+        // Do not clone from form layouts.
+        if ($row->view_mode == 'form') {
+          continue;
+        }
         if ($row->entity_type == $entity_type && !isset($row->settings['ds_panels'])) {
           $options[$row->id] = drupal_ucfirst($row->entity_type) . ' > ' . drupal_ucfirst($row->bundle) . ' > ' . drupal_ucfirst($row->view_mode);
         }
