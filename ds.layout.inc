@@ -68,8 +68,8 @@ function ds_emergency() {
 
   $form['ds_disable'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Disable theming through Display suite'),
-    '#description' => t('In case you get an error after configuring a layout with DS which prints something like "Fatal error: Unsupported operand types", you can temporarily disable all DS theming by toggling this checkbox. In that case, you probably are trying to render an node inside a node, for instance through a view, which is simply not possible. See <a href="http://drupal.org/node/1264386">http://drupal.org/node/1264386</a>.'),
+    '#title' => t('Disable adding fields through Display suite'),
+    '#description' => t('In case you get an error after configuring a layout with DS which prints something like "Fatal error: Unsupported operand types", you can temporarily disable adding fields from DS by toggling this checkbox. You probably are trying to render an node inside a node, for instance through a view, which is simply not possible. See <a href="http://drupal.org/node/1264386">http://drupal.org/node/1264386</a>.'),
     '#default_value' => variable_get('ds_disable', FALSE),
   );
 
