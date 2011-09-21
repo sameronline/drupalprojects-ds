@@ -276,17 +276,18 @@ class views_plugin_ds_entity_view extends views_plugin_row {
 
       $group_field = $this->options['grouping_fieldset']['group_field'];
 
-      // Backwards compatibility.
+      // New way of creating the alias.
       if (strpos($group_field, '|') !== FALSE) {
         list($ftable, $ffield) = explode('|', $group_field);
         $group_field = $this->view->sort[$ffield]->table_alias . '_' . $this->view->sort[$ffield]->real_field;
       }
-      else {
-        // Note, the keys in the $row object are cut of at 60 chars.
-        if (drupal_strlen($group_field) > 60) {
-          $group_field = drupal_substr($group_field, 0, 60);
-        }
+
+      // Note, the keys in the $row object are cut of at 60 chars.
+      // see views_plugin_query_default.inc.
+      if (drupal_strlen($group_field) > 60) {
+        $group_field = drupal_substr($group_field, 0, 60);
       }
+
       $raw_group_value = isset($row->{$group_field}) ? $row->{$group_field} : '';
       if (!isset($grouping[$view_name][$raw_group_value])) {
         $group_value = $raw_group_value;
