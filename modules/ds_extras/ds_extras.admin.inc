@@ -99,10 +99,10 @@ function ds_extras_settings($form) {
       '#description' => t('Keep the option to switch between Field UI or Panels. Note: any layout configured already with Field UI will be kept.'),
       '#default_value' => variable_get('ds_extras_editor_switch', FALSE),
       '#states' => array(
-      'visible' => array(
-        'input[name="additional_settings[fs3][ds_extras_panel_view_modes]"]' => array('checked' => TRUE),
+        'visible' => array(
+          'input[name="additional_settings[fs3][ds_extras_panel_view_modes]"]' => array('checked' => TRUE),
+        ),
       ),
-    ),
     );
   }
 
