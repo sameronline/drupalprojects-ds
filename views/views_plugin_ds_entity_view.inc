@@ -141,11 +141,12 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       '#title' => t('Group data on a field. The value of this field will be displayed too.'),
       '#default_value' => $groupable,
     );
+
     if (!empty($sorts)) {
       $sort_options = array();
       foreach ($sorts as $key => $sort) {
-        $sort_name = drupal_ucfirst(str_replace('_', ' ', $sort['table']) . ' ' . $sort['field']);
-        $sort_options[$sort['table'] . '_' . $sort['field']] = $sort_name;
+        $sort_name = drupal_ucfirst($sort['field']);
+        $sort_options[$sort['table'] . '|' . $sort['field']] = $sort_name;
       }
 
       $form['grouping_fieldset']['group_field'] = array(
@@ -272,10 +273,19 @@ class views_plugin_ds_entity_view extends views_plugin_row {
 
     // Keep a static grouping for this view.
     if ($this->options['grouping']) {
-      // Note, the keys in the $row object are cut of at 60 chars.
+
       $group_field = $this->options['grouping_fieldset']['group_field'];
-      if (drupal_strlen($group_field) > 60) {
-        $group_field = drupal_substr($group_field, 0, 60);
+
+      // Backwards compatibility.
+      if (strpos($group_field, '|') !== FALSE) {
+        list($ftable, $ffield) = explode('|', $group_field);
+        $group_field = $this->view->sort[$ffield]->table_alias . '_' . $this->view->sort[$ffield]->real_field;
+      }
+      else {
+        // Note, the keys in the $row object are cut of at 60 chars.
+        if (drupal_strlen($group_field) > 60) {
+          $group_field = drupal_substr($group_field, 0, 60);
+        }
       }
       $raw_group_value = isset($row->{$group_field}) ? $row->{$group_field} : '';
       if (!isset($grouping[$view_name][$raw_group_value])) {
