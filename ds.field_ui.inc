@@ -255,6 +255,11 @@ function ds_field_ui_regions($form, $form_state) {
       ),
     );
 
+    // Hide this if we formatter_settings_edit is not empty so it doesn't confuse users.
+    if (!empty($form_state['formatter_settings_edit'])) {
+      $limit_items['#access'] = FALSE;
+    }
+
     // Update existing rows by changing rowHandler and adding regions.
     foreach (element_children($table) as $name) {
       $row = &$table[$name];
