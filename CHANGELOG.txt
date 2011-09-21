@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1283714 by swentel: hide format and label for views layouting.
 - #1264386 by swentel: add option to temporarily disable theming through DS.
 - #1244514 by dub4u: long description in info file segfaults apache on PHP 5.3.4
                      and windows.

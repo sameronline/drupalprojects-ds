@@ -272,6 +272,11 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
         }
       }
 
+      // Skip those settings for DS views.
+      if ($form['#entity_type'] == 'ds_views') {
+        continue;
+      }
+
       // Link to open settings.
       $form['fields'][$key]['format']['ft'] = array(
         '#prefix' => '<a href="" class="ft-link">' . t('Field display') . '</a><div class="field-template" id="ft-' . $i . '">',
@@ -383,7 +388,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
   }
 
   // Views displays.
-  if (variable_get('ds_extras_vd', FALSE)) {
+  if ($form['#entity_type'] == 'ds_views') {
     // Add an additional submit callback so we can ditch the extra title
     // which is added by ds_extras_field_extra_fields().
     $form['#submit'] = array_merge(array('ds_extras_vd_field_ui_submit'), $form['#submit']);

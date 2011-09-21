@@ -199,6 +199,12 @@ function ds_field_ui_regions($form, $form_state) {
       );
     }
 
+    // Remove label and format for views.
+    if ($entity_type == 'ds_views') {
+      $table['#header'][4] = '';
+      $table['#header'][5]['data'] = '';
+    }
+
     $table['#regions'] = array();
     foreach ($layout->regions as $region_key => $region_title) {
       $region_options[$region_key] = $region_title;
@@ -270,6 +276,12 @@ function ds_field_ui_regions($form, $form_state) {
         $row['format']['type']['#suffix'] = '</div>';
         $row['format']['limit'] = $limit_items;
         $row['format']['limit']['#default_value'] = (isset($layout->settings['limit']) && isset($layout->settings['limit'][$name])) ? $layout->settings['limit'][$name] : '#';
+      }
+
+      // Disable label and format for views.
+      if ($entity_type == 'ds_views') {
+        $row['label']['#access'] = FALSE;
+        $row['format']['#access'] = FALSE;
       }
 
       // Add region.
