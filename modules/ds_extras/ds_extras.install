@@ -179,8 +179,12 @@ function ds_extras_update_7004() {
 }
 
 /**
- * Cleanup ft-kill variable.
+ * Cleanup ft-kill variable and change module weight.
  */
 function ds_extras_update_7005() {
   variable_del('ft-kill');
+  db_update('system')
+    ->fields(array('weight' => 2))
+    ->condition('name', 'ds_extras')
+    ->execute();
 }
