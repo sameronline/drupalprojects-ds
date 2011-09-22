@@ -59,6 +59,16 @@ function ds_extras_menu() {
       'type' => MENU_LOCAL_TASK,
     );
 
+    $items['node/%node/ds-form'] = array(
+      'title' => 'Manage form',
+      'description' => 'Manage form layout.',
+      'page callback' => 'ds_extras_contextual_page_tab',
+      'page arguments' => array(1, 'node', 'form'),
+      'file' => 'ds_extras.pages.inc',
+      'access arguments' => array('administer content types'),
+      'type' => MENU_LOCAL_TASK,
+    );
+
     $items['user/%user/display'] = array(
       'title' => 'Manage display',
       'description' => 'Manage display of this user profile.',
