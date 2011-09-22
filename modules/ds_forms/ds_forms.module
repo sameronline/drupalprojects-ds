@@ -60,6 +60,31 @@ function ds_forms_form_field_ui_field_overview_form_alter(&$form, &$form_state) 
     // Load Display suite.
     form_load_include($form_state, 'inc', 'ds', 'ds.field_ui');
     ds_field_ui_fields_layouts($form, $form_state);
+
+    if (!module_exists('field_group')) {
+
+      $form['#attached']['css'][] = drupal_get_path('module', 'ds_forms') . '/ds_forms.admin.css';
+
+      // Add AJAX wrapper.
+      $form['fields']['#prefix'] = '<div id="field-display-overview-wrapper">';
+      $form['fields']['#suffix'] = '</div>';
+
+      $form['refresh_rows'] = array('#type' => 'hidden');
+      $form['refresh'] = array(
+        '#type' => 'submit',
+        '#value' => t('Refresh'),
+        '#op' => 'refresh_table',
+        '#submit' => array('field_ui_display_overview_multistep_submit'),
+        '#ajax' => array(
+          'callback' => 'field_ui_display_overview_multistep_js',
+          'wrapper' => 'field-display-overview-wrapper',
+          'effect' => 'fade',
+          // The button stays hidden, so we hide the AJAX spinner too. Ad-hoc
+          // spinners will be added manually by the client-side script.
+          'progress' => 'none',
+        ),
+      );
+    }
   }
 }
 
@@ -99,6 +124,18 @@ function ds_forms_field_extra_fields() {
   }
 
   return $extra;
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter
+ */
+function ds_forms_form_node_form_alter(&$form, &$form_state, $form_id) {
+  $entity_type = 'node';
+  $bundle = $form['#node']->type;
+  $view_mode = 'form';
+  if ($layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE)) {
+    $form['#attributes']['class'][] = strtr($layout['layout'], '_', '-');
+  }
 }
 
 /**

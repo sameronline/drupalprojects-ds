@@ -11,7 +11,7 @@ class dsBaseTest extends DrupalWebTestCase {
    * Implementation of setUp().
    */
   function setUp() {
-    parent::setUp('ctools', 'ds', 'ds_test', 'ds_extras', 'search', 'ds_search', 'panels', 'views');
+    parent::setUp('ctools', 'ds', 'ds_test', 'ds_extras', 'search', 'ds_search', 'ds_forms', 'panels', 'views');
 
     variable_set('search_active_modules', array('node' => '', 'user' => 'user', 'ds_search' => 'ds_search'));
     menu_rebuild();

@@ -29,7 +29,7 @@ function ds_layout_list() {
         $row[] = $bundle['label'];
         if (module_exists('ds_forms')) {
           if ($entity_type == 'node') {
-            $row[] = l(t('Manage forms'), $path . '/fields');
+            $row[] = l(t('Manage form'), $path . '/fields');
           }
           else {
             $row[] = '';

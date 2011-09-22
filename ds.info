@@ -11,5 +11,6 @@ files[] = tests/ds.entities.test
 files[] = tests/ds.exportables.test
 files[] = tests/ds.panels.test
 files[] = tests/ds.views.test
+files[] = tests/ds.forms.test
 dependencies[] = ctools
 configure = admin/structure/ds

@@ -26,7 +26,7 @@ Drupal.fieldUIFieldOverview.ds = function (row, data) {
 
   this.$regionSelect = $('select.ds-field-region', row);
   this.$regionSelect.change(Drupal.fieldUIOverview.onChange);
-      
+
   return this;
 };
 
@@ -56,7 +56,7 @@ Drupal.fieldUIFieldOverview.ds.prototype = {
    *   Drupal.fieldOverview.AJAXRefreshRows().
    */
   regionChange: function (region, recurse) {
-	  	  
+	  	  	  
      // Replace dashes with underscores.
      region = region.replace('-', '_');
 
@@ -68,12 +68,11 @@ Drupal.fieldUIFieldOverview.ds.prototype = {
      refreshRows[this.name] = this.$regionSelect.get(0);
 
      // If a row is handled by field_group module, loop through the children.
-     /*if ($(this.row).hasClass('field-group') && $.isFunction(Drupal.fieldUIFieldOverview.group.prototype.regionChangeFields)) {
+     if ($(this.row).hasClass('field-group') && $.isFunction(Drupal.fieldUIFieldOverview.group.prototype.regionChangeFields)) {
        Drupal.fieldUIFieldOverview.group.prototype.regionChangeFields(region, this, refreshRows);
-     }*/
+     }
 
-     return {};
-     //return refreshRows;
+     return refreshRows;
   }
 };
 
