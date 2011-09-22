@@ -1322,14 +1322,23 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       }
 
       if (!empty($options)) {
-        $form['additional_settings']['ds_layouts']['clone'] = array(
-          '#title' => t('Or clone layout from existing view mode'),
+
+        // Clone from another layout.
+        $form['additional_settings']['ds_clone'] = array(
+          '#type' => 'fieldset',
+          '#title' => t('Clone layout'),
+          '#collapsible' => TRUE,
+          '#collapsed' => TRUE,
+          '#parents' => array('additional_settings'),
+        );
+        $form['additional_settings']['ds_clone']['clone'] = array(
+          '#title' => t('Select an existing layout to clone.'),
           '#type' => 'select',
           '#options' => $options,
           '#weight' => 20,
           '#description' => t('Note that not all fields might be available.'),
         );
-        $form['additional_settings']['ds_layouts']['clone_submit'] = array(
+        $form['additional_settings']['ds_clone']['clone_submit'] = array(
           '#type' => 'submit',
           '#value' => t('Clone'),
           '#submit' => array('ds_field_ui_layout_clone'),

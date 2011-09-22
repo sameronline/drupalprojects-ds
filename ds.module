@@ -768,7 +768,9 @@ function ds_entity_variables(&$vars) {
         // because we don't need it anymore.
         if (isset($vars[$field])) {
           $vars[$render_container][$field] = $vars[$field];
-          unset($vars[$field]);
+          if (!isset($vars['preprocess_keep'])) {
+            unset($vars[$field]);
+          }
         }
       }
     }

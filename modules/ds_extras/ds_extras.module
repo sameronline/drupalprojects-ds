@@ -754,6 +754,8 @@ function ds_extras_preprocess_view_layout(&$variables) {
       }
     }
 
+    // Don't remove the variables so we don't trigger notices.
+    $variables['preprocess_keep'] = TRUE;
     ds_entity_variables($variables);
     if (isset($variables['#attached'])) {
       drupal_process_attached($variables);
