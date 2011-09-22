@@ -71,18 +71,24 @@ function ds_forms_field_extra_fields() {
   module_load_include('inc', 'node', 'node.pages');
 
   foreach (node_type_get_types() as $type) {
+
+    // Get the action buttons.
     $extra['node'][$type->type] = array(
       'form' => array(
         'actions' => array(
           'label' => t('Actions'),
           'weight' => -5,
         ),
-        'additional_settings' => array(
-          'label' => t('Additional settings'),
-          'weight' => -6,
-        ),
       ),
     );
+
+    // Additional settings is exposed if field group is not enabled.
+    if (!module_exists('field_group')) {
+      $extra['node'][$type->type]['form']['additional_settings'] = array(
+        'label' => t('Additional settings'),
+        'weight' => -6,
+      );
+    }
 
     // @todo not every node type is translatable.
     if (module_exists('translation')) {
@@ -91,46 +97,9 @@ function ds_forms_field_extra_fields() {
         'weight' => 0,
       );
     }
-
-    // This is relative resource full one, but it only happens
-    // during form building on Field ui, so we should be save.
-    // This will find out all fields which are nested into
-    // vertical tabs and make them available to drag them around.
-    $additional_fields = ds_forms_get_additional_fields('node', $type->type);
-    foreach ($additional_fields as $key => $config) {
-      $extra['node'][$type->type]['form'][$key] = array(
-        'label' => t($config['label']),
-        'weight' => 0,
-      );
-    }
   }
 
   return $extra;
-}
-
-/**
- * Implements hook_form_alter().
- */
-function ds_forms_form_alter(&$form, &$form_state, $form_id) {
-
-  // Only act on node forms and in case the hook_field_extra_fields() is not running.
-  if (isset($form['#node_edit_form']) && !isset($form['#node']->ds_forms_extra)) {
-
-    $entity_type = 'node';
-    $bundle = $form['#node']->type;
-    $view_mode = 'form';
-    if ($layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE)) {
-
-      // We need to check earlier than preprocess to move any fields which
-      // could be nested into a vertical tab out of there.
-      $additional_fields = ds_forms_get_additional_fields($entity_type, $bundle);
-      foreach ($additional_fields as $key => $value) {
-        if (isset($layout['settings']['fields'][$key]) && $layout['settings']['fields'][$key] != 'hidden' && isset($form[$key])) {
-          unset($form[$key]['#group']);
-        }
-      }
-    }
-  }
 }
 
 /**
@@ -142,8 +111,6 @@ function ds_forms_preprocess_node_form(&$vars) {
   $view_mode = 'form';
 
   if ($layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE)) {
-
-  $additional_fields = ds_forms_get_additional_fields($entity_type, $bundle);
 
     // Hide empty regions variable.
     $hide_empty_regions = $layout['settings']['hide_empty_regions'];
@@ -168,10 +135,10 @@ function ds_forms_preprocess_node_form(&$vars) {
 
       // Create the region content.
       if ($region_name == 'hidden') {
-        ds_forms_render_region($form, $region_name, $layout, $additional_fields);
+        ds_forms_render_region($form, $region_name, $layout);
       }
       else {
-        $vars[$region_name] = ds_forms_render_region($form, $region_name, $layout, $additional_fields);
+        $vars[$region_name] = ds_forms_render_region($form, $region_name, $layout);
 
         // Hide empty regions.
         if ($hide_empty_regions && empty($vars[$region_name]) && empty($layout['flexible'])) {
@@ -197,81 +164,19 @@ function ds_forms_preprocess_node_form(&$vars) {
  *   The name of region to render.
  * @param $layout
  *   The layout definition.
- * @param $additional_fields
- *   A collection of addtional fields which reside in the vertical tab
  */
-function ds_forms_render_region(&$content, $region, $layout, $additional_fields) {
+function ds_forms_render_region(&$content, $region, $layout) {
   $output = '';
 
   if (isset($layout['settings']['regions'][$region])) {
     foreach ($layout['settings']['regions'][$region] as $key => $field) {
       if ($region == 'hidden') {
-        // If it's a field that's an additional setting, access
-        // is handled by that field itself.
-        if (!isset($additional_fields[$field])) {
-          $content[$field]['#access'] = FALSE;
-        }
+        $content[$field]['#access'] = FALSE;
       }
       else {
-        if (isset($additional_fields[$field])) {
-          // Remove the fieldset collapsed options.
-          // TODO make this configurable.
-          $content[$field]['#attributes']['class'] = array();
-        }
         $output .= drupal_render($content[$field]);
       }
     }
   }
   return $output;
-}
-
-/**
- * Get the additional fields for an entity type which can be found in vertical tabs.
- *
- * @param $entity_type
- *   The name of the entity.
- */
-function ds_forms_get_additional_fields($entity_type, $bundle) {
-  static $additional_fields = array();
-
-  if (!isset($additional_fields[$entity_type][$bundle])) {
-
-    // Register so we don't come in here twice.
-    $additional_fields[$entity_type][$bundle] = array();
-
-    $key = 'ds_forms_additional_' . $entity_type;
-    $fields = variable_get($key, array());
-    if (empty($fields)) {
-      $fields = ds_forms_find_additional_fields($entity_type, $bundle);
-    }
-    $additional_fields[$entity_type][$bundle] = $fields[$entity_type][$bundle];
-  }
-
-  return $additional_fields[$entity_type][$bundle];
-}
-
-/**
- * Inspect a form build for any children in the additional settings tab.
- *
- * @param $entity_type
- *   The name of the entity.
- */
-function ds_forms_find_additional_fields($entity_type, $bundle) {
-  $fields = array();
-
-  global $user;
-  $node = (object) array('uid' => $user->uid, 'name' => (isset($user->name) ? $user->name : ''), 'type' => $bundle, 'language' => LANGUAGE_NONE, 'ds_forms_extra' => TRUE);
-  $form = drupal_get_form($bundle . '_node_form', $node);
-  foreach ($form['additional_settings']['group']['#groups'] as $key => $value) {
-    // We skip body and additional settings.
-    if ($key == 'additional_settings' || strpos($key, 'body]') !== FALSE) {
-      continue;
-    }
-    $config = array(
-      'label' => drupal_ucfirst(str_replace('_', ' ', $key)),
-    );
-    $fields[$entity_type][$bundle][$key] = $config;
-  }
-
-  return $fields;
 }

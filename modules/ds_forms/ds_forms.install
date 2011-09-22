@@ -11,13 +11,6 @@
 function ds_forms_install() {
   db_update('system')
     ->fields(array('weight' => 1))
-    ->condition('name', 'ds_extras')
+    ->condition('name', 'ds_forms')
     ->execute();
-}
-
-/**
- * Implements hook_uninstall().
- */
-function ds_forms_uninstall() {
-  variable_del('ds_forms_additional_node');
 }
