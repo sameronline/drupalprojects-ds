@@ -96,17 +96,12 @@ function ds_forms_field_extra_fields() {
     // during form building on Field ui, so we should be save.
     // This will find out all fields which are nested into
     // vertical tabs and make them available to drag them around.
-    global $user;
-    $node = (object) array('uid' => $user->uid, 'name' => (isset($user->name) ? $user->name : ''), 'type' => $type->type, 'language' => LANGUAGE_NONE, 'ds_forms_extra' => TRUE);
-    $form = drupal_get_form($type->type . '_node_form', $node);
-    $additional_fields = ds_forms_find_additional_fields($form, 'node');
-    foreach ($additional_fields as $key => $label) {
-      if (isset($form[$key])) {
-        $extra['node'][$type->type]['form'][$key] = array(
-          'label' => t($label),
-          'weight' => 0,
-        );
-      }
+    $additional_fields = ds_forms_get_additional_fields('node', $type->type);
+    foreach ($additional_fields as $key => $config) {
+      $extra['node'][$type->type]['form'][$key] = array(
+        'label' => t($config['label']),
+        'weight' => 0,
+      );
     }
   }
 
@@ -246,7 +241,10 @@ function ds_forms_get_additional_fields($entity_type, $bundle) {
 
     $key = 'ds_forms_additional_' . $entity_type;
     $fields = variable_get($key, array());
-    $additional_fields[$entity_type][$bundle] = $fields[$bundle];
+    if (empty($fields)) {
+      $fields = ds_forms_find_additional_fields($entity_type, $bundle);
+    }
+    $additional_fields[$entity_type][$bundle] = $fields[$entity_type][$bundle];
   }
 
   return $additional_fields[$entity_type][$bundle];
@@ -255,13 +253,25 @@ function ds_forms_get_additional_fields($entity_type, $bundle) {
 /**
  * Inspect a form build for any children in the additional settings tab.
  *
- * @param $form
- *   The form to inspect.
  * @param $entity_type
  *   The name of the entity.
  */
-function ds_forms_find_additional_fields($form, $entity_type) {
+function ds_forms_find_additional_fields($entity_type, $bundle) {
   $fields = array();
+
+  global $user;
+  $node = (object) array('uid' => $user->uid, 'name' => (isset($user->name) ? $user->name : ''), 'type' => $bundle, 'language' => LANGUAGE_NONE, 'ds_forms_extra' => TRUE);
+  $form = drupal_get_form($bundle . '_node_form', $node);
+  foreach ($form['additional_settings']['group']['#groups'] as $key => $value) {
+    // We skip body and additional settings.
+    if ($key == 'additional_settings' || strpos($key, 'body]') !== FALSE) {
+      continue;
+    }
+    $config = array(
+      'label' => drupal_ucfirst(str_replace('_', ' ', $key)),
+    );
+    $fields[$entity_type][$bundle][$key] = $config;
+  }
 
   return $fields;
 }
