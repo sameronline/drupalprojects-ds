@@ -14,7 +14,7 @@
  * Implements hook_ctools_plugin_api().
  */
 function hook_test_ctools_plugin_api($module, $api) {
-  if (($module == 'ds' && $api == 'ds') || ($module == 'ds_extras' && $api == 'ds_extras')) {
+  if (($module == 'ds' && $api == 'ds') || ($module == 'ds_extras' && $api == 'ds_extras') || ($module == 'ds_forms' && $api == 'ds_forms')) {
     return array('version' => 1);
   }
 }
@@ -495,6 +495,20 @@ function hook_ds_panels_default_fields($entity_type, $bundle, $view_mode) {
   // Get the fields from Field API.
   $fields = field_info_instances($entity_type, $bundle);
   return $fields;
+}
+
+/**
+ * Return the forms ready for Display suite.
+ */
+function hook_ds_forms_info() {
+  return array(
+    'form_id' => array(
+      'group' => 'node',
+      'label' => 'My form',
+      // Omit this if this is not handled by Field UI.
+      'path' => 'the/path/to/manage/fields',
+    ),
+  );
 }
 
 /**

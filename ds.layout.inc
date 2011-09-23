@@ -27,20 +27,12 @@ function ds_layout_list() {
         }
 
         $row[] = $bundle['label'];
-        if (module_exists('ds_forms')) {
-          if ($entity_type == 'node') {
-            $row[] = l(t('Manage form'), $path . '/fields');
-          }
-          else {
-            $row[] = '';
-          }
-        }
         $row[] = l(t('Manage display'), $path . '/display');
         $entity_rows[] = $row;
       }
 
       if (!empty($entity_rows)) {
-        $rows[] = array(array('data' => $entity['label'], 'colspan' => '3', 'style' => 'background-color: #E1E2DC; border: 1px solid #BEBFB9;'));
+        $rows[] = array(array('data' => $entity['label'], 'colspan' => '2', 'style' => 'background-color: #E1E2DC; border: 1px solid #BEBFB9;'));
         $rows = array_merge($rows, $entity_rows);
       }
     }
@@ -55,7 +47,7 @@ function ds_layout_list() {
   }
   else {
     // This will probably never happen.
-    $build['list'] = array('#markup' => t('No entities found'));
+    $build['list'] = array('#markup' => t('No content found'));
   }
 
   return $build;

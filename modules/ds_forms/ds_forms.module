@@ -6,6 +6,53 @@
  */
 
 /**
+ * Implements hook_menu().
+ */
+function ds_forms_menu() {
+  $items = array();
+
+  $items['admin/structure/ds/forms'] = array(
+    'title' => 'Forms',
+    'description' => 'Displays a list of forms which can be styled.',
+    'page callback' => 'ds_forms_list',
+    'access arguments' => array('admin_display_suite'),
+    'file' => 'ds_forms.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_ds_forms_info().
+ */
+function ds_forms_ds_forms_info() {
+  module_load_include('inc', 'ds_forms', 'ds_forms.admin');
+  return _ds_forms_ds_forms_info();
+}
+
+/**
+ * Get the registered forms.
+ *
+ * @param $reset
+ *   Whether to reset the internal and database cache.
+ */
+function ds_forms_get_forms($reset = FALSE) {
+  static $forms = NULL;
+
+  if (!isset($forms)) {
+    if ($cache = cache_get('ds_forms') && !$reset) {
+      $forms = $cache->data;
+    }
+    else {
+      $forms = module_invoke_all('ds_forms_info');
+      cache_set('ds_forms', $forms, 'cache');
+    }
+  }
+
+  return $forms;
+}
+
+/**
  * Implements hook_theme().
  */
 function ds_forms_theme() {
@@ -13,6 +60,11 @@ function ds_forms_theme() {
 
   // Node form theme function registration.
   $theme_functions['node_form'] = array(
+    'render element' => 'form',
+  );
+
+  // Display suite theme form registration.
+  $theme_functions['ds_forms_custom_form'] = array(
     'render element' => 'form',
   );
 
@@ -47,8 +99,9 @@ function ds_forms_ds_layout_info() {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_forms_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
-  // We currently only work on node forms.
-  if ($form['#entity_type'] == 'node') {
+
+  // We currently only work on node forms or custom forms.
+  if ($form['#entity_type'] == 'node' || isset($form_state['ds_custom_form'])) {
 
     // Add necessary variables.
     $form['#view_mode'] = 'form';

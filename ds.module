@@ -92,7 +92,7 @@ function ds_menu() {
   // Layout overview.
   $items['admin/structure/ds/layout'] = array(
     'title' => 'Layout',
-    'description' => 'Displays a list of items which can be styled.',
+    'description' => 'Displays a list of content which can be styled.',
     'page callback' => 'ds_layout_list',
     'file' => 'ds.layout.inc',
     'access arguments' => array('admin_display_suite'),
@@ -376,6 +376,17 @@ function ds_filter_tips($filter, $format, $long = FALSE) {
 }
 
 /**
+ * Function to check if we go on with Display suite.
+ */
+function ds_kill_switch() {
+  if (variable_get('ds_disable', FALSE)) {
+    return TRUE;
+  }
+
+  return false;
+}
+
+/**
  * Get entity view modes.
  *
  * @param $entity_type
@@ -630,7 +641,7 @@ function ds_field_attach_view_alter(&$build, $context) {
   // possible, so you can temporarily disable DS completely
   // by setting this variable, either from code or via
   // the UI through admin/structure/ds/
-  if (variable_get('ds_disable', FALSE)) {
+  if (ds_kill_switch()) {
     return;
   }
 
