@@ -503,10 +503,18 @@ function hook_ds_panels_default_fields($entity_type, $bundle, $view_mode) {
 function hook_ds_forms_info() {
   return array(
     'form_id' => array(
-      'group' => 'node',
       'label' => 'My form',
-      // Omit this if this is not handled by Field UI.
+      // Use ds_forms if this is not for an entity type.
+      'entity_type' => 'node',
+      // Omit this if bundle is same as form_id.
+      'bundle' => 'article',
+      // Omit if this if handled by admin path in an entity.
       'path' => 'the/path/to/manage/fields',
+      // The root elements of your form, 'key' => t('label').
+      'elements' => array(
+        'actions' => t('Label'),
+        'input' => t('Title'),
+      ),
     ),
   );
 }

@@ -124,9 +124,9 @@ function ds_test_ds_fields_info_alter(&$fields, $entity_type) {
 }
 
 /**
- * Implements hook_ds_layouts().
+ * Implements hook_ds_layouts_info().
  */
-function ds_extras_ds_layout_info() {
+function ds_test_ds_layout_info() {
   $path = drupal_get_path('module', 'ds_test');
   $layouts = array(
     'dstest_1col' => array(
@@ -149,3 +149,23 @@ function ds_extras_ds_layout_info() {
 
   return $layouts;
 }
+
+/**
+ * Implements hook_ds_forms_info().
+ */
+function ds_test_ds_forms_info() {
+  return array(
+    'ds_edit_view_mode_form' => array(
+      'group' => 'other',
+      'entity_type' => 'ds_forms',
+      'label' => 'View mode',
+      'elements' => array(
+        'name' => t('Label'),
+        'view_mode' => t('Machine name'),
+        'entities' => t('Entities'),
+        'submit' => t('Submit'),
+      ),
+    ),
+  );
+}
+
