@@ -109,9 +109,11 @@ function ds_forms_manage_custom($form) {
   $form_state['no_panels'] = TRUE;
   $form_state['no_view_mode_suggestions'] = TRUE;
   form_load_include($form_state, 'inc', 'field_ui', 'field_ui.admin');
+  form_load_include($form_state, 'inc', 'ds_forms', 'ds_forms.admin');
   $build = drupal_build_form('field_ui_field_overview_form', $form_state);
 
   // Deny access to fields.
+  // @todo make sure they stay away after ajax refresh.
   unset($build['fields']['_add_new_field']);
   unset($build['fields']['_add_existing_field']);
 

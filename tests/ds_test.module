@@ -158,6 +158,7 @@ function ds_test_ds_forms_info() {
     'ds_edit_view_mode_form' => array(
       'group' => 'other',
       'entity_type' => 'ds_forms',
+      'bundle' => 'ds_edit_view_mode_form',
       'label' => 'View mode',
       'elements' => array(
         'name' => t('Label'),

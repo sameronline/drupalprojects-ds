@@ -155,7 +155,6 @@ function ds_forms_get_forms($reset = FALSE) {
       $forms = $cache->data;
     }
     else {
-      // @todo make sure all keys are ok (like entity_type, bundle etc).
       $forms = module_invoke_all('ds_forms_info');
       cache_set('ds_forms', $forms, 'cache');
     }
@@ -215,15 +214,14 @@ function ds_forms_form_field_ui_field_overview_form_alter(&$form, &$form_state) 
  */
 function ds_forms_form_alter(&$form, &$form_state, $form_id) {
   if ($ds_form = ds_form_load($form_id)) {
-    $bundle = isset($ds_form['bundle']) ? $ds_form['bundle'] : $form_id;
-    if ($layout = ds_get_layout($ds_form['entity_type'], $bundle, 'form', FALSE)) {
+    if ($layout = ds_get_layout($ds_form['entity_type'], $ds_form['bundle'], 'form', FALSE)) {
       // Add the theming function and add the layout as a class.
       $form['#theme'][] = 'ds_forms_custom_form';
       $form['#attributes']['class'][] = strtr($layout['layout'], '_', '-');
       // Field group support.
       if (module_exists('field_group')) {
         $form['#entity_type'] = $ds_form['entity_type'];
-        $form['#bundle'] = $bundle;
+        $form['#bundle'] = $ds_form['bundle'];
         field_group_attach_groups($form, 'form', $form_state);
       }
     }
@@ -236,7 +234,7 @@ function ds_forms_form_alter(&$form, &$form_state, $form_id) {
 function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
   $ds_form = ds_form_load($vars['form']['#form_id']);
   $entity_type = $ds_form['entity_type'];
-  $bundle = isset($ds_form['bundle']) ? $ds_form['bundle'] : $vars['form']['#form_id'];
+  $bundle = $ds_form['bundle'];
 
   if ($layout = ds_get_layout($entity_type, $bundle, 'form', FALSE)) {
 

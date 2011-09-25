@@ -506,7 +506,7 @@ function hook_ds_forms_info() {
       'label' => 'My form',
       // Use ds_forms if this is not for an entity type.
       'entity_type' => 'node',
-      // Omit this if bundle is same as form_id.
+      // This can can sometimes be the same as the form_id.
       'bundle' => 'article',
       // Omit if this if handled by admin path in an entity.
       'path' => 'the/path/to/manage/fields',
