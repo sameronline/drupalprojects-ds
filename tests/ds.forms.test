@@ -70,5 +70,39 @@ class dsFormTests extends dsBaseTest {
     $this->drupalGet('node/' . $node->nid . '/edit');
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/fields');
     $this->assertNoRaw('edit-revision-information', 'Additional settings hidden');
+
+    // Test on a non entity form - view modes form is registered in ds_test.
+    $form = array(
+      'additional_settings[layout]' => 'ds_form',
+    );
+    $form_assert = array(
+      'regions' => array(
+        'header' => '<td colspan="8">' . t('Header') . '</td>',
+    		'left' => '<td colspan="8">' . t('Left') . '</td>',
+    		'right' => '<td colspan="8">' . t('Right') . '</td>',
+        'footer' => '<td colspan="8">' . t('Footer') . '</td>',
+      ),
+    );
+    $this->dsSelectLayout($form, $form_assert, 'admin/structure/ds/forms/manage/ds_edit_view_mode_form');
+
+    $fields = array(
+      'fields[name][region]' => 'left',
+      'fields[view_mode][region]' => 'left',
+      'fields[entities][region]' => 'right',
+      'fields[submit][region]' => 'right',
+    );
+    $this->dsConfigureUI($fields, 'admin/structure/ds/forms/manage/ds_edit_view_mode_form');
+
+    // Inspect the view mode form.
+    $this->drupalGet('admin/structure/ds/view_modes/manage');
+    $this->assertRaw('class="ds-form"', 'ds-form class added');
+    $this->assertRaw('group-header', 'Template found (region header)');
+    $this->assertRaw('group-left', 'Template found (region left)');
+    $this->assertRaw('group-right', 'Template found (region right)');
+    $this->assertRaw('group-footer', 'Template found (region footer)');
+    $this->assertRaw('edit-view-mode', 'Label field found');
+    $this->assertRaw('edit-name', 'Machine field found');
+    $this->assertRaw('edit-submit', 'Submit button found');
+    $this->assertRaw('edit-entities', 'Entities checkboxes found');
   }
 }
