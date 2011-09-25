@@ -43,7 +43,7 @@ function _ds_forms_ds_forms_info() {
 /**
  * List callback to display all forms.
  */
-function ds_forms_list() {
+function ds_forms_overview() {
   $rows = $groups = array();
   $forms = ds_forms_get_forms(TRUE);
 
@@ -107,15 +107,10 @@ function ds_forms_manage_custom($form) {
   $arguments = array('ds_forms', $form_id, 'form');
   $form_state['build_info']['args'] = $arguments;
   $form_state['no_panels'] = TRUE;
+  $form_state['no_fapi_fields'] = TRUE;
   $form_state['no_view_mode_suggestions'] = TRUE;
   form_load_include($form_state, 'inc', 'field_ui', 'field_ui.admin');
-  form_load_include($form_state, 'inc', 'ds_forms', 'ds_forms.admin');
   $build = drupal_build_form('field_ui_field_overview_form', $form_state);
-
-  // Deny access to fields.
-  // @todo make sure they stay away after ajax refresh.
-  unset($build['fields']['_add_new_field']);
-  unset($build['fields']['_add_existing_field']);
 
   // Deny access to fields table if there's no layout.
   if (!ds_get_layout('ds_forms', $form_id, 'form')) {

@@ -14,7 +14,7 @@ function ds_forms_menu() {
   $items['admin/structure/ds/forms'] = array(
     'title' => 'Forms',
     'description' => 'Displays a list of forms which can be styled.',
-    'page callback' => 'ds_forms_list',
+    'page callback' => 'ds_forms_overview',
     'access arguments' => array('admin_display_suite'),
     'file' => 'ds_forms.admin.inc',
   );
