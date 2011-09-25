@@ -67,8 +67,8 @@ class dsFormTests extends dsBaseTest {
     $fields = array(
       'fields[additional_settings][region]' => 'hidden',
     );
-    $this->drupalGet('node/' . $node->nid . '/edit');
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/fields');
+    $this->drupalGet('node/' . $node->nid . '/edit');
     $this->assertNoRaw('edit-revision-information', 'Additional settings hidden');
 
     // Test on a non entity form - view modes form is registered in ds_test.

@@ -151,22 +151,33 @@ function ds_test_ds_layout_info() {
 }
 
 /**
+ * Implements hook_ctools_plugin_api().
+ */
+function ds_test_ctools_plugin_api($module, $api) {
+  if ($module == 'ds_forms' && $api == 'ds_forms') {
+    return array('version' => 1);
+  }
+}
+
+/**
  * Implements hook_ds_forms_info().
  */
 function ds_test_ds_forms_info() {
-  return array(
-    'ds_edit_view_mode_form' => array(
-      'group' => 'other',
-      'entity_type' => 'ds_forms',
-      'bundle' => 'ds_edit_view_mode_form',
-      'label' => 'View mode',
-      'elements' => array(
-        'name' => t('Label'),
-        'view_mode' => t('Machine name'),
-        'entities' => t('Entities'),
-        'submit' => t('Submit'),
-      ),
-    ),
+  $forms = array();
+  $form_id = 'ds_edit_view_mode_form';
+  $ds_form = new stdClass;
+  $ds_form->form_id = $form_id;
+  $ds_form->api_version = 1;
+  $ds_form->label = 'View mode';
+  $ds_form->entity_type = 'ds_forms';
+  $ds_form->bundle = $form_id;
+  $ds_form->elements = array(
+    'name' => t('Label'),
+    'view_mode' => t('Machine name'),
+    'entities' => t('Entities'),
+    'submit' => t('Submit'),
   );
+  $forms[$form_id] = $ds_form;
+  return $forms;
 }
 

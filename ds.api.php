@@ -501,22 +501,22 @@ function hook_ds_panels_default_fields($entity_type, $bundle, $view_mode) {
  * Return the forms ready for Display suite.
  */
 function hook_ds_forms_info() {
-  return array(
-    'form_id' => array(
-      'label' => 'My form',
-      // Use ds_forms if this is not for an entity type.
-      'entity_type' => 'node',
-      // This can can sometimes be the same as the form_id.
-      'bundle' => 'article',
-      // Omit if this if handled by admin path in an entity.
-      'path' => 'the/path/to/manage/fields',
-      // The root elements of your form, 'key' => t('label').
-      'elements' => array(
-        'actions' => t('Label'),
-        'input' => t('Title'),
-      ),
-    ),
+  $forms = array();
+  $form_id = 'form_id';
+
+  $ds_form = new stdClass;
+  $ds_form->form_id = $form_id;
+  $ds_form->api_version = 1;
+  $ds_form->entity_type = 'node';
+  $ds_form->bundle = 'bundle';
+  $ds_form->path = 'admin/structure/types/manage/article/fields';
+  $ds_form->elements = array(
+    'actions' => t('Label'),
+    'input' => t('Title'),
   );
+  $forms[$form_id] = $ds_form;
+
+  return $forms;
 }
 
 /**

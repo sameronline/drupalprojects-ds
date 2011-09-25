@@ -19,6 +19,31 @@ function ds_forms_menu() {
     'file' => 'ds_forms.admin.inc',
   );
 
+  $items['admin/structure/ds/forms/overview'] = array(
+    'title' => 'Forms',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+
+  $items['admin/structure/ds/forms/registration'] = array(
+    'title' => 'Register',
+    'description' => 'Enable on site registration of form.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_forms_register_admin_form'),
+    'access arguments' => array('admin_display_suite'),
+    'file' => 'ds_forms.admin.inc',
+    'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
+  );
+
+  $items['admin/structure/ds/forms/register'] = array(
+    'title' => 'Register',
+    'description' => 'Register a form',
+    'page callback' => 'ds_forms_register',
+    'access arguments' => array('admin_display_suite'),
+    'file' => 'ds_forms.admin.inc',
+    'type' => MENU_CALLBACK,
+  );
+
   $items['admin/structure/ds/forms/manage/%ds_form'] = array(
     'title' => 'Manage form',
     'description' => 'Manage a custom form with Display suite',
@@ -38,6 +63,15 @@ function ds_forms_menu() {
 function ds_forms_ds_forms_info() {
   module_load_include('inc', 'ds_forms', 'ds_forms.admin');
   return _ds_forms_ds_forms_info();
+}
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function ds_forms_ctools_plugin_api($module, $api) {
+  if ($module == 'ds_forms' && $api == 'ds_forms') {
+    return array('version' => 1);
+  }
 }
 
 /**
@@ -86,10 +120,9 @@ function ds_forms_entity_info() {
   $bundles = $entity_info = array();
   $forms = ds_forms_get_forms();
   foreach ($forms as $form_id => $data) {
-    if ($data['entity_type'] == 'ds_forms') {
+    if ($data->entity_type == 'ds_forms') {
       $bundles[$form_id] = array(
-        'label' => check_plain($data['label']),
-        'admin' => array('path' => 'admin/structure/ds/forms/manage/' . $form_id),
+        'label' => check_plain($data->label),
         'fieldable' => FALSE,
       );
     }
@@ -114,10 +147,9 @@ function ds_forms_field_extra_fields() {
   // Register extra fields for forms.
   $forms = ds_forms_get_forms();
   foreach ($forms as $form_id => $data) {
-    if (isset($data['elements'])) {
-      foreach ($data['elements'] as $key => $label) {
-        $bundle = isset($data['bundle']) ? $data['bundle'] : $form_id;
-        $extra[$data['entity_type']][$bundle]['form'][$key] = array(
+    if (isset($data->elements)) {
+      foreach ($data->elements as $key => $label) {
+        $extra[$data->entity_type][$data->bundle]['form'][$key] = array(
           'label' => $label,
           'weight' => 0,
         );
@@ -134,9 +166,7 @@ function ds_forms_field_extra_fields() {
 function ds_form_load($form_id) {
   $forms = ds_forms_get_forms();
   if (isset($forms[$form_id])) {
-    $return = $forms[$form_id];
-    $return['form_id'] = $form_id;
-    return $return;
+    return $forms[$form_id];
   }
   return FALSE;
 }
@@ -148,19 +178,20 @@ function ds_form_load($form_id) {
  *   Whether to reset the internal and database cache.
  */
 function ds_forms_get_forms($reset = FALSE) {
-  static $forms = NULL;
+  static $ds_forms = NULL;
 
-  if (!isset($forms)) {
+  if (!isset($ds_forms)) {
     if (!$reset && $cache = cache_get('ds_forms')) {
-      $forms = $cache->data;
+      $ds_forms = $cache->data;
     }
     else {
-      $forms = module_invoke_all('ds_forms_info');
-      cache_set('ds_forms', $forms, 'cache');
+      ctools_include('export');
+      $ds_forms = ctools_export_crud_load_all('ds_forms');
+      cache_set('ds_forms', $ds_forms, 'cache');
     }
   }
 
-  return $forms;
+  return $ds_forms;
 }
 
 /**
@@ -213,18 +244,27 @@ function ds_forms_form_field_ui_field_overview_form_alter(&$form, &$form_state) 
  * Implements hook_form_alter().
  */
 function ds_forms_form_alter(&$form, &$form_state, $form_id) {
+
+  // Form layout.
   if ($ds_form = ds_form_load($form_id)) {
-    if ($layout = ds_get_layout($ds_form['entity_type'], $ds_form['bundle'], 'form', FALSE)) {
+    if ($layout = ds_get_layout($ds_form->entity_type, $ds_form->bundle, 'form', FALSE)) {
       // Add the theming function and add the layout as a class.
       $form['#theme'][] = 'ds_forms_custom_form';
       $form['#attributes']['class'][] = strtr($layout['layout'], '_', '-');
       // Field group support.
       if (module_exists('field_group')) {
-        $form['#entity_type'] = $ds_form['entity_type'];
-        $form['#bundle'] = $ds_form['bundle'];
+        $form['#entity_type'] = $ds_form->entity_type;
+        $form['#bundle'] = $ds_form->bundle;
         field_group_attach_groups($form, 'form', $form_state);
       }
     }
+  }
+
+  // Form registration.
+  if (user_access('admin_display_suite') && variable_get('ds_forms_registration')) {
+    /*dsm($form_id);
+    dsm($form);
+    dsm('going to register');*/
   }
 }
 
@@ -233,8 +273,8 @@ function ds_forms_form_alter(&$form, &$form_state, $form_id) {
  */
 function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
   $ds_form = ds_form_load($vars['form']['#form_id']);
-  $entity_type = $ds_form['entity_type'];
-  $bundle = $ds_form['bundle'];
+  $entity_type = $ds_form->entity_type;
+  $bundle = $ds_form->bundle;
 
   if ($layout = ds_get_layout($entity_type, $bundle, 'form', FALSE)) {
 

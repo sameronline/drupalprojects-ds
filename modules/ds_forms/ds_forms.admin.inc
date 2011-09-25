@@ -28,13 +28,16 @@ function _ds_forms_ds_forms_info() {
       $elements['language'] = t('Language');
     }
 
-    $forms[$type->type . '_node_form'] = array(
-      'entity_type' => 'node',
-      'bundle' => $type->type,
-      'label' => $type->name,
-      'path' => 'admin/structure/types/manage/' . $type->type . '/fields',
-      'elements' => $elements,
-    );
+    $form_id = $type->type . '_node_form';
+    $ds_form = new stdClass;
+    $ds_form->form_id = $form_id;
+    $ds_form->api_version = 1;
+    $ds_form->label = $type->name;
+    $ds_form->entity_type = 'node';
+    $ds_form->bundle = $type->type;
+    $ds_form->path = 'admin/structure/types/manage/' . $type->type . '/fields';
+    $ds_form->elements = $elements;
+    $forms[$type->type . '_node_form'] = $ds_form;
   }
 
   return $forms;
@@ -50,7 +53,7 @@ function ds_forms_overview() {
   foreach ($forms as $form_id => $form_values) {
 
     // Create a group.
-    $group = $form_values['entity_type'];
+    $group = $form_values->entity_type;
     if (!isset($groups[$group])) {
       if ($group == 'ds_forms') {
         $label = t('Other');
@@ -61,9 +64,9 @@ function ds_forms_overview() {
       $groups[$group]['header'] = array(array('data' => $label, 'colspan' => '2', 'style' => 'background-color: #E1E2DC; border: 1px solid #BEBFB9;'));
     }
 
-    $path = isset($form_values['path']) ? $form_values['path'] : 'admin/structure/ds/forms/manage/' . $form_id;
+    $path = !empty($form_values->path) ? $form_values->path : 'admin/structure/ds/forms/manage/' . $form_id;
     $groups[$group]['forms'][$form_id] = array(
-      0 => $form_values['label'],
+      0 => $form_values->label,
       1 => l(t('Manage form'), $path),
     );
   }
@@ -100,11 +103,10 @@ function ds_forms_overview() {
  *   The configuration of the form.
  */
 function ds_forms_manage_custom($form) {
-  $form_id = $form['form_id'];
 
   // Use drupal_build_form instead of drupal_get_form.
   $form_state = array();
-  $arguments = array('ds_forms', $form_id, 'form');
+  $arguments = array('ds_forms', $form->form_id, 'form');
   $form_state['build_info']['args'] = $arguments;
   $form_state['no_panels'] = TRUE;
   $form_state['no_fapi_fields'] = TRUE;
@@ -113,9 +115,31 @@ function ds_forms_manage_custom($form) {
   $build = drupal_build_form('field_ui_field_overview_form', $form_state);
 
   // Deny access to fields table if there's no layout.
-  if (!ds_get_layout('ds_forms', $form_id, 'form')) {
+  if (!ds_get_layout('ds_forms', $form->form_id, 'form')) {
     $build['fields']['#access'] = FALSE;
   }
 
   return $build;
+}
+
+/**
+ * Menu callback: enable or disable registration for forms.
+ */
+function ds_forms_register_admin_form($form) {
+
+  $form['ds_forms_registration'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Enable form registration',
+    '#default_value' => variable_get('ds_forms_registration'),
+    '#description' => t('Users with the \'admin_display_suite\' permission will see a "Register form" link on any form in the site. The form will be available on !admin/structure/ds/forms to change the layout.', array('!admin/structure/ds/forms' => l('admin/structure/ds/forms', 'admin/structure/ds/forms'))),
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Menu callback: register a form.
+ */
+function ds_forms_register($form_id = '') {
+  return 'jow';
 }
