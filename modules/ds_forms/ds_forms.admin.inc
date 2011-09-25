@@ -19,9 +19,7 @@ function _ds_forms_ds_forms_info() {
     $elements['actions'] = t('Actions');
 
     // Additional settings is exposed if field group is not enabled.
-    if (!module_exists('field_group')) {
-      $elements['additional_settings'] = t('Additional settings');
-    }
+    $elements['additional_settings'] = t('Additional settings');
 
     // Translation support.
     if (module_exists('translation') && translation_supported_type($type->type)) {
