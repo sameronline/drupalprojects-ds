@@ -115,11 +115,6 @@ function ds_forms_manage_custom($form) {
   unset($build['fields']['_add_new_field']);
   unset($build['fields']['_add_existing_field']);
 
-  // @todo - test this if this could actually work (it should).
-  if (module_exists('field_group')) {
-    unset($build['fields']['_add_new_group']);
-  }
-
   // Deny access to fields table if there's no layout.
   if (!ds_get_layout('ds_forms', $form_id, 'form')) {
     $build['fields']['#access'] = FALSE;
