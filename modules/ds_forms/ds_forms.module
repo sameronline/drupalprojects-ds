@@ -150,7 +150,7 @@ function ds_forms_field_extra_fields() {
     if (isset($data->elements)) {
       foreach ($data->elements as $key => $label) {
         $extra[$data->entity_type][$data->bundle]['form'][$key] = array(
-          'label' => $label,
+          'label' => check_plain($label),
           'weight' => 0,
         );
       }
@@ -248,9 +248,11 @@ function ds_forms_form_alter(&$form, &$form_state, $form_id) {
   // Form layout.
   if ($ds_form = ds_form_load($form_id)) {
     if ($layout = ds_get_layout($ds_form->entity_type, $ds_form->bundle, 'form', FALSE)) {
+
       // Add the theming function and add the layout as a class.
       $form['#theme'][] = 'ds_forms_custom_form';
       $form['#attributes']['class'][] = strtr($layout['layout'], '_', '-');
+
       // Field group support.
       if (module_exists('field_group')) {
         $form['#entity_type'] = $ds_form->entity_type;
@@ -262,9 +264,53 @@ function ds_forms_form_alter(&$form, &$form_state, $form_id) {
 
   // Form registration.
   if (user_access('admin_display_suite') && variable_get('ds_forms_registration')) {
-    /*dsm($form_id);
-    dsm($form);
-    dsm('going to register');*/
+
+    // We are going to register the form in the $_SESSION, that's really easiest way.
+    // Always rebuild it as well, otherwhise, we're going to end up with a huge
+    // ds_forms collection.
+    static $run = FALSE;
+    if (!$run) {
+      $run = TRUE;
+      $_SESSION['ds_forms'] = array();
+    }
+
+    $ds_form = ds_form_load($form_id);
+    if ($ds_form) {
+      $link_text = t('Unregister form');
+    }
+    else {
+      $link_text = t('Register form');
+
+      $ds_form_elements = array();
+      $form_elements = element_children($form);
+      foreach ($form_elements as $element) {
+
+        // Ignore form API elements, hidden and value types.
+        if (in_array($element, array('form_build_id', 'form_token', 'form_id')) || (isset($form[$element]['#type']) && in_array($form[$element]['#type'], array('hidden', 'value')))) {
+          continue;
+        }
+        $form_element = $form[$element];
+        if (isset($form_element['#title'])) {
+          $label = $form_element['#title'];
+        }
+        elseif (isset($form_element['#value'])) {
+          $label = $form_element['#value'];
+        }
+        else {
+          $label = drupal_ucfirst($element);
+        }
+        $ds_form_elements[$element] = $label;
+      }
+      $_SESSION['ds_forms'][$form_id] = $ds_form_elements;
+    }
+
+    // Add css and links.
+    $form['#attached']['css'][] = drupal_get_path('module', 'ds_forms') . '/ds_forms.css';
+    $form['ds_form_register_link'] = array(
+      '#type' => 'markup',
+    	'#markup' => '<div class="ds-form-register-link">' . l($link_text, 'admin/structure/ds/forms/register/' . $form_id, array('query' => drupal_get_destination())) . '</div>',
+      '#weight' => -100,
+    );
   }
 }
 

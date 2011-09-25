@@ -104,5 +104,56 @@ class dsFormTests extends dsBaseTest {
     $this->assertRaw('edit-name', 'Machine field found');
     $this->assertRaw('edit-submit', 'Submit button found');
     $this->assertRaw('edit-entities', 'Entities checkboxes found');
+
+    // Use the onsite registration of forms functionality.
+    $this->drupalGet('admin/structure/ds/fields/manage_custom');
+    $this->assertText(t('Register form'));
+    $this->drupalGet('admin/structure/ds/forms/register/ds_edit_custom_field_form', array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
+    $this->assertText(t('Form ds_edit_custom_field_form has been registered.'));
+    $this->assertText(t('Unregister form'));
+
+    $form = array(
+      'additional_settings[layout]' => 'ds_form',
+    );
+    $form_assert = array(
+      'regions' => array(
+        'header' => '<td colspan="8">' . t('Header') . '</td>',
+    		'left' => '<td colspan="8">' . t('Left') . '</td>',
+    		'right' => '<td colspan="8">' . t('Right') . '</td>',
+        'footer' => '<td colspan="8">' . t('Footer') . '</td>',
+      ),
+    );
+    $this->dsSelectLayout($form, $form_assert, 'admin/structure/ds/forms/manage/ds_edit_custom_field_form');
+
+    $fields = array(
+      'fields[name][region]' => 'left',
+      'fields[field][region]' => 'left',
+      'fields[submit][region]' => 'right',
+    	'fields[code][region]' => 'right',
+    	'fields[use_token][region]' => 'right',
+      'fields[entities][region]' => 'right',
+    );
+    $this->dsConfigureUI($fields, 'admin/structure/ds/forms/manage/ds_edit_custom_field_form');
+
+    // Inspect the code field form.
+    $this->drupalGet('admin/structure/ds/fields/manage_custom');
+    $this->assertRaw('class="ds-form"', 'ds-form class added');
+    $this->assertRaw('group-header', 'Template found (region header)');
+    $this->assertRaw('group-left', 'Template found (region left)');
+    $this->assertRaw('group-right', 'Template found (region right)');
+    $this->assertRaw('group-footer', 'Template found (region footer)');
+    $this->assertRaw('edit-field', 'Label field found');
+    $this->assertRaw('edit-name', 'Machine field found');
+    $this->assertRaw('edit-submit', 'Submit button found');
+    $this->assertRaw('edit-entities', 'Entities checkboxes found');
+    $this->assertRaw('edit-use-token', 'Token button found');
+    $this->assertRaw('edit-code', 'Code textarea found');
+
+    $this->drupalGet('admin/structure/ds/forms/register/ds_edit_custom_field_form');
+    $this->assertText(t('Form ds_edit_custom_field_form has been unregistered.'));
+    $this->drupalGet('admin/structure/ds/forms/manage/ds_edit_custom_field_form');
+    $this->assertResponse('404');
+    $this->drupalGet('admin/structure/ds/forms');
+    $this->assertNoText('ds_edit_custom_field_form');
   }
 }

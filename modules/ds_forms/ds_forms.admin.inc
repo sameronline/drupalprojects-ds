@@ -141,5 +141,49 @@ function ds_forms_register_admin_form($form) {
  * Menu callback: register a form.
  */
 function ds_forms_register($form_id = '') {
-  return 'jow';
+  $clear_cache = FALSE;
+
+  if (empty($form_id)) {
+    $message = t('Unknown form');
+  }
+
+  $form = ds_form_load($form_id);
+
+  if ($form) {
+    $clear_cache = TRUE;
+
+    db_delete('ds_forms')
+      ->condition('form_id', $form_id)
+      ->execute();
+
+    $layout_id = $form->entity_type . '|' . $form->bundle . '|form';
+    db_delete('ds_layout_settings')
+      ->condition('id', $layout_id)
+      ->execute();
+
+    $message = t('Form %form_id has been unregistered.', array('%form_id' => $form_id));
+  }
+  elseif (isset($_SESSION['ds_forms']) && isset($_SESSION['ds_forms'][$form_id])) {
+    $clear_cache = TRUE;
+    $ds_form = new stdClass;
+    $ds_form->form_id = $form_id;
+    $ds_form->api_version = 1;
+    $ds_form->label = $form_id;
+    $ds_form->entity_type = 'ds_forms';
+    $ds_form->bundle = $form_id;
+    $ds_form->elements = $_SESSION['ds_forms'][$form_id];
+    drupal_write_record('ds_forms', $ds_form);
+    $message = t('Form %form_id has been registered.', array('%form_id' => $form_id));
+  }
+
+  if ($clear_cache) {
+    // Clear ds_field_settings, ds_forms, extra_fields, entity cache cache.
+    cache_clear_all('ds_forms', 'cache');
+    cache_clear_all('ds_field_settings', 'cache');
+    cache_clear_all('entity_info:', 'cache', TRUE);
+    cache_clear_all('field_info_fields', 'cache_field');
+  }
+
+  drupal_set_message($message);
+  drupal_goto();
 }
