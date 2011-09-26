@@ -103,6 +103,7 @@ if ($rows): ?>
 	                </div>
                   <div class="settings-tab-row clear-block">
                     <?php print $row->{$build_mode}->format; ?>
+                    <?php print $row->{$build_mode}->subgroup_format; ?>
                     <?php print $row->{$build_mode}->class . $row->{$build_mode}->field_id . $row->{$build_mode}->parent_id ?>
                   </div>
                 </div>

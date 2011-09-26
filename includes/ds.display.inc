@@ -295,8 +295,7 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
   $default_properties = ds_field_default_form_properties($build_mode);
   $default = (!empty($form[key($fields)])) ? $form[key($fields)] : $default_properties;
 
-  foreach ($fields as $field => $value) {
-
+  foreach ($fields as $field => $value) {    
     $summary = '';
 
     // Add form variable to let the template system know about the fields.
@@ -356,8 +355,24 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     }
     $form[$field][$build_mode]['format']['#default_value'] = $format;
     $form[$field][$build_mode]['format']['#access'] = (count($form[$field][$build_mode]['format']['#options']) == 0) ? FALSE : TRUE;
-    if (!empty($format))
-    $summary .= ' - <span class="format-info">Format: '. $form[$field][$build_mode]['format']['#options'][$format] .'</span>';
+
+    // Only show group formatting if the option is available
+    if (isset($value['properties']['subgroup_formatters'])) {
+      $form[$field][$build_mode]['subgroup_format']['#options'] = $value['properties']['subgroup_formatters'];
+      $subgroup_format = ds_default_value($display_settings, 'fields', $field, 'subgroup_format', '');
+      if (empty($subgroup_format) && isset($value['properties']['formatters'])) {
+        $subgroup_format = key($value['properties']['formatters']);
+      }
+      $form[$field][$build_mode]['subgroup_format']['#default_value'] = $subgroup_format;
+      $form[$field][$build_mode]['subgroup_format']['#access'] = (count($form[$field][$build_mode]['format']['#options']) == 0) ? FALSE : TRUE;
+    }
+    else {
+      unset($form[$field][$build_mode]['subgroup_format']);
+    }
+    
+    if (!empty($format)) {
+      $summary .= ' - <span class="format-info">Format: '. $form[$field][$build_mode]['format']['#options'][$format] .'</span>';
+    }
 
     // Class.
     $class = ds_default_value($display_settings, 'fields', $field, 'css-class', '');
@@ -498,6 +513,7 @@ function ds_display_overview_form_submit($form, &$form_state) {
       $display_settings[$build_mode]['fields'][$key]['region'] = $region;
       $display_settings[$build_mode]['fields'][$key]['weight'] = $form_state['values'][$key]['ds_weight'];
       $display_settings[$build_mode]['fields'][$key]['format'] = $form_state['values'][$key][$build_mode]['format'];
+      $display_settings[$build_mode]['fields'][$key]['subgroup_format'] = $form_state['values'][$key][$build_mode]['subgroup_format'];
       $class = implode(' ', $form_state['values'][$key][$build_mode]['css-class']);
       $display_settings[$build_mode]['fields'][$key]['css-class'] = $class;
 
@@ -787,6 +803,16 @@ function ds_field_default_form_properties($build_mode) {
         '#description' => t('Select how this field will be displayed.'),
         '#attributes' => array(
           'class' => 'ds-format-change',
+        ),
+      ),
+      'subgroup_format' => array(
+        '#title' => t('Subgroup format'),
+        '#type' => 'select',
+        '#options' => array(),
+        '#default_value' => DS_DEFAULT_FORMAT,
+        '#description' => t('Table formatters will ignore field formatter settings. Ensure that CCK\'s default <em>Subgroup format</em> for this group is set to <em>fieldset</em>.'),
+        '#attributes' => array(
+          'class' => 'ds-subgroup-format-change',
         ),
       ),
       'css-class' => array(

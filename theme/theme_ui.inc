@@ -90,6 +90,12 @@ function template_preprocess_ds_display_overview_form(&$vars) {
         // Other fields.
         $row->{$child}->region = drupal_render($element[$child]['region']);
         $row->{$child}->format = drupal_render($element[$child]['format']);
+        if (!empty($element[$child]['subgroup_format'])) {
+          $row->{$child}->subgroup_format = drupal_render($element[$child]['subgroup_format']);
+        } 
+        else {
+          $row->{$child}->subgroup_format = NULL;
+        }
         $row->{$child}->label = drupal_render($element[$child]['label']);
         $row->{$child}->label_value = drupal_render($element[$child]['label_value']);
 

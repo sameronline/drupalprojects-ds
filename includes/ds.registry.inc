@@ -328,6 +328,72 @@ function _ds_theme() {
       'function' => 'ds_group_fieldset',
     ),
 
+    // CCK 3.x multigroup subgroup formatters
+    'ds_multigroup_fieldset_open' => array(
+      'arguments' => array(
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'ds_multigroup_fieldset',
+    ),
+    'ds_multigroup_fieldset_collapsible' => array(
+      'arguments' => array(
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'ds_multigroup_fieldset',
+    ),
+    'ds_multigroup_fieldset_collapsed' => array(
+      'arguments' => array(
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'ds_multigroup_fieldset',
+    ),
+    'ds_multigroup_table_simple' => array(
+      'arguments' => array(
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'ds_multigroup_table_simple',
+    ),
+    'ds_multigroup_table_multiple' => array(
+      'arguments' => array(
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'ds_multigroup_table_multiple',
+    ),
+    'ds_multigroup_horizontal_line' => array(
+      'arguments' => array(
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'ds_multigroup_horizontal_line',
+    ),
+    'ds_multigroup_list_ol' => array(
+      'arguments' => array(
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'ds_multigroup_list',
+    ),
+    'ds_multigroup_list_ul' => array(
+      'arguments' => array(
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'ds_multigroup_list',
+    ),
+
     // Theming for fields which are shared across objects (name, picture etc).
     'ds_author_link' => array(
       'arguments' => array('object' => NULL),
