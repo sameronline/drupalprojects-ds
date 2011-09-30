@@ -91,6 +91,7 @@ function ds_build_mode_form($form_state, $module, $build_mode = '') {
     '#title' => 'Key name',
     '#description' => t('The machine-readable name of this build mode.'),
     '#required' => TRUE,
+    '#maxlength' => 32,
   );
   if (!empty($build_mode)) {
     $form['identity']['key']['#disabled'] = TRUE;
