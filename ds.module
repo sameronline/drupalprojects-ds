@@ -258,9 +258,9 @@ function ds_build_fields_and_regions(&$object, $module) {
           $ds_fields[$parent]['theme'] = $format;
           $ds_groups[$parent][$key] = $weight;
 
-          //Support Multigroup
-          if($fields[$parent]['type'] == DS_FIELD_TYPE_MULTIGROUP){
-            $ds_groups[$parent]['multigroup']= TRUE;
+          // Add tag to enable CCK Multigroup support.
+          if ($fields[$parent]['type'] == DS_FIELD_TYPE_MULTIGROUP) {
+            $ds_groups[$parent]['multigroup'] = TRUE;
           }
         }
 
@@ -388,37 +388,66 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
       $field_count = 0;
       $group_fields = array();
 
-      // Support for CCK 6.x-3.0 Multigroup
+      // Support for CCK 6.x-3.x multigroups
       if (isset($fields['multigroup']) && $fields['multigroup']) {
-        $field_settings = ds_default_value($display_settings, 'fields');
-        $group_content = ds_get_cck_multigroup_content($object, $group, $field_settings);
-        foreach($fields as $key => $weight){
+        // Add 'multigroup' tag to group.
+        $object->ds_fields[$group]['multigroup'] = TRUE;
+
+        // Remove 'multigroup' tag from field list and sort by wieght.
+        unset($fields['multigroup']);
+        asort($fields);
+
+        // Define field settings for multigroup instance wrappers.
+        $field_settings = array(
+          'key' => '',
+          'region' => $object->ds_fields[$group]['region'],
+          'title' => '',
+          'class' => '',
+          'labelformat' => 'hidden',
+          'type' => 'ds',
+          'weight' => 0,
+          'multigroup_field' => TRUE,
+        );
+
+        // Find group content array.
+        // Note groups may be nested in other groups.
+        $content_var = $object->content;
+        $group_parents = array_reverse(fieldgroup_get_parents($object->type, $group));
+        foreach ($group_parents as $key => $parent) {
+          $content_var = $content_var[$parent]['group'];
+        }
+
+        $field_count = count($object->{key($fields)});
+        // Theme each instance within the multigroup
+        for ($i = 0; $i < $field_count; $i++) {
+          $field_content = '';
+          // Theme each field within a multigroup instance.
+          foreach ($fields as $key => $weight) {
+            $sub_field_content = isset($content_var[$i][$key]['#children']) ? $content_var[$i][$key]['#children'] : '';
+            if (!empty($sub_field_content)) {
+              $field_content .= theme($theme_function, $sub_field_content, $object->ds_fields[$key]);
+            }
+          }
+          $field_settings['key'] = $group . '_delta_' . $i;
+          $field_settings['class'] = 'field-multigroup field-multigroup-' . $group . ' ds-multigroup-' . $group . '-delta-' . $i;
+          $field_settings['weight'] = $i - 100;
+          if (!empty($field_content)) {
+            $group_content .= theme($theme_function, $field_content, $field_settings);
+          }
+        }
+        foreach ($fields as $key => $weight) {
+          $group_fields[] = $object->ds_fields[$key];
           unset($object->ds_fields[$key]);
         }
       }
       else {
         foreach ($fields as $key => $weight) {
-          $field_content = '';
-          if (is_array($vars[$key])){
-            foreach($vars[$key] as $row){
-              $field_content .= content_format($key, $row);
-            }
-            if (!empty($field_content)) {
-              $object->ds_fields[$key]['type'] = 'ds';
-              $group_content .= theme($theme_function, $field_content, $object->ds_fields[$key]);
-              $field_count++;
-              $group_fields[] = $object->ds_fields[$key];
-              unset($object->ds_fields[$key]);
-            }
-          }
-          else {
-            $field_content = isset($vars[$key .'_rendered']) ? $vars[$key .'_rendered'] : '';
-            if (!empty($field_content)) {
-              $group_content .= theme($theme_function, $field_content, $object->ds_fields[$key]);
-              $field_count++;
-              $group_fields[] = $object->ds_fields[$key];
-              unset($object->ds_fields[$key]);
-            }
+          $field_content = isset($vars[$key .'_rendered']) ? $vars[$key .'_rendered'] : '';
+          if (!empty($field_content)) {
+            $group_content .= theme($theme_function, $field_content, $object->ds_fields[$key]);
+            $field_count++;
+            $group_fields[] = $object->ds_fields[$key];
+            unset($object->ds_fields[$key]);
           }
         }
       }
@@ -813,52 +842,4 @@ function ds_import_default_data($module = '', $type = '', $build_mode = '') {
     module_load_include('inc', 'ds', 'includes/ds.tools');
     ds_import_data($data, FALSE, FALSE, $module, $type, $build_mode);
   }
-}
-
-/**
- * Function to return the html for cck-multigroup field
- *
- * @param $node
- *  Contains the full node object.
- * @param $group_name
- *  The name of the group
- * @param $field_settings
- *  The field settings.
- */
-function ds_get_cck_multigroup_content($node, $group_name, $field_settings){
-  $output = '';
-  $groups = array();
-  $group = array();
-  $instance = 0;
-  $parent = array();
-
-  // Remove 'multigroup' tag.
-  foreach($node->ds_groups[$group_name] as $field => $weight){
-    if($field != 'multigroup'){
-      $groups[$weight]=$field;
-    }
-  }
-
-  // Sort fields.
-  ksort($groups);
-  foreach ($groups as $weight => $field){
-    $temp = array();
-    foreach($node->$field as $row){
-      $temp[] = content_format($field, $row, $field_settings[$field]['format']);
-    }
-    $instance= count($temp);
-    $group[$field]= $temp;
-  }
-  if ($instance != 0){
-   $output .= "<div class='$group_name'>";
-    for ($i = 0; $i < $instance; $i++){
-      foreach ($groups as $weight => $field){
-        $output .= theme($field_settings[$group_name]['format'], $group[$field][$i] , $node->ds_fields[$field]);
-      }   }
-    $output .="</div>";
-  }
-
-  // Use return theme if you want to use the node display layout.
-  //return theme($field_settings[$group_name]['format'], $output, $node->ds_fields[$group_name]);
-  return $output;
 }
