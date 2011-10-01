@@ -648,8 +648,9 @@ function ds_render_multigroup(&$object, $group_key, $vars = array()){
       // CCK via nd_cck
       if (empty($object->ds_fields[$group_key]['fields'][$field_key]['title'])) {
         $cck_field = content_fields($field_key, $object->type);
-        $object->ds_fields[$group_key]['fields'][$field_key]['title'] = nd_cck_get_label_value($cck_field, array());
+        $object->ds_fields[$group_key]['fields'][$field_key]['title'] = nd_cck_get_label_value($cck_field, $object->build_mode);
       }
+      $object->ds_fields[$group_key]['subgroups']['rows'][$i]['fields'][$field_key]['title'] = $object->ds_fields[$group_key]['fields'][$field_key]['title'];
 
       // Add subgroup row information
       $object->ds_fields[$group_key]['subgroups']['rows'][$i]['title'] = $object->content[$group_key]['group'][$i]['#title'];
