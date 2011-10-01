@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1294686 by attiks: Fix empty region to block error.
 - #1295586 by Johnny vd Laar: Fix strict warnings in ds_views_row_render_taxonomy_term_data().
 - #1242620 by swentel: hide limit textfield on formatter settings form.
 - #1283714 by swentel: hide format and label for views layouting.
