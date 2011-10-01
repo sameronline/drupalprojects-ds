@@ -1073,8 +1073,6 @@ function ds_ajax_add_field($js, $field_type) {
   ctools_include('ajax');
   ctools_include('modal');
 
-  module_load_include('inc', 'ds', 'ds.registry');
-
   switch ($field_type) {
 
     case "manage_ctools":
