@@ -668,7 +668,7 @@ function ds_render_multigroup(&$object, $group_key, $vars = array()){
   // Subgroups may be rendered as if they are a single field, so we must construct
   // a wrapping field object to pass to ds_render_item()
   $object->ds_fields[$group_key]['subgroups']['key'] = $group_key .'_subgroup';
-  $object->ds_fields[$group_key]['subgroups']['theme'] = $object->ds_fields[$group_key]['subgroup_theme'];
+  $object->ds_fields[$group_key]['subgroups']['theme'] = isset($object->ds_fields[$group_key]['subgroup_theme']) ? $object->ds_fields[$group_key]['subgroup_theme'] : 'ds_multigroup_fieldset';
   // To be passed to a rendering function, the 'content' key must exist,
   // however the subgroup has not rendered content at this point
   $object->ds_fields[$group_key]['subgroups']['content'] = TRUE;
