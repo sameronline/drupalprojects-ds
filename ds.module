@@ -344,7 +344,7 @@ function ds_build_fields_and_regions(&$object, $module) {
  * @param string $theme_function 
  *  The theming function for a field.
  */
-function ds_render_content($object, $module, $vars, $theme_function = 'ds_field') {
+function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT_THEME_CALLBACK) {
 
   /**
    * Basic object set up
