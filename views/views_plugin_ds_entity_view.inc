@@ -363,7 +363,8 @@ function ds_views_row_render_users($entity, $view_mode, $load_comments) {
  * Render the taxonomy term through the entity plugin.
  */
 function ds_views_row_render_taxonomy_term_data($entity, $view_mode, $load_comments) {
-  return drupal_render(taxonomy_term_view($entity, $view_mode));
+  $el = taxonomy_term_view($entity, $view_mode);
+  return drupal_render($el);
 }
 
 /**
