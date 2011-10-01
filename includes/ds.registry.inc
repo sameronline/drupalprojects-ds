@@ -389,15 +389,18 @@ function _ds_theme() {
     ),
     'ds_multigroup_list_ol' => array(
       'arguments' => array(
-        'field' => NULL,
+        'content' => NULL,
+        'group' => NULL,
       ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
-      'function' => 'ds_multigroup_list',
+      'function' => 'theme_ds_multigroup_list',
     ),
     'ds_multigroup_list_ul' => array(
       'arguments' => array(
-        'field' => NULL,
+        'content' => NULL,
+        'group' => NULL,
+      ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
       'function' => 'theme_ds_multigroup_list',

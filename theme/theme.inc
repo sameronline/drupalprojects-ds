@@ -398,10 +398,10 @@ function theme_ds_multigroup_horizontal_line($content, $group) {
 /**
  * Theme a multigroup list.
  *
- * @param string $field The field to theme.
+ * @param string $group The group to theme.
  */
-function ds_multigroup_list($content, $field) {
-  $variation = array_pop(explode('_', $field['theme']));
+function theme_ds_multigroup_list($content, $group) {
+  $variation = array_pop(explode('_', $group['theme']));
 
   switch ($variation) {
     case 'ol':
@@ -414,7 +414,7 @@ function ds_multigroup_list($content, $field) {
   }
 
   $items = array();
-  foreach ($field['rows'] as $row) {
+  foreach ($group['rows'] as $row) {
     if (!empty($row['rendered'])) {
       $items[] = $row['rendered'];
     }
