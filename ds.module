@@ -184,8 +184,10 @@ function ds_reset_fields_cache() {
 /**
  * Get fields and regions for an object.
  *
- * @param stdClass $object The object to manipulate.
- * @param string $module The module that is requesting.
+ * @param stdClass $object 
+ *  The object to manipulate.
+ * @param string $module 
+ *  The module that is requesting.
  */
 function ds_build_fields_and_regions(&$object, $module) {
 
@@ -317,9 +319,6 @@ function ds_build_fields_and_regions(&$object, $module) {
             $field['formatter'] = (isset($field_setting['format'])) ? $field_setting['format'] : key($field['properties']['formatters']);
             $output = theme($field['formatter'], $field);
             break;
-          // case DS_FIELD_TYPE_MULTIGROUP:
-          //   $output = '<div>multigroup</div>';
-          //   break;
         }
         
         $object->ds_fields[$key]['pre_render'] = $output;
@@ -336,15 +335,19 @@ function ds_build_fields_and_regions(&$object, $module) {
 /**
  * Render content for an object.
  *
- * @param stdClass $object The object to manipulate.
- * @param string $module The module that is requesting.
- * @param array $vars The variables need for rendering.
- * @param string $theme_function The theming function for a field.
+ * @param stdClass $object 
+ *  The object to manipulate.
+ * @param string $module 
+ *  The module that is requesting.
+ * @param array $vars 
+ *  The variables required for rendering.
+ * @param string $theme_function 
+ *  The theming function for a field.
  */
 function ds_render_content($object, $module, $vars, $theme_function = 'ds_field') {
 
   /**
-   * Basic set up
+   * Basic object set up
    */
 
   // stdClass to hold our complete rendered object
@@ -389,7 +392,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
    * Iterate over the active regions to build the display object
    *
    * Instead of iterating over groups first, we iterate over active regions 
-   * and build groups only when required (more efficient).
+   * and build groups only when required.
    */
   foreach ($object_display->active_regions as $region_name => $region_title) {
     $region_fields = array();
@@ -429,7 +432,7 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
        * Choose a rendering pipeline based on the type
        * 
        * Groups get content and render within wrapper functions.
-       * Fields get content then call the render directly.
+       * Fields get content then call the renderer directly.
        */
       switch ($object->ds_fields[$key]['ds_type']) {
         case DS_FIELD_TYPE_GROUP:
@@ -524,13 +527,14 @@ function ds_render_content($object, $module, $vars, $theme_function = 'ds_field'
  *
  * @param array $item
  *  The item to render. The item requires a 'content' key.
+ *
  * @return
  *  A rendered item, or FALSE if no content was found
  */
 function ds_render_item($item){
   $content = FALSE;
 
-  // Tabs must the the ds_tabs themeing fuction
+  // Tabs must use the ds_tabs themeing fuction
   if (isset($item['tab'])) {
     $item['theme'] = 'ds_tabs';
   }
@@ -619,9 +623,9 @@ function ds_render_multigroup(&$object, $group_key, $vars = array()){
 
   // Iterate over the number of properties ($fields) in the multigroup, and
   // construct a single numerically keyed, compound value array representing
-  // the field.
-  // This is complicated because we are building individually rendered fields
-  // for fieldset implementations, as well as array keys for things like tables.
+  // the field. This is complicated because we are building individually 
+  // rendered fields for fieldset implementations, as well as array keys for 
+  // things like tables.
   $field_keys = array_keys($object->ds_fields[$group_key]['fields']);
   $subgroup_count = count($vars[$field_keys[0]]);
 
@@ -632,7 +636,7 @@ function ds_render_multigroup(&$object, $group_key, $vars = array()){
       'weight' => $i - 100,
     );
 
-    // Iterate over all fields in the group and move their values into subgroups
+    // Iterate over fields in the group and move their values into subgroups
     foreach ($object->ds_fields[$group_key]['fields'] as $field_key => $field_weight) {
       $object->ds_fields[$group_key]['subgroups']['rows'][$i]['fields'][$field_key] = $object->ds_fields[$group_key]['fields'][$field_key];
       $object->ds_fields[$group_key]['subgroups']['rows'][$i]['fields'][$field_key]['view'] = ds_get_content($object->ds_fields[$group_key]['fields'][$field_key], $vars[$field_key][$i], 'view');
