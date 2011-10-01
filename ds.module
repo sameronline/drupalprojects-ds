@@ -632,7 +632,7 @@ function ds_render_multigroup(&$object, $group_key, $vars = array()){
   for ($i = 0; $i < $subgroup_count; $i++) {
     $object->ds_fields[$group_key]['subgroups']['rows'][$i] = array(
       'index' => $group_key . '_delta_' . $i,
-      'class' => 'field-multigroup-row ds-multigroup-'. $group_key .'-delta-'. $i . ($i % 2 ? ' odd' : ' even'),
+      'class' => 'content-multigroup-wrapper field-multigroup-row ds-multigroup-'. $group_key .'-delta-'. $i . ($i % 2 ? ' odd' : ' even'),
       'weight' => $i - 100,
     );
 
