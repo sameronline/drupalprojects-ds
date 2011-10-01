@@ -188,6 +188,47 @@ function ds_group_fieldset($content, $field) {
 }
 
 /**
+ * Theme a multigroup as a collection of simple objects
+ *
+ * @param string $content 
+ *  A dummy content value for consistency with other ds theme signatures
+ * @param string $group 
+ *  The multigroup to theme.
+ */
+function theme_ds_multigroup_div($content, $group) {
+  $output = '';
+
+  foreach ($group['rows'] as $row){
+    $row_output = '';
+    
+    // Set a legend if a field title exists
+    $output .= '<div class="'. $row['class'] .'">';
+    if (!empty($row['title'])) {
+      $row_output = theme('ds_subgroup_label', $row['title']);
+    }
+    foreach ($row['fields'] as $field) {
+      $class = (!empty($field['class']) ? ' '. $field['class'] : '');
+      $row_output .= '<div class="field field-item '. $field['key'] . $class .'">';
+      // Above label.
+      if ($field['labelformat'] == 'above') {
+        $row_output .= '<div class="field-label">'. $field['title'] .': </div>';
+      }
+      // Inline label
+      elseif ($field['labelformat'] == 'inline') {
+        $row_output .= '<div class="field-label-inline-first">'. $field['title'] .': </div>';
+      }
+
+      $row_output .= $field['view'] .'</div>';
+    }
+
+    $output .= $row_output;
+    $output .= '</div>';
+  }
+
+  return $output;
+}
+
+/**
  * Theme a multigroup as a collection of fieldsets.
  *
  * @param string $content 

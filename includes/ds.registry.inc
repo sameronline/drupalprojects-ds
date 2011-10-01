@@ -329,6 +329,15 @@ function _ds_theme() {
     ),
 
     // CCK 3.x multigroup subgroup formatters
+    'ds_multigroup_div' => array(
+      'arguments' => array(
+        'content' => NULL,
+        'group' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'theme_ds_multigroup_div',
+    ),
     'ds_multigroup_fieldset_open' => array(
       'arguments' => array(
         'field' => NULL,
