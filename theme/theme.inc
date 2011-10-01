@@ -455,6 +455,18 @@ function theme_ds_tabs($field) {
 }
 
 /**
+ * Theme the subgroup label
+ */
+function theme_ds_subgroup_label($label, $class = NULL) {
+  $classes = 'content_multigroup';
+  if (!empty($class)) {
+    $classes = $classes .' '. $class;
+  }
+
+  return '<legend class="'. $classes .'">'. $label .'</legend>';
+}
+
+/**
  * Theme author name.
  */
 function theme_ds_author_nolink($field) {

@@ -397,10 +397,18 @@ function _ds_theme() {
     'ds_multigroup_list_ul' => array(
       'arguments' => array(
         'field' => NULL,
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'theme_ds_multigroup_list',
+    ),
+    'ds_subgroup_label' => array(
+      'arguments' => array(
+        'label' => NULL,
+        'class' => NULL,
       ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
-      'function' => 'ds_multigroup_list',
+      'function' => 'theme_ds_subgroup_label',
     ),
 
     // Theming for fields which are shared across objects (name, picture etc).
