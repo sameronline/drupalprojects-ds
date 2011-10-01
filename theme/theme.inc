@@ -314,7 +314,6 @@ function theme_ds_multigroup_table_simple($content, $group) {
  *
  * @param string $field The field to theme.
  */
-  dsm($group);
 function theme_ds_multigroup_table_multiple($content, $group) {
   $headers = array();
 
