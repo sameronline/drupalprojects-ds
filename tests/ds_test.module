@@ -17,7 +17,7 @@ function ds_test_install() {
   variable_set('ds_extras_fields_extra', TRUE);
   variable_set('ds_extras_fields_extra_list', "node|article|ds_extras_extra_test_field\nnode|article|ds_extras_second_field");
   variable_set('ds_extras_vd', TRUE);
-  variable_set('ds_forms_registration', TRUE);
+  variable_set('rel_build_form_registration', TRUE);
 }
 
 /**
@@ -155,30 +155,32 @@ function ds_test_ds_layout_info() {
  * Implements hook_ctools_plugin_api().
  */
 function ds_test_ctools_plugin_api($module, $api) {
-  if ($module == 'ds_forms' && $api == 'ds_forms') {
+  if ($module == 'rel' && $api == 'rel') {
     return array('version' => 1);
   }
 }
 
 /**
- * Implements hook_ds_forms_info().
+ * Implements hook_rel_build_info().
  */
-function ds_test_ds_forms_info() {
-  $forms = array();
-  $form_id = 'ds_edit_view_mode_form';
-  $ds_form = new stdClass;
-  $ds_form->form_id = $form_id;
-  $ds_form->api_version = 1;
-  $ds_form->label = 'View mode';
-  $ds_form->entity_type = 'ds_forms';
-  $ds_form->bundle = $form_id;
-  $ds_form->elements = array(
+function ds_test_rel_build_info() {
+  $builds = array();
+  $build_id = 'ds_edit_view_mode_form';
+  $rel_build = new stdClass;
+  $rel_build->build_id = $build_id;
+  $rel_build->api_version = 1;
+  $rel_build->label = 'View mode';
+  $rel_build->entity_type = 'rel_build';
+  $rel_build->bundle = $build_id;
+  $rel_build->rel_type = 'form';
+  $rel_build->path = 'admin/config/systel/rel/manage/' . $build_id;
+  $rel_build->root_elements = array(
     'name' => t('Label'),
     'view_mode' => t('Machine name'),
     'entities' => t('Entities'),
     'submit' => t('Submit'),
   );
-  $forms[$form_id] = $ds_form;
-  return $forms;
+  $builds[$build_id] = $rel_build;
+  return $builds;
 }
 

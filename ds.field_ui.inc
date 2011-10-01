@@ -64,29 +64,6 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
     '#type' => 'hidden',
     '#value' => $view_mode,
   );
-
-  // Hide the Field API fields if wanted.
-  // We need to add an extra validate to inject
-  // those on submit so it doesn't trigger notices in Field UI.
-  if (isset($form_state['no_fapi_fields'])) {
-    unset($form['fields']['_add_new_field']);
-    unset($form['fields']['_add_existing_field']);
-    array_unshift($form['#validate'], 'ds_field_ui_fix_notices');
-  }
-}
-
-/**
- * Validate function which adds the _add_new_field key back
- * on the the form_state so no notices are triggered in some cases.
- */
-function ds_field_ui_fix_notices($form, &$form_state) {
-  $field = array(
-    'label' => '',
-    'field_name' => '',
-    'type' => '',
-    'widget_type' => ''
-  );
-  $form_state['values']['fields']['_add_new_field'] = $field;
 }
 
 /**
@@ -224,7 +201,6 @@ function ds_field_ui_regions($form, $form_state) {
     // Remove label and format for views.
     if ($entity_type == 'ds_views') {
       $table['#header'][4] = '';
-      $table['#header'][5]['data'] = '';
     }
 
     $table['#regions'] = array();
@@ -308,11 +284,13 @@ function ds_field_ui_regions($form, $form_state) {
       // Disable label and format for views.
       if ($entity_type == 'ds_views') {
         $row['label']['#access'] = FALSE;
-        $row['format']['#access'] = FALSE;
       }
 
       // Add region.
       $split = ($view_mode != 'form') ? 7 : 6;
+      if ($row['#row_type'] == 'group' && $view_mode == 'form') {
+        $split = ($view_mode != 'form') ? 8 : 7;
+      }
       $second = array_splice($row, $split);
       $row['region'] = $region;
       $row['region']['#default_value'] = (isset($layout->settings['fields'][$name]) && isset($region_options[$layout->settings['fields'][$name]])) ? $layout->settings['fields'][$name] : 'hidden';
