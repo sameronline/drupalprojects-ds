@@ -380,15 +380,15 @@ function ds_multigroup_table_multiple($content, $group) {
 /**
  * Theme a multigroup divided by horizontal lines
  *
- * @param string $field The field to theme.
+ * @param string $group The group to theme.
  */
-function ds_multigroup_horizontal_line($content, $field) {
+function theme_ds_multigroup_horizontal_line($content, $group) {
   $output = '';
-  foreach ($field['rows'] as $row_delta => $row) {
+  foreach ($group['rows'] as $row_delta => $row) {
     $divider = ($row_delta > 0 ? '<hr class="content-multigroup" />' : '');
     $output .= '<div'. drupal_attributes(array('class' => $row['class'])) .'>'. $divider;
     if (!empty($row['title'])) {
-      $output .= '<label class="content-multigroup">'. $row['title'] .':</label>';
+      $output .= theme('ds_subgroup_label', $row['title']);
     }
     $output .= $row['rendered'].'</div>';
   }

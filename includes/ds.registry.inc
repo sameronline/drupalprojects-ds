@@ -380,11 +380,12 @@ function _ds_theme() {
     ),
     'ds_multigroup_horizontal_line' => array(
       'arguments' => array(
-        'field' => NULL,
+        'content' => NULL,
+        'group' => NULL,
       ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
-      'function' => 'ds_multigroup_horizontal_line',
+      'function' => 'theme_ds_multigroup_horizontal_line',
     ),
     'ds_multigroup_list_ol' => array(
       'arguments' => array(
