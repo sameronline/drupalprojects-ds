@@ -155,7 +155,7 @@ function theme_ds_objects($data, $extra) {
  * @param string $content The content to render.
  * @param string $field The field to theme.
  */
-function ds_group_fieldset($content, $field) {
+function theme_ds_group_fieldset($content, $field) {
   $add_js = FALSE;
   $class = $field['class'];
   $variation = array_pop(explode('_', $field['theme']));
@@ -236,7 +236,7 @@ function theme_ds_multigroup_div($content, $group) {
  * @param string $group 
  *  The multigroup to theme.
  */
-function ds_multigroup_fieldset($content, $group) {
+function theme_ds_multigroup_fieldset($content, $group) {
   $collapsible = FALSE;
   $class = NULL;
   $variation = array_pop(explode('_', $group['theme']));
@@ -287,7 +287,7 @@ function ds_multigroup_fieldset($content, $group) {
  * @param string $group 
  *  The multigroup to theme.
  */
-function ds_multigroup_table_simple($content, $group) {
+function theme_ds_multigroup_table_simple($content, $group) {
   $headers = array();
   $rows = array();
   foreach ($group['rows'] as $row) {
@@ -314,8 +314,8 @@ function ds_multigroup_table_simple($content, $group) {
  *
  * @param string $field The field to theme.
  */
-function ds_multigroup_table_multiple($content, $group) {
   dsm($group);
+function theme_ds_multigroup_table_multiple($content, $group) {
   $headers = array();
 
   // Set up row labels from subgroup labels, if applicable

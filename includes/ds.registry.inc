@@ -307,7 +307,7 @@ function _ds_theme() {
       ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
-      'function' => 'ds_group_fieldset',
+      'function' => 'theme_ds_group_fieldset',
     ),
     'ds_group_fieldset_collapsible' => array(
       'arguments' => array(
@@ -316,7 +316,7 @@ function _ds_theme() {
       ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
-      'function' => 'ds_group_fieldset',
+      'function' => 'theme_ds_group_fieldset',
     ),
     'ds_group_fieldset_collapsed' => array(
       'arguments' => array(
@@ -325,7 +325,7 @@ function _ds_theme() {
       ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
-      'function' => 'ds_group_fieldset',
+      'function' => 'theme_ds_group_fieldset',
     ),
 
     // CCK 3.x multigroup subgroup formatters
@@ -340,43 +340,48 @@ function _ds_theme() {
     ),
     'ds_multigroup_fieldset_open' => array(
       'arguments' => array(
-        'field' => NULL,
+        'content' => NULL,
+        'group' => NULL,
       ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
-      'function' => 'ds_multigroup_fieldset',
+      'function' => 'theme_ds_multigroup_fieldset',
     ),
     'ds_multigroup_fieldset_collapsible' => array(
       'arguments' => array(
-        'field' => NULL,
+        'content' => NULL,
+        'group' => NULL,
       ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
-      'function' => 'ds_multigroup_fieldset',
+      'function' => 'theme_ds_multigroup_fieldset',
     ),
     'ds_multigroup_fieldset_collapsed' => array(
       'arguments' => array(
-        'field' => NULL,
+        'content' => NULL,
+        'group' => NULL,
       ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
-      'function' => 'ds_multigroup_fieldset',
+      'function' => 'theme_ds_multigroup_fieldset',
     ),
     'ds_multigroup_table_simple' => array(
       'arguments' => array(
-        'field' => NULL,
+        'content' => NULL,
+        'group' => NULL,
       ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
-      'function' => 'ds_multigroup_table_simple',
+      'function' => 'theme_ds_multigroup_table_simple',
     ),
     'ds_multigroup_table_multiple' => array(
       'arguments' => array(
-        'field' => NULL,
+        'content' => NULL,
+        'group' => NULL,
       ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
-      'function' => 'ds_multigroup_table_multiple',
+      'function' => 'theme_ds_multigroup_table_multiple',
     ),
     'ds_multigroup_horizontal_line' => array(
       'arguments' => array(
