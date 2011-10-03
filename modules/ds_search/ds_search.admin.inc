@@ -239,6 +239,13 @@ function ds_search_settings($form, $form_state) {
         ),
       ),
     );
+
+    $form['apachesolr_search']['ds_search_apachesolr_use_url'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use Apache Solr URL for linking'),
+      '#description' => t('Use this when searching in an index which is used by multiple sites so the content links to the right site.'),
+      '#default_value' => variable_get('ds_search_apachesolr_use_url'),
+    );
   }
 
   $active = variable_get('search_active_modules', array('node', 'user'));

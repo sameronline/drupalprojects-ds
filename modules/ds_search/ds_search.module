@@ -540,14 +540,24 @@ function apachesolr_search_ds_search_execute($keys = NULL, $conditions = NULL) {
   }
 
   foreach ($find as $item) {
+
+    // Unserialize tm_node field.
     $node = @unserialize(urldecode($item['fields']['tm_node'][0]));
     if (!isset($node->nid)) {
       $node = node_load($item['node']->entity_id);
     }
+
     // Add the snippet, url and extra info on the object.
     $node->search_snippet = $item['snippet'];
     $node->search_extra = $item['extra'];
     $node->search_as_url = $item['fields']['url'];
+
+    // Populate node->uri with the apache solr url if wanted.
+    if (variable_get('ds_search_apachesolr_use_url')) {
+      $node->uri['path'] = $node->search_as_url;
+      $node->uri['options'] = array();
+    }
+
     $results[$item['node']->entity_id] = $node;
   }
 
