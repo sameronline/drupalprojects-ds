@@ -544,9 +544,10 @@ function apachesolr_search_ds_search_execute($keys = NULL, $conditions = NULL) {
     if (!isset($node->nid)) {
       $node = node_load($item['node']->entity_id);
     }
-    // Add the snippet and extra info on the object.
+    // Add the snippet, url and extra info on the object.
     $node->search_snippet = $item['snippet'];
     $node->search_extra = $item['extra'];
+    $node->search_as_url = $item['fields']['url'];
     $results[$item['node']->entity_id] = $node;
   }
 
