@@ -231,7 +231,7 @@ function ds_search_settings($form, $form_state) {
     $form['apachesolr_search']['ds_search_apachesolr_multisite'] = array(
       '#type' => 'checkbox',
       '#title' => t('Multisite support'),
-      '#description' => t('Enable this in case multiple sites share one index. Note that sometimes you need to make sure that your formatters are creating absolute paths for links or images. Implementing hook_url_inbound_alter() is a good option in which you can set $options[\'absolute\'] to TRUE.'),
+      '#description' => t('Enable this in case multiple sites share one index. Note that sometimes you need to make sure that your formatters are creating absolute paths for links or images. Implementing hook_url_outbound_alter() is a good option in which you can set $options[\'absolute\'] to TRUE.'),
       '#default_value' => variable_get('ds_search_apachesolr_multisite'),
     );
 
