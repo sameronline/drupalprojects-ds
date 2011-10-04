@@ -362,7 +362,7 @@ function ds_search_search_page($results) {
 
     // Site counter.
     foreach ($site_counter as $hash => $values) {
-      $title = check_plain(t($values['title'], array('!total_per_site' => $values['counter'])));
+      $title = check_plain(t($values['title'], array('!total_per_site' => format_plural($values['counter'], '1 result', '@count results'))));
       if ($values['type'] == 'div') {
         $build['search_results'][$hash]['#prefix'] = '<div class="' . $values['class'] . '">' . ((!empty($title)) ? '<h2>' . $title . '</h2>' : '');
         $build['search_results'][$hash]['#suffix'] = '</div>';

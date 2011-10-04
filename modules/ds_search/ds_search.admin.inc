@@ -250,7 +250,7 @@ function ds_search_settings($form, $form_state) {
       '#type' => 'textarea',
       '#title' => t('Group by site configuration'),
       '#default_value' => variable_get('ds_search_apachesolr_multisite_group_config'),
-      '#description' => t('Enter sites line by line with following configuration: site-hash|label|wrapper. The <em>site-hash</em> is per site which you can get from Solr. The <em>label</em> is translatable per site. Use !total_per_site in this label for number of results per site. The <em>wrapper</em> can either be "fieldset" or "div".'),
+      '#description' => t('Enter sites line by line with following configuration: site-hash|label|wrapper. The <em>site-hash</em> is per site which you can get from Solr. The <em>label</em> is translatable per site. Use !total_per_site in this label for number of results per site. Depending on the number, you will either get "1 result" or "x results" which are translatable. The <em>wrapper</em> can either be "fieldset" or "div".'),
       '#states' => array(
         'visible' => array(
           'input[name="ds_search_apachesolr_multisite_group"]' => array('checked' => TRUE),
