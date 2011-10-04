@@ -228,23 +228,11 @@ function ds_search_settings($form, $form_state) {
       '#default_value' => variable_get('ds_search_apachesolr_hide_current_filters'),
     );
 
-    $form['apachesolr_search']['ds_search_apachesolr_current_filters_default'] = array(
+    $form['apachesolr_search']['ds_search_apachesolr_multisite'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Retain filters by default'),
-      '#description' => t('Retain the previously used filters when performing a new search.'),
-      '#default_value' => variable_get('ds_search_apachesolr_current_filters_default', FALSE),
-      '#states' => array(
-        'visible' => array(
-          'input[name="ds_search_apachesolr_hide_current_filters"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
-
-    $form['apachesolr_search']['ds_search_apachesolr_use_url'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Use Apache Solr URL for linking'),
-      '#description' => t('Use this when searching in an index which is used by multiple sites so the content links to the right site.'),
-      '#default_value' => variable_get('ds_search_apachesolr_use_url'),
+      '#title' => t('Multisite support'),
+      '#description' => t('Enable this in case multiple sites share one index. Note that sometimes you need to make sure that your formatters are creating absolute paths for links or images.'),
+      '#default_value' => variable_get('ds_search_apachesolr_multisite'),
     );
   }
 

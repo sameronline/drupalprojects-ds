@@ -44,6 +44,7 @@
 - #1239658 by tjhellmann and swentel: remove double quote when using custom label el.
 - #1238710 by swentel: do not conflict with core overlay css.
 - #1237064 by swentel: do not conflict with revisioning module.
+- by swentel: Apache Solr multisite support.
 - by jyve: New minimal Field Template added.
 
 -------------------------------------------------------------------------------------
