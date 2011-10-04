@@ -314,6 +314,65 @@ function ds_search_search_page($results) {
     }
   }
 
+  // Apache Solr multisearch grouping.
+  if (variable_get('ds_search_apachesolr_multisite') && variable_get('ds_search_type', 'node') == 'apachesolr_search') {
+    $site_counter = array();
+    $conf_array = array();
+    $config = explode("\n", variable_get('ds_search_apachesolr_multisite_group_config'));
+    foreach ($config as $weight => $conf) {
+      $conf = trim($conf);
+      if (empty($conf)) {
+        continue;
+      }
+      $site_conf = explode('|', $conf);
+      $conf_array[$site_conf[0]] = array(
+        'label' => $site_conf[1],
+        'wrapper' => $site_conf[2],
+        'weight' => $weight,
+      );
+    }
+
+    // Iterate over results.
+    foreach ($build['search_results'] as $id => $result) {
+      if (!isset($build['search_results'][$result['#site_hash']])) {
+        $class = 'group-result group-result-' . strtr($result['#site_hash'], '_', '-');
+        $build['search_results'][$result['#site_hash']] = array(
+          '#type' => 'fieldset',
+          '#weight' => $conf_array[$result['#site_hash']]['weight'],
+          '#attributes' => array(
+            'class' => array($class),
+          ),
+        );
+
+        // Create site counter.
+        $site_counter[$result['#site_hash']] = array(
+          'counter' => 0,
+          'title' => $conf_array[$result['#site_hash']]['label'],
+          'type' => $conf_array[$result['#site_hash']]['wrapper'],
+          'class' => $class,
+        );
+      }
+
+      // Move result into other wrapper and unset previous. Also count for
+      // every site so we can populate @total_per_site later on.
+      $site_counter[$result['#site_hash']]['counter']++;
+      $build['search_results'][$result['#site_hash']][$id] = $result;
+      unset($build['search_results'][$id]);
+    }
+
+    // Site counter.
+    foreach ($site_counter as $hash => $values) {
+      $title = check_plain(t($values['title'], array('!total_per_site' => $values['counter'])));
+      if ($values['type'] == 'div') {
+        $build['search_results'][$hash]['#prefix'] = '<div class="' . $values['class'] . '">' . ((!empty($title)) ? '<h2>' . $title . '</h2>' : '');
+        $build['search_results'][$hash]['#suffix'] = '</div>';
+      }
+      else {
+        $build['search_results'][$hash]['#title'] = $title;
+      }
+    }
+  }
+
   return theme('ds_search_page', $build);
 }
 
@@ -580,9 +639,12 @@ function apachesolr_search_ds_search_execute($keys = NULL, $conditions = NULL) {
       // do cool stuff themselves.
       $node->uri['path'] = $node->search_as_url;
       $node->uri['options'] = array();
-      // Do not use the entity_id as the key so we don't overwrite results.
+      // Prefix with site hash so we don't override same id's.
       $markup = $item['fields']['tm_ds_search_result'][0];
-      $results[$item['fields']['id']] = array('#markup' => $markup);
+      $results[$item['fields']['id'] . '-' . $item['node']->entity_id] = array(
+      	'#markup' => $markup,
+        '#site_hash' => $item['fields']['hash'],
+      );
     }
     else {
       $results[$item['node']->entity_id] = $node;
