@@ -201,11 +201,23 @@ function ds_test_rel_build_info() {
   $rel_build->bundle = $build_id;
   $rel_build->rel_type = 'form';
   $rel_build->path = 'admin/config/systel/rel/manage/' . $build_id;
-  $rel_build->root_elements = array(
-    'name' => t('Label'),
-    'view_mode' => t('Machine name'),
-    'entities' => t('Entities'),
-    'submit' => t('Submit'),
+  $rel_build->elements = array(
+    'name' => array(
+      'handler' => 'rel',
+      'label' => t('Label'),
+    ),
+    'view_mode' => array(
+      'handler' => 'rel',
+      'label' => t('Machine name'),
+    ),
+    'entities' => array(
+      'handler' => 'rel',
+      'label' => t('Entities'),
+    ),
+    'submit' => array(
+      'handler' => 'rel',
+      'label' => t('Submit'),
+    ),
   );
   $builds[$build_id] = $rel_build;
   return $builds;
