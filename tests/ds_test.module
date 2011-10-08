@@ -200,7 +200,7 @@ function ds_test_rel_build_info() {
   $rel_build->entity_type = 'rel_build';
   $rel_build->bundle = $build_id;
   $rel_build->rel_type = 'form';
-  $rel_build->path = 'admin/config/systel/rel/manage/' . $build_id;
+  $rel_build->path = 'admin/structure/rel/manage/' . $build_id;
   $rel_build->elements = array(
     'name' => array(
       'handler' => 'rel',

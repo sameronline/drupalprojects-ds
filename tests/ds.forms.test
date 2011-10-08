@@ -25,7 +25,7 @@ class dsFormTests extends dsBaseTest {
 
     // Register the article form.
     $this->drupalGet('node/add/article');
-    $this->drupalGet('admin/config/system/rel/register/article_node_form', array('query' => array('destination' => 'node/add/article')));
+    $this->drupalGet('rel-register/article_node_form', array('query' => array('destination' => 'node/add/article')));
 
     // Create a node.
     $node = $this->drupalCreateNode(array('type' => 'article', 'promote' => FALSE));
@@ -86,7 +86,7 @@ class dsFormTests extends dsBaseTest {
         'footer' => '<td colspan="8">' . t('Footer') . '</td>',
       ),
     );
-    $this->dsSelectLayout($form, $form_assert, 'admin/config/system/rel/manage/ds_edit_view_mode_form');
+    $this->dsSelectLayout($form, $form_assert, 'admin/structure/rel/manage/ds_edit_view_mode_form');
 
     $fields = array(
       'fields[name][region]' => 'left',
@@ -94,7 +94,7 @@ class dsFormTests extends dsBaseTest {
       'fields[entities][region]' => 'right',
       'fields[submit][region]' => 'right',
     );
-    $this->dsConfigureUI($fields, 'admin/config/system/rel/manage/ds_edit_view_mode_form');
+    $this->dsConfigureUI($fields, 'admin/structure/rel/manage/ds_edit_view_mode_form');
 
     // Inspect the view mode form.
     $this->drupalGet('admin/structure/ds/view_modes/manage');
@@ -110,7 +110,7 @@ class dsFormTests extends dsBaseTest {
 
     // Use the onsite registration of forms functionality.
     $this->drupalGet('admin/structure/ds/fields/manage_custom');
-    $this->drupalGet('admin/config/system/rel/register/ds_edit_custom_field_form', array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
+    $this->drupalGet('rel-register/ds_edit_custom_field_form', array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
 
     $form = array(
       'additional_settings[layout]' => 'ds_form',
@@ -123,7 +123,7 @@ class dsFormTests extends dsBaseTest {
         'footer' => '<td colspan="8">' . t('Footer') . '</td>',
       ),
     );
-    $this->dsSelectLayout($form, $form_assert, 'admin/config/system/rel/manage/ds_edit_custom_field_form');
+    $this->dsSelectLayout($form, $form_assert, 'admin/structure/rel/manage/ds_edit_custom_field_form');
 
     $fields = array(
       'fields[name][region]' => 'left',
@@ -133,7 +133,7 @@ class dsFormTests extends dsBaseTest {
     	'fields[use_token][region]' => 'right',
       'fields[entities][region]' => 'right',
     );
-    $this->dsConfigureUI($fields, 'admin/config/system/rel/manage/ds_edit_custom_field_form');
+    $this->dsConfigureUI($fields, 'admin/structure/rel/manage/ds_edit_custom_field_form');
 
     // Inspect the code field form.
     $this->drupalGet('admin/structure/ds/fields/manage_custom');
@@ -153,9 +153,9 @@ class dsFormTests extends dsBaseTest {
     $layout_id = 'rel_build|ds_edit_custom_field_form|form';
     $record = db_query('SELECT id FROM {ds_layout_settings} WHERE  id = :id', array(':id' => $layout_id))->fetchField();
     $this->assertTrue($record, 'Layout found for DS');
-    $this->drupalGet('admin/config/system/rel/register/ds_edit_custom_field_form', array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
+    $this->drupalGet('rel-register/ds_edit_custom_field_form', array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
     $record = db_query('SELECT id FROM {ds_layout_settings} WHERE  id = :id', array(':id' => $layout_id))->fetchField();
-    $this->assertFalse($record, 'Layout removed for DS');
+    $this->assertTrue($record, 'Layout still exists for DS');
 
   }
 }
