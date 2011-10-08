@@ -17,7 +17,6 @@ function ds_test_install() {
   variable_set('ds_extras_fields_extra', TRUE);
   variable_set('ds_extras_fields_extra_list', "node|article|ds_extras_extra_test_field\nnode|article|ds_extras_second_field");
   variable_set('ds_extras_vd', TRUE);
-  variable_set('rel_build_form_registration', TRUE);
 }
 
 /**

@@ -6,18 +6,20 @@
  */
 
 /**
- * Implements ds_forms_menu().
+ * Implements hook_menu().
  */
 function ds_forms_menu() {
   $items = array();
 
-  $items['admin/structure/ds/forms'] = array(
-    'title' => 'Forms',
-    'description' => 'Displays a list of forms which can be styled.',
-    'page callback' => 'drupal_goto',
-    'page arguments' => array('admin/config/system/rel'),
-    'access arguments' => array('admin_display_suite'),
-  );
+  if (module_exists('rel')) {
+    $items['admin/structure/ds/forms'] = array(
+      'title' => 'Forms',
+      'description' => 'Displays a list of forms which can be styled.',
+      'page callback' => 'drupal_goto',
+      'page arguments' => array('admin/structure/rel'),
+      'access arguments' => array('admin_display_suite'),
+    );
+  }
 
   return $items;
 }

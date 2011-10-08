@@ -27,6 +27,9 @@ class dsFormTests extends dsBaseTest {
     $this->drupalGet('node/add/article');
     $this->drupalGet('rel-register/article_node_form', array('query' => array('destination' => 'node/add/article')));
 
+    // @todo once we can actually register which element to rip out, bring back additional_settings.
+    // into the test.
+
     // Create a node.
     $node = $this->drupalCreateNode(array('type' => 'article', 'promote' => FALSE));
 
@@ -50,7 +53,7 @@ class dsFormTests extends dsBaseTest {
       'fields[actions][region]' => 'right',
       'fields[field_image][region]' => 'right',
       'fields[field_tags][region]' => 'right',
-      'fields[additional_settings][region]' => 'footer',
+      'fields[log][region]' => 'footer',
     );
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/fields');
 
@@ -64,15 +67,15 @@ class dsFormTests extends dsBaseTest {
     $this->assertRaw('edit-title', 'Title field found');
     $this->assertRaw('edit-submit', 'Submit field found');
     $this->assertRaw('edit-field-tags-und', 'Tags field found');
-    $this->assertRaw('edit-revision-information', 'Additional settings found');
+    $this->assertRaw('edit-log', 'Revision log found');
 
-    // Hide the additional settings.
+    // Hide the log field.
     $fields = array(
-      'fields[additional_settings][region]' => 'hidden',
+      'fields[log][region]' => 'hidden',
     );
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/fields');
     $this->drupalGet('node/' . $node->nid . '/edit');
-    $this->assertNoRaw('edit-revision-information', 'Additional settings hidden');
+    $this->assertNoRaw('edit-log', 'Revision log hidden');
 
     // Test on a non entity form - view modes form is registered in ds_test.
     $form = array(
