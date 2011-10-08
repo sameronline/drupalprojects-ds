@@ -204,18 +204,22 @@ function ds_test_rel_build_info() {
     'name' => array(
       'handler' => 'rel',
       'label' => t('Label'),
+      'weight' => 1,
     ),
     'view_mode' => array(
       'handler' => 'rel',
       'label' => t('Machine name'),
+      'weight' => 2,
     ),
     'entities' => array(
       'handler' => 'rel',
       'label' => t('Entities'),
+      'weight' => 3,
     ),
     'submit' => array(
       'handler' => 'rel',
       'label' => t('Submit'),
+      'weight' => 4,
     ),
   );
   $builds[$build_id] = $rel_build;
