@@ -77,6 +77,12 @@ class dsFormTests extends dsBaseTest {
     $this->drupalGet('node/' . $node->nid . '/edit');
     $this->assertNoRaw('edit-log', 'Revision log hidden');
 
+    // Check layout configuration.
+    $layout_id = 'node|article|form';
+    $this->drupalGet('rel-register/article_node_form', array('query' => array('destination' => 'admin/structure/rel')));
+    $record = db_query('SELECT id FROM {ds_layout_settings} WHERE  id = :id', array(':id' => $layout_id))->fetchField();
+    $this->assertTrue($record, 'Layout is not gone for node form after unregistration.');
+
     // Test on a non entity form - view modes form is registered in ds_test.
     $form = array(
       'additional_settings[layout]' => 'ds_form',
@@ -111,7 +117,7 @@ class dsFormTests extends dsBaseTest {
     $this->assertRaw('edit-submit', 'Submit button found');
     $this->assertRaw('edit-entities', 'Entities checkboxes found');
 
-    // Use the onsite registration of forms functionality.
+    // Use the onsite registration of rel functionality.
     $this->drupalGet('admin/structure/ds/fields/manage_custom');
     $this->drupalGet('rel-register/ds_edit_custom_field_form', array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
 
@@ -158,7 +164,7 @@ class dsFormTests extends dsBaseTest {
     $this->assertTrue($record, 'Layout found for DS');
     $this->drupalGet('rel-register/ds_edit_custom_field_form', array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
     $record = db_query('SELECT id FROM {ds_layout_settings} WHERE  id = :id', array(':id' => $layout_id))->fetchField();
-    $this->assertTrue($record, 'Layout still exists for DS');
+    $this->assertFalse($record, 'Layout is gone for contact form');
 
   }
 }

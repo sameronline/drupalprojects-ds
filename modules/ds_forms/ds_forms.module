@@ -212,3 +212,15 @@ function ds_forms_render_region(&$content, $region, $layout) {
   }
   return $output;
 }
+
+/**
+ * Implements hook_rel_build_unregister().
+ */
+function ds_forms_rel_build_unregister($build) {
+  if ($build->entity_type == 'rel_build') {
+    $layout_id = $build->entity_type . '|' . $build->bundle . '|form';
+    db_delete('ds_layout_settings')
+      ->condition('id', $layout_id)
+      ->execute();
+  }
+}

@@ -87,18 +87,14 @@ function ds_switch_view_mode_inline() {
 /**
  * Menu callback: redirect to manage display.
  */
-function ds_extras_contextual_page_tab($object, $entity_type, $form = FALSE) {
+function ds_extras_contextual_page_tab($object, $entity_type) {
 
   switch ($entity_type) {
     case 'node':
       $bundle = $object->type;
-      if ($form) {
-        $view_mode = 'form';
-      }
-      else {
-        $view_mode = (!empty($object->ds_switch)) ? $object->ds_switch : 'full';
-      }
-      // Let's always go back to the node full anyway.
+      $view_mode = (!empty($object->ds_switch)) ? $object->ds_switch : 'full';
+
+      // Let's always go back to the node page.
       $destination = 'node/' . $object->nid;
       break;
     case 'user':
@@ -123,16 +119,11 @@ function ds_extras_contextual_page_tab($object, $entity_type, $form = FALSE) {
   $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
   $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
 
-  if (!$form) {
-    if (empty($layout) && !$overriden) {
-      $admin_path .= '/display';
-    }
-    else {
-      $admin_path .= '/display/' . $view_mode;
-    }
+  if (empty($layout) && !$overriden) {
+    $admin_path .= '/display';
   }
   else {
-    $admin_path .= '/fields';
+    $admin_path .= '/display/' . $view_mode;
   }
 
   drupal_goto($admin_path, array('query' => array('destination' => $destination)));
