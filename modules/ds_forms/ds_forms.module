@@ -97,7 +97,7 @@ function ds_forms_rel_build_unregister($build) {
 function ds_forms_form_alter(&$form, &$form_state, $form_id) {
 
   // Form layout.
-  if ($ds_form = rel_build_load($form_id)) {
+  if ($ds_form = ds_build_load($form, $form_id)) {
     if ($layout = ds_get_layout($ds_form->entity_type, $ds_form->bundle, 'form', FALSE)) {
 
       // Add the theming function and add the layout as a class.
@@ -123,10 +123,30 @@ function ds_forms_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
+ * Helper function to determine if this form can be loaded.
+ */
+function ds_build_load($form, $form_id) {
+  $ds_form = FALSE;
+
+  if (module_exists('rel')) {
+    $ds_form = rel_build_load($form_id);
+  }
+
+  if (!$ds_form && isset($form['#entity_type'])) {
+    $ds_form = new stdClass();
+    $ds_form->entity_type = $form['#entity_type'];
+    $ds_form->bundle = $form['#bundle'];
+    $ds_form->rel_type = 'form';
+  }
+
+  return $ds_form;
+}
+
+/**
  * Implements hook_preprocess_ds_forms_custom_form().
  */
 function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
-  $rel_build = rel_build_load($vars['form']['#form_id']);
+  $rel_build = ds_build_load($vars['form'], $vars['form']['#form_id']);
   $entity_type = $rel_build->entity_type;
   $bundle = $rel_build->bundle;
 

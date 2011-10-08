@@ -3,4 +3,3 @@ description = "Manage the layout of forms."
 core = "7.x"
 package = "Display suite"
 dependencies[] = ds
-dependencies[] = rel
