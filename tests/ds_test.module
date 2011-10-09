@@ -198,26 +198,27 @@ function ds_test_rel_build_info() {
   $rel_build->label = 'View mode';
   $rel_build->entity_type = 'rel_build';
   $rel_build->bundle = $build_id;
-  $rel_build->rel_type = 'form';
+  $rel_build->view_mode = 'form';
+  $rel_build->context = 'form';
   $rel_build->path = 'admin/structure/rel/manage/' . $build_id;
   $rel_build->elements = array(
     'name' => array(
-      'handler' => 'rel',
+      'owner' => 'rel',
       'label' => t('Label'),
       'weight' => 1,
     ),
     'view_mode' => array(
-      'handler' => 'rel',
+      'owner' => 'rel',
       'label' => t('Machine name'),
       'weight' => 2,
     ),
     'entities' => array(
-      'handler' => 'rel',
+      'owner' => 'rel',
       'label' => t('Entities'),
       'weight' => 3,
     ),
     'submit' => array(
-      'handler' => 'rel',
+      'owner' => 'rel',
       'label' => t('Submit'),
       'weight' => 4,
     ),
