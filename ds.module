@@ -295,6 +295,24 @@ function ds_views_api() {
 }
 
 /**
+ * Implements hook_node_type_update().
+ */
+function ds_node_type_update($info) {
+  if (!empty($info->old_type) && $info->old_type != $info->type) {
+    module_load_include('inc', 'ds', 'ds.registry');
+    _ds_entity_type_update('node', $info, 'update');
+  }
+}
+
+/**
+ * Implements hook_node_type_update().
+ */
+function ds_node_type_delete($info) {
+  module_load_include('inc', 'ds', 'ds.registry');
+  _ds_entity_type_update('node', $info, 'delete');
+}
+
+/**
  * Implements hook_theme_registry_alter().
  */
 function ds_theme_registry_alter(&$theme_registry) {

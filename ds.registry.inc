@@ -61,6 +61,64 @@ function _ds_features_api() {
 }
 
 /**
+ * Remove or rename layout & field settings on entity machine name update.
+ *
+ * @param $entity_type
+ *   The name of the entity type.
+ * @param $info
+ *   The entity info.
+ * @param $action
+ *   The action, either update or delete.
+ */
+function _ds_entity_type_update($entity_type, $info, $action) {
+
+  // Delete settings.
+  if ($action == 'delete') {
+    db_delete('ds_layout_settings')
+      ->condition('entity_type', $entity_type)
+      ->condition('bundle', $info->type)
+      ->execute();
+    db_delete('ds_field_settings')
+      ->condition('entity_type', $entity_type)
+      ->condition('bundle', $info->type)
+      ->execute();
+  }
+
+  // Update settings.
+  if ($action == 'update') {
+    $records = db_query('SELECT * FROM {ds_layout_settings} WHERE entity_type = :entity_type AND bundle = :bundle', array(':entity_type' => $entity_type, ':bundle' => $info->old_type));
+    foreach ($records as $record) {
+      $old_id = $entity_type . '|' . $info->old_type . '|' . $record->view_mode;
+      $new_id = $entity_type . '|' . $info->type . '|' . $record->view_mode;
+      db_update('ds_layout_settings')
+        ->fields(array(
+          'id' => $new_id,
+        	'bundle' => $info->type)
+        )
+        ->condition('id', $old_id)
+        ->execute();
+    }
+    $records = db_query('SELECT * FROM {ds_field_settings} WHERE entity_type = :entity_type AND bundle = :bundle', array(':entity_type' => $entity_type, ':bundle' => $info->old_type));
+    foreach ($records as $record) {
+      $old_id = $entity_type . '|' . $info->old_type . '|' . $record->view_mode;
+      $new_id = $entity_type . '|' . $info->type . '|' . $record->view_mode;
+      db_update('ds_field_settings')
+        ->fields(array(
+          'id' => $new_id,
+        	'bundle' => $info->type)
+        )
+        ->condition('id', $old_id)
+        ->execute();
+    }
+  }
+
+  // Clear cache.
+  cache_clear_all('ds_fields', 'cache');
+  cache_clear_all('ds_field_settings', 'cache');
+  field_info_cache_clear();
+}
+
+/**
  * Implements hook_theme_registry_alter().
  */
 function _ds_theme_registry_alter(&$theme_registry) {
