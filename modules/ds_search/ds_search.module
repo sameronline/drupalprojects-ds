@@ -315,7 +315,7 @@ function ds_search_search_page($results) {
   }
 
   // Apache Solr multisearch grouping.
-  if (variable_get('ds_search_apachesolr_multisite') && variable_get('ds_search_type', 'node') == 'apachesolr_search') {
+  if (variable_get('ds_search_apachesolr_multisite') && variable_get('ds_search_apachesolr_multisite_group') && variable_get('ds_search_type', 'node') == 'apachesolr_search') {
     $site_counter = array();
     $conf_array = array();
     $config = explode("\n", variable_get('ds_search_apachesolr_multisite_group_config'));
