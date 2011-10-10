@@ -93,7 +93,7 @@ function _ds_entity_type_update($entity_type, $info, $action) {
       db_update('ds_layout_settings')
         ->fields(array(
           'id' => $new_id,
-        	'bundle' => $info->type)
+          'bundle' => $info->type)
         )
         ->condition('id', $old_id)
         ->execute();
@@ -105,7 +105,7 @@ function _ds_entity_type_update($entity_type, $info, $action) {
       db_update('ds_field_settings')
         ->fields(array(
           'id' => $new_id,
-        	'bundle' => $info->type)
+          'bundle' => $info->type)
         )
         ->condition('id', $old_id)
         ->execute();
