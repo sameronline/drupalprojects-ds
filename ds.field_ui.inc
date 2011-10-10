@@ -1268,7 +1268,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     '#description' => t('Check this to have the page disable all sidebar regions displayed in the theme. Note that some themes support this setting better than others. If in doubt, try with stock themes to see.'),
     '#default_value' => isset($layout->settings['hide_sidebars']) ? $layout->settings['hide_sidebars'] : FALSE,
     '#access' => $view_mode != 'form',
-  	'#weight' => 3,
+    '#weight' => 3,
   );
 
   if (!empty($layout) && isset($layout->regions)) {

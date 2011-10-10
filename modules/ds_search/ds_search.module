@@ -642,7 +642,7 @@ function apachesolr_search_ds_search_execute($keys = NULL, $conditions = NULL) {
       // Prefix with site hash so we don't override same id's.
       $markup = $item['fields']['tm_ds_search_result'][0];
       $results[$item['fields']['id'] . '-' . $item['node']->entity_id] = array(
-      	'#markup' => $markup,
+       '#markup' => $markup,
         '#site_hash' => $item['fields']['hash'],
       );
     }

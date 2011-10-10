@@ -44,8 +44,8 @@ class dsFormTests extends dsBaseTest {
     $form_assert = array(
       'regions' => array(
         'header' => '<td colspan="8">' . t('Header') . '</td>',
-    		'left' => '<td colspan="8">' . t('Left') . '</td>',
-    		'right' => '<td colspan="8">' . t('Right') . '</td>',
+        'left' => '<td colspan="8">' . t('Left') . '</td>',
+        'right' => '<td colspan="8">' . t('Right') . '</td>',
         'footer' => '<td colspan="8">' . t('Footer') . '</td>',
       ),
     );
@@ -94,8 +94,8 @@ class dsFormTests extends dsBaseTest {
     $form_assert = array(
       'regions' => array(
         'header' => '<td colspan="8">' . t('Header') . '</td>',
-    		'left' => '<td colspan="8">' . t('Left') . '</td>',
-    		'right' => '<td colspan="8">' . t('Right') . '</td>',
+        'left' => '<td colspan="8">' . t('Left') . '</td>',
+        'right' => '<td colspan="8">' . t('Right') . '</td>',
         'footer' => '<td colspan="8">' . t('Footer') . '</td>',
       ),
     );
@@ -139,8 +139,8 @@ class dsFormTests extends dsBaseTest {
     $form_assert = array(
       'regions' => array(
         'header' => '<td colspan="8">' . t('Header') . '</td>',
-    		'left' => '<td colspan="8">' . t('Left') . '</td>',
-    		'right' => '<td colspan="8">' . t('Right') . '</td>',
+        'left' => '<td colspan="8">' . t('Left') . '</td>',
+        'right' => '<td colspan="8">' . t('Right') . '</td>',
         'footer' => '<td colspan="8">' . t('Footer') . '</td>',
       ),
     );
@@ -150,8 +150,8 @@ class dsFormTests extends dsBaseTest {
       'fields[name][region]' => 'left',
       'fields[field][region]' => 'left',
       'fields[submit][region]' => 'right',
-    	'fields[code][region]' => 'right',
-    	'fields[use_token][region]' => 'right',
+      'fields[code][region]' => 'right',
+      'fields[use_token][region]' => 'right',
       'fields[entities][region]' => 'right',
     );
     $this->dsConfigureUI($fields, 'admin/structure/rel/manage/ds_edit_custom_field_form');

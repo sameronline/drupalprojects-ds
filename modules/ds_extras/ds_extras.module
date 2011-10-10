@@ -331,7 +331,7 @@ function theme_ds_field_minimal($variables) {
   $config = $variables['ds-config'];
 
   // Add a simple wrapper.
-  $output .= '<div class="field field-name-'. strtr($variables['element']['#field_name'], '_', '-') .'">';
+  $output .= '<div class="field field-name-' . strtr($variables['element']['#field_name'], '_', '-') . '">';
 
   // Render the label.
   if (!$variables['label_hidden']) {
