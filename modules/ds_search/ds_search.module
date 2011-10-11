@@ -547,7 +547,6 @@ function ds_search_apachesolr_query_alter($query) {
   // Get the node from the index.
   $query->addParam('fl', 'tm_node');
 
-
   // Apache Solr multisite support.
   if (variable_get('ds_search_apachesolr_multisite') && variable_get('ds_search_type', 'node') == 'apachesolr_search') {
     // Site hash.
