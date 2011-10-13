@@ -553,6 +553,12 @@ function ds_search_apachesolr_query_alter($query) {
     $query->addParam('fl', 'hash');
     // Rendered search result.
     $query->addParam('fl', 'tm_ds_search_result');
+
+    // Make sure this site's search results are first.
+    if (variable_get('ds_search_apachesolr_multisite_boost')) {
+      $hash = apachesolr_site_hash();
+      $query->addParam('bq', 'hash:' . $hash .'^' . variable_get('ds_search_apachesolr_multisite_boost_nr', 100));
+    }
   }
 
   // Search per language.
@@ -617,6 +623,10 @@ function apachesolr_search_ds_search_execute($keys = NULL, $conditions = NULL) {
   // Make sure apachesolr_search_browse is not rendered.
   if (isset($find['apachesolr_search_browse'])) {
     unset($find['apachesolr_search_browse']);
+  }
+
+  if (empty($find)) {
+    return array();
   }
 
   foreach ($find as $item) {

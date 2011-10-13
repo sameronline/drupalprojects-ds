@@ -186,7 +186,6 @@ function ds_search_settings($form, $form_state) {
   $form['node'] = array(
     '#type' => 'fieldset',
     '#title' => t('Drupal core'),
-    '#description' => t('These settings are only applicable if the search engine is set to Node.'),
     '#states' => array(
       'visible' => array(
         'select[name="ds_search_type"]' => array('value' => 'node'),
@@ -206,7 +205,6 @@ function ds_search_settings($form, $form_state) {
     $form['apachesolr_search'] = array(
       '#type' => 'fieldset',
       '#title' => t('Apache Solr'),
-      '#description' => t('These settings are only applicable if the search engine is set to Apache Solr.'),
       '#states' => array(
         'visible' => array(
           'select[name="ds_search_type"]' => array('value' => 'apachesolr_search'),
@@ -233,6 +231,13 @@ function ds_search_settings($form, $form_state) {
       '#title' => t('Multisite support'),
       '#description' => t('Enable this in case multiple sites share one index. Note that sometimes you need to make sure that your formatters are creating absolute paths for links or images. Implementing hook_url_outbound_alter() is a good option in which you can set $options[\'absolute\'] to TRUE.'),
       '#default_value' => variable_get('ds_search_apachesolr_multisite'),
+    );
+
+    $form['apachesolr_search']['ds_search_apachesolr_multisite_boost'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Sort by site'),
+      '#description' => t('Enable this to rank the results of the current site first, than all the rest.'),
+      '#default_value' => variable_get('ds_search_apachesolr_multisite_boost'),
     );
 
     $form['apachesolr_search']['ds_search_apachesolr_multisite_group'] = array(
