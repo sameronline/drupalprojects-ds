@@ -93,7 +93,7 @@ function ds_forms_form_alter(&$form, &$form_state, $form_id) {
     if ($layout = ds_get_layout($ds_form->entity_type, $ds_form->bundle, 'form', FALSE)) {
 
       // Add the theming function and add the layout as a class.
-      $form['#theme'][] = 'ds_forms_custom_form';
+      $form['#theme'] = array('ds_forms_custom_form');
       $form['#attributes']['class'][] = strtr($layout['layout'], '_', '-');
 
       // Field group support. We need to attach and pre render immediately
@@ -102,13 +102,7 @@ function ds_forms_form_alter(&$form, &$form_state, $form_id) {
       if (module_exists('field_group') && $ds_form->entity_type == 'rel_build') {
         $form['#entity_type'] = $ds_form->entity_type;
         $form['#bundle'] = $ds_form->bundle;
-        field_group_attach_groups($form, 'form', $form_state);
-        $form = field_group_build_pre_render($form);
-        foreach ($form['#pre_render'] as $key => $function) {
-          if ($function == 'field_group_build_pre_render' || $function == '_field_extra_fields_pre_render') {
-            unset($form['#pre_render'][$key]);
-          }
-        }
+        // @todo this might go since this will be added in rel already.
       }
     }
   }
