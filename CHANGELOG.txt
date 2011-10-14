@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1309280 by swentel: fix clash with modules looking for #field index in form.
 - #1304714 by swentel: update or remove layout/field settings on content type actions.
 - #1302270 by swentel: clearer description of CTools cache plugin in DS extras.
 - #1294686 by attiks: Fix empty region to block error.

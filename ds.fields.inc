@@ -398,7 +398,7 @@ function ds_remove_fields_form($form, &$form_state, $field = '', $action = 'dele
   $custom_fields = ctools_export_crud_load_all('ds_fields');
   if (isset($custom_fields[$field])) {
     $field = $custom_fields[$field];
-    $form['#field'] = $field;
+    $form['#ds_field'] = $field;
     return confirm_form($form,
       t('Are you sure you want to ' . $action . ' %field?', array('%field' => $field->label)),
       'admin/structure/ds/fields',
@@ -432,7 +432,7 @@ function ds_revert_field_confirm_submit($form, &$form_state) {
  */
 function ds_remove_field_confirm_submit($form, &$form_state, $action = 'deleted') {
 
-  $field = $form['#field'];
+  $field = $form['#ds_field'];
 
   // Remove field.
   db_delete('ds_fields')
