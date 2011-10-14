@@ -29,7 +29,7 @@ class dsFormTests extends dsBaseTest {
       'elements[actions]' => TRUE,
       'elements[log]' => TRUE,
     );
-    $this->drupalPost('rel-register/article_node_form', $edit, t('Register build'), array('query' => array('destination' => 'node/add/article')));
+    $this->drupalPost('rel-register/article_node_form', $edit, t('Continue'), array('query' => array('destination' => 'node/add/article')));
 
     // @todo once we can actually register which element to rip out, bring back additional_settings.
     // into the test.
@@ -131,7 +131,7 @@ class dsFormTests extends dsBaseTest {
       'elements[code]' => TRUE,
       'elements[use_token]' => TRUE,
     );
-    $this->drupalPost('rel-register/ds_edit_custom_field_form', $edit, t('Register build'), array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
+    $this->drupalPost('rel-register/ds_edit_custom_field_form', $edit, t('Continue'), array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
 
     $form = array(
       'additional_settings[layout]' => 'ds_form',
