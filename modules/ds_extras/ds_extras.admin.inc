@@ -114,7 +114,7 @@ function ds_extras_settings($form) {
   $form['additional_settings']['fs4']['ds_extras_switch_view_mode'] = array(
     '#type' => 'checkbox',
     '#title' => t('View mode per node'),
-    '#description' => t('Change view modes for individual nodes. A new tab \'Display settings\' will appear on the content create form.'),
+    '#description' => t('Change view modes for individual nodes. A new tab \'Display settings\' will appear on the content create form.<br />You can also pass the name of a view mode through the URL, eg node/x?v=full.'),
     '#default_value' => variable_get('ds_extras_switch_view_mode', FALSE),
   );
 
