@@ -50,6 +50,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
   }
 
   function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
 
     $view_mode_options = array();
     $entity_type = $this->view->base_table;
