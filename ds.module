@@ -77,6 +77,7 @@ function ds_menu() {
     'page arguments' => array('ds_emergency'),
     'access arguments' => array('admin_display_suite'),
     'file' => 'ds.layout.inc',
+    'weight' => 100,
   );
 
   // Custom styles.
