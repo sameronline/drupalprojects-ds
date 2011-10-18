@@ -16,6 +16,10 @@ function ds_human_name($integer, $type) {
       DS_FIELD_TYPE_CODE => t('Code field'),
       DS_FIELD_TYPE_BLOCK => t('Block field'),
       DS_FIELD_TYPE_PREPROCESS => t('Preprocess field'),
+      DS_FIELD_TYPE_THEME => t('Theme field'),
+      DS_FIELD_TYPE_FUNCTION => t('Custom function'),
+      DS_FIELD_TYPE_IGNORE => t('Available in object content'),
+      DS_FIELD_TYPE_GROUP => t('Fieldgroup')
     ),
     'status' => array(
       DS_FIELD_STATUS_DEFAULT => t('Default'),

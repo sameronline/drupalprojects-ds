@@ -11,4 +11,5 @@
 - #1221036 by jstoller: fix notice due to function param change in features.
 - #1230038 by swentel: fix (public) xss exploit.
 - Hide the classes select box on views fields if there are no styles.
+- Add missing human names for field type constants
 - Multigroup support
