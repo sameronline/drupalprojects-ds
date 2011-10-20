@@ -394,6 +394,7 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
    * Instead of iterating over groups first, we iterate over active regions 
    * and build groups only when required.
    */
+  $count = 0;
   foreach ($object_display->active_regions as $region_name => $region_title) {
     $region_fields = array();
 
@@ -497,6 +498,7 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
         'fields' => $region_fields,
       );
     }
+    $count++;
   }
 
   /**
