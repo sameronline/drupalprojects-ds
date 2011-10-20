@@ -298,7 +298,7 @@ function ds_build_fields_and_regions(&$object, $module) {
               $object->preprocess_fields[$key] = array('type' => $field['type'], 'key' => $field['properties']['key']);
             }
             else {
-              $object->preprocess_fields[$key] = $field['type'];
+              $object->preprocess_fields[$key] = array('type' => $field['type']);
             }
             break;
           case DS_FIELD_TYPE_CODE:
@@ -410,7 +410,7 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
       // Process key_rendered fields from DS_FIELD_TYPE_PREPROCESS and 
       // DS_FIELD_TYPE_IGNORE.
       if (!empty($object->preprocess_fields)) {
-        if (in_array($key, $object->preprocess_fields)) {
+        if (array_key_exists($key, $object->preprocess_fields)) {
           if (is_array($object->preprocess_fields[$key])) {
             switch ($object->preprocess_fields[$key]['type']) {
               case DS_FIELD_TYPE_PREPROCESS:
