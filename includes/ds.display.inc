@@ -471,16 +471,16 @@ function ds_plugins_display_form(&$form, $display_settings) {
   if (!empty($plugins)) {
     $form['#plugins'] = TRUE;
     $form['#plugin_keys'] = array();
-  }
 
-  foreach ($plugins as $key => $data) {
-    if (isset($data['filename'])) {
-      require_once($data['filename']);
+    foreach ($plugins as $key => $data) {
+      if (isset($data['filename'])) {
+        require_once($data['filename']);
+      }
+      $class = $data['class'];
+      $plugin = new $class();
+      $plugin_form = $plugin->plugin_form($form, $display_settings);
+      $form['#plugin_keys'][$key] = $data['title'];
     }
-    $class = $data['class'];
-    $plugin = new $class();
-    $plugin_form = $plugin->plugin_form($form, $display_settings);
-    $form['#plugin_keys'][$key] = $data['title'];
   }
 }
 
