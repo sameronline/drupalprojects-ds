@@ -452,24 +452,27 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
 
       // Support for tabs. We need to create an additional field and unset
       // the existing group field.
-      if ($object->ds_fields[$key]['theme'] == 'ds_tabs') {
+      if (!empty($object->ds_fields[$key]['theme'])) {
+        if ($object->ds_fields[$key]['theme'] == 'ds_tabs') {
 
-        unset($object['regions'][$region_name][$key]); //@todo - doesnt look necessary at this point
+          unset($object['regions'][$region_name][$key]); //@todo - doesnt look necessary at this point
 
-        $object_display->active_regions[$region_name]['tab_'. $region_name] = $object->ds_fields[$key]['weight'];
+          $object_display->active_regions[$region_name]['tab_'. $region_name] = $object->ds_fields[$key]['weight'];
 
-        $region_fields['tab_'. $region_name] = array(
-          'tab' => TRUE,
-          'name' => $region_name,
-          'fields' => array(
-            $object->ds_fields[$key]['weight'] => $object->ds_fields[$key],
-          ) 
-        );
-        $region_fields['tab_'. $region_name]['fields'][$object->ds_fields[$key]['weight']]['content'] = $object->ds_fields[$key]['rendered'];
+          $region_fields['tab_'. $region_name] = array(
+            'tab' => TRUE,
+            'name' => $region_name,
+            'fields' => array(
+              $object->ds_fields[$key]['weight'] => $object->ds_fields[$key],
+            ) 
+          );
+          $region_fields['tab_'. $region_name]['fields'][$object->ds_fields[$key]['weight']]['content'] = $object->ds_fields[$key]['rendered'];
 
-        unset($object->ds_fields[$key]);
-        unset($region_fields[$key]);
+          unset($object->ds_fields[$key]);
+          unset($region_fields[$key]);
+        }
       }
+
     }
 
     // Store content from a region and add classes if necessary.
