@@ -513,7 +513,9 @@ function ds_display_overview_form_submit($form, &$form_state) {
       $display_settings[$build_mode]['fields'][$key]['region'] = $region;
       $display_settings[$build_mode]['fields'][$key]['weight'] = $form_state['values'][$key]['ds_weight'];
       $display_settings[$build_mode]['fields'][$key]['format'] = $form_state['values'][$key][$build_mode]['format'];
-      $display_settings[$build_mode]['fields'][$key]['subgroup_format'] = $form_state['values'][$key][$build_mode]['subgroup_format'];
+      if (!empty($form_state['values'][$key][$build_mode]['subgroup_format'])){
+        $display_settings[$build_mode]['fields'][$key]['subgroup_format'] = $form_state['values'][$key][$build_mode]['subgroup_format'];
+      }
       $class = implode(' ', $form_state['values'][$key][$build_mode]['css-class']);
       $display_settings[$build_mode]['fields'][$key]['css-class'] = $class;
 
