@@ -115,6 +115,9 @@ function ds_features_revert($module = NULL) {
         foreach ($setting as $build_mode => $conf) {
 
           // Remove old settings.
+          db_query("DELETE FROM {ds_settings} WHERE build_mode = '%s' AND module = '%s' AND type = '%s'", $build_mode, $ds_module, $object_type);
+
+          // Catch situations where the feature name has crept into the table
           db_query("DELETE FROM {ds_settings} WHERE build_mode = '%s' AND module = '%s' AND type = '%s'", $build_mode, $module, $object_type);
 
           // Iterate over fields and ditch those which are hidden.
@@ -127,7 +130,7 @@ function ds_features_revert($module = NULL) {
 
           // Save new settings.
           $record = new stdClass();
-          $record->module = $module;
+          $record->module = $ds_module;
           $record->type = $object_type;
           $record->build_mode = $build_mode;
           $record->settings = serialize($conf);
