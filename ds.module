@@ -456,7 +456,7 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
       if (!empty($object->ds_fields[$key]['theme'])) {
         if ($object->ds_fields[$key]['theme'] == 'ds_tabs') {
 
-          unset($object['regions'][$region_name][$key]); //@todo - doesnt look necessary at this point
+          //unset($object['regions'][$region_name][$key]); //@todo - doesnt look necessary at this point
 
           $object_display->active_regions[$region_name]['tab_'. $region_name] = $object->ds_fields[$key]['weight'];
 
