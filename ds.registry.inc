@@ -331,6 +331,9 @@ function _ds_ds_layout_info() {
           'label' => $layout['title'],
           'path' => $layout['path'],
           'module' => 'panels',
+          // We need the Panels plugin info array to correctly include the
+          // layout and its CSS files later on.
+          'panels' => $layout,
           'flexible' => FALSE,
           'regions' => $layout['regions'],
         );

@@ -753,9 +753,11 @@ function ds_field_attach_view_alter(&$build, $context) {
     $loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'] = TRUE;
     // Add css file.
     if (isset($layout['module']) && $layout['module'] == 'panels') {
-      $layout['layout'] = str_replace('panels-', '', $layout['layout']);
+      $build['#attached']['css'][] = $layout['path'] . '/' . $layout['panels']['css'];
     }
-    $build['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
+    else {
+      $build['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
+    }
   }
 }
 
@@ -812,8 +814,7 @@ function ds_entity_variables(&$vars) {
     if (!empty($layout['flexible'])) {
       ctools_include('plugins', 'panels');
       $vars['css_id'] = $vars['settings'] = $vars['display'] =  $vars['renderer'] = '';
-      $panels_layout = str_replace('panels-', '', $layout['layout']);
-      $vars['layout'] = panels_get_layout($panels_layout);
+      $vars['layout'] = panels_get_layout($layout['panels']['name']);
       $vars['theme_hook_suggestion'] = 'panels_flexible';
     }
     else {
@@ -823,9 +824,9 @@ function ds_entity_variables(&$vars) {
       }
       $vars['classes_array'][] = 'view-mode-' . $vars['elements']['#view_mode'];
 
-      // In case this is a panels layout, do a string replace.
+      // In case this is a panels layout, use panels info array.
       if (isset($layout['module']) && $layout['module'] == 'panels') {
-        $layout['layout'] = str_replace('-', '_', $layout['layout']);
+        $layout['layout'] = $layout['panels']['theme'];
       }
 
       $vars['theme_hook_suggestions'][] = $layout['layout'];
