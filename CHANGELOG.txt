@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1316344 by jherencia: Impossible to render a user using panels layout.
 - #1315768 by dixon_: Panels layouts are handled the wrong way.
 - #1313228 by swentel: database column to small for vd label (seriously).
 - #1305092 by swentel: add relationship to ds row plugin.

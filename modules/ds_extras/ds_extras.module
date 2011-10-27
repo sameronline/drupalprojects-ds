@@ -854,7 +854,8 @@ function ds_extras_render_panel_layout(&$vars) {
     $entity_type = $vars['elements']['#entity_type'];
     $bundle = $vars['elements']['#bundle'];
     $view_mode = $vars['elements']['#view_mode'];
-    $entity = $vars[$vars['elements']['#entity_type']];
+    $element = ($entity_type == 'user') ? '#account' : '#' . $entity_type;
+    $entity = $vars['elements'][$element];
     ctools_include('plugins', 'panels');
 
     $contexts = array();
