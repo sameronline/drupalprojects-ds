@@ -34,6 +34,11 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
     _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, $form, $form_state);
   }
 
+  // Special validate function for field group.
+  if (isset($form_state['no_field_group'])) {
+    array_unshift($form['#validate'], '_ds_field_group_field_ui_fix_notices');
+  }
+
   // Attach js.
   $form['#attached']['js'][] = drupal_get_path('module', 'ds') . '/js/ds.js';
 
@@ -166,6 +171,12 @@ function ds_field_ui_regions($form, $form_state) {
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form['#view_mode'];
+
+  // Ignore fieldgroup options.
+  if (isset($form_state['no_field_group'])) {
+    unset($form['fields']['_add_new_group']);
+    $form['additional_settings']['field_group']['#access'] = FALSE;
+  }
 
   // Check layout.
   $layout = isset($form['#ds_layout']) ? $form['#ds_layout'] : FALSE;
@@ -1130,6 +1141,17 @@ function ds_ajax_add_field($js, $field_type) {
   drupal_add_http_header('Content-Type', 'application/json');
   print ajax_render($output);
   exit;
+}
+
+/**
+ * Add fake field group value in.
+ */
+function _ds_field_group_field_ui_fix_notices($form, &$form_state) {
+  $field_group = array(
+    'group_name' => '',
+    'label' => '',
+  );
+  $form_state['values']['fields']['_add_new_group'] = $field_group;
 }
 
 /**
