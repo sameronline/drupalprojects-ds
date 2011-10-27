@@ -75,7 +75,7 @@ class dsPanelViewModesTests extends dsBaseTest {
    *   The name of the view mode.
    */
   function DSPanelCloneLayout($edit, $view_mode) {
-    $this->drupalPost('admin/structure/types/manage/article/display/' . $view_mode, $edit, t('Clone'));
+    $this->drupalPost('admin/structure/types/manage/article/display/' . $view_mode, $edit, t('Clone layout'));
     $this->assertText(t('The layout has been cloned.'));
   }
 

@@ -1360,7 +1360,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
         );
         $form['additional_settings']['ds_clone']['clone_submit'] = array(
           '#type' => 'submit',
-          '#value' => t('Clone'),
+          '#value' => t('Clone layout'),
           '#submit' => array('ds_field_ui_layout_clone'),
           '#weight' => 21,
         );

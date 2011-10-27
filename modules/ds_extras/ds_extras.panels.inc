@@ -267,7 +267,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
       );
       $form['clone_submit'] = array(
         '#type' => 'submit',
-        '#value' => t('Clone'),
+        '#value' => t('Clone layout'),
         '#submit' => array('ds_panels_layout_clone'),
       );
     }
