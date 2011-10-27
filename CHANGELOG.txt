@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.4 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1313228 by swentel: database column to small for vd label (seriously).
 - #1305092 by swentel: add relationship to ds row plugin.
 - #1310930 by swentel: Switch view mode through $_GET argument.
 - #1309280 by swentel: fix clash with modules looking for #field index in form.
@@ -25,7 +26,7 @@
 - #1270634 by swentel: check on #view_mode index in contextual links.
 - #1269004 by adf1969 and swentel: use $base_root for subdir installs in ds_source.
 - #1259454 by swentel: add more help text for a preprocess field.
-- #1266400 by pfrenssen: Provide a default setting for the 'Retain filters' checkbox 
+- #1266400 by pfrenssen: Provide a default setting for the 'Retain filters' checkbox
                          if this is hidden in solr search.
 - #1264508 by pfrenssen: Browser freezes on empty search and highlighting enabled.
 - #1263438 by pfrenssen: Apache Solr filter conditions need to be updated.
@@ -40,7 +41,7 @@
 - #1251330 by swentel: set title on revision view mode.
 - #1239436 by swentel: fix PDO exceptions on rare occasions.
 - #1252792 by swentel: Menu titles should be in hook_menu().
-- #1250862 by pfrenssen: Call to undefined method SolrBaseQuery::add_filter(). 
+- #1250862 by pfrenssen: Call to undefined method SolrBaseQuery::add_filter().
 - #1244896 by Jax: Fix reference error in layout revert form.
 - #1242058 by swentel: fivestar is no longer available on the content type.
 - #1241936 by swentel: add missing tests.
@@ -60,7 +61,7 @@
 - #1194252 by swentel and zuuperman: hide colons on labels for reset and expert.
 - #1193114 by swentel: make sure features don't list Display suite x times.
 - #1192744 by swentel and mrfelton: load comments on nodes on views listings.
-- #1214238 by dylon: fix type in ds.field_ui.inc. 
+- #1214238 by dylon: fix type in ds.field_ui.inc.
 - #1207718 by BTMash: fix white page and facet api.
 - #1218464 by muka: Better regular expression for finding themes.
 - #1218636 by swentel: fix issue in ds-build to create tpl files with hyphens.
@@ -105,7 +106,7 @@
 7.x-1.1 09/05/2011
 -------------------------------------------------------------------------------------
 - #1150536 by swentel: fix apachesolr changes in DS search.
-- #1053912 by swentel and jyve: change field labels, classes and wrappers per mode. 
+- #1053912 by swentel and jyve: change field labels, classes and wrappers per mode.
 - #1142572 by swentel: add ability to hide the page title on full node view.
 - #1132682 by swentel: add hook_ds_layout_info_alter().
 - #1129208 by swentel: support for Fivestar in Extras module.
