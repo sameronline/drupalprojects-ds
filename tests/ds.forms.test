@@ -27,12 +27,9 @@ class dsFormTests extends dsBaseTest {
     $this->drupalGet('node/add/article');
     $edit = array(
       'elements[actions]' => TRUE,
-      'elements[log]' => TRUE,
+      'elements[additional_settings]' => TRUE,
     );
-    $this->drupalPost('rel-register/article_node_form', $edit, t('Continue'), array('query' => array('destination' => 'node/add/article')));
-
-    // @todo once we can actually register which element to rip out, bring back additional_settings.
-    // into the test.
+    $this->drupalPost('rel-register/nojs/article_node_form', $edit, t('Save'), array('query' => array('destination' => 'node/add/article')));
 
     // Create a node.
     $node = $this->drupalCreateNode(array('type' => 'article', 'promote' => FALSE));
@@ -54,10 +51,11 @@ class dsFormTests extends dsBaseTest {
     $fields = array(
       'fields[title][region]' => 'header',
       'fields[body][region]' => 'left',
+      'fields[additional_settings][region]' => 'left',
       'fields[actions][region]' => 'right',
       'fields[field_image][region]' => 'right',
       'fields[field_tags][region]' => 'right',
-      'fields[log][region]' => 'footer',
+      'fields[additional_settings][region]' => 'footer',
     );
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/fields');
 
@@ -73,9 +71,9 @@ class dsFormTests extends dsBaseTest {
     $this->assertRaw('edit-field-tags-und', 'Tags field found');
     $this->assertRaw('edit-log', 'Revision log found');
 
-    // Hide the log field.
+    // Hide the additional settings field.
     $fields = array(
-      'fields[log][region]' => 'hidden',
+      'fields[additional_settings][region]' => 'hidden',
     );
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/fields');
     $this->drupalGet('node/' . $node->nid . '/edit');
@@ -83,7 +81,7 @@ class dsFormTests extends dsBaseTest {
 
     // Check layout configuration.
     $layout_id = 'node|article|form';
-    $this->drupalPost('rel-unregister/article_node_form', array(), t('Confirm'), array('query' => array('destination' => 'admin/structure/rel')));
+    $this->drupalPost('rel-unregister/nojs/article_node_form', array(), t('Confirm'), array('query' => array('destination' => 'admin/structure/rel')));
     $record = db_query('SELECT id FROM {ds_layout_settings} WHERE  id = :id', array(':id' => $layout_id))->fetchField();
     $this->assertTrue($record, 'Layout is not gone for node form after unregistration.');
 
@@ -131,7 +129,7 @@ class dsFormTests extends dsBaseTest {
       'elements[code]' => TRUE,
       'elements[use_token]' => TRUE,
     );
-    $this->drupalPost('rel-register/ds_edit_custom_field_form', $edit, t('Continue'), array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
+    $this->drupalPost('rel-register/nojs/ds_edit_custom_field_form', $edit, t('Save'), array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
 
     $form = array(
       'additional_settings[layout]' => 'ds_form',
@@ -174,7 +172,7 @@ class dsFormTests extends dsBaseTest {
     $layout_id = 'rel_build|ds_edit_custom_field_form|form';
     $record = db_query('SELECT id FROM {ds_layout_settings} WHERE  id = :id', array(':id' => $layout_id))->fetchField();
     $this->assertTrue($record, 'Layout found for DS');
-    $this->drupalPost('rel-unregister/ds_edit_custom_field_form', array(), t('Confirm'), array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
+    $this->drupalPost('rel-unregister/nojs/ds_edit_custom_field_form', array(), t('Confirm'), array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
     $record = db_query('SELECT id FROM {ds_layout_settings} WHERE  id = :id', array(':id' => $layout_id))->fetchField();
     $this->assertFalse($record, 'Layout is gone for contact form');
 
