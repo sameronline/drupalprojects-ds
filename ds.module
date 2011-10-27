@@ -72,7 +72,7 @@ function ds_menu() {
   // Emergency page
   $items['admin/structure/ds/emergency'] = array(
     'title' => 'Emergency',
-    'description' => 'Temporarily disable adding custom fields.',
+    'description' => 'In case you have errors via Display suite, visit this page.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_emergency'),
     'access arguments' => array('admin_display_suite'),
