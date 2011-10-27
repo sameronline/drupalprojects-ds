@@ -378,7 +378,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
     );
   }
   else {
-    $form['ds_panels_layout']['sticky'] = array('#value' => FALSE);
+    $form['ds_panels_layout']['sticky'] = array('#type' => 'value', '#value' => FALSE);
   }
 
   $form['ds_panels_layout']['hide_sidebars'] = array(
