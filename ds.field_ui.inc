@@ -836,8 +836,10 @@ function ds_ds_field_settings_form($field) {
         $action = 'add';
         $args = '';
         $conf = array();
+        $query = array('query' => array('selection' => 1));
         $title = t('Select content');
         if (isset($settings[$key])) {
+          $query = array();
           $ctools = unserialize($settings['ctools']);
           $type = $ctools['type'];
           $subtype = $ctools['subtype'];
@@ -847,7 +849,7 @@ function ds_ds_field_settings_form($field) {
           $title = t('Edit content');
         }
         $form['select'] = array(
-          '#markup' => l($title, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field['entity_type'] . '/' . $field['name'] . $args, array('attributes' => array('class' => 'ctools-use-modal'))),
+          '#markup' => '<div class="select-content-link">' . l($title, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field['entity_type'] . '/' . $field['name'] . $args, array('attributes' => array('class' => array('ctools-use-modal'), $query))) . '</div>',
           '#weight' => -10,
         );
         $form['load_terms'] = array(
@@ -907,6 +909,7 @@ function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '',
   }
 
   $url = 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $entity_type . '/' . $field_name;
+  $base_url = $url;
   if (!empty($type_name) && !empty($subtype_name)) {
     $url .= '/' . $type_name . '/' . $subtype_name . '/%step';
   }
@@ -930,8 +933,7 @@ function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '',
   // Call the content form.
   $output = ctools_content_form($action, $form_info, $form_state, $content_type, $subtype_name, $subtype, $conf, $step);
 
-  // Dismiss the modal.
-  if (!empty($form_state['complete'])) {
+  if (!empty($form_state['complete']) || isset($_GET['dismiss'])) {
     $configuration = array(
       'conf' => $form_state['conf'],
       'type' => $type_name,
@@ -939,11 +941,20 @@ function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '',
     );
     $commands[] = ctools_modal_command_dismiss();
     $commands[] = ajax_command_invoke('input[name="fields[' . $field_name . '][settings_edit_form][settings][ctools]"]', 'dsCtoolsContentConfiguration', array(serialize($configuration)));
+    $commands[] = ajax_command_invoke('.select-content-link', 'dsCtoolsContentUpdate', array(serialize($configuration)));
     ctools_object_cache_clear($field_name, $field_name);
   }
-  elseif ($output === FALSE || !empty($form_state['cancel'])) {
+  // Content selection
+  else if (!empty($form_state['cancel']) || isset($_GET['selection'])) {
+    ctools_object_cache_clear($field_name, $field_name);
     $commands[] = ds_ctools_content_select($contexts, $field_name, $action, $entity_type);
   }
+  // No configuration anymore.
+  elseif ($output === FALSE && !isset($_GET['dismiss'])) {
+    $output = t('No further configuration exists for this content type.<br/><br/><a href="!close_modal" class="use-ajax">Click here to close the modal and save the settings.</a><br/><br/><a href="!new_content" class="use-ajax">Click here to select new content</a>.', array('!new_content' => url($base_url, array('query' => array('selection' => TRUE))), '!close_modal' => url($url, array('query' => array('dismiss' => 1)))));
+    $commands[] = ctools_modal_command_display(t('Edit content'), $output);
+  }
+  // Form render.
   else {
     $commands = ctools_modal_form_render($form_state, $output);
   }
@@ -1253,7 +1264,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   $form['additional_settings']['ds_layouts']['layout'] = array(
     '#type' => 'select',
     '#title' => t('Select a layout'),
-    '#description' => !isset($layout->layout) ? t('Hit the save button at the bottom to save the layout.') : '',
     '#options' => $layout_options,
     '#default_value' => isset($layout->layout) ? $layout->layout : '',
     '#weight' => -1,
