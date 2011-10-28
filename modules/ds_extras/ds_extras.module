@@ -625,7 +625,6 @@ function ds_extras_block_view($delta = '') {
   }
 }
 
-
 /**
  * Implements hook_ds_layout_region_alter().
  */
