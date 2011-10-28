@@ -180,6 +180,7 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
   $fs_hooks = array(
     'ds_field_settings_alter',
     'form_ds_styles_form_alter',
+    'form_field_ui_field_edit_form_alter',
     'theme',
   );
   if (!variable_get('ds_extras_field_template', FALSE) && in_array($hook, $fs_hooks)) {

@@ -238,6 +238,22 @@ function ds_extras_ds_field_theme_functions_info() {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
+function ds_extras_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) {
+  $theme_functions = module_invoke_all('ds_field_theme_functions_info');
+  unset($theme_functions['theme_ds_field_expert']);
+  $form['instance']['ds_extras_field_template'] = array(
+    '#type' => 'select',
+    '#title' => t('Field Template'),
+    '#default_value' => isset($form['#instance']['ds_extras_field_template']) ? $form['#instance']['ds_extras_field_template'] : '',
+    '#options' => $theme_functions,
+    '#description' => t('Choose the default HTML for this field.'),
+    '#empty_option' => t('Use sitewide default'),
+  );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
 function ds_extras_form_ds_styles_form_alter(&$form, &$form_state) {
   $form['ds_styles_fields'] = array(
     '#type' => 'textarea',
@@ -263,10 +279,12 @@ function ds_preprocess_field(&$variables) {
     $field_settings[$variables['element']['#entity_type']][$variables['element']['#bundle']][$variables['element']['#view_mode']] = ds_get_field_settings($variables['element']['#entity_type'], $variables['element']['#bundle'], $variables['element']['#view_mode']);
   }
 
-  // Get the field name.
+  // Get the field name and field instance info - if available.
   $field_name = $variables['element']['#field_name'];
+  $field_instance_info = field_info_instance($variables['element']['#entity_type'], $field_name, $variables['element']['#bundle']);
 
   // Check if this field has custom output settings.
+  $variables['ds-config'] = array();
   if (isset($field_settings[$variables['element']['#entity_type']][$variables['element']['#bundle']][$variables['element']['#view_mode']][$field_name]['ft'])) {
     $config = $field_settings[$variables['element']['#entity_type']][$variables['element']['#bundle']][$variables['element']['#view_mode']][$field_name]['ft'];
     $variables['ds-config'] = $config;
@@ -284,17 +302,46 @@ function ds_preprocess_field(&$variables) {
     }
   }
 
-  // Determine the field function. In case it's something different
+  // Determine the field template. In case it's something different
   // than theme_field, we'll add that function as a suggestion.
-  if (isset($config['func'])) {
+  if (isset($config['func']) && $config['func'] != 'theme_field') {
     $variables['ds-config'] = $config;
+    // Either it uses the function.
     $variables['theme_hook_suggestions'][] = $config['func'];
+    // Or the template file(s).
+    $suggestion = 'field__' . str_replace('theme_ds_field_', '', $config['func']);
+    $variables['theme_hook_suggestions'] = array();
+    $variables['theme_hook_suggestions'][] = $suggestion;
+    $variables['theme_hook_suggestions'][] = $suggestion . '__' . $field_name;
+    $variables['theme_hook_suggestions'][] = $suggestion . '__' . $variables['element']['#bundle'];
+    $variables['theme_hook_suggestions'][] = $suggestion . '__' . $field_name . '__' . $variables['element']['#bundle'];
   }
+  // Check if we have a default field template on instance level.
+  elseif (isset($field_instance_info['ds_extras_field_template']) && !empty($field_instance_info['ds_extras_field_template']) && $field_instance_info['ds_extras_field_template'] != 'theme_field') {
+    // Either it uses the function.
+    $variables['theme_hook_suggestions'][] = $field_instance_info['ds_extras_field_template'];
+    // Or the template file(s).
+    $suggestion = 'field__' . str_replace('theme_ds_field_', '', $field_instance_info['ds_extras_field_template']);
+    $variables['theme_hook_suggestions'] = array();
+    $variables['theme_hook_suggestions'][] = $suggestion;
+    $variables['theme_hook_suggestions'][] = $suggestion . '__' . $field_name;
+    $variables['theme_hook_suggestions'][] = $suggestion . '__' . $variables['element']['#bundle'];
+    $variables['theme_hook_suggestions'][] = $suggestion . '__' . $field_name . '__' . $variables['element']['#bundle'];
+  }
+  // Default theming function.
   else {
     $field_theme_function = variable_get('ft-default', 'theme_field');
     if ($field_theme_function != 'theme_field') {
       $variables['ds-config'] = $config;
+      // Either it uses the function.
       $variables['theme_hook_suggestions'][] = $field_theme_function;
+      // Or the template file(s).
+      $suggestion = 'field__' . str_replace('theme_ds_field_', '', $field_theme_function);
+      $variables['theme_hook_suggestions'] = array();
+      $variables['theme_hook_suggestions'][] = $suggestion;
+      $variables['theme_hook_suggestions'][] = $suggestion . '__' . $field_name;
+      $variables['theme_hook_suggestions'][] = $suggestion . '__' . $variables['element']['#bundle'];
+      $variables['theme_hook_suggestions'][] = $suggestion . '__' . $field_name . '__' . $variables['element']['#bundle'];
     }
   }
 }

@@ -309,11 +309,13 @@ function hook_ds_fields_ui_alter(&$fields, $context) {
  * The theme function gets $variables as the only parameter.
  * The optional configuration through the UI is in $variables['ds-config'].
  *
+ * Note that 'theme_ds_field_' is always needed, so the suggestions can work.
+ *
  * @return $field_theme_functions
  *   A collection of field theming functions.
  */
 function hook_ds_field_theme_functions_info() {
-  return array('theme_field' => t('Theme field'));
+  return array('theme_ds_field_mine' => t('Theme field'));
 }
 
 /**
