@@ -536,6 +536,7 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
 
   $fields = $form_state['values']['fields'];
   $default_field_function = variable_get('ft-default', 'theme_field');
+
   $wrappers = array(
     'ow' => t('Wrapper'),
     'fis' => t('Field items'),
