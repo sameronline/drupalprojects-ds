@@ -223,6 +223,7 @@ function ds_test_rel_build_info() {
       'weight' => 4,
     ),
   );
+  $rel_build->duplicate = array();
   $builds[$build_id] = $rel_build;
   return $builds;
 }
