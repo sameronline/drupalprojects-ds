@@ -189,5 +189,7 @@ function ds_extras_update_7005() {
     ->condition('name', 'ds_extras')
     ->execute();
 
-  db_change_field('ds_vd', 'label', 'label', array('description' => 'The label for the views display.', 'type' => 'varchar', 'length' => 132, 'not null' => TRUE, 'default' => ''));
+  if (db_table_exists('ds_vd')) {
+    db_change_field('ds_vd', 'label', 'label', array('description' => 'The label for the views display.', 'type' => 'varchar', 'length' => 132, 'not null' => TRUE, 'default' => ''));
+  }
 }
