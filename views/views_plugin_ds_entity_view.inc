@@ -350,35 +350,39 @@ function ds_views_row_render_node($entity, $view_mode, $load_comments) {
  */
 function ds_views_row_render_comment($entity, $view_mode, $load_comments) {
   $node = node_load($entity->nid);
-  return drupal_render(comment_view($entity, $node, $view_mode));
+  $element = comment_view($entity, $node, $view_mode);
+  return drupal_render($element);
 }
 
 /**
  * Render the user through the entity plugin.
  */
 function ds_views_row_render_users($entity, $view_mode, $load_comments) {
-  return drupal_render(user_view($entity, $view_mode));
+  $element = user_view($entity, $view_mode);
+  return drupal_render($element);
 }
 
 /**
  * Render the taxonomy term through the entity plugin.
  */
 function ds_views_row_render_taxonomy_term_data($entity, $view_mode, $load_comments) {
-  $el = taxonomy_term_view($entity, $view_mode);
-  return drupal_render($el);
+  $element = taxonomy_term_view($entity, $view_mode);
+  return drupal_render($element);
 }
 
 /**
  * Render the file through the entity plugin.
  */
 function ds_views_row_render_file_managed($entity, $view_mode, $load_comments) {
-  return drupal_render(file_view($entity, $view_mode));
+  $element = file_view($entity, $view_mode);
+  return drupal_render($element);
 }
 
 /**
  * Render the micro through the entity plugin.
  */
 function ds_views_row_render_micro($entity, $view_mode, $load_comments) {
-  return drupal_render(micro_view($entity, $view_mode));
+  $element = micro_view($entity, $view_mode);
+  return drupal_render($element);
 }
 
