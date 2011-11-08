@@ -767,29 +767,29 @@ function ds_get_content($item, $content_vars = array(), $vars_key = NULL) {
     return FALSE;
   }
 
-  // Set custom key for vars, or use default
-  if (!empty($content_vars)) {
-    if (!empty($vars_key)) {
-      $key = $vars_key;
-    }
-    else {
-      $key = $item['key'] .'_rendered';
-    }
-  }
-
   // If content has been prerendered by ds_build_fields_and_objects use that
   if (!empty($item['pre_render'])) {
     $item['content'] = $item['pre_render'];
   }
   // If content has been rendered by another source (i.e. CCK) use that
   elseif (!empty($content_vars)) {
+    // Set custom key for vars, or use default
+    if (!empty($content_vars)) {
+      if (!empty($vars_key)) {
+        $key = $vars_key;
+      }
+      else {
+        $key = $item['key'] .'_rendered';
+      }
+    }
+
     $item['content'] = $content_vars[$key];
   }
 
   if (!empty($item['content'])){
     return $item['content'];
   }
-  
+
   return FALSE;
 }
 
