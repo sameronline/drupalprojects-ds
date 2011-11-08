@@ -15,10 +15,10 @@ define('DS_SETTINGS_OVERRIDDEN', 3);
  * Rendering pipelines
  */
 define('DS_RENDER_DEFAULT', 'default'); // rendered by ds
-define('DS_RENDER_NON_DS', 'other'); // unknown renderer
 define('DS_RENDER_DRUPAL', 'drupal'); // rendered by drupal_render
-define('DS_RENDER_CUSTOM', 'custom'); //custom renderer
 define('DS_RENDER_CCK', 'cck'); // rendered by cck
+define('DS_RENDER_NON_DS', 'other'); // unknown renderer
+
 
 /**
  * Constants for field types.
@@ -266,19 +266,19 @@ function ds_build_fields_and_regions(&$object, $module) {
         // call to ds_get_settings (or similar)
         if (isset($available_fields[$field_key])) {
           $field_settings = $available_fields[$field_key];
-          if (!isset($field_settings['ds']['pipeline'])) {
-            $field_settings['ds']['pipeline'] = DS_RENDER_DEFAULT;
+          if (!isset($field_settings['pipeline'])) {
+            $field_settings['pipeline'] = DS_RENDER_DEFAULT;
           }
         }
         else {
           $field_settings = array();
-          $field_settings['ds']['render-pipeline'] = DS_RENDER_NON_DS;
+          $field_settings['pipeline'] = DS_RENDER_NON_DS;
         }
-      
+
         $field_settings = array_merge($field_defaults, $field_settings);
 
         // Additional field properties (which should be included a normalised
-        // settings function)DS_RENDER_DEFAULT$field_settings['ds']['render-pipeline']
+        // settings function)
         $field_settings['ds_type'] = $field_defaults['type']; // fix key collision
         $field_settings['module'] = $module;
         $field_settings['object'] =& $object;
@@ -358,7 +358,10 @@ function ds_build_field($field_key, $field_settings){
   $field['class'] = implode(' ', $classes);
   $field['labelformat'] = (isset($field_settings['labelformat'])) ? $field_settings['labelformat'] : DS_DEFAULT_LABEL_FORMAT;
   $field['type'] = empty($field_settings) ? 'other' : 'ds';
-  $field['ds_type'] = $field_settings['type'];
+  $field['ds_type'] = $field_settings['ds_type'];
+  $field['module'] = $field_settings['module'];
+  $field['object_type'] = $field_settings['object_type'];
+  $field['pipeline'] = $field_settings['pipeline'];
 
   // Check for weight in region and parent (if any). If a parent key is found, we'll unset the original
   // field from the region it might be set in and we'll add that field to the group array.
@@ -367,7 +370,7 @@ function ds_build_field($field_key, $field_settings){
 
   // If the field has no content yet, just continue to the next field, the 
   // content will come from another module (most likely CCK).
-  if ($field_settings['ds']['pipeline'] = DS_RENDER_DEFAULT) {
+  if ($field_settings['pipeline'] = DS_RENDER_DEFAULT) {
     
     // Change the title if this is configured and label is not hidden.
     if (isset($field_settings['label_value']) && $field['labelformat'] != DS_DEFAULT_LABEL_FORMAT) {
@@ -513,7 +516,7 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
       }
 
       /**
-       * Choose a rendering pipeline based on the type
+       * Choose a field rendering pipeline based on the type
        * 
        * Groups get content and render within wrapper functions.
        * Fields get content then call the renderer directly.
@@ -622,17 +625,37 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
 function ds_render_item($item){
   $content = FALSE;
 
-  // Tabs must use the ds_tabs themeing fuction
-  if (isset($item['tab'])) {
-    $item['theme'] = 'ds_tabs';
-  }
-  // If no theme function is set, use the default
-  elseif (empty($item['theme'])) {
-    $item['theme'] = DS_DEFAULT_THEME_CALLBACK;
+  switch ($item['pipeline']) {
+    
+    // Render the content using Drupal's default render function
+    case DS_RENDER_DRUPAL:
+      $content = drupal_render($item['vars']);
+      break;
+    
+    // This is a non-DS field and has done its own rendering
+    // e.g. CCK
+    case DS_RENDER_NON_DS:
+      $content = $item['content'];
+      break;
+    
+    // Use ds's built-in rendering
+    default:
+    case DS_RENDER_DEFAULT:
+      // Tabs must use the ds_tabs themeing fuction
+      if (isset($item['tab'])) {
+        $item['theme'] = 'ds_tabs';
+      }
+      // If no theme function is set, use the default
+      elseif (empty($item['theme'])) {
+        $item['theme'] = DS_DEFAULT_THEME_CALLBACK;
+      }
+
+      $content = theme($item['theme'], $item['content'], $item);
+
+      break;
   }
 
-  $content = theme($item['theme'], $item['content'], $item);
-
+  
   // theme() can return anything, but we only want to return content where
   // there is 1 or more characters
   if (isset($content) && strlen($content) > 0) {
