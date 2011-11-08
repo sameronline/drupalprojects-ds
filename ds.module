@@ -832,9 +832,10 @@ function ds_get_settings($module, $type, $build_mode, $return = 'settings', $res
  * @param mixed default value.
  */
 function ds_default_value($settings, $type, $key = NULL, $search_key = NULL, $default = NULL) {
-  if ($key == NULL)
-  return (isset($settings[$type])) ? $settings[$type] : NULL;
-  else
+  if ($key == NULL) {
+    return (isset($settings[$type])) ? $settings[$type] : NULL;
+  }
+
   return (isset($settings[$type][$key][$search_key])) ? $settings[$type][$key][$search_key] : $default;
 }
 
