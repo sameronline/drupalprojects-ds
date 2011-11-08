@@ -51,11 +51,12 @@ define('DS_BLOCK_CONTENT', 3);
  * Constants for content field default values
  */
 define('DS_DEFAULT_REGION', 'disabled');
+define('DS_DISABLED_REGION', 'disabled');
 define('DS_DEFAULT_FORMAT', 'default');
 define('DS_DEFAULT_LABEL_FORMAT', 'hidden');
 define('DS_DEFAULT_WEIGHT', -19);
 define('DS_DEFAULT_THEME_CALLBACK', 'ds_field');
-define('DS_DEFAULT_FIELDSET_FORMAT', 'ds_group_fieldset');
+define('DS_DEFAULT_FIELDSET_FORMAT', 'ds_group_fieldset_open');
 
 /**
  * Implementation of hook_theme().
