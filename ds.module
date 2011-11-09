@@ -355,9 +355,6 @@ function ds_build_field($field_key, $field_settings){
   $field = array_merge($field_defaults, $field_settings);
   $field['key'] = $field_key;
   $field['type'] = empty($field_settings) ? 'other' : 'ds';
-  if (isset($field_settings['format'])) {
-    $field['theme'] = $field_settings['format'];
-  }
 
   // Check for weight in region and parent (if any). If a parent key is found, 
   // we'll unset the original field from the region it might be set in and 
@@ -390,7 +387,7 @@ function ds_build_field($field_key, $field_settings){
 
   $field['class'] = implode(' ', $classes);
 
-  // If the field has no content yet, just continue to the next field, the 
+  // If the field is not to be rendered by ds, just continue to the next field, the 
   // content will come from another module (most likely CCK).
   if ($field_settings['pipeline'] = DS_RENDER_DEFAULT) {
     
@@ -404,9 +401,9 @@ function ds_build_field($field_key, $field_settings){
 
     // Theming can either be done in preprocess, with a custom function or an
     // existing formatter theming function. Always pass the $field_settings as parameter.
-    // @todo make these use ds_render_item() wherever possible
-    // @todo some of these should break earlier as no processing is required
-    switch ($field_settings['field_type']) {
+    // @todo: make these use ds_render_item() wherever possible
+    // @todo: some of these should break earlier as no processing is required
+    switch ($field['field_type']) {
       case DS_FIELD_TYPE_PREPROCESS:
       case DS_FIELD_TYPE_IGNORE:
         if (isset($field_settings['properties']['key']) && !empty($field_settings['properties']['key'])) {
@@ -417,23 +414,31 @@ function ds_build_field($field_key, $field_settings){
         }
         break;
       case DS_FIELD_TYPE_CODE:
-        $field_settings['formatter'] = (isset($field_settings['format'])) ? $field_settings['format'] : 'ds_eval_code';
-        $field['pre_render'] = theme($field_settings['formatter'], $field_settings);
+        $field['format'] = isset($field['format']) ? $field['format'] : 'ds_eval_code';
         break;
       case DS_FIELD_TYPE_BLOCK:
-        $field['pre_render'] = theme('ds_eval_block', $field_settings);
+        $field['format'] = 'ds_eval_block';
         break;
       case DS_FIELD_TYPE_FUNCTION:
-        if (isset($field_settings['file'])) {
-          include_once($field_settings['file']);
-        }
-        $function = (isset($field_settings['format'])) ? $field_settings['format'] : key($field_settings['properties']['formatters']);
-        $field['pre_render'] = $function($field_settings);
+        $field['function'] = (isset($field_settings['format'])) ? $field_settings['format'] : key($field_settings['properties']['formatters']);
         break;
       case DS_FIELD_TYPE_THEME:
-        $field_settings['formatter'] = (isset($field_settings['format'])) ? $field_settings['format'] : key($field_settings['properties']['formatters']);
-        $field['pre_render'] = theme($field_settings['formatter'], $field_settings);
+        $field['format'] = (isset($field_settings['format'])) ? $field_settings['format'] : key($field_settings['properties']['formatters']);
         break;
+    }
+
+    // Pre-render anything with a formatter and not already prerendered
+    // @todo: use ds_render_item
+    if (isset($field['format']) && !isset($field['pre_render'])) {
+      if (isset($field['file'])) {
+        include_once($field['file']);
+      }
+      if (isset($field['function'])) {
+        $field['pre_render'] = $function($field);
+      }
+      else {
+        $field['pre_render'] = theme($field['format'], $field);
+      }
     }
   }
 

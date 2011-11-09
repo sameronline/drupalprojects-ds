@@ -14,24 +14,18 @@
 function theme_ds_field($field) {
   $output = '';
 
-  if (!empty($content)) {
-    if ($field['type'] == 'ds') {
-
-      $output .= '<div class="field '. $field['class'] .'">';
-      // Above label.
-      if ($field['labelformat'] == 'above') {
-        $output .= '<div class="field-label">'. $field['title'] .': </div>';
-      }
-      // Inline label
-      if ($field['labelformat'] == 'inline') {
-        $output .= '<div class="field-label-inline-first">'. $field['title'] .': </div>';
-      }
-      $output .= $field['content'];
-      $output .= '</div>';
+  if (!empty($field['content'])) {
+    $output .= '<div class="field '. $field['class'] .'">';
+    // Above label.
+    if ($field['labelformat'] == 'above') {
+      $output .= '<div class="field-label">'. $field['title'] .': </div>';
     }
-    else {
-      $output = $content;
+    // Inline label
+    if ($field['labelformat'] == 'inline') {
+      $output .= '<div class="field-label-inline-first">'. $field['title'] .': </div>';
     }
+    $output .= $field['content'];
+    $output .= '</div>';
   }
 
   return $output;
