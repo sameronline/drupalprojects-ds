@@ -358,7 +358,6 @@ function ds_build_field($field_key, $field_settings){
   $field['class'] = implode(' ', $classes);
   $field['labelformat'] = (isset($field_settings['labelformat'])) ? $field_settings['labelformat'] : DS_DEFAULT_LABEL_FORMAT;
   $field['type'] = empty($field_settings) ? 'other' : 'ds';
-  $field['ds_type'] = $field_settings['ds_type'];
   $field['module'] = $field_settings['module'];
   $field['object_type'] = $field_settings['object_type'];
   $field['pipeline'] = $field_settings['pipeline'];
@@ -521,7 +520,7 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
        * Groups get content and render within wrapper functions.
        * Fields get content then call the renderer directly.
        */
-      switch ($object->ds_fields[$key]['ds_type']) {
+      switch ($object->ds_fields[$key]['type']) {
         case DS_FIELD_TYPE_GROUP:
           $region_fields[$key]['rendered'] = ds_render_group($object, $key, $vars);
           break;
