@@ -840,8 +840,10 @@ function ds_get_content($item, $content_vars = array(), $vars_key = NULL) {
         $key = $item['key'] .'_rendered';
       }
     }
-
-    $item['content'] = $content_vars[$key];
+    
+    if (isset($content_vars[$key])) {
+      $item['content'] = $content_vars[$key];
+    }
   }
 
   if (!empty($item['content'])){
