@@ -194,7 +194,12 @@ function ds_api_info($module, $type_name = 'all') {
  * API function to build and render a build mode for a given object
  *
  * This is not used internally by ds, but can be called by other modules
- * wishing to call a buildmode programatically.
+ * wishing to call a build mode programatically. 
+ *
+ * Note that ds normally steps in during the normal build process and expects 
+ * certain values to be available in $vars as a result, so you will need to 
+ * determine what those properties are and provide them, or ensure that all 
+ * your fields do not require values from that array.
  *
  * @param $object
  *  the object to be manipulated
@@ -204,14 +209,25 @@ function ds_api_info($module, $type_name = 'all') {
  *  an array of values to use in the render
  * @param $build_mode (optional)
  *  the build mode to use
+ *
+ * @return 
+ *  a string containing the fully rendered display
  */
-function ds_render(&$object, $module, $vars, $build_mode = NULL) {
+function ds_render(&$object, $module, &$vars, $build_mode = NULL) {
   if (isset($build_mode) && !is_null($build_mode)){
     $object->build_mode = $build_mode;
   }
 
-  $pre_render = ds_build_fields_and_regions($object, $module);
-  $render = ds_render_content($object, $module, $vars);
+  $data = array(
+    'object' => $object,
+    'module' => $module,
+    'vars' => $vars,
+  );
+
+  drupal_alter('ds_render', $data);
+
+  $pre_render = ds_build_fields_and_regions($data['object'], $module);
+  $render = ds_render_content($data['object'], $module, $data['vars']);
 
   return $render;
 }
