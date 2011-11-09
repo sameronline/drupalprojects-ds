@@ -327,7 +327,19 @@ function ds_build_fields_and_regions(&$object, $module) {
  *  a field settings array ready to pass to ds_render_content
  */
 function ds_build_field($field_key, $field_settings){
-  
+
+  // Default class and extra class from the UI
+  $classes = array();
+  $classes[] = 'field-'. strtr($field_key, '_', '-');
+  if (isset($field_settings['properties']['css-class']) && !empty($field_settings['properties']['css-class'])) {
+    $classes[] = $field_settings['properties']['css-class'];
+    unset($field_settings['properties']['css-class']); // dont set these on the field
+  }
+  if (isset($field_settings['css-class']) && !empty($field_settings['css-class'])) {
+    $classes[] = $field_settings['css-class'];
+    unset($field_settings['css-class']); // dont set these on the field
+  }
+
   // @todo 
   // Abstract field types into config functions which returns defaults for 
   // that type
@@ -346,14 +358,6 @@ function ds_build_field($field_key, $field_settings){
     $field['theme'] = $field_settings['format'];
   }
 
-  // Default class and extra class from the UI.
-  $classes = array();
-  $classes[] = 'field-'. strtr($field_key, '_', '-');
-  if (isset($field_settings['properties']['css-class']) && !empty($field_settings['properties']['css-class'])) {
-    $classes[] = $field_settings['properties']['css-class'];
-  }
-  if (isset($field_settings['css-class']) && !empty($field_settings['css-class'])) {
-    $classes[] = $field_settings['css-class'];
   }
 
   // Check for weight in region and parent (if any). If a parent key is found, we'll unset the original
