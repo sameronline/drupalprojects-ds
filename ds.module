@@ -287,19 +287,11 @@ function ds_build_fields_and_regions(&$object, $module) {
 
         // Build the field
         $object->ds_fields[$field_key] = ds_build_field($field_key, $field_settings);
-
-        // Process the field into a group, if required
+        
+        // Process the field into a group or region as required
         if (!empty($object->ds_fields[$field_key]['parent'])) {
           $parent = $object->ds_fields[$field_key]['parent'];
-
-          // Get the form of the group and create a theme key.
-          $object->ds_fields[$parent]['theme'] = (isset($field_settings[$parent]['format'])) ? $field_settings[$parent]['format'] : DS_DEFAULT_FIELDSET_FORMAT;
           $object->ds_groups[$parent][$field_key] = $field_settings['weight'];
-
-          // Additional formatting settings for CCK multigroups
-          if ($available_fields[$parent]['type'] == DS_FIELD_TYPE_MULTIGROUP) {
-            $object->ds_fields[$parent]['subgroup_theme'] = isset($field_settings[$parent]['subgroup_format']) ? $field_settings[$parent]['subgroup_format'] : 'ds_group_fieldset';
-          }
         }
         else {
           $object->regions[$region][$field_key] = $field_settings['weight'];
@@ -344,18 +336,11 @@ function ds_build_field($field_key, $field_settings){
   if (isset($field_settings['css-class']) && !empty($field_settings['css-class'])) {
     $classes[] = $field_settings['css-class'];
   }
-  if (isset($field_settings['type']) && ($field_settings['type'] == DS_FIELD_TYPE_GROUP)) {
-    $classes[] = 'field-group';
-  }
-  if (isset($field_settings['type']) && ($field_settings['type'] == DS_FIELD_TYPE_MULTIGROUP)) {
-    $classes = 'field-multigroup';
-  }
 
   // Build field information
   $field['key'] = $field_key;
   $field['region'] = $field_settings['region'];
   $field['title'] = isset($field_settings['title']) ? $field_settings['title'] : '';
-  $field['class'] = implode(' ', $classes);
   $field['labelformat'] = (isset($field_settings['labelformat'])) ? $field_settings['labelformat'] : DS_DEFAULT_LABEL_FORMAT;
   $field['type'] = empty($field_settings) ? 'other' : 'ds';
   $field['module'] = $field_settings['module'];
@@ -366,6 +351,29 @@ function ds_build_field($field_key, $field_settings){
   // field from the region it might be set in and we'll add that field to the group array.
   $field['weight'] = (isset($field_settings['weight'])) ? $field_settings['weight'] : DS_DEFAULT_WEIGHT;
   $field['parent'] = (isset($field_settings['parent'])) ? $field_settings['parent'] : '';
+
+  // Process groups (fieldsets)
+  if ($field_settings['field_type'] == DS_FIELD_TYPE_GROUP || $field_settings['field_type'] == DS_FIELD_TYPE_MULTIGROUP) {
+    if (isset($field_settings['format'])) {
+      $field['theme'] = $field_settings['format'];
+    }
+    else {
+      $field['theme'] = DS_DEFAULT_FIELDSET_FORMAT;
+    }
+
+    // Additional formatting settings for fieldsets
+    if ($field_settings['field_type'] == DS_FIELD_TYPE_GROUP) {
+      $classes[] = 'field-group';
+    }
+
+    // Additional formatting settings for CCK multigroups
+    if ($field_settings['field_type'] == DS_FIELD_TYPE_MULTIGROUP) {
+      $field['subgroup_theme'] = isset($field_settings['subgroup_format']) ? $field_settings['subgroup_format'] : DS_DEFAULT_FIELDSET_FORMAT;
+      $classes[] = 'field-multigroup';
+    }
+  }
+
+  $field['class'] = implode(' ', $classes);
 
   // If the field has no content yet, just continue to the next field, the 
   // content will come from another module (most likely CCK).
