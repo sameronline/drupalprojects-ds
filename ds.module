@@ -653,18 +653,18 @@ function ds_render_item($item){
   $content = FALSE;
 
   switch ($item['pipeline']) {
-    
+
     // Render the content using Drupal's default render function
     case DS_RENDER_DRUPAL:
       $content = drupal_render($item['vars']);
       break;
-    
+
     // This is a non-DS field and has done its own rendering
     // e.g. CCK
     case DS_RENDER_NON_DS:
       $content = $item['content'];
       break;
-    
+
     // Use ds's built-in rendering
     default:
     case DS_RENDER_DEFAULT:
@@ -678,11 +678,9 @@ function ds_render_item($item){
       }
 
       $content = theme($item['theme'], $item);
-
       break;
   }
 
-  
   // theme() can return anything, but we only want to return content where
   // there is 1 or more characters
   if (isset($content) && strlen($content) > 0) {
