@@ -11,7 +11,7 @@
  * @param string $content The content to render.
  * @param array $field Collection of field properties.
  */
-function theme_ds_field($content, $field) {
+function theme_ds_field($field) {
   $output = '';
 
   if (!empty($content)) {
@@ -26,7 +26,7 @@ function theme_ds_field($content, $field) {
       if ($field['labelformat'] == 'inline') {
         $output .= '<div class="field-label-inline-first">'. $field['title'] .': </div>';
       }
-      $output .= $content;
+      $output .= $field['content'];
       $output .= '</div>';
     }
     else {
@@ -155,7 +155,7 @@ function theme_ds_objects($data, $extra) {
  * @param string $content The content to render.
  * @param string $field The field to theme.
  */
-function theme_ds_group_fieldset($content, $field) {
+function theme_ds_group_fieldset($field) {
   $add_js = FALSE;
   $class = $field['class'];
   $variation = array_pop(explode('_', $field['theme']));
@@ -184,7 +184,7 @@ function theme_ds_group_fieldset($content, $field) {
     $legend = '<legend>'. $field['title'] .'</legend>';
   }
 
-  return '<fieldset class="group '. $class .'">'. $legend . $content .'</fieldset>';
+  return '<fieldset class="group '. $class .'">'. $legend . $field['content'] .'</fieldset>';
 }
 
 /**
@@ -195,7 +195,7 @@ function theme_ds_group_fieldset($content, $field) {
  * @param string $group 
  *  The multigroup to theme.
  */
-function theme_ds_multigroup_div($content, $group) {
+function theme_ds_multigroup_div($group) {
   $output = '';
 
   foreach ($group['rows'] as $row){
@@ -236,7 +236,7 @@ function theme_ds_multigroup_div($content, $group) {
  * @param string $group 
  *  The multigroup to theme.
  */
-function theme_ds_multigroup_fieldset($content, $group) {
+function theme_ds_multigroup_fieldset($group) {
   $collapsible = FALSE;
   $class = NULL;
   $variation = array_pop(explode('_', $group['theme']));
@@ -287,7 +287,7 @@ function theme_ds_multigroup_fieldset($content, $group) {
  * @param string $group 
  *  The multigroup to theme.
  */
-function theme_ds_multigroup_table_simple($content, $group) {
+function theme_ds_multigroup_table_simple($group) {
   $headers = array();
   $rows = array();
   foreach ($group['rows'] as $row) {
@@ -314,7 +314,7 @@ function theme_ds_multigroup_table_simple($content, $group) {
  *
  * @param string $field The field to theme.
  */
-function theme_ds_multigroup_table_multiple($content, $group) {
+function theme_ds_multigroup_table_multiple($group) {
   $headers = array();
 
   // Set up row labels from subgroup labels, if applicable
@@ -381,7 +381,7 @@ function theme_ds_multigroup_table_multiple($content, $group) {
  *
  * @param string $group The group to theme.
  */
-function theme_ds_multigroup_horizontal_line($content, $group) {
+function theme_ds_multigroup_horizontal_line($group) {
   $output = '';
   foreach ($group['rows'] as $row_delta => $row) {
     $divider = ($row_delta > 0 ? '<hr class="content-multigroup" />' : '');
@@ -399,7 +399,7 @@ function theme_ds_multigroup_horizontal_line($content, $group) {
  *
  * @param string $group The group to theme.
  */
-function theme_ds_multigroup_list($content, $group) {
+function theme_ds_multigroup_list($group) {
   $variation = array_pop(explode('_', $group['theme']));
 
   switch ($variation) {

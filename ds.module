@@ -661,7 +661,7 @@ function ds_render_item($item){
         $item['theme'] = DS_DEFAULT_THEME_CALLBACK;
       }
 
-      $content = theme($item['theme'], $item['content'], $item);
+      $content = theme($item['theme'], $item);
 
       break;
   }
