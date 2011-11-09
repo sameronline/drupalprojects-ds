@@ -56,8 +56,13 @@ define('DS_DISABLED_REGION', 'disabled');
 define('DS_DEFAULT_FORMAT', 'default');
 define('DS_DEFAULT_LABEL_FORMAT', 'hidden');
 define('DS_DEFAULT_WEIGHT', -19);
-define('DS_DEFAULT_THEME_CALLBACK', 'ds_field');
-define('DS_DEFAULT_FIELDSET_FORMAT', 'ds_group_fieldset_open');
+
+/**
+ * Constants for theme callback defaults
+ */
+define('DS_DEFAULT_THEME_REGIONS', 'ds_regions');
+define('DS_DEFAULT_THEME_FIELD', 'ds_field');
+define('DS_DEFAULT_THEME_FIELDSET', 'ds_group_fieldset_open');
 
 /**
  * Implementation of hook_theme().
@@ -362,7 +367,7 @@ function ds_build_field($field_key, $field_settings){
       $field['theme'] = $field_settings['format'];
     }
     else {
-      $field['theme'] = DS_DEFAULT_FIELDSET_FORMAT;
+      $field['theme'] = DS_DEFAULT_THEME_FIELDSET;
     }
 
     // Additional formatting settings for fieldsets
@@ -372,7 +377,7 @@ function ds_build_field($field_key, $field_settings){
 
     // Additional formatting settings for CCK multigroups
     if ($field_settings['field_type'] == DS_FIELD_TYPE_MULTIGROUP) {
-      $field['subgroup_theme'] = isset($field_settings['subgroup_format']) ? $field_settings['subgroup_format'] : DS_DEFAULT_FIELDSET_FORMAT;
+      $field['subgroup_theme'] = isset($field_settings['subgroup_format']) ? $field_settings['subgroup_format'] : DS_DEFAULT_THEME_FIELDSET;
       $classes[] = 'field-multigroup';
     }
   }
@@ -441,7 +446,7 @@ function ds_build_field($field_key, $field_settings){
  * @param string $theme_function 
  *  The theming function for a field.
  */
-function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT_THEME_CALLBACK) {
+function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT_THEME_FIELD) {
 
   /**
    * Basic object set up
@@ -621,7 +626,7 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
   }
 
   // Theme the regions with their content.
-  return theme('ds_regions', $object_display, $module);
+  return theme(DS_DEFAULT_THEME_REGIONS, $object_display, $module);
 }
 
 /**
@@ -658,7 +663,7 @@ function ds_render_item($item){
       }
       // If no theme function is set, use the default
       elseif (empty($item['theme'])) {
-        $item['theme'] = DS_DEFAULT_THEME_CALLBACK;
+        $item['theme'] = DS_DEFAULT_THEME_FIELD;
       }
 
       $content = theme($item['theme'], $item);
