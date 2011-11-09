@@ -340,33 +340,35 @@ function ds_build_field($field_key, $field_settings){
     unset($field_settings['css-class']); // dont set these on the field
   }
 
+  // Field defaults - all fields get these
   // @todo 
   // Abstract field types into config functions which returns defaults for 
   // that type
   $field_defaults = array(
     'labelformat' => DS_DEFAULT_LABEL_FORMAT,
     'title' => '',
-    'theme' => '',
+    'theme' => DS_DEFAULT_THEME_FIELD,
+    'weight' => DS_DEFAULT_WEIGHT,
   );
 
-  // Build field information
+  // Merge defaults and settings to produce the field array
   $field = array_merge($field_defaults, $field_settings);
-
   $field['key'] = $field_key;
   $field['type'] = empty($field_settings) ? 'other' : 'ds';
   if (isset($field_settings['format'])) {
     $field['theme'] = $field_settings['format'];
   }
 
+  // Check for weight in region and parent (if any). If a parent key is found, 
+  // we'll unset the original field from the region it might be set in and 
+  // we'll add that field to the group array.
+  if (isset($field_settings['weight'])) {
+    $field['weight'] = $field_settings['weight'];
   }
-
-  // Check for weight in region and parent (if any). If a parent key is found, we'll unset the original
-  // field from the region it might be set in and we'll add that field to the group array.
-  $field['weight'] = (isset($field_settings['weight'])) ? $field_settings['weight'] : DS_DEFAULT_WEIGHT;
-  $field['parent'] = (isset($field_settings['parent'])) ? $field_settings['parent'] : '';
+  $field['parent'] = (isset($field_settings['parent'])) ? $field_settings['parent'] : NULL;
 
   // Process groups (fieldsets)
-  if ($field_settings['field_type'] == DS_FIELD_TYPE_GROUP || $field_settings['field_type'] == DS_FIELD_TYPE_MULTIGROUP) {
+  if ($field['field_type'] == DS_FIELD_TYPE_GROUP || $field['field_type'] == DS_FIELD_TYPE_MULTIGROUP) {
     if (isset($field_settings['format'])) {
       $field['theme'] = $field_settings['format'];
     }
