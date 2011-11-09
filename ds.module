@@ -322,13 +322,26 @@ function ds_build_fields_and_regions(&$object, $module) {
  *  a field settings array ready to pass to ds_render_content
  */
 function ds_build_field($field_key, $field_settings){
-
-  $field = array();
-
-  // Default class and extra class from the UI.
+  
   // @todo 
   // Abstract field types into config functions which returns defaults for 
   // that type
+  $field_defaults = array(
+    'labelformat' => DS_DEFAULT_LABEL_FORMAT,
+    'title' => '',
+    'theme' => '',
+  );
+
+  // Build field information
+  $field = array_merge($field_defaults, $field_settings);
+
+  $field['key'] = $field_key;
+  $field['type'] = empty($field_settings) ? 'other' : 'ds';
+  if (isset($field_settings['format'])) {
+    $field['theme'] = $field_settings['format'];
+  }
+
+  // Default class and extra class from the UI.
   $classes = array();
   $classes[] = 'field-'. strtr($field_key, '_', '-');
   if (isset($field_settings['properties']['css-class']) && !empty($field_settings['properties']['css-class'])) {
@@ -337,17 +350,6 @@ function ds_build_field($field_key, $field_settings){
   if (isset($field_settings['css-class']) && !empty($field_settings['css-class'])) {
     $classes[] = $field_settings['css-class'];
   }
-
-  // Build field information
-  $field['key'] = $field_key;
-  $field['region'] = $field_settings['region'];
-  $field['title'] = isset($field_settings['title']) ? $field_settings['title'] : '';
-  $field['labelformat'] = (isset($field_settings['labelformat'])) ? $field_settings['labelformat'] : DS_DEFAULT_LABEL_FORMAT;
-  $field['type'] = empty($field_settings) ? 'other' : 'ds';
-  $field['module'] = $field_settings['module'];
-  $field['object_type'] = $field_settings['object_type'];
-  $field['field_type'] = $field_settings['field_type'];
-  $field['pipeline'] = $field_settings['pipeline'];
 
   // Check for weight in region and parent (if any). If a parent key is found, we'll unset the original
   // field from the region it might be set in and we'll add that field to the group array.
