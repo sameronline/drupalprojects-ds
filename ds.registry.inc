@@ -349,6 +349,7 @@ function _ds_ds_layout_info() {
             'label' => $layout['title'],
             'path' => $layout['path'],
             'module' => 'panels',
+            'panels' => $layout,
             'flexible' => TRUE,
             'regions' => $regions,
           );
