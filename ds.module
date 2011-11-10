@@ -417,7 +417,6 @@ function ds_build_field($field_key, $field_settings){
 
     // Theming can either be done in preprocess, with a custom function or an
     // existing formatter theming function. Always pass the $field_settings as parameter.
-    // @todo: make these use ds_render_item() wherever possible
     // @todo: some of these should break earlier as no processing is required
     switch ($field['field_type']) {
       case DS_FIELD_TYPE_PREPROCESS:
