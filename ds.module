@@ -443,21 +443,9 @@ function ds_build_field($field_key, $field_settings){
         break;
     }
 
-    // Pre-render anything with a formatter and not already prerendered
-    // @todo: use ds_render_item
-    if (isset($field['format']) && !isset($field['pre_render'])) {
-      if (isset($field['file'])) {
-        include_once($field['file']);
-      }
-      if (isset($field['function'])) {
-        $field['pre_render'] = $function($field);
-      }
-      else {
-        $field['pre_render'] = theme($field['format'], $field);
-      }
-    }
+    //  Format content for the field
+    $field = ds_format_content($field);
   }
-
   return $field;
 }
 
@@ -654,6 +642,37 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
 
   // Theme the regions with their content.
   return theme(DS_DEFAULT_THEME_REGIONS, $object_display, $module);
+}
+
+/**
+ * Format content for use in an item
+ */
+function ds_format_content($field) {
+
+  switch ($field['pipeline']) {
+    case DS_RENDER_DRUPAL:
+      break;
+
+    case DS_RENDER_NON_DS:
+      break;
+
+    default:
+    case DS_RENDER_DEFAULT:
+      if (isset($field['format']) && !isset($field['pre_render'])) {
+        if (isset($field['file'])) {
+          include_once($field['file']);
+        }
+        if (isset($field['function'])) {
+          $field['pre_render'] = $function($field);
+        }
+        else {
+          $field['pre_render'] = theme($field['format'], $field);
+        }
+      }
+      break;
+  }
+
+  return $field;
 }
 
 /**
