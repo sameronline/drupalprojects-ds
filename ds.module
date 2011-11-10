@@ -362,7 +362,6 @@ function ds_build_field($field_key, $field_settings){
   // that type
   $field_defaults = array(
     'labelformat' => DS_DEFAULT_LABEL_FORMAT,
-    'title' => '',
     'theme' => DS_DEFAULT_THEME_FIELD,
     'weight' => DS_DEFAULT_WEIGHT,
   );
