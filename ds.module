@@ -422,10 +422,7 @@ function ds_build_field($field_key, $field_settings){
       case DS_FIELD_TYPE_PREPROCESS:
       case DS_FIELD_TYPE_IGNORE:
         if (isset($field_settings['properties']['key']) && !empty($field_settings['properties']['key'])) {
-          $field = array('type' => $field_settings['type'], 'key' => $field_settings['properties']['key']);
-        }
-        else {
-          $field = array('type' => $field_settings['type']);
+          $field['key'] = $field_settings['properties']['key'];
         }
         break;
       case DS_FIELD_TYPE_CODE:
