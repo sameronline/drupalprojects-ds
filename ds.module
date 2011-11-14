@@ -429,16 +429,16 @@ function ds_build_field($field_key, $field_settings){
         }
         break;
       case DS_FIELD_TYPE_CODE:
-        $field['format'] = isset($field['format']) ? $field['format'] : 'ds_eval_code';
+        $field['formatter'] = isset($field['format']) ? $field['format'] : 'ds_eval_code';
         break;
       case DS_FIELD_TYPE_BLOCK:
-        $field['format'] = 'ds_eval_block';
+        $field['formatter'] = 'ds_eval_block';
         break;
       case DS_FIELD_TYPE_FUNCTION:
         $field['function'] = (isset($field_settings['format'])) ? $field_settings['format'] : key($field_settings['properties']['formatters']);
         break;
       case DS_FIELD_TYPE_THEME:
-        $field['format'] = (isset($field_settings['format'])) ? $field_settings['format'] : key($field_settings['properties']['formatters']);
+        $field['formatter'] = (isset($field_settings['format'])) ? $field_settings['format'] : key($field_settings['properties']['formatters']);
         break;
     }
 
@@ -657,7 +657,7 @@ function ds_format_content($field) {
 
     default:
     case DS_RENDER_DEFAULT:
-      if (isset($field['format']) && !isset($field['pre_render'])) {
+      if (isset($field['formatter']) && !isset($field['pre_render'])) {
         if (isset($field['file'])) {
           include_once($field['file']);
         }
@@ -665,7 +665,7 @@ function ds_format_content($field) {
           $field['pre_render'] = $function($field);
         }
         else {
-          $field['pre_render'] = theme($field['format'], $field);
+          $field['pre_render'] = theme($field['formatter'], $field);
         }
       }
       break;
