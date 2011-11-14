@@ -200,7 +200,7 @@ function ds_fieldgroup_form_submit($form, &$form_state) {
 
   // Safe field and invalidate cached fields.
   variable_set($module .'_fields', $fields);
-  ds_reset_fields_cache();
+  variable_del('ds_fields_cached');
 
   // Redirect and confirmation message.
   $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fieldgroups';
@@ -252,7 +252,7 @@ function ds_fieldgroup_delete_form_submit($form, &$form_state) {
   // Save and invalidate fields_cached.
   unset($fields[$fieldgroup]);
   variable_set($module .'_fields', $fields);
-  ds_reset_fields_cache();
+  variable_del('ds_fields_cached');
 
   drupal_set_message(t('Fieldgroup %fieldgroup has been deleted.', array('%fieldgroup' => $field_title)));
   $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/fieldgroups';
