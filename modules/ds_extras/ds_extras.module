@@ -503,6 +503,7 @@ function ds_extras_process_page_title(&$variables) {
       ds_create_entity_context('node', $entity, $contexts);
       $title = $layout['settings']['page_option_title'];
       $variables['title'] = filter_xss_admin(ctools_context_keyword_substitute($title, array(), $contexts));
+      drupal_set_title($variables['title']);
     }
   }
 }
