@@ -144,7 +144,7 @@ function ds_styles_form(&$form_state) {
     '#type' => 'textarea',
     '#title' => t('Styles for fields'),
     '#default_value' => variable_get('ds_styles', ''),
-    '#description' => t('Configure styles which you can add to fields in the overview screen. Add multiple styles line per line.<br />If you want to have a friendly name, separate class and friendly name by |, but this is not required. eg:<br /><em>class_name_1<br />class_name_2|Friendly name<br />class_name_3</em>')
+    '#description' => t('Configure styles which you can add to fields in the overview screen. Add multiple styles line per line.<br />If you want to have a friendly name, separate class and friendly name by |, but this is not required. eg:<br /><em>class_name_1<br />class_name_2|Friendly name<br />class_name_3</em><br />To group styles in the overview screen, use any number of tildes (~) as class name and the friendly name will be used as the group label in the styles selector. See <a href="http://drupal.org/node/1176182#comment-4578530">this issue</a> for more information.')
   );
 
   $form['ds_styles_regions'] = array(
@@ -223,11 +223,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
       );
       $human_names = array();
       if (!empty($default_value)) {
-        foreach ($default_value as $dv_key => $dv_value) {
-          if (!empty($dv_value)) {
-            $human_names[] = $region_style_options[$dv_value];
-          }
-        }
+        $human_names = _ds_styles_match_options($region_style_options, array_filter($default_value));
       }
       $form['region_styles_'. $key .'_summary'] = array(
         '#type' => 'markup',
@@ -362,11 +358,7 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
     $class_values = explode(' ', $class);
     $human_names = array();
     if (!empty($class_values)) {
-      foreach ($class_values as $dv_key => $dv_value) {
-        if (!empty($dv_value)) {
-          $human_names[] = $field_style_options[$dv_value];
-        }
-      }
+      $human_names = _ds_styles_match_options($field_style_options, array_filter($class_values));
     }
     $form[$field][$build_mode]['css-class']['#default_value'] = explode(' ', $class);
     if (!empty($human_names)) {
@@ -385,6 +377,22 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
       '#value' => $summary,
     );
   }
+}
+
+/**
+ * Match option labels from specified option values.
+ */
+function _ds_styles_match_options($options, $values) {
+  $matches = array();
+  foreach ($options as $optkey => $optvalue) {
+    if (is_array($optvalue)) {
+      $matches = array_merge($matches, _ds_styles_match_options($optvalue, $values));
+    }
+    elseif (in_array($optkey, $values, TRUE)) {
+      $matches[] = $optvalue;
+    }
+  }
+  return $matches;
 }
 
 /**
@@ -638,34 +646,50 @@ function ds_styles($variable = '') {
 
   if (!$run) {
     // Field styles.
-    $field_styles = trim(variable_get('ds_styles', ''));
-    if (!empty($field_styles)) {
-      $styles['fields'][''] = t('None');
-      $field_styles = explode("\n", $field_styles);
-      foreach ($field_styles as $key => $value) {
-        $classes = explode("|", $value);
-        $key = trim($classes[0]);
-        $name = isset($classes[1]) ? trim($classes[1]) : $key;
-        $styles['fields'][$key] = $name;
-      }
-    }
+    $field_styles = _ds_style_parse_variable('ds_styles');
+    $styles['fields'] = $field_styles;
 
     // Region styles.
-    $region_styles = trim(variable_get('ds_styles_regions', ''));
-    if (!empty($region_styles)) {
-      $styles['regions'][''] = t('None');
-      $region_styles = explode("\n", $region_styles);
-      foreach ($region_styles as $key => $value) {
-        $classes = explode("|", $value);
-        $key = trim($classes[0]);
-        $name = isset($classes[1]) ? trim($classes[1]) : $key;
-        $styles['regions'][$key] = $name;
-      }
-    }
+    $region_styles = _ds_style_parse_variable('ds_styles_regions');
+    $styles['regions'] = $region_styles;
     $run = TRUE;
   }
 
   return (empty($variable)) ? $styles : (isset($styles[$variable]) ? $styles[$variable] : array());
+}
+
+ /**
+ * Parse style variable value into a keyed array suitable for FAPI options,
+ * including the "None" option.
+ */
+function _ds_style_parse_variable($variable) {
+  static $optgroup_key = '~';
+  static $optgroup_label_trim = ' []';
+  $styles = array('' => t('None'));
+
+  $var_values = trim(variable_get($variable, ''));
+  if (!empty($var_values)) {
+    // Prepare loop variables
+    $var_styles = explode("\n", $var_values);
+    $label = NULL;
+    $group = &$styles;
+    foreach ($var_styles as $key => $value) {
+      $classes = explode('|', trim($value));
+      $key = trim($classes[0]);
+      $name = isset($classes[1]) ? trim($classes[1]) : $key;
+      // Group
+      if (preg_match('/^(' . $optgroup_key . ')+$/', $key)) {
+        // Accumulate this new group
+        $label = trim($name, $optgroup_label_trim);
+        $group = &$styles[$label];
+     }
+      // Regular style
+      else {
+        $group[$key] = $name;
+      }
+    }
+  }
+  return $styles;
 }
 
 /**
