@@ -422,7 +422,10 @@ function ds_build_field($field_key, $field_settings){
       case DS_FIELD_TYPE_PREPROCESS:
       case DS_FIELD_TYPE_IGNORE:
         if (isset($field_settings['properties']['key']) && !empty($field_settings['properties']['key'])) {
-          $field['key'] = $field_settings['properties']['key'];
+          $field['preprocess_settings'] = array('type' => $field['type'], 'key' => $field['properties']['key']);
+        }
+        else {
+          $field['preprocess_settings'] = array('type' => $field['type']);
         }
         break;
       case DS_FIELD_TYPE_CODE:
@@ -516,30 +519,22 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
     foreach ($object_display->active_regions[$region_name] as $key => $weight) {
 
       $region_fields[$key] = $object->ds_fields[$key];
-
-     /**
-      * Assign content
-      */
-      // Process key_rendered fields from DS_FIELD_TYPE_PREPROCESS and 
-      // DS_FIELD_TYPE_IGNORE.
-      if (!empty($object->preprocess_fields)) {
-        if (array_key_exists($key, $object->preprocess_fields)) {
-          if (is_array($object->preprocess_fields[$key])) {
-            switch ($object->preprocess_fields[$key]['field_type']) {
-              case DS_FIELD_TYPE_PREPROCESS:
-                if (!empty($object->preprocess_fields[$key]['key'])) {
-                  $object->ds_fields[$key]['pre_render'] = $vars[$key][$object->preprocess_fields[$key]['key']];
-                }
-                else {
-                  $object->ds_fields[$key]['pre_render'] = $vars[$key];
-                }
-                break;
-              case DS_FIELD_TYPE_IGNORE:
-                $object->ds_fields[$key]['pre_render'] = $object->content[$key]['#value'];
-                break;
-            }
+      /**
+       * Preprocess some field content
+       */
+      switch ($object->ds_fields[$key]['field_type']) {
+        case DS_FIELD_TYPE_PREPROCESS:
+          if (!empty($object->ds_fields[$key]['preprocess_settings']['key'])) {
+            $object->ds_fields[$key]['pre_render'] = $vars[$key][$object->preprocess_fields[$key]['key']];
           }
-        }
+          else {
+            $object->ds_fields[$key]['pre_render'] = $vars[$key];
+          }
+          break;
+            
+        case DS_FIELD_TYPE_IGNORE:
+          $object->ds_fields[$key]['pre_render'] = $object->content[$key]['#value'];
+          break;
       }
 
       /**
