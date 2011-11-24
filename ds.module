@@ -611,7 +611,7 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
     }
     $count++;
   }
-dsm($object_display);
+
   /**
    * Do some final configuration and pass the complete display object off to
    * theme_ds_regions for final rendering.
