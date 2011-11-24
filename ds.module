@@ -469,11 +469,12 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
   // stdClass to hold our complete rendered object
   $object_display = new stdClass();
 
-  // All region information
-  $object_display->all_regions = ds_regions('all', TRUE);
-
-  // Regions set on this object
-  $object_display->active_regions = $vars['regions'];
+  // Sort regions to get them in the right order for rendering
+  $object_display->active_regions = array();
+  $all_regions = ds_regions('all', TRUE);
+  foreach($all_regions as $region_name => $region) {
+    $object_display->active_regions[$region_name] = $vars['regions'][$region_name];
+  }
 
   // Only themed regions
   $object_display->themed_regions = array();
