@@ -471,9 +471,11 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
 
   // Sort regions to get them in the right order for rendering
   $object_display->active_regions = array();
-  $all_regions = ds_regions('all', TRUE);
-  foreach($all_regions as $region_name => $region) {
-    $object_display->active_regions[$region_name] = $vars['regions'][$region_name];
+  $object_display->all_regions = ds_regions('all', TRUE);
+  foreach($object_display->all_regions as $region_name => $region) {
+    if (isset($vars['regions'][$region_name]) && !empty($vars['regions'][$region_name])) {
+      $object_display->active_regions[$region_name] = $vars['regions'][$region_name];
+    }
   }
 
   // Only themed regions
@@ -487,11 +489,11 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
 
   // API info for this module and type. This doesn't cost a lot
   // since it will be cached already in ds_build_fields_and_regions().
-  $api_info = ds_api_info($module, $object->type);
+  $object_display->api_info = ds_api_info($module, $object->type);
 
   // Display settings for this module and object.
-  $display_settings = ds_get_settings($module, $object->type, $object->build_mode);
-  $region_styles = ds_default_value($display_settings, 'region_styles');
+  $object_display->display_settings = ds_get_settings($module, $object->type, $object->build_mode);
+  $object_display->region_styles = ds_default_value($display_settings, 'region_styles');
 
   /**
    * Pack groups
@@ -609,13 +611,13 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
     }
     $count++;
   }
-
+dsm($object_display);
   /**
    * Do some final configuration and pass the complete display object off to
    * theme_ds_regions for final rendering.
    */
   // Plugins.
-  ds_plugins_process($module, $api_info['object'], $display_settings, $vars, $object_display);
+  ds_plugins_process($object_display, $object, $vars);
 
   // Add classes based on regions.
   if (isset($object_display->themed_regions['middle'])) {
@@ -1054,21 +1056,22 @@ function ds_get_build_modes($module = NULL, $reset = FALSE) {
 /**
  * Process plugins.
  *
- * @param string $module The module to process for.
- * @param string $object_type The type of object (node, user, comment).
- * @param array $display_settings Display settings.
- * @param array $vars The variables currently processed.
- * @param stdClass $display Collection of arrays with object data.
+ * @param stdClass $display 
+ *  The display built by ds_render_content
+ * @param stdClass $object
+ *  The original object being processed
+ * @param array $vars
+ *  The variables used to build that display
  */
-function ds_plugins_process($module, $object_type, $display_settings, &$vars, &$display) {
-  $plugins = variable_get($module .'_plugin_settings', array());
+function ds_plugins_process(&$display, $object, $vars) {
+  $plugins = variable_get($display->api_info['module'] .'_plugin_settings', array());
   if (!empty($plugins)) {
     foreach ($plugins as $key => $data) {
       if (isset($data['filename']) && isset($data['class'])) {
         require_once($data['filename']);
         $class = $data['class'];
         $plugin = new $class();
-        $plugin->execute($vars, $display, $display_settings, $object_type, $module);
+        $plugin->execute($vars, $display, $display->display_settings, $object->type, $display->api_info['module']);
       }
     }
   }
