@@ -114,7 +114,7 @@ class ds_regiontoblock {
   /**
    * execute().
    */
-  public function execute(&$vars, &$display, $display_settings, $object_type, $module) {
+  public function execute($vars, &$display, $display_settings, $object_type, $module) {
     $object = $vars[$object_type];
 
     foreach ($display->all_regions as $region_name => $region_title) {
