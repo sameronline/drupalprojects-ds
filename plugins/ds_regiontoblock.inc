@@ -123,7 +123,7 @@ class ds_regiontoblock {
 
       if ($region_to_block == TRUE && isset($display->themed_regions[$region_name])) {
         $region_content = $display->themed_regions[$region_name];
-        $key = 'ds_regiontoblock_'. $module .'_'. $object->type .'_'. $object->build_mode .'_'. $region_name;
+        $key = 'ds_regiontoblock_'. $module .'_'. $object_type .'_'. $display->build_mode .'_'. $region_name;
         $data = new stdClass;
         $data->content = $region_content['content'];
         $data->object = $vars[$object_type];
