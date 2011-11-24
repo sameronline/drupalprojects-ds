@@ -1,6 +1,10 @@
 -------------------------------------------------------------------------------------
 6.x-2.0 2011-xx-xx
 -------------------------------------------------------------------------------------
+Multigroup support
+Improved internal API
+Improved database storage
+
 - #1293420 by Feng-Shui: Custom build mode key name can exceed db field size.
 - #1168130 by swentel: backport some of the techniques of D7 storage.
 - #1169466 by grahamgilchrist: do not use block templates if content is empty.
@@ -12,4 +16,3 @@
 - #1230038 by swentel: fix (public) xss exploit.
 - Hide the classes select box on views fields if there are no styles.
 - Add missing human names for field type constants
-- Multigroup support
