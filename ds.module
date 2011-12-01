@@ -967,7 +967,7 @@ function ds_render_code_field($field) {
     }
     // Token support - check on token property so we don't run every single field through token.
     if (isset($field['properties']['use_token']) && $field['properties']['use_token'] == TRUE) {
-      $value = token_replace($value, array($field['entity_type'] => $field['entity']));
+      $value = token_replace($value, array($field['entity_type'] => $field['entity']), array('clear' => TRUE));
     }
     return $value;
   }

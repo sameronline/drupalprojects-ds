@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.5 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1355936 by GoZ: Token clear option.
 - #1336342 by Casper_Deseyne: Flexible panels layouts need the full $layout as well.
 - #1295586 by pfrenssen: follow up on variables passed by reference.
 
