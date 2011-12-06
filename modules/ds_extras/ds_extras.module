@@ -147,6 +147,19 @@ function ds_extras_permission() {
 }
 
 /**
+ * Implements hook_admin_paths().
+ */
+function ds_extras_admin_paths() {
+  if (variable_get('node_admin_theme')) {
+    return array(
+      'node/*/display' => TRUE,
+      'user/*/display' => TRUE,
+      'taxonomy/term/*/display' => TRUE,
+    );
+  }
+}
+
+/**
  * Implements hook_menu_alter().
  */
 function ds_extras_menu_alter(&$items) {

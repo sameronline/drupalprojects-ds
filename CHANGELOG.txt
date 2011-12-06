@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.5 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1353140 by isaacfreeman and swentel: implement hook_admin_paths() for display tab.
 - #1240510 by tim.plunkett: follow up on Views row options missing in views export.
 - #1359106 by netsensei: DS alters entity info without checking if bundles exists.
 - #1355936 by GoZ: Token clear option.
