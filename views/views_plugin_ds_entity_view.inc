@@ -42,11 +42,49 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     $options['changing'] = array('default' => FALSE);
     $options['grouping'] = array('default' => FALSE);
     $options['advanced'] = array('default' => FALSE);
-    $options['grouping_fieldset'] = array('default' => FALSE);
-    $options['default_fieldset'] = array('default' => FALSE);
-    $options['alternating_fieldset'] = array('default' => FALSE);
-    $options['advanced_fieldset'] = array('default' => FALSE);
+    $options['grouping_fieldset'] = array(
+      'contains' => array(
+        'grouping' => array('default' => FALSE, 'bool' => TRUE),
+        'group_field' => array('default' => ''),
+        'group_field_function' => array('default' => ''),
+      ),
+    );
+    $options['default_fieldset'] = array(
+      'contains' => array(
+        'view_mode' => array('default' => ''),
+        'load_comments' => array('default' => FALSE, 'bool' => TRUE),
+      ),
+    );
+    $options['alternating_fieldset'] = array(
+      'contains' => array(
+        'alternating' => array('default' => FALSE, 'bool' => TRUE),
+        'allpages' => array('default' => FALSE, 'bool' => TRUE),
+        'item' => array(
+          'default' => array(),
+          'export' => 'ds_item_export_option',
+        ),
+      ),
+    );
+    $options['advanced_fieldset'] = array(
+      'contains' => array(
+        'advanced' => array('default' => FALSE, 'bool' => TRUE),
+      ),
+    );
     return $options;
+  }
+
+  /**
+   * Custom export function for alternating_fieldset items.
+   */
+  function ds_item_export_option($indent, $prefix, $storage, $option, $definition, $parents) {
+    $output = '';
+    $definition = array('default' => 'teaser');
+    foreach ($storage as $key => $value) {
+      if (strstr($key, 'item_') !== FALSE) {
+        $output .= parent::export_option($indent, $prefix, $storage, $key, $definition, $parents);
+      }
+    }
+    return $output;
   }
 
   function options_form(&$form, &$form_state) {
