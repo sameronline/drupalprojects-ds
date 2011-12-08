@@ -1185,3 +1185,47 @@ function ds_import_default_data($module = '', $type = '', $build_mode = '') {
     ds_import_data($data, FALSE, FALSE, $module, $type, $build_mode);
   }
 }
+
+/**
+ * Return elements of an array which are children (i.e. not starting with #)
+ * 
+ * This is a direct port of element_children from Drupal 7
+ *
+ * @param $elements
+ *  The element array whose children are to be identified.
+ * @param $sort
+ *  Boolean to indicate whether the children should be sorted by weight.
+ *
+ * @return
+ *  The array keys of the element's children.
+ */
+function ds_element_children(&$elements, $sort = FALSE) {
+  // Do not attempt to sort elements which have already been sorted.
+  $sort = isset($elements['#sorted']) ? !$elements['#sorted'] : $sort;
+
+  // Filter out properties from the element, leaving only children.
+  $children = array();
+  $sortable = FALSE;
+  foreach ($elements as $key => $value) {
+    if ($key === '' || $key[0] !== '#') {
+      $children[$key] = $value;
+      if (is_array($value) && isset($value['#weight'])) {
+        $sortable = TRUE;
+      }
+    }
+  }
+  // Sort the children if necessary.
+  if ($sort && $sortable) {
+    uasort($children, 'element_sort');
+    // Put the sorted children back into $elements in the correct order, to
+    // preserve sorting if the same element is passed through
+    // element_children() twice.
+    foreach ($children as $key => $child) {
+      unset($elements[$key]);
+      $elements[$key] = $child;
+    }
+    $elements['#sorted'] = TRUE;
+  }
+
+  return array_keys($children);
+}
