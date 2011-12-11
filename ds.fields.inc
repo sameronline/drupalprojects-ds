@@ -135,6 +135,7 @@ function ds_shared_form(&$form, $field) {
     '#type' => 'textfield',
     '#default_value' => $field->label,
     '#description' => t('The human-readable label of the field.'),
+    '#maxlength' => 32,
     '#required' => TRUE,
     '#size' => 30,
   );
