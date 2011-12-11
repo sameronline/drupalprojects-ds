@@ -72,7 +72,7 @@ function template_preprocess_ds_row_fields(&$vars) {
 
   // Render the views fields into the template layout.
   // This code is more or less copied from ds_entity_variables().
-  if ($row_layout[$bundle]) {
+  if (isset($row_layout[$bundle])) {
 
     $view = $vars['view'];
     $layout = $row_layout[$bundle];
