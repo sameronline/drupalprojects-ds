@@ -113,6 +113,7 @@ function ds_forms_form_field_ui_field_overview_form_alter(&$form, &$form_state) 
           'progress' => 'none',
         ),
       );
+      $form['#attached']['css'][] = drupal_get_path('module', 'ds_forms') . '/ds_forms.admin.css';
     }
 
     // Attach js.
