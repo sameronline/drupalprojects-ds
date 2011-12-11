@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.5 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1356190 by swentel: use $form_id instead of $form['#token'].
 - #1343990 by OnkelTem: Fix changing of fields on forms.
 - #1354630 by swentel: DS entity views can handle custom fields now as well.
 - #1345278 by swentel: fixed Node title field label not displayed.
