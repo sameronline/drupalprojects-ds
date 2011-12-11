@@ -30,7 +30,7 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   }
 
   // Add buttons to add fields in overlay.
-  if ($entity_type != 'ds_views' && isset($form['#ds_layout']) && user_access('admin_fields') && $view_mode != 'form') {
+  if (isset($form['#ds_layout']) && user_access('admin_fields') && $view_mode != 'form') {
     _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, $form, $form_state);
   }
 
