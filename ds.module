@@ -717,6 +717,12 @@ function ds_field_attach_view_alter(&$build, $context) {
     }
     $field_value = ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_mode);
 
+    // Title label.
+    if ($key == 'title' && $entity_type == 'node') {
+      $node_type = node_type_get_type($entity);
+      $field['title'] = $node_type->title_label;
+    }
+
     if ($field_value) {
       $build[$key] = array(
         '#theme' => 'field',
