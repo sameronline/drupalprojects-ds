@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.5 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1289516 by swentel: Username field is not passed through form_username() function.
 - #1332376 by swentel: 3 column stacked form layout.
 - #1356190 by swentel: use $form_id instead of $form['#token'].
 - #1343990 by OnkelTem: Fix changing of fields on forms.

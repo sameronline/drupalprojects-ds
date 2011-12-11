@@ -1110,7 +1110,12 @@ function ds_render_field($field) {
     $output = t($settings['link text']);
   }
   elseif (isset($field['properties']['entity_render_key']) && isset($field['entity']->{$field['properties']['entity_render_key']})) {
-    $output = $field['entity']->{$field['properties']['entity_render_key']};
+    if ($field['entity_type'] == 'user' && $field['properties']['entity_render_key'] == 'name') {
+      $output = format_username($field['entity']);
+    }
+    else {
+      $output = $field['entity']->{$field['properties']['entity_render_key']};
+    }
   }
 
   if (empty($output)) {
