@@ -56,6 +56,19 @@ function ds_forms_ds_layout_info() {
       'css' => TRUE,
       'form' => TRUE,
     ),
+    'ds_form_3col' => array(
+      'label' => t('3 column stacked'),
+      'path' => $path . '/layouts/ds_form_3col',
+      'regions' => array(
+        'header' => t('Header'),
+        'left' => t('Left'),
+        'middle' => t('Middle'),
+        'right' => t('Right'),
+        'footer' => t('Footer')
+      ),
+      'css' => TRUE,
+      'form' => TRUE,
+    ),
   );
 
   return $layouts;
