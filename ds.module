@@ -1072,6 +1072,9 @@ function ds_render_block_field($field) {
       case DS_BLOCK_TEMPLATE:
         global $theme_key;
         $block = (object) $block;
+        if (!isset($block->subject)) {
+          $block->subject = NULL;
+        }
         $block->region = NULL;
         $block->module = $module;
         $block->delta = $delta;
