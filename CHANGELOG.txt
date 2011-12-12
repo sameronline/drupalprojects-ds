@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.5 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1360480 by swentel: fix panel layouts on taxonomy terms.
 - #1365142 by swentel: hide field with ds views fields if configured.
 - #1311108 by swentel: full content view mode not fully disabled.
 - #1324196 by swentel: fix notices with relation and efq.

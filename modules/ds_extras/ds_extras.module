@@ -915,7 +915,9 @@ function ds_extras_render_panel_layout(&$vars) {
     $entity_type = $vars['elements']['#entity_type'];
     $bundle = $vars['elements']['#bundle'];
     $view_mode = $vars['elements']['#view_mode'];
-    $element = ($entity_type == 'user') ? '#account' : '#' . $entity_type;
+    $element = '#' . $entity_type;
+    if ($entity_type == 'user') $element = '#account';
+    if ($entity_type == 'taxonomy_term') $element = '#term';
     $entity = $vars['elements'][$element];
     ctools_include('plugins', 'panels');
 
