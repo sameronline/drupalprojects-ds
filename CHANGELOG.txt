@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.5 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1324196 by swentel: fix notices with relation and efq.
 - #1313228 by swentel: followup, limit length on machine name.
 - #1289516 by swentel: Username field is not passed through form_username() function.
 - #1332376 by swentel: 3 column stacked form layout.

@@ -106,6 +106,11 @@ function _ds_extras_entity_info() {
       'label' => t('Display suite Views'),
       'bundles' => $bundles,
       'ds_display' => TRUE,
+      'base table' => 'views_view',
+      'entity keys' => array(
+        'id' => 'vid',
+        'label' => 'name',
+      ),
     ),
   );
 
