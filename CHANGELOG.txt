@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.5 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1369170 by swentel: Fix errors on form class not being an error.
 - #1360480 by swentel: fix panel layouts on taxonomy terms.
 - #1365142 by swentel: hide field with ds views fields if configured.
 - #1311108 by swentel: full content view mode not fully disabled.
