@@ -140,7 +140,7 @@ function ds_forms_form_alter(&$form, &$form_state, $form_id) {
         $form['#attributes']['class'][] = $class;
       }
       elseif (isset($form['#attributes']['class']) && is_string($form['#attributes']['class'])) {
-        $form['#attributes']['class'] .= ' ' . $class;
+        $form['#attributes']['class'] .= ' ' . $class . ' ';
       }
     }
   }
