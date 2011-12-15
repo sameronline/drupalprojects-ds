@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.5 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1342030 by swentel: Add page title options for user and taxonomy term.
 - #1370386 by swentel: Fix link to entity uri.
 - #1369170 by swentel: Fix errors on form class not being an error.
 - #1360480 by swentel: fix panel layouts on taxonomy terms.
