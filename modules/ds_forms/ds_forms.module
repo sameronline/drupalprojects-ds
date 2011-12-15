@@ -136,7 +136,7 @@ function ds_forms_form_alter(&$form, &$form_state, $form_id) {
       // Add the theming function and add the layout as a class.
       $form['#theme'] = array('ds_forms_custom_form');
       $class = strtr($layout['layout'], '_', '-');
-      if (isset($form['#attributes']['class']) && is_array($form['#attributes']['class'])) {
+      if ((isset($form['#attributes']['class']) && is_array($form['#attributes']['class'])) || !(isset($form['#attributes']['class']))) {
         $form['#attributes']['class'][] = $class;
       }
       elseif (isset($form['#attributes']['class']) && is_string($form['#attributes']['class'])) {

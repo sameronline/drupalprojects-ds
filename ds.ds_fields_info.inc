@@ -36,8 +36,6 @@ function ds_ds_fields_info($entity_type) {
     'field_type' => DS_FIELD_TYPE_FUNCTION,
     'function' => 'ds_render_field',
     'properties' => array(
-      'entity_path' => 'node',
-      'entity_id_key' => 'nid',
       'entity_render_key' => 'title',
       'settings' => array(
         'link' => array('type' => 'select', 'options' => array('no', 'yes')),
@@ -68,8 +66,6 @@ function ds_ds_fields_info($entity_type) {
     'field_type' => DS_FIELD_TYPE_FUNCTION,
     'function' => 'ds_render_field',
     'properties' => array(
-      'entity_path' => 'node',
-      'entity_id_key' => 'nid',
       'settings' => array(
         'link text' => array('type' => 'textfield', 'options' => array('no', 'yes')),
         'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
@@ -254,8 +250,6 @@ function ds_ds_fields_info($entity_type) {
     'field_type' => DS_FIELD_TYPE_FUNCTION,
     'function' => 'ds_render_field',
     'properties' => array(
-      'entity_path' => 'user',
-      'entity_id_key' => 'uid',
       'entity_render_key' => 'name',
       'settings' => array(
         'link' => array('type' => 'select', 'options' => array('no', 'yes')),
@@ -318,8 +312,6 @@ function ds_ds_fields_info($entity_type) {
       'field_type' => DS_FIELD_TYPE_FUNCTION,
       'function' => 'ds_render_field',
       'properties' => array(
-        'entity_path' => 'taxonomy/term',
-        'entity_id_key' => 'tid',
         'entity_render_key' => 'name',
         'settings' => array(
           'link' => array('type' => 'select', 'options' => array('no', 'yes')),

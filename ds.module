@@ -1133,9 +1133,8 @@ function ds_render_field($field) {
       $path = $field['entity']->uri['path'];
     }
     else {
-      $entity_key = $field['properties']['entity_id_key'];
-      $entity_path = $field['properties']['entity_path'];
-      $path = $entity_path . '/' . $field['entity']->{$entity_key};
+      $uri_info = entity_uri($field['entity_type'], $field['entity']);
+      $path = $uri_info['path'];
     }
     $output = l($output, $path);
   }
