@@ -338,7 +338,8 @@ function ds_fields_display_form(&$form, $display_settings, $fields = array()) {
 
     // Label.
     $form[$field]['human_name']['#value'] = !empty($label_value) ? check_plain($label_value) : (isset($value['label']) ? $value['label'] : $value['title']);
-
+    $form[$field]['field_name']['#value'] = check_plain($field);
+    
     // Weight.
     $form[$field]['weight']['#default_value'] = ds_default_value($display_settings, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);
     $form[$field]['ds_weight']['#default_value'] = ds_default_value($display_settings, 'fields', $field, 'weight', DS_DEFAULT_WEIGHT);

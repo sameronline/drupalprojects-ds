@@ -35,6 +35,10 @@
   padding: 3px;
 }
 
+.ds-field-name {
+  font-size: 0.9em;
+}
+
 .ds-label-label {
 	float: left;
 	margin-right: 15px;
