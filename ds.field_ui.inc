@@ -849,7 +849,7 @@ function ds_ds_field_settings_form($field) {
           $title = t('Edit content');
         }
         $form['select'] = array(
-          '#markup' => '<div class="select-content-link">' . l($title, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field['entity_type'] . '/' . $field['name'] . $args, array('attributes' => array('class' => array('ctools-use-modal'), $query))) . '</div>',
+          '#markup' => '<div class="select-content-link">' . l($title, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field['entity_type'] . '/' . $field['name'] . $args, array('attributes' => array('class' => array('ctools-use-modal'))) + $query) . '</div>',
           '#weight' => -10,
         );
         $form['load_terms'] = array(
