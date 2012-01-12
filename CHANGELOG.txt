@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.5 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1294686 by victoriachan: follow up on empty region to block error.
 - #1382132 by swentel: add warning about wrong regions.
 - #1387036 by donquixote and swentel: Fix array to string conversion in implode.
 - #1388288 by mrfelton: Fix vertical tabs with empty regions. 
