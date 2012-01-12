@@ -433,10 +433,22 @@ function ds_get_layout_info() {
   static $layouts = FALSE;
 
   if (!$layouts) {
+    $errors = array();
+
     $layouts = module_invoke_all('ds_layout_info');
 
     // Give modules a chance to alter the layouts information.
     drupal_alter('ds_layout_info', $layouts);
+
+    // Check that there is no 'content' region.
+    foreach ($layouts as $key => $info) {
+      if (array_key_exists('content', $info['regions'])) {
+        $errors[] = $key;
+      }
+    }
+    if (!empty($errors)) {
+      drupal_set_message(t('Following layouts have a "content "region key which is invalid: %layouts.', array('%layouts' => implode(', ', $errors))), 'error');
+    }
   }
 
   return $layouts;
