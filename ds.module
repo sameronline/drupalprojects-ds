@@ -442,7 +442,7 @@ function ds_get_layout_info() {
 
     // Check that there is no 'content' region.
     foreach ($layouts as $key => $info) {
-      if (array_key_exists('content', $info['regions'])) {
+      if (isset($info['regions']['content'])) {
         $errors[] = $key;
       }
     }
