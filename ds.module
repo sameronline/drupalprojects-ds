@@ -493,7 +493,7 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
 
   // Display settings for this module and object.
   $object_display->display_settings = ds_get_settings($module, $object->type, $object->build_mode);
-  $object_display->region_styles = ds_default_value($display_settings, 'region_styles');
+  $object_display->region_styles = ds_default_value($object_display->display_settings, 'region_styles');
 
   /**
    * Pack groups
