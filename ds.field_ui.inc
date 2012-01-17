@@ -727,7 +727,8 @@ function ds_field_ui_layout_clone($form, &$form_state) {
     cache_clear_all('entity_info', 'cache', TRUE);
 
     // Show message.
-    drupal_set_message(t('The layout has been cloned.'));
+    drupal_set_message(t('The layout has been cloned. Note that not all settings for all fields have been copied over, you need to check those and save this screen again.'));
+  
   }
   else {
     drupal_set_message(t('No layout was cloned.'));
