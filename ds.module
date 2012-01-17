@@ -190,6 +190,8 @@ function ds_api_info($module, $type_name = 'all') {
   return $api_info[$module][$type_name];
 }
 
+
+
 /**
  * API function to build and render a build mode for a given object
  *
@@ -199,8 +201,11 @@ function ds_api_info($module, $type_name = 'all') {
  * Note that ds normally steps in during the normal build process and expects 
  * certain values to be available in $vars as a result, so you will need to 
  * determine what those properties are and provide them, or ensure that all 
- * your fields do not require values from that array.
+ * your fields do not require values from that array. In a lot of cases, calling
+ * this function outside of a page load workflow will fail as a result.
  *
+ * @param $key
+ *  Key of the object, e.g. NID
  * @param $object
  *  the object to be manipulated
  * @param $module
@@ -213,7 +218,7 @@ function ds_api_info($module, $type_name = 'all') {
  * @return 
  *  a string containing the fully rendered display
  */
-function ds_render(&$object, $module, &$vars, $build_mode = NULL) {
+function ds_make($key, $module, &$object, &$vars, $build_mode = NULL) {
   if (isset($build_mode) && !is_null($build_mode)){
     $object->build_mode = $build_mode;
   }
@@ -223,13 +228,37 @@ function ds_render(&$object, $module, &$vars, $build_mode = NULL) {
     'module' => $module,
     'vars' => $vars,
   );
-
   drupal_alter('ds_render', $data);
 
   $pre_render = ds_build_fields_and_regions($data['object'], $module);
-  $render = ds_render_content($data['object'], $module, $data['vars']);
+  $render = ds_render($data['object'], $module, $data['vars']);
 
   return $render;
+}
+
+/**
+ * API function to return rendered content for an item
+ *
+ * @param string $key
+ *  A key for the object, e.g. an NID
+ * @param stdClass $object 
+ *  The object to manipulate, e.g. a $node object
+ * @param string $module 
+ *  The name of the module requesting the render
+ * @param array $vars 
+ *  The variables required for rendering
+ *
+ * @return 
+ *  a string containing the fully rendered display
+ */
+function ds_render($key, $object, $module, $vars) {
+  static $renders = array();
+
+  if (isset($renders[$module]) && isset($renders[$module][$key])) {
+    return $renders[$module][$key];
+  }
+  $renders[$module][$key] = ds_render_content($object, $module, $vars);
+  return $renders[$module][$key];
 }
 
 /**
@@ -451,6 +480,10 @@ function ds_build_field($field_key, $field_settings){
 /**
  * Render content for an object.
  *
+ * @deprecated This function is a builder, use the statically cached ds_render
+ *
+ * @param string $key
+ *  A key for the object 
  * @param stdClass $object 
  *  The object to manipulate.
  * @param string $module 
