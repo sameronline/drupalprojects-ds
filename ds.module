@@ -852,6 +852,9 @@ function ds_render_multigroup(&$object, $group_key, $vars = array()){
       // through the ds rendering pipeline
       $object->ds_fields[$group_key]['subgroups']['rows'][$i]['fields'][$field_key]['content'] = $object->ds_fields[$group_key]['subgroups']['rows'][$i]['fields'][$field_key]['view'];
       $object->ds_fields[$group_key]['subgroups']['rows'][$i]['fields'][$field_key]['type'] = 'ds';
+      // Because CCK fields normally ignore ds formatters, we need to explicitly
+      // set the pipeline for multigroups to use DS, or they dont get formatted
+      $object->ds_fields[$group_key]['subgroups']['rows'][$i]['fields'][$field_key]['pipeline'] = DS_RENDER_DEFAULT;
       $object->ds_fields[$group_key]['subgroups']['rows'][$i]['fields'][$field_key]['rendered'] = ds_render_item($object->ds_fields[$group_key]['subgroups']['rows'][$i]['fields'][$field_key]);
 
       // Add subgroup row information
