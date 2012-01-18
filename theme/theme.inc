@@ -422,7 +422,7 @@ function theme_ds_multigroup_list($group) {
   }
 
   $items = array();
-  foreach ($group['fields'] as $row) {
+  foreach ($group['rows'] as $row) {
     if (!empty($row['rendered'])) {
       $items[] = $row['rendered'];
     }
