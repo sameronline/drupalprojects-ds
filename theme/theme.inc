@@ -409,6 +409,45 @@ function theme_ds_multigroup_list($group) {
 }
 
 /**
+ * Theme a multigroup as a comma separated list
+ *
+ * @param string $group 
+ *  The multigroup to theme.
+ */
+function theme_ds_multigroup_comma_separated($group) {
+  $output = '';
+
+  foreach ($group['rows'] as $row){
+    $row_output = '';
+    
+    // Set a legend if a field title exists
+    $output .= '<div class="'. $row['class'] .'">';
+    if (!empty($row['title'])) {
+      $row_output = theme('ds_subgroup_label', $row['title']);
+    }
+    $n = count($row['fields']);
+    $count = 1;
+    foreach ($row['fields'] as $field) {
+      $class = (!empty($field['class']) ? ' '. $field['class'] : '');
+      $row_output .= '<span class="field-item '. $field['key'] . $class .'">';
+      if ($field['labelformat'] == 'inline') {
+        $row_output .= '<span class="field-label-inline-first">'. $field['title'] .': </span>';
+      }
+      $row_output .= $field['view'] .'</span>';
+      if ($count != $n) {
+        $row_output .= ', ';
+      }
+      $count++;
+    }
+
+    $output .= $row_output;
+    $output .= '</div>';
+  }
+
+  return $output;
+}
+
+/**
  * Theme tabs. This is based on the theme_tabset() function
  * from the tabs module. We use our own theming function because
  * otherwhise we need to loop through our fields to build the

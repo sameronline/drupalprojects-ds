@@ -397,6 +397,14 @@ function _ds_theme() {
       'path' => $path .'/theme',
       'function' => 'theme_ds_multigroup_list',
     ),
+    'ds_multigroup_comma_separated' => array(
+      'arguments' => array(
+        'group' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+      'function' => 'theme_ds_multigroup_comma_separated',
+    ),
     'ds_subgroup_label' => array(
       'arguments' => array(
         'label' => NULL,
