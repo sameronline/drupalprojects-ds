@@ -270,7 +270,14 @@ function _ds_theme() {
       'file' => 'theme.inc',
       'path' => $path .'/theme',
     ),
-
+    'ds_field_inline' => array(
+      'arguments' => array(
+        'field' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+    ),
+    
     // Evaluate code.
     'ds_eval_code' => array(
       'arguments' => array(

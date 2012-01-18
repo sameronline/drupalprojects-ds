@@ -31,6 +31,29 @@ function theme_ds_field($field) {
 }
 
 /**
+ * Theme function to render the field content inline
+ *
+ * This does not support "above" labels, for obvious reasons.
+ *
+ * @param array $field Collection of field properties.
+ */
+function theme_ds_field_inline($field) {
+  $output = '';
+
+  if (!empty($field['content'])) {
+    $output .= '<div class="field field-inline '. $field['class'] .'">';
+    // Inline label
+    if ($field['labelformat'] == 'inline') {
+      $output .= '<div class="field-label-inline-first">'. $field['title'] .': </div>';
+    }
+    $output .= $field['content'];
+    $output .= '</div>';
+  }
+
+  return $output;
+}
+
+/**
  * Theme function to render all regions with their content.
  *
  * @param stdClass $object_display The complete object and display properties.
