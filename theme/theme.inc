@@ -8,7 +8,6 @@
 /**
  * Theme function to render the field content.
  *
- * @param string $content The content to render.
  * @param array $field Collection of field properties.
  */
 function theme_ds_field($field) {
@@ -146,7 +145,6 @@ function theme_ds_objects($data, $extra) {
 /**
  * Theme a group (fieldset).
  *
- * @param string $content The content to render.
  * @param string $field The field to theme.
  */
 function theme_ds_group_fieldset($field) {
@@ -184,8 +182,6 @@ function theme_ds_group_fieldset($field) {
 /**
  * Theme a multigroup as a collection of simple objects
  *
- * @param string $content 
- *  A dummy content value for consistency with other ds theme signatures
  * @param string $group 
  *  The multigroup to theme.
  */
@@ -225,8 +221,6 @@ function theme_ds_multigroup_div($group) {
 /**
  * Theme a multigroup as a collection of fieldsets.
  *
- * @param string $content 
- *  A dummy content value for consistency with other ds theme signatures
  * @param string $group 
  *  The multigroup to theme.
  */
@@ -276,8 +270,6 @@ function theme_ds_multigroup_fieldset($group) {
 /**
  * Theme a multigroup (fieldset).
  *
- * @param string $content 
- *  A dummy content value for consistency with other ds theme signatures
  * @param string $group 
  *  The multigroup to theme.
  */

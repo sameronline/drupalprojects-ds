@@ -265,7 +265,6 @@ function _ds_theme() {
     // General theming field.
     'ds_field' => array(
       'arguments' => array(
-        'content' => NULL,
         'field' => NULL,
       ),
       'file' => 'theme.inc',
@@ -302,7 +301,6 @@ function _ds_theme() {
     // We'll only use one function for the fieldsets.
     'ds_group_fieldset_open' => array(
       'arguments' => array(
-        'content' => NULL,
         'field' => NULL,
       ),
       'file' => 'theme.inc',
@@ -311,7 +309,6 @@ function _ds_theme() {
     ),
     'ds_group_fieldset_collapsible' => array(
       'arguments' => array(
-        'content' => NULL,
         'field' => NULL,
       ),
       'file' => 'theme.inc',
@@ -320,7 +317,6 @@ function _ds_theme() {
     ),
     'ds_group_fieldset_collapsed' => array(
       'arguments' => array(
-        'content' => NULL,
         'field' => NULL,
       ),
       'file' => 'theme.inc',
@@ -331,7 +327,6 @@ function _ds_theme() {
     // CCK 3.x multigroup subgroup formatters
     'ds_multigroup_div' => array(
       'arguments' => array(
-        'content' => NULL,
         'group' => NULL,
       ),
       'file' => 'theme.inc',
@@ -340,7 +335,6 @@ function _ds_theme() {
     ),
     'ds_multigroup_fieldset_open' => array(
       'arguments' => array(
-        'content' => NULL,
         'group' => NULL,
       ),
       'file' => 'theme.inc',
@@ -349,7 +343,6 @@ function _ds_theme() {
     ),
     'ds_multigroup_fieldset_collapsible' => array(
       'arguments' => array(
-        'content' => NULL,
         'group' => NULL,
       ),
       'file' => 'theme.inc',
@@ -358,7 +351,6 @@ function _ds_theme() {
     ),
     'ds_multigroup_fieldset_collapsed' => array(
       'arguments' => array(
-        'content' => NULL,
         'group' => NULL,
       ),
       'file' => 'theme.inc',
@@ -367,7 +359,6 @@ function _ds_theme() {
     ),
     'ds_multigroup_table_simple' => array(
       'arguments' => array(
-        'content' => NULL,
         'group' => NULL,
       ),
       'file' => 'theme.inc',
@@ -376,7 +367,6 @@ function _ds_theme() {
     ),
     'ds_multigroup_table_multiple' => array(
       'arguments' => array(
-        'content' => NULL,
         'group' => NULL,
       ),
       'file' => 'theme.inc',
@@ -385,7 +375,6 @@ function _ds_theme() {
     ),
     'ds_multigroup_horizontal_line' => array(
       'arguments' => array(
-        'content' => NULL,
         'group' => NULL,
       ),
       'file' => 'theme.inc',
@@ -394,7 +383,6 @@ function _ds_theme() {
     ),
     'ds_multigroup_list_ol' => array(
       'arguments' => array(
-        'content' => NULL,
         'group' => NULL,
       ),
       'file' => 'theme.inc',
@@ -403,7 +391,6 @@ function _ds_theme() {
     ),
     'ds_multigroup_list_ul' => array(
       'arguments' => array(
-        'content' => NULL,
         'group' => NULL,
       ),
       'file' => 'theme.inc',
