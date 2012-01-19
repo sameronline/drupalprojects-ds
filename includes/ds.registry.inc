@@ -40,6 +40,18 @@ function _ds_ui_menu() {
     'file' => 'includes/ds.admin.inc',
   );
 
+  
+  // Styles
+  $items['admin/build/ds/styles'] = array(
+    'title' => 'Styles',
+    'description' => 'Configure generic CSS class settings for fields and regions.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ds_styles_form'),
+    'access arguments' => array('administer styles'),
+    'file' => 'includes/ds.display.inc',
+    'weight' => 5,
+  );
+  
   // Import / Export
   $items['admin/build/ds/tools'] = array(
     'title' => 'Tools',
@@ -48,7 +60,7 @@ function _ds_ui_menu() {
     'page arguments' => array('ds_import'),
     'access arguments' => array('export and import settings'),
     'file' => 'includes/ds.tools.inc',
-    'weight' => -1,
+    'weight' => 10,
   );
   $items['admin/build/ds/tools/import'] = array(
     'title' => 'Import settings',
@@ -75,26 +87,27 @@ function _ds_ui_menu() {
 
   // Display layout menu item.
   $items['admin/build/ds/layout'] = array(
-    'title' => 'Layout',
+    'title' => 'Layouts',
     'description' => 'Go to the overview screen of all the objects in your Drupal site to theme.',
     'page callback' => 'ds_layout_overview',
     'access arguments' => array('access display suite'),
     'file' => 'includes/ds.display.inc',
-    'weight' => 2,
+    'weight' => -5,
   );
   $items['admin/build/ds/layout/overview'] = array(
       'title' => 'Overview',
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => 0,
   );
-  $items['admin/build/ds/layout/styles'] = array(
-    'title' => 'Styles',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_styles_form'),
-    'access arguments' => array('administer styles'),
-    'file' => 'includes/ds.display.inc',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 1,
+
+  // Modules
+  $items['admin/build/ds/modules'] = array(
+    'title' => 'Module display settings',
+    'description' => 'Settings for modules which provide displays.',
+    'page callback' => 'ds_module_list',
+    'access arguments' => array('access display suite'),
+    'file' => 'includes/ds.modules.inc',
+    'weight' => 3,
   );
 
   foreach (module_implements('ds_api') as $module) {
@@ -103,22 +116,22 @@ function _ds_ui_menu() {
     $title = $api_info['title'];
 
     // Info.
-    $items['admin/build/ds/'. $module] = array(
+    $items['admin/build/ds/modules/'. $module] = array(
       'title' => $title,
       'description' => 'Find help, configure build modes, fields, fieldgroups, plugins and possibly other settings for '. $title .'.',
       'page callback' => 'ds_info',
       'page arguments' => array($module),
       'access arguments' => array('administer '. $module),
-      'file' => 'includes/ds.info.inc',
+      'file' => 'includes/ds.modules.inc',
     );
-    $items['admin/build/ds/'. $module .'/info'] = array(
+    $items['admin/build/ds/modules/'. $module .'/info'] = array(
       'title' => 'Info',
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => 0,
     );
 
     // Fields.
-    $items['admin/build/ds/'. $module .'/fields'] = array(
+    $items['admin/build/ds/modules/'. $module .'/fields'] = array(
       'title' => 'Fields',
       'page callback' => 'ds_fields',
       'page arguments' => array($module),
@@ -131,7 +144,7 @@ function _ds_ui_menu() {
 
     // Fields examples.
     if (!isset($api_info['no_fields_examples'])) {
-      $items['admin/build/ds/'. $module .'/fields-examples'] = array(
+      $items['admin/build/ds/modules/'. $module .'/fields-examples'] = array(
         'title' => 'Field examples',
         'page callback' => 'ds_fields_examples',
         'page arguments' => array($module),
@@ -144,7 +157,7 @@ function _ds_ui_menu() {
     }
 
     // Field groups
-    $items['admin/build/ds/'. $module .'/fieldgroups'] = array(
+    $items['admin/build/ds/modules/'. $module .'/fieldgroups'] = array(
       'title' => 'Fieldgroups',
       'page callback' => 'ds_fieldgroups',
       'page arguments' => array($module),
@@ -155,7 +168,7 @@ function _ds_ui_menu() {
     );
 
     // Build modes.
-    $items['admin/build/ds/'. $module .'/buildmodes'] = array(
+    $items['admin/build/ds/modules/'. $module .'/buildmodes'] = array(
       'title' => 'Build modes',
       'page callback' => 'ds_build_modes',
       'page arguments' => array($module),
@@ -166,7 +179,7 @@ function _ds_ui_menu() {
     );
 
     // Plugins.
-    $items['admin/build/ds/'. $module .'/plugins'] = array(
+    $items['admin/build/ds/modules/'. $module .'/plugins'] = array(
       'title' => 'Plugins',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('ds_plugins', $module),

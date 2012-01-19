@@ -28,6 +28,7 @@
 Multigroup support
 Improved internal API
 Improved database storage
+Improved administration user experience
 
 - #1293420 by Feng-Shui: Custom build mode key name can exceed db field size.
 - #1168130 by swentel: backport some of the techniques of D7 storage.
