@@ -569,7 +569,7 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
           break;
             
         case DS_FIELD_TYPE_IGNORE:
-          $object->ds_fields[$key]['pre_render'] = $object->content[$key]['#value'];
+          $object->ds_fields[$key]['pre_render'] = isset($object->content[$key]['#value']) ? $object->content[$key]['#value'] : '';
           break;
       }
 
