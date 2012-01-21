@@ -394,6 +394,7 @@ function ds_build_field($field_key, $field_settings){
     'label' => '',
     'theme' => DS_DEFAULT_THEME_FIELD,
     'weight' => DS_DEFAULT_WEIGHT,
+    'content' => NULL,
   );
 
   // Merge defaults and settings to produce the field array
