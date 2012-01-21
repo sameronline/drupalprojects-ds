@@ -473,7 +473,7 @@ function ds_build_field($field_key, $field_settings){
     }
 
     //  Format content for the field
-    $field = ds_format_content($field);
+    $field['content'] = ds_field_format_content($field);
   }
   return $field;
 }
@@ -562,15 +562,15 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
       switch ($object->ds_fields[$key]['field_type']) {
         case DS_FIELD_TYPE_PREPROCESS:
           if (!empty($object->ds_fields[$key]['preprocess_settings']['key'])) {
-            $object->ds_fields[$key]['pre_render'] = $vars[$key][$object->preprocess_fields[$key]['key']];
+            $object->ds_fields[$key]['content'] = $vars[$key][$object->preprocess_fields[$key]['key']];
           }
           else {
-            $object->ds_fields[$key]['pre_render'] = $vars[$key];
+            $object->ds_fields[$key]['content'] = $vars[$key];
           }
           break;
             
         case DS_FIELD_TYPE_IGNORE:
-          $object->ds_fields[$key]['pre_render'] = isset($object->content[$key]['#value']) ? $object->content[$key]['#value'] : '';
+          $object->ds_fields[$key]['content'] = isset($object->content[$key]['#value']) ? $object->content[$key]['#value'] : '';
           break;
       }
 
@@ -591,7 +591,7 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
 
         default:
           // Set content for this item
-          $object->ds_fields[$key]['content'] = ds_get_content($object->ds_fields[$key], $vars);
+          $object->ds_fields[$key]['content'] = ds_get_content($object->ds_fields[$key], $vars, $key);
           $region_fields[$key]['rendered'] = ds_render_item($object->ds_fields[$key]);
           break;
       }
@@ -675,32 +675,35 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
 /**
  * Format content for use in an item
  */
-function ds_format_content($field) {
+function ds_field_format_content($field) {
+  $content = NULL;
 
   switch ($field['pipeline']) {
     case DS_RENDER_DRUPAL:
+      // Does nothing, as drupal_render will take care of the entire field later
       break;
 
     case DS_RENDER_NON_DS:
+      // Does nothing, because we are ignoring it
       break;
 
     default:
     case DS_RENDER_DEFAULT:
-      if (isset($field['formatter']) && !isset($field['pre_render'])) {
+      if (isset($field['formatter'])) {
         if (isset($field['file'])) {
           include_once($field['file']);
         }
         if (isset($field['function'])) {
-          $field['pre_render'] = $function($field);
+          $content = $function($field);
         }
         else {
-          $field['pre_render'] = theme($field['formatter'], $field);
+          $content = theme($field['formatter'], $field);
         }
       }
       break;
   }
 
-  return $field;
+  return $content;
 }
 
 /**
@@ -778,7 +781,7 @@ function ds_render_group(&$object, $group_key, $vars = array()){
       // Items inside groups wont have a content value set, so assign it now
       // @todo find a way to move ds_set_content into a consistent place for 
       // all fields, e.g. ds_build_fields_and_objects
-      $object->ds_fields[$group_key]['fields'][$field_key]['content'] = ds_get_content($object->ds_fields[$group_key]['fields'][$field_key], $vars);
+      $object->ds_fields[$group_key]['fields'][$field_key]['content'] = ds_get_content($object->ds_fields[$group_key]['fields'][$field_key], $vars, $field_key);
       $object->ds_fields[$group_key]['fields'][$field_key]['rendered'] = ds_render_item($object->ds_fields[$group_key]['fields'][$field_key]);
 
       $object->ds_fields[$group_key]['content'] .= $object->ds_fields[$group_key]['fields'][$field_key]['rendered'];
@@ -896,7 +899,7 @@ function ds_render_multigroup(&$object, $group_key, $vars = array()){
  *  the item to set content for
  * @param array $content_vars (optional)
  *  the $vars array, or an array containing possible values
- * @param string $vars_key (optional)
+ * @param string $vars_key 
  *  the key within $content_vars to retrieve
  *
  * @return 
@@ -907,29 +910,25 @@ function ds_get_content($item, $content_vars = array(), $vars_key = NULL) {
     return FALSE;
   }
 
+  $content = '';
   // If content has been prerendered by ds_build_fields_and_objects use that
-  if (!empty($item['pre_render'])) {
-    $item['content'] = $item['pre_render'];
+  if (!empty($item['content'])) {
+    $content = $item['content'];
   }
   // If content has been rendered by another source (i.e. CCK) use that
   elseif (!empty($content_vars)) {
-    // Set custom key for vars, or use default
-    if (!empty($content_vars)) {
-      if (!empty($vars_key)) {
-        $key = $vars_key;
-      }
-      else {
-        $key = $item['key'] .'_rendered';
-      }
+    // CCK fields will use $vars_key.'_rendered'
+    // @todo: this is a bit of a hacky way to get CCK content, refactor
+    if (isset($content_vars[$vars_key .'_rendered'])) {
+      $content = $content_vars[$vars_key .'_rendered'];
     }
-    
-    if (isset($content_vars[$key])) {
-      $item['content'] = $content_vars[$key];
+    elseif (isset($content_vars[$vars_key])) {
+      $content = $content_vars[$vars_key];
     }
   }
 
-  if (!empty($item['content'])){
-    return $item['content'];
+  if (!empty($content)){
+    return $content;
   }
 
   return FALSE;
