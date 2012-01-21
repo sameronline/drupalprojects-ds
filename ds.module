@@ -677,7 +677,6 @@ function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT
  */
 function ds_field_format_content($field) {
   $content = NULL;
-
   switch ($field['pipeline']) {
     case DS_RENDER_DRUPAL:
       // Does nothing, as drupal_render will take care of the entire field later
@@ -689,13 +688,18 @@ function ds_field_format_content($field) {
 
     default:
     case DS_RENDER_DEFAULT:
-      if (isset($field['formatter'])) {
+      if (isset($field['formatter']) || isset($field['function'])) {
+        // Load includes
         if (isset($field['file'])) {
           include_once($field['file']);
         }
-        if (isset($field['function'])) {
-          $content = $function($field);
+        // If its a function, call it
+        if (isset($field['function']) && !empty($field['function'])) {
+          if (function_exists($field['function'])) {
+            $content = call_user_func($field['function'], $field);
+          }
         }
+        // Otherwise, pipe through theme()
         else {
           $content = theme($field['formatter'], $field);
         }
