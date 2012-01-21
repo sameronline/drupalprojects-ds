@@ -1,6 +1,30 @@
--------------------------------------------------------------------------------------
-6.x-2.0 2011-xx-xx
--------------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+6.x-2.0-dev 2012-XX-XX
+------------------------------------------------------------------------------
+- #1375990 by xtfer: Fix function field types called from code
+- #1412028 by iankp: Fix an issue where region styles were not output
+- Fix a PHP notice when ignored fields are not actually present on the object
+- Fix broken multigroup list formatter
+- New inline field formatter
+- New comma separated list formatter for multigroup subgroups
+- Make sure fields in multigroups get passed through DS for theming
+- Minor performance improvements
+- Show real field names in Layout UI
+- Fix an issue where incorrect values were passed to the multigroup list theme 
+  function
+- New function to get element children
+
+------------------------------------------------------------------------------
+6.x-2.0-rc1 2011-11-14
+------------------------------------------------------------------------------
+- #1176182 by zhangtaihao: OptGroups for field and region style
+- Fix broken preprocess and ignored fields
+- Render regions in the right order
+- Pass the correct values to plugins
+
+------------------------------------------------------------------------------
+6.x-2.0-alpha1 2011-11-14
+------------------------------------------------------------------------------
 Multigroup support
 Improved internal API
 Improved database storage
