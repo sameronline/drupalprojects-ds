@@ -65,6 +65,15 @@ define('DS_DEFAULT_THEME_FIELD', 'ds_field');
 define('DS_DEFAULT_THEME_FIELDSET', 'ds_group_fieldset_open');
 
 /**
+ * Constants for menu paths
+ */
+define('DS_PATH_BASE', 'admin/build/ds');
+define('DS_PATH_LAYOUT', 'admin/build/ds/layout');
+define('DS_PATH_TOOLS', 'admin/build/ds/tools');
+define('DS_PATH_STYLES', 'admin/build/ds/styles');
+define('DS_PATH_MODULES', 'admin/build/ds/modules');
+
+/**
  * Implementation of hook_theme().
  */
 function ds_theme() {

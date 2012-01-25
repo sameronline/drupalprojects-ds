@@ -51,10 +51,10 @@ function ds_module_list() {
     );
 
     // Tools
-    $fields = l('Fields', 'admin/build/ds/modules/'. $api_info['module'] .'/fields');
-    $fieldgroups = l('Fieldgroups', 'admin/build/ds/modules/'. $api_info['module'] .'/fieldgroups');
-    $buildmodes = l('Build modes', 'admin/build/ds/modules/'. $api_info['module'] .'/buildmodes');
-    $plugins = l('Plugins', 'admin/build/ds/modules/'. $api_info['module'] .'/plugins');
+    $fields = l('Fields', DS_PATH_MODULES .'/'.  $api_info['module'] .'/fields');
+    $fieldgroups = l('Fieldgroups', DS_PATH_MODULES .'/'.  $api_info['module'] .'/fieldgroups');
+    $buildmodes = l('Build modes', DS_PATH_MODULES .'/'.  $api_info['module'] .'/buildmodes');
+    $plugins = l('Plugins', DS_PATH_MODULES .'/'.  $api_info['module'] .'/plugins');
 
     $form[$api_info['module']]['tools'] = array(
       '#value' => '<p>'. $fields .' | '. $fieldgroups .' | '. $buildmodes .' | '. $plugins .'</p>',

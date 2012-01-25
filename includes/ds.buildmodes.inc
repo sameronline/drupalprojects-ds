@@ -10,8 +10,8 @@
  */
 function ds_build_modes($module) {
   $output = '';
-  $action = arg(5);
-  $build_mode = arg(6);
+  $action = check_plain(arg(6));
+  $build_mode = check_plain(arg(7));
   $build_modes = variable_get($module .'_build_modes', array());
   $api_info = ds_api_info($module);
 
@@ -41,7 +41,7 @@ function ds_build_modes($module) {
           $row = array();
           $row[] = check_plain($name);
           $row[] = $key;
-          $row[] = l(t('Edit'), 'admin/build/ds/'. $module .'/buildmodes/edit/'. $key) .' - '. l(t('Delete'), 'admin/build/ds/'. $module .'/buildmodes/delete/'. $key);
+          $row[] = l(t('Edit'), DS_PATH_MODULES .'/'.  $module .'/buildmodes/edit/'. $key) .' - '. l(t('Delete'), DS_PATH_MODULES .'/'.  $module .'/buildmodes/delete/'. $key);
           $rows[] = $row;
         }
 
@@ -143,7 +143,7 @@ function ds_build_mode_form_submit($form, &$form_state) {
   variable_set($form['#module'] .'_build_modes', $build_modes);
 
   drupal_set_message(t('Build mode %build_mode has been saved.', array('%build_mode' => $build_modes[$form_state['values']['key']])));
-  $form_state['redirect'] = 'admin/build/ds/'. $form['#module'] .'/buildmodes';
+  $form_state['redirect'] = DS_PATH_MODULES .'/'.  $form['#module'] .'/buildmodes';
   menu_rebuild();
   drupal_rebuild_theme_registry();
 }
@@ -172,7 +172,7 @@ function ds_build_mode_delete_form($form_state, $module, $build_mode) {
   $form['buttons']['cancel'] = array(
     '#suffix' => '</div>',
     '#type' => 'markup',
-    '#value' => l('cancel', 'admin/build/ds/'. $module .'/buildmodes'),
+    '#value' => l('cancel', DS_PATH_MODULES .'/'.  $module .'/buildmodes'),
   );
 
   $form['#module'] = $module;
@@ -192,7 +192,7 @@ function ds_build_mode_delete_form_submit($form, &$form_state) {
   db_query("DELETE FROM {ds_settings} WHERE build_mode = '%s' AND module = '%s'", $form_state['values']['display'], $module);
 
   drupal_set_message(t('Custom build mode %build_mode has been removed.', array('%build_mode' => $form_state['values']['display'])));
-  $form_state['redirect'] = 'admin/build/ds/'. $module .'/buildmodes';
+  $form_state['redirect'] = DS_PATH_MODULES .'/'.  $module .'/buildmodes';
   menu_rebuild();
   drupal_rebuild_theme_registry();
 }

@@ -52,9 +52,9 @@ function ds_layout_overview() {
             $row[] = $build_mode['title'];
             $row[] = ds_settings_status($settings_status);
 
-            $operations = l('Edit', 'admin/build/ds/layout/'. $type_url_str .'/'. $bkey);
+            $operations = l('Edit', DS_PATH_LAYOUT .'/'. $type_url_str .'/'. $bkey);
             if (user_access('revert overridden settings') && $settings_status == DS_SETTINGS_OVERRIDDEN) {
-              $operations .= ' - '. l('Revert', 'admin/build/ds/tools/revert/'. $module .'/'. $type_url_str .'/'. $bkey);
+              $operations .= ' - '. l('Revert', DS_PATH_TOOLS .'/revert/'. $module .'/'. $type_url_str .'/'. $bkey);
             }
             $row[] = $operations;
             $build_mode_rows[] = array('data' => $row, 'class' => 'ds-row-type');
@@ -203,7 +203,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
   );
 
   if ($synced) {
-    $form['#synced'] = t('You can not edit this buildmode right now because it is synchronised with !bm.', array('!bm' => l($all_build_modes[$synced]['title'], 'admin/build/ds/layout/'. $type .'/'. $synced)));
+    $form['#synced'] = t('You can not edit this buildmode right now because it is synchronised with !bm.', array('!bm' => l($all_build_modes[$synced]['title'], DS_PATH_LAYOUT .'/'. $type .'/'. $synced)));
   }
 
   // Build style selects for region classes.
