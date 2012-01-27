@@ -39,13 +39,15 @@ function ds_schema() {
         'description' => 'The settings of for this record.',
         'type' => 'text',
         'not null' => TRUE,
-        'size' => 'big'
+        'size' => 'big',
+        'default' => '',
       ),
       'fields' => array(
         'description' => 'The fields of for this record.',
         'type' => 'text',
         'not null' => TRUE,
-        'size' => 'big'
+        'size' => 'big',
+        'default' => '',
       ),
     ),
     'indexes' => array(
@@ -169,5 +171,26 @@ function ds_update_4() {
   }
 
 
+  return $ret;
+}
+
+function ds_update_6201(){
+  $ret = array();
+  db_change_field($ret, 'ds_settings', 'settings', 'settings', array(
+      'description' => 'The settings of for this record.',
+      'type' => 'text',
+      'not null' => TRUE,
+      'size' => 'big',
+      'default' => '',
+    )
+  );
+  db_change_field($ret, 'ds_settings', 'fields', 'fields', array(
+      'description' => 'The fields for this record.',
+      'type' => 'text',
+      'not null' => TRUE,
+      'size' => 'big',
+      'default' => '',
+    )
+  );
   return $ret;
 }
