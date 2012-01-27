@@ -113,7 +113,7 @@ function ds_layout_overview() {
     $content = theme('table', array(), $rows, array('id' => 'ds-overview-page'));
   }
   else {
-    $content = t('No items found.');
+    $content = '<p>'. t('No modules which provide Displays were found.') .'</p></p>'. t('For example, to change display options for nodes, use <a href="http://drupal.org/project/nd">Node Displays</a>. Other modules are listed in the <a href="http://drupal.org/node/644662">documentation</a>.') .'</p>';
   }
 
   return $content;

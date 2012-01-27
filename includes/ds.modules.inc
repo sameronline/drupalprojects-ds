@@ -69,6 +69,9 @@ function ds_module_list() {
     
     $output .= drupal_render($form);
   }
+  if (empty($output)) {
+    $output = '<p>'. t('No modules which provide settings were found.') .'</p></p>'. t('For example, to change display options for nodes, use <a href="http://drupal.org/project/nd">Node Displays</a>. Other modules are listed in the <a href="http://drupal.org/node/644662">documentation</a>.') .'</p>';
+  }
 
   return $output;
 }
