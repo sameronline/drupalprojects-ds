@@ -572,7 +572,6 @@ function ds_display_overview_form_submit($form, &$form_state) {
 
   // Save new settings.
   $record = new stdClass();
-  $record = new stdClass();
   $record->module = $module;
   $record->type = $type;
   $record->build_mode = $build_mode;
@@ -588,7 +587,6 @@ function ds_display_overview_form_submit($form, &$form_state) {
       db_query("DELETE FROM {ds_settings} WHERE build_mode = '%s' AND module = '%s' AND type = '%s'", $sync_build_mode, $module, $type);
 
       // Save new sync/copy settings.
-      $record = new stdClass();
       $record = new stdClass();
       $record->module = $module;
       $record->type = $type;
