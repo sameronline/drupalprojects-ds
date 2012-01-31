@@ -803,7 +803,9 @@ function ds_render_group(&$object, $group_key, $vars = array()){
     $object->ds_fields[$group_key]['count'] = count($object->ds_fields[$group_key]['fields']); // @todo - is this still required?
 
     // Render the complete group
-    $object->ds_fields[$group_key]['rendered'] = ds_render_item($object->ds_fields[$group_key]);
+    if (!empty($object->ds_fields[$group_key]['content'])) {
+      $object->ds_fields[$group_key]['rendered'] = ds_render_item($object->ds_fields[$group_key]);
+    }
   }
 
   return $object->ds_fields[$group_key]['rendered'];
