@@ -314,6 +314,13 @@ function ds_build_fields_and_regions(&$object, $module) {
     // Get all fields and settings for this build mode (this doesnt load CCK fields, only groups)
     $available_fields = ds_get_fields($module, $object->type, $object->build_mode, $api_info['extra']);
 
+    // The node Body can sometimes be populated with other content when empty
+    // @todo - we do this here so the fields populate correctly, but find 
+    // somewhere logical for this
+    if (isset($object->has_empty_body) && $object->has_empty_body == 1) {
+      $object->body = '';
+    }
+
     // Iterate over fields listed on the display
     foreach ($display_settings['fields'] as $field_key => $field_defaults) {
 
