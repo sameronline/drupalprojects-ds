@@ -1,4 +1,13 @@
 ------------------------------------------------------------------------------
+6.x-2.x-dev 2012-XX-XX
+------------------------------------------------------------------------------
+- #1421004 by xtfer: Empty field groups should not render
+- #1422448 by xtfer: Fix an issue where an empty body field would sometimes be 
+  populated with other field content
+- #1416986: Fix an issue where some MySQL versions may not create tables correctly.
+- Provide better information when no api implementers are installed.
+
+------------------------------------------------------------------------------
 6.x-2.1 2012-01-25
 ------------------------------------------------------------------------------
 - #1415070 by xtfer: Fix incorrect menu callbacks
