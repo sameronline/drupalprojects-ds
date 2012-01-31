@@ -510,7 +510,7 @@ function ds_build_field($field_key, $field_settings){
  * @param string $theme_function 
  *  The theming function for a field.
  */
-function ds_render_content($object, $module, $vars, $theme_function = DS_DEFAULT_THEME_FIELD) {
+function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAULT_THEME_FIELD) {
 
   /**
    * Basic object set up
