@@ -1021,6 +1021,9 @@ function ds_render_ctools_field($field) {
           if (empty($field['entity']->{$key})) {
             continue;
           }
+          if (!isset($field['entity']->{$key}[$language])) {
+            $language = LANGUAGE_NONE;
+          }
           foreach ($field['entity']->{$key}[$language] as $tkey => $item) {
             if (isset($item['tid']) && !isset($item['taxonomy_term'])) {
               if (!isset($terms_loaded[$item['tid']])) {
