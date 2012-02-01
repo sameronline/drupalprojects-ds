@@ -119,6 +119,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
         '#type' => 'checkbox',
         '#description' => t('Load comments for every node to display.'),
         '#default_value' => isset($this->options['load_comments']) ? $this->options['load_comments'] : FALSE,
+        '#access' => module_exists('comment'),
       );
     }
 
@@ -377,7 +378,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
  */
 function ds_views_row_render_node($entity, $view_mode, $load_comments) {
   $node_display = node_view($entity, $view_mode);
-  if ($load_comments) {
+  if ($load_comments && module_exists('comment')) {
     $node_display['comments'] = comment_node_page_additions($entity);
   }
   return drupal_render($node_display);
