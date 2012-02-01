@@ -728,7 +728,7 @@ function ds_field_ui_layout_clone($form, &$form_state) {
 
     // Show message.
     drupal_set_message(t('The layout has been cloned. Note that not all settings for all fields have been copied over, you need to check those and save this screen again.'));
-  
+
   }
   else {
     drupal_set_message(t('No layout was cloned.'));
@@ -1319,21 +1319,21 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#access' => empty($chosen_layout['flexible']),
     );
 
-    $styles = _ds_styles();
-    if (!empty($styles)) {
+    $classes = _ds_classes();
+    if (!empty($classes)) {
       foreach (array_keys($layout->regions) as $region) {
         $form['additional_settings']['ds_classes'][$region] = array(
           '#type' => 'select',
           '#multiple' => TRUE,
-          '#options' => $styles,
+          '#options' => $classes,
           '#title' => t('Class for @region', array('@region' => $region)),
           '#default_value' => isset($layout->settings['classes'], $layout->settings['classes'][$region]) ? $layout->settings['classes'][$region] : '',
         );
       }
-      $form['additional_settings']['ds_classes']['info'] = array('#markup' => l(t('Manage region styles'), 'admin/structure/ds/styles', array('query' => drupal_get_destination())));
+      $form['additional_settings']['ds_classes']['info'] = array('#markup' => l(t('Manage region CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())));
     }
     else {
-      $form['additional_settings']['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any styles which can be used on regions.') . '</p><p>' . l(t('Manage region styles'), 'admin/structure/ds/styles', array('query' => drupal_get_destination())) . '</p>');
+      $form['additional_settings']['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any CSS classes which can be used on regions.') . '</p><p>' . l(t('Manage region CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())) . '</p>');
     }
   }
   else {
@@ -1689,25 +1689,25 @@ function _ds_field_valid($key, $field, &$form_state, $view_mode = 'default') {
 /**
  * Utility function to return styles.
  */
-function _ds_styles($name = 'ds_styles_regions') {
-  static $styles = array();
+function _ds_classes($name = 'ds_classes_regions') {
+  static $classes = array();
 
-  if (!isset($styles[$name])) {
-    $styles[$name] = array();
-    $custom_styles = trim(variable_get($name, ''));
-    if (!empty($custom_styles)) {
-      $styles[$name][''] = t('None');
-      $custom_styles = explode("\n", $custom_styles);
-      foreach ($custom_styles as $key => $value) {
+  if (!isset($classes[$name])) {
+    $classes[$name] = array();
+    $custom_classes = trim(variable_get($name, ''));
+    if (!empty($custom_classes)) {
+      $classes[$name][''] = t('None');
+      $custom_classes = explode("\n", $custom_classes);
+      foreach ($custom_classes as $key => $value) {
         $classes = explode("|", $value);
         $key = trim($classes[0]);
         $friendly_name = isset($classes[1]) ? trim($classes[1]) : $key;
-        $styles[$name][check_plain($key)] = $friendly_name;
+        $classes[$name][check_plain($key)] = $friendly_name;
       }
     }
   }
 
-  return $styles[$name];
+  return $classes[$name];
 }
 
 /**

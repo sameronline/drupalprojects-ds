@@ -256,7 +256,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
   if (variable_get('ds_extras_field_template', FALSE) && isset($form['#ds_layout'])) {
 
     $field_settings = $form['#field_settings'];
-    $field_styles = _ds_styles('ds_styles_fields');
+    $field_classes = _ds_classes('ds_classes_fields');
     $functions = module_invoke_all('ds_field_theme_functions_info');
     $default_field_function = variable_get('ft-default', 'theme_field');
 
@@ -298,12 +298,12 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
         ),
       );
 
-      // Field styles.
-      if (!empty($field_styles)) {
+      // Field classes.
+      if (!empty($field_classes)) {
         $field_styles_select = array(
           '#type' => 'select',
           '#multiple' => TRUE,
-          '#options' => $field_styles,
+          '#options' => $field_classes,
           '#title' => t('Choose a field style'),
           '#default_value' => isset($field_settings[$key]['ft']['styles']) ? explode(' ', $field_settings[$key]['ft']['styles']) : array(),
           '#prefix' => '<div class="field-styles">',

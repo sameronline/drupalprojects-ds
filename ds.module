@@ -81,22 +81,22 @@ function ds_menu() {
   );
 
   // Custom styles.
-  $items['admin/structure/ds/styles'] = array(
+  $items['admin/structure/ds/classes'] = array(
     'title' => 'CSS classes',
     'description' => 'Define extra CSS class names for regions and fields.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_styles_form'),
-    'file' => 'ds.styles.inc',
+    'page arguments' => array('ds_classes_form'),
+    'file' => 'ds.classes.inc',
     'access arguments' => array('admin_display_suite'),
     'weight' => -8,
   );
 
   // Layout overview.
-  $items['admin/structure/ds/layout'] = array(
+  $items['admin/structure/ds/displays'] = array(
     'title' => 'Displays',
     'description' => 'Define layouts for content items.',
     'page callback' => 'ds_layout_list',
-    'file' => 'ds.layout.inc',
+    'file' => 'ds.displays.inc',
     'access arguments' => array('admin_display_suite'),
     'weight' => -10,
   );
