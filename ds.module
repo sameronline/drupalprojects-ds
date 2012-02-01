@@ -792,7 +792,7 @@ function ds_field_attach_view_alter(&$build, $context) {
  * This function is added in ds_theme_registry_alter().
  */
 function ds_entity_variables(&$vars) {
-  if (isset($vars['elements']) && $layout = ds_get_layout($vars['elements']['#entity_type'], $vars['elements']['#bundle'], $vars['elements']['#view_mode'])) {
+  if (isset($vars['elements']) && isset($vars['elements']['#bundle']) && $layout = ds_get_layout($vars['elements']['#entity_type'], $vars['elements']['#bundle'], $vars['elements']['#view_mode'])) {
 
     // Do not render panel layouts.
     if (!empty($layout['settings']['ds_panels'])) {

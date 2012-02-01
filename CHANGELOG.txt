@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.5 xx/xx/2011
 -------------------------------------------------------------------------------------
+- #1410440 by swentel: fix #bundle notices once and for all.
 - #1382132 by andypost: follow up on region warning.
 - #1294686 by victoriachan: follow up on empty region to block error.
 - #1382132 by swentel: add warning about wrong regions.

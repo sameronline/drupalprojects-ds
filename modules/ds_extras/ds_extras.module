@@ -874,7 +874,7 @@ function ds_extras_entity_view_alter(&$build, $entity_type) {
 
   // If views and core doesn't send information along on the entity,
   // Display suite doesn't have a context to render the layout.
-  if (!isset($build['#entity_type']) && !isset($build['#bundle'])) {
+  if (!isset($build['#entity_type']) || !isset($build['#bundle'])) {
     return;
   }
 
@@ -919,7 +919,7 @@ function ds_extras_entity_view_alter(&$build, $entity_type) {
 function ds_extras_render_panel_layout(&$vars) {
   static $displays = array();
 
-  if (isset($vars['elements']) && $layout = ds_get_layout($vars['elements']['#entity_type'], $vars['elements']['#bundle'], $vars['elements']['#view_mode'])) {
+  if (isset($vars['elements']) && isset($vars['elements']['#bundle']) && $layout = ds_get_layout($vars['elements']['#entity_type'], $vars['elements']['#bundle'], $vars['elements']['#view_mode'])) {
 
     if (empty($layout['settings']['ds_panels'])) {
       return;
