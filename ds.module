@@ -82,21 +82,23 @@ function ds_menu() {
 
   // Custom styles.
   $items['admin/structure/ds/styles'] = array(
-    'title' => 'Styles',
-    'description' => 'Define classes which you can use as classes on regions and fields (if available).',
+    'title' => 'CSS classes',
+    'description' => 'Define extra CSS class names for regions and fields.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_styles_form'),
     'file' => 'ds.styles.inc',
     'access arguments' => array('admin_display_suite'),
+    'weight' => -8,
   );
 
   // Layout overview.
   $items['admin/structure/ds/layout'] = array(
-    'title' => 'Layout',
-    'description' => 'Displays a list of content which can be styled.',
+    'title' => 'Displays',
+    'description' => 'Define custom layouts for content items.',
     'page callback' => 'ds_layout_list',
     'file' => 'ds.layout.inc',
     'access arguments' => array('admin_display_suite'),
+    'weight' => -10,
   );
 
   // Change layout.
@@ -128,6 +130,7 @@ function ds_menu() {
     'page callback' => 'ds_view_modes_list',
     'file' => 'ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
+    'weight' => -7,
   );
   $items['admin/structure/ds/view_modes/manage'] = array(
     'title' => 'Add a view mode',
@@ -164,6 +167,7 @@ function ds_menu() {
     'page callback' => 'ds_custom_fields_list',
     'file' => 'ds.fields.inc',
     'access arguments' => array('admin_fields'),
+    'weight' => -9,
   );
   $items['admin/structure/ds/fields/manage'] = array(
     'title' => 'Fields edit',
