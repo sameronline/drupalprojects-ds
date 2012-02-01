@@ -94,7 +94,7 @@ function ds_menu() {
   // Layout overview.
   $items['admin/structure/ds/layout'] = array(
     'title' => 'Displays',
-    'description' => 'Define custom layouts for content items.',
+    'description' => 'Define layouts for content items.',
     'page callback' => 'ds_layout_list',
     'file' => 'ds.layout.inc',
     'access arguments' => array('admin_display_suite'),
