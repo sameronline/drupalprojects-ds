@@ -305,8 +305,8 @@ function ds_preprocess_field(&$variables) {
   }
 
   // Styles
-  if (isset($config['styles'])) {
-    $variables['classes_array'][] = $config['styles'];
+  if (isset($config['classes'])) {
+    $variables['classes_array'][] = $config['classes'];
   }
 
   // Alter the label if configured.

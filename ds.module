@@ -80,7 +80,7 @@ function ds_menu() {
     'weight' => 100,
   );
 
-  // Custom styles.
+  // Custom CSS classes.
   $items['admin/structure/ds/classes'] = array(
     'title' => 'CSS classes',
     'description' => 'Define extra CSS class names for regions and fields.',

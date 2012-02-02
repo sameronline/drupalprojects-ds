@@ -37,7 +37,7 @@ function ds_extras_settings($form) {
     '#title' => t('Default Field Template'),
     '#options' => $theme_functions,
     '#default_value' => variable_get('ft-default', 'theme_field'),
-    '#description' => t('Default will output the field as defined in Drupal Core.<br />Reset will strip all HTML.<br />Minimal adds a simple wrapper around the field.<br/>There is also an Expert Field Template that gives full control over the HTML, but can only be set per field.<br /><br />You can override this setting per field on the "Manage display" screens or when creating fields on the instance level.<br /><br /><strong>Template suggestions</strong><br />You can create .tpl files as well for these field theme functions, e.g. field--reset.tpl.php, field--minimal.tpl.php<br /><br /><label>Styles</label>You can add custom styles on the <a href="!url">styles form</a>. These styles can be added to fields using the Default Field Template.<br /><br /><label>Advanced</label>You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.', array('!url' => url('admin/structure/ds/styles'))),
+    '#description' => t('Default will output the field as defined in Drupal Core.<br />Reset will strip all HTML.<br />Minimal adds a simple wrapper around the field.<br/>There is also an Expert Field Template that gives full control over the HTML, but can only be set per field.<br /><br />You can override this setting per field on the "Manage display" screens or when creating fields on the instance level.<br /><br /><strong>Template suggestions</strong><br />You can create .tpl files as well for these field theme functions, e.g. field--reset.tpl.php, field--minimal.tpl.php<br /><br /><label>CSS classes</label>You can add custom CSS classes on the <a href="!url">classes form</a>. These classes can be added to fields using the Default Field Template.<br /><br /><label>Advanced</label>You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.', array('!url' => url('admin/structure/ds/classes'))),
     '#states' => array(
       'visible' => array(
         'input[name="additional_settings[fs1][ds_extras_field_template]"]' => array('checked' => TRUE),
@@ -300,19 +300,19 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 
       // Field classes.
       if (!empty($field_classes)) {
-        $field_styles_select = array(
+        $field_classes_select = array(
           '#type' => 'select',
           '#multiple' => TRUE,
           '#options' => $field_classes,
-          '#title' => t('Choose a field style'),
-          '#default_value' => isset($field_settings[$key]['ft']['styles']) ? explode(' ', $field_settings[$key]['ft']['styles']) : array(),
-          '#prefix' => '<div class="field-styles">',
+          '#title' => t('Choose additional CSS classes for the field'),
+          '#default_value' => isset($field_settings[$key]['ft']['classes']) ? explode(' ', $field_settings[$key]['ft']['classes']) : array(),
+          '#prefix' => '<div class="field-classes">',
           '#suffix' => '</div>',
         );
-        $form['fields'][$key]['format']['ft']['styles'] = $field_styles_select;
+        $form['fields'][$key]['format']['ft']['classes'] = $field_classes_select;
       }
       else {
-        $form['fields'][$key]['format']['ft']['styles'] = array(
+        $form['fields'][$key]['format']['ft']['classes'] = array(
           '#type' => 'value',
           '#value' => array(''),
         );
@@ -562,11 +562,11 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
       $field_settings[$key]['ft']['func'] = $function;
     }
 
-    // Field styles.
+    // Field classes.
     if ($function != 'theme_ds_field_expert' && $function != 'theme_ds_field_reset') {
-      $classes = implode(' ', $values['styles']);
+      $classes = implode(' ', $values['classes']);
       if (!empty($classes)) {
-        $field_settings[$key]['ft']['styles'] = $classes;
+        $field_settings[$key]['ft']['classes'] = $classes;
       }
     }
 

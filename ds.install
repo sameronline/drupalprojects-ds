@@ -19,7 +19,7 @@ function ds_install() {
  * Implements hook_uninstall().
  */
 function ds_uninstall() {
-  variable_del('ds_styles_regions');
+  variable_del('ds_classes_regions');
 }
 
 /**
@@ -330,4 +330,12 @@ function ds_update_7004() {
   $schema = ds_schema();
   db_change_field('ds_layout_settings', 'bundle', 'bundle', $schema['ds_layout_settings']['fields']['bundle']);
   db_change_field('ds_field_settings', 'bundle', 'bundle', $schema['ds_field_settings']['fields']['bundle']);
+}
+
+/**
+ * Rename the ds_styles_regions variable to ds_styles_regions.
+ */
+function ds_update_7005() {
+  variable_set('ds_classes_regions', variable_get('ds_styles_regions'));
+  variable_del('ds_styles_regions');
 }

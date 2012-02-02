@@ -118,7 +118,7 @@ function ds_extras_uninstall() {
   variable_del('ds_extras_vd');
   variable_del('ds_extras_hide_page_title');
   variable_del('ds_extras_field_template');
-  variable_del('ds_styles_fields');
+  variable_del('ds_classes_fields');
   variable_del('ds_extras_fields_extra');
   variable_del('ds_extras_fields_extra_list');
   variable_del('ds_extras_switch_field');
@@ -192,4 +192,12 @@ function ds_extras_update_7005() {
   if (db_table_exists('ds_vd')) {
     db_change_field('ds_vd', 'label', 'label', array('description' => 'The label for the views display.', 'type' => 'varchar', 'length' => 132, 'not null' => TRUE, 'default' => ''));
   }
+}
+
+/**
+ * Rename the ds_styles_fields variable to ds_classes_fields.
+ */
+function ds_extras_update_7006() {
+  variable_set('ds_classes_fields', variable_get('ds_styles_fields'));
+  variable_del('ds_styles_fields');
 }

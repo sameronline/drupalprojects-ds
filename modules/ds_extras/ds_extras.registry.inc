@@ -184,7 +184,7 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
   // Field template
   $ft_hooks = array(
     'ds_field_settings_alter',
-    'form_ds_styles_form_alter',
+    'form_ds_classes_form_alter',
     'form_field_ui_field_edit_form_alter',
     'theme',
   );
