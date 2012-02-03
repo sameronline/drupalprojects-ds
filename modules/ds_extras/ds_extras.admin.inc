@@ -677,8 +677,6 @@ function _ds_extras_page_title_options($settings, $entity_type) {
     '#weight' => 100,
   );
 
-  dpm($settings);
-
   $contexts = ds_get_entity_context($entity_type);
   $rows = array();
   foreach ($contexts as $context) {
