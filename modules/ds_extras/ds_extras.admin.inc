@@ -387,7 +387,11 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 
   // Page title functionality, currently only works on nodes, users and taxonomy terms.
   if (variable_get('ds_extras_hide_page_title', FALSE) && isset($form['#ds_layout']) && in_array($form['#entity_type'], array('node', 'user', 'taxonomy_term')) && ($form['#view_mode'] == 'full' || $form['#view_mode'] == 'revision' || (variable_get('ds_extras_switch_view_mode', FALSE) && $form['#entity_type'] == 'node'))) {
-    $form['additional_settings']['ds_layouts']['ds_page_title_options'] = _ds_extras_page_title_options($form['#ds_layout']->settings, $form['#entity_type']);
+    $form['additional_settings']['ds_page_title'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Page title options'),
+    );
+    $form['additional_settings']['ds_page_title']['ds_page_title_options'] = _ds_extras_page_title_options($form['#ds_layout']->settings, $form['#entity_type']);
   }
 
   // Region to block only fires if there is a layout and we're working on the
@@ -673,6 +677,8 @@ function _ds_extras_page_title_options($settings, $entity_type) {
     '#weight' => 100,
   );
 
+  dpm($settings);
+
   $contexts = ds_get_entity_context($entity_type);
   $rows = array();
   foreach ($contexts as $context) {
@@ -693,7 +699,7 @@ function _ds_extras_page_title_options($settings, $entity_type) {
     '#states' => array(
       'visible' => array(
         ':input[name="page_option_type"]' => array('value' => '2'),
-        ':input[name="additional_settings[ds_page_title_options][page_option_type]"]' => array('value' => '2'),
+        ':input[name="additional_settings[ds_page_title][ds_page_title_options][page_option_type]"]' => array('value' => '2'),
       ),
     ),
   );
@@ -702,14 +708,15 @@ function _ds_extras_page_title_options($settings, $entity_type) {
   $return['page_option_contexts'] = array(
     '#type' => 'fieldset',
     '#title' => t('Substitutions'),
-    '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    // Doesn't work because of http://drupal.org/node/1015798
+    //'#collapsible' => TRUE,
+    //'#collapsed' => TRUE,
     '#value' => theme('table', array('header' => $header, 'rows' => $rows)),
     '#weight' => 102,
     '#states' => array(
       'visible' => array(
         ':input[name="page_option_type"]' => array('value' => '2'),
-        ':input[name="additional_settings[ds_page_title_options][page_option_type]"]' => array('value' => '2'),
+        ':input[name="additional_settings[ds_page_title][ds_page_title_options][page_option_type]"]' => array('value' => '2'),
       ),
     ),
   );
