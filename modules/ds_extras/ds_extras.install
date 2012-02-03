@@ -201,3 +201,10 @@ function ds_extras_update_7006() {
   variable_set('ds_classes_fields', variable_get('ds_styles_fields'));
   variable_del('ds_styles_fields');
 }
+
+/**
+ * Remove the contextual links variable
+ */
+function ds_extra_update_7007() {
+  variable_del('ds_extras_contextual');
+}

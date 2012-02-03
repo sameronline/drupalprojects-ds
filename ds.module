@@ -255,6 +255,41 @@ function ds_menu() {
     'type' => MENU_CALLBACK,
   );
 
+  if (module_exists('contextual') && module_exists('field_ui')) {
+    $items['node/%node/display'] = array(
+      'title' => 'Manage display',
+      'description' => 'Manage display of this content.',
+      'page callback' => 'ds_contextual_page_tab',
+      'page arguments' => array(1, 'node'),
+      'file' => 'ds.contextual.inc',
+      'access arguments' => array('administer content types'),
+      'type' => MENU_LOCAL_TASK,
+    );
+
+    $items['user/%user/display'] = array(
+      'title' => 'Manage display',
+      'description' => 'Manage display of this user profile.',
+      'page callback' => 'ds_contextual_page_tab',
+      'page arguments' => array(1, 'user'),
+      'file' => 'ds.contextual.inc',
+      'access arguments' => array('administer users'),
+      'type' => MENU_LOCAL_TASK,
+    );
+
+    if (module_exists('taxonomy')) {
+      $items['taxonomy/term/%taxonomy_term/display'] = array(
+        'title' => 'Manage display',
+        'description' => 'Manage display of this term.',
+        'page callback' => 'ds_contextual_page_tab',
+        'page arguments' => array(2, 'taxonomy_term'),
+        'access arguments' => array('administer taxonomy'),
+        'type' => MENU_LOCAL_TASK,
+        'weight' => 11,
+        'file' => 'ds.contextual.inc',
+      );
+    }
+  }
+
   return $items;
 }
 
@@ -358,6 +393,15 @@ function ds_module_implements_alter(&$implementations, $hook) {
   // disable this too in Display Suite by default.
   if ($hook == 'field_display_node_alter') {
     unset($implementations['node']);
+  }
+
+  // Contextual
+  $con_hooks = array(
+    'contextual_links_view_alter',
+    'admin_paths',
+  );
+  if (in_array($hook, $con_hooks) || !module_exists('field_ui')) {
+    unset($implementations['ds_extras']);
   }
 }
 
@@ -1294,4 +1338,39 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
     $element[$delta] = $build;
   }
   return $element;
+}
+
+/**
+ * Implements hook_contextual_links_view_alter().
+ */
+function ds_contextual_links_view_alter(&$element, $items) {
+
+  if (isset($element['#element']['#entity_type']) && user_access('administer content types')) {
+    $entity_type = $element['#element']['#entity_type'];
+    $bundle = $element['#element']['#bundle'];
+    $view_mode = isset($element['#element']['#view_mode']) ? $element['#element']['#view_mode'] : 'default';
+
+    // Check if we have a configured layout. Do not fallback to default.
+    $layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE);
+
+    // Get the manage display URI.
+    $admin_path = _field_ui_bundle_admin_path($entity_type, $bundle);
+
+    // Check view mode settings.
+    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
+    $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
+
+    if (empty($layout) && !$overriden) {
+      $admin_path .= '/display';
+    }
+    else {
+      $admin_path .= '/display/' . $view_mode;
+    }
+
+    $element['#links']['manage-display'] = array(
+      'title' => t('Manage display'),
+      'href' => $admin_path,
+      'query' => drupal_get_destination(),
+    );
+  }
 }
