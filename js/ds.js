@@ -165,12 +165,12 @@ Drupal.behaviors.settingsToggle = {
         $('.colon-checkbox', field).parent().show();
       }
 
-      // Styles.
+      // CSS classes.
       if (ft != 'theme_ds_field_expert' && ft != 'theme_ds_field_reset') {
-        $('.field-styles', field).show();
+        $('.field-classes', field).show();
       }
       else {
-        $('.field-styles', field).hide();
+        $('.field-classes', field).hide();
       }
     }
 
