@@ -485,9 +485,24 @@ function ds_extras_process_page_title(&$variables) {
  * Implements hook_ds_layout_settings_alter().
  */
 function ds_extras_ds_layout_settings_alter($record, $form_state) {
-  if (isset($form_state['values']['additional_settings']['ds_page_title_options']['page_option_type']) || isset($form_state['values']['page_option_type'])) {
-    $record->settings['hide_page_title'] = isset($form_state['values']['additional_settings']['ds_page_title_options']['page_option_type']) ? $form_state['values']['additional_settings']['ds_page_title_options']['page_option_type'] : $form_state['values']['page_option_type'];
-    $record->settings['page_option_title'] = isset($form_state['values']['additional_settings']['ds_page_title_options']['page_option_title']) ? $form_state['values']['additional_settings']['ds_page_title_options']['page_option_title'] : $form_state['values']['page_option_title'];
+  if (isset($form_state['values']['additional_settings']['ds_page_title']['ds_page_title_options']['page_option_type']) ||
+      isset($form_state['values']['page_option_type'])) {
+
+    // Save page title view type
+    if (isset($form_state['values']['additional_settings']['ds_page_title']['ds_page_title_options']['page_option_type'])) {
+      $record->settings['hide_page_title'] =  $form_state['values']['additional_settings']['ds_page_title']['ds_page_title_options']['page_option_type'];
+    }
+    else {
+      $form_state['values']['page_option_type'];
+    }
+
+    // Save page title
+    if (isset($form_state['values']['additional_settings']['ds_page_title']['ds_page_title_options']['page_option_title'])) {
+      $record->settings['page_option_title'] = $form_state['values']['additional_settings']['ds_page_title']['ds_page_title_options']['page_option_title'];
+    }
+    else {
+      $record->settings['page_option_title'] = $form_state['values']['page_option_title'];
+    }
   }
 }
 
