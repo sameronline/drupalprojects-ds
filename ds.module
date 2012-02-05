@@ -263,11 +263,11 @@ function ds_make($key, $module, &$object, &$vars, $build_mode = NULL) {
 function ds_render($key, $object, $module, $vars) {
   static $renders = array();
 
-  if (isset($renders[$module]) && isset($renders[$module][$key])) {
-    return $renders[$module][$key];
+  if (isset($renders[$module][$object->build_mode][$key])) {
+    return $renders[$module][$object->build_mode][$key];
   }
-  $renders[$module][$key] = ds_render_content($object, $module, $vars);
-  return $renders[$module][$key];
+  $renders[$module][$object->build_mode][$key] = ds_render_content($object, $module, $vars);
+  return $renders[$module][$object->build_mode][$key];
 }
 
 /**
