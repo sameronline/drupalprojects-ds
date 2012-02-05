@@ -1,6 +1,8 @@
 ------------------------------------------------------------------------------
 6.x-2.x-dev 2012-XX-XX
 ------------------------------------------------------------------------------
+- #1426264 by xtfer: Fix an issue where the same node rendered in different 
+  build modes would always use the first build mode.
 - #1421004 by xtfer: Empty field groups should not render
 - #1422448 by xtfer: Fix an issue where an empty body field would sometimes be 
   populated with other field content
