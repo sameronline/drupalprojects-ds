@@ -1,6 +1,6 @@
 
 (function ($) {
-  
+
 Drupal.behaviors.DSExtrasSwitchViewmode = {
   attach: function (context) {
 

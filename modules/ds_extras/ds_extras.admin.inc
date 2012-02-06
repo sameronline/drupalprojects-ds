@@ -125,13 +125,6 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_switch_field', FALSE),
   );
 
-  $form['additional_settings']['fs4']['ds_extras_revision_view_mode'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Revision view mode'),
-    '#description' => t('Make new view mode "Revision" available which can be used to style the revision of a node.'),
-    '#default_value' => variable_get('ds_extras_revision_view_mode', FALSE),
-  );
-
   $form['additional_settings']['fs4']['ds_extras_hide_page_title'] = array(
     '#type' => 'checkbox',
     '#title' => t('Page title options'),

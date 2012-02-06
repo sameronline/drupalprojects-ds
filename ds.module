@@ -294,6 +294,14 @@ function ds_menu() {
 }
 
 /**
+ * Implements hook_menu_alter().
+ */
+function ds_menu_alter(&$items) {
+  module_load_include('inc', 'ds', 'ds.registry');
+  return _ds_menu_alter($items);
+}
+
+/**
  * Implements hook_theme().
  */
 function ds_theme() {
@@ -401,7 +409,15 @@ function ds_module_implements_alter(&$implementations, $hook) {
     'admin_paths',
   );
   if (in_array($hook, $con_hooks) || !module_exists('field_ui')) {
-    unset($implementations['ds_extras']);
+    unset($implementations['ds']);
+  }
+
+  // Revision view mode.
+  $revision_hooks = array(
+    'entity_info_alter',
+  );
+  if (in_array($hook, $revision_hooks)) {
+    unset($implementations['ds']);
   }
 }
 

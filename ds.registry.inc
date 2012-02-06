@@ -201,6 +201,12 @@ function _ds_entity_info_alter(&$entity_info) {
     $layout['settings'] = $row->settings;
     $entity_info[$row->entity_type]['bundles'][$row->bundle]['layouts'][$row->view_mode] = $layout;
   }
+
+  $revision = array(
+    'label' => 'Revision',
+    'custom settings' => FALSE,
+  );
+  $entity_info['node']['view modes']['revision'] = $revision;
 }
 
 /**
@@ -392,5 +398,26 @@ function _ds_layouts_scan_theme($theme, &$layouts) {
     $function = 'ds_' . $values->name;
     $layouts[$values->name] = $function();
     $layouts[$values->name]['path'] = str_replace('/' . $values->filename, '', $file);
+  }
+}
+
+/**
+ * Implements hook_menu_alter
+ */
+function _ds_menu_alter(&$items) {
+  // Revision view mode.
+  if (variable_get('ds_extras_revision_view_mode', FALSE)) {
+
+    // Do not conflict with the revisioning module.
+    if (module_exists('revisioning')) {
+      $items['node/%node/revisions/%vid/view']['page callback'] = 'ds_extras_revision_node_show';
+      $items['node/%node/revisions/%vid/view']['file'] = 'ds_extras.pages.inc';
+      $items['node/%node/revisions/%vid/view']['file path'] = drupal_get_path('module', 'ds_extras');
+    }
+    else {
+      $items['node/%node/revisions/%/view']['page callback'] = 'ds_extras_revision_node_show';
+      $items['node/%node/revisions/%/view']['file'] = 'ds_extras.pages.inc';
+      $items['node/%node/revisions/%/view']['file path'] = drupal_get_path('module', 'ds_extras');
+    }
   }
 }

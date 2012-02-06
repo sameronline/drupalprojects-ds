@@ -92,23 +92,6 @@ function ds_extras_schema() {
 }
 
 /**
- * Implements hook_install().
- */
-function ds_extras_install() {
-
-  $schema['node_revision'] = array();
-  ds_extras_schema_alter($schema);
-  foreach ($schema['node_revision']['fields'] as $name => $spec) {
-    db_add_field('node_revision', $name, $spec);
-  }
-
-  db_update('system')
-    ->fields(array('weight' => 2))
-    ->condition('name', 'ds_extras')
-    ->execute();
-}
-
-/**
  * Implements hook_uninstall().
  */
 function ds_extras_uninstall() {
@@ -129,23 +112,6 @@ function ds_extras_uninstall() {
   variable_del('ft-kill-colon');
   variable_del('ds_extras_contextual');
   db_drop_field('node_revision', 'ds_switch');
-}
-
-/**
- * Implements hook_schema_alter().
- */
-function ds_extras_schema_alter(&$schema) {
-
-  // Add a field ds_switch to the node_revision table in order
-  // to store the name of view mode to switch to.
-  if (isset($schema['node_revision'])) {
-    $schema['node_revision']['fields']['ds_switch'] = array(
-      'type' => 'varchar',
-      'length' => 255,
-      'not null' => TRUE,
-      'default' => '',
-    );
-  }
 }
 
 /**
@@ -203,8 +169,9 @@ function ds_extras_update_7006() {
 }
 
 /**
- * Remove the contextual links variable
+ * Remove the contextual links and revision variable
  */
 function ds_extra_update_7007() {
   variable_del('ds_extras_contextual');
+  variable_del('ds_extras_revision_view_mode');
 }
