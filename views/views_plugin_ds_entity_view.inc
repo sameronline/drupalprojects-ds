@@ -38,6 +38,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
   function option_definition() {
     $options = parent::option_definition();
     $options['view_mode'] = array('default' => 'teaser');
+    $options['load_comments'] = array('default' => FALSE);
     $options['alternating'] = array('default' => FALSE);
     $options['changing'] = array('default' => FALSE);
     $options['grouping'] = array('default' => FALSE);
@@ -52,7 +53,6 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     $options['default_fieldset'] = array(
       'contains' => array(
         'view_mode' => array('default' => ''),
-        'load_comments' => array('default' => FALSE, 'bool' => TRUE),
       ),
     );
     $options['alternating_fieldset'] = array(
