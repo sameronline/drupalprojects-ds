@@ -401,7 +401,7 @@ function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundl
         '#type' => 'container',
       );
       $form['region_' . $region]['ds_label_' . $region] = array(
-        '#markup' => 'Old region <span class="change_ds_layout_old_region"> ' . $region_title . '</span> maps to new region',
+        '#markup' => 'Fields in <span class="change_ds_layout_old_region"> ' . $region_title . '</span> go into',
       );
       $form['region_' . $region]['ds_' . $region] = array(
         '#type' => 'select',
