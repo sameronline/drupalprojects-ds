@@ -1687,7 +1687,7 @@ function _ds_field_valid($key, $field, &$form_state, $view_mode = 'default') {
 }
 
 /**
- * Utility function to return styles.
+ * Utility function to return CSS classes.
  */
 function _ds_classes($name = 'ds_classes_regions') {
   static $classes = array();
@@ -1699,9 +1699,9 @@ function _ds_classes($name = 'ds_classes_regions') {
       $classes[$name][''] = t('None');
       $custom_classes = explode("\n", $custom_classes);
       foreach ($custom_classes as $key => $value) {
-        $classes = explode("|", $value);
-        $key = trim($classes[0]);
-        $friendly_name = isset($classes[1]) ? trim($classes[1]) : $key;
+        $classes_splitted = explode("|", $value);
+        $key = trim($classes_splitted[0]);
+        $friendly_name = isset($classes_splitted[1]) ? trim($classes_splitted[1]) : $key;
         $classes[$name][check_plain($key)] = $friendly_name;
       }
     }
