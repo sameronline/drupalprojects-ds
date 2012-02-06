@@ -41,7 +41,7 @@
   position: fixed!important;
   background-color: #000!important;
 }
- 
+
 div.ctools-modal-content .modal-header {
   padding: 5px;
   background-color: #E1E2DC;
@@ -111,7 +111,7 @@ a.section-link {
 
 #ctools-content-selection #ds-right {
   float: left;
-  width: 70%; 
+  width: 70%;
 }
 
 #ctools-content-selection .selection-hide {
@@ -120,7 +120,7 @@ a.section-link {
 
 #ctools-content-selection .content-item {
   width: 50%;
-  float: left;	
+  float: left;
 }
 
 /**
@@ -135,3 +135,13 @@ a.section-link {
 #edit-additional-settings-ds-page-title-options-page-option-contexts legend {
   display: block;
 }
+
+/**
+ * Change layout screen.
+ */
+ .change_ds_layout_info {
+   margin-bottom: 10px;
+ }
+ .change_ds_layout_old_region {
+   font-weight: bold;
+ }

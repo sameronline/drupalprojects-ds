@@ -69,6 +69,16 @@ function ds_menu() {
     'file path' => drupal_get_path('module', 'system'),
   );
 
+  // Layout overview.
+  $items['admin/structure/ds/displays'] = array(
+    'title' => 'Displays',
+    'description' => 'Define layouts for content items.',
+    'page callback' => 'ds_layout_list',
+    'file' => 'ds.displays.inc',
+    'access arguments' => array('admin_display_suite'),
+    'weight' => -10,
+  );
+
   // Emergency page
   $items['admin/structure/ds/emergency'] = array(
     'title' => 'Emergency',
@@ -88,17 +98,7 @@ function ds_menu() {
     'page arguments' => array('ds_classes_form'),
     'file' => 'ds.classes.inc',
     'access arguments' => array('admin_display_suite'),
-    'weight' => -8,
-  );
-
-  // Layout overview.
-  $items['admin/structure/ds/displays'] = array(
-    'title' => 'Displays',
-    'description' => 'Define layouts for content items.',
-    'page callback' => 'ds_layout_list',
-    'file' => 'ds.displays.inc',
-    'access arguments' => array('admin_display_suite'),
-    'weight' => -10,
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
   // Change layout.
@@ -130,7 +130,7 @@ function ds_menu() {
     'page callback' => 'ds_view_modes_list',
     'file' => 'ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
-    'weight' => -7,
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
   $items['admin/structure/ds/view_modes/manage'] = array(
     'title' => 'Add a view mode',
@@ -167,7 +167,7 @@ function ds_menu() {
     'page callback' => 'ds_custom_fields_list',
     'file' => 'ds.fields.inc',
     'access arguments' => array('admin_fields'),
-    'weight' => -9,
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
   $items['admin/structure/ds/fields/manage'] = array(
     'title' => 'Fields edit',

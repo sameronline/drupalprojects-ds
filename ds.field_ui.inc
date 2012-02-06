@@ -363,7 +363,9 @@ function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundl
     $form['#export_id'] = $entity_type . '|' . $bundle . '|' . $view_mode;
 
     $form['info'] = array(
-      '#markup' => t('You are changing from %old to %new layout for !bundle in !view_mode view mode. On this screen, you can map the old regions to the new regions.', array('%old' => $old_layout['label'], '%new' => $new_layout['label'], '!bundle' => $bundle, '!view_mode' => $view_mode)),
+      '#markup' => t('You are changing from %old to %new layout for !bundle in !view_mode view mode.', array('%old' => $old_layout['label'], '%new' => $new_layout['label'], '!bundle' => $bundle, '!view_mode' => $view_mode)),
+      '#prefix' => "<div class='change_ds_layout_info'>",
+      '#suffix' => "</div>",
     );
 
     // Old region options.
@@ -393,16 +395,21 @@ function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundl
     $new_layout['regions'] = $region_info['region_options'];
     $form['#new_layout']['regions'] = $new_layout['regions'];
 
-    // Create field selects. Use previous region as default value.
-    foreach ($new_layout['regions'] as $region => $region_title) {
-      $form['ds_' . $region] = array(
+    $selectable_regions = array('' => t('- None -')) + $new_layout['regions'];
+    foreach ($old_layout['regions'] as $region => $region_title) {
+      $form['region_' . $region] = array (
+        '#type' => 'container',
+      );
+      $form['region_' . $region]['ds_label_' . $region] = array(
+        '#markup' => 'Old region <span class="change_ds_layout_old_region"> ' . $region_title . '</span> maps to new region',
+      );
+      $form['region_' . $region]['ds_' . $region] = array(
         '#type' => 'select',
-        '#multiple' => TRUE,
-        '#title' => $region_title,
-        '#options' => $regions,
+        '#options' => $layout_options = $selectable_regions,
         '#default_value' => $region,
       );
     }
+    $form['#attached']['css'][] = drupal_get_path('module', 'ds') . '/css/ds.admin.css';
 
     $form['actions'] = array('#type' => 'actions');
     $form['actions']['submit'] = array(
@@ -423,35 +430,6 @@ function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundl
 }
 
 /**
- * Validate callback: make sure old regions can not be mapped more than once.
- */
-function ds_field_ui_layout_change_validate($form, &$form_state) {
-  $layout = $form['#old_layout'];
-  $new_layout = $form['#new_layout'];
-
-  $mappings = array();
-  foreach ($new_layout['regions'] as $new_region => $region_title) {
-    $values = $form_state['values']['ds_' . $new_region];
-    foreach ($values as $old_region) {
-      if (!isset($mappings[$old_region])) {
-        $mappings[$old_region] = $old_region;
-        if (!isset($mappings['new'][$new_region])) {
-          $mappings['new'][$new_region] = array();
-        }
-        $mappings['new'][$new_region][$old_region] = $old_region;
-      }
-      else {
-        form_set_error('ds_' . $new_region, t('You can not map old regions into multiple new regions.'));
-        break;
-      }
-    }
-  }
-
-  // Save the mappings so we can re-use in the submit callback.
-  $form_state['mappings'] = isset($mappings['new']) ? $mappings['new'] : array();
-}
-
-/**
  * Submit callback: save the layout change.
  */
 function ds_field_ui_layout_change_submit($form, &$form_state) {
@@ -463,7 +441,6 @@ function ds_field_ui_layout_change_submit($form, &$form_state) {
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form['#view_mode'];
-  $mappings = $form_state['mappings'];
 
   // Create new record.
   $record = new stdClass();
@@ -476,17 +453,16 @@ function ds_field_ui_layout_change_submit($form, &$form_state) {
   unset($record->settings['regions']);
   unset($record->settings['fields']);
 
-  // Remap.
-  foreach ($mappings as $new_region => $old_regions) {
-    foreach ($old_regions as $region_key) {
-      if (isset($old_layout['settings']['regions'][$region_key])) {
-        foreach ($old_layout['settings']['regions'][$region_key] as $field_key => $field) {
-          if (!isset($record->settings['regions'][$new_region])) {
-            $record->settings['regions'][$new_region] = array();
-          }
-          $record->settings['regions'][$new_region][] = $field;
-          $record->settings['fields'][$field] = $new_region;
+  // map old regions to new ones
+  foreach ($old_layout['regions'] as $region => $region_title) {
+    $new_region = $form_state['values']['ds_' . $region];
+    if($new_region != '' && isset($old_layout['settings']['regions'][$region])) {
+      foreach($old_layout['settings']['regions'][$region] as $field_key => $field) {
+        if (!isset($record->settings['regions'][$new_region])) {
+          $record->settings['regions'][$new_region] = array();
         }
+        $record->settings['regions'][$new_region][] = $field;
+        $record->settings['fields'][$field] = $new_region;
       }
     }
   }
@@ -1225,6 +1201,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
     '#parents' => array('additional_settings'),
+    '#weight' => -100,
   );
 
   ctools_include('export');
@@ -1312,7 +1289,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     // Add extra classes for the regions to have more control while theming.
     $form['additional_settings']['ds_classes'] = array(
       '#type' => 'fieldset',
-      '#title' => t('Extra classes for regions'),
+      '#title' => t('Extra classes for regions and fields'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
       '#parents' => array('additional_settings'),
@@ -1330,10 +1307,10 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
           '#default_value' => isset($layout->settings['classes'], $layout->settings['classes'][$region]) ? $layout->settings['classes'][$region] : '',
         );
       }
-      $form['additional_settings']['ds_classes']['info'] = array('#markup' => l(t('Manage region CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())));
+      $form['additional_settings']['ds_classes']['info'] = array('#markup' => l(t('Manage region  and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())));
     }
     else {
-      $form['additional_settings']['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any CSS classes which can be used on regions.') . '</p><p>' . l(t('Manage region CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())) . '</p>');
+      $form['additional_settings']['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any CSS classes which can be used on regions.') . '</p><p>' . l(t('Manage region and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())) . '</p>');
     }
   }
   else {
@@ -1619,7 +1596,7 @@ function _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, &$form, $
 
   $form['additional_settings']['add_custom_fields'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Add custom fields'),
+    '#title' => t('Custom fields'),
     '#description' => t('Click on one of the buttons to create a new field.') . '<p></p>',
     '#access' => user_access('admin_fields'),
   );
@@ -1655,6 +1632,13 @@ function _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, &$form, $
       '#id' => 'ctools_add_field_' . $field_key,
     );
   }
+  $form['additional_settings']['add_custom_fields']['manage_fields'] = array (
+    '#type' => 'link',
+    '#title' => 'Manage fields',
+    '#href' => 'admin/structure/ds/fields',
+    '#prefix' => '<div>',
+    '#suffix' => '</div>',
+  );
 }
 
 /**
