@@ -19,11 +19,6 @@ function ds_install() {
   foreach ($schema['node_revision']['fields'] as $name => $spec) {
     db_add_field('node_revision', $name, $spec);
   }
-
-  db_update('system')
-    ->fields(array('weight' => 2))
-    ->condition('name', 'ds_extras')
-    ->execute();
 }
 
 /**

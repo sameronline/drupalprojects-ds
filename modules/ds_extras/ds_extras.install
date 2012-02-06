@@ -5,6 +5,16 @@
  * Install file.
  */
 
+ /**
+ * Implements hook_install().
+ */
+function ds_extras_install() {
+  db_update('system')
+    ->fields(array('weight' => 2))
+    ->condition('name', 'ds_extras')
+    ->execute();
+}
+
 /**
  * Implements hook_schema().
  */
