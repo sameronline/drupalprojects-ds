@@ -56,44 +56,19 @@ function theme_ds_field_inline($field) {
 /**
  * Theme function to render all regions with their content.
  *
- * @param stdClass $object_display The complete object and display properties.
- * @param string $module The module name.
+ * @param stdClass $vars The complete object and display properties.
  *
  * Other variables which you can use:
  *  - $region_data['count']: holds the number of fields per region.
  */
-function theme_ds_regions($object_display, $module) {
-  $output = '';
+function theme_ds_regions($vars) {
+  $output = '<div'. $vars['attributes'] .'>';
 
-  foreach ($object_display->themed_regions as $region_name => $region_data) {
-    $output .= '<div class="'. $module .'-region-'. $region_name;
-
-    // The middle region has a wrapper region and some sidebar related classes.
-    if ($region_name == 'middle') {
-      $output .= '-wrapper ';
-    }
-    if ($region_name == 'header' || $region_name == 'footer') {
-      $output .= ' clear-block';
-    }
-
-    // Extra classes or inline styles.
-    if (!empty($region_data['extra_class'])) {
-      $output .= $region_data['extra_class'];
-    }
-    $output .= '" ';
-    if (isset($region_data['inline_css'])) {
-      $output .= $region_data['inline_css'];
-    }
-
-    // Close the wrapper for middle if necessary.
-    if ($region_name == 'middle') {
-      $output .= '><div class="'. $module .'-region-'. $region_name .'">'. $region_data['content'] .'</div></div>';
-    }
-    else {
-      $output .= '>'. $region_data['content'] .'</div>';
-    }
+  foreach ($vars['regions'] as $region_name => $region_data) {
+    $output .= '<div'. $region_data['attributes'].'>'. $region_data['#content'] .'</div>';
   }
 
+  $output .= '</div>';
   return $output;
 }
 

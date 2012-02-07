@@ -53,6 +53,7 @@ define('DS_BLOCK_CONTENT', 3);
  */
 define('DS_DEFAULT_REGION', 'disabled');
 define('DS_DISABLED_REGION', 'disabled');
+define('DS_DEFAULT_LAYOUT', 'default');
 define('DS_DEFAULT_FORMAT', 'default');
 define('DS_DEFAULT_LABEL_FORMAT', 'hidden');
 define('DS_DEFAULT_WEIGHT', -19);
@@ -97,6 +98,14 @@ function ds_views_api() {
 function ds_ds_plugins() {
   require_once('includes/ds.registry.inc');
   return _ds_plugins();
+}
+
+/**
+ * Implementation of hook_ds_layouts()
+ */
+function ds_ds_layouts() {
+  require_once('includes/ds.registry.inc');
+  return _ds_ds_layouts();
 }
 
 /**
@@ -517,16 +526,24 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
    */
 
   // stdClass to hold our complete rendered object
-  $object_display = new stdClass();
+  //$object_display = new stdClass();
+  $display = ds_create_display();
+  if (!isset($object->layout)) {
+    $object->layout = DS_DEFAULT_LAYOUT;
+  }
+  $display->getLayout($object->layout);
 
   // Sort regions to get them in the right order for rendering
-  $object_display->active_regions = array();
-  $object_display->all_regions = ds_regions('all', TRUE);
-  foreach($object_display->all_regions as $region_name => $region) {
-    if (isset($vars['regions'][$region_name]) && !empty($vars['regions'][$region_name])) {
-      $object_display->active_regions[$region_name] = $vars['regions'][$region_name];
-    }
-  }
+  //$object_display->active_regions = array();
+  //$object_display->all_regions = ds_regions('all', TRUE);
+  // foreach($object_display->all_regions as $region_name => $region) {
+  //   if (isset($vars['regions'][$region_name]) && !empty($vars['regions'][$region_name])) {
+  //     $object_display->active_regions[$region_name] = array(
+  //       'name' => $vars['regions'][$region_name],
+  //     );
+  //   }
+  // }
+  $display->assignActiveRegions($vars['regions']);
 
   // Only themed regions
   $object_display->themed_regions = array();
@@ -535,15 +552,19 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
   $object_display->region_classes = array();
 
   // Build mode for this object
-  $object_display->build_mode = $object->build_mode;
+  //$object_display->build_mode = $object->build_mode;
+  $display->build_mode = $object->build_mode;
 
   // API info for this module and type. This doesn't cost a lot
   // since it will be cached already in ds_build_fields_and_regions().
-  $object_display->api_info = ds_api_info($module, $object->type);
+  //$object_display->api_info = ds_api_info($module, $object->type);
+  $display->api_info = ds_api_info($module, $object->type);
 
   // Display settings for this module and object.
-  $object_display->display_settings = ds_get_settings($module, $object->type, $object->build_mode);
-  $object_display->region_styles = ds_default_value($object_display->display_settings, 'region_styles');
+  //$object_display->display_settings = ds_get_settings($module, $object->type, $object->build_mode);
+  //$object_display->region_styles = ds_default_value($object_display->display_settings, 'region_styles');
+  $display->display_settings = ds_get_settings($module, $object->type, $display->build_mode);
+  $display->region_styles = ds_default_value($display->display_settings, 'region_styles');
 
   /**
    * Pack groups
@@ -559,107 +580,115 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
 
   /**
    * Iterate over the active regions to build the display object
-   *
-   * Instead of iterating over groups first, we iterate over active regions 
-   * and build groups only when required.
    */
   $count = 0;
-  foreach ($object_display->active_regions as $region_name => $region_title) {
-    $region_fields = array();
+  foreach ($display->regions as $region_name => $region) {
+    if ($region['#hidden'] == FALSE) {
 
-    // Loop through all fields after ordering on weight.
-    asort($object_display->active_regions[$region_name]);
-    foreach ($object_display->active_regions[$region_name] as $key => $weight) {
+      // Loop through all fields after ordering on weight.
+      $display->regionOrderFields($region_name);
+      foreach ($display->regions[$region_name]['#field_weights'] as $key => $weight) {
 
-      $region_fields[$key] = $object->ds_fields[$key];
-      /**
-       * Preprocess some field content
-       */
-      switch ($object->ds_fields[$key]['field_type']) {
-        case DS_FIELD_TYPE_PREPROCESS:
-          if (!empty($object->ds_fields[$key]['preprocess_settings']['key'])) {
-            $object->ds_fields[$key]['content'] = $vars[$key][$object->preprocess_fields[$key]['key']];
-          }
-          else {
-            $object->ds_fields[$key]['content'] = $vars[$key];
-          }
-          break;
+        /**
+         * Preprocess some field content
+         */
+        switch ($object->ds_fields[$key]['field_type']) {
+          case DS_FIELD_TYPE_PREPROCESS:
+            if (!empty($object->ds_fields[$key]['preprocess_settings']['key'])) {
+              $object->ds_fields[$key]['content'] = $vars[$key][$object->preprocess_fields[$key]['key']];
+            }
+            else {
+              $object->ds_fields[$key]['content'] = $vars[$key];
+            }
+            break;
             
-        case DS_FIELD_TYPE_IGNORE:
-          $object->ds_fields[$key]['content'] = isset($object->content[$key]['#value']) ? $object->content[$key]['#value'] : '';
-          break;
-      }
-
-      /**
-       * Choose a field rendering pipeline based on the type
-       * 
-       * Groups get content and render within wrapper functions.
-       * Fields get content then call the renderer directly.
-       */
-      switch ($object->ds_fields[$key]['field_type']) {
-        case DS_FIELD_TYPE_GROUP:
-          $region_fields[$key]['rendered'] = ds_render_group($object, $key, $vars);
-          break;
-
-        case DS_FIELD_TYPE_MULTIGROUP:
-          $region_fields[$key]['rendered'] = ds_render_multigroup($object, $key, $vars);
-          break;
-
-        default:
-          // Set content for this item
-          $object->ds_fields[$key]['content'] = ds_get_content($object->ds_fields[$key], $vars, $key);
-          $region_fields[$key]['rendered'] = ds_render_item($object->ds_fields[$key]);
-          break;
-      }
-
-      // Support for tabs. We need to create an additional field and unset
-      // the existing group field.
-      if (!empty($object->ds_fields[$key]['theme'])) {
-        if ($object->ds_fields[$key]['theme'] == 'ds_tabs') {
-
-          //unset($object['regions'][$region_name][$key]); //@todo - doesnt look necessary at this point
-
-          $object_display->active_regions[$region_name]['tab_'. $region_name] = $object->ds_fields[$key]['weight'];
-
-          $region_fields['tab_'. $region_name] = array(
-            'tab' => TRUE,
-            'name' => $region_name,
-            'fields' => array(
-              $object->ds_fields[$key]['weight'] => $object->ds_fields[$key],
-            ) 
-          );
-          $region_fields['tab_'. $region_name]['fields'][$object->ds_fields[$key]['weight']]['content'] = $object->ds_fields[$key]['rendered'];
-
-          unset($object->ds_fields[$key]);
-          unset($region_fields[$key]);
+          case DS_FIELD_TYPE_IGNORE:
+            $object->ds_fields[$key]['content'] = isset($object->content[$key]['#value']) ? $object->content[$key]['#value'] : '';
+            break;
         }
-      }
 
-    }
+        /**
+         * Choose a field rendering pipeline based on the type
+         * 
+         * Groups get content and render within wrapper functions.
+         * Fields get content then call the renderer directly.
+         */
+        switch ($object->ds_fields[$key]['field_type']) {
+          case DS_FIELD_TYPE_GROUP:
+            $display->regions[$region_name][$key] = ds_render_group($object, $key, $vars);
+            break;
 
-    // Store content from a region and add classes if necessary.
-    if(is_array($region_fields) && !empty($region_fields)) {
-      if ($region_name == 'left' || $region_name == 'right') {
-        $object_display->region_classes[$region_name] = $region_name;
-      }
+          case DS_FIELD_TYPE_MULTIGROUP:
+            $display->regions[$region_name][$key] = ds_render_multigroup($object, $key, $vars);
+            break;
 
-      $style = isset($object_display->region_styles[$region_name]) ? ' '. $object_display->region_styles[$region_name] : '';
-
-      $rendered_region = '';
-      foreach ($region_fields as $region_field) {
-        if (!empty($region_field['rendered'])) {
-          $rendered_region .= $region_field['rendered'];
+          default:
+            // Set content for this item
+            $object->ds_fields[$key]['content'] = ds_get_content($object->ds_fields[$key], $vars, $key);
+            $display->regions[$region_name][$key] = ds_render_item($object->ds_fields[$key]);
+            break;
         }
+
+        // Support for tabs. We need to create an additional field and unset
+        // the existing group field.
+        if (!empty($object->ds_fields[$key]['theme'])) {
+          if ($object->ds_fields[$key]['theme'] == 'ds_tabs') {
+            drupal_set_message('This build mode use Tabs, which are currently unsupported. Please select a different formatter.');
+
+            //unset($object['regions'][$region_name][$key]); //@todo - doesnt look necessary at this point
+
+            // $display->regions[$region_name]['#field_weights']['tab_'. $region_name] = $object->ds_fields[$key]['weight'];
+            // 
+            // $object->ds_fields[$region_name]['tab_'. $region_name] = array(
+            //   'tab' => TRUE,
+            //   'name' => $region_name,
+            //   'fields' => array(
+            //     $object->ds_fields[$key]['weight'] => $object->ds_fields[$key],
+            //   ) 
+            // );
+            // $display->regions[$region_name]['tab_'. $region_name]['fields'][$object->ds_fields[$key]['weight']]['content'] = $object->ds_fields[$key]['rendered'];
+            // 
+            // unset($object->ds_fields[$key]);
+            // unset($region_fields[$key]);
+          }
+        }
+
+      }
+    }
+  }
+
+  // Render complete region content for all regions
+  $display->renderRegionContent();
+
+  $count = 1;
+  foreach ($display->regions as $key => $region) {
+    if (isset($region['#content']) && !empty($region['#content'])) {
+
+      // Setup some classes
+      if ($key == 'left' || $key == 'right') {
+        $display->regionAttr($key, 'class', $key);
       }
 
-      $object_display->themed_regions[$region_name] = array(
-        'content' => $rendered_region,
-        'extra_class' => $style,
-        'count' => $count,
-        'fields' => $region_fields,
-      );
+      $display->regions[$key]['#count'] = $count;
+      $count++;
     }
-    $count++;
+  }
+
+  // Add classes based on regions.
+  if ($display->regionIsActive('middle')) {
+    $display->regions['middle']['#content'] = '<div class="'. $display->api_info['module'] .'-region-middle">'. $display->regions['middle']['#content'] .'</div>';
+    $middle_class = $module .'-no-sidebars';
+    if ($display->regionIsActive('left') && $display->regionIsActive('right')) {
+      $middle_class = $module .'-two-sidebars';
+    }
+    elseif ($display->regionIsActive('left')) {
+      $middle_class = $module .'-one-sidebar '. $module .'-sidebar-left';
+    }
+    elseif ($display->regionIsActive('right')) {
+      $middle_class = $module .'-one-sidebar '. $module .'-sidebar-right';
+    }
+    $display->regionAttr('middle', 'class', $middle_class);
+    $display->regionAttr('middle', 'class', $display->api_info['module'] .'-region-middle-wrapper');
   }
 
   /**
@@ -667,25 +696,13 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
    * theme_ds_regions for final rendering.
    */
   // Plugins.
-  ds_plugins_process($object_display, $object, $vars);
-
-  // Add classes based on regions.
-  if (isset($object_display->themed_regions['middle'])) {
-    $middle_class = $module .'-no-sidebars';
-    if (isset($object_display->region_classes['left']) && isset($object_display->region_classes['right'])) {
-      $middle_class = $module .'-two-sidebars';
-    }
-    elseif (isset($object_display->region_classes['left'])) {
-      $middle_class = $module .'-one-sidebar '. $module .'-sidebar-left';
-    }
-    elseif (isset($object_display->region_classes['right'])) {
-      $middle_class = $module .'-one-sidebar '. $module .'-sidebar-right';
-    }
-    $object_display->themed_regions['middle']['extra_class'] .= ' '.$middle_class;
-  }
+  ds_plugins_process($display, $object, $vars);
 
   // Theme the regions with their content.
-  return theme(DS_DEFAULT_THEME_REGIONS, $object_display, $module);
+  $display->displayFinalise();
+  $display->displayRender();
+
+  return $display->content();
 }
 
 /**
@@ -954,6 +971,33 @@ function ds_get_content($item, $content_vars = array(), $vars_key = NULL) {
   }
 
   return FALSE;
+}
+
+/**
+ * Factory function to initalise a new dsDisplay object
+ *
+ * @return
+ *  A correctly initialised display object
+ */
+function ds_create_display(){
+  module_load_include('php', 'ds', 'includes/dsDisplay');
+  return new dsDisplay();
+}
+
+/**
+ * Load a layout
+ */
+function ds_get_layout($name = DS_DEFAULT_LAYOUT) {
+  $layouts = module_invoke_all('ds_layouts');
+  foreach ($layouts as $key => $layout) {
+    if ($key == $name) {
+      // Every layout has a disabled region
+      $layout['regions']['disabled'] = array(
+        'name' => t('Disabled'),
+      );
+      return $layout;
+    }
+  }
 }
 
 /**
@@ -1286,4 +1330,21 @@ function ds_element_children(&$elements, $sort = FALSE) {
   }
 
   return array_keys($children);
+}
+
+/**
+ * Given an array of attributes, convert it to a string suitable for use in
+ * a theme function
+ *
+ * @param $attributes
+ *  An array of attributes keyed by attributes name
+ */
+function ds_clean_attributes($attributes) {
+  // Collect attribute information 
+  foreach ($attributes as $key => $attr){
+    if (is_array($attr)) {
+      $attributes[$key] = implode(' ', $attributes[$key]);
+    }
+  }
+  return ' '.drupal_attributes($attributes);
 }

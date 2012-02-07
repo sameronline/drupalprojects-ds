@@ -70,17 +70,17 @@ class ds_cssoverrider {
    */
   public function execute($vars, &$display, $display_settings, $object_type, $module) {
 
-    foreach ($display->themed_regions as $region_name => $region_data) {
+    foreach ($display->regions as $region_name => $region_data) {
 
       $classes = ds_default_value($display_settings, 'cssoverrider', 'class', $region_name, '');
       $inline = ds_default_value($display_settings, 'cssoverrider', 'inline', $region_name, '');
 
       if (!empty($classes)) {
-        $display->themed_regions[$region_name]['extra_class'] .= ' '. $classes;
+        $display->regionAttr($region_name, 'class', $classes);
       }
 
       if (!empty($inline)) {
-        $display->themed_regions[$region_name]['inline_css'] = 'style="'. $inline .'"';
+        $display->regionAttr($region_name, 'style', $inline);
       }
     }
   }
