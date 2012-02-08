@@ -1,5 +1,11 @@
 ------------------------------------------------------------------------------
-6.x-2.x-dev 2012-XX-XX
+6.x-3.x-dev
+------------------------------------------------------------------------------
+- Display rendering is handled by a new object, dsDisplay
+- New theme function to render a region, ds_region
+
+------------------------------------------------------------------------------
+6.x-2.2 2012-02-08
 ------------------------------------------------------------------------------
 - #1426264 by xtfer: Fix an issue where the same node rendered in different 
   build modes would always use the first build mode.
