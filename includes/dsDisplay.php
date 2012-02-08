@@ -209,4 +209,17 @@ class dsDisplay {
     // Add the attribute specified
     $this->regions[$region]['#attributes'][$type][] = $data;
   }
+
+  /**
+   * Remove an attribute from a region
+   */
+  public function regionRemoveAttr($region, $type, $match) {
+    if (isset($this->regions[$region]['#attributes'][$type]) && is_array($this->regions[$region]['#attributes'][$type])) {
+      foreach ($this->regions[$region]['#attributes'][$type] as $index => $value) {
+        if ($match == $value) {
+          unset($this->regions[$region]['#attributes'][$type][$index]);
+        }
+      }
+    }
+  }
 }
