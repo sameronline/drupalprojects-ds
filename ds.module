@@ -945,6 +945,19 @@ function ds_create_display(){
 }
 
 /**
+ * Factory function to initalise a new Field object
+ *
+ * @return
+ *  A correctly initialised Field object
+ */
+function ds_create_field($type){
+  module_load_include('php', 'ds', 'includes/dsField');
+  $type_info = ds_get_field_type($field_type);
+  $field = new $type_info['class'];
+  return $field;
+}
+
+/**
  * Load a layout
  */
 function ds_get_layout($name = DS_DEFAULT_LAYOUT) {
