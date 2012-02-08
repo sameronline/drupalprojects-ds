@@ -648,7 +648,6 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
   // Add field content to all regions
   $display->regionsAddContent();
 
-  $count = 1;
   foreach ($display->regions as $key => $region) {
     if (isset($region['#content']) && !empty($region['#content'])) {
 
@@ -656,9 +655,6 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
       if ($key == 'left' || $key == 'right') {
         $display->regionAttr($key, 'class', $key);
       }
-
-      $display->regions[$key]['#count'] = $count;
-      $count++;
     }
   }
 

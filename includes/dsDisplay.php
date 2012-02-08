@@ -145,6 +145,7 @@ class dsDisplay {
       $vars = array();
       $vars['attributes'] = $this->regions[$key]['attributes'];
       $vars['content'] = $this->regions[$key]['#field_content'];
+      $vars['count'] = $this->regions[$key]['#count'];
 
       $this->regions[$key]['content'] = theme($theme, $vars);
     }
@@ -154,8 +155,13 @@ class dsDisplay {
    * Wrapper to render all region content
    */
   public function regionsRenderAll() {
+    $count = 1;
     foreach ($this->regions as $key => $region) {
-      $this->regionRender($key);
+      if ($this->regionIsActive($key)) {
+        $this->regions[$key]['#count'] = $count;
+        $this->regionRender($key);
+        $count++;
+      }
     }
   }
 
