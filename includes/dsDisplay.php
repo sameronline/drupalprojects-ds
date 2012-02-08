@@ -100,16 +100,16 @@ class dsDisplay {
   }
 
   /**
-   * Render content
+   * For all regions, add content from provided fields
    */
-  public function renderRegionContent() {
+  public function regionsAddContent() {
     $this->content = '';
     foreach ($this->regions as $key => $region) {
       if ($region['#hidden'] == FALSE) {
         $fields = ds_element_children($region);
         foreach ($fields as $field) {
           if (!empty($region[$field])) {
-            $this->regions[$key]['#content'] .= $region[$field];
+            $this->regions[$key]['#field_content'] .= $region[$field];
           }
         }
       }
@@ -117,34 +117,52 @@ class dsDisplay {
   }
 
   /**
-   * Determine whether a region is active
+   * Finalise a region for rendering
    */
-  public function regionIsActive($region_name) {
-    if (isset($this->regions[$region_name]) && $this->regions[$region_name]['#hidden'] == FALSE) {
-      return TRUE;
+  public function regionFinalise($key) {
+    if ($this->regionIsActive($key)) {
+      if (isset($display->region_styles[$key]) && !empty($display->region_styles[$key])) {
+        $this->regionAttr($key, 'class', $display->region_styles[$key]);
+      }
+      // Clean region attributes
+      $this->regions[$key]['attributes'] = ds_clean_attributes($this->regions[$key]['#attributes']);
     }
-    return FALSE;
+  }
+
+  /**
+   * Render a region
+   */
+  public function regionRender($key) {
+    if ($this->regionIsActive($key)) {
+      $theme = DS_DEFAULT_THEME_REGION;
+      if (isset($this->regions[$key]['#theme']) && !empty($this->regions[$key]['#theme'])) {
+        $theme = $this->regions[$key]['#theme'];
+      }
+
+      // Do any last minute region tasks
+      $this->regionFinalise($key);
+
+      $vars = array();
+      $vars['attributes'] = $this->regions[$key]['attributes'];
+      $vars['content'] = $this->regions[$key]['#field_content'];
+
+      $this->regions[$key]['content'] = theme($theme, $vars);
+    }
+  }
+
+  /**
+   * Wrapper to render all region content
+   */
+  public function regionsRenderAll() {
+    foreach ($this->regions as $key => $region) {
+      $this->regionRender($key);
+    }
   }
 
   /**
    * Complete any last minute items before rendering
    */
   public function displayFinalise() {
-
-    foreach ($this->regions as $key => $region) {
-      if ($this->regionIsActive($key)) {
-
-        // Default region classes
-        $this->regionAttr($key, 'class', 'ds-region');
-        $this->regionAttr($key, 'class', $this->api_info['module'] .'-region-'. $key);
-        if (isset($display->region_styles[$key]) && !empty($display->region_styles[$key])) {
-          $this->regionAttr($key, 'class', $display->region_styles[$key]);
-        }
-
-        // Clean region attributes
-        $this->regions[$key]['attributes'] = ds_clean_attributes($this->regions[$key]['#attributes']);
-      }
-    }
 
     // Default layout classes
     $this->layout['#attributes']['class'] = 'ds-display';
@@ -172,9 +190,6 @@ class dsDisplay {
       }
     }
     $vars['attributes'] = $this->layout['attributes'];
-    if (isset($this->regions['#wrapper'])) {
-      $vars['wrapper'] = $this->regions['#wrapper'];
-    }
 
     // Render the content and store for later
     $this->content = theme($theme, $vars);
