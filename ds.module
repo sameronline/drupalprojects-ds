@@ -23,15 +23,15 @@ define('DS_RENDER_NON_DS', 'other'); // unknown renderer
 /**
  * Constants for field types.
  */
-define('DS_FIELD_TYPE_NON_DS', 0);
-define('DS_FIELD_TYPE_THEME', 1);
-define('DS_FIELD_TYPE_FUNCTION', 2);
-define('DS_FIELD_TYPE_PREPROCESS', 3);
-define('DS_FIELD_TYPE_IGNORE', 4);
-define('DS_FIELD_TYPE_CODE', 5);
-define('DS_FIELD_TYPE_BLOCK', 6);
-define('DS_FIELD_TYPE_GROUP', 7);
-define('DS_FIELD_TYPE_MULTIGROUP', 8);
+define('DS_FIELD_TYPE_NON_DS', 'non_ds');
+define('DS_FIELD_TYPE_THEME', 'theme');
+define('DS_FIELD_TYPE_FUNCTION', 'function');
+define('DS_FIELD_TYPE_PREPROCESS', 'preprocess');
+define('DS_FIELD_TYPE_IGNORE', 'ignore');
+define('DS_FIELD_TYPE_CODE', 'code');
+define('DS_FIELD_TYPE_BLOCK', 'block');
+define('DS_FIELD_TYPE_GROUP', 'group');
+define('DS_FIELD_TYPE_MULTIGROUP', 'multigroup');
 
 /**
  * Constants for field statuses.
