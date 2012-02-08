@@ -586,8 +586,13 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
   foreach ($display->regions as $region_name => $region) {
     if ($region['#hidden'] == FALSE) {
 
-      // Loop through all fields after ordering on weight.
+      // Initialise the region with default values
+      $display->regionSetup($region_name);
+
+      // Order region fields by weight
       $display->regionOrderFields($region_name);
+
+      // Loop through fields and extract them from the passed-in object
       foreach ($display->regions[$region_name]['#field_weights'] as $key => $weight) {
 
         /**
@@ -658,8 +663,8 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
     }
   }
 
-  // Render complete region content for all regions
-  $display->renderRegionContent();
+  // Add field content to all regions
+  $display->regionsAddContent();
 
   $count = 1;
   foreach ($display->regions as $key => $region) {
@@ -677,7 +682,7 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
 
   // Add classes based on regions.
   if ($display->regionIsActive('middle')) {
-    $display->regions['middle']['#content'] = '<div class="'. $display->api_info['module'] .'-region-middle">'. $display->regions['middle']['#content'] .'</div>';
+    $display->regions['middle']['#field_content'] = '<div class="'. $display->api_info['module'] .'-region-middle">'. $display->regions['middle']['#field_content'] .'</div>';
     $middle_class = $module .'-no-sidebars';
     if ($display->regionIsActive('left') && $display->regionIsActive('right')) {
       $middle_class = $module .'-two-sidebars';
@@ -690,12 +695,12 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
     }
     $display->regionAttr('middle', 'class', $middle_class);
     $display->regionAttr('middle', 'class', $display->api_info['module'] .'-region-middle-wrapper');
+    $display->regionRemoveAttr('middle', 'class', $display->api_info['module'] .'-region-middle');
   }
 
-  /**
-   * Do some final configuration and pass the complete display object off to
-   * theme_ds_regions for final rendering.
-   */
+  // Clean up regions ready for rendering
+  $display->regionsRenderAll();
+
   // Plugins.
   ds_plugins_process($display, $object, $vars);
 
