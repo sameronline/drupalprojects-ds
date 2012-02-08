@@ -211,7 +211,7 @@ function ds_api_info($module, $type_name = 'all') {
     else {
       return FALSE;
     }
-    
+
     $api_info[$module][$type_name] = $api_data;
     if (!isset($api_info[$module][$type_name]['extra'])) {
       $api_info[$module][$type_name]['extra'] = array();
@@ -231,8 +231,6 @@ function ds_api_info($module, $type_name = 'all') {
 
   return $api_info[$module][$type_name];
 }
-
-
 
 /**
  * API function to build and render a build mode for a given object
