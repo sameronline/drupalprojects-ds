@@ -62,6 +62,7 @@ define('DS_DEFAULT_WEIGHT', -19);
  * Constants for theme callback defaults
  */
 define('DS_DEFAULT_THEME_REGIONS', 'ds_regions');
+define('DS_DEFAULT_THEME_REGION', 'ds_region');
 define('DS_DEFAULT_THEME_FIELD', 'ds_field');
 define('DS_DEFAULT_THEME_FIELDSET', 'ds_group_fieldset_open');
 

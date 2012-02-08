@@ -73,6 +73,21 @@ function theme_ds_regions($vars) {
 }
 
 /**
+ * Theme function to render an individual region with its content
+ *
+ * @param stdClass $vars
+ *  Variables required to complete the display.
+ *
+ * @return
+ *  A themed region.
+ */
+function theme_ds_region($vars) {
+  $output = '<div'. $vars['attributes'] .'>'. $vars['content'] .'</div>';
+
+  return $output;
+}
+
+/**
  * Evaluate custom code.
  *
  * @param array $field The field with all its properties.

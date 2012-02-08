@@ -267,8 +267,14 @@ function _ds_theme() {
     // Regions theming.
     'ds_regions' => array(
       'arguments' => array(
-        'object_display' => NULL,
-        'module' => '',
+        'vars' => NULL,
+      ),
+      'file' => 'theme.inc',
+      'path' => $path .'/theme',
+    ),
+    'ds_region' => array(
+      'argument' => array(
+        'vars' => NULL,
       ),
       'file' => 'theme.inc',
       'path' => $path .'/theme',
