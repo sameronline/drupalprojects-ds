@@ -233,6 +233,46 @@ function ds_api_info($module, $type_name = 'all') {
 }
 
 /**
+ * Tell ctools where we keep default plugins
+ */
+function ds_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'ds' && !empty($plugin)) {
+    return "plugins/$plugin";
+  }
+}
+
+/**
+ * Fetch metadata on a specific ds_field plugin.
+ *
+ * @param $field_type
+ *   Name of a ds_field type.
+ *
+ * @return
+ *   An array with information about the requested field type.
+ */
+function ds_get_field_type($field_type) {
+  ctools_include('plugins');
+  return ctools_get_plugins('ds', 'ds_field', $field_type);
+}
+
+/**
+ * Fetch metadata for all ds_field plugins.
+ *
+ * @return
+ *   An array of arrays with information about all available field types.
+ */
+function ds_get_field_types() {
+  static $types = NULL;
+
+  if (!isset($types)) {
+    ctools_include('plugins');
+    $types = ctools_get_plugins('ds', 'ds_field');
+  }
+
+  return $types;
+}
+
+/**
  * API function to build and render a build mode for a given object
  *
  * This is not used internally by ds, but can be called by other modules
