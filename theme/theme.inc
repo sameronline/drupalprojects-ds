@@ -56,16 +56,17 @@ function theme_ds_field_inline($field) {
 /**
  * Theme function to render all regions with their content.
  *
- * @param stdClass $vars The complete object and display properties.
+ * @param stdClass $vars
+ *  Variables required to complete the display.
  *
  * Other variables which you can use:
- *  - $region_data['count']: holds the number of fields per region.
+ *  - $region['count']: holds the number of fields per region.
  */
 function theme_ds_regions($vars) {
   $output = '<div'. $vars['attributes'] .'>';
 
-  foreach ($vars['regions'] as $region_name => $region_data) {
-    $output .= '<div'. $region_data['attributes'].'>'. $region_data['#content'] .'</div>';
+  foreach ($vars['regions'] as $region) {
+    $output .= $region['content'];;
   }
 
   $output .= '</div>';
