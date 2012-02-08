@@ -543,12 +543,7 @@ function ds_build_field($field_key, $field_settings){
  */
 function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAULT_THEME_FIELD) {
 
-  /**
-   * Basic object set up
-   */
-
-  // stdClass to hold our complete rendered object
-  //$object_display = new stdClass();
+  // Initialise the display
   $display = ds_create_display();
   if (!isset($object->layout)) {
     $object->layout = DS_DEFAULT_LAYOUT;
@@ -556,15 +551,6 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
   $display->getLayout($object->layout);
 
   // Sort regions to get them in the right order for rendering
-  //$object_display->active_regions = array();
-  //$object_display->all_regions = ds_regions('all', TRUE);
-  // foreach($object_display->all_regions as $region_name => $region) {
-  //   if (isset($vars['regions'][$region_name]) && !empty($vars['regions'][$region_name])) {
-  //     $object_display->active_regions[$region_name] = array(
-  //       'name' => $vars['regions'][$region_name],
-  //     );
-  //   }
-  // }
   $display->assignActiveRegions($vars['regions']);
 
   // Only themed regions
@@ -574,23 +560,17 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
   $object_display->region_classes = array();
 
   // Build mode for this object
-  //$object_display->build_mode = $object->build_mode;
   $display->build_mode = $object->build_mode;
 
   // API info for this module and type. This doesn't cost a lot
   // since it will be cached already in ds_build_fields_and_regions().
-  //$object_display->api_info = ds_api_info($module, $object->type);
   $display->api_info = ds_api_info($module, $object->type);
 
   // Display settings for this module and object.
-  //$object_display->display_settings = ds_get_settings($module, $object->type, $object->build_mode);
-  //$object_display->region_styles = ds_default_value($object_display->display_settings, 'region_styles');
   $display->display_settings = ds_get_settings($module, $object->type, $display->build_mode);
   $display->region_styles = ds_default_value($display->display_settings, 'region_styles');
 
-  /**
-   * Pack groups
-   */
+  // Pack groups
   if (!empty($object->ds_groups)){
     foreach ($object->ds_groups as $group_key => $group) {
       foreach ($group as $field_key => $field){
@@ -599,10 +579,8 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
       }
     }
   }
-
-  /**
-   * Iterate over the active regions to build the display object
-   */
+  
+  // Iterate over the active regions to build the display object
   $count = 0;
   foreach ($display->regions as $region_name => $region) {
     if ($region['#hidden'] == FALSE) {
@@ -656,27 +634,10 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
             break;
         }
 
-        // Support for tabs. We need to create an additional field and unset
-        // the existing group field.
+        // Tabs are unsupported for the time being. Warn.
         if (!empty($object->ds_fields[$key]['theme'])) {
           if ($object->ds_fields[$key]['theme'] == 'ds_tabs') {
             drupal_set_message('This build mode use Tabs, which are currently unsupported. Please select a different formatter.');
-
-            //unset($object['regions'][$region_name][$key]); //@todo - doesnt look necessary at this point
-
-            // $display->regions[$region_name]['#field_weights']['tab_'. $region_name] = $object->ds_fields[$key]['weight'];
-            // 
-            // $object->ds_fields[$region_name]['tab_'. $region_name] = array(
-            //   'tab' => TRUE,
-            //   'name' => $region_name,
-            //   'fields' => array(
-            //     $object->ds_fields[$key]['weight'] => $object->ds_fields[$key],
-            //   ) 
-            // );
-            // $display->regions[$region_name]['tab_'. $region_name]['fields'][$object->ds_fields[$key]['weight']]['content'] = $object->ds_fields[$key]['rendered'];
-            // 
-            // unset($object->ds_fields[$key]);
-            // unset($region_fields[$key]);
           }
         }
 
