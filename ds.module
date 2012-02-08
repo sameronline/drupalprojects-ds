@@ -159,7 +159,19 @@ function ds_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 /**
- * Set or get static variables at runtime.
+ * Set or get static variables at runtime
+ *
+ * If passed a key and data, will set the data. If passed only a key, will
+ * attempt to retrieve the data and return it.
+ *
+ * @param $key
+ *  The key to use for the variable
+ * @param $data
+ *  The data to set
+ *
+ * @return
+ *  If the key is found, the data, or FALSE. If data is provided, TRUE if the 
+ * data is set successfully.
  */
 function ds_static_variables($key, $data = NULL) {
   static $variables = array();
@@ -169,17 +181,22 @@ function ds_static_variables($key, $data = NULL) {
   elseif (!isset($variables[$key]) && isset($data)) {
     $variables[$key] = array();
     $variables[$key][] = $data;
+    return TRUE;
   }
   elseif (isset($variables[$key]) && isset($data)) {
     $variables[$key][] = $data;
+    return TRUE;
   }
+  return FALSE;
 }
 
 /**
- * Return API info about a module and type.
+ * Return API information about a module and type
  *
- * @param string $module The module to get the API info from.
- * @param string $type_name The object type name.
+ * @param string $module 
+ *  The module to get the API information from
+ * @param string $type_name 
+ *  The object type name
  */
 function ds_api_info($module, $type_name = 'all') {
   static $api_info = array();
@@ -188,7 +205,13 @@ function ds_api_info($module, $type_name = 'all') {
 
     // Gather information.
     $function = $module .'_ds_api';
-    $api_data = $function();
+    if (function_exists($function)) {
+      $api_data = call_user_func($function);
+    }
+    else {
+      return FALSE;
+    }
+    
     $api_info[$module][$type_name] = $api_data;
     if (!isset($api_info[$module][$type_name]['extra'])) {
       $api_info[$module][$type_name]['extra'] = array();
