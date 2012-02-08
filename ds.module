@@ -997,6 +997,23 @@ function ds_get_regions($layout_name) {
 }
 
 /**
+ * Generalised API function to invoke HOOK_dsapi in other modules.
+ *
+ * @param string $op
+ *  The operation
+ * @param array $args
+ *  (optional) An array of variables to pass to the hook
+ *
+ * @return
+ *  The results of the given operation
+ */
+function ds_api_invoke($callback, $args = array()) {
+  foreach (module_implements('dsapi') as $module) {
+    return module_invoke($module, 'dsapi', $args);
+  }
+}
+
+/**
  * Get settings
  *
  * @param string $module The name of the module
