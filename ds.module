@@ -553,12 +553,6 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
   // Sort regions to get them in the right order for rendering
   $display->assignActiveRegions($vars['regions']);
 
-  // Only themed regions
-  $object_display->themed_regions = array();
-
-  // Classes for regions
-  $object_display->region_classes = array();
-
   // Build mode for this object
   $display->build_mode = $object->build_mode;
 
