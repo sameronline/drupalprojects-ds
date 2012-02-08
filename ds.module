@@ -365,7 +365,6 @@ function ds_build_fields_and_regions(&$object, $module) {
   // Setup the object
   $object->regions = array();
   $object->ds_fields = array();
-  $object->ds_groups = array();
   $object->preprocess_fields = array();
 
   // Get settings for this display/build mode combination
@@ -390,6 +389,11 @@ function ds_build_fields_and_regions(&$object, $module) {
       $region = (isset($field_defaults['region'])) ? $field_defaults['region'] : DS_DEFAULT_REGION;
       if ($region != DS_DISABLED_REGION) {
 
+        // Create a dummy region in $temp_regions for later nesting
+        if (!isset($temp_regions[$region])) {
+          $temp_regions[$region] = array();
+        }
+
         // @todo 
         // Settings per field should be retrieved from a single cached function
         // call to ds_get_settings (or similar)
@@ -400,37 +404,112 @@ function ds_build_fields_and_regions(&$object, $module) {
           $field_settings = array();
         }
 
-        $field_settings = array_merge($field_defaults, $field_settings);
+        $object->ds_fields[$field_key] = array();
+        $object->ds_fields[$field_key] = array_merge($field_defaults, $field_settings);
 
         // Additional field properties (which should be included a normalised
         // settings function)
-        $field_settings['field_type'] = isset($field_settings['type']) ? $field_settings['type'] : DS_FIELD_TYPE_NON_DS; // fix key collision
-        $field_settings['module'] = $module;
-        $field_settings['object'] =& $object;
-        $field_settings['object_type'] = $api_info['object'];
+        $object->ds_fields[$field_key]['region'] = $region;
+        $object->ds_fields[$field_key]['field_type'] = isset($object->ds_fields[$field_key]['type']) ? $object->ds_fields[$field_key]['type'] : DS_FIELD_TYPE_NON_DS; // fix key collision
+        unset($object->ds_fields[$field_key]['type']);
+        $object->ds_fields[$field_key]['module'] = $module;
+        $object->ds_fields[$field_key]['object'] =& $object;
+        $object->ds_fields[$field_key]['object_type'] = $api_info['object'];
         // end @todo
+      }
+    }
 
-        // Build the field
-        $object->ds_fields[$field_key] = ds_build_field($field_key, $field_settings);
-        
-        // Process the field into a group or region as required
-        if (!empty($object->ds_fields[$field_key]['parent'])) {
-          $parent = $object->ds_fields[$field_key]['parent'];
-          $object->ds_groups[$parent][$field_key] = $field_settings['weight'];
+    // Build the individual fields using settings created previously
+    $temp_regions = array();
+    foreach ($object->ds_fields as $key => $setting) {
+      // Build the field
+      ds_build_field($key, $object->ds_fields[$key]);
+
+      // Create a temp reference only if it doesnt already exists
+      // This ensures that the weight and region always comes from the first
+      // fieldgroup positioned.
+      $region_key = $object->ds_fields[$key]['region'];
+      $parent = $object->ds_fields[$key]['parent'];
+
+      if ($object->ds_fields[$key]['format'] == 'ds_tabs') {
+        if (!isset($temp_regions[$region_key][$parent]) && $parent != '#root') {
+          $temp_regions[$region_key][$parent] = array(
+            '#weight' => $object->ds_fields[$key]['weight'],
+            '#parent' => '#root',
+          ); 
         }
-        else {
-          $object->regions[$region][$field_key] = $field_settings['weight'];
-        }
+      }
+      $temp_regions[$region_key][$key] = array(
+        '#weight' => $object->ds_fields[$key]['weight'],
+        '#parent' => $parent,
+      );
+
+      if ($parent != '#root') {
+        $object->ds_fields[$parent]['fields'][] = $key;
+      }
+    }
+
+    // Nest and order fields in regions
+    if (!empty($temp_regions)) {
+      // Nest groups
+      foreach ($temp_regions as $key => $region){
+        $nested_fields = array();
+        ds_nest_fields($region, $nested_fields);
+
+        $object->regions[$key] = $nested_fields;
+      }
+      // Sort groups
+      foreach ($object->regions as $key => $region) {
+        ds_order_fields($object->regions[$key]);
       }
     }
   }
-
   // Reset render_by_ds property if needed.
   if (empty($object->regions)) {
     $object->render_by_ds = FALSE;
   }
 }
 
+/**
+ * Helper to nest fieldsets
+ *
+ * @param $fields
+ *  a flat array of fields to nest
+ * @param $nested
+ *  a nested array of regions to return
+ */
+function ds_nest_fields(&$fields, &$nested, $current_parent = '#root', $depth = 0) {
+  foreach($fields as $key => $field) {
+    if($field['#parent'] == $current_parent) {
+      $children = array();
+      ds_nest_fields($fields, $children, $key, $depth + 1);
+      $nested[$key]['#weight'] = $field['#weight'];
+      $nested[$key]['#depth'] = $depth;
+      foreach($children as $child_key => $child) {
+        $nested[$key]['#fields'][$child_key] = $child;
+      }
+    }
+  }
+}
+
+/**
+ * Helper to sort nested fields
+ */
+function ds_order_fields(&$fields) {
+
+  // Order fields by weight
+  $weight = array();
+  foreach ($fields as $key => $row) {
+      $weight[$key]  = $row['#weight'];
+  }
+  array_multisort($weight, SORT_ASC, $fields);
+
+  foreach ($fields as &$field) {
+    if (isset($field['#fields']) && !empty($field['#fields'])) {
+      ds_order_fields($field['#fields']);
+    }
+  }
+}
 /**
  * Build an individual field value
  *
@@ -587,16 +666,6 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
   $display->display_settings = ds_get_settings($module, $object->type, $display->build_mode);
   $display->region_styles = ds_default_value($display->display_settings, 'region_styles');
 
-  // Pack groups
-  if (!empty($object->ds_groups)){
-    foreach ($object->ds_groups as $group_key => $group) {
-      foreach ($group as $field_key => $field){
-        $object->ds_fields[$group_key]['fields'][$field_key] = $object->ds_fields[$field_key];
-        unset($object->ds_fields[$field_key]);
-      }
-    }
-  }
-  
   // Iterate over the active regions to build the display object
   $count = 0;
   foreach ($display->regions as $region_name => $region) {
@@ -771,7 +840,7 @@ function ds_render_item($item){
 function ds_render_group(&$object, $group_key, $vars = array()){
   $object->ds_fields[$group_key]['content'] = '';
 
-  if (array_key_exists($group_key, $object->ds_groups)) {
+  if (array_key_exists($group_key, $object->ds_fields)) {
 
     // Sort group items by weight, and pass them to the render function
     asort($object->ds_groups[$group_key]);
