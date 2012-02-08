@@ -70,6 +70,15 @@ class dsDisplay {
   }
 
   /**
+   * Determine whether a region is active
+   */
+  public function regionIsActive($region_name) {
+    if (isset($this->regions[$region_name]) && $this->regions[$region_name]['#hidden'] == FALSE) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+
    * Order fields for a region
    *
    * @todo this will need to be swapped out for nested ordering wttk
