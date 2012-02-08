@@ -1007,6 +1007,14 @@ function ds_get_layout($name = DS_DEFAULT_LAYOUT) {
 }
 
 /**
+ * Load regions for a layout
+ */
+function ds_get_regions($layout_name) {
+  $layout = ds_get_layout($layout_name);
+  return $layout['regions'];
+}
+
+/**
  * Get settings
  *
  * @param string $module The name of the module
