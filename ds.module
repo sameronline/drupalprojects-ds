@@ -12,15 +12,6 @@ define('DS_SETTINGS_DEFAULT', 2);
 define('DS_SETTINGS_OVERRIDDEN', 3);
 
 /**
- * Rendering pipelines
- */
-define('DS_RENDER_DEFAULT', 'default'); // rendered by ds
-define('DS_RENDER_DRUPAL', 'drupal'); // rendered by drupal_render
-define('DS_RENDER_CCK', 'cck'); // rendered by cck
-define('DS_RENDER_NON_DS', 'other'); // unknown renderer
-
-
-/**
  * Constants for field types.
  */
 define('DS_FIELD_TYPE_NON_DS', 'non_ds');
@@ -404,13 +395,9 @@ function ds_build_fields_and_regions(&$object, $module) {
         // call to ds_get_settings (or similar)
         if (isset($available_fields[$field_key])) {
           $field_settings = $available_fields[$field_key];
-          if (!isset($field_settings['pipeline'])) {
-            $field_settings['pipeline'] = DS_RENDER_DEFAULT;
-          }
         }
         else {
           $field_settings = array();
-          $field_settings['pipeline'] = DS_RENDER_NON_DS;
         }
 
         $field_settings = array_merge($field_defaults, $field_settings);
@@ -520,48 +507,44 @@ function ds_build_field($field_key, $field_settings){
 
   $field['class'] = implode(' ', $classes);
 
-  // If the field is not to be rendered by ds, just continue to the next field, the 
-  // content will come from another module (most likely CCK).
-  if ($field_settings['pipeline'] = DS_RENDER_DEFAULT) {
-    
-    // Change the title if this is configured and label is not hidden.
-    if (isset($field_settings['label_value']) && $field['labelformat'] != DS_DEFAULT_LABEL_FORMAT) {
-      $field['title'] = t(check_plain($field_settings['label_value']));
-    }
-
-    // Add extra properties to be used in themeing
-    $field['key'] = $field_key;
-
-    // Theming can either be done in preprocess, with a custom function or an
-    // existing formatter theming function. Always pass the $field_settings as parameter.
-    // @todo: some of these should break earlier as no processing is required
-    switch ($field['field_type']) {
-      case DS_FIELD_TYPE_PREPROCESS:
-      case DS_FIELD_TYPE_IGNORE:
-        if (isset($field_settings['properties']['key']) && !empty($field_settings['properties']['key'])) {
-          $field['preprocess_settings'] = array('type' => $field['type'], 'key' => $field['properties']['key']);
-        }
-        else {
-          $field['preprocess_settings'] = array('type' => $field['type']);
-        }
-        break;
-      case DS_FIELD_TYPE_CODE:
-        $field['formatter'] = isset($field['format']) ? $field['format'] : 'ds_eval_code';
-        break;
-      case DS_FIELD_TYPE_BLOCK:
-        $field['formatter'] = 'ds_eval_block';
-        break;
-      case DS_FIELD_TYPE_FUNCTION:
-        $field['function'] = (isset($field_settings['format'])) ? $field_settings['format'] : key($field_settings['properties']['formatters']);
-        break;
-      case DS_FIELD_TYPE_THEME:
-        $field['formatter'] = (isset($field_settings['format'])) ? $field_settings['format'] : key($field_settings['properties']['formatters']);
-        break;
-    }
-
-    //  Format content for the field
-    $field['content'] = ds_field_format_content($field);
+  // Change the title if this is configured and label is not hidden.
+  if (isset($field_settings['label_value']) && $field['labelformat'] != DS_DEFAULT_LABEL_FORMAT) {
+    $field['title'] = t(check_plain($field_settings['label_value']));
   }
+
+  // Add extra properties to be used in themeing
+  $field['key'] = $field_key;
+
+  // Theming can either be done in preprocess, with a custom function or an
+  // existing formatter theming function. Always pass the $field_settings as parameter.
+  // @todo: some of these should break earlier as no processing is required
+  switch ($field['field_type']) {
+    case DS_FIELD_TYPE_PREPROCESS:
+    case DS_FIELD_TYPE_IGNORE:
+      if (isset($field_settings['properties']['key']) && !empty($field_settings['properties']['key'])) {
+        $field['preprocess_settings'] = array('type' => $field['type'], 'key' => $field['properties']['key']);
+      }
+      else {
+        $field['preprocess_settings'] = array('type' => $field['type']);
+      }
+      break;
+    case DS_FIELD_TYPE_CODE:
+      $field['formatter'] = isset($field['format']) ? $field['format'] : 'ds_eval_code';
+      break;
+    case DS_FIELD_TYPE_BLOCK:
+      $field['formatter'] = 'ds_eval_block';
+      break;
+    case DS_FIELD_TYPE_FUNCTION:
+      $field['function'] = (isset($field_settings['format'])) ? $field_settings['format'] : key($field_settings['properties']['formatters']);
+      break;
+    case DS_FIELD_TYPE_THEME:
+      $field['formatter'] = (isset($field_settings['format'])) ? $field_settings['format'] : key($field_settings['properties']['formatters']);
+      break;
+  }
+
+  //  Format content for the field
+  $field['content'] = ds_field_format_content($field);
+
   return $field;
 }
 
@@ -718,34 +701,22 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
  */
 function ds_field_format_content($field) {
   $content = NULL;
-  switch ($field['pipeline']) {
-    case DS_RENDER_DRUPAL:
-      // Does nothing, as drupal_render will take care of the entire field later
-      break;
 
-    case DS_RENDER_NON_DS:
-      // Does nothing, because we are ignoring it
-      break;
-
-    default:
-    case DS_RENDER_DEFAULT:
-      if (isset($field['formatter']) || isset($field['function'])) {
-        // Load includes
-        if (isset($field['file'])) {
-          include_once($field['file']);
-        }
-        // If its a function, call it
-        if (isset($field['function']) && !empty($field['function'])) {
-          if (function_exists($field['function'])) {
-            $content = call_user_func($field['function'], $field);
-          }
-        }
-        // Otherwise, pipe through theme()
-        else {
-          $content = theme($field['formatter'], $field);
-        }
+  if (isset($field['formatter']) || isset($field['function'])) {
+    // Load includes
+    if (isset($field['file'])) {
+      include_once($field['file']);
+    }
+    // If its a function, call it
+    if (isset($field['function']) && !empty($field['function'])) {
+      if (function_exists($field['function'])) {
+        $content = call_user_func($field['function'], $field);
       }
-      break;
+    }
+    // Otherwise, pipe through theme()
+    else {
+      $content = theme($field['formatter'], $field);
+    }
   }
 
   return $content;
@@ -763,34 +734,16 @@ function ds_field_format_content($field) {
 function ds_render_item($item){
   $content = FALSE;
 
-  switch ($item['pipeline']) {
-
-    // Render the content using Drupal's default render function
-    case DS_RENDER_DRUPAL:
-      $content = drupal_render($item['vars']);
-      break;
-
-    // This is a non-DS field and has done its own rendering
-    // e.g. CCK
-    case DS_RENDER_NON_DS:
-      $content = $item['content'];
-      break;
-
-    // Use ds's built-in rendering
-    default:
-    case DS_RENDER_DEFAULT:
-      // Tabs must use the ds_tabs themeing fuction
-      if (isset($item['tab'])) {
-        $item['theme'] = 'ds_tabs';
-      }
-      // If no theme function is set, use the default
-      elseif (empty($item['theme'])) {
-        $item['theme'] = DS_DEFAULT_THEME_FIELD;
-      }
-
-      $content = theme($item['theme'], $item);
-      break;
+  // Tabs must use the ds_tabs themeing fuction
+  if (isset($item['tab'])) {
+    $item['theme'] = 'ds_tabs';
   }
+  // If no theme function is set, use the default
+  elseif (empty($item['theme'])) {
+    $item['theme'] = DS_DEFAULT_THEME_FIELD;
+  }
+
+  $content = theme($item['theme'], $item);
 
   // theme() can return anything, but we only want to return content where
   // there is 1 or more characters
@@ -905,7 +858,6 @@ function ds_render_multigroup(&$object, $group_key, $vars = array()){
       $object->ds_fields[$group_key]['subgroups']['rows'][$i]['fields'][$field_key]['type'] = 'ds';
       // Because CCK fields normally ignore ds formatters, we need to explicitly
       // set the pipeline for multigroups to use DS, or they dont get formatted
-      $object->ds_fields[$group_key]['subgroups']['rows'][$i]['fields'][$field_key]['pipeline'] = DS_RENDER_DEFAULT;
       $object->ds_fields[$group_key]['subgroups']['rows'][$i]['fields'][$field_key]['rendered'] = ds_render_item($object->ds_fields[$group_key]['subgroups']['rows'][$i]['fields'][$field_key]);
 
       // Add subgroup row information
