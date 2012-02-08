@@ -79,6 +79,16 @@ class dsDisplay {
     return FALSE;
   }
 
+  /**
+   * Set up a region for use
+   */
+  public function regionSetup($region_name) {
+    // Default region classes
+    $this->regionAttr($region_name, 'class', 'ds-region');
+    $this->regionAttr($region_name, 'class', $this->api_info['module'] .'-region-'. $region_name);
+  }
+
+  /**
    * Order fields for a region
    *
    * @todo this will need to be swapped out for nested ordering wttk
