@@ -27,6 +27,15 @@ function _ds_theme() {
     );
   }
 
+  // Field templates
+  $field_functions = module_invoke_all('ds_field_theme_functions_info');
+  foreach ($field_functions as $key => $label) {
+    $theme_functions[$key] = array(
+      'render element' => 'element',
+      'function' => $key,
+    );
+  }
+
   return $theme_functions;
 }
 
@@ -202,11 +211,13 @@ function _ds_entity_info_alter(&$entity_info) {
     $entity_info[$row->entity_type]['bundles'][$row->bundle]['layouts'][$row->view_mode] = $layout;
   }
 
+  /*
   $revision = array(
     'label' => 'Revision',
     'custom settings' => FALSE,
   );
   $entity_info['node']['view modes']['revision'] = $revision;
+  */
 }
 
 /**

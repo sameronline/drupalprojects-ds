@@ -27,6 +27,8 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   // Add the fields on the table.
   if ($view_mode != 'form') {
     _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form, $form_state);
+    // Also alter core fields
+    _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, $form, $form_state);
   }
 
   // Add buttons to add fields in overlay.
@@ -488,7 +490,6 @@ function ds_field_ui_layout_change_submit($form, &$form_state) {
  * Save the layout settings from the 'Manage display' screen.
  */
 function ds_field_ui_layouts_save($form, &$form_state) {
-
   // Get some default values.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
@@ -595,7 +596,6 @@ function ds_field_ui_layouts_save($form, &$form_state) {
  * Save the field settings from the 'Manage display' screen.
  */
 function ds_field_ui_fields_save($form, &$form_state) {
-
   // Setup some variables.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
@@ -612,15 +612,16 @@ function ds_field_ui_fields_save($form, &$form_state) {
 
   // Save settings for each field.
   $fields = $form['#ds_fields'];
+
   foreach ($fields as $key => $field) {
 
     // Field settings.
     $field_values = $form_state['values']['fields'][$field];
 
     // In case the region is hidden, do not save.
-    if (isset($field_values['region']) && $field_values['region'] == 'hidden') {
-      continue;
-    }
+    //if (isset($field_values['region']) && $field_values['region'] == 'hidden') {
+    //  continue;
+    //}
 
     // Build settings.
     $settings = array();
@@ -630,6 +631,11 @@ function ds_field_ui_fields_save($form, &$form_state) {
 
     // Any formatter settings.
     if (isset($form_state['formatter_settings'][$field])) {
+
+      // unset field template settings, TODO: why are these settings in this place?
+      //if(isset(form_state['formatter_settings'][$field]))
+      //  unset()
+
       $settings['formatter_settings'] = $form_state['formatter_settings'][$field];
     }
 
@@ -638,6 +644,9 @@ function ds_field_ui_fields_save($form, &$form_state) {
 
   // Allow other modules to modify the field settings before they get saved.
   drupal_alter('ds_field_settings', $field_settings, $form, $form_state);
+
+  // Load field template settings
+  ds_field_template_settings($field_settings, $form, $form_state);
 
   // Save the record.
   if (!empty($field_settings)) {
@@ -654,6 +663,81 @@ function ds_field_ui_fields_save($form, &$form_state) {
   cache_clear_all('ds_fields', 'cache');
   cache_clear_all('ds_field_settings', 'cache');
 }
+
+/**
+ * Creates field template settings.
+ */
+function ds_field_template_settings(&$field_settings, $form, &$form_state) {
+
+  $fields = $form_state['values']['fields'];
+  $default_field_function = variable_get('ft-default', 'theme_field');
+
+  $wrappers = array(
+    'ow' => t('Wrapper'),
+    'fis' => t('Field items'),
+    'fi' => t('Field item')
+  );
+
+  foreach ($fields as $key => $field) {
+
+    // Make sure we need to save anything for this field.
+    if (_ds_field_valid($key, $field, $form_state)) {
+      continue;
+    }
+
+    if (isset($field['settings_edit_form']['settings']['ft'])) {
+      $values = $field['settings_edit_form']['settings']['ft'];
+    }
+    else {
+      continue;
+    }
+
+    // Theme output function.
+    $function = $values['function'];
+    if ($function != $default_field_function) {
+      $field_settings[$key]['formatter_settings']['ft']['func'] = $function;
+    }
+
+    // Field classes.
+    if ($function != 'theme_ds_field_expert' && $function != 'theme_ds_field_reset') {
+      $classes = implode(' ', $values['classes']);
+      if (!empty($classes)) {
+        $field_settings[$key]['formatter_settings']['ft']['classes'] = $classes;
+      }
+    }
+
+    // Label.
+    if (isset($fields[$key]['label']) && $fields[$key]['label'] != 'hidden') {
+      if (!empty($values['lb'])) {
+        $field_settings[$key]['formatter_settings']['ft']['lb'] = $values['lb'];
+      }
+      if (!(empty($values['lb-el'])) && $function == 'theme_ds_field_expert') {
+        $field_settings[$key]['formatter_settings']['ft']['lb-el'] = check_plain($values['lb-el']);
+      }
+      if (!(empty($values['lb-cl'])) && $function == 'theme_ds_field_expert') {
+        $field_settings[$key]['formatter_settings']['ft']['lb-cl'] = check_plain($values['lb-cl']);
+      }
+      if (!(empty($values['lb-col']))) {
+        $field_settings[$key]['formatter_settings']['ft']['lb-col'] = TRUE;
+      }
+    }
+
+    // Custom field configuration.
+    if ($function == 'theme_ds_field_expert') {
+      foreach ($wrappers as $wrapper_key => $title) {
+        if ($values[$wrapper_key]) {
+          // Enable.
+          $field_settings[$key]['formatter_settings']['ft'][$wrapper_key] = TRUE;
+          // Element.
+          $field_settings[$key]['formatter_settings']['ft'][$wrapper_key . '-el'] = !(empty($values[$wrapper_key . '-el'])) ? check_plain($values[$wrapper_key . '-el']) : 'div';
+          // Classess.
+          $field_settings[$key]['formatter_settings']['ft'][$wrapper_key . '-cl'] = !(empty($values[$wrapper_key . '-cl'])) ? check_plain($values[$wrapper_key . '-cl']) : '';
+        }
+      }
+    }
+  }
+}
+
 
 /**
  * Clone a fields layout.
@@ -721,12 +805,35 @@ function ds_field_ui_layout_clone($form, &$form_state) {
  *   An markup array.
  */
 function ds_field_settings_summary($field) {
-  $summary = module_invoke($field['module'], 'ds_field_format_summary', $field);
+
+  $summary = '';
+
+  // Not all fields have settings.
+  if (isset($field['properties']['settings'])) {
+     $summary = module_invoke($field['module'], 'ds_field_format_summary', $field);
+  }
+
+  // Field template summary
+  $field_settings = ds_get_field_settings($field['entity_type'], $field['bundle'], $field['view_mode'], FALSE);
+  $functions = module_invoke_all('ds_field_theme_functions_info');
+  $default_field_function = variable_get('ft-default', 'theme_field');
+  $field_function = isset($field_settings[$field['name']]['formatter_settings']['ft']['func']) ? $field_settings[$field['name']]['formatter_settings']['ft']['func'] : $default_field_function;
+
+  $summary .= ' Field template: ' . check_plain($functions[$field_function]) . '<br />';
+
   return array(
     '#markup' => '<div class="field-formatter-summary">' . $summary . '</div>',
     '#cell_attributes' => array('class' => array('field-formatter-summary-cell')),
   );
 }
+
+/**
+ * Creates a summary for the field template configuration summary.
+ */
+function ds_field_template_settings_summary($field) {
+  return ' Field template: ' . check_plain($functions[$field_function]) . '<br />';
+ }
+
 
 /**
  * Creates a form for Display Suite fields.
@@ -738,7 +845,20 @@ function ds_field_settings_summary($field) {
  *   A form definition.
  */
 function ds_field_settings_form($field) {
-  return module_invoke($field['module'], 'ds_field_settings_form', $field);
+  $form = module_invoke($field['module'], 'ds_field_settings_form', $field);
+
+  // Add field template settings to every field
+  $context = array(
+    'instance' => array(
+      'entity_type' => $field['entity_type'],
+      'bundle' => $field['bundle'],
+      'field_name' => $field['name'],
+    ),
+    'view_mode' => $field['view_mode'],
+  );
+  ds_field_template_settings_form($form, $context);
+
+  return $form;
 }
 
 /**
@@ -747,10 +867,14 @@ function ds_field_settings_form($field) {
 function ds_ds_field_format_summary($field) {
   $summary = '';
   $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
+  $functions = module_invoke_all('ds_field_theme_functions_info');
   foreach ($settings as $key => $value) {
     if ($key == 'ctools') {
       $conf = unserialize($value);
       $summary .= t('Type: !type', array('!type' => check_plain(drupal_ucfirst(str_replace('_', ' ', $conf['subtype'])))));
+    }
+    elseif ($key == 'ft') {
+      // doe niets
     }
     elseif (!empty($value)) {
       $value = is_numeric($value) ? ($value ? t('Yes') : t('No')) : check_plain($value);
@@ -1281,6 +1405,40 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     '#weight' => 3,
   );
 
+  $form['additional_settings']['fs1'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Field Templates'),
+  );
+
+  $theme_functions = module_invoke_all('ds_field_theme_functions_info');
+  unset($theme_functions['theme_ds_field_expert']);
+  $form['additional_settings']['fs1']['ft-default'] = array(
+    '#type' => 'select',
+    '#title' => t('Sitewide default Field Template'),
+    '#options' => $theme_functions,
+    '#default_value' => variable_get('ft-default', 'theme_field'),
+    '#description' => t('Drupal default will output the field as defined in Drupal Core.<br />Reset will strip all HTML.<br />Minimal adds a simple wrapper around the field.<br/>There is also an Expert Field Template that gives full control over the HTML, but can only be set per field.<br /><br />You can override this setting per field on the "Manage display" screens or when creating fields on the instance level.<br /><br /><strong>Template suggestions</strong><br />You can create .tpl files as well for these field theme functions, e.g. field--reset.tpl.php, field--minimal.tpl.php<br /><br /><label>CSS classes</label>You can add custom CSS classes on the <a href="!url">classes form</a>. These classes can be added to fields using the Drupal default or Minimal Field Template.<br /><br /><label>Advanced</label>You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.', array('!url' => url('admin/structure/ds/classes'))),
+    '#states' => array(
+      'visible' => array(
+        'input[name="additional_settings[fs1][ds_extras_field_template]"]' => array('checked' => TRUE),
+      ),
+    ),
+  );
+
+  $form['additional_settings']['fs1']['ft-kill-colon'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hide colon'),
+    '#default_value' => variable_get('ft-kill-colon', FALSE),
+    '#description' => t('Hide the colon on the reset field template.'),
+    '#states' => array(
+      'visible' => array(
+        'select[name="additional_settings[fs1][ft-default]"]' => array('value' => 'theme_ds_field_reset'),
+        'input[name="additional_settings[fs1][ds_extras_field_template]"]' => array('checked' => TRUE),
+      ),
+    ),
+  );
+
+
   if (!empty($layout) && isset($layout->regions)) {
     $form['additional_settings']['ds_layouts']['suggestions'] = array(
       '#markup' => '<p>' . $selected . '</p><p>' . t('!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p>',
@@ -1504,11 +1662,78 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       'settings_edit' => array(),
     );
 
-    // Not all fields have settings.
-    if (!isset($field['properties']['settings'])) {
-      continue;
-    }
+    $field['name'] = $key;
+    $field['entity_type'] = $entity_type;
+    $field['bundle'] = $bundle;
+    $field['view_mode'] = $view_mode;
 
+    if ($form_state['formatter_settings_edit'] == $key) {
+      $settings_form = ds_field_settings_form($field);
+      ds_field_row_form_format_construct($table, $key, $settings_form);
+    }
+    else {
+      // After saving, the settings are updated here aswell. First we create
+      // the element for the table cell.
+      $table[$key]['settings_summary'] = ds_field_settings_summary($field);
+      ds_field_row_form_format_summary_construct($table, $key);
+    }
+  }
+}
+
+/**
+ * Add the fields to the Field UI form.
+ *
+ * @param $entity_type
+ *   The name of the entity type.
+ * @param $bundle
+ *   The name of the bundle
+ * @param $view_mode
+ *   The name of the view_mode
+ * @param $form
+ *   A collection of form properties.
+ * @param $form_state
+ *   A collection of form_state properties.
+ */
+function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$form_state) {
+  $entity_type = $form['#entity_type'];
+  $bundle = $form['#bundle'];
+  $view_mode = $form['#view_mode'];
+
+  // Gather type information.
+  $instances = field_info_instances($entity_type, $bundle);
+
+  $field_types = field_info_field_types();
+  $extra_fields = field_info_extra_fields($entity_type, $bundle, 'display');
+
+  $table = &$form['fields'];
+
+  // Field rows.
+  foreach ($instances as $name => $instance) {
+    $field = field_info_field($instance['field_name']);
+    $display = $instance['display'][$view_mode];
+
+    // Check the currently selected formatter, and merge persisted values for
+    // formatter settings.
+    if (isset($form_state['values']['fields'][$name]['type'])) {
+      $formatter_type = $form_state['values']['fields'][$name]['type'];
+    }
+    else {
+      $formatter_type = $display['type'];
+    }
+    if (isset($form_state['formatter_settings'][$name])) {
+      $settings = $form_state['formatter_settings'][$name];
+    }
+    else {
+      $settings = $display['settings'];
+    }
+    $settings += field_info_formatter_settings($formatter_type);
+
+    $instance['display'][$view_mode]['type'] = $formatter_type;
+    $formatter = field_info_formatter_types($formatter_type);
+    $instance['display'][$view_mode]['module'] = $formatter['module'];
+    $instance['display'][$view_mode]['settings'] = $settings;
+
+    // Base button element for the various formatter settings actions.
     $base_button = array(
       '#submit' => array('field_ui_display_overview_multistep_submit'),
       '#ajax' => array(
@@ -1516,66 +1741,271 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
         'wrapper' => 'field-display-overview-wrapper',
         'effect' => 'fade',
       ),
-      '#field_name' => $key,
+      '#field_name' => $name,
     );
 
-    if ($form_state['formatter_settings_edit'] == $key) {
-      $field['name'] = $key;
-      $field['entity_type'] = $entity_type;
-      $field['bundle'] = $bundle;
-      $field['view_mode'] = $view_mode;
-      $table[$key]['settings_edit'] = array(
-        '#type' => 'container',
-        '#attributes' => array('class' => array('field-formatter-settings-edit-form')),
-        '#parents' => array('fields', $key, 'settings_edit_form'),
-        '#weight' => -5,
-        'label' => array(
-          '#markup' => '<h3>' . t('Field settings') . '</h3>',
-        ),
-        // Create a settings form where hooks can pick in.
-        'settings' => ds_field_settings_form($field),
-        'actions' => array(
-          '#type' => 'actions',
-          'save_settings' => $base_button + array(
-            '#type' => 'submit',
-            '#name' => $key . '_formatter_settings_update',
-            '#value' => t('Update'),
-            '#op' => 'update',
-          ),
-          'cancel_settings' => $base_button + array(
-            '#type' => 'submit',
-            '#name' => $key . '_formatter_settings_cancel',
-            '#value' => t('Cancel'),
-            '#op' => 'cancel',
-            // Do not check errors for the 'Cancel' button.
-            '#limit_validation_errors' => array(),
-          ),
-        ),
+    if ($form_state['formatter_settings_edit'] == $name) {
+      $settings_form = isset($table[$name]['format']['settings_edit_form']['settings']) ? $table[$name]['format']['settings_edit_form']['settings'] : array();
+
+      // Add the field templates form
+      $context = array(
+        'module' => $formatter['module'],
+        'formatter' => $formatter,
+        'field' => $field,
+        'instance' => $instance,
+        'view_mode' => $view_mode,
+        'form' => $form,
+        'form_state' => $form_state,
       );
-      $table[$key]['#attributes']['class'][] = 'field-formatter-settings-editing';
-      $table[$key]['format']['type']['#attributes']['class'] = array('element-invisible');
+
+      ds_field_template_settings_form($settings_form, $context);
+
+      if ($settings_form) {
+        $table[$name]['format']['#cell_attributes'] = array('colspan' => 3);
+        $table[$name]['format']['settings_edit_form'] = array(
+          '#type' => 'container',
+          '#attributes' => array('class' => array('field-formatter-settings-edit-form')),
+          '#parents' => array('fields', $name, 'settings_edit_form'),
+          'label' => array(
+            '#markup' => t('Format settings:') . ' <span class="formatter-name">' . $formatter['label'] . '</span>',
+          ),
+          'settings' => $settings_form,
+          'actions' => array(
+            '#type' => 'actions',
+            'save_settings' => $base_button + array(
+              '#type' => 'submit',
+              '#name' => $name . '_formatter_settings_update',
+              '#value' => t('Update'),
+              '#op' => 'update',
+              '#submit' => array('ds_field_ui_fields_save', 'field_ui_display_overview_multistep_submit'),
+            ),
+            'cancel_settings' => $base_button + array(
+              '#type' => 'submit',
+              '#name' => $name . '_formatter_settings_cancel',
+              '#value' => t('Cancel'),
+              '#op' => 'cancel',
+              // Do not check errors for the 'Cancel' button, but make sure we
+              // get the value of the 'formatter type' select.
+              '#limit_validation_errors' => array(array('fields', $name, 'type')),
+            ),
+          ),
+        );
+        $table[$name]['#attributes']['class'][] = 'field-formatter-settings-editing';
+        $table[$name]['format']['settings_edit_form']['actions']['save_settings']['#submit'] = array('ds_field_ui_fields_save', 'field_ui_display_overview_multistep_submit');
+      }
     }
     else {
-      // After saving, the settings are updated here aswell. First we create
-      // the element for the table cell.
-      $table[$key]['settings_summary'] = ds_field_settings_summary($field);
-      // Add the configure button.
-      $table[$key]['settings_edit'] = $base_button + array(
+      $summary = module_invoke($formatter['module'], 'field_formatter_settings_summary', $field, $instance, $view_mode);
+
+      // Field template summary
+      $field_settings = ds_get_field_settings($entity_type, $bundle, $view_mode, FALSE);
+      $functions = module_invoke_all('ds_field_theme_functions_info');
+      $default_field_function = variable_get('ft-default', 'theme_field');
+      $field_function = isset($field_settings[$name]['formatter_settings']['ft']['func']) ? $field_settings[$name]['formatter_settings']['ft']['func'] : $default_field_function;
+
+      $summary .= '<br /> Field template: ' . check_plain($functions[$field_function]) . '<br />';
+
+      $table[$name]['settings_summary'] = array();
+      $table[$name]['settings_edit'] = array();
+
+      $table[$name]['settings_summary'] = array(
+        '#markup' => '<div class="field-formatter-summary">' . $summary . '</div>',
+        '#cell_attributes' => array('class' => array('field-formatter-summary-cell')),
+      );
+      $table[$name]['settings_edit'] = $base_button + array(
         '#type' => 'image_button',
-        '#name' => $key . '_group_settings_edit',
+        '#name' => $name . '_formatter_settings_edit',
         '#src' => 'misc/configure.png',
         '#attributes' => array('class' => array('field-formatter-settings-edit'), 'alt' => t('Edit')),
         '#op' => 'edit',
-        // Do not check errors for the 'Edit' button.
-        '#limit_validation_errors' => array(),
+        // Do not check errors for the 'Edit' button, but make sure we get
+        // the value of the 'formatter type' select.
+        '#limit_validation_errors' => array(array('fields', $name, 'type')),
         '#prefix' => '<div class="field-formatter-settings-edit-wrapper">',
         '#suffix' => '</div>',
       );
     }
   }
+}
 
-  // Add fields submit handler.
-  $form['#submit'][] = 'ds_field_ui_fields_save';
+/**
+ * Helper function to print field formatter settings.
+ */
+function ds_field_row_form_format_construct(&$table, $key, $settings_form) {
+
+  $base_button = array(
+    '#submit' => array('field_ui_display_overview_multistep_submit'),
+    '#ajax' => array(
+      'callback' => 'field_ui_display_overview_multistep_js',
+      'wrapper' => 'field-display-overview-wrapper',
+      'effect' => 'fade',
+    ),
+    '#field_name' => $key,
+  );
+
+  $table[$key]['settings_edit'] = array(
+    '#type' => 'container',
+    '#attributes' => array('class' => array('field-formatter-settings-edit-form')),
+    '#parents' => array('fields', $key, 'settings_edit_form'),
+    '#weight' => -5,
+    'label' => array(
+      '#markup' => t('Format settings:') . ' <span class="formatter-name">' . 'Default' . '</span><br/>',
+    ),
+    // Create a settings form where hooks can pick in.
+    'settings' => $settings_form,
+    'actions' => array(
+      '#type' => 'actions',
+      'save_settings' => $base_button + array(
+        '#type' => 'submit',
+        '#name' => $key . '_formatter_settings_update',
+        '#value' => t('Update'),
+        '#op' => 'update',
+      ),
+      'cancel_settings' => $base_button + array(
+        '#type' => 'submit',
+        '#name' => $key . '_formatter_settings_cancel',
+        '#value' => t('Cancel'),
+        '#op' => 'cancel',
+        // Do not check errors for the 'Cancel' button.
+        '#limit_validation_errors' => array(),
+      ),
+    ),
+  );
+  $table[$key]['#attributes']['class'][] = 'field-formatter-settings-editing';
+  $table[$key]['format']['type']['#attributes']['class'] = array('element-invisible');
+  $table[$key]['settings_edit']['actions']['save_settings']['#submit'] = array('ds_field_ui_fields_save', 'field_ui_display_overview_multistep_submit');
+}
+
+/**
+ * Helper function to print field formatter summary settings.
+ */
+function ds_field_row_form_format_summary_construct(&$table, $key) {
+
+  $base_button = array(
+    '#submit' => array('field_ui_display_overview_multistep_submit'),
+    '#ajax' => array(
+      'callback' => 'field_ui_display_overview_multistep_js',
+      'wrapper' => 'field-display-overview-wrapper',
+      'effect' => 'fade',
+    ),
+    '#field_name' => $key,
+  );
+
+  // Add the configure button.
+  $table[$key]['settings_edit'] = $base_button + array(
+    '#type' => 'image_button',
+    '#name' => $key . '_group_settings_edit',
+    '#src' => 'misc/configure.png',
+    '#attributes' => array('class' => array('field-formatter-settings-edit'), 'alt' => t('Edit')),
+    '#op' => 'edit',
+    // Do not check errors for the 'Edit' button.
+    '#limit_validation_errors' => array(),
+    '#prefix' => '<div class="field-formatter-settings-edit-wrapper">',
+    '#suffix' => '</div>',
+  );
+}
+
+function ds_field_template_settings_form(array &$form, array $context) {
+
+  //$field_function = isset($field_settings[$key]['ft']['func']) ? $field_settings[$key]['ft']['func'] : $default_field_function;
+  $functions = module_invoke_all('ds_field_theme_functions_info');
+  $default_field_function = variable_get('ft-default', 'theme_field');
+  $field_settings = ds_get_field_settings($context['instance']['entity_type'], $context['instance']['bundle'], $context['view_mode'], FALSE);
+  $key = $context['instance']['field_name'];
+  $field_function = isset($field_settings[$key]['formatter_settings']['ft']['func']) ? $field_settings[$key]['formatter_settings']['ft']['func'] : $default_field_function;
+  $field_classes = _ds_classes('ds_classes_fields');
+
+  // Functions.
+  $form['ft']['function'] = array(
+    '#title' => t('Choose a Field Template'),
+    '#type' => 'select',
+    '#options' => $functions,
+    '#default_value' => $field_function,
+    '#attributes' => array(
+      'class' => array('ds-extras-field-template'),
+    ),
+  );
+
+
+
+  // Field classes.
+  if (!empty($field_classes)) {
+    $field_classes_select = array(
+      '#type' => 'select',
+      '#multiple' => TRUE,
+      '#options' => $field_classes,
+      '#title' => t('Choose additional CSS classes for the field'),
+      '#default_value' => isset($field_settings[$key]['formatter_settings']['ft']['classes']) ? explode(' ', $field_settings[$key]['formatter_settings']['ft']['classes']) : array(),
+      '#prefix' => '<div class="field-classes">',
+      '#suffix' => '</div>',
+    );
+    $form['ft']['classes'] = $field_classes_select;
+  }
+  else {
+    $form['ft']['classes'] = array(
+      '#type' => 'value',
+      '#value' => array(''),
+    );
+  }
+
+  // Wrappers and label.
+  $wrappers = array(
+    'lb' => array(
+      'title' => t('Label'),
+    ),
+    'ow' => array('title' => t('Outer wrapper')),
+    'fis' => array('title' => t('Field items')),
+    'fi' => array('title' => t('Field item')),
+  );
+
+  $colon_checkbox = FALSE;
+  foreach ($wrappers as $wrapper_key => $value) {
+
+    // Hide colon.
+    if (!$colon_checkbox) {
+      $form['ft']['lb-col'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Hide colon'),
+        '#default_value' => isset($field_settings[$key]['formatter_settings']['ft']['lb-col']) ? $field_settings[$key]['formatter_settings']['ft']['lb-col'] : FALSE,
+        '#attributes' => array(
+          'class' => array('colon-checkbox'),
+        ),
+      );
+      $colon_checkbox = TRUE;
+    }
+
+    $form['ft'][$wrapper_key] = array(
+      '#type' => 'checkbox',
+      '#title' => $value['title'],
+      '#prefix' => '<div class="ft-group ' . $wrapper_key . '">',
+      '#default_value' => isset($field_settings[$key]['formatter_settings']['ft'][$wrapper_key]) ? TRUE : FALSE,
+    );
+    $form['ft'][$wrapper_key . '-el'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Element'),
+      '#size' => '10',
+      '#description' => t('E.g. div, span, h2 etc.'),
+      '#default_value' => isset($field_settings[$key]['formatter_settings']['ft'][$wrapper_key . '-el']) ? $field_settings[$key]['formatter_settings']['ft'][$wrapper_key . '-el'] : '',
+    );
+    $classes = array(
+      'field-name-' . strtr($key, '_', '-'),
+    );
+    $form['ft'][$wrapper_key . '-cl'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Classes'),
+      '#size' => '10',
+      '#suffix' => '</div><div class="clearfix"></div>',
+      '#default_value' => isset($field_settings[$key]['formatter_settings']['ft'][$wrapper_key . '-cl']) ? $field_settings[$key]['formatter_settings']['ft'][$wrapper_key . '-cl'] : '',
+      '#description' => t('Classes: !classes', array('!classes' => implode(', ', $classes))),
+    );
+  }
+
+  // Another label needs some other stuff.
+  unset($form['ft']['lb']['#description']);
+  $form['ft']['lb']['#type'] = 'textfield';
+  $form['ft']['lb']['#size'] = '10';
+  $form['ft']['lb']['#attributes'] = array('class' => array('label-change'));
+  $form['ft']['lb']['#default_value'] = isset($field_settings[$key]['formatter_settings']['ft']['lb']) ? $field_settings[$key]['formatter_settings']['ft']['lb'] : '';
 }
 
 /**
@@ -1663,8 +2093,10 @@ function _ds_field_valid($key, $field, &$form_state, $view_mode = 'default') {
 
     // In case of a form, fields will be set with #access to FALSE.
     if ($view_mode != 'form') {
-      $continue = TRUE;
+      return FALSE;
     }
+
+    return TRUE;
   }
 
   return $continue;

@@ -116,12 +116,6 @@ function _ds_extras_theme_registry_alter(&$theme_registry) {
     $theme_registry['page']['process functions'][] = 'ds_extras_process_page_title';
   }
 
-  // Check on field templates.
-  if (!variable_get('ds_extras_field_template', FALSE)) {
-    $key = array_search('ds_preprocess_field', $theme_registry['field']['preprocess functions']);
-    unset($theme_registry['field']['preprocess functions'][$key]);
-  }
-
   // Inject ds_extras_render_panel_layout in all entity theming functions.
   if (variable_get('ds_extras_panel_view_modes')) {
     $entity_info = entity_get_info();
