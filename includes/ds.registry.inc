@@ -661,9 +661,15 @@ function _ds_ds_layouts() {
         ),
         'left' => array(
           '#name' => t('Left'),
+          '#attributes' => array(
+            'class' => 'left',
+          ),
         ),
         'right' => array(
           '#name' => t('Right'),
+          '#attributes' => array(
+            'class' => 'right',
+          ),
         ),
         'footer' => array(
           '#name' => t('Footer'),
