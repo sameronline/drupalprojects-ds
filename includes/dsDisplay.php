@@ -340,4 +340,45 @@ class dsDisplay {
       }
     }
   }
+
+  /**
+   * Helper to nest fieldsets
+   *
+   * @param $fields
+   *  a flat array of fields to nest
+   * @param $nested
+   *  a nested array of regions to return
+   */
+  function nestFields(&$fields, &$nested, $current_parent = '#root', $depth = 0) {
+    foreach($fields as $key => $field) {
+      if($field['#parent'] == $current_parent) {
+        $children = array();
+        ds_nest_fields($fields, $children, $key, $depth + 1);
+        $nested[$key]['#weight'] = $field['#weight'];
+        $nested[$key]['#depth'] = $depth;
+        foreach($children as $child_key => $child) {
+          $nested[$key]['#fields'][$child_key] = $child;
+        }
+      }
+    }
+  }
+
+  /**
+   * Helper to sort nested fields
+   */
+  function orderFields(&$fields) {
+
+    // Order fields by weight
+    $weight = array();
+    foreach ($fields as $key => $row) {
+        $weight[$key]  = $row['#weight'];
+    }
+    array_multisort($weight, SORT_ASC, $fields);
+
+    foreach ($fields as &$field) {
+      if (isset($field['#fields']) && !empty($field['#fields'])) {
+        ds_order_fields($field['#fields']);
+      }
+    }
+  }
 }
