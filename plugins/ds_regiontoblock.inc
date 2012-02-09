@@ -27,17 +27,17 @@ class ds_regiontoblock {
     );
 
     $build_mode = $form['#build_mode'];
-    $regions = ds_regions();
-    foreach ($regions as $region => $title) {
-      if ($region != 'disabled') {
-        $default_value = ds_default_value($display_settings, 'regiontoblock', 'block', $region, '');
+    $regions = ds_get_regions($display_settings['layout']);
+    foreach ($regions as $key => $region) {
+      if ($key != 'disabled') {
+        $default_value = ds_default_value($display_settings, 'regiontoblock', 'block', $key, '');
         $form['regiontoblock']['region-block-'. $region] = array(
-          '#title' => $title,
+          '#title' => $region['#name'],
           '#type' => 'checkbox',
           '#default_value' => $default_value,
         );
         if ($default_value == TRUE) {
-          $form['#regions'][$region] .= ' - '. t('assigned to block');
+          $form['#regions'][$key] .= ' - '. t('assigned to block');
         }
       }
     }
@@ -48,13 +48,13 @@ class ds_regiontoblock {
    */
   public function plugin_form_submit($form, $form_state, &$display_settings) {
 
-    $regions = ds_regions();
+    $regions = ds_get_regions($display_settings['layout']);
     $regions_save = array();
     $build_mode = $form['#build_mode'];
 
-    foreach ($regions as $region => $title) {
-      if (isset($form_state['values']['regiontoblock']['region-block-'. $region]))
-      $regions_save['block'][$region] = $form_state['values']['regiontoblock']['region-block-'. $region];
+    foreach ($regions as $key => $region) {
+      if (isset($form_state['values']['regiontoblock']['region-block-'. $key]))
+      $regions_save['block'][$key] = $form_state['values']['regiontoblock']['region-block-'. $key];
     }
 
     $display_settings[$build_mode]['regiontoblock'] = $regions_save;
@@ -117,21 +117,17 @@ class ds_regiontoblock {
   public function execute($vars, &$display, $display_settings, $object_type, $module) {
     $object = $vars[$object_type];
 
-    foreach ($display->all_regions as $region_name => $region_title) {
+    foreach ($display->regions as $region_name => $region) {
 
       $region_to_block = ds_default_value($display_settings, 'regiontoblock', 'block', $region_name, FALSE);
 
-      if ($region_to_block == TRUE && isset($display->themed_regions[$region_name])) {
-        $region_content = $display->themed_regions[$region_name];
+      if ($region_to_block == TRUE && $display->regionIsActive($region_name)) {
         $key = 'ds_regiontoblock_'. $module .'_'. $object_type .'_'. $display->build_mode .'_'. $region_name;
         $data = new stdClass;
-        $data->content = $region_content['content'];
+        $data->content = $display->regions[$region_name][$key]['content'];
         $data->object = $vars[$object_type];
         ds_static_variables($key, $data);
-        unset($display->themed_regions[$region_name]);
-        if ($region_name == 'left' || $region_name == 'right') {
-          unset($display->region_classes[$region_name]);
-        }
+        $display->regionHide($region_name);
       }
     }
   }
