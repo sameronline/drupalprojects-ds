@@ -1422,3 +1422,19 @@ function ds_clean_attributes($attributes) {
   }
   return ' '.drupal_attributes($attributes);
 }
+
+/**
+ * Create a machine name from a set of parts
+ *
+ * @param $parts
+ *  an array of name parts to use
+ *
+ * @return string
+ *  a machine name, or FALSE if not enough information was provided
+ */
+function ds_machine_name($parts = array()) {
+
+  $name = implode('_', $parts);
+
+  return $name;
+}
