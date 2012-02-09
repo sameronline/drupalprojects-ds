@@ -177,7 +177,7 @@ class dsDisplay {
     foreach ($this->layout['regions'] as $name => $info) {
       $this->regions[$name] = $info;
       // All regions are disabled initially
-      $this->regions[$name]['#hidden'] = TRUE; 
+      $this->regionHide($name); 
     }
   }
 
@@ -189,7 +189,7 @@ class dsDisplay {
     foreach ($this->regions as $key => $region) {
       if (array_key_exists($key, $set_regions)) {
         $this->regions[$key]['#field_weights'] = $set_regions[$key];
-        $this->regions[$key]['#hidden'] = FALSE;
+        $this->regionShow($key);
       }
     }
   }
@@ -225,12 +225,30 @@ class dsDisplay {
   }
 
   /**
+   * Helper to hide a region
+   */
+  public function regionHide($name) {
+    if(isset($this->regions[$name])) {
+      $this->regions[$name]['#hidden'] == TRUE;
+    }
+  }
+
+  /**
+   * Helper to show a region
+   */
+  public function regionShow($name) {
+    if(isset($this->regions[$name])) {
+      $this->regions[$name]['#hidden'] == FALSE;
+    }
+  }
+
+  /**
    * For all regions, add content from provided fields
    */
   public function regionsAddContent() {
     $this->content = '';
     foreach ($this->regions as $key => $region) {
-      if ($region['#hidden'] == FALSE) {
+      if ($this->regionIsActive($key)) {
         $fields = ds_element_children($region);
         foreach ($fields as $field) {
           if (!empty($region[$field])) {
