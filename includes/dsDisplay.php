@@ -8,6 +8,24 @@
  * The Display Suite Display object
  */
 class dsDisplay {
+  /**
+   * Basic settings
+   */
+  public $dsid;
+  public $name;
+  public $module;
+  public $type;
+  public $build_mode;
+
+  /**
+   * Display settings
+   */
+  public $settings = array();
+
+  /**
+   * Fields set on this display
+   */
+  public $fields;
 
   /**
    * Layout settings from hook_ds_layouts
@@ -25,11 +43,6 @@ class dsDisplay {
   public $api_info = array();
 
   /**
-   * Display settings
-   */
-  public $settings = array();
-
-  /**
    * Region styles
    */
   public $region_styles = array();
@@ -38,6 +51,90 @@ class dsDisplay {
    * The content to return
    */
   public $content;
+
+  /**
+   * Load a display
+   *
+   * @param $name (optional)
+   *  The machine name which identifies the display. If not provided, the
+   *  existing name will be used, if set.
+   *
+   * @return
+   *  either a complete display object, or FALSE
+   */
+  public function load($name = '') {
+    if (!empty($name)) {
+      $this->name = $name;
+    }
+
+    if (isset($this->name)){
+      $stored_display = db_fetch_array(db_query("SELECT * FROM {ds_settings} WHERE name = '%s'", $this->name));
+      if (!empty($stored_display)) {
+        $this->dsid = $stored_display['dsid'];
+        $this->module = $stored_display['module'];
+        $this->type = $stored_display['type'];
+        $this->build_mode = $stored_display['build_mode'];
+        $this->settings = unserialize($stored_display['settings']);
+        $this->fields = unserialize($stored_display['fields']);
+      }
+    }
+  }
+
+  /**
+   *  Save this display to the database
+   */
+  public function save() {
+    $success = FALSE;
+
+    // Iterate over fields and ditch those which are hidden.
+    if (!empty($this->settings['fields'])) {
+      foreach ($this->settings['fields'] as $field_key => $field_value) {
+        if ($field_value['region'] == 'disabled') {
+          unset($this->settings['fields'][$field_key]);
+        }
+      }
+    }
+
+    $this->settings = serialize($this->settings);
+
+    if (isset($this->dsid)) {
+      $op = 'update';
+    }
+    else {
+      $op = 'create';
+    }
+
+    switch ($op) {
+      case 'create':
+        $result = drupal_write_record('ds_settings', $this);
+        break;
+      case 'update':
+        $result = drupal_write_record('ds_settings', $this, 'dsid');
+        break;
+    }
+
+    if ($result) {
+      switch ($result) {
+        case SAVED_NEW:
+        case SAVED_UPDATED:
+          $success = TRUE;
+          $this->load($this->name); // Reload to get the dsid
+          break;
+      }
+    }
+
+    if (isset($result) && $result == TRUE){
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * Delete
+   */
+  public function delete() {
+    db_query("DELETE FROM {ds_settings} WHERE name = '%s'", $this->name);
+  }
 
   /**
    * Load a layout from hook_ds_layouts, and assign region variables
