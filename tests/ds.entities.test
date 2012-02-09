@@ -30,9 +30,9 @@ class dsNodeTests extends dsBaseTest {
     $settings = array('type' => 'article');
     $node = $this->drupalCreateNode($settings);
 
-    // Create field styles.
-    $edit = array('ds_styles_fields' => "test_field_class\ntest_field_class_2|Field class 2");
-    $this->drupalPost('admin/structure/ds/styles', $edit, t('Save configuration'));
+    // Create field CSS classes.
+    $edit = array('ds_classes_fields' => "test_field_class\ntest_field_class_2|Field class 2");
+    $this->drupalPost('admin/structure/ds/classes', $edit, t('Save configuration'));
 
     // Create a token and php field.
     $token_field = array(
@@ -88,7 +88,7 @@ class dsNodeTests extends dsBaseTest {
       $edit['fields[body][format][ft][lb]'] = $text;
     }
     if (!empty($class)) {
-      $edit['fields[body][format][ft][styles][]'] = $class;
+      $edit['fields[body][format][ft][classes][]'] = $class;
     }
     if ($hide_colon) {
       $edit['fields[body][format][ft][lb-col]'] = '1';
