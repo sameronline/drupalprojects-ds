@@ -828,14 +828,6 @@ function ds_field_settings_summary($field) {
 }
 
 /**
- * Creates a summary for the field template configuration summary.
- */
-function ds_field_template_settings_summary($field) {
-  return ' Field template: ' . check_plain($functions[$field_function]) . '<br />';
- }
-
-
-/**
  * Creates a form for Display Suite fields.
  * .
  * @param $field
@@ -1410,6 +1402,13 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     '#title' => t('Field Templates'),
   );
 
+  /*$form['additional_settings']['fs1']['ds_field_template'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable field templates'),
+    '#description' => t('Blablabla something something'),
+    '#default_value' => variable_get('ds_field_template', FALSE),
+  );*/
+
   $theme_functions = module_invoke_all('ds_field_theme_functions_info');
   unset($theme_functions['theme_ds_field_expert']);
   $form['additional_settings']['fs1']['ft-default'] = array(
@@ -1420,7 +1419,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     '#description' => t('Drupal default will output the field as defined in Drupal Core.<br />Reset will strip all HTML.<br />Minimal adds a simple wrapper around the field.<br/>There is also an Expert Field Template that gives full control over the HTML, but can only be set per field.<br /><br />You can override this setting per field on the "Manage display" screens or when creating fields on the instance level.<br /><br /><strong>Template suggestions</strong><br />You can create .tpl files as well for these field theme functions, e.g. field--reset.tpl.php, field--minimal.tpl.php<br /><br /><label>CSS classes</label>You can add custom CSS classes on the <a href="!url">classes form</a>. These classes can be added to fields using the Drupal default or Minimal Field Template.<br /><br /><label>Advanced</label>You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.', array('!url' => url('admin/structure/ds/classes'))),
     '#states' => array(
       'visible' => array(
-        'input[name="additional_settings[fs1][ds_extras_field_template]"]' => array('checked' => TRUE),
+        'input[name="additional_settings[fs1][ds_field_template]"]' => array('checked' => TRUE),
       ),
     ),
   );
@@ -1433,7 +1432,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     '#states' => array(
       'visible' => array(
         'select[name="additional_settings[fs1][ft-default]"]' => array('value' => 'theme_ds_field_reset'),
-        'input[name="additional_settings[fs1][ds_extras_field_template]"]' => array('checked' => TRUE),
+        'input[name="additional_settings[fs1][ds_field_template]"]' => array('checked' => TRUE),
       ),
     ),
   );
@@ -1926,8 +1925,6 @@ function ds_field_template_settings_form(array &$form, array $context) {
     ),
   );
 
-
-
   // Field classes.
   if (!empty($field_classes)) {
     $field_classes_select = array(
@@ -2150,7 +2147,7 @@ function _ds_sort_fields($a, $subkey) {
 /**
  * Menu callback: show an individual revision node using the revision view mode.
  */
-function ds_extras_revision_node_show($node, $message = NULL) {
+function ds_revision_node_show($node, $message = NULL) {
 
   drupal_set_title(t('Revision of %title from %date', array('%title' => $node->title, '%date' => format_date($node->revision_timestamp))), PASS_THROUGH);
 
@@ -2160,7 +2157,7 @@ function ds_extras_revision_node_show($node, $message = NULL) {
   // Determine view mode.
   $layout = ds_get_layout('node', $node->type, 'revision', FALSE);
   $view_mode = ($layout) ? 'revision' : 'full';
-  drupal_static('ds_extras_view_mode', $view_mode);
+  drupal_static('ds_view_mode', $view_mode);
 
   // For markup consistency with other pages, use node_view_multiple() rather than node_view().
   return node_view_multiple(array($node->nid => $node), $view_mode);

@@ -30,7 +30,7 @@ function ds_extras_node_page_view($node) {
   if (isset($_GET['v']) && !empty($_GET['v'])) {
     $view_mode = $_GET['v'];
   }
-  drupal_static('ds_extras_view_mode', $view_mode);
+  drupal_static('ds_view_mode', $view_mode);
   return node_view_multiple(array($node->nid => $node), $view_mode);
 }
 

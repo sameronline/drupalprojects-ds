@@ -629,11 +629,9 @@ class dsLayoutsClassesTests extends dsBaseTest {
 
     // Remap the regions.
     $edit = array(
-      'ds_header[]' => '',
-      'ds_left[]' => 'header',
-      'ds_right[]' => 'footer',
-      'ds_footer[]' => '',
-      'ds_block_region[]' => 'foooter',
+      'ds_left' => 'header',
+      'ds_right' => 'footer',
+      'ds_block_region' => 'foooter',
     );
     $this->drupalPost('admin/structure/ds/change-layout/node/article/full/ds_2col_stacked', $edit, t('Save'), array('query' => array('destination' => 'admin/structure/types/manage/article/display/full')));
 

@@ -1604,3 +1604,15 @@ function ds_preprocess_field(&$variables) {
     }
   }
 }
+
+/**
+ * Utility funtion to return the view mode for the current entity.
+ *
+ * The drupal_static is called in ds_node_show to set
+ * the current view mode. Through this technique, the hide page
+ * title functionality can also work across other view modes
+ * if another one is chosen for the full page of the node.
+ */
+function ds_get_view_mode() {
+  return drupal_static('ds_view_mode', 'full');
+}

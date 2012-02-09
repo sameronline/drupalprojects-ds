@@ -187,18 +187,6 @@ function ds_extras_form_field_ui_field_edit_form_alter(&$form, &$form_state, $fo
 }
 
 /**
- * Utility funtion to return the view mode for the current entity.
- *
- * The drupal_static is called in ds_extras_node_show to set
- * the current view mode. Through this technique, the hide page
- * title functionality can also work across other view modes
- * if another one is chosen for the full page of the node.
- */
-function ds_extras_get_view_mode() {
-  return drupal_static('ds_extras_view_mode', 'full');
-}
-
-/**
  * Page title options for a full entity page view.
  */
 function ds_extras_process_page_title(&$variables) {
@@ -555,7 +543,7 @@ function ds_extras_entity_view_alter(&$build, $entity_type) {
 
   $bundle = $build['#bundle'];
   $view_mode = $build['#view_mode'];
-  $layout = ds_get_layout($entity_type, $bundle, ds_extras_get_view_mode());
+  $layout = ds_get_layout($entity_type, $bundle, ds_get_view_mode());
 
   // Page title options.
   if (variable_get('ds_extras_hide_page_title', FALSE)) {
