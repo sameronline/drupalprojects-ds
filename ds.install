@@ -14,6 +14,19 @@ function ds_schema() {
   $schema['ds_settings'] = array(
     'description' => 'The settings for Display Suite',
     'fields' => array(
+      'dsid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Primary ID field for the table. Not used for anything except internal lookups',
+      ),
+      'name' => array(
+        'description' => 'Machine name for the display type',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => ''
+      ),
       'module' => array(
         'description' => 'The name of the module',
         'type' => 'varchar',
@@ -193,4 +206,40 @@ function ds_update_6201(){
     )
   );
   return $ret;
+}
+
+/**
+ * Implementation of hook_update_N
+ */
+function ds_update_3000(&$ret){
+  $ret = array();
+  $displays = array();
+
+  $query = db_query("SELECT * FROM {ds_settings}");
+  while($result = db_fetch_array($query)) {
+    $displays[] = $result;
+  }
+
+  db_drop_table($ret, 'ds_settings');
+
+  // Create schema.
+  $schema = ds_schema();
+  foreach ($schema as $name => $spec) {
+    db_create_table($ret, $name, $spec);
+  }
+
+  $notices = '';
+  if (!empty($displays)) {
+    module_load_include('php', 'ds', 'includes/dsDisplay');
+    foreach ($displays as $d) {
+      $ds = new dsDisplay();
+      $ds->module = $d['module'];
+      $ds->type = $d['type'];
+      $ds->build_mode = $d['build_mode'];
+      $ds->settings = unserialize($d['settings']);
+      $ds->name = ds_machine_name(array($d['module'], $d['type'], $d['build_mode']));
+      $ds->save();
+      $notices = "Updated ". $d['build_mode'] ."display for ". $d['type'] ." using module ". $d['module'] ."\n";
+    }
+  }
 }
