@@ -29,9 +29,9 @@ class ds_regiontoblock {
     $build_mode = $form['#build_mode'];
     $regions = ds_get_regions($display_settings['layout']);
     foreach ($regions as $key => $region) {
-      if ($key != 'disabled') {
+      if ($key != DS_DISABLED_REGION) {
         $default_value = ds_default_value($display_settings, 'regiontoblock', 'block', $key, '');
-        $form['regiontoblock']['region-block-'. $region] = array(
+        $form['regiontoblock']['region-block-'. $key] = array(
           '#title' => $region['#name'],
           '#type' => 'checkbox',
           '#default_value' => $default_value,
@@ -118,16 +118,17 @@ class ds_regiontoblock {
     $object = $vars[$object_type];
 
     foreach ($display->regions as $region_name => $region) {
+      if ($display->regionIsActive($region_name)) {
+        $region_to_block = ds_default_value($display_settings, 'regiontoblock', 'block', $region_name, FALSE);
 
-      $region_to_block = ds_default_value($display_settings, 'regiontoblock', 'block', $region_name, FALSE);
-
-      if ($region_to_block == TRUE && $display->regionIsActive($region_name)) {
-        $key = 'ds_regiontoblock_'. $module .'_'. $object_type .'_'. $display->build_mode .'_'. $region_name;
-        $data = new stdClass;
-        $data->content = $display->regions[$region_name][$key]['content'];
-        $data->object = $vars[$object_type];
-        ds_static_variables($key, $data);
-        $display->regionHide($region_name);
+        if (isset($region_to_block) && $region_to_block == TRUE) {
+          $key = 'ds_regiontoblock_'. $module .'_'. $object_type .'_'. $display->build_mode .'_'. $region_name;
+          $data = new stdClass;
+          $data->content = $display->regions[$region_name]['#field_content'];
+          $data->object = $vars[$object_type];
+          ds_static_variables($key, $data);
+          $display->regionHide($region_name);
+        }
       }
     }
   }
