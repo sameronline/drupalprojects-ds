@@ -358,12 +358,13 @@ function ds_get_settings($module, $type, $build_mode, $return = 'settings', $res
       $settings[$module][$type][$build_mode]['settings'] = unserialize($record['settings']);
       $settings[$module][$type][$build_mode]['fields'] = unserialize($record['fields']);
     }
+    // Ensure that settings always returns a layout value, even one none is set
+    if (!isset($settings[$module][$type][$build_mode]['settings']['layout'])) {
+      $settings[$module][$type][$build_mode]['settings']['layout'] = DS_DEFAULT_LAYOUT;
+    }
   }
 
-  // Ensure that settings always returns a layout value, even one none is set
-  if (!isset($settings[$module][$build_mode]['settings']['layout'])) {
-    $settings[$module][$build_mode]['settings']['layout'] = DS_DEFAULT_LAYOUT;
-  }
+
 
   return isset($settings[$module][$type][$build_mode][$return]) ? $settings[$module][$type][$build_mode][$return] : array();
 }
