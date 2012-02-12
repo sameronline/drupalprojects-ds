@@ -546,6 +546,26 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
   $object_display->region_styles = ds_default_value($object_display->display_settings, 'region_styles');
 
   /**
+   * Give field types an opportunity to change settings before we sort groups
+   */
+  foreach ($object->ds_fields as $key => $field) {
+    switch ($field['field_type']) {
+      case DS_FIELD_TYPE_PREPROCESS:
+        if (!empty($field['preprocess_settings']['key'])) {
+          $object->ds_fields[$key]['content'] = $vars[$key][$object->preprocess_fields[$key]['key']];
+        }
+        else {
+          $object->ds_fields[$key]['content'] = $vars[$key];
+        }
+        break;
+          
+      case DS_FIELD_TYPE_IGNORE:
+        $object->ds_fields[$key]['content'] = isset($object->content[$key]['#value']) ? $object->content[$key]['#value'] : '';
+        break;
+    }
+  }
+
+  /**
    * Pack groups
    */
   if (!empty($object->ds_groups)){
@@ -572,23 +592,6 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
     foreach ($object_display->active_regions[$region_name] as $key => $weight) {
 
       $region_fields[$key] = $object->ds_fields[$key];
-      /**
-       * Preprocess some field content
-       */
-      switch ($object->ds_fields[$key]['field_type']) {
-        case DS_FIELD_TYPE_PREPROCESS:
-          if (!empty($object->ds_fields[$key]['preprocess_settings']['key'])) {
-            $object->ds_fields[$key]['content'] = $vars[$key][$object->preprocess_fields[$key]['key']];
-          }
-          else {
-            $object->ds_fields[$key]['content'] = $vars[$key];
-          }
-          break;
-            
-        case DS_FIELD_TYPE_IGNORE:
-          $object->ds_fields[$key]['content'] = isset($object->content[$key]['#value']) ? $object->content[$key]['#value'] : '';
-          break;
-      }
 
       /**
        * Choose a field rendering pipeline based on the type

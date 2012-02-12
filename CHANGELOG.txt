@@ -1,4 +1,10 @@
 ------------------------------------------------------------------------------
+6.x-2.x 2012-XX-XX
+------------------------------------------------------------------------------
+- #1414930 by xtfer: Fix an issue where preprocess and ignored fields inside fieldgroups
+  never received content, and were thus unrendered.
+
+------------------------------------------------------------------------------
 6.x-2.2 2012-02-08
 ------------------------------------------------------------------------------
 - #1426264 by xtfer: Fix an issue where the same node rendered in different 
