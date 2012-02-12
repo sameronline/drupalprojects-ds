@@ -7,11 +7,28 @@
 $plugin = array(
   'type' => DS_FIELD_TYPE_THEME,
   'name' => t('Theme field'),
+  'class' => 'dsFieldTheme',
 );
 
 /**
- * Implements ds_field_api_init
+ * The theme field type
  */
-function ds_field_api_theme_build(&$field){
-  $field['formatter'] = (isset($field['format'])) ? $field['format'] : key($field['properties']['formatters']);
+class dsFieldTheme extends dsField {
+
+  /**
+   * Format content for use in an item
+   */
+  public function formatContent() {
+    $content = NULL;
+
+    if (isset($this->settings['formatter'])) {
+      // Load includes
+      if (isset($this->settings['file'])) {
+        include_once($this->settings['file']);
+      }
+      $this->content = theme($this->settings['formatter'], $this->settings);
+      return $this->content;
+    }
+    return FALSE;
+  }
 }

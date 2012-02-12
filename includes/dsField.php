@@ -6,9 +6,60 @@
  */
 class dsField {
   /**
+   * Field key
+   */
+  public $key;
+
+  /**
+   * Content for the field
+   */
+  public $content;
+
+  /**
    * Field settings
    */
   public $settings = array();
+
+  /**
+   * Field attributes
+   */
+  protected $attributes = array();
+
+  /**
+   * Wrapper to set a value on a field
+   */
+  public function setting($key, $value) {
+    $this->settings[$key] = $value;
+  }
+
+  /**
+   * Return default values for a field
+   */
+  protected function defaults() {
+    return array();
+  }
+
+  /**
+   * Initialise field defaults
+   *
+   * This overly complicated function merges defaults and settings in the
+   * following order:
+   *  - default field settings across all fields, from this function
+   *  - type defaults loaded from the field types
+   *  - field settings from the database
+   * Settings from latter groups override previous groups.
+   */
+  public function initialise($settings) {
+    $defaults = array(
+      'labelformat' => DS_DEFAULT_LABEL_FORMAT,
+      'label' => '',
+      'theme' => DS_DEFAULT_THEME_FIELD,
+      'weight' => DS_DEFAULT_WEIGHT,
+      'content' => NULL,
+    );
+    $type_defaults = array_merge($defaults, $this->defaults());
+    $this->settings = array_merge($type_defaults, $settings);
+  }
 
   /**
    * Build an individual field value
@@ -125,5 +176,81 @@ class dsField {
     $field['content'] = ds_field_format_content($field);
 
     return $field;
+  }
+
+  /**
+   * Get content for use in a field.
+   *
+   * This will check an array of content values for a matching key and use its
+   * value as the field's content.
+   *
+   * @param stdClass $item
+   *  the item to set content for
+   * @param array $content_vars (optional)
+   *  the $vars array, or an array containing possible values
+   * @param string $vars_key 
+   *  the key within $content_vars to retrieve
+   *
+   * @return 
+   *  the content value as a string, or FALSE if none was found
+   */
+  function getContent($content_vars = array(), $vars_key = NULL) {
+    // If content has been prerendered by ds_build_fields_and_objects use that
+    if (!empty($this->content)) {
+      return $this->content;
+    }
+    if (empty($vars_key)) {
+      $vars_key = $this->key;
+    }
+    // If content has been rendered by another source (e.g. CCK) use that
+    if (!empty($content_vars)) {
+      if (isset($content_vars[$vars_key .'_rendered'])) {
+        $this->content = $content_vars[$vars_key .'_rendered'];
+      }
+      elseif (isset($content_vars[$vars_key])) {
+        $this->content = $content_vars[$vars_key];
+      }
+    }
+
+    if (!empty($this->content)){
+      return $this->content;
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Format content for use in an item.
+   *
+   * Most field types will override this function, as dsField::render simply
+   * wraps the content in default field HTML.
+   */
+  public function formatContent() {
+    return filter_xss($this->content);
+  }
+
+  /**
+   * Return a value for a field or group
+   *
+   * @param array $item
+   *  The item to render. The item requires a 'content' key.
+   *
+   * @return
+   *  A rendered item, or FALSE if no content was found
+   */
+  public function render(){
+    if (empty($this->settings['theme'])) {
+      $this->settings['theme'] = DS_DEFAULT_THEME_FIELD;
+    }
+
+    $this->content = theme($this->settings['theme'], $this);
+
+    // theme() can return anything, but we only want to return content where
+    // there is 1 or more characters
+    if (isset($this->content) && strlen($this->content) > 0) {
+      return $this->content;
+    }
+
+    return FALSE;
   }
 }

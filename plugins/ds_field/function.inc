@@ -7,11 +7,33 @@
 $plugin = array(
   'type' => DS_FIELD_TYPE_FUNCTION,
   'name' => t('Custom function'),
+  'function' => 'dsFieldFunction'
 );
 
 /**
- * Implements ds_field_api_init
+ * The function field type
  */
-function ds_field_api_function_init(&$field){
-  $field['function'] = (isset($field['format'])) ? $field['format'] : key($field['properties']['formatters']);
+class dsFieldFunction extends dsField {
+
+  /**
+   * Format content for use in an item
+   */
+  public function formatContent() {
+    $content = NULL;
+
+    if (isset($this->settings['function'])) {
+      // Load includes
+      if (isset($this->settings['file'])) {
+        include_once($this->settings['file']);
+      }
+      // If its a function, call it
+      if (isset($this->settings['function']) && !empty($this->settings['function'])) {
+        if (function_exists($this->settings['function'])) {
+          $this->content = call_user_func($this->settings['function'], $this->settings);
+          return $this->content;
+        }
+      }
+    }
+    return FALSE;
+  }
 }

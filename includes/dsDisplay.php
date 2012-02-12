@@ -53,6 +53,26 @@ class dsDisplay {
   public $content;
 
   /**
+   * __constructor
+   */
+  public function __construct() {
+    // Setup the object
+    $this->regions = array();
+    $this->fields = array();
+  }
+
+  /**
+   * Initialise a display object
+   */
+  public function initialise($object) {
+    // API info for this module and type.
+    $this->api_info = ds_api_info($module, $object->type);
+
+    // Get settings for this display/build mode combination
+    $this->settings = ds_get_settings($module, $object->type, $object->build_mode);
+  }
+
+  /**
    * Load a display
    *
    * @param $name (optional)
@@ -134,6 +154,14 @@ class dsDisplay {
    */
   public function delete() {
     db_query("DELETE FROM {ds_settings} WHERE name = '%s'", $this->name);
+  }
+
+  /**
+   * Add a field
+   */
+  public function addField($key, $field) {
+    $this->fields[$key] = $field;
+    return $this->fields[$key];
   }
 
   /**

@@ -83,8 +83,9 @@ function ds_render($key, $object, $module, $vars) {
  */
 function ds_build_fields_and_regions(&$object, $module) {
 
-  // API info for this module and type.
-  $api_info = ds_api_info($module, $object->type);
+  // Initialise the display
+  $display = ds_create_display();
+  $display->initialise($object);
 
   // See if rendering is needed later on.
   // There are two ways of excluding: global exclude on object type
@@ -92,19 +93,11 @@ function ds_build_fields_and_regions(&$object, $module) {
   // We don't return here, because we want to add all fields on the object
   // so themers can use it in their template.
   $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
-  $object->render_by_ds = ((isset($exclude_build_modes[$object->type][$object->build_mode])
+  $render_by_ds = ((isset($exclude_build_modes[$object->type][$object->build_mode])
     && $exclude_build_modes[$object->type][$object->build_mode] == TRUE) ||
     variable_get($module .'_type_'. $object->type, FALSE) == TRUE) ? FALSE : TRUE;
 
-  // Setup the object
-  $object->regions = array();
-  $object->ds_fields = array();
-  $object->preprocess_fields = array();
-
-  // Get settings for this display/build mode combination
-  $display_settings = ds_get_settings($module, $object->type, $object->build_mode);
-
-  if (!empty($display_settings['fields'])) {
+  if (!empty($display->settings['fields'])) {
 
     // Get all fields and settings for this build mode (this doesnt load CCK fields, only groups)
     $available_fields = ds_get_fields($module, $object->type, $object->build_mode, $api_info['extra']);
@@ -117,10 +110,10 @@ function ds_build_fields_and_regions(&$object, $module) {
     }
 
     // Iterate over fields listed on the display
-    foreach ($display_settings['fields'] as $field_key => $field_defaults) {
+    foreach ($display->settings['fields'] as $field_key => $field_settings) {
 
       // Dont render fields which are set to disabled
-      $region = (isset($field_defaults['region'])) ? $field_defaults['region'] : DS_DEFAULT_REGION;
+      $region = (isset($field_settings['region'])) ? $field_settings['region'] : DS_DEFAULT_REGION;
       if ($region != DS_DISABLED_REGION) {
 
         // Create a dummy region in $temp_regions for later nesting
@@ -132,54 +125,45 @@ function ds_build_fields_and_regions(&$object, $module) {
         // Settings per field should be retrieved from a single cached function
         // call to ds_get_settings (or similar)
         if (isset($available_fields[$field_key])) {
-          $field_settings = $available_fields[$field_key];
+          $field_defaults = $available_fields[$field_key];
         }
         else {
-          $field_settings = array();
+          $field_defaults = array();
         }
+        $settings = array_merge($field_settings, $field_defaults);
 
-        $object->ds_fields[$field_key] = array();
-        $object->ds_fields[$field_key] = array_merge($field_defaults, $field_settings);
+        $field = ds_create_field($field_settings['type']);
+        $field->initialise($settings);
 
-        // Additional field properties (which should be included a normalised
-        // settings function)
-        $object->ds_fields[$field_key]['region'] = $region;
-        $object->ds_fields[$field_key]['field_type'] = isset($object->ds_fields[$field_key]['type']) ? $object->ds_fields[$field_key]['type'] : DS_FIELD_TYPE_NON_DS; // fix key collision
-        unset($object->ds_fields[$field_key]['type']);
-        $object->ds_fields[$field_key]['module'] = $module;
-        $object->ds_fields[$field_key]['object'] =& $object;
-        $object->ds_fields[$field_key]['object_type'] = $api_info['object'];
-        // end @todo
+        $field->setting('region', $region);
+        $field->setting('module', $module);
+        $field->setting('object', $object);
+        $field->setting('object_type', $display->api_info['object']);
+
+        $display->addField($field_key, $field);
       }
     }
 
     // Build the individual fields using settings created previously
     $temp_regions = array();
-    foreach ($object->ds_fields as $key => $setting) {
+    foreach ($display->fields as $key => $field) {
+
       // Build the field
-      ds_build_field($key, $object->ds_fields[$key]);
+      $field->build();
 
       // Create a temp reference only if it doesnt already exists
       // This ensures that the weight and region always comes from the first
       // fieldgroup positioned.
-      $region_key = $object->ds_fields[$key]['region'];
-      $parent = $object->ds_fields[$key]['parent'];
+      $region_key = $field['region'];
+      $parent = $field['parent'];
 
-      if ($object->ds_fields[$key]['format'] == 'ds_tabs') {
-        if (!isset($temp_regions[$region_key][$parent]) && $parent != '#root') {
-          $temp_regions[$region_key][$parent] = array(
-            '#weight' => $object->ds_fields[$key]['weight'],
-            '#parent' => '#root',
-          ); 
-        }
-      }
       $temp_regions[$region_key][$key] = array(
         '#weight' => $object->ds_fields[$key]['weight'],
         '#parent' => $parent,
       );
 
       if ($parent != '#root') {
-        $object->ds_fields[$parent]['fields'][] = $key;
+        $display->fields[$parent]['fields'][] = $key;
       }
     }
 
@@ -188,13 +172,13 @@ function ds_build_fields_and_regions(&$object, $module) {
       // Nest groups
       foreach ($temp_regions as $key => $region){
         $nested_fields = array();
-        ds_nest_fields($region, $nested_fields);
+        $display->nestFields($region, $nested_fields);
 
-        $object->regions[$key] = $nested_fields;
+        $display->regions[$key] = $nested_fields;
       }
       // Sort groups
       foreach ($object->regions as $key => $region) {
-        ds_order_fields($object->regions[$key]);
+        $display->orderFields($object->regions[$key]);
       }
     }
   }
@@ -202,6 +186,7 @@ function ds_build_fields_and_regions(&$object, $module) {
   if (empty($object->regions)) {
     $object->render_by_ds = FALSE;
   }
+  $object->display = $display;
 }
 
 /**
@@ -222,8 +207,6 @@ function ds_build_fields_and_regions(&$object, $module) {
  */
 function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAULT_THEME_FIELD) {
 
-  // Initialise the display
-  $display = ds_create_display();
   if (!isset($object->layout)) {
     $object->layout = DS_DEFAULT_LAYOUT;
   }
@@ -341,4 +324,3 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
 
   return $display->content();
 }
-
