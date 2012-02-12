@@ -294,6 +294,9 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
   // Add field content to all regions
   $display->regionsAddContent();
 
+  // Plugins.
+  ds_plugins_process($display, $object, $vars);
+
   // Add classes based on regions.
   if ($display->regionIsActive('middle')) {
     $display->regions['middle']['#field_content'] = '<div class="'. $display->api_info['module'] .'-region-middle">'. $display->regions['middle']['#field_content'] .'</div>';
@@ -314,9 +317,6 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
 
   // Clean up regions ready for rendering
   $display->regionsRenderAll();
-
-  // Plugins.
-  ds_plugins_process($display, $object, $vars);
 
   // Theme the regions with their content.
   $display->displayFinalise();
