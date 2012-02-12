@@ -303,36 +303,41 @@ function template_preprocess_ds_display_overview_views_form(&$vars) {
 function theme_ds_buildmodes_matrix_form($form) {
   $output = '';
 
-  // Header.
-  $header = array(0 => '');
-  foreach ($form['#build_modes'] as $key => $mode) {
-    $header[] = $mode['title'];
-  }
-
-  // Checkboxes.
-  $rows = array();
-  foreach ($form['#types'] as $key => $type) {
-    $row = array();
-    $row[] = array('data' => check_plain(drupal_ucfirst($type->name)));
-    foreach ($form['#build_modes'] as $bkey => $mode) {
-      $row[] = array('data' => drupal_render($form['exclude'][$key][$key .'-'. $bkey]));
+  if (isset($form['#types']) && !empty($form['#types'])) {
+    // Header.
+    $header = array(0 => '');
+    foreach ($form['#build_modes'] as $key => $mode) {
+      $header[] = $mode['title'];
     }
-    $rows[] = $row;
+
+    // Checkboxes.
+    $rows = array();
+    foreach ($form['#types'] as $key => $type) {
+      $row = array();
+      $row[] = array('data' => check_plain($type->name));
+      foreach ($form['#build_modes'] as $bkey => $mode) {
+        $row[] = array('data' => drupal_render($form['exclude'][$key][$key .'-'. $bkey]));
+      }
+      $rows[] = $row;
+    }
+
+    // Theme as table.
+    $table = theme('table', $header, $rows);
+    $table .= drupal_render($form['exclude']['submit']);
+
+    $fieldset = array(
+      '#title' => t('Disable Display Suite rendering by type/build mode'),
+      '#description' => t('Toggle which build modes you want to exclude from rendering. The "All" checkbox will exclude/include all build modes at once for that type.'),
+      '#children' => $table,
+      '#attributes' => array(),
+    );
+
+    $output = theme('fieldset', $fieldset);
+    $output .= drupal_render($form);
   }
-
-  // Theme as table.
-  $table = theme('table', $header, $rows);
-  $table .= drupal_render($form['exclude']['submit']);
-
-  $fieldset = array(
-    '#title' => t('Exclude matrix'),
-    '#description' => t('Toggle per type which build modes you want to exclude from rendering. The "Toggle" checkbox will exclude/include all build modes at once.'),
-    '#children' => $table,
-    '#attributes' => array(),
-  );
-
-  $output = theme('fieldset', $fieldset);
-  $output .= drupal_render($form);
+  else {
+    $output = 'No build modes are available for this module. You may need to enable additional modules, or there may be no types (for example, you may not have Content Types, or all your Views may be disabled).';
+  }
 
   return $output;
 }
