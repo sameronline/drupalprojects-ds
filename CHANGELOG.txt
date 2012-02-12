@@ -1,8 +1,11 @@
 ------------------------------------------------------------------------------
 6.x-2.x 2012-XX-XX
 ------------------------------------------------------------------------------
+- #1427794: Fix an issue where view names longer than 25 characters would cause 
+  display settings not to save
 - #1414930 by xtfer: Fix an issue where preprocess and ignored fields inside fieldgroups
   never received content, and were thus unrendered.
+- Improve usability of build mode settings
 
 ------------------------------------------------------------------------------
 6.x-2.2 2012-02-08
