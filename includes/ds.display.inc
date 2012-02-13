@@ -546,6 +546,9 @@ function ds_display_overview_form_submit($form, &$form_state) {
       unset($form_state['values'][$key]);
     }
   }
+  if (!isset($display_settings['layout'])) {
+    $display_settings['layout'] = DS_DEFAULT_LAYOUT;
+  }
 
   // Plugins.
   if ($form['#plugins'] == TRUE) {
