@@ -64,14 +64,6 @@ function ds_extras_menu() {
 }
 
 /**
- * Implements hook_menu_alter().
- */
-function ds_extras_menu_alter(&$items) {
-  module_load_include('inc', 'ds_extras', 'ds_extras.registry');
-  _ds_extras_menu_alter($items);
-}
-
-/**
  * Implements hook_entity_info().
  */
 function ds_extras_entity_info() {
@@ -107,6 +99,14 @@ function ds_extras_admin_paths() {
       'taxonomy/term/*/display' => TRUE,
     );
   }
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function ds_extras_menu_alter(&$items) {
+  module_load_include('inc', 'ds_extras', 'ds_extras.registry');
+  _ds_extras_menu_alter($items);
 }
 
 /**
