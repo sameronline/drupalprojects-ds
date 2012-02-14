@@ -436,6 +436,8 @@ function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundl
  */
 function ds_field_ui_layout_change_submit($form, &$form_state) {
 
+
+
   // Prepare some variables.
   $old_layout = $form['#old_layout'];
   $new_layout = $form['#new_layout'];
@@ -813,13 +815,20 @@ function ds_field_settings_summary($field) {
      $summary = module_invoke($field['module'], 'ds_field_format_summary', $field);
   }
 
-  // Field template summary
-  $field_settings = ds_get_field_settings($field['entity_type'], $field['bundle'], $field['view_mode'], FALSE);
-  $functions = module_invoke_all('ds_field_theme_functions_info');
-  $default_field_function = variable_get('ft-default', 'theme_field');
-  $field_function = isset($field_settings[$field['name']]['formatter_settings']['ft']['func']) ? $field_settings[$field['name']]['formatter_settings']['ft']['func'] : $default_field_function;
+  if(module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
+    module_load_include('inc', 'ds_extras', 'ds_extras.admin');
 
-  $summary .= ' Field template: ' . check_plain($functions[$field_function]) . '<br />';
+    // Field template summary
+    $field_settings = ds_get_field_settings($field['entity_type'], $field['bundle'], $field['view_mode'], FALSE);
+    $functions = module_invoke_all('ds_field_theme_functions_info');
+    $default_field_function = variable_get('ft-default', 'theme_field');
+    $field_function = isset($field_settings[$field['name']]['formatter_settings']['ft']['func']) ? $field_settings[$field['name']]['formatter_settings']['ft']['func'] : $default_field_function;
+
+    $summary .= ' Field template: ' . check_plain($functions[$field_function]) . '<br />';
+  }
+
+  if($summary == '')
+    return NULL; // no summary return nothing
 
   return array(
     '#markup' => '<div class="field-formatter-summary">' . $summary . '</div>',
@@ -839,16 +848,18 @@ function ds_field_settings_summary($field) {
 function ds_field_settings_form($field) {
   $form = module_invoke($field['module'], 'ds_field_settings_form', $field);
 
-  // Add field template settings to every field
-  $context = array(
-    'instance' => array(
-      'entity_type' => $field['entity_type'],
-      'bundle' => $field['bundle'],
-      'field_name' => $field['name'],
-    ),
-    'view_mode' => $field['view_mode'],
-  );
-  ds_field_template_settings_form($form, $context);
+  // Add field template settings to every field if enabled
+  if(module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
+    $context = array(
+      'instance' => array(
+        'entity_type' => $field['entity_type'],
+        'bundle' => $field['bundle'],
+        'field_name' => $field['name'],
+      ),
+      'view_mode' => $field['view_mode'],
+    );
+    ds_field_template_settings_form($form, $context);
+  }
 
   return $form;
 }
@@ -866,7 +877,7 @@ function ds_ds_field_format_summary($field) {
       $summary .= t('Type: !type', array('!type' => check_plain(drupal_ucfirst(str_replace('_', ' ', $conf['subtype'])))));
     }
     elseif ($key == 'ft') {
-      // doe niets
+      // do nothing
     }
     elseif (!empty($value)) {
       $value = is_numeric($value) ? ($value ? t('Yes') : t('No')) : check_plain($value);
@@ -1397,47 +1408,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     '#weight' => 3,
   );
 
-  $form['additional_settings']['fs1'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Field Templates'),
-  );
-
-  /*$form['additional_settings']['fs1']['ds_field_template'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Enable field templates'),
-    '#description' => t('Blablabla something something'),
-    '#default_value' => variable_get('ds_field_template', FALSE),
-  );*/
-
-  $theme_functions = module_invoke_all('ds_field_theme_functions_info');
-  unset($theme_functions['theme_ds_field_expert']);
-  $form['additional_settings']['fs1']['ft-default'] = array(
-    '#type' => 'select',
-    '#title' => t('Sitewide default Field Template'),
-    '#options' => $theme_functions,
-    '#default_value' => variable_get('ft-default', 'theme_field'),
-    '#description' => t('Drupal default will output the field as defined in Drupal Core.<br />Reset will strip all HTML.<br />Minimal adds a simple wrapper around the field.<br/>There is also an Expert Field Template that gives full control over the HTML, but can only be set per field.<br /><br />You can override this setting per field on the "Manage display" screens or when creating fields on the instance level.<br /><br /><strong>Template suggestions</strong><br />You can create .tpl files as well for these field theme functions, e.g. field--reset.tpl.php, field--minimal.tpl.php<br /><br /><label>CSS classes</label>You can add custom CSS classes on the <a href="!url">classes form</a>. These classes can be added to fields using the Drupal default or Minimal Field Template.<br /><br /><label>Advanced</label>You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.', array('!url' => url('admin/structure/ds/classes'))),
-    '#states' => array(
-      'visible' => array(
-        'input[name="additional_settings[fs1][ds_field_template]"]' => array('checked' => TRUE),
-      ),
-    ),
-  );
-
-  $form['additional_settings']['fs1']['ft-kill-colon'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Hide colon'),
-    '#default_value' => variable_get('ft-kill-colon', FALSE),
-    '#description' => t('Hide the colon on the reset field template.'),
-    '#states' => array(
-      'visible' => array(
-        'select[name="additional_settings[fs1][ft-default]"]' => array('value' => 'theme_ds_field_reset'),
-        'input[name="additional_settings[fs1][ds_field_template]"]' => array('checked' => TRUE),
-      ),
-    ),
-  );
-
-
   if (!empty($layout) && isset($layout->regions)) {
     $form['additional_settings']['ds_layouts']['suggestions'] = array(
       '#markup' => '<p>' . $selected . '</p><p>' . t('!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p>',
@@ -1582,6 +1552,11 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
   );
   drupal_alter('ds_label_options', $field_label_options);
 
+  // Regions for fields
+  if(isset($form['#ds_layout']->settings['fields'])) {
+    $field_regions = $form['#ds_layout']->settings['fields'];
+  }
+
   foreach ($fields as $key => $field) {
 
     // Check on ui_limit.
@@ -1661,6 +1636,11 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       'settings_edit' => array(),
     );
 
+    // Summary niet tonen indien we in hidden region zitten
+    if (!isset($field_regions[$key]) || $field_regions[$key] == 'hidden') {
+      continue;
+    }
+
     $field['name'] = $key;
     $field['entity_type'] = $entity_type;
     $field['bundle'] = $bundle;
@@ -1673,8 +1653,12 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     else {
       // After saving, the settings are updated here aswell. First we create
       // the element for the table cell.
-      $table[$key]['settings_summary'] = ds_field_settings_summary($field);
-      ds_field_row_form_format_summary_construct($table, $key);
+      $summary = ds_field_settings_summary($field);
+
+      if(isset($summary)) {
+        $table[$key]['settings_summary'] = $summary;
+        ds_field_row_form_format_summary_construct($table, $key);
+      }
     }
   }
 }
@@ -1705,6 +1689,11 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
   $extra_fields = field_info_extra_fields($entity_type, $bundle, 'display');
 
   $table = &$form['fields'];
+
+  // Regions for fields
+  if(isset($form['#ds_layout']->settings['fields'])) {
+    $field_regions = $form['#ds_layout']->settings['fields'];
+  }
 
   // Field rows.
   foreach ($instances as $name => $instance) {
@@ -1743,21 +1732,22 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       '#field_name' => $name,
     );
 
+    // Summary niet tonen indien we in hidden region zitten
+    if (!isset($field_regions[$name]) || $field_regions[$name] == 'hidden') {
+      continue;
+    }
+
     if ($form_state['formatter_settings_edit'] == $name) {
       $settings_form = isset($table[$name]['format']['settings_edit_form']['settings']) ? $table[$name]['format']['settings_edit_form']['settings'] : array();
 
-      // Add the field templates form
-      $context = array(
-        'module' => $formatter['module'],
-        'formatter' => $formatter,
-        'field' => $field,
-        'instance' => $instance,
-        'view_mode' => $view_mode,
-        'form' => $form,
-        'form_state' => $form_state,
-      );
-
-      ds_field_template_settings_form($settings_form, $context);
+      // Add the field templates form when needed
+      if(module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
+        $context = array(
+          'instance' => $instance,
+          'view_mode' => $view_mode,
+        );
+        ds_field_template_settings_form($settings_form, $context);
+      }
 
       if ($settings_form) {
         $table[$name]['format']['#cell_attributes'] = array('colspan' => 3);
@@ -1796,33 +1786,39 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     else {
       $summary = module_invoke($formatter['module'], 'field_formatter_settings_summary', $field, $instance, $view_mode);
 
-      // Field template summary
-      $field_settings = ds_get_field_settings($entity_type, $bundle, $view_mode, FALSE);
-      $functions = module_invoke_all('ds_field_theme_functions_info');
-      $default_field_function = variable_get('ft-default', 'theme_field');
-      $field_function = isset($field_settings[$name]['formatter_settings']['ft']['func']) ? $field_settings[$name]['formatter_settings']['ft']['func'] : $default_field_function;
+      if(module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
+        module_load_include('inc', 'ds_extras', 'ds_extras.admin');
 
-      $summary .= '<br /> Field template: ' . check_plain($functions[$field_function]) . '<br />';
+        // Field template summary
+        $field_settings = ds_get_field_settings($entity_type, $bundle, $view_mode, FALSE);
+        $functions = module_invoke_all('ds_field_theme_functions_info');
+        $default_field_function = variable_get('ft-default', 'theme_field');
+        $field_function = isset($field_settings[$name]['formatter_settings']['ft']['func']) ? $field_settings[$name]['formatter_settings']['ft']['func'] : $default_field_function;
 
-      $table[$name]['settings_summary'] = array();
-      $table[$name]['settings_edit'] = array();
+        $summary .= '<br /> Field template: ' . check_plain($functions[$field_function]) . '<br />';
+      }
 
-      $table[$name]['settings_summary'] = array(
-        '#markup' => '<div class="field-formatter-summary">' . $summary . '</div>',
-        '#cell_attributes' => array('class' => array('field-formatter-summary-cell')),
-      );
-      $table[$name]['settings_edit'] = $base_button + array(
-        '#type' => 'image_button',
-        '#name' => $name . '_formatter_settings_edit',
-        '#src' => 'misc/configure.png',
-        '#attributes' => array('class' => array('field-formatter-settings-edit'), 'alt' => t('Edit')),
-        '#op' => 'edit',
-        // Do not check errors for the 'Edit' button, but make sure we get
-        // the value of the 'formatter type' select.
-        '#limit_validation_errors' => array(array('fields', $name, 'type')),
-        '#prefix' => '<div class="field-formatter-settings-edit-wrapper">',
-        '#suffix' => '</div>',
-      );
+      if($summary != '') {
+        $table[$name]['settings_summary'] = array();
+        $table[$name]['settings_edit'] = array();
+
+        $table[$name]['settings_summary'] = array(
+          '#markup' => '<div class="field-formatter-summary">' . $summary . '</div>',
+          '#cell_attributes' => array('class' => array('field-formatter-summary-cell')),
+        );
+        $table[$name]['settings_edit'] = $base_button + array(
+          '#type' => 'image_button',
+          '#name' => $name . '_formatter_settings_edit',
+          '#src' => 'misc/configure.png',
+          '#attributes' => array('class' => array('field-formatter-settings-edit'), 'alt' => t('Edit')),
+          '#op' => 'edit',
+          // Do not check errors for the 'Edit' button, but make sure we get
+          // the value of the 'formatter type' select.
+          '#limit_validation_errors' => array(array('fields', $name, 'type')),
+          '#prefix' => '<div class="field-formatter-settings-edit-wrapper">',
+          '#suffix' => '</div>',
+        );
+      }
     }
   }
 }
@@ -2090,10 +2086,8 @@ function _ds_field_valid($key, $field, &$form_state, $view_mode = 'default') {
 
     // In case of a form, fields will be set with #access to FALSE.
     if ($view_mode != 'form') {
-      return FALSE;
+      $continue = TRUE;
     }
-
-    return TRUE;
   }
 
   return $continue;

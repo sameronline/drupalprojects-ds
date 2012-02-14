@@ -74,7 +74,7 @@ Drupal.behaviors.settingsToggle = {
   attach: function (context) {
 
     // Bind on click.
-    $(context).find('#field-display-overview').find('.ft-link').once('ds-ft').bind('click', function(e) {
+    $(context).find('#field-display-overview').find('.field-formatter-settings-edit').once('ds-ft').bind('click', function(e) {
 
       e.preventDefault();
 

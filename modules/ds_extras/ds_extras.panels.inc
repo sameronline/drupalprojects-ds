@@ -67,24 +67,26 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
     $layout = drupal_get_form('ds_panels_layout', $entity_type, $bundle, $view_mode, $ds_layout, $panel_layout, $layout_tab_first);
   }
 
-  // Content tab.
-  $content = ds_panels_content($entity_type, $bundle, $view_mode, $ds_layout, $panel_layout);
-
   // Move all this stuff into nice vertical tabs.
   $build['tabs'] = array(
     '#type' => 'vertical_tabs',
     '#theme_wrappers' => array('vertical_tabs'),
   );
 
-  $build['tabs']['ds_panels_content'] = array(
-    '#type' => 'fieldset',
-    '#group' => 'tabs',
-    '#title' => t('Content'),
-    '#weight' => 0,
-  );
-  $build['tabs']['ds_panels_content']['content'] = array(
-    '#markup' => drupal_render($content),
-  );
+  if(!empty($ds_layout)) {
+    // Content tab.
+    $content = ds_panels_content($entity_type, $bundle, $view_mode, $ds_layout, $panel_layout);
+
+    $build['tabs']['ds_panels_content'] = array(
+      '#type' => 'fieldset',
+      '#group' => 'tabs',
+      '#title' => t('Content'),
+      '#weight' => 0,
+    );
+    $build['tabs']['ds_panels_content']['content'] = array(
+      '#markup' => drupal_render($content),
+    );
+  }
   $build['tabs']['ds_panels_layout'] = array(
     '#type' => 'fieldset',
     '#group' => 'tabs',
@@ -421,11 +423,6 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
  * Return the panels content manager.
  */
 function ds_panels_content($entity_type, $bundle, $view_mode, $ds_layout) {
-
-  if (empty($ds_layout)) {
-    return array('#markup' => '<p>' . t('Select a layout first.') . '</p>');
-  }
-
   $did = $ds_layout['settings']['did'];
   ctools_include('common', 'panels');
   $display = panels_load_display($did);

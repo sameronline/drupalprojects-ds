@@ -17,6 +17,48 @@ function ds_extras_settings($form) {
     '#suffix' => '</div>',
     '#tree' => TRUE,
   );
+
+  $form['additional_settings']['fs1'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Field Templates'),
+  );
+
+  $form['additional_settings']['fs1']['ds_extras_field_template'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable Field Templates'),
+    '#description' => t('Customize the labels and the HTML output of your fields.'),
+    '#default_value' => variable_get('ds_extras_field_template', FALSE),
+  );
+
+  $theme_functions = module_invoke_all('ds_field_theme_functions_info');
+  unset($theme_functions['theme_ds_field_expert']);
+  $form['additional_settings']['fs1']['ft-default'] = array(
+    '#type' => 'select',
+    '#title' => t('Default Field Template'),
+    '#options' => $theme_functions,
+    '#default_value' => variable_get('ft-default', 'theme_field'),
+    '#description' => t('Default will output the field as defined in Drupal Core.<br />Reset will strip all HTML.<br />Minimal adds a simple wrapper around the field.<br/>There is also an Expert Field Template that gives full control over the HTML, but can only be set per field.<br /><br />You can override this setting per field on the "Manage display" screens or when creating fields on the instance level.<br /><br /><strong>Template suggestions</strong><br />You can create .tpl files as well for these field theme functions, e.g. field--reset.tpl.php, field--minimal.tpl.php<br /><br /><label>CSS classes</label>You can add custom CSS classes on the <a href="!url">classes form</a>. These classes can be added to fields using the Default Field Template.<br /><br /><label>Advanced</label>You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.', array('!url' => url('admin/structure/ds/classes'))),
+    '#states' => array(
+      'visible' => array(
+        'input[name="additional_settings[fs1][ds_extras_field_template]"]' => array('checked' => TRUE),
+      ),
+    ),
+  );
+
+  $form['additional_settings']['fs1']['ft-kill-colon'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hide colon'),
+    '#default_value' => variable_get('ft-kill-colon', FALSE),
+    '#description' => t('Hide the colon on the reset field template.'),
+    '#states' => array(
+      'visible' => array(
+        'select[name="additional_settings[fs1][ft-default]"]' => array('value' => 'theme_ds_field_reset'),
+        'input[name="additional_settings[fs1][ds_extras_field_template]"]' => array('checked' => TRUE),
+      ),
+    ),
+  );
+
+
   $form['additional_settings']['fs2'] = array(
     '#type' => 'fieldset',
     '#title' => t('Extra fields'),

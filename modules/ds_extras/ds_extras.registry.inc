@@ -159,15 +159,6 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
     unset($implementations['ds_extras']);
   }
 
-  // Contextual
-  $con_hooks = array(
-    'contextual_links_view_alter',
-    'admin_paths',
-  );
-  if ((!variable_get('ds_extras_contextual', FALSE) && in_array($hook, $con_hooks)) || !module_exists('field_ui')) {
-    unset($implementations['ds_extras']);
-  }
-
   // Region to block
   $region_hooks = array(
     'ds_layout_region_alter',
