@@ -102,6 +102,14 @@ function ds_extras_admin_paths() {
 }
 
 /**
+ * Implements hook_menu_alter().
+ */
+function ds_extras_menu_alter(&$items) {
+  module_load_include('inc', 'ds_extras', 'ds_extras.registry');
+  _ds_extras_menu_alter($items);
+}
+
+/**
  * Implements hook_theme_registry_alter().
  */
 function ds_extras_theme_registry_alter(&$theme_registry) {
