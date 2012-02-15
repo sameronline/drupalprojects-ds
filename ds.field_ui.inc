@@ -598,6 +598,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
  * Save the field settings from the 'Manage display' screen.
  */
 function ds_field_ui_fields_save($form, &$form_state) {
+
   // Setup some variables.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
@@ -621,9 +622,9 @@ function ds_field_ui_fields_save($form, &$form_state) {
     $field_values = $form_state['values']['fields'][$field];
 
     // In case the region is hidden, do not save.
-    //if (isset($field_values['region']) && $field_values['region'] == 'hidden') {
-    //  continue;
-    //}
+    if (_ds_field_valid($field, $field_values, $form_state, $view_mode)) {
+      continue;
+    }
 
     // Build settings.
     $settings = array();
@@ -1661,6 +1662,9 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       }
     }
   }
+
+  // Add fields submit handler.
+  $form['#submit'][] = 'ds_field_ui_fields_save';
 }
 
 /**
@@ -1766,7 +1770,6 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
               '#name' => $name . '_formatter_settings_update',
               '#value' => t('Update'),
               '#op' => 'update',
-              '#submit' => array('ds_field_ui_fields_save', 'field_ui_display_overview_multistep_submit'),
             ),
             'cancel_settings' => $base_button + array(
               '#type' => 'submit',
@@ -1780,7 +1783,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
           ),
         );
         $table[$name]['#attributes']['class'][] = 'field-formatter-settings-editing';
-        $table[$name]['format']['settings_edit_form']['actions']['save_settings']['#submit'] = array('ds_field_ui_fields_save', 'field_ui_display_overview_multistep_submit');
+        $table[$name]['format']['type']['#attributes']['class'] = array('element-invisible');
       }
     }
     else {
