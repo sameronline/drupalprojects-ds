@@ -2,3 +2,5 @@ name = "Display suite"
 description = "Manage the display of your data objects."
 core = "6.x"
 package = "Display suite"
+
+dependencies[] = ctools
