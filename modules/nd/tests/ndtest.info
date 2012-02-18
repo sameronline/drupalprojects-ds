@@ -1,0 +1,6 @@
+name = "Node displays TEST"
+description = "Test module for Node Displays, do not enable this on production sites."
+core = "6.x"
+dependencies[] = ds
+dependencies[] = ds_ui
+package = "Display suite"

@@ -1,0 +1,5 @@
+name = "Node displays"
+description = "Extended node build and display modes"
+core = "6.x"
+dependencies[] = ds
+package = "Display suite"

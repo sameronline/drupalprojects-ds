@@ -1,0 +1,12 @@
+name = ND Permalink Field
+description = "Adds a field to all Nodes providing a permalink to that field."
+
+; Core version (required)
+core = 6.x
+
+; Package name (see http://drupal.org/node/231036 for a list of names)
+package = Display suite
+
+; Module dependencies
+dependencies[] = nd
+
