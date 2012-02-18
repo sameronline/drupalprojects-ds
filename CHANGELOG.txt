@@ -3,6 +3,9 @@
 ------------------------------------------------------------------------------
 - Display rendering is handled by a new object, dsDisplay
 - New theme function to render a region, ds_region
+- #1427794: Fix an issue where view names longer than 25 characters would cause 
+  display settings not to save
+- Improve usability of build mode settings
 
 ------------------------------------------------------------------------------
 6.x-2.2 2012-02-08

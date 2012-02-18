@@ -37,14 +37,14 @@ function ds_schema() {
       'type' => array(
         'description' => 'The name of the type',
         'type' => 'varchar',
-        'length' => 32,
+        'length' => 64,
         'not null' => TRUE,
         'default' => ''
       ),
       'build_mode' => array(
         'description' => 'The name of the build mode',
         'type' => 'varchar',
-        'length' => 32,
+        'length' => 64,
         'not null' => TRUE,
         'default' => ''
       ),
@@ -191,7 +191,7 @@ function ds_update_4() {
 function ds_update_6201(){
   $ret = array();
   db_change_field($ret, 'ds_settings', 'settings', 'settings', array(
-      'description' => 'The settings of for this record.',
+      'description' => 'The settings for this record.',
       'type' => 'text',
       'not null' => TRUE,
       'size' => 'big',
@@ -206,6 +206,33 @@ function ds_update_6201(){
       'default' => '',
     )
   );
+  return $ret;
+}
+
+function ds_update_6202() {
+  $ret = array();
+  db_drop_index($ret, 'ds_settings', 'type');
+  db_change_field($ret, 'ds_settings', 'type', 'type', array(
+      'description' => 'The name of the type',
+      'type' => 'varchar',
+      'length' => 64,
+      'not null' => TRUE,
+      'default' => '',
+    )
+  );
+  db_add_index($ret, 'ds_settings', 'type', array('type'));
+
+  db_drop_index($ret, 'ds_settings', 'build_mode');
+  db_change_field($ret, 'ds_settings', 'build_mode', 'build_mode', array(
+      'description' => 'The name of the build mode',
+      'type' => 'varchar',
+      'length' => 64,
+      'not null' => TRUE,
+      'default' => '',
+    )
+  );
+  db_add_index($ret, 'ds_settings', 'build_mode', array('build_mode'));
+  
   return $ret;
 }
 

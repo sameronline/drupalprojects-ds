@@ -87,7 +87,7 @@ class dsRegionToBlock {
         }
         foreach ($display_settings as $build_mode => $settings) {
 
-          if (isset($settings['regiontoblock'])) {
+          if (isset($settings['regiontoblock']['block'])) {
             foreach ($settings['regiontoblock']['block'] as $region => $value) {
               if ($value) {
                 $block_key = 'ds_regiontoblock_'. $module .'_'. $object->type .'_'. $build_mode .'_'. $region;
