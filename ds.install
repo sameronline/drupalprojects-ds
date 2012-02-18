@@ -63,6 +63,7 @@ function ds_schema() {
         'default' => '',
       ),
     ),
+    'primary key' => array('dsid'),
     'indexes' => array(
       'module' => array('module'),
       'build_mode' => array('build_mode'),
@@ -213,6 +214,8 @@ function ds_update_6201(){
  */
 function ds_update_3000(&$ret){
   $ret = array();
+
+  // Update displays
   $displays = array();
 
   $query = db_query("SELECT * FROM {ds_settings}");
