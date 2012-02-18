@@ -211,8 +211,8 @@ function _ds_ui_menu() {
   );
   
   // Tools
-  $items[DS_PATH_TOOLS] = array(
-    'title' => 'Tools',
+  $items[DS_PATH_EXPORT] = array(
+    'title' => 'Import/export',
     'description' => 'Import and export settings and get a skeleton of your stylesheet depending on your configuration.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_import'),
@@ -220,12 +220,12 @@ function _ds_ui_menu() {
     'file' => 'includes/ds.tools.inc',
     'weight' => 7,
   );
-  $items[DS_PATH_TOOLS .'/import'] = array(
+  $items[DS_PATH_EXPORT .'/import'] = array(
     'title' => 'Import settings',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => 0,
   );
-  $items[DS_PATH_TOOLS .'/export'] = array(
+  $items[DS_PATH_EXPORT .'/export'] = array(
     'title' => 'Export settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_export'),
@@ -234,7 +234,7 @@ function _ds_ui_menu() {
     'type' => MENU_LOCAL_TASK,
     'weight' => 1,
   );
-  $items[DS_PATH_TOOLS .'/revert'] = array(
+  $items[DS_PATH_EXPORT .'/revert'] = array(
     'title' => 'Revert',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_revert_form'),
