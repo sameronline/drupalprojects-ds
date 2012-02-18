@@ -2,10 +2,16 @@
 
 /**
  * @file
- * DS_EmptyRegionRender: Plugin to render an empty region.
+ * dsEmptyRegionRender: Plugin to render an empty region.
  */
+$plugin = array(
+  'name' => t('Empty region renderer'),
+  'class' => 'dsEmptyRegionRender',
+  'description' => t('Renders a region when there is no content in it.'),
+  'target' => 'all',
+);
 
-class ds_emptyregionrender {
+class dsEmptyRegionRender {
 
   /**
    * Constructor().

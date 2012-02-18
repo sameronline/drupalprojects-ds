@@ -2,10 +2,17 @@
 
 /**
  * @file
- * DS_CSSOverrider: plugin to override css per region.
+ * dsCSSOverrider: plugin to override css per region.
  */
 
-class ds_cssoverrider {
+$plugin = array(
+  'class' => 'dsStylesOverrider',
+  'name' => t('Simple CSS overrider'),
+  'description' => t('Override region CSS with inline styles or add extra classes.'),
+  'target' => 'all',
+);
+
+class dsStylesOverrider {
 
   /**
    * Constructor().

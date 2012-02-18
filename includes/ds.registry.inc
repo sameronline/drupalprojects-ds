@@ -197,17 +197,6 @@ function _ds_ui_menu() {
       'type' => MENU_LOCAL_TASK,
       'weight' => 3,
     );
-
-    // Plugins.
-    $items[DS_PATH_MODULES .'/'.  $module .'/plugins'] = array(
-      'title' => 'Plugins',
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('ds_plugins', $module),
-      'access arguments' => array('administer '. $module),
-      'file' => 'includes/ds.plugins.inc',
-      'type' => MENU_LOCAL_TASK,
-      'weight' => 4,
-    );
   }
 
   // Styles
@@ -229,7 +218,7 @@ function _ds_ui_menu() {
     'page arguments' => array('ds_import'),
     'access arguments' => array('export and import settings'),
     'file' => 'includes/ds.tools.inc',
-    'weight' => 10,
+    'weight' => 7,
   );
   $items[DS_PATH_TOOLS .'/import'] = array(
     'title' => 'Import settings',
@@ -254,6 +243,15 @@ function _ds_ui_menu() {
     'type' => MENU_CALLBACK,
   );
 
+  // Plugins.
+  $items[DS_PATH_PLUGINS] = array(
+    'title' => 'Plugins',
+    'page callback' => 'ds_plugins_page',
+    'access arguments' => array('access display suite'),
+    'file' => 'includes/ds.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 9,
+  );
   return $items;
 }
 
@@ -608,39 +606,6 @@ function _ds_block_list() {
   }
 
   return $blocks;
-}
-
-/**
- * Return ds plugins.
- */
-function _ds_plugins() {
-  $path = drupal_get_path('module', 'ds');
-  return array(
-    'emptyregionrender' => array(
-      'title' => t('Empty region'),
-      'class' => 'ds_emptyregionrender',
-      'description' => t('Renders a region when there is no content in it.'),
-      'file' => 'ds_emptyregionrender.inc',
-      'path' => $path .'/plugins',
-      'target' => 'all',
-    ),
-    'cssoverrider' => array(
-      'title' => t('Simple CSS overrider'),
-      'class' => 'ds_cssoverrider',
-      'description' => t('Override region CSS with inline styles or add extra classes.'),
-      'file' => 'ds_cssoverrider.inc',
-      'path' => $path .'/plugins',
-      'target' => 'all',
-    ),
-    'regiontoblock' => array(
-      'title' => t('Region to block'),
-      'class' => 'ds_regiontoblock',
-      'description' => t('Render a display suite region into a theme region. That region will be made available as a block.'),
-      'file' => 'ds_regiontoblock.inc',
-      'path' => $path .'/plugins',
-      'target' => 'all',
-    ),
-  );
 }
 
 /**

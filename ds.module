@@ -65,6 +65,7 @@ define('DS_PATH_LAYOUT', 'admin/build/ds/layout');
 define('DS_PATH_TOOLS', 'admin/build/ds/tools');
 define('DS_PATH_STYLES', 'admin/build/ds/styles');
 define('DS_PATH_MODULES', 'admin/build/ds/modules');
+define('DS_PATH_PLUGINS', 'admin/build/ds/plugins');
 
 /**
  * Implementation of hook_theme().
@@ -115,6 +116,39 @@ function ds_ctools_plugin_directory($module, $plugin) {
   if ($module == 'ds' && !empty($plugin)) {
     return "plugins/$plugin";
   }
+}
+
+/**
+ * Fetch metadata on a ds plugins
+ *
+ * @param $type
+ *  The type of plugin to load
+ * @param $name
+ *  The name of the plugin.
+ *
+ * @return
+ *   An array with information about the plugin.
+ */
+function ds_get_plugin($type, $name) {
+  ctools_include('plugins');
+  return ctools_get_plugins('ds', $type, $name);
+}
+
+/**
+ * Fetch metadata for all plugins by type.
+ *
+ * @return
+ *   An array of arrays with information about all available plugins of a given type
+ */
+function ds_get_plugins($type) {
+  static $types = array();
+
+  if (!isset($types[$type])) {
+    ctools_include('plugins');
+    $types[$type] = ctools_get_plugins('ds', $type);
+  }
+
+  return $types[$type];
 }
 
 /**

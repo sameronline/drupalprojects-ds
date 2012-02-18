@@ -2,10 +2,17 @@
 
 /**
  * @file
- * DS_RegionToBlock: Plugin to make a region available as a block.
+ * dsRegionToBlock: Plugin to make a region available as a block.
  */
 
-class ds_regiontoblock {
+$plugin = array(
+  'name' => t('Use regions as blocks'),
+  'class' => 'dsRegionToBlock',
+  'description' => t('Render a display suite region into a theme region. That region will be made available as a block.'),
+  'target' => 'all',
+);
+
+class dsRegionToBlock {
 
   /**
    * Constructor().
