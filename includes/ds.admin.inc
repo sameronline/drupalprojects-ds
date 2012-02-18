@@ -43,6 +43,7 @@ function ds_plugins_page() {
   $output = 'This page shows all available plugin types used by Display Suite.';
   $plugins = array();
   $plugin_types = array(
+    'ds_display' => 'Display types',
     'ds_field' => 'Field types',
     'ds_extension' => 'Extensions',
   );
