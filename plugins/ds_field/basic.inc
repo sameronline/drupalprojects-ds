@@ -4,6 +4,14 @@
  *
  * This will almost always be overridden by another type.
  */
+
+$plugin = array(
+  'type' => DS_FIELD_TYPE_BASIC,
+  'name' => t('Basic field'),
+  'description' => t('Basic field handler on which all others are based.'),
+  'class' => 'dsField',
+);
+
 class dsField {
   /**
    * Field key

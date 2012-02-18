@@ -7,5 +7,6 @@
 $plugin = array(
   'type' => DS_FIELD_TYPE_NON_DS,
   'name' => t('Non-DS field'),
+  'description' => t('Field type to handling rendering of non-DS fields'),
   'class' => 'dsFieldNonDs'
 );

@@ -6,6 +6,7 @@
 
 $plugin = array(
   'type' => DS_FIELD_TYPE_IGNORE,
-  'name' => t('Available in object content'),
+  'name' => t('Ignore'),
+  'description' => t('Special field type to ignore field settings'),
   'class' => 'dsFieldIgnore',
 );

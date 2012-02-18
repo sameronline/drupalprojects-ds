@@ -7,6 +7,7 @@
 $plugin = array(
   'type' => DS_FIELD_TYPE_THEME,
   'name' => t('Theme field'),
+  'description' => t('The default field type. Renders content using a theme function'),
   'class' => 'dsFieldTheme',
 );
 

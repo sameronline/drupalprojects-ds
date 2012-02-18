@@ -7,6 +7,7 @@
 $plugin = array(
   'type' => DS_FIELD_TYPE_TAB,
   'name' => t('Tab field'),
+  'description' => t('Renders groups as tabs'),
   'class' => 'dsFieldTab',
 );
 

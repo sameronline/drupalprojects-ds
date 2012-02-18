@@ -6,7 +6,8 @@
 
 $plugin = array(
   'type' => DS_FIELD_TYPE_MULTIGROUP,
-  'name' => t('CCK3 Multigroup'),
+  'name' => t('CCK 6.x-3.x Multigroup'),
+  'description' => t('Special field type to render CCK multigroups'),
   'class' => 'dsFieldMultigroup',
 );
 

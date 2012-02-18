@@ -14,6 +14,7 @@ define('DS_SETTINGS_OVERRIDDEN', 3);
 /**
  * Constants for field types.
  */
+define('DS_FIELD_TYPE_BASIC', 'basic');
 define('DS_FIELD_TYPE_NON_DS', 'non_ds');
 define('DS_FIELD_TYPE_THEME', 'theme');
 define('DS_FIELD_TYPE_FUNCTION', 'function');

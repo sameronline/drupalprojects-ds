@@ -7,6 +7,7 @@
 $plugin = array(
   'type' => DS_FIELD_TYPE_FUNCTION,
   'name' => t('Custom function'),
+  'description' => t('Retrieves content using a PHP function.'),
   'function' => 'dsFieldFunction'
 );
 

@@ -7,6 +7,7 @@
 $plugin = array(
   'type' => DS_FIELD_TYPE_GROUP,
   'name' => t('Fieldgroup'),
+  'description' => t('Renders groups of content.'),
   'class' => 'dsFieldGroup',
 );
 
