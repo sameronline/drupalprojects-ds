@@ -170,7 +170,7 @@ function ds_extras_field_attach_view_alter(&$build, $context) {
             unset($build[$field]);
           }
         }
-        if (is_array($block_data[$block_key])) {
+        if (isset($block_data[$block_key]) && is_array($block_data[$block_key])) {
           $block_data[$block_key] += $properties;
         }
       }
