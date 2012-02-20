@@ -369,7 +369,6 @@ function ds_extras_ds_layout_region_alter($context, &$region_info) {
   $view_mode = $context['view_mode'];
 
   foreach ($region_blocks as $block_key => $block) {
-
     if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
       $region_info['region_options'][$block_key] = $block['title'];
       if (isset($region_info['table_regions'])) {
@@ -858,6 +857,79 @@ function theme_ds_field_expert($variables) {
 }
 
 /**
+ * Implements hook_ds_field_settings_alter().
+ */
+function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state) {
+
+  $fields = $form_state['values']['fields'];
+  $default_field_function = variable_get('ft-default', 'theme_field');
+
+  $wrappers = array(
+    'ow' => t('Wrapper'),
+    'fis' => t('Field items'),
+    'fi' => t('Field item')
+  );
+
+  foreach ($fields as $key => $field) {
+
+    // Make sure we need to save anything for this field.
+    if (_ds_field_valid($key, $field, $form_state)) {
+      continue;
+    }
+
+    // Get the values.
+    $values = isset($form_state['formatter_settings'][$key]['ft']) ? $form_state['formatter_settings'][$key]['ft'] : array();
+    if (empty($values)) {
+      continue;
+    }
+
+    // Theme output function.
+    $function = $values['func'];
+    if ($function != $default_field_function) {
+      $field_settings[$key]['ft']['func'] = $function;
+    }
+
+    // Field styles.
+    if ($function != 'theme_ds_field_expert' && $function != 'theme_ds_field_reset') {
+      $classes = implode(' ', $values['classes']);
+      if (!empty($classes)) {
+        $field_settings[$key]['ft']['classes'] = $classes;
+      }
+    }
+
+    // Label.
+    if (isset($values['label']) && $values['label'] != 'hidden') {
+      if (!empty($values['lb'])) {
+        $field_settings[$key]['ft']['lb'] = $values['lb'];
+      }
+      if (!(empty($values['lb-el'])) && $function == 'theme_ds_field_expert') {
+        $field_settings[$key]['ft']['lb-el'] = check_plain($values['lb-el']);
+      }
+      if (!(empty($values['lb-cl'])) && $function == 'theme_ds_field_expert') {
+       $field_settings[$key]['ft']['lb-cl'] = check_plain($values['lb-cl']);
+      }
+      if (!(empty($values['lb-col']))) {
+        $field_settings[$key]['ft']['lb-col'] = TRUE;
+      }
+    }
+
+    // Custom field configuration.
+    if ($function == 'theme_ds_field_expert') {
+      foreach ($wrappers as $wrapper_key => $title) {
+        if (!empty($values[$wrapper_key])) {
+          // Enable.
+          $field_settings[$key]['ft'][$wrapper_key] = TRUE;
+          // Element.
+          $field_settings[$key]['ft'][$wrapper_key . '-el'] = !(empty($values[$wrapper_key . '-el'])) ? check_plain($values[$wrapper_key . '-el']) : 'div';
+          // Classess.
+          $field_settings[$key]['ft'][$wrapper_key . '-cl'] = !(empty($values[$wrapper_key . '-cl'])) ? check_plain($values[$wrapper_key . '-cl']) : '';
+        }
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess_field().
  */
 function ds_extras_preprocess_field(&$variables) {
@@ -884,8 +956,8 @@ function ds_extras_preprocess_field(&$variables) {
 
   // Check if this field has custom output settings.
   $variables['ds-config'] = array();
-  if (isset($field_settings[$entity_type][$bundle][$view_mode][$field_name]['formatter_settings']['ft'])) {
-    $config = $field_settings[$entity_type][$bundle][$view_mode][$field_name]['formatter_settings']['ft'];
+  if (isset($field_settings[$entity_type][$bundle][$view_mode][$field_name]['ft'])) {
+    $config = $field_settings[$entity_type][$bundle][$view_mode][$field_name]['ft'];
     $variables['ds-config'] = $config;
   }
 

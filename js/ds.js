@@ -73,6 +73,8 @@ $.fn.dsCtoolsContentUpdate = function () {
 Drupal.behaviors.settingsToggle = {
   attach: function (context) {
 
+    console.log('whaetver');
+
     // Bind on click.
     $(context).find('#field-display-overview').find('.field-formatter-settings-edit').once('ds-ft').bind('click', function(e) {
 

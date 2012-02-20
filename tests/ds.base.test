@@ -82,6 +82,14 @@ class dsBaseTest extends DrupalWebTestCase {
   }
 
   /**
+   * Configure Field UI.
+   */
+  function dsConfigure2UI($edit, $url = 'admin/structure/types/manage/article/display') {
+    $edit['formatter_settings_edit'] = 'body';
+    $this->drupalPost($url, $edit, t('Edit'));
+  }
+
+  /**
    * Create a view mode.
    *
    * @param $edit
@@ -631,7 +639,7 @@ class dsLayoutsClassesTests extends dsBaseTest {
     $edit = array(
       'ds_left' => 'header',
       'ds_right' => 'footer',
-      'ds_block_region' => 'foooter',
+      'ds_block_region' => 'footer',
     );
     $this->drupalPost('admin/structure/ds/change-layout/node/article/full/ds_2col_stacked', $edit, t('Save'), array('query' => array('destination' => 'admin/structure/types/manage/article/display/full')));
 

@@ -85,13 +85,13 @@ class dsNodeTests extends dsBaseTest {
       'fields[body][label]' => $label,
     );
     if (!empty($text)) {
-      $edit['fields[body][format][formatter_settings][ft][lb]'] = $text;
+      $edit['formatter_settings[body][ft][lb]'] = $text;
     }
     if (!empty($class)) {
-      $edit['fields[body][format][formatter_settings][ft][classes][]'] = $class;
+      $edit['formatter_settings[body][ft][classes][]'] = $class;
     }
     if ($hide_colon) {
-      $edit['fields[body][format][formatter_settings][ft][lb-col]'] = '1';
+      $edit['formatter_settings[body][ft][lb-col]'] = '1';
     }
     $this->dsConfigureUI($edit);
   }
@@ -237,6 +237,7 @@ class dsNodeTests extends dsBaseTest {
 
     // Change title of revision.
     $edit = array('additional_settings[ds_page_title][ds_page_title_options][page_option_type]' => '2', 'additional_settings[ds_page_title][ds_page_title_options][page_option_title]' => 'Custom revision title');
+
     $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display/revision');
     $this->drupalGet('node/' . $node->nid . '/revisions/1/view');
     $this->assertText('Custom revision title', 'Custom title on revision view mode');
@@ -361,11 +362,20 @@ class dsNodeTests extends dsBaseTest {
 
     // With outer wrapper.
     $edit = array(
-      'fields[body][format][formatter_settings][ft][function]' => 'theme_ds_field_expert',
-      'fields[body][format][formatter_settings][ft][ow]' => '1',
-      'fields[body][format][formatter_settings][ft][ow-el]' => 'div'
+      'fields[body][weight]' => '1',
+      'fields[body][settings_edit_form][settings][ft][ow]' => '1',
+      'fields[body][settings_edit_form][settings][ft][ow-el]' => 'div',
+      'refresh_rows' => 'body',
     );
-    $this->dsConfigureUI($edit);
+
+    $this->drupalGet('admin/structure/types/manage/article/display');
+
+    // Change the formatter and check that the summary is updated.
+    $this->drupalPostAJAX(NULL, $edit, array('op' => t('Refresh')));
+
+    $this->drupalPost(NULL, array(), t('Save'));
+    //$this->dsConfigure2UI($edit);
+
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
       <div><p>" . $body_field . "</p>
@@ -373,9 +383,9 @@ class dsNodeTests extends dsBaseTest {
 
     // With outer div wrapper and class.
     $edit = array(
-      'fields[body][format][formatter_settings][ft][ow]' => '1',
-      'fields[body][format][formatter_settings][ft][ow-el]' => 'div',
-      'fields[body][format][formatter_settings][ft][ow-cl]' => 'ow-class'
+      'formatter_settings[body][ft][ow]' => '1',
+      'formatter_settings[body][ft][ow-el]' => 'div',
+      'formatter_settings[body][ft][ow-cl]' => 'ow-class'
     );
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
@@ -385,9 +395,9 @@ class dsNodeTests extends dsBaseTest {
 
     // With outer span wrapper and class.
     $edit = array(
-      'fields[body][format][formatter_settings][ft][ow]' => '1',
-      'fields[body][format][formatter_settings][ft][ow-el]' => 'span',
-      'fields[body][format][formatter_settings][ft][ow-cl]' => 'ow-class-2'
+      'formatter_settings[body][ft][ow]' => '1',
+      'formatter_settings[body][ft][ow-el]' => 'span',
+      'formatter_settings[body][ft][ow-cl]' => 'ow-class-2'
     );
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
@@ -400,11 +410,11 @@ class dsNodeTests extends dsBaseTest {
 
     // With outer wrapper and field items wrapper.
     $edit = array(
-      'fields[body][format][formatter_settings][ft][function]' => 'theme_ds_field_expert',
-      'fields[body][format][formatter_settings][ft][ow]' => '1',
-      'fields[body][format][formatter_settings][ft][ow-el]' => 'div',
-      'fields[body][format][formatter_settings][ft][fis]' => '1',
-      'fields[body][format][formatter_settings][ft][fis-el]' => 'div'
+      'fields[body][settings_edit_form][settings][ft][func]' => 'theme_ds_field_expert',
+      'fields[body][settings_edit_form][settings][ft][ow]' => '1',
+      'fields[body][settings_edit_form][settings][ft][ow-el]' => 'div',
+      'fields[body][settings_edit_form][settings][ft][fis]' => '1',
+      'fields[body][settings_edit_form][settings][ft][ft][fis-el]' => 'div'
     );
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
@@ -414,12 +424,12 @@ class dsNodeTests extends dsBaseTest {
 
     // With outer wrapper and field items div wrapper with class.
     $edit = array(
-      'fields[body][format][formatter_settings][ft][ow]' => '1',
-      'fields[body][format][formatter_settings][ft][ow-el]' => 'div',
-      'fields[body][format][formatter_settings][ft][ow-el]' => 'div',
-      'fields[body][format][formatter_settings][ft][fis]' => '1',
-      'fields[body][format][formatter_settings][ft][fis-el]' => 'div',
-      'fields[body][format][formatter_settings][ft][fis-cl]' => 'fi-class'
+      'formatter_settings[body][ft][ow]' => '1',
+      'formatter_settings[body][ft][ow-el]' => 'div',
+      'formatter_settings[body][ft][ow-el]' => 'div',
+      'formatter_settings[body][ft][fis]' => '1',
+      'formatter_settings[body][ft][fis-el]' => 'div',
+      'formatter_settings[body][ft][fis-cl]' => 'fi-class'
     );
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
@@ -429,11 +439,11 @@ class dsNodeTests extends dsBaseTest {
 
     // With outer wrapper and field items span wrapper and class.
     $edit = array(
-      'fields[body][format][formatter_settings][ft][ow]' => '1',
-      'fields[body][format][formatter_settings][ft][ow-el]' => 'div',
-      'fields[body][format][formatter_settings][ft][fis]' => '1',
-      'fields[body][format][formatter_settings][ft][fis-el]' => 'span',
-      'fields[body][format][formatter_settings][ft][fis-cl]' => 'fi-class'
+      'formatter_settings[body][ft][ow]' => '1',
+      'formatter_settings[body][ft][ow-el]' => 'div',
+      'formatter_settings[body][ft][fis]' => '1',
+      'formatter_settings[body][ft][fis-el]' => 'span',
+      'formatter_settings[body][ft][fis-cl]' => 'fi-class'
     );
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
@@ -443,12 +453,12 @@ class dsNodeTests extends dsBaseTest {
 
     // With outer wrapper class and field items span wrapper and class.
     $edit = array(
-      'fields[body][format][formatter_settings][ft][ow]' => '1',
-      'fields[body][format][formatter_settings][ft][ow-el]' => 'div',
-      'fields[body][format][formatter_settings][ft][ow-cl]' => 'ow-class',
-      'fields[body][format][formatter_settings][ft][fis]' => '1',
-      'fields[body][format][formatter_settings][ft][fis-el]' => 'span',
-      'fields[body][format][formatter_settings][ft][fis-cl]' => 'fi-class'
+      'formatter_settings[body][ft][ow]' => '1',
+      'formatter_settings[body][ft][ow-el]' => 'div',
+      'formatter_settings[body][ft][ow-cl]' => 'ow-class',
+      'formatter_settings[body][ft][fis]' => '1',
+      'formatter_settings[body][ft][fis-el]' => 'span',
+      'formatter_settings[body][ft][fis-cl]' => 'fi-class'
     );
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
@@ -458,12 +468,12 @@ class dsNodeTests extends dsBaseTest {
 
     // With outer wrapper span class and field items span wrapper and class.
     $edit = array(
-      'fields[body][format][formatter_settings][ft][ow]' => '1',
-      'fields[body][format][formatter_settings][ft][ow-el]' => 'span',
-      'fields[body][format][formatter_settings][ft][ow-cl]' => 'ow-class',
-      'fields[body][format][formatter_settings][ft][fis]' => '1',
-      'fields[body][format][formatter_settings][ft][fis-el]' => 'span',
-      'fields[body][format][formatter_settings][ft][fis-cl]' => 'fi-class-2'
+      'formatter_settings[body][ft][ow]' => '1',
+      'formatter_settings[body][ft][ow-el]' => 'span',
+      'formatter_settings[body][ft][ow-cl]' => 'ow-class',
+      'formatter_settings[body][ft][fis]' => '1',
+      'formatter_settings[body][ft][fis-el]' => 'span',
+      'formatter_settings[body][ft][fis-cl]' => 'fi-class-2'
     );
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
@@ -476,8 +486,8 @@ class dsNodeTests extends dsBaseTest {
 
     // With field item div wrapper.
     $edit = array(
-      'fields[body][format][formatter_settings][ft][function]' => 'theme_ds_field_expert',
-      'fields[body][format][formatter_settings][ft][fi]' => '1',
+      'formatter_settings[body][ft][func]' => 'theme_ds_field_expert',
+      'formatter_settings[body][ft][fi]' => '1',
     );
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
@@ -487,8 +497,8 @@ class dsNodeTests extends dsBaseTest {
 
     // With field item span wrapper.
     $edit = array(
-      'fields[body][format][formatter_settings][ft][fi]' => '1',
-      'fields[body][format][formatter_settings][ft][fi-el]' => 'span',
+      'formatter_settings[body][ft][fi]' => '1',
+      'formatter_settings[body][ft][fi-el]' => 'span',
     );
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
@@ -498,9 +508,9 @@ class dsNodeTests extends dsBaseTest {
 
     // With field item span wrapper and class.
     $edit = array(
-      'fields[body][format][formatter_settings][ft][fi]' => '1',
-      'fields[body][format][formatter_settings][ft][fi-el]' => 'span',
-      'fields[body][format][formatter_settings][ft][fi-cl]' => 'fi-class',
+      'formatter_settings[body][ft][fi]' => '1',
+      'formatter_settings[body][ft][fi-el]' => 'span',
+      'formatter_settings[body][ft][fi-cl]' => 'fi-class',
     );
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
@@ -510,12 +520,12 @@ class dsNodeTests extends dsBaseTest {
 
     // With fis and fi.
     $edit = array(
-      'fields[body][format][formatter_settings][ft][fis]' => '1',
-      'fields[body][format][formatter_settings][ft][fis-el]' => 'div',
-      'fields[body][format][formatter_settings][ft][fis-cl]' => 'fi-class-2',
-      'fields[body][format][formatter_settings][ft][fi]' => '1',
-      'fields[body][format][formatter_settings][ft][fi-el]' => 'div',
-      'fields[body][format][formatter_settings][ft][fi-cl]' => 'fi-class',
+      'formatter_settings[body][ft][fis]' => '1',
+      'formatter_settings[body][ft][fis-el]' => 'div',
+      'formatter_settings[body][ft][fis-cl]' => 'fi-class-2',
+      'formatter_settings[body][ft][fi]' => '1',
+      'formatter_settings[body][ft][fi-el]' => 'div',
+      'formatter_settings[body][ft][fi-cl]' => 'fi-class',
     );
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
@@ -524,15 +534,15 @@ class dsNodeTests extends dsBaseTest {
 </div></div>    </div>");
     // With all
     $edit = array(
-      'fields[body][format][formatter_settings][ft][ow]' => '1',
-      'fields[body][format][formatter_settings][ft][ow-el]' => 'div',
-      'fields[body][format][formatter_settings][ft][ow-cl]' => 'ow-class',
-      'fields[body][format][formatter_settings][ft][fis]' => '1',
-      'fields[body][format][formatter_settings][ft][fis-el]' => 'div',
-      'fields[body][format][formatter_settings][ft][fis-cl]' => 'fi-class-2',
-      'fields[body][format][formatter_settings][ft][fi]' => '1',
-      'fields[body][format][formatter_settings][ft][fi-el]' => 'span',
-      'fields[body][format][formatter_settings][ft][fi-cl]' => 'fi-class',
+      'formatter_settings[body][ft][ow]' => '1',
+      'formatter_settings[body][ft][ow-el]' => 'div',
+      'formatter_settings[body][ft][ow-cl]' => 'ow-class',
+      'formatter_settings[body][ft][fis]' => '1',
+      'formatter_settings[body][ft][fis-el]' => 'div',
+      'formatter_settings[body][ft][fis-cl]' => 'fi-class-2',
+      'formatter_settings[body][ft][fi]' => '1',
+      'formatter_settings[body][ft][fi-el]' => 'span',
+      'formatter_settings[body][ft][fi-cl]' => 'fi-class',
     );
     $this->dsConfigureUI($edit);
     $this->drupalGet('node/' . $node->nid);
@@ -580,7 +590,7 @@ class dsNodeTests extends dsBaseTest {
     // Use the test field theming function to test that this function is
     // registered in the theme registry through ds_extras_theme().
     $edit = array(
-      'fields[body][format][formatter_settings][ft][function]' => 'ds_test_theming_function',
+      'formatter_settings[body][ft][func]' => 'ds_test_theming_function',
     );
 
     $this->dsConfigureUI($edit);
