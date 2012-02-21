@@ -3,22 +3,8 @@
  * @file
  * Administration CSS for Display Suite.
  */
-
-/**
- * Field template.
- */
-.field-template {
-  display: none;
-  min-width: 450px;
-  z-index: 1000;
-}
-
 .ds-extras-field-template {
   margin-bottom: 1em;
-}
-
-.field-formatter-settings-editing .ft-link {
-  display: none;
 }
 
 .ft-group div.form-item {

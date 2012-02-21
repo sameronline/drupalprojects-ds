@@ -73,23 +73,14 @@ $.fn.dsCtoolsContentUpdate = function () {
 Drupal.behaviors.settingsToggle = {
   attach: function (context) {
 
-    console.log('whaetver');
-
     // Bind on click.
-    $(context).find('#field-display-overview').find('.field-formatter-settings-edit').once('ds-ft').bind('click', function(e) {
+    $('.field-formatter-settings-edit-form', context).once('ds-ft', function() {
 
-      e.preventDefault();
-
-      var fieldTemplate = $(this).next();
+      var fieldTemplate = $(this);
 
       // Bind update button.
-      fieldTemplate.find('.ft-update').click(function() {
-
-        // Close the settings.
-        var settings = $(this).parents('.field-template');
-        settings.hide();
-        $(this).parents('tr').removeClass('field-formatter-settings-editing');
-
+      fieldTemplate.find('input[value="Update"]').click(function() {
+        console.log('kak');
         // Check the label.
         var row = $(this).parents('tr');
         var label = $('.label-change', settings).val();
@@ -107,39 +98,18 @@ Drupal.behaviors.settingsToggle = {
 
       // Bind on field template select button.
       fieldTemplate.find('.ds-extras-field-template').change(function() {
-        ds_show_expert_settings(this);
-      })
+        ds_show_expert_settings(fieldTemplate);
+      });
 
-      $(this).parents('tr').siblings().removeClass('field-formatter-settings-editing');
-      $(this).parents('tr').addClass('field-formatter-settings-editing');
+      ds_show_expert_settings(fieldTemplate);
 
-      var settings = $(this).siblings('.field-template');
-      if (Drupal.DisplaySuite.fieldopened != '' && Drupal.DisplaySuite.fieldopened != settings.attr('id')) {
-        $('#' + Drupal.DisplaySuite.fieldopened).hide();
-      }
-
-      if (settings.is(':visible')) {
-        $(this).parents('tr').removeClass('field-formatter-settings-editing');
-        settings.hide();
-      }
-      else {
-        // Slide down.
-        ds_show_expert_settings(settings, true);
-        settings.slideDown('normal');
-      }
-      // Store the opened setting.
-      Drupal.DisplaySuite.fieldopened = settings.attr('id');
     });
 
     // Show / hide settings on field template form.
     function ds_show_expert_settings(element, open) {
-      if (undefined == open) {
-        var field = $(element).parents('.field-template');
-      }
-      else {
-        field = element;
-      }
+      field = element;
       ft = $('.ds-extras-field-template', field).val();
+      console.log(ft);
       if (ft == 'theme_ds_field_expert') {
         // Show second and third label.
         if ($('.lb .form-item:nth-child(1)', field).is(':visible')) {

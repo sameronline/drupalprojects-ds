@@ -1886,6 +1886,10 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
   $field_function = isset($field_settings['func']) ? $field_settings['func'] : $default_field_function;
   $field_classes = _ds_classes('ds_classes_fields');
 
+   $form['ft'] = array (
+    '#weight' => 20,
+  );
+
   // Functions.
   $form['ft']['func'] = array(
     '#title' => t('Choose a Field Template'),
@@ -1934,11 +1938,12 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
     if (!$colon_checkbox) {
       $form['ft']['lb-col'] = array(
         '#type' => 'checkbox',
-        '#title' => t('Hide colon'),
+        '#title' => t('Hide label colon'),
         '#default_value' => isset($field_settings[$key]['ft']['lb-col']) ? $field_settings[$key]['ft']['lb-col'] : FALSE,
         '#attributes' => array(
           'class' => array('colon-checkbox'),
         ),
+        '#weight' => 21,
       );
       $colon_checkbox = TRUE;
     }
