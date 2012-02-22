@@ -346,10 +346,11 @@ function ds_field_ui_layouts_validate($form, &$form_state) {
 function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundle = '', $view_mode = '', $new_layout = '') {
 
   $old_layout = NULL;
+  $all_layouts = ds_get_layout_info();
+
   if (!empty($entity_type) && !empty($bundle) && !empty($view_mode)) {
     $old_layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE);
   }
-  $all_layouts = ds_get_layout_info();
 
   if ($old_layout && isset($all_layouts[$new_layout])) {
 
@@ -399,6 +400,7 @@ function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundl
     $form['#new_layout']['regions'] = $new_layout['regions'];
 
     $selectable_regions = array('' => t('- None -')) + $new_layout['regions'];
+    $form['regions_pre']['#markup'] = '<div class="ds-layout-regions">';
     foreach ($regions as $region => $region_title) {
       $form['region_' . $region] = array (
         '#type' => 'container',
@@ -412,17 +414,37 @@ function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundl
         '#default_value' => $region,
       );
     }
+    $form['regions_post']['#markup'] = '</div>';
+
+    $form['preview'] = array(
+      '#type' => 'container',
+      '#prefix' => '<div class="ds-layout-preview"/>',
+      '#suffix' => '</div>',
+    );
+
+    $fallback_image = drupal_get_path('module', 'ds') . '/img/preview.png';
+    $old_image = (isset($old_layout['image']) &&  !empty($old_layout['image'])) ? $old_layout['path'] . '/' . $old_layout['layout'] . '.png' : $fallback_image;
+    $new_image = (isset($new_layout['image']) &&  !empty($new_layout['image'])) ? $new_layout['path'] . '/' . $new_layout_key . '.png' : $fallback_image;
+    $arrow = drupal_get_path('module', 'ds') . '/img/arrow.png';
+
+    $form['preview']['old_layout'] = array(
+      '#markup' => '<div class="ds-layout-preview-image"><img src="/' . $old_image . '"/></div>',
+    );
+    $form['preview']['arrow'] = array(
+      '#markup' => '<div class="ds-layout-preview-arrow"><img src="/' . $arrow . '"/></div>',
+    );
+    $form['preview']['new_layout'] = array(
+      '#markup' => '<div class="ds-layout-preview-image"><img src="/' . $new_image . '"/></div>',
+    );
     $form['#attached']['css'][] = drupal_get_path('module', 'ds') . '/css/ds.admin.css';
+
 
     $form['actions'] = array('#type' => 'actions');
     $form['actions']['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Save'),
-    );
-    $form['actions']['cancel'] = array(
-      '#type' => 'link',
-      '#title' => t('Cancel'),
-      '#href' => isset($_REQUEST['destination']) ? $_REQUEST['destination'] : '',
+      '#prefix' => '<div class="ds-layout-change-save">',
+      '#suffix' => '</div>',
     );
   }
   else {
@@ -1292,42 +1314,9 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   }
 
   if (!empty($layout) && isset($layout->layout) && isset($ds_layouts[$layout->layout])) {
-    $chosen_layout = $ds_layouts[$layout->layout];
-    $layout_string = $layout->layout;
-    if (empty($chosen_layout['flexible'])) {
-      $selected = t('You have selected the %layout_label layout. The default template can be found in %path', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
-      $suggestions = 'Possible template suggestions are:<ul>';
-      $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '.tpl.php</li>';
-      $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '-' . $bundle . '.tpl.php</li>';
-      if (!isset($form_state['no_view_mode_suggestions'])) {
-        $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode . '.tpl.php</li></ul>';
-      }
-    }
-    else {
-      $suggestions = '';
-      $selected = t('You have selected the flexible %layout_label layout.', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
-    }
     $layout->settings = $layout->settings;
-    $layout->regions = $chosen_layout['regions'];
+    $layout->regions = $ds_layouts[$layout->layout]['regions'];
     $form['#ds_layout'] = $layout;
-  }
-
-  $form['additional_settings']['ds_layouts']['layout'] = array(
-    '#type' => 'select',
-    '#title' => t('Select a layout'),
-    '#options' => $layout_options,
-    '#default_value' => isset($layout->layout) ? $layout->layout : '',
-    '#weight' => -1,
-  );
-
-  // Apply button.
-  if (isset($layout->layout)) {
-    $form['additional_settings']['ds_layouts']['ds_layout_apply'] = array(
-      '#type' => 'submit',
-      '#value' => t('Apply'),
-      '#disabled' => TRUE,
-      '#weight' => 0,
-    );
   }
 
   if (isset($layout->export_type) && $layout->export_type == 3) {
@@ -1336,6 +1325,10 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#weight' => 1,
     );
   }
+
+  // Load the layout preview form
+  $layout->layout_options = $layout_options;
+  _ds_field_ui_table_layouts_preview($form, $form_state, $ds_layouts, $layout, $entity_type, $bundle, $view_mode);
 
   $form['additional_settings']['ds_layouts']['hide_empty_regions'] = array(
     '#type' => 'checkbox',
@@ -1355,10 +1348,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   );
 
   if (!empty($layout) && isset($layout->regions)) {
-    $form['additional_settings']['ds_layouts']['suggestions'] = array(
-      '#markup' => '<p>' . $selected . '</p><p>' . t('!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p>',
-    );
-
     // Add extra classes for the regions to have more control while theming.
     $form['additional_settings']['ds_classes'] = array(
       '#type' => 'fieldset',
@@ -1445,6 +1434,111 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   $submit = $form['#submit'];
   $form['#submit'] = array('ds_field_ui_layouts_save');
   $form['#submit'] = array_merge($form['#submit'], $submit);
+}
+
+function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $layout, $entity_type, $bundle, $view_mode) {
+  $layout_string = '';
+
+  $form['additional_settings']['ds_layouts']['layout'] = array(
+    '#type' => 'select',
+    '#title' => t('Select a layout'),
+    '#options' => $layout->layout_options,
+    '#default_value' => isset($layout->layout) ? $layout->layout : '',
+    '#prefix' => '<div class="ds-select-layout">',
+    '#suffix' => '</div>',
+    '#weight' => -1,
+    '#ajax' => array(
+      'callback' => 'ds_field_ui_table_layouts_preview_callback',
+      'wrapper' => 'ds_layout_wrapper',
+    ),
+  );
+
+  $form['additional_settings']['ds_layouts']['preview'] = array(
+    '#type' => 'container',
+    '#prefix' => '<div id="ds_layout_wrapper">',
+    '#suffix' => '</div>',
+    '#weight' => -3,
+  );
+
+  if(isset($layout->layout) || isset($form_state['values']['additional_settings']['layout'])) {
+    $layout_string = isset($form_state['values']['additional_settings']['layout']) ? $form_state['values']['additional_settings']['layout'] : $layout->layout;
+  }
+
+  if($layout_string != '') {
+    $chosen_layout = $ds_layouts[$layout_string];
+
+    if (empty($chosen_layout['flexible'])) {
+      $selected = t('%layout_label layout.', array('%layout_label' => $chosen_layout['label']));
+      $selected .= '<br/>' . t('The default template can be found in %path', array('%path' => $chosen_layout['path']));
+      $suggestions = 'Possible template suggestions:<ul>';
+      $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '.tpl.php</li>';
+      $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '-' . $bundle . '.tpl.php</li>';
+      if (!isset($form_state['no_view_mode_suggestions'])) {
+        $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode . '.tpl.php</li></ul>';
+      }
+    }
+    else {
+      $suggestions = '';
+      $selected = t('You have selected the flexible %layout_label layout.', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
+    }
+
+    if (isset($form_state['values']['additional_settings']['layout']) || (!empty($layout) && isset($layout->regions))) {
+      $fallback_image = drupal_get_path('module', 'ds') . '/img/preview.png';
+      $current_layout = isset($form_state['values']['additional_settings']['layout']) && $form_state['values']['additional_settings']['layout'] != $layout->layout ? t('Current layout (after save)') : t('Current layout');
+      $image = (isset($chosen_layout['image']) &&  !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $layout_string . '.png' : $fallback_image;
+
+      $form['additional_settings']['ds_layouts']['preview'] ['title'] = array(
+        '#markup' => '<div class="ds-layout-preview-title">' . $current_layout . '</div>',
+      );
+      $form['additional_settings']['ds_layouts']['preview'] ['image'] = array(
+        '#markup' => '<div class="ds-layout-preview-image"><img src="/' . $image . '"/></div>',
+      );
+      $form['additional_settings']['ds_layouts']['preview'] ['suggestions'] = array(
+        '#markup' => '<div class="ds-layout-preview-suggestion"><p>' . $selected . '</p><p>' . t('!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p></div>',
+      );
+    }
+
+    if(isset($form_state['values']['additional_settings']['layout']) && $form_state['values']['additional_settings']['layout'] != $layout->layout) {
+
+      // If regions aren't set we don't have to move fields.
+      if(isset($layout->regions)) {
+        $url = 'admin/structure/ds/change-layout/' . $entity_type . '/' . $bundle . '/' . $view_mode . '/' . $layout_string . '?destination=admin/structure/types/manage/' . $bundle . '/display/';
+        $form['#validate'][] = 'ds_field_ui_change_layout_validate';
+      }
+      else {
+        $url = 'admin/structure/types/manage/' . $bundle . '/display/';
+      }
+
+      if($view_mode != 'default') {
+        $url .= $view_mode;
+      }
+
+      $form['layout_changed_url'] = array(
+        '#type' => 'value',
+        '#value' => $url,
+      );
+
+      $form['#submit'][] = 'ds_field_ui_change_layout_submit';
+    }
+  }
+}
+
+function ds_field_ui_table_layouts_preview_callback($form, $form_state) {
+  return $form['additional_settings']['ds_layouts']['preview'];
+}
+
+function ds_field_ui_change_layout_validate(&$form, &$form_state) {
+  $key1 = array_search('ds_field_ui_layouts_save', $form['#submit']);
+  $key2 = array_search('ds_field_ui_fields_save', $form['#submit']);
+  unset($form['#submit'][$key1]);
+  unset($form['#submit'][$key2]);
+}
+
+function ds_field_ui_change_layout_submit($form, &$form_state) {
+  unset($_GET['destination']);
+  global $base_url;
+  $url = $base_url.'/' . $form_state['values']['layout_changed_url'];
+  $form_state['redirect'] = $url;
 }
 
 /**

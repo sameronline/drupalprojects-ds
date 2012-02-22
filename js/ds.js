@@ -6,38 +6,6 @@ Drupal.DisplaySuite.fieldopened = '';
 Drupal.DisplaySuite.layout_original = '';
 
 /**
- * Layout change.
- */
-Drupal.behaviors.layoutChange = {
-  attach: function (context) {
-    if ($('#edit-additional-settings-layout').length > 0 && $('#edit-additional-settings-ds-layout-apply').length > 0) {
-      Drupal.DisplaySuite.layout_original = $('#edit-additional-settings-layout').val();
-      $('#edit-additional-settings-layout').change(function() {
-        layout = $('#edit-additional-settings-layout').val();
-        if (layout != '' && Drupal.DisplaySuite.layout_original != '' && Drupal.DisplaySuite.layout_original != layout) {
-          entity_type = $('input[name="ds_entity_type"]').val();
-          bundle = $('input[name="ds_bundle"]').val();
-          view_mode = $('input[name="ds_view_mode"]').val();
-          args = entity_type + '/' + bundle + '/' + view_mode + '/' + layout;
-          $('#edit-additional-settings-ds-layout-apply').attr('disabled', '');
-          $('#edit-additional-settings-ds-layout-apply').removeClass('form-button-disabled');
-        }
-        else {
-          $('#edit-additional-settings-ds-layout-apply').attr('disabled', 'disabled');
-          $('#edit-additional-settings-ds-layout-apply').addClass('form-button-disabled');
-        }
-      });
-
-      // Bind on apply button.
-      $('#edit-additional-settings-ds-layout-apply').click(function() {
-        window.location = $('input[name="ds_source"]').val() + 'admin/structure/ds/change-layout/' + args + '?destination=' + $('input[name="ds_destination"]').val();
-        return false;
-      });
-    }
-  }
-};
-
-/**
  * Ctools selection content.
  */
 Drupal.behaviors.CToolsSelection = {

@@ -231,6 +231,7 @@ function _ds_ds_layout_info() {
       'regions' => array(
         'ds_content' => t('Content'),
       ),
+      'image' => TRUE,
     ),
     'ds_2col' => array(
       'label' => t('Two column'),
