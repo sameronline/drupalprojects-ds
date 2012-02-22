@@ -370,6 +370,116 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 }
 
 /**
+ * Field template settings form
+ */
+function ds_extras_field_template_settings_form(array &$form, array &$form_state, array $context) {
+  $functions = module_invoke_all('ds_field_theme_functions_info');
+  $default_field_function = variable_get('ft-default', 'theme_field');
+  $key = $context['instance']['field_name'];
+  $field_settings = $form_state['formatter_settings'][$key]['ft'];
+
+  dpm($field_settings);
+
+  $field_function = isset($field_settings['func']) ? $field_settings['func'] : $default_field_function;
+  $field_classes = _ds_classes('ds_classes_fields');
+
+   $form['ft'] = array (
+    '#weight' => 20,
+  );
+
+  // Functions.
+  $form['ft']['func'] = array(
+    '#title' => t('Choose a Field Template'),
+    '#type' => 'select',
+    '#options' => $functions,
+    '#default_value' => $field_function,
+    '#attributes' => array(
+      'class' => array('ds-extras-field-template'),
+    ),
+  );
+
+  // Field classes.
+  if (!empty($field_classes)) {
+    $field_classes_select = array(
+      '#type' => 'select',
+      '#multiple' => TRUE,
+      '#options' => $field_classes,
+      '#title' => t('Choose additional CSS classes for the field'),
+      '#default_value' => isset($field_settings['classes']) ? explode(' ', $field_settings['classes']) : array(),
+      '#prefix' => '<div class="field-classes">',
+      '#suffix' => '</div>',
+    );
+    $form['ft']['classes'] = $field_classes_select;
+  }
+  else {
+    $form['ft']['classes'] = array(
+      '#type' => 'value',
+      '#value' => array(''),
+    );
+  }
+
+  // Wrappers and label.
+  $wrappers = array(
+    'lb' => array(
+      'title' => t('Label'),
+    ),
+    'ow' => array('title' => t('Outer wrapper')),
+    'fis' => array('title' => t('Field items')),
+    'fi' => array('title' => t('Field item')),
+  );
+
+  $colon_checkbox = FALSE;
+  foreach ($wrappers as $wrapper_key => $value) {
+
+    // Hide colon.
+    if (!$colon_checkbox) {
+      $form['ft']['lb-col'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Hide label colon'),
+        '#default_value' => isset($field_settings['lb-col']) ? $field_settings['lb-col'] : FALSE,
+        '#attributes' => array(
+          'class' => array('colon-checkbox'),
+        ),
+        '#weight' => 21,
+      );
+      $colon_checkbox = TRUE;
+    }
+
+    $form['ft'][$wrapper_key] = array(
+      '#type' => 'checkbox',
+      '#title' => $value['title'],
+      '#prefix' => '<div class="ft-group ' . $wrapper_key . '">',
+      '#default_value' => isset($field_settings[$wrapper_key]) ? TRUE : FALSE,
+    );
+    $form['ft'][$wrapper_key . '-el'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Element'),
+      '#size' => '10',
+      '#description' => t('E.g. div, span, h2 etc.'),
+      '#default_value' => isset($field_settings[$wrapper_key . '-el']) ? $field_settings[$wrapper_key . '-el'] : '',
+    );
+    $classes = array(
+      'field-name-' . strtr($key, '_', '-'),
+    );
+    $form['ft'][$wrapper_key . '-cl'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Classes'),
+      '#size' => '10',
+      '#suffix' => '</div><div class="clearfix"></div>',
+      '#default_value' => isset($field_settings[$wrapper_key . '-cl']) ? $field_settings[$wrapper_key . '-cl'] : '',
+      '#description' => t('Classes: !classes', array('!classes' => implode(', ', $classes))),
+    );
+  }
+
+  // Another label needs some other stuff.
+  unset($form['ft']['lb']['#description']);
+  $form['ft']['lb']['#type'] = 'textfield';
+  $form['ft']['lb']['#size'] = '10';
+  $form['ft']['lb']['#attributes'] = array('class' => array('label-change'));
+  $form['ft']['lb']['#default_value'] = isset($field_settings['lb']) ? $field_settings['lb'] : '';
+}
+
+/**
  * Implements hook_ds_field_format_summary().
  */
 function ds_extras_ds_field_format_summary($field) {

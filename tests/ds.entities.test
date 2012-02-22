@@ -360,6 +360,8 @@ class dsNodeTests extends dsBaseTest {
     // Custom field function.
     // ----------------------
 
+    // TODO zorg dat we de field template settings kunnen opslaan
+
     // With outer wrapper.
     $edit = array(
       'fields[body][weight]' => '1',
