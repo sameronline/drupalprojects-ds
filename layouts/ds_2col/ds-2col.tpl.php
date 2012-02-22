@@ -5,22 +5,22 @@
  * Display Suite 2 column template.
  */
 ?>
-<div class="ds-2col <?php print $classes;?> clearfix">
+<<?php print $layout_wrapper ?> class="ds-2col <?php print $classes;?> clearfix">
 
   <?php if (isset($title_suffix['contextual_links'])): ?>
   <?php print render($title_suffix['contextual_links']); ?>
   <?php endif; ?>
 
   <?php if ($left): ?>
-    <div class="group-left<?php print $left_classes; ?>">
+    <<?php print $left_wrapper ?> class="group-left<?php print $left_classes; ?>">
       <?php print $left; ?>
-    </div>
+    </<?php print $left_wrapper ?>>
   <?php endif; ?>
 
   <?php if ($right): ?>
-    <div class="group-right<?php print $right_classes; ?>">
+    <<?php print $right_wrapper ?> class="group-right<?php print $right_classes; ?>">
       <?php print $right; ?>
-    </div>
+    </<?php print $right_wrapper ?>>
   <?php endif; ?>
 
-</div>
+</<?php print $layout_wrapper ?>>

@@ -933,7 +933,14 @@ function ds_entity_variables(&$vars) {
       if (empty($layout['flexible'])) {
         $vars[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
       }
+      // Add a wrapper to the region.
+      if (empty($layout['flexible'])) {
+        $vars[$region_name . '_wrapper'] = isset($layout['settings']['wrappers'][$region_name]) ? $layout['settings']['wrappers'][$region_name] : 'div';
+      }
     }
+
+    // Add a layout wrapper
+    $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
   }
 }
 

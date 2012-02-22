@@ -595,6 +595,17 @@ function ds_field_ui_layouts_save($form, &$form_state) {
           $record->settings['classes'][$region] = $form_state['values']['additional_settings'][$region];
         }
       }
+
+      if(variable_get('ds_extras_region_wrapper', FALSE)) {
+        // Additional wrappers on regions.
+        if (isset($form_state['values']['additional_settings']['region_wrapper'][$region])) {
+          $record->settings['wrappers'][$region] = $form_state['values']['additional_settings']['region_wrapper'][$region];
+        }
+      }
+    }
+
+    if(variable_get('ds_extras_region_wrapper', FALSE) && isset($form_state['values']['additional_settings']['layout_wrapper'])) {
+        $record->settings['layout_wrapper'] = $form_state['values']['additional_settings']['layout_wrapper'];
     }
 
     $record->settings = $record->settings;

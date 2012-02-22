@@ -5,7 +5,7 @@
  * Display Suite 3 column stacked template HTML 5 version.
  */
 ?>
-<div class="ds-3col-stacked-html5 <?php print $classes;?> clearfix">
+<<?php print $layout_wrapper ?> class="ds-3col-stacked-html5 <?php print $classes;?> clearfix">
 
   <?php if (isset($title_suffix['contextual_links'])): ?>
   <?php print render($title_suffix['contextual_links']); ?>
@@ -40,4 +40,4 @@
       <?php print $footer; ?>
     </footer>
   <?php endif; ?>
-</div>
+</<?php print $layout_wrapper ?>>
