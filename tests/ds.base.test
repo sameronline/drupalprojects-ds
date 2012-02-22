@@ -82,14 +82,6 @@ class dsBaseTest extends DrupalWebTestCase {
   }
 
   /**
-   * Configure Field UI.
-   */
-  function dsConfigure2UI($edit, $url = 'admin/structure/types/manage/article/display') {
-    $edit['formatter_settings_edit'] = 'body';
-    $this->drupalPost($url, $edit, t('Edit'));
-  }
-
-  /**
    * Create a view mode.
    *
    * @param $edit
@@ -583,6 +575,22 @@ class dsLayoutsClassesTests extends dsBaseTest {
     $this->dsConfigureUI($hide);
     $this->drupalGet('node/' . $node->nid);
     $this->assertNoRaw('sidebar-first', 'Left sidebar not found.');
+
+    // Test HTML5 wrappers
+    variable_set('ds_extras_region_wrapper', TRUE);
+    $this->assertNoRaw('<header', 'Header not found.');
+    $this->assertNoRaw('<footer', 'Footer not found.');
+    $this->assertNoRaw('<article', 'Article not found.');
+    $wrappers = array(
+      'additional_settings[region_wrapper][header]' => 'header',
+      'additional_settings[region_wrapper][right]' => 'footer',
+      'additional_settings[layout_wrapper]' => 'article',
+    );
+    $this->dsConfigureUI($wrappers);
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertRaw('<header', 'Header found.');
+    $this->assertRaw('<footer', 'Footer found.');
+    $this->assertRaw('<article', 'Article found.');
 
     // Let's create a block field, enable the full mode first.
     $edit = array('additional_settings[modes][view_modes_custom][full]' => '1');
