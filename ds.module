@@ -660,7 +660,11 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
         'extra_class' => $style,
         'count' => $count,
         'fields' => $region_fields,
+        'hidden' => FALSE,
       );
+      if (empty($rendered_region)) {
+        $object_display->themed_regions[$region_name]['hidden'] = TRUE;
+      }
     }
     $count++;
   }
@@ -672,16 +676,23 @@ function ds_render_content(&$object, $module, $vars, $theme_function = DS_DEFAUL
   // Plugins.
   ds_plugins_process($object_display, $object, $vars);
 
+  // Cleanup: 
+  // Remove any regions which are hidden before rendering
+  foreach ($object_display->themed_regions as $key => $region) {
+    if ($region['hidden'] == TRUE) {
+      unset($object_display->themed_regions[$key]);
+    } 
+  }
   // Add classes based on regions.
   if (isset($object_display->themed_regions['middle'])) {
     $middle_class = $module .'-no-sidebars';
-    if (isset($object_display->region_classes['left']) && isset($object_display->region_classes['right'])) {
+    if (isset($object_display->themed_regions['left']) && isset($object_display->themed_regions['right'])) {
       $middle_class = $module .'-two-sidebars';
     }
-    elseif (isset($object_display->region_classes['left'])) {
+    elseif (isset($object_display->themed_regions['left'])) {
       $middle_class = $module .'-one-sidebar '. $module .'-sidebar-left';
     }
-    elseif (isset($object_display->region_classes['right'])) {
+    elseif (isset($object_display->themed_regions['right'])) {
       $middle_class = $module .'-one-sidebar '. $module .'-sidebar-right';
     }
     $object_display->themed_regions['middle']['extra_class'] .= ' '.$middle_class;
