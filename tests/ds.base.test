@@ -82,6 +82,15 @@ class dsBaseTest extends DrupalWebTestCase {
   }
 
   /**
+   * Edit field formatter settings
+   */
+  function dsEditFormatterSettings($edit, $url = 'admin/structure/types/manage/article/display', $element_value = 'edit body') {
+    $this->drupalPost($url, array(), $element_value);
+    $this->drupalPost(NULL, $edit, t('Update'));
+    $this->drupalPost(NULL, array(), t('Save'));
+  }
+
+  /**
    * Create a view mode.
    *
    * @param $edit

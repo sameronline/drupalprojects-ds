@@ -376,9 +376,8 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
   $functions = module_invoke_all('ds_field_theme_functions_info');
   $default_field_function = variable_get('ft-default', 'theme_field');
   $key = $context['instance']['field_name'];
-  $field_settings = $form_state['formatter_settings'][$key]['ft'];
 
-  dpm($field_settings);
+  $field_settings = isset($form_state['formatter_settings'][$key]) ? $form_state['formatter_settings'][$key]['ft'] : array();
 
   $field_function = isset($field_settings['func']) ? $field_settings['func'] : $default_field_function;
   $field_classes = _ds_classes('ds_classes_fields');

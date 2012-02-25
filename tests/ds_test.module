@@ -17,6 +17,11 @@ function ds_test_install() {
   variable_set('ds_extras_fields_extra', TRUE);
   variable_set('ds_extras_fields_extra_list', "node|article|ds_extras_extra_test_field\nnode|article|ds_extras_second_field");
   variable_set('ds_extras_vd', TRUE);
+
+  db_update('system')
+    ->fields(array('weight' => 2))
+    ->condition('name', 'ds_test')
+    ->execute();
 }
 
 /**
@@ -228,3 +233,17 @@ function ds_test_rel_build_info() {
   return $builds;
 }
 
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ds_test_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
+  foreach (element_children($form['fields']) as $key) {
+    if(isset($form['fields'][$key]['settings_edit'])) {
+     $settings = $form['fields'][$key]['settings_edit'];
+      if (!empty($settings)) {
+        $form['fields'][$key]['settings_edit']['#type'] = 'submit';
+        $form['fields'][$key]['settings_edit']['#value'] = 'edit ' . $key;
+      }
+    }
+  }
+}

@@ -644,18 +644,6 @@ function ds_field_ui_layouts_save($form, &$form_state) {
  */
 
 /**
- *
- */
-function ds_fields_ui_fields_prepare_save(&$form, &$form_state) {
-  //foreach (element_children($form['fields']) as $key) {
-  //  $settings = $form_state['values']['fields'][$key]['settings_edit_form']['settings']['ft'];
-  //  if (!empty($settings)) {
-  //    $form_state['formatter_settings'][$key]['ft'] = array_merge($form_state['formatter_settings'][$key]['ft'], $settings);
-  //  }
-  //}
-}
-
-/**
  * TODO
  */
 function ds_field_ui_fields_validate($form, &$form_state) {
@@ -674,7 +662,6 @@ function ds_field_ui_fields_validate($form, &$form_state) {
  * Save the field settings from the 'Manage display' screen.
  */
 function ds_field_ui_fields_save($form, &$form_state) {
-
   // Setup some variables.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
@@ -1905,7 +1892,6 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
         );
         $table[$key]['#attributes']['class'][] = 'field-formatter-settings-editing';
         $table[$key]['format']['type']['#attributes']['class'] = array('element-invisible');
-        $table[$key]['format']['settings_edit_form']['actions']['save_settings']['#submit'] = array('ds_fields_ui_fields_prepare_save', 'field_ui_display_overview_multistep_submit');
       }
     }
     else {
@@ -1944,7 +1930,6 @@ function ds_field_row_form_format_construct(&$table, $key, $settings_form) {
 
   $base_button = array(
     '#submit' => array(
-      'ds_fields_ui_fields_prepare_save',
       'field_ui_display_overview_multistep_submit',
     ),
     '#validate' => array(

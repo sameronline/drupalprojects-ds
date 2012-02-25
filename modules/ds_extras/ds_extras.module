@@ -898,7 +898,7 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
     }
 
     // Label.
-    if (isset($values['label']) && $values['label'] != 'hidden') {
+    if (isset($form_state['values']['fields'][$key]['label']) && $form_state['values']['fields'][$key]['label'] != 'hidden') {
       if (!empty($values['lb'])) {
         $field_settings[$key]['ft']['lb'] = $values['lb'];
       }
