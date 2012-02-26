@@ -1172,6 +1172,11 @@ function ds_render_field($field) {
  */
 function ds_render_author_field($field) {
 
+  // Users without a user name are anonymous users. These are never linked.
+  if (empty($field['entity']->name)) {
+    return check_plain(variable_get('anonymous', t('Anonymous')));
+  }
+
   if ($field['formatter'] == 'author') {
     return $field['entity']->name;
   }
