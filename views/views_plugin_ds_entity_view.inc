@@ -308,6 +308,13 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       }
     }
 
+    // Give modules a chance to alter the $view_mode. Use $view_mode by ref.
+    $context = array(
+      'entity' => $this->entities[$row->{$this->field_alias}],
+      'view_name' => $this->view->name,
+      'display' => $this->view->current_display
+    );
+    drupal_alter('ds_views_view_mode', $view_mode, $context);
     // Call the row render function.
     $content = $this->ds_views_row_render_entity($view_mode, $row, $load_comments);
 

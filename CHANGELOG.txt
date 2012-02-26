@@ -3,6 +3,7 @@
 -------------------------------------------------------------------------------------
 - #961494 by pfrenssen: Author field is empty for anonymous users.
 - #1454544 by Jax: Username title isn't passed through t().
+- #1375080 by swentel: Extra alter for views rendering.
 
 -------------------------------------------------------------------------------------
 7.x-1.5 14/02/2012
