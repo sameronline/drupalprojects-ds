@@ -246,7 +246,7 @@ function ds_ds_fields_info($entity_type) {
 
   // Username
   $fields['user']['name'] = array(
-    'title' => 'Username',
+    'title' => t('Username'),
     'field_type' => DS_FIELD_TYPE_FUNCTION,
     'function' => 'ds_render_field',
     'properties' => array(
