@@ -4,7 +4,16 @@
  * @file
  * Node displays.
  */
- 
+
+/**
+ * Tell ctools where we keep default plugins
+ */
+function nd_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'ds' && !empty($plugin)) {
+    return "plugins/$plugin";
+  }
+}
+
 /**
  * Implementation of hook_init().
  */

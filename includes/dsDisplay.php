@@ -66,10 +66,10 @@ class dsDisplay {
    */
   public function initialise($object) {
     // API info for this module and type.
-    $this->api_info = ds_api_info($module, $object->type);
+    $this->api_info = ds_get_display_hander($object->module);
 
     // Get settings for this display/build mode combination
-    $this->settings = ds_get_settings($module, $object->type, $object->build_mode);
+    $this->settings = ds_get_settings($object->module, $object->type, $object->build_mode);
   }
 
   /**

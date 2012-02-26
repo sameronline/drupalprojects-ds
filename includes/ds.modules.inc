@@ -37,34 +37,33 @@ function ds_info($module) {
 function ds_module_list() {
   $output = '';
 
-  foreach (module_implements('ds_api') as $module) {
-    $api_info = ds_api_info($module);
+  $modules = ds_get_display_handlers();
+  foreach ($modules as $key => $module) {
     $form = array();
 
     // Fieldset
-    $form[$api_info['module']] = array(
+    $form[$key] = array(
       '#type' => 'fieldset',
-      '#title' => t($api_info['title']),
+      '#title' => t($module['name']),
       '#collapsible' => TRUE,
       '#collapsed' => FALSE,
-      '#access' => user_access('administer '. $api_info['module']),
+      '#access' => user_access('administer '. $key),
     );
 
     // Tools
-    $fields = l('Fields', DS_PATH_MODULES .'/'.  $api_info['module'] .'/fields');
-    $fieldgroups = l('Fieldgroups', DS_PATH_MODULES .'/'.  $api_info['module'] .'/fieldgroups');
-    $buildmodes = l('Build modes', DS_PATH_MODULES .'/'.  $api_info['module'] .'/buildmodes');
-    $plugins = l('Plugins', DS_PATH_MODULES .'/'.  $api_info['module'] .'/plugins');
+    $fields = l('Fields', DS_PATH_MODULES .'/'.  $key .'/fields');
+    $fieldgroups = l('Fieldgroups', DS_PATH_MODULES .'/'.  $key .'/fieldgroups');
+    $buildmodes = l('Build modes', DS_PATH_MODULES .'/'.  $key .'/buildmodes');
+    $plugins = l('Plugins', DS_PATH_MODULES .'/'.  $key .'/plugins');
 
-    $form[$api_info['module']]['tools'] = array(
+    $form[$key]['tools'] = array(
       '#value' => '<p>'. $fields .' | '. $fieldgroups .' | '. $buildmodes .' | '. $plugins .'</p>',
       '#weight' => -1,
     );
 
     // Help
-    $help = implode('', $api_info['help']);
-    $form[$api_info['module']]['help'] = array(
-      '#value' => $help,
+    $form[$key]['help'] = array(
+      '#value' => $module['help'],
     );
     
     $output .= drupal_render($form);

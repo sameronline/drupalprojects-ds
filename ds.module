@@ -184,6 +184,45 @@ function ds_get_field_types() {
 }
 
 /**
+ * Fetch metadata on a specific ds_display plugin.
+ *
+ * @param $module
+ *   Name of module implementint a ds_display handler
+ *
+ * @return
+ *   An array with information about the requested display handler
+ */
+function ds_get_display_handler($module) {
+  ctools_include('plugins');
+  $plugin = ctools_get_plugins('ds', 'ds_display', $module);
+  if (isset($plugin['types_callback']) && function_exists($plugin['types_callback'])) {
+    $plugin['types'] = call_user_func($plugin['types_callback']);
+  }
+}
+
+/**
+ * Fetch metadata for all ds_display plugins.
+ *
+ * @return
+ *   An array of arrays with information about all available display handlers
+ */
+function ds_get_display_handlers() {
+  static $plugins = NULL;
+
+  if (!isset($plugins)) {
+    ctools_include('plugins');
+    $plugins = ctools_get_plugins('ds', 'ds_display');
+    foreach ($plugins as $key => $plugin) {
+      if (isset($plugin['types_callback']) && function_exists($plugin['types_callback'])) {
+        $plugins[$key]['types'] = call_user_func($plugin['types_callback']);
+      }
+    }
+  }
+
+  return $plugins;
+}
+
+/**
  * Implementation of hook_flush_caches().
  */
 function ds_flush_caches() {
