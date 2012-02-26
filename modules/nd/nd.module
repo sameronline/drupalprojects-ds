@@ -216,8 +216,13 @@ function nd_preprocess_page(&$vars){
  */
 function _nd_nodeapi(&$node) {
 
+  // Attach a display to the node object
+  ds_attach_display($node);
+  $node->ds->prepare($node);
+
   // Build fields and regions.
- ds_build_fields_and_regions($node, 'nd');
+ //ds_build_fields_and_regions($node, 'nd');
+
 
   // Special support for RSS.
   if ($node->build_mode == NODE_BUILD_RSS && $node->render_by_ds == TRUE) {
@@ -278,14 +283,7 @@ function _nd_preprocess_node(&$vars, $hook) {
   $vars['template_files'][] = 'nd-'. $node->type .'-'. $node->build_mode;
   $vars['template_files'][] = 'nd-'. $node->type .'-'. $node->build_mode .'-'. $node->nid;
 
-  // Dont completely break things for users of 1.x
-  if (function_exists('ds_render')) {
-    $vars['content'] = ds_render($node->nid, $node, 'nd', $vars);
-  }
-  else {
-    drupal_set_message('You are using incompatible versions of Display Suite and Node Displays. Please downgrade Node Displays to 2.6, or upgrade Display Suite to the 2.x branch.', 'warning');
-    $vars['content'] = ds_render_content($node, 'nd', $vars);
-  }
+  $vars['content'] = $node->ds->render();
 }
 
 /**

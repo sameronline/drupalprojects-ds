@@ -76,6 +76,8 @@ function ds_render($key, $object, $module, $vars) {
 /**
  * Get fields and regions for an object.
  *
+ * @deprecated
+ *
  * @param stdClass $object 
  *  The object to manipulate.
  * @param string $module 
@@ -192,7 +194,7 @@ function ds_build_fields_and_regions(&$object, $module) {
 /**
  * Render content for an object.
  *
- * @deprecated This function is a builder, use the statically cached ds_render
+ * @deprecated
  *
  * @param string $key
  *  A key for the object 

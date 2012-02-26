@@ -157,6 +157,230 @@ class dsDisplay {
   }
 
   /**
+   * Build field and region information
+   *
+   * @param stdClass $object 
+   *  The object for which this display is being built. We'd prefer to just
+   *  attach it directly, but this causes circular reference problems in PHP 5.2
+   */
+  function prepare(&$object) {
+
+    // See if rendering is needed later on.
+    // There are two ways of excluding: global exclude on object type
+    // or per build mode per object type.
+    // We don't return here, because we want to add all fields on the object
+    // so themers can use it in their template.
+    $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
+    $render_by_ds = ((isset($exclude_build_modes[$object->type][$object->build_mode])
+      && $exclude_build_modes[$object->type][$object->build_mode] == TRUE) ||
+      variable_get($module .'_type_'. $object->type, FALSE) == TRUE) ? FALSE : TRUE;
+
+    if (!empty($this->settings['fields'])) {
+
+      // Get all fields and settings for this build mode (this doesnt load CCK fields, only groups)
+      $available_fields = ds_get_fields($this->module, $this->type, $this->build_mode);
+
+      // The node Body can sometimes be populated with other content when empty
+      // @todo - we do this here so the fields populate correctly, but find 
+      // somewhere logical for this
+      if (isset($object->has_empty_body) && $object->has_empty_body == 1) {
+        $object->body = '';
+      }
+
+      // Iterate over fields listed on the display
+      foreach ($this->settings['fields'] as $field_key => $field_settings) {
+
+        // Dont render fields which are set to disabled
+        $region = (isset($field_settings['region'])) ? $field_settings['region'] : DS_DEFAULT_REGION;
+        if ($region != DS_DISABLED_REGION) {
+
+          // Create a dummy region in $temp_regions for later nesting
+          if (!isset($temp_regions[$region])) {
+            $temp_regions[$region] = array();
+          }
+
+          // @todo 
+          // Settings per field should be retrieved from a single cached function
+          // call to ds_get_settings (or similar)
+          if (isset($available_fields[$field_key])) {
+            $field_defaults = $available_fields[$field_key];
+          }
+          else {
+            $field_defaults = array();
+          }
+          $settings = array_merge($field_settings, $field_defaults);
+
+          $field = ds_create_field($field_settings['type']);
+          $field->initialise($settings);
+
+          $field->setting('region', $region);
+          $field->setting('module', $module);
+          $field->setting('object', $object);
+          $field->setting('object_type', $this->api_info['object']);
+
+          $this->addField($field_key, $field);
+        }
+      }
+
+      // Build the individual fields using settings created previously
+      $temp_regions = array();
+      foreach ($this->fields as $key => $field) {
+
+        // Build the field
+        $field->build();
+
+        // Create a temp reference only if it doesnt already exists
+        // This ensures that the weight and region always comes from the first
+        // fieldgroup positioned.
+        $region_key = $field['region'];
+        $parent = $field['parent'];
+
+        $temp_regions[$region_key][$key] = array(
+          '#weight' => $object->ds_fields[$key]['weight'],
+          '#parent' => $parent,
+        );
+
+        if ($parent != '#root') {
+          $this->fields[$parent]['fields'][] = $key;
+        }
+      }
+
+      // Nest and order fields in regions
+      if (!empty($temp_regions)) {
+        // Nest groups
+        foreach ($temp_regions as $key => $region){
+          $nested_fields = array();
+          $this->nestFields($region, $nested_fields);
+
+          $this->regions[$key] = $nested_fields;
+        }
+        // Sort groups
+        foreach ($object->regions as $key => $region) {
+          $this->orderFields($object->regions[$key]);
+        }
+      }
+    }
+    // Reset render_by_ds property if needed.
+    if (empty($this->regions)) {
+      $object->render_by_ds = FALSE;
+    }
+  }
+
+  /**
+   * Render content
+   *
+   * @param stdClass $object 
+   *  The object to manipulate.
+   * @param array $vars (optional)
+   *  The variables required for rendering.
+   */
+  function render(&$object, $vars = array()) {
+
+    // @todo
+    // This is a workaround till layouts are implemented
+    if (!isset($object->layout)) {
+      $object->layout = DS_DEFAULT_LAYOUT;
+    }
+    $this->getLayout($object->layout);
+    // end @todo
+
+    // Sort regions to get them in the right order for rendering
+    $this->assignActiveRegions($vars['regions']);
+
+    $this->region_styles = ds_default_value($this->display_settings, 'region_styles');
+
+    // Iterate over the active regions to build the display object
+    $count = 0;
+    foreach ($this->regions as $region_name => $region) {
+      if ($region['#hidden'] == FALSE) {
+
+        // Initialise the region with default values
+        $this->regionSetup($region_name);
+
+        // Order region fields by weight
+        $this->regionOrderFields($region_name);
+
+        // Loop through fields and extract them from the passed-in object
+        foreach ($this->regions[$region_name]['#field_weights'] as $key => $weight) {
+
+          /**
+           * Preprocess some field content
+           */
+          switch ($object->ds_fields[$key]['field_type']) {
+            case DS_FIELD_TYPE_PREPROCESS:
+              if (!empty($object->ds_fields[$key]['preprocess_settings']['key'])) {
+                $object->ds_fields[$key]['content'] = $vars[$key][$object->preprocess_fields[$key]['key']];
+              }
+              else {
+                $object->ds_fields[$key]['content'] = $vars[$key];
+              }
+              break;
+
+            case DS_FIELD_TYPE_IGNORE:
+              $object->ds_fields[$key]['content'] = isset($object->content[$key]['#value']) ? $object->content[$key]['#value'] : '';
+              break;
+          }
+
+          /**
+           * Choose a field rendering pipeline based on the type
+           * 
+           * Groups get content and render within wrapper functions.
+           * Fields get content then call the renderer directly.
+           */
+          switch ($object->ds_fields[$key]['field_type']) {
+            case DS_FIELD_TYPE_GROUP:
+              $this->regions[$region_name][$key] = ds_render_group($object, $key, $vars);
+              break;
+
+            case DS_FIELD_TYPE_MULTIGROUP:
+              $this->regions[$region_name][$key] = ds_render_multigroup($object, $key, $vars);
+              break;
+
+            default:
+              // Set content for this item
+              $object->ds_fields[$key]['content'] = ds_get_content($object->ds_fields[$key], $vars, $key);
+              $this->regions[$region_name][$key] = ds_render_item($object->ds_fields[$key]);
+              break;
+          }
+        }
+      }
+    }
+
+    // Add field content to all regions
+    $this->regionsAddContent();
+
+    // Plugins.
+    ds_plugins_process($this, $object, $vars);
+
+    // Add classes based on regions.
+    if ($this->regionIsActive('middle')) {
+      $this->regions['middle']['#field_content'] = '<div class="'. $this->api_info['module'] .'-region-middle">'. $this->regions['middle']['#field_content'] .'</div>';
+      $middle_class = $module .'-no-sidebars';
+      if ($this->regionIsActive('left') && $this->regionIsActive('right')) {
+        $middle_class = $module .'-two-sidebars';
+      }
+      elseif ($this->regionIsActive('left')) {
+        $middle_class = $module .'-one-sidebar '. $module .'-sidebar-left';
+      }
+      elseif ($this->regionIsActive('right')) {
+        $middle_class = $module .'-one-sidebar '. $module .'-sidebar-right';
+      }
+      $this->regionAttr('middle', 'class', $middle_class);
+      $this->regionAttr('middle', 'class', $this->api_info['module'] .'-region-middle-wrapper');
+      $this->regionRemoveAttr('middle', 'class', $this->api_info['module'] .'-region-middle');
+    }
+
+    // Clean up regions ready for rendering
+    $this->regionsRenderAll();
+
+    // Theme the regions with their content.
+    $this->displayFinalise();
+    $this->displayRender();
+
+    return $this->content();
+  }
+
+  /**
    * Add a field
    */
   public function addField($key, $field) {

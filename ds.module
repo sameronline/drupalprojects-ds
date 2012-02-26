@@ -348,6 +348,23 @@ function ds_reset_fields_cache() {
 }
 
 /**
+ * Attach a display to a renderable item
+ *
+ * Given either an object or array, attach a display object to it for later
+ * rendering.
+ */
+function ds_attach_display(&$item) {
+  module_load_include('inc', 'ds', 'includes/ds.api');
+  if (is_object($item)) {
+    $item->ds = ds_create_display();
+    $item->ds->initialise($item);
+  }
+  else {
+    return FALSE;
+  }
+}
+
+/**
  * Factory function to initalise a new dsDisplay object
  *
  * @return
