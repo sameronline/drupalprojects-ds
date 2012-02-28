@@ -605,7 +605,9 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       }
     }
 
-    $record->settings['layout_wrapper'] = $form_state['values']['additional_settings']['layout_wrapper'];
+    // Layout wrapper
+    $record->settings['layout_wrapper'] = $form_state['values']['additional_settings']['region_wrapper']['layout_wrapper'];
+
     $record->settings = $record->settings;
 
     // Let other modules alter the layout settings.
@@ -1347,19 +1349,19 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     $wrapper_options = array('div' => 'Div', 'section' => 'Section', 'article' => 'Article', 'header' => 'Header', 'footer' => 'Footer', 'aside' => 'Aside');
     $form['additional_settings']['region_wrapper'] = array(
       '#type' => 'fieldset',
-      '#title' => t('HTML5 wrapper for regions'),
+      '#title' => t('Custom wrappers'),
       '#description' => t('Choose a HTML5 wrapper')
     );
     foreach (array_keys($layout->regions) as $region) {
       $form['additional_settings']['region_wrapper'][$region] = array (
         '#type' => 'select',
         '#options' => $wrapper_options,
-        '#title' => t('Wrapper for @region', array('@region' => $region)),
+        '#title' => t('Wrapper for @region', array('@region' => $layout->regions[$region])),
         '#default_value' => isset($layout->settings['wrappers'], $layout->settings['wrappers'][$region]) ? $layout->settings['wrappers'][$region] : 'div',
       );
     }
 
-    $form['additional_settings']['ds_layouts']['layout_wrapper'] = array(
+    $form['additional_settings']['region_wrapper']['layout_wrapper'] = array(
       '#type' => 'select',
       '#options' => $wrapper_options,
       '#title' => t('Layout wrapper'),
@@ -1370,7 +1372,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     // Add extra classes for the regions to have more control while theming.
     $form['additional_settings']['ds_classes'] = array(
       '#type' => 'fieldset',
-      '#title' => t('Extra classes for regions and fields'),
+      '#title' => t('Custom classes'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
       '#parents' => array('additional_settings'),

@@ -586,14 +586,13 @@ class dsLayoutsClassesTests extends dsBaseTest {
     $this->assertNoRaw('sidebar-first', 'Left sidebar not found.');
 
     // Test HTML5 wrappers
-    variable_set('ds_extras_region_wrapper', TRUE);
     $this->assertNoRaw('<header', 'Header not found.');
     $this->assertNoRaw('<footer', 'Footer not found.');
     $this->assertNoRaw('<article', 'Article not found.');
     $wrappers = array(
       'additional_settings[region_wrapper][header]' => 'header',
       'additional_settings[region_wrapper][right]' => 'footer',
-      'additional_settings[layout_wrapper]' => 'article',
+      'additional_settings[region_wrapper][layout_wrapper]' => 'article',
     );
     $this->dsConfigureUI($wrappers);
     $this->drupalGet('node/' . $node->nid);
