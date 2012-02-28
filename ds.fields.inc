@@ -22,13 +22,13 @@ function ds_custom_fields_list() {
       $row[] = ds_field_human_name($field_value->field_type);
       $row[] = $field_key;
       $row[] = ucwords(str_replace('_', ' ', implode(', ', $field_value->entities)));
-      $operations = l(t('Edit'), 'admin/structure/ds/fields/manage/' . $field_key, array('alias' => TRUE));
+      $operations = l(t('Edit'), 'admin/structure/ds/displays/fields/manage/' . $field_key, array('alias' => TRUE));
 
       if ($field_value->export_type == 3) {
-        $operations .= ' - ' . l(t('Revert'), 'admin/structure/ds/fields/revert/' . $field_key, array('alias' => TRUE));
+        $operations .= ' - ' . l(t('Revert'), 'admin/structure/ds/displays/fields/revert/' . $field_key, array('alias' => TRUE));
       }
       elseif ($field_value->export_type == 1) {
-        $operations .= ' - ' . l(t('Delete'), 'admin/structure/ds/fields/delete/' . $field_key, array('alias' => TRUE));
+        $operations .= ' - ' . l(t('Delete'), 'admin/structure/ds/displays/fields/delete/' . $field_key, array('alias' => TRUE));
       }
       $row[] = $operations;
       $rows[] = $row;
@@ -88,24 +88,24 @@ function ds_custom_manage($field_key = '') {
     $field = $custom_fields[$field_key];
     switch ($field->field_type) {
       case DS_FIELD_TYPE_CODE:
-        $redirect = 'admin/structure/ds/fields/manage_custom/' . $field_key;
+        $redirect = 'admin/structure/ds/displays/fields/manage_custom/' . $field_key;
         break;
 
       case DS_FIELD_TYPE_BLOCK:
-        $redirect = 'admin/structure/ds/fields/manage_block/' . $field_key;
+        $redirect = 'admin/structure/ds/displays/fields/manage_block/' . $field_key;
         break;
 
       case DS_FIELD_TYPE_CTOOLS:
-        $redirect = 'admin/structure/ds/fields/manage_ctools/' . $field_key;
+        $redirect = 'admin/structure/ds/displays/fields/manage_ctools/' . $field_key;
         break;
 
       case DS_FIELD_TYPE_PREPROCESS:
-        $redirect = 'admin/structure/ds/fields/manage_preprocess/' . $field_key;
+        $redirect = 'admin/structure/ds/displays/fields/manage_preprocess/' . $field_key;
         break;
 
       default:
         drupal_set_message(t('Field not found'));
-        $redirect = 'admin/structure/ds/fields';
+        $redirect = 'admin/structure/ds/displays/fields';
         break;
     }
   }
@@ -225,7 +225,7 @@ function ds_shared_form_submit($form, &$form_state) {
   cache_clear_all('ds_fields', 'cache');
 
   // Redirect.
-  $form_state['redirect'] = 'admin/structure/ds/fields';
+  $form_state['redirect'] = 'admin/structure/ds/displays/fields';
   drupal_set_message(t('The field %field has been saved', array('%field' => $field->label)));
 }
 
@@ -402,7 +402,7 @@ function ds_remove_fields_form($form, &$form_state, $field = '', $action = 'dele
     $form['#ds_field'] = $field;
     return confirm_form($form,
       t('Are you sure you want to ' . $action . ' %field?', array('%field' => $field->label)),
-      'admin/structure/ds/fields',
+      'admin/structure/ds/displays/fields',
       t('This action cannot be undone.'),
       t(drupal_ucfirst($action)),
       t('Cancel')
@@ -410,7 +410,7 @@ function ds_remove_fields_form($form, &$form_state, $field = '', $action = 'dele
   }
   else {
     drupal_set_message(t('Unknown field'));
-    drupal_goto('admin/structure/ds/fields');
+    drupal_goto('admin/structure/ds/displays/fields');
   }
 }
 
@@ -444,6 +444,6 @@ function ds_remove_field_confirm_submit($form, &$form_state, $action = 'deleted'
   cache_clear_all('ds_fields', 'cache');
 
   // Redirect.
-  $form_state['redirect'] = 'admin/structure/ds/fields';
+  $form_state['redirect'] = 'admin/structure/ds/displays/fields';
   drupal_set_message(t('The field %field has been ' . $action, array('%field' => $field->label)));
 }

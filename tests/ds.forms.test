@@ -108,7 +108,7 @@ class dsFormTests extends dsBaseTest {
     $this->dsConfigureUI($fields, 'admin/structure/rel/manage/ds_edit_view_mode_form');
 
     // Inspect the view mode form.
-    $this->drupalGet('admin/structure/ds/view_modes/manage');
+    $this->drupalGet('admin/structure/ds/displays/view_modes/manage');
     $this->assertRaw('ds-form"', 'ds-form class added');
     $this->assertRaw('group-header', 'Template found (region header)');
     $this->assertRaw('group-left', 'Template found (region left)');
@@ -120,7 +120,7 @@ class dsFormTests extends dsBaseTest {
     $this->assertRaw('edit-entities', 'Entities checkboxes found');
 
     // Use the onsite registration of rel functionality.
-    $this->drupalGet('admin/structure/ds/fields/manage_custom');
+    $this->drupalGet('admin/structure/ds/displays/fields/manage_custom');
     $edit = array(
       'elements[name]' => TRUE,
       'elements[field]' => TRUE,
@@ -129,7 +129,7 @@ class dsFormTests extends dsBaseTest {
       'elements[code]' => TRUE,
       'elements[use_token]' => TRUE,
     );
-    $this->drupalPost('rel-register/nojs/ds_edit_custom_field_form', $edit, t('Save'), array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
+    $this->drupalPost('rel-register/nojs/ds_edit_custom_field_form', $edit, t('Save'), array('query' => array('destination' => 'admin/structure/ds/displays/fields/manage_custom')));
 
     $form = array(
       'additional_settings[layout]' => 'ds_form',
@@ -155,7 +155,7 @@ class dsFormTests extends dsBaseTest {
     $this->dsConfigureUI($fields, 'admin/structure/rel/manage/ds_edit_custom_field_form');
 
     // Inspect the code field form.
-    $this->drupalGet('admin/structure/ds/fields/manage_custom');
+    $this->drupalGet('admin/structure/ds/displays/fields/manage_custom');
     $this->assertRaw('ds-form"', 'ds-form class added');
     $this->assertRaw('group-header', 'Template found (region header)');
     $this->assertRaw('group-left', 'Template found (region left)');
@@ -172,7 +172,7 @@ class dsFormTests extends dsBaseTest {
     $layout_id = 'rel_build|ds_edit_custom_field_form|form';
     $record = db_query('SELECT id FROM {ds_layout_settings} WHERE  id = :id', array(':id' => $layout_id))->fetchField();
     $this->assertTrue($record, 'Layout found for DS');
-    $this->drupalPost('rel-unregister/nojs/ds_edit_custom_field_form', array(), t('Confirm'), array('query' => array('destination' => 'admin/structure/ds/fields/manage_custom')));
+    $this->drupalPost('rel-unregister/nojs/ds_edit_custom_field_form', array(), t('Confirm'), array('query' => array('destination' => 'admin/structure/ds/displays/fields/manage_custom')));
     $record = db_query('SELECT id FROM {ds_layout_settings} WHERE  id = :id', array(':id' => $layout_id))->fetchField();
     $this->assertFalse($record, 'Layout is gone for contact form');
 

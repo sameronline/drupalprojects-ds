@@ -79,6 +79,13 @@ function ds_menu() {
     'weight' => -10,
   );
 
+    // Layout overview.
+  $items['admin/structure/ds/displays/list'] = array(
+    'title' => 'List displays',
+    'weight' => -10,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
   // Emergency page
   $items['admin/structure/ds/emergency'] = array(
     'title' => 'Emergency',
@@ -91,14 +98,14 @@ function ds_menu() {
   );
 
   // Custom CSS classes.
-  $items['admin/structure/ds/classes'] = array(
+  $items['admin/structure/ds/displays/classes'] = array(
     'title' => 'CSS classes',
     'description' => 'Define extra CSS class names for regions and fields.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_classes_form'),
     'file' => 'ds.classes.inc',
     'access arguments' => array('admin_display_suite'),
-    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+    'type' => MENU_LOCAL_TASK,
   );
 
   // Change layout.
@@ -124,15 +131,16 @@ function ds_menu() {
   );
 
   // View modes.
-  $items['admin/structure/ds/view_modes'] = array(
+  $items['admin/structure/ds/displays/view_modes'] = array(
     'title' => 'View modes',
     'description' => 'Manage view modes for all content.',
     'page callback' => 'ds_view_modes_list',
     'file' => 'ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
-    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+    'weight' => -9,
+    'type' => MENU_LOCAL_TASK,
   );
-  $items['admin/structure/ds/view_modes/manage'] = array(
+  $items['admin/structure/ds/displays/view_modes/manage'] = array(
     'title' => 'Add a view mode',
     'description' => 'Manage a view mode',
     'page callback' => 'drupal_get_form',
@@ -141,7 +149,7 @@ function ds_menu() {
     'access arguments' => array('admin_view_modes'),
     'type' => MENU_LOCAL_ACTION,
   );
-  $items['admin/structure/ds/view_modes/delete'] = array(
+  $items['admin/structure/ds/displays/view_modes/delete'] = array(
     'title' => 'Delete a view mode',
     'description' => 'Delete a custom view mode.',
     'page callback' => 'drupal_get_form',
@@ -150,7 +158,7 @@ function ds_menu() {
     'access arguments' => array('admin_view_modes'),
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
-  $items['admin/structure/ds/view_modes/revert'] = array(
+  $items['admin/structure/ds/displays/view_modes/revert'] = array(
     'title' => 'Revert a view mode',
     'description' => 'Revert a view mode.',
     'page callback' => 'drupal_get_form',
@@ -161,22 +169,23 @@ function ds_menu() {
   );
 
   // Fields.
-  $items['admin/structure/ds/fields'] = array(
+  $items['admin/structure/ds/displays/fields'] = array(
     'title' => 'Fields',
     'description' => 'Manage fields for all content.',
     'page callback' => 'ds_custom_fields_list',
     'file' => 'ds.fields.inc',
     'access arguments' => array('admin_fields'),
-    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+    'weight' => -8,
+    'type' => MENU_LOCAL_TASK,
   );
-  $items['admin/structure/ds/fields/manage'] = array(
+  $items['admin/structure/ds/displays/fields/manage'] = array(
     'title' => 'Fields edit',
     'page callback' => 'ds_custom_manage',
     'file' => 'ds.fields.inc',
     'access arguments' => array('admin_fields'),
     'type' => MENU_CALLBACK,
   );
-  $items['admin/structure/ds/fields/manage_custom'] = array(
+  $items['admin/structure/ds/displays/fields/manage_custom'] = array(
     'title' => 'Add a code field',
     'description' => 'Manage a field',
     'page callback' => 'drupal_get_form',
@@ -186,7 +195,7 @@ function ds_menu() {
     'type' => MENU_LOCAL_ACTION,
     'weight' => 0,
   );
-  $items['admin/structure/ds/fields/manage_ctools'] = array(
+  $items['admin/structure/ds/displays/fields/manage_ctools'] = array(
     'title' => 'Add a dynamic field',
     'description' => 'Manage a dynamic field',
     'page callback' => 'drupal_get_form',
@@ -196,14 +205,14 @@ function ds_menu() {
     'type' => MENU_LOCAL_ACTION,
     'weight' => 1,
   );
-  $items['admin/structure/ds/fields/manage_ctools/content'] = array(
+  $items['admin/structure/ds/displays/fields/manage_ctools/content'] = array(
     'title' => 'Ctools field content',
     'page callback' => 'ds_ctools_content',
     'file' => 'ds.field_ui.inc',
     'access arguments' => array('admin_display_suite'),
     'type' => MENU_CALLBACK,
   );
-  $items['admin/structure/ds/fields/manage_preprocess'] = array(
+  $items['admin/structure/ds/displays/fields/manage_preprocess'] = array(
     'title' => 'Add a preprocess field',
     'description' => 'Manage a preprocess field',
     'page callback' => 'drupal_get_form',
@@ -213,7 +222,7 @@ function ds_menu() {
     'type' => MENU_LOCAL_ACTION,
     'weight' => 3,
   );
-  $items['admin/structure/ds/fields/delete'] = array(
+  $items['admin/structure/ds/displays/fields/delete'] = array(
     'title' => 'Delete a field',
     'description' => 'Delete a field.',
     'page callback' => 'drupal_get_form',
@@ -222,7 +231,7 @@ function ds_menu() {
     'access arguments' => array('admin_fields'),
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
-  $items['admin/structure/ds/fields/revert'] = array(
+  $items['admin/structure/ds/displays/fields/revert'] = array(
     'title' => 'Revert a custom field',
     'description' => 'Revert a custom field.',
     'page callback' => 'drupal_get_form',
@@ -233,7 +242,7 @@ function ds_menu() {
   );
   // Block can be disabled.
   if (module_exists('block')) {
-    $items['admin/structure/ds/fields/manage_block'] = array(
+    $items['admin/structure/ds/displays/fields/manage_block'] = array(
       'title' => 'Add a block field',
       'description' => 'Manage a block field',
       'page callback' => 'drupal_get_form',

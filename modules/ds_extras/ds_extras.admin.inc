@@ -37,7 +37,7 @@ function ds_extras_settings($form) {
     '#title' => t('Default Field Template'),
     '#options' => $theme_functions,
     '#default_value' => variable_get('ft-default', 'theme_field'),
-    '#description' => t('Default will output the field as defined in Drupal Core.<br />Reset will strip all HTML.<br />Minimal adds a simple wrapper around the field.<br/>There is also an Expert Field Template that gives full control over the HTML, but can only be set per field.<br /><br />You can override this setting per field on the "Manage display" screens or when creating fields on the instance level.<br /><br /><strong>Template suggestions</strong><br />You can create .tpl files as well for these field theme functions, e.g. field--reset.tpl.php, field--minimal.tpl.php<br /><br /><label>CSS classes</label>You can add custom CSS classes on the <a href="!url">classes form</a>. These classes can be added to fields using the Default Field Template.<br /><br /><label>Advanced</label>You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.', array('!url' => url('admin/structure/ds/classes'))),
+    '#description' => t('Default will output the field as defined in Drupal Core.<br />Reset will strip all HTML.<br />Minimal adds a simple wrapper around the field.<br/>There is also an Expert Field Template that gives full control over the HTML, but can only be set per field.<br /><br />You can override this setting per field on the "Manage display" screens or when creating fields on the instance level.<br /><br /><strong>Template suggestions</strong><br />You can create .tpl files as well for these field theme functions, e.g. field--reset.tpl.php, field--minimal.tpl.php<br /><br /><label>CSS classes</label>You can add custom CSS classes on the <a href="!url">classes form</a>. These classes can be added to fields using the Default Field Template.<br /><br /><label>Advanced</label>You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.', array('!url' => url('admin/structure/ds/displays/classes'))),
     '#states' => array(
       'visible' => array(
         'input[name="additional_settings[fs1][ds_extras_field_template]"]' => array('checked' => TRUE),
@@ -131,13 +131,6 @@ function ds_extras_settings($form) {
     '#title' => t('Page title options'),
     '#description' => t('Hide or manually set the page title of the "Full content" view mode.'),
     '#default_value' => variable_get('ds_extras_hide_page_title', FALSE),
-  );
-
-  $form['additional_settings']['fs4']['ds_extras_region_wrapper'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('HTML5 region wrapper'),
-    '#description' => t('Enable HTML5 wrappers for regions.'),
-    '#default_value' => variable_get('ds_extras_region_wrapper', FALSE),
   );
 
   if (module_exists('block')) {
@@ -258,34 +251,6 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
       '#title' => t('Custom page title'),
     );
     $form['additional_settings']['ds_page_title']['ds_page_title_options'] = _ds_extras_page_title_options($form['#ds_layout']->settings, $form['#entity_type']);
-  }
-
-  // HTML5 wrappers for regions only fires if there is a layout.
-  if (isset($form['#ds_layout']) && variable_get('ds_extras_region_wrapper', FALSE)) {
-    $wrapper_options = array('div' => 'Div', 'section' => 'Section', 'article' => 'Article', 'header' => 'Header', 'footer' => 'Footer', 'aside' => 'Aside');
-    $layout = $form['#ds_layout'];
-
-    $form['additional_settings']['region_wrapper'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('HTML5 wrapper for regions'),
-      '#description' => t('Choose a HTML5 wrapper')
-    );
-    foreach (array_keys($layout->regions) as $region) {
-      $form['additional_settings']['region_wrapper'][$region] = array (
-        '#type' => 'select',
-        '#options' => $wrapper_options,
-        '#title' => t('Wrapper for @region', array('@region' => $region)),
-        '#default_value' => isset($layout->settings['wrappers'], $layout->settings['wrappers'][$region]) ? $layout->settings['wrappers'][$region] : 'div',
-      );
-    }
-
-    $form['additional_settings']['ds_layouts']['layout_wrapper'] = array(
-      '#type' => 'select',
-      '#options' => $wrapper_options,
-      '#title' => t('Layout wrapper'),
-      '#default_value' => isset($layout->settings['layout_wrapper']) ? $layout->settings['layout_wrapper'] : 'div',
-      '#weight' => 10,
-    );
   }
 
   // Region to block only fires if there is a layout and we're working on the

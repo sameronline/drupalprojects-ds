@@ -151,7 +151,7 @@ function ds_panels_display_settings($form, $form_state, $entity_type, $bundle) {
       '#title' => t('Use custom display settings for the following view modes'),
       '#options' => $view_modes['options'],
       '#default_value' => $view_modes['default'],
-      '#description' => $view_mode_admin_access ? l(t('Manage view modes'), 'admin/structure/ds/view_modes') : '',
+      '#description' => $view_mode_admin_access ? l(t('Manage view modes'), 'admin/structure/ds/displays/view_modes') : '',
     );
     $form['modes_save'] = array(
       '#type' => 'submit',
