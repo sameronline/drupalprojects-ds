@@ -20,6 +20,7 @@ swentel - http://drupal.org/user/107403
 stalski - http://drupal.org/user/322618
 zuuperman - http://drupal.org/user/361625
 jyve - http://drupal.org/user/591438
+aspilicious - http://drupal.org/user/172527
 
 -- INSPIRATORS --
 
