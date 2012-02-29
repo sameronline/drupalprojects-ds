@@ -44,6 +44,12 @@
   clear: both;
 }
 
+/**
+ * Displays list
+ */
+table th.ds-display-list-options {
+  width: 300px;
+}
 
 /**
  * Limit

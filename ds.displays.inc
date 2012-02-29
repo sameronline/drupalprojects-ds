@@ -14,10 +14,24 @@ function ds_layout_list() {
   // All entities.
   $rows = array();
   $entities = entity_get_info();
+
+  if (isset($entities['node'])) {
+    $node_entity = $entities['node'];
+    $node_entity['label'] = 'Content';
+    unset($entities['node']);
+    array_unshift($entities, $node_entity);
+  }
+
+  if (isset($entities['comment'])) {
+    $comment_entity = $entities['comment'];
+    unset($entities['comment']);
+    $entities['comment'] = $comment_entity;
+  }
+
   foreach ($entities as $entity_type => $entity) {
     if ((isset($entity['fieldable']) && $entity['fieldable']) || isset($entity['ds_display'])) {
 
-      $entity_rows = array();
+      $rows = array();
       foreach ($entity['bundles'] as $bundle_type => $bundle) {
         $row = array();
 
@@ -28,27 +42,24 @@ function ds_layout_list() {
 
         $row[] = $bundle['label'];
         $row[] = l(t('Manage display'), $path . '/display');
-        $entity_rows[] = $row;
+        $rows[] = $row;
       }
 
-      if (!empty($entity_rows)) {
-        $rows[] = array(array('data' => $entity['label'], 'colspan' => '2', 'style' => 'background-color: #E1E2DC; border: 1px solid #BEBFB9;'));
-        $rows = array_merge($rows, $entity_rows);
+      if (!empty($rows)) {
+        $variables = array(
+          'header' => array(array('data' => $entity['label']), array('data' => t('operations'), 'class' => 'ds-display-list-options')),
+          'rows' => $rows,
+        );
+        $build['list_' . $entity_type] = array(
+          '#markup' => theme('table', $variables)
+        );
+
+        $entity_rows = array();
+        $rows = array();
       }
     }
   }
-
-  if (!empty($rows)) {
-    $variables = array(
-      'header' => array(),
-      'rows' => $rows,
-    );
-    $build['list'] = array('#markup' => theme('table', $variables));
-  }
-  else {
-    // This will probably never happen.
-    $build['list'] = array('#markup' => t('No content found'));
-  }
+  drupal_add_css(drupal_get_path('module', 'ds') . '/css/ds.admin.css');
 
   return $build;
 }
