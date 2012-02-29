@@ -55,17 +55,15 @@ function ds_plugins_submit($form, &$form_state) {
  * Retrieve all available plugins.
  */
 function ds_plugins_retrieve($module) {
+  $plugins = array();
+  $source = module_invoke_all('ds_plugins');
 
-  $plugins = module_invoke_all('ds_plugins');
-
-  foreach ($plugins as $plugin => $data) {
-    if ($data['target'] == 'all' || (is_array($data['target']) && isset($data['target'][$module]))) {
-
+  foreach ($source as $plugin => $data) {
+    if ($data['target'] == 'all' || (is_array($data['target']) && in_array($module, $data['target']))) {
       $data['key'] = $plugin;
-      $data['class'] = $data['class'];
-      if (isset($data['file']) && isset($data['path']))
-      $data['filename'] = $data['path'] .'/'. $data['file'];
-
+      if (isset($data['file']) && isset($data['path'])) {
+        $data['filename'] = $data['path'] .'/'. $data['file'];
+      }
       $plugins[$plugin] = $data;
     }
   }
