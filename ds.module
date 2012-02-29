@@ -890,9 +890,6 @@ function ds_entity_variables(&$vars) {
       }
     }
 
-    // Hide empty regions variable.
-    $hide_empty_regions = $layout['settings']['hide_empty_regions'];
-
     // Check if this is a flexible panels layout.
     if (!empty($layout['flexible'])) {
       ctools_include('plugins', 'panels');
@@ -923,14 +920,6 @@ function ds_entity_variables(&$vars) {
 
       // Create the region content.
       $vars[$region_name] = ds_render_region($vars[$render_container], $region_name, $layout);
-
-      // Hide empty regions.
-      if ($hide_empty_regions && empty($vars[$region_name]) && empty($layout['flexible'])) {
-        $vars[$region_name] = FALSE;
-      }
-      elseif (empty($vars[$region_name])) {
-        $vars[$region_name] = '&nbsp;';
-      }
 
       // In case this is a panels layout, add the variable to the $content variable.
       if (isset($layout['module']) && $layout['module'] == 'panels') {

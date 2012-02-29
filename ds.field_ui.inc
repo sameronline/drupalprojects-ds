@@ -523,7 +523,6 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
   // Determine layout variables.
   $layout = $form_state['values']['additional_settings']['layout'];
-  $hide_empty_regions = $form_state['values']['additional_settings']['hide_empty_regions'];
   $hide_sidebars = $form_state['values']['additional_settings']['hide_sidebars'];
   $old_layout = $form_state['values']['additional_settings']['old_layout'];
   $new_layout = ($layout != $old_layout) || empty($old_layout);
@@ -535,7 +534,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $record->bundle = $bundle;
   $record->view_mode = $view_mode;
   $record->layout = $layout;
-  $record->settings = array('hide_empty_regions' => $hide_empty_regions, 'hide_sidebars' => $hide_sidebars);
+  $record->settings = array('hide_sidebars' => $hide_sidebars);
 
   // Remove old layout if necessary.
   if (($new_layout && !empty($old_layout)) || $form['#panel']) {
@@ -1325,14 +1324,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   // Load the layout preview form
   $layout->layout_options = $layout_options;
   _ds_field_ui_table_layouts_preview($form, $form_state, $ds_layouts, $layout, $entity_type, $bundle, $view_mode);
-
-  $form['additional_settings']['ds_layouts']['hide_empty_regions'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Hide empty regions'),
-    '#default_value' => isset($layout->settings['hide_empty_regions']) ? $layout->settings['hide_empty_regions'] : FALSE,
-    '#weight' => 2,
-    '#access' => empty($chosen_layout['flexible']),
-  );
 
   $form['additional_settings']['ds_layouts']['hide_sidebars'] = array(
     '#type' => 'checkbox',
