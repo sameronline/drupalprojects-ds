@@ -80,9 +80,6 @@ function template_preprocess_ds_row_fields(&$vars) {
       return;
     }
 
-    // Hide empty regions variable.
-    $hide_empty_regions = $layout['settings']['hide_empty_regions'];
-
     // Classes array.
     $vars['classes_array'] = array();
     $vars['classes_array'][] = strtr($bundle, '_', '-');
@@ -119,14 +116,6 @@ function template_preprocess_ds_row_fields(&$vars) {
         }
       }
       $vars[$region_name] = $region_content;
-
-      // Hide empty regions.
-      if ($hide_empty_regions && empty($vars[$region_name]) && empty($layout['flexible'])) {
-        $vars[$region_name] = FALSE;
-      }
-      elseif (empty($vars[$region_name])) {
-        $vars[$region_name] = '&nbsp;';
-      }
 
       // Add extras classes to the region.
       $vars[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';

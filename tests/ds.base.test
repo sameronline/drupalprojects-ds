@@ -447,7 +447,7 @@ class dsLayoutsClassesTests extends dsBaseTest {
   }
 
   /**
-   * Test selecting layouts, empty regions, classes, region to block and fields.
+   * Test selecting layouts, classes, region to block and fields.
    */
   function testDStestLayouts() {
 
@@ -562,21 +562,8 @@ class dsLayoutsClassesTests extends dsBaseTest {
     $this->assertText('Use articles for time-sensitive content like news, press releases or blog posts.', t('Dynamic field found'));
     $this->assertText('This is an extra field made available through "Extra fields" functionality.');
 
-    // Test empty regions checkbox.
-    $fields = array(
-      'fields[comments][region]' => 'hidden',
-    );
-    $this->dsConfigureUI($fields);
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertRaw('group-footer', 'Template found (region footer)');
-    $hide = array(
-      'additional_settings[hide_empty_regions]' => '1',
-    );
-    $this->dsConfigureUI($hide);
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertNoRaw('group-footer', 'No region footer found');
-
     // Test disable sidebar regions.
+    $this->drupalGet('node/' . $node->nid);
     $this->assertRaw('sidebar-first', 'Left sidebar found.');
     $hide = array(
       'additional_settings[hide_sidebars]' => '1',
