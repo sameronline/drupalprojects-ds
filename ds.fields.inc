@@ -259,6 +259,11 @@ function ds_edit_custom_field_form($form, &$form_state, $custom_field = '') {
       '#type' => 'fieldset',
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
+      '#states' => array(
+        'invisible' => array(
+          'input[name="use_token"]' => array('checked' => FALSE),
+        ),
+      ),
     );
     $form['tokens']['help'] = array(
       '#theme' => 'token_tree',
