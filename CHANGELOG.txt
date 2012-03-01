@@ -1,6 +1,7 @@
 -------------------------------------------------------------------------------------
 7.x-1.6 xx/xx/2012
 -------------------------------------------------------------------------------------
+- #1462544 by Deciphered: Hide available tokens unless 'use_token' checkbox is ticked.
 - #961494 by pfrenssen: Author field is empty for anonymous users.
 - #1454544 by Jax: Username title isn't passed through t().
 - #1375080 by swentel: Extra alter for views rendering.
