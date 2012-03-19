@@ -8,58 +8,103 @@
 /**
  * Build modes overview.
  */
-function ds_build_modes($module) {
+function ds_build_modes_page($module) {
   $output = '';
   $action = check_plain(arg(6));
   $build_mode = check_plain(arg(7));
-  $build_modes = variable_get($module .'_build_modes', array());
+  $build_modes = ds_get_build_modes($module, TRUE);
   $api_info = ds_api_info($module);
+  $hide = FALSE;
 
+  // Only show edit forms if allowed by api
   if (!isset($api_info['no_new_build_modes'])) {
     // Delete form.
     if (in_array($build_mode, array_keys($build_modes)) && $action == 'delete') {
       $output .= drupal_get_form('ds_build_mode_delete_form', $module, $build_mode);
+      $hide = TRUE;
     }
     // Edit form.
     elseif (in_array($build_mode, array_keys($build_modes)) && $action == 'edit') {
       $output .= drupal_get_form('ds_build_mode_form', $module, $build_mode);
+      $hide = TRUE;
     }
+    if (empty($build_modes)) {
+      $output .= '<p>'. t('You have not defined any custom build modes.') .'</p>';
+    }
+  }
+
+  if ($hide == FALSE) {
     // Custom build modes overview form.
-    else {
-      if (empty($build_modes)) {
-        $output .= '<p>'. t('You have not defined any custom build modes.') .'</p>';
+    if (!empty($build_modes)) {
+      $groups = array();
+      foreach ($build_modes as $key => $build_mode) {
+        $groups[$build_mode['group']][$key] = $build_mode;
       }
-      else {
-        $output .= '<p>'. t('This is a list of custom build modes defined via the UI.') .'</p>';
 
-        $header = array(
-          t('Name'), t('Key'), t('Operations'),
-        );
+      $header = array(
+        t('Group'), t('Name'), t('Machine name'), t('Module'), t('State'), t('Operations'),
+      );
+      $rows = array();
+      foreach ($groups as $group_key => $group) {
+        // Add a header row for this group
+        $rows[] = array('data' => array(array('data' => '<em>' . $group_key . '</em>', 'colspan' => 6)));
 
-        $rows = array();
-        foreach ($build_modes as $key => $name) {
+        foreach ($group as $key => $mode) {
+          // Check state of build mode
+          $in_code = TRUE;
+          $overridden = FALSE;
+          $state = 'default';
+          $state_message = t('In code');
+          if (!isset($mode['module']) || empty($mode['module']))  {
+            $in_code = FALSE;
+            $state_message = t('Database');
+            $state = 'custom';
+          }
+          elseif (isset($mode['overridden']) && !empty($mode['overridden'])) {
+            $overridden = TRUE;
+            $state_message = t('Overridden');
+            $state = 'overridden';
+          }
+
+          // Build the row
           $row = array();
-          $row[] = check_plain($name);
+          $row[] = '';
+          $row[] = '<strong>'. check_plain($mode['title']) .'</strong>';
           $row[] = $key;
-          $row[] = l(t('Edit'), DS_PATH_MODULES .'/'.  $module .'/buildmodes/edit/'. $key) .' - '. l(t('Delete'), DS_PATH_MODULES .'/'.  $module .'/buildmodes/delete/'. $key);
-          $rows[] = $row;
-        }
+          $row[] = isset($mode['module']) ? $mode['module'] : 'unknown';
+          $row[] = $state_message;
+          if ($state != 'default') {
+            $row[] = l(t('Edit'), DS_PATH_MODULES .'/'.  $module .'/buildmodes/edit/'. $key) .' - '. l(t('Delete'), DS_PATH_MODULES .'/'.  $module .'/buildmodes/delete/'. $key);
+          }
+          else {
+            $row[] = '';
+          }
 
-        $output .= theme('table', $header, $rows);
+          $rows[] = array('data' => $row);
+        }
       }
 
-      // New build mode form.
-      $output .= drupal_get_form('ds_build_mode_form', $module);
+      $output .= theme('table', $header, $rows);
+    }
 
+    // New build mode form.
+    if (!isset($api_info['no_new_build_modes'])) {
+      $output .= drupal_get_form('ds_build_mode_form', $module);
+    }
+    else {
+      $output .= theme('fieldset', array(
+        '#title' => t('Add new build mode'),
+        '#value' => '<p>This type does not support custom build modes.</p>',
+      ));
+    }
+
+    // Matrix form.
+    if (isset($api_info['types'])) {
+      $types = $api_info['types']();
+      $output .= drupal_get_form('ds_buildmodes_matrix_form', $module, $types);
     }
   }
-
-  // Matrix form.
-  if (isset($api_info['types'])) {
-    $types = $api_info['types']();
-    $output .= drupal_get_form('ds_buildmodes_matrix_form', $module, $types);
-  }
-
+  
   return $output;
 }
 

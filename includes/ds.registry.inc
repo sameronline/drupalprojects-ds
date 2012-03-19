@@ -190,7 +190,7 @@ function _ds_ui_menu() {
     // Build modes.
     $items[DS_PATH_MODULES .'/'.  $module .'/buildmodes'] = array(
       'title' => 'Build modes',
-      'page callback' => 'ds_build_modes',
+      'page callback' => 'ds_build_modes_page',
       'page arguments' => array($module),
       'access arguments' => array('administer '. $module),
       'file' => 'includes/ds.buildmodes.inc',
@@ -519,28 +519,33 @@ function _ds_register_build_modes() {
 
     $module_data = array();
     $function = $module .'_content_build_modes';
-    $temp_data = $function();
+    $cck_grouped = call_user_func($function);
     // We need to do some fiddling existing build modes.
-    if (!empty($temp_data)) {
-      foreach ($temp_data as $key => $value) {
+    if (!empty($cck_grouped)) {
+      foreach ($cck_grouped as $group_key => $group) {
         // Sane build modes.
-        foreach ($value['build modes'] as $build_mode => $build_mode_value) {
+        foreach ($group['build modes'] as $build_mode_key => $build_mode) {
           // If no module key is set, we are adding it ourselves. This hook only applies
           // to nodes anyway, so yes, we use nd as the $module key.
-          $module_name = isset($build_mode_value['module']) ? $build_mode_value['module'] : 'nd';
-          $build_modes[$module_name][$build_mode] = array(
-            'weight' => isset($build_mode_value['weight']) ? $build_mode_value['weight'] : $weight++,
-            'title' => $build_mode_value['title'],
+          $module_name = isset($build_mode['module']) ? $build_mode['module'] : 'nd';
+          $build_modes[$module_name][$build_mode_key] = array(
+            'weight' => isset($build_mode['weight']) ? $build_mode['weight'] : $weight++,
+            'title' => $build_mode['title'],
+            'type' => 'code',
+            'module' => $module,
+            'group' => check_plain($group['title']),
+            'overridden' => FALSE,
           );
         }
       }
     }
   }
-
+  $code_modes = $build_modes;
   // Custom build modes via the UI.
   foreach (module_implements('ds_api') as $module) {
     $weight = 10;
     $db_build_modes = variable_get($module .'_build_modes', array());
+
     if (!empty($db_build_modes)) {
       foreach ($db_build_modes as $key => $name) {
         $build_modes[$module][$key] = array(
@@ -551,6 +556,10 @@ function _ds_register_build_modes() {
               'title' => check_plain($name),
             ),
           ),
+          'type' => 'db',
+          'module' => isset($code_modes[$module][$key]['module']) && $module != 'nd' ? $code_modes[$module][$key]['module'] : '',
+          'group' => t('Custom'),
+          'overridden' => isset($code_modes[$module][$key]) ? TRUE : FALSE,
         );
       }
     }
