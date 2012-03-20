@@ -13,7 +13,11 @@
 
 .ds-layout-preview-image {
   float: left;
-  width: 300px;
+  width: 150px;
+}
+
+.ds-layout-preview-image img {
+  width: 150px;
 }
 
 .ds-layout-preview-arrow {
