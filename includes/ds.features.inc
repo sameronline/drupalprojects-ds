@@ -135,6 +135,12 @@ function ds_features_revert($module = NULL) {
           $record->build_mode = $build_mode;
           $record->settings = serialize($conf);
           drupal_write_record('ds_settings', $record);
+          if (db_affected_rows() >= 1) {
+            watchdog('ds', 'Reverted the display settings for @object_type build mode: @build_mode', array('@object_type' => $object_type, '@build_mode' => $build_mode));
+          }
+          else {
+            watchdog('ds', 'Failed to revert settings for @object_type build mode: @build_mode', array('@object_type' => $object_type, '@build_mode' => $build_mode));
+          }
         }
       }
     }
