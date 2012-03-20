@@ -551,6 +551,54 @@ function ds_get_build_modes($module = NULL, $reset = FALSE) {
 }
 
 /**
+ * API function to retrieve ACTIVE build modes for a module
+ */
+function ds_get_active_build_modes($module, $type = NULL) {
+  $api_info = ds_api_info($module);
+  $build_modes = ds_get_build_modes($module);
+  $filtered_bm = array();
+
+  if (!empty($build_modes)) {
+    if (function_exists($api_info['types'])) {
+      $types = call_user_func($api_info['types']);
+    }
+    else {
+      $types = array();
+    }
+
+    foreach ($types as $tkey => $type_info) {
+
+      // Global exclude.
+      if (variable_get($module .'_type_'. $type_info->type, FALSE)) {
+        continue;
+      }
+
+      $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
+      foreach ($build_modes as $key => $value) {
+        // Check if build mode is excluded for this object type.
+        $excluded = (isset($exclude_build_modes[$type_name][$key]) && $exclude_build_modes[$type_name][$key] == TRUE) ? TRUE : FALSE;
+        if ($excluded) {
+          continue;
+        }
+
+        $filtered_bm[$tkey][$key] = $value;
+      }
+    }
+  }
+
+  if (isset($type) && !empty($type)) {
+    if (isset($filtered_bm[$type])){
+      return $filtered_bm[$type];
+    }
+    else {
+      return FALSE;
+    }
+  }
+
+  return $filtered_bm;
+}
+
+/**
  * Process plugins.
  *
  * @param stdClass $display 

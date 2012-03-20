@@ -106,7 +106,7 @@ function _ds_ui_menu() {
             'page callback' => 'drupal_get_form',
             'page arguments' => array('ds_display_overview_form', $type_name, "$key", $module),
             'access arguments' => array('configure layout for '. $module),
-            'type' => $first == 0 ? MENU_DEFAULT_LOCAL_TASK : MENU_LOCAL_TASK,
+            'type' => MENU_CALLBACK, //$first == 0 ? MENU_DEFAULT_LOCAL_TASK : MENU_LOCAL_TASK,
             'file' => 'includes/ds.display.inc',
             'weight' => (isset($value['weight']) && !empty($value['weight'])) ? $value['weight'] : $weight++,
           );
