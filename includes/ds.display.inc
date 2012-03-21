@@ -203,7 +203,7 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
   );
 
   // Navigation to other build modes
-  $options = array();
+  $options = array('none'=> '-- select --');
   $build_modes = ds_get_active_build_modes($module, $type);
   $type_url_str = str_replace('_', '-', $type);
   foreach ($build_modes as $key => $mode){
@@ -214,7 +214,6 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
   $form['nav'] = array(
     '#type' => 'select',
     '#options' => $options,
-    '#default_value' => DS_PATH_LAYOUT . '/'. $type_url_string .'/'. $build_mode,
     '#title' => t('Edit build mode'),
   );
 
