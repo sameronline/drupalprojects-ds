@@ -569,7 +569,7 @@ function ds_extras_switch_view_mode_field($field) {
  */
 function ds_extras_contextual_links_view_alter(&$element, $items) {
 
-  if (isset($element['#element']['#entity_type']) && user_access('administer content types')) {
+  if (isset($element['#element']['#entity_type']) && user_access('administer content types') && module_exists('field_ui')) {
     $entity_type = $element['#element']['#entity_type'];
     $bundle = $element['#element']['#bundle'];
     $view_mode = isset($element['#element']['#view_mode']) ? $element['#element']['#view_mode'] : 'default';
