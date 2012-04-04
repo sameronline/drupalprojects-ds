@@ -57,6 +57,9 @@ function ds_ds_fields_info($entity_type) {
     $fields['node']['comments'] = array(
       'title' => t('Comments'),
       'field_type' => DS_FIELD_TYPE_IGNORE,
+      'ui_limit' => array(
+        '*|full', '*|default',
+      ),
     );
   }
 
