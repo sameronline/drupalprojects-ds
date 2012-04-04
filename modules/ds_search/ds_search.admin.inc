@@ -200,6 +200,12 @@ function ds_search_settings($form, $form_state) {
     '#default_value' => variable_get('ds_search_node_form_alter'),
   );
 
+  $form['node']['ds_search_node_limit'] = array(
+    '#type' => 'textfield',
+    '#default_value' => variable_get('ds_search_node_limit', 10),
+    '#title' => t('Node search limit'),
+  );
+
   if (module_exists('apachesolr')) {
 
     $form['apachesolr_search'] = array(

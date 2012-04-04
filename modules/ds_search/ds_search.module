@@ -621,7 +621,7 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
 
   // Load results.
   $find = $query
-    ->limit(10)
+    ->limit(variable_get('ds_search_node_limit', 10))
     ->execute();
   $results = array();
   foreach ($find as $item) {
