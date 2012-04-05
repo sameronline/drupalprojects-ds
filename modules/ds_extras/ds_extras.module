@@ -500,7 +500,7 @@ function theme_ds_field_expert($variables) {
  * if another one is chosen for the full page of the node.
  */
 function ds_extras_get_view_mode() {
-  return drupal_static('ds_extras_view_mode', 'full');
+  return drupal_static('ds_extras_view_mode');
 }
 
 /**
@@ -880,7 +880,10 @@ function ds_extras_entity_view_alter(&$build, $entity_type) {
 
   $bundle = $build['#bundle'];
   $view_mode = $build['#view_mode'];
-  $layout = ds_get_layout($entity_type, $bundle, ds_extras_get_view_mode());
+  if ($overridden_view_mode = ds_extras_get_view_mode()) {
+    $view_mode = $overridden_view_mode;
+  }
+  $layout = ds_get_layout($entity_type, $bundle, $view_mode);
 
   // Page title options.
   if (variable_get('ds_extras_hide_page_title', FALSE)) {
