@@ -496,8 +496,13 @@ function ds_get_layout_info() {
     // Give modules a chance to alter the layouts information.
     drupal_alter('ds_layout_info', $layouts);
 
-    // Check that there is no 'content' region.
+    // Check that there is no 'content' region, but ignore panel layouts.
+    // Because when entities are rendered, the field items are stored into a
+    // 'content' key so fields would be overwritten before they're all moved.
     foreach ($layouts as $key => $info) {
+      if (isset($info['panels'])) {
+        continue;
+      }
       if (isset($info['regions']['content'])) {
         $errors[] = $key;
       }
