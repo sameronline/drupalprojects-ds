@@ -806,8 +806,7 @@ function ds_field_settings_summary($field, $form_state) {
 function ds_field_settings_form($field, &$form_state) {
   $form = module_invoke($field['module'], 'ds_field_settings_form', $field);
 
-  // Add field template settings to every field if enabled
-  // TODO moet dit niet verplaatst worden
+  // Add field template settings to every field if enabled.
   if(module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
     $context = array(
       'instance' => array(
@@ -840,7 +839,6 @@ function ds_ds_field_format_summary($field) {
     }
     elseif ($key == 'ft') {
       // Do nothing
-      // TODO dit ok? ==> staat hier om warnings te vermijden
     }
     elseif (!empty($value)) {
       $value = is_numeric($value) ? ($value ? t('Yes') : t('No')) : check_plain($value);
