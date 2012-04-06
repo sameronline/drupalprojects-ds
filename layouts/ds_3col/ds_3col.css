@@ -1,15 +1,15 @@
 
-.group-left {
+.ds-3col .group-left {
   width: 25%;
   float: left;
 }
 
-.group-middle {
+.ds-3col .group-middle {
   width: 50%;
   float: left;
 }
 
-.group-right {
+.ds-3col .group-right {
   width: 25%;
   float: right;
 }

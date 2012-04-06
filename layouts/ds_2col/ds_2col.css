@@ -1,10 +1,10 @@
 
-.group-left {
+.ds-2col .group-left {
   float: left;
   width: 50%;
 }
 
-.group-right {
+.ds-2col .group-right {
 	float: left;
   width: 50%;
 }

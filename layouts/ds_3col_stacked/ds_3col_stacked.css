@@ -1,23 +1,23 @@
 
-.group-header {
+.ds-3col-stacked .group-header {
   clear: both;
 }
 
-.group-left {
+.ds-3col-stacked .group-left {
   width: 25%;
   float: left;
 }
 
-.group-middle {
+.ds-3col-stacked .group-middle {
   width: 50%;
   float: left;
 }
 
-.group-right {
+.ds-3col-stacked .group-right {
   width: 25%;
   float: right;
 }
 
-.group-footer {
+.ds-3col-stacked .group-footer {
   clear: both;
 }
