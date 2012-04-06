@@ -816,7 +816,7 @@ function ds_field_attach_view_alter(&$build, $context) {
         '#bundle' => $bundle,
         '#entity_type' => $entity_type,
         '#view_mode' => $view_mode,
-        '#access' => TRUE,
+        '#access' => (variable_get('ds_extras_field_permissions', FALSE) && function_exists('ds_extras_ds_field_access')) ? ds_extras_ds_field_access($key, $entity_type) : TRUE,
         '#items' => array(
           0 => array(
             'value' => $field_value,

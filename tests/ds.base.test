@@ -17,7 +17,7 @@ class dsBaseTest extends DrupalWebTestCase {
     variable_set('search_active_modules', array('node' => '', 'user' => 'user', 'ds_search' => 'ds_search'));
     menu_rebuild();
 
-    $this->admin_user = $this->drupalCreateUser(array('admin_view_modes', 'admin_fields', 'admin_display_suite', 'rel_build_registration', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles'));
+    $this->admin_user = $this->drupalCreateUser(array('admin_view_modes', 'admin_fields', 'admin_display_suite', 'rel_build_registration', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions'));
     $this->drupalLogin($this->admin_user);
   }
 
@@ -694,9 +694,58 @@ class dsLayoutsClassesTests extends dsBaseTest {
   }
 }
 
+/**
+ * Tests for Display Suite field permissions.
+ */
+class dsFieldPermissionTests extends dsBaseTest {
+
+  /**
+   * Implements getInfo().
+   */
+  public static function getInfo() {
+    return array(
+      'name' => t('Field permissions'),
+      'description' => t('Tests for testing field permissions.'),
+      'group' => t('Display suite'),
+    );
+  }
+
+  function testFieldPermissions() {
+
+    $fields = array(
+      'fields[body][region]' => 'right',
+      'fields[ds_test_field][region]' => 'left',
+    );
+
+    variable_set('ds_extras_field_permissions', TRUE);
+    $this->refreshVariables();
+    module_implements(FALSE, FALSE, TRUE);
+
+    $this->dsSelectLayout();
+    $this->dsConfigureUI($fields);
+
+    // Create a node.
+    $settings = array('type' => 'article');
+    $node = $this->drupalCreateNode($settings);
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertNoRaw('group-left', 'Template found (but not region left)');
+    $this->assertRaw('group-right', 'Template found (region right)');
+    $this->assertNoText('Test code field on node ' . $node->nid, 'Test code field not found');
+
+    // Give permissions.
+    $edit = array(
+      '2[view author on node]' => 1,
+      '2[view ds_test_field on node]' => 1,
+    );
+    $this->drupalPost('admin/people/permissions', $edit, t('Save permissions'));
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertRaw('group-left', 'Template found (region left)');
+    $this->assertText('Test code field on node ' . $node->nid, 'Test code field found');
+  }
+}
 
 /**
- * Tests for Display Suite hookds.
+ * Tests for Display Suite hooks.
  */
 class dsHooksTests extends dsBaseTest {
 

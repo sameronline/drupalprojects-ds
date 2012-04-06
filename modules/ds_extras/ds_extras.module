@@ -75,17 +75,30 @@ function ds_extras_entity_info() {
  * Implements hook_permission().
  */
 function ds_extras_permission() {
+  $permissions = array();
 
   // Extra check to make sure this doesn't get fired on install.
   if (variable_get('ds_extras_switch_view_mode', FALSE)) {
-    $permissions = array();
     foreach (node_type_get_names() as $key => $name) {
       $permissions['ds_switch ' . $key] = array(
         'title' => t('Switch view modes on :type', array(':type' => $name))
       );
     }
-    return $permissions;
   }
+
+  if (variable_get('ds_extras_field_permissions', FALSE)) {
+    $entities = entity_get_info();
+    foreach ($entities as $entity_type => $info) {
+      $fields = ds_get_fields($entity_type);
+      foreach ($fields as $key => $finfo) {
+        $permissions['view ' . $key . ' on ' . $entity_type] = array(
+          'title' => t('View !field on !entity_type', array('!field' => $finfo['title'], '!entity_type' => $info['label'])),
+        );
+      }
+    }
+  }
+
+  return $permissions;
 }
 
 /**
@@ -131,6 +144,23 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
 function ds_extras_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
   form_load_include($form_state, 'inc', 'ds_extras', 'ds_extras.admin');
   ds_extras_field_ui_alter($form, $form_state);
+}
+
+/**
+ * DS fields access.
+ *
+ * @param $field
+ *   The machine name of the field
+ * @param $entity_type
+ *   The name of the entity type.
+ */
+function ds_extras_ds_field_access($field, $entity_type) {
+
+  if (user_access('view ' . $field . ' on ' . $entity_type)) {
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 /**

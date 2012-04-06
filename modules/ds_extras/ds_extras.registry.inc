@@ -172,7 +172,6 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
 
   // Switch view mode
   $switch_hooks = array(
-    'permission',
     'form_node_form_alter',
   );
   if (!variable_get('ds_extras_switch_view_mode', FALSE) && in_array($hook, $switch_hooks)) {

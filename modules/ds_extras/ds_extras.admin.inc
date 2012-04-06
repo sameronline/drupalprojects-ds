@@ -140,6 +140,13 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_flag', FALSE),
   );
 
+  $form['additional_settings']['fs4']['ds_extras_field_permissions'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Field permissions'),
+    '#description' => t('Hide or manually set the page title of the "Full content" view mode.'),
+    '#default_value' => variable_get('ds_extras_field_permissions', FALSE),
+  );
+
   if (module_exists('block')) {
     $form['additional_settings']['fs4']['ds_extras_region_to_block'] = array(
       '#type' => 'checkbox',
