@@ -1500,7 +1500,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
     if (empty($chosen_layout['flexible'])) {
       $selected = t('%layout_label layout.', array('%layout_label' => $chosen_layout['label']));
       $selected .= '<br/>' . t('The default template can be found in %path', array('%path' => $chosen_layout['path']));
-      $suggestions = 'Possible template suggestions:<ul>';
+      $suggestions = t('Template suggestions') . ':<ul>';
       $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '.tpl.php</li>';
       $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '-' . $bundle . '.tpl.php</li>';
       if (!isset($form_state['no_view_mode_suggestions'])) {
