@@ -805,7 +805,7 @@ function ds_field_attach_view_alter(&$build, $context) {
       $field['title'] = $node_type->title_label;
     }
 
-    if ($field_value) {
+    if (!empty($field_value) || (string) $field_value === '0') {
       $build[$key] = array(
         '#theme' => 'field',
         '#field_type' => 'ds',

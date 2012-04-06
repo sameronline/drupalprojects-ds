@@ -789,6 +789,22 @@ class dsHooksTests extends dsBaseTest {
       'fields[links][region]' => 'left',
       'fields[body][region]' => 'right',
       'fields[ds_test_field][region]' => 'right',
+      'fields[ds_test_field_empty_string][region]' => 'right',
+      'fields[ds_test_field_empty_string][label]' => 'inline',
+      'fields[ds_test_field_false][region]' => 'right',
+      'fields[ds_test_field_false][label]' => 'inline',
+      'fields[ds_test_field_null][region]' => 'right',
+      'fields[ds_test_field_null][label]' => 'inline',
+      'fields[ds_test_field_nothing][region]' => 'right',
+      'fields[ds_test_field_nothing][label]' => 'inline',
+      'fields[ds_test_field_empty_array][region]' => 'right',
+      'fields[ds_test_field_empty_array][label]' => 'inline',
+      'fields[ds_test_field_zero_int][region]' => 'right',
+      'fields[ds_test_field_zero_int][label]' => 'inline',
+      'fields[ds_test_field_zero_string][region]' => 'right',
+      'fields[ds_test_field_zero_string][label]' => 'inline',
+      'fields[ds_test_field_zero_float][region]' => 'right',
+      'fields[ds_test_field_zero_float][label]' => 'inline',
     );
 
     $this->dsSelectLayout();
@@ -802,6 +818,14 @@ class dsHooksTests extends dsBaseTest {
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
     $this->assertText('Test code field on node ' . $node->nid, 'Test code field found');
+    $this->assertNoText('Test code field that returns an empty string', 'Test code field that returns an empty string is not visible.');
+    $this->assertNoText('Test code field that returns FALSE', 'Test code field that returns FALSE is not visible.');
+    $this->assertNoText('Test code field that returns NULL', 'Test code field that returns NULL is not visible.');
+    $this->assertNoText('Test code field that returns nothing', 'Test code field that returns nothing is not visible.');
+    $this->assertNoText('Test code field that returns an empty array', 'Test code field that returns an empty array is not visible.');
+    $this->assertText('Test code field that returns zero as an integer', 'Test code field that returns zero as an integer is visible.');
+    $this->assertText('Test code field that returns zero as a string', 'Test code field that returns zero as a string is visible.');
+    $this->assertText('Test code field that returns zero as a floating point number', 'Test code field that returns zero as a floating point number is visible.');
   }
 
   /**

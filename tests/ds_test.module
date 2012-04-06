@@ -120,6 +120,46 @@ function ds_test_ds_fields_info($entity_type) {
       'field_type' => DS_FIELD_TYPE_FUNCTION,
       'function' => 'dstest_render_test_field',
     );
+    $fields['node']['ds_test_field_empty_string'] = array(
+      'title' => t('Test code field that returns an empty string'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'dstest_render_empty_string',
+    );
+    $fields['node']['ds_test_field_false'] = array(
+      'title' => t('Test code field that returns FALSE'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'dstest_render_false',
+    );
+    $fields['node']['ds_test_field_null'] = array(
+      'title' => t('Test code field that returns NULL'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'dstest_render_null',
+    );
+    $fields['node']['ds_test_field_nothing'] = array(
+      'title' => t('Test code field that returns nothing'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'dstest_render_nothing',
+    );
+    $fields['node']['ds_test_field_empty_array'] = array(
+      'title' => t('Test code field that returns an empty array'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'dstest_render_empty_array',
+    );
+    $fields['node']['ds_test_field_zero_int'] = array(
+      'title' => t('Test code field that returns zero as an integer'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'dstest_render_zero_int',
+    );
+    $fields['node']['ds_test_field_zero_string'] = array(
+      'title' => t('Test code field that returns zero as a string'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'dstest_render_zero_string',
+    );
+    $fields['node']['ds_test_field_zero_float'] = array(
+      'title' => t('Test code field that returns zero as a floating point number'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'dstest_render_zero_float',
+    );
 
     return $fields;
   }
@@ -144,6 +184,62 @@ function ds_test_theming_function($variables) {
  */
 function dstest_render_test_field($field) {
   return 'Test code field on node ' . $field['entity']->nid;
+}
+
+/**
+ * Test code field that returns an empty string.
+ */
+function dstest_render_empty_string() {
+  return '';
+}
+
+/**
+ * Test code field that returns FALSE.
+ */
+function dstest_render_false() {
+  return FALSE;
+}
+
+/**
+ * Test code field that returns NULL.
+ */
+function dstest_render_null() {
+  return NULL;
+}
+
+/**
+ * Test code field that returns nothing.
+ */
+function dstest_render_nothing() {
+  return;
+}
+
+/**
+ * Test code field that returns an empty array.
+ */
+function dstest_render_empty_array() {
+  return array();
+}
+
+/**
+ * Test code field that returns zero as an integer.
+ */
+function dstest_render_zero_int() {
+  return 0;
+}
+
+/**
+ * Test code field that returns zero as a string.
+ */
+function dstest_render_zero_string() {
+  return '0';
+}
+
+/**
+ * Test code field that returns zero as a floating point number.
+ */
+function dstest_render_zero_float() {
+  return 0.0;
 }
 
 /**
