@@ -1515,7 +1515,10 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
     if (isset($form_state['values']['additional_settings']['layout']) || (!empty($layout) && isset($layout->regions))) {
       $fallback_image = drupal_get_path('module', 'ds') . '/img/preview.png';
       $current_layout = isset($form_state['values']['additional_settings']['layout']) && $form_state['values']['additional_settings']['layout'] != $layout->layout ? t('Current layout (after save)') : t('Current layout');
-      $image = (isset($chosen_layout['image']) &&  !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $layout_string . '.png' : $fallback_image;
+      $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $layout_string . '.png' : $fallback_image;
+      if (isset($chosen_layout['panels']) && !empty($chosen_layout['panels']['icon'])) {
+        $image = $chosen_layout['panels']['path'] . '/' . $chosen_layout['panels']['icon'];
+      }
 
       $form['additional_settings']['ds_layouts']['preview'] ['title'] = array(
         '#markup' => '<div class="ds-layout-preview-title">' . $current_layout . '</div>',
