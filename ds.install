@@ -13,12 +13,6 @@ function ds_install() {
     ->fields(array('weight' => 1))
     ->condition('name', 'ds')
     ->execute();
-
-  $schema['node_revision'] = array();
-  ds_schema_alter($schema);
-  foreach ($schema['node_revision']['fields'] as $name => $spec) {
-    db_add_field('node_revision', $name, $spec);
-  }
 }
 
 /**
@@ -292,6 +286,13 @@ function ds_schema() {
         'size' => 'big',
         'serialize' => TRUE,
       ),
+      'ui_limit' => array(
+        'description' => 'The UI limit for this field.',
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+      ),
       'properties' => array(
         'description' => 'The properties for this field.',
         'type' => 'blob',
@@ -304,23 +305,6 @@ function ds_schema() {
   );
 
   return $schema;
-}
-
-/**
- * Implements hook_schema_alter().
- */
-function ds_schema_alter(&$schema) {
-
-  // Add a field ds_switch to the node_revision table in order
-  // to store the name of view mode to switch to.
-  if (isset($schema['node_revision'])) {
-    $schema['node_revision']['fields']['ds_switch'] = array(
-      'type' => 'varchar',
-      'length' => 255,
-      'not null' => TRUE,
-      'default' => '',
-    );
-  }
 }
 
 /**
@@ -361,4 +345,12 @@ function ds_update_7004() {
 function ds_update_7005() {
   variable_set('ds_classes_regions', variable_get('ds_styles_regions'));
   variable_del('ds_styles_regions');
+}
+
+/**
+ * Add the ui_limit table to the fields table.
+ */
+function ds_update_7006() {
+  $schema = ds_schema();
+  db_add_field('ds_fields', 'ui_limit', $schema['ds_fields']['fields']['ui_limit']);
 }

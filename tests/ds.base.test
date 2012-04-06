@@ -235,7 +235,7 @@ class dsFieldsTests extends dsBaseTest {
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[test_field][weight]', t('Test field found on node article.'));
 
-    // Assert it's not found on the Field UI for article.
+    // Assert it's not found on the Field UI for users.
     $this->drupalGet('admin/config/people/accounts/display');
     $this->assertNoRaw('fields[test_field][weight]', t('Test field not found on user.'));
 
@@ -245,6 +245,31 @@ class dsFieldsTests extends dsBaseTest {
     );
     $this->drupalPost('admin/structure/ds/displays/fields/manage_custom/test_field', $edit, t('Save'));
     $this->assertText(t('The field Test field 2 has been saved'), t('Test field label updated'));
+
+    // Use the Field UI limit option.
+    $this->dsSelectLayout(array(), array(), 'admin/structure/types/manage/page/display');
+    $this->dsSelectLayout(array(), array(), 'admin/structure/types/manage/article/display/teaser');
+    $edit = array(
+      'ui_limit' => 'article|default',
+    );
+    $this->drupalPost('admin/structure/ds/displays/fields/manage_custom/test_field', $edit, t('Save'));
+
+    $this->drupalGet('admin/structure/types/manage/article/display');
+    $this->assertRaw('fields[test_field][weight]', t('Test field field found on node article, default.'));
+    $this->drupalGet('admin/structure/types/manage/article/display/teaser');
+    $this->assertNoRaw('fields[test_field][weight]', t('Test field field not found on node article, teaser.'));
+    $this->drupalGet('admin/structure/types/manage/page/display');
+    $this->assertNoRaw('fields[test_field][weight]', t('Test field field not found on node page, default.'));
+    $edit = array(
+      'ui_limit' => 'article|*',
+    );
+    $this->drupalPost('admin/structure/ds/displays/fields/manage_custom/test_field', $edit, t('Save'));
+    $this->drupalGet('admin/structure/types/manage/article/display');
+    $this->assertRaw('fields[test_field][weight]', t('Test field field found on node article, default.'));
+    $this->drupalGet('admin/structure/types/manage/article/display/teaser');
+    $this->assertRaw('fields[test_field][weight]', t('Test field field found on node article, teaser.'));
+
+
 
     // Remove the field.
     $this->drupalPost('admin/structure/ds/displays/fields/delete/test_field', array(), t('Delete'));
@@ -275,7 +300,7 @@ class dsFieldsTests extends dsBaseTest {
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[test_block_field][weight]', t('Test block field found on node article.'));
 
-    // Assert it's not found on the Field UI for article.
+    // Assert it's not found on the Field UI for users.
     $this->drupalGet('admin/config/people/accounts/display');
     $this->assertNoRaw('fields[test_block_field][weight]', t('Test block field not found on user.'));
 
@@ -313,7 +338,7 @@ class dsFieldsTests extends dsBaseTest {
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[submitted][weight]', t('Submitted found on node article.'));
 
-    // Assert it's not found on the Field UI for article.
+    // Assert it's not found on the Field UI for users.
     $this->drupalGet('admin/config/people/accounts/display');
     $this->assertNoRaw('fields[submitted][weight]', t('Submitted not found on user.'));
 
@@ -351,7 +376,7 @@ class dsFieldsTests extends dsBaseTest {
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[dynamic][weight]', t('Dynamic found on node article.'));
 
-    // Assert it's not found on the Field UI for article.
+    // Assert it's not found on the Field UI for users.
     $this->drupalGet('admin/config/people/accounts/display');
     $this->assertNoRaw('fields[dynamic][weight]', t('Dynamic not found on user.'));
 
