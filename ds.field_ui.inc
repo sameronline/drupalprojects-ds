@@ -262,8 +262,8 @@ function ds_field_ui_regions($form, $form_state) {
       '#prefix' => '<div class="limit-float">',
       '#suffix' => '</div><div class="clearfix"></div>',
       '#attributes' => array(
-        'alt' => t('Enter a number to limit the number of items. Leave empty to display them all.'),
-        'title' => t('Enter a number to limit the number of items. Leave empty to display them all.'),
+        'alt' => t('Enter a number to limit the number of items or \'delta\' to print a specific delta (usually configured in views or found in entity->ds_delta). Leave empty to display them all.'),
+        'title' => t('Enter a number to limit the number of items or \'delta\' to print a specific delta (usually configured in views or found in entity->ds_delta). Leave empty to display them all.'),
       ),
     );
 
@@ -577,7 +577,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
       // Save limit.
       $limit = isset($field['format']['limit']) ? trim($field['format']['limit']) : '';
-      if (is_numeric($limit)) {
+      if (is_numeric($limit) || $limit === 'delta') {
         $record->settings['limit'][$key] = $limit;
       }
     }

@@ -766,13 +766,23 @@ function ds_field_attach_view_alter(&$build, $context) {
     return;
   }
 
-  // Check on field limit.
+  // Check on field/delta limit.
   if (isset($layout['settings']['limit'])) {
     foreach ($layout['settings']['limit'] as $field => $limit) {
       if (isset($build[$field])) {
-        $count = count($build[$field]['#items']);
-        if ($count > $limit) {
-          $build[$field]['#items'] = array_slice($build[$field]['#items'], 0, $limit);
+        if ($limit === 'delta' && isset($entity->ds_delta) && isset($entity->ds_delta[$field])) {
+          $delta = $entity->ds_delta[$field];
+          foreach ($build[$field]['#items'] as $key => $item) {
+            if ($key != $delta) {
+              unset($build[$field][$key]);
+            }
+          }
+        }
+        else {
+          $count = count($build[$field]['#items']);
+          if ($count > $limit) {
+            $build[$field]['#items'] = array_slice($build[$field]['#items'], 0, $limit);
+          }
         }
       }
     }
