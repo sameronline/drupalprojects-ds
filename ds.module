@@ -790,7 +790,7 @@ function ds_field_attach_view_alter(&$build, $context) {
     }
 
     $field = $fields[$key];
-    if(isset($field_values[$key]['format'])) {
+    if (isset($field_values[$key]['format'])) {
       $field['formatter'] = $field_values[$key]['format'];
     }
 

@@ -73,7 +73,7 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
     '#theme_wrappers' => array('vertical_tabs'),
   );
 
-  if(!empty($ds_layout)) {
+  if (!empty($ds_layout)) {
     // Content tab.
     $content = ds_panels_content($entity_type, $bundle, $view_mode, $ds_layout, $panel_layout);
 

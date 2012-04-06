@@ -361,7 +361,7 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
   $field_function = isset($field_settings['func']) ? $field_settings['func'] : $default_field_function;
   $field_classes = _ds_classes('ds_classes_fields');
 
-   $form['ft'] = array (
+  $form['ft'] = array(
     '#weight' => 20,
   );
 

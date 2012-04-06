@@ -410,7 +410,7 @@ function _ds_layouts_scan_theme($theme, &$layouts) {
 }
 
 /**
- * Implements hook_menu_alter
+ * Implements hook_menu_alter().
  */
 function _ds_menu_alter(&$items) {
   // Do not conflict with the revisioning module.
