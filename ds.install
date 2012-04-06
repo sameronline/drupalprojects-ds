@@ -292,6 +292,13 @@ function ds_schema() {
         'size' => 'big',
         'serialize' => TRUE,
       ),
+      'ui_limit' => array(
+        'description' => 'The UI limit for this field.',
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+        'serialize' => TRUE,
+      ),
       'properties' => array(
         'description' => 'The properties for this field.',
         'type' => 'blob',
@@ -361,4 +368,12 @@ function ds_update_7004() {
 function ds_update_7005() {
   variable_set('ds_classes_regions', variable_get('ds_styles_regions'));
   variable_del('ds_styles_regions');
+}
+
+/**
+ * Add the ui_limit table to the fields table.
+ */
+function ds_update_7006() {
+  $schema = ds_schema();
+  db_add_field('ds_fields', 'ui_limit', $schema['ds_fields']['fields']['ui_limit']);
 }

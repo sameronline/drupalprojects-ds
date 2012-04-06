@@ -23,6 +23,9 @@ function ds_ds_fields_info($entity_type) {
         'field_type' => $field->field_type,
         'properties' => $field->properties,
       );
+      if (!empty($field->ui_limit)) {
+        $fields[$entity_type][$key]['ui_limit'] = explode("\n", $field->ui_limit);
+      }
     }
   }
 
