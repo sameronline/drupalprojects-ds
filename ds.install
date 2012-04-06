@@ -13,12 +13,6 @@ function ds_install() {
     ->fields(array('weight' => 1))
     ->condition('name', 'ds')
     ->execute();
-
-  $schema['node_revision'] = array();
-  ds_schema_alter($schema);
-  foreach ($schema['node_revision']['fields'] as $name => $spec) {
-    db_add_field('node_revision', $name, $spec);
-  }
 }
 
 /**
@@ -311,23 +305,6 @@ function ds_schema() {
   );
 
   return $schema;
-}
-
-/**
- * Implements hook_schema_alter().
- */
-function ds_schema_alter(&$schema) {
-
-  // Add a field ds_switch to the node_revision table in order
-  // to store the name of view mode to switch to.
-  if (isset($schema['node_revision'])) {
-    $schema['node_revision']['fields']['ds_switch'] = array(
-      'type' => 'varchar',
-      'length' => 255,
-      'not null' => TRUE,
-      'default' => '',
-    );
-  }
 }
 
 /**
