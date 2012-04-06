@@ -284,7 +284,9 @@ function ds_field_ui_regions($form, $form_state) {
       }
 
       // Add label class.
-      $row['label']['#attributes']['class'][] = 'label-change';
+      if (isset($row['label'])) {
+        $row['label']['#attributes']['class'][] = 'label-change';
+      }
 
       // Limit items.
       $field_info = field_info_field($name);
