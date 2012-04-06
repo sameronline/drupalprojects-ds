@@ -1498,7 +1498,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
     $chosen_layout = $ds_layouts[$layout_string];
 
     if (empty($chosen_layout['flexible'])) {
-      $selected = t('%layout_label layout.', array('%layout_label' => $chosen_layout['label']));
+      $selected = '<strong>' . $chosen_layout['label'] . '</strong>';
       $selected .= '<br/>' . t('The default template can be found in %path', array('%path' => $chosen_layout['path']));
       $suggestions = t('Template suggestions') . ':<ul>';
       $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '.tpl.php</li>';
