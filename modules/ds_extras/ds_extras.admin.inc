@@ -133,6 +133,13 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_hide_page_title', FALSE),
   );
 
+  $form['additional_settings']['fs4']['ds_extras_flag'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Flag'),
+    '#description' => t('Expose flags as fields on nodes.'),
+    '#default_value' => variable_get('ds_extras_flag', FALSE),
+  );
+
   if (module_exists('block')) {
     $form['additional_settings']['fs4']['ds_extras_region_to_block'] = array(
       '#type' => 'checkbox',

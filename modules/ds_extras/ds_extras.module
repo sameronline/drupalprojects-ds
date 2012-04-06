@@ -449,6 +449,13 @@ function ds_extras_field_extra_fields() {
 }
 
 /**
+ * Output flag.
+ */
+function ds_extras_flags_add_flag_link($field) {
+  return flag_create_link($field['properties']['flag'], $field['entity']->nid);
+}
+
+/**
  * Implements hook_preprocess_views_view().
  */
 function ds_extras_preprocess_view_layout(&$variables) {
