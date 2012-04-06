@@ -328,18 +328,6 @@ function _ds_ds_layout_info() {
       'css' => TRUE,
       'image' => TRUE,
     ),
-    'ds_3col_stacked_html5' => array(
-      'label' => t('Three column stacked - 25/50/25 (HTML5)'),
-      'path' => $path . '/layouts/ds_3col_stacked_html5',
-      'regions' => array(
-        'header' => t('Header'),
-        'left' => t('Left'),
-        'middle' => t('Middle'),
-        'right' => t('Right'),
-        'footer' => t('Footer'),
-      ),
-      'css' => TRUE,
-    ),
     'ds_4col' => array(
       'label' => t('Four column - equal width'),
       'path' => $path . '/layouts/ds_4col',
