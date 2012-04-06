@@ -60,7 +60,7 @@ class dsNodeTests extends dsBaseTest {
       'fields[token_field][region]' => 'header',
       'fields[php_field][region]' => 'left',
       'fields[body][region]' => 'right',
-      'fields[links][region]' => 'footer',
+      'fields[node_link][region]' => 'footer',
       'fields[body][label]' => $label,
     );
     $this->dsConfigureUI($fields);

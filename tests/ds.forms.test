@@ -100,10 +100,10 @@ class dsFormTests extends dsBaseTest {
     $this->dsSelectLayout($form, $form_assert, 'admin/structure/rel/manage/ds_edit_view_mode_form');
 
     $fields = array(
-      'fields[name][region]' => 'left',
+      'fields[name][region]' => 'header',
       'fields[view_mode][region]' => 'left',
       'fields[entities][region]' => 'right',
-      'fields[submit][region]' => 'right',
+      'fields[submit][region]' => 'footer',
     );
     $this->dsConfigureUI($fields, 'admin/structure/rel/manage/ds_edit_view_mode_form');
 
@@ -145,12 +145,12 @@ class dsFormTests extends dsBaseTest {
     $this->dsSelectLayout($form, $form_assert, 'admin/structure/rel/manage/ds_edit_custom_field_form');
 
     $fields = array(
-      'fields[name][region]' => 'left',
+      'fields[name][region]' => 'header',
       'fields[field][region]' => 'left',
       'fields[submit][region]' => 'right',
       'fields[code][region]' => 'right',
       'fields[use_token][region]' => 'right',
-      'fields[entities][region]' => 'right',
+      'fields[entities][region]' => 'footer',
     );
     $this->dsConfigureUI($fields, 'admin/structure/rel/manage/ds_edit_custom_field_form');
 

@@ -121,6 +121,9 @@ function ds_shared_form(&$form, $field) {
   $custom_fields = ctools_export_crud_load_all('ds_fields');
   if (isset($custom_fields[$field])) {
     $field = $custom_fields[$field];
+    if (!isset($field->ui_limit)) {
+      $field->ui_limit = '';
+    }
   }
   else {
     $field = new stdClass;
