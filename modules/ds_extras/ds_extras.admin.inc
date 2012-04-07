@@ -132,6 +132,13 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_revision_view_mode', FALSE),
   );
 
+  $form['additional_settings']['fs4']['ds_extras_hidden_region'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hidden region'),
+    '#description' => t('Add a hidden region to the layouts. Fields will be built but not printed.'),
+    '#default_value' => variable_get('ds_extras_hidden_region', FALSE),
+  );
+
   if (module_exists('contextual') && module_exists('field_ui')) {
     $form['additional_settings']['fs4']['ds_extras_contextual'] = array(
       '#type' => 'checkbox',

@@ -130,6 +130,17 @@ function ds_extras_entity_info_alter(&$entity_info) {
 }
 
 /**
+ * Implements hook_ds_layout_info_alter().
+ */
+function ds_extras_ds_layout_info_alter(&$layouts) {
+  if (variable_get('ds_extras_hidden_region')) {
+    foreach ($layouts as $key => $layout) {
+      $layouts[$key]['regions']['ds_hidden'] = t('Hidden');
+    }
+  }
+}
+
+/**
  * Implements hook_permission().
  */
 function ds_extras_permission() {
