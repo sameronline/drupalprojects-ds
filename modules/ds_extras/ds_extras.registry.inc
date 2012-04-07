@@ -80,7 +80,7 @@ function _ds_extras_entity_info() {
   foreach ($vd_settings as $key => $vd) {
     $bundles[$vd->vd] = array(
       'label' => check_plain($vd->label),
-      'admin' => array('path' => 'admin/structure/ds/vd/' . $vd->vd),
+      'admin' => array('path' => 'admin/structure/ds/vd/manage/' . $vd->vd),
     );
   }
 
