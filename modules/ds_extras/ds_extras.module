@@ -326,14 +326,20 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
     $view_mode_settings = field_view_mode_settings('node', $form['#node']->type);
 
     // Get the view modes.
-    $options = array('' => t('Default'));
     $ds_vm = ds_entity_view_modes('node');
+    $layouts = array();
+    $options = array('' => t('Default');
     foreach ($ds_vm as $key => $item) {
       $overriden = (!empty($view_mode_settings[$key]['custom_settings']) ? TRUE : FALSE);
       if ($overriden) {
+        $layout = ds_get_layout('node', $form['#node']->type, $key, FALSE);
+        $layouts[$key] = $layout;
         $options[$key] = $item['label'];
       }
     }
+
+    // Add default layout settings
+    $layouts[''] = ds_get_layout('node', $form['#node']->type, 'default', FALSE);
 
     // Only fire if we have more than 1 option.
     if (count($options) > 1) {
@@ -357,10 +363,41 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
         '#default_value' => isset($node->ds_switch) ? $node->ds_switch : '',
         '#description' => t('Switch to a different view mode to display the full page view of this node.'),
         '#weight' => -1,
+        '#ajax' => array(
+          'callback' => 'ds_extras_switch_view_mode_preview_callback',
+          'wrapper' => 'ds_switch_preview_wrapper',
+        ),
+      );
+
+      $form['ds_extras']['preview'] = array(
+        '#type' => 'container',
+        '#prefix' => '<div id="ds_switch_preview_wrapper">',
+        '#suffix' => '</div>',
+      );
+
+      $mode = isset($form_state['input']['ds_switch']) ? $form_state['input']['ds_switch'] : $node->ds_switch;
+      $chosen_layout = $layouts[$mode];
+
+      $fallback_image = drupal_get_path('module', 'ds') . '/img/preview.png';
+      $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $chosen_layout['layout'] . '.png' : $fallback_image;
+      if (isset($chosen_layout['panels']) && !empty($chosen_layout['panels']['icon'])) {
+        $image = $chosen_layout['panels']['path'] . '/' . $chosen_layout['panels']['icon'];
+      }
+
+      $form['ds_extras']['preview']['image'] = array(
+        '#markup' => '<div class="ds-layout-preview-image"><img src="' . base_path() . $image . '"/></div>',
       );
     }
   }
 }
+
+/**
+ * Ajax callback for _ds_field_ui_table_layouts_preview().
+ */
+function ds_extras_switch_view_mode_preview_callback($form, $form_state) {
+  return $form['ds_extras']['preview'];
+}
+
 
 /**
  * Implements hook_block_info().
