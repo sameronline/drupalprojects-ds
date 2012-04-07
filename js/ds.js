@@ -48,7 +48,6 @@ Drupal.behaviors.settingsToggle = {
 
       // Bind update button.
       fieldTemplate.find('input[value="Update"]').click(function() {
-        console.log('kak');
         // Check the label.
         var row = $(this).parents('tr');
         var label = $('.label-change', settings).val();
