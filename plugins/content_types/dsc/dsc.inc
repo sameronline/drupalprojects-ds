@@ -11,6 +11,7 @@
  */
 $plugin = array(
   'title' => t('Display suite content'),
+  'category' => t('Display suite'),
   'single' => TRUE,
   'defaults' => array(
     'title' => '',
@@ -19,8 +20,6 @@ $plugin = array(
     'context' => array(),
   ),
   'description' => t('Add custom content with the possibility to use the entity object when using the Display suite format.'),
-  'category' => t('Custom'),
-  'top level' => TRUE,
   'js' => array('misc/textarea.js', 'misc/collapse.js'),
   'all contexts' => TRUE,
 );
@@ -47,14 +46,10 @@ function ds_dsc_content_type_render($subtype, $conf, $panel_args, $context, $inc
 }
 
 /**
- * The form to add or edit a node as content.
+ * The form to add or edit display suite content.
  */
 function ds_dsc_content_type_edit_form($form, &$form_state) {
   $conf = $form_state['conf'];
-
-  $form['override_title']['#access'] = FALSE;
-  $form['override_title_text']['#access'] = FALSE;
-  $form['override_title_markup']['#access'] = FALSE;
 
   $form['title'] = array(
     '#type' => 'textfield',
@@ -83,7 +78,7 @@ function ds_dsc_content_type_edit_form_submit($form, &$form_state) {
 }
 
 /**
- * Returns the administrative title for a Display suite content..
+ * Returns the administrative title for a Display suite content.
  */
 function ds_dsc_content_type_admin_title($subtype, $conf) {
   return (!empty($conf['title'])) ? $conf['title'] : t('Display suite content');
