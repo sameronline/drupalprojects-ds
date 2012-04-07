@@ -257,6 +257,8 @@ function ds_extras_select_layout_editor($entity_type, $bundle_arg, $view_mode) {
  * Alter Manage display screen.
  */
 function ds_extras_field_ui_alter(&$form, &$form_state) {
+  // Attach js.
+  $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/ds_extras.admin.js';
 
   // Views displays.
   if ($form['#entity_type'] == 'ds_views') {

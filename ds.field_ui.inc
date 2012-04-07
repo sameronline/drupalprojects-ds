@@ -43,7 +43,7 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   }
 
   // Attach js.
-  $form['#attached']['js'][] = drupal_get_path('module', 'ds') . '/js/ds.js';
+  $form['#attached']['js'][] = drupal_get_path('module', 'ds') . '/js/ds.admin.js';
 
   // Attach css.
   $form['#attached']['css'][] = drupal_get_path('module', 'ds') . '/css/ds.admin.css';
