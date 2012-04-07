@@ -41,7 +41,11 @@ function ds_layout_list() {
         }
 
         $row[] = $bundle['label'];
-        $row[] = l(t('Manage display'), $path . '/display');
+        $links = array(l(t('Manage display'), $path . '/display'));
+        if ($entity['base table'] == 'node' && !module_exists('rel')) {
+          $links[] = l(t('Manage form'), $path . '/fields');
+        }
+        $row[] = implode(' - ', $links);
         $rows[] = $row;
       }
 
