@@ -409,7 +409,6 @@ function ds_extras_switch_view_mode_preview_callback($form, $form_state) {
   return $form['ds_extras']['preview'];
 }
 
-
 /**
  * Implements hook_block_info().
  */
