@@ -429,7 +429,13 @@ function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundl
 
     $fallback_image = drupal_get_path('module', 'ds') . '/img/preview.png';
     $old_image = (isset($old_layout['image']) &&  !empty($old_layout['image'])) ? $old_layout['path'] . '/' . $old_layout['layout'] . '.png' : $fallback_image;
+    if (isset($old_layout['panels']) && !empty($old_layout['panels']['icon'])) {
+      $old_image = $old_layout['panels']['path'] . '/' . $old_layout['panels']['icon'];
+    }
     $new_image = (isset($new_layout['image']) &&  !empty($new_layout['image'])) ? $new_layout['path'] . '/' . $new_layout_key . '.png' : $fallback_image;
+    if (isset($new_layout['panels']) && !empty($new_layout['panels']['icon'])) {
+      $new_image = $new_layout['panels']['path'] . '/' . $new_layout['panels']['icon'];
+    }
     $arrow = drupal_get_path('module', 'ds') . '/img/arrow.png';
 
     $form['preview']['old_layout'] = array(
