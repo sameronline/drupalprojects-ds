@@ -133,6 +133,13 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_hide_page_title', FALSE),
   );
 
+  $form['additional_settings']['fs4']['ds_extras_hidden_region'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hidden region'),
+    '#description' => t('Add a hidden region to the layouts. Fields will be built but not printed.'),
+    '#default_value' => variable_get('ds_extras_hidden_region', FALSE),
+  );
+
   $form['additional_settings']['fs4']['ds_extras_flag'] = array(
     '#type' => 'checkbox',
     '#title' => t('Flag'),
