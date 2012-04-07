@@ -708,20 +708,27 @@ function ds_field_ui_layout_clone($form, &$form_state) {
 
   // Save new layout record for ds.
   if ($layout) {
-    $settings = $layout->settings;
     $record = new stdClass();
     $record->id = $form['#export_id'];
     $record->entity_type = $entity_type;
     $record->bundle = $bundle;
     $record->view_mode = $view_mode;
     $record->layout = $layout->layout;
-    $record->settings = $settings;
+    $record->settings = $layout->settings;
 
     // Let other modules alter the layout settings.
     drupal_alter('ds_layout_settings', $record, $form_state);
 
     // Save layout record.
     drupal_write_record('ds_layout_settings', $record);
+
+    // Copy the field_bundle_settings from the cloned entity and bundle.
+    $clone_settings = field_bundle_settings($layout->entity_type, $layout->bundle);
+    $record_settings = field_bundle_settings($entity_type, $bundle);
+    $record_settings['view_modes'][$view_mode] = $clone_settings['view_modes'][$layout->view_mode];
+
+    // Update the field_bundle_settings.
+    field_bundle_settings($entity_type, $bundle, $record_settings);
 
     // Clear entity info cache.
     cache_clear_all('entity_info', 'cache', TRUE);
