@@ -773,7 +773,7 @@ function ds_field_settings_summary($field, $form_state) {
 
   // Not all fields have settings.
   if (isset($field['properties']['settings'])) {
-    $summary = module_invoke($field['module'], 'ds_field_format_summary', $field);
+    $summary = module_invoke($field['module'], 'ds_field_format_summary', $field) . '<br />';
   }
 
   if (module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
