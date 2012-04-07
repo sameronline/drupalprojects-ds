@@ -816,7 +816,7 @@ function ds_vd_render_title_field($field) {
   $output = '';
   $formatter = explode('_', $field['formatter']);
   $tag = $formatter[2];
-  $output = '<' . $tag . '>' . check_plain($field['entity']->get_title()) . '</' . $tag . '>';
+  $output = '<' . $tag . '>' . $field['entity']->get_title() . '</' . $tag . '>';
 
   // Views is a special case, we stack title on the entity.
   $field['entity']->preprocess_fields[] = 'title';
