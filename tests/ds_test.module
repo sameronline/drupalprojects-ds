@@ -13,7 +13,6 @@ function ds_test_install() {
   variable_set('ds_extras_switch_view_mode', TRUE);
   variable_set('ds_extras_hide_page_title', TRUE);
   variable_set('ds_extras_field_template', TRUE);
-  variable_set('ds_extras_revision_view_mode', TRUE);
   variable_set('ds_extras_fields_extra', TRUE);
   variable_set('ds_extras_fields_extra_list', "node|article|ds_extras_extra_test_field\nnode|article|ds_extras_second_field");
   variable_set('ds_extras_vd', TRUE);
