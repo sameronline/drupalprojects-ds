@@ -337,8 +337,16 @@ function _ds_ds_layout_info() {
         'third' => t('Third'),
         'fourth' => t('Fourth'),
       ),
-       'css' => TRUE,
-       'image' => TRUE,
+      'css' => TRUE,
+      'image' => TRUE,
+    ),
+    'ds_reset' => array(
+      'label' => t('Reset'),
+      'path' => $path . '/layouts/ds_reset',
+      'regions' => array(
+        'ds_content' => t('Content'),
+      ),
+      'image' => TRUE,
     ),
   );
 

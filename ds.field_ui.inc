@@ -1343,13 +1343,19 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
 
   if (!empty($layout) && isset($layout->regions)) {
 
-    // Add HTML5 wrappers
-    $wrapper_options = array('div' => 'Div', 'section' => 'Section', 'article' => 'Article', 'header' => 'Header', 'footer' => 'Footer', 'aside' => 'Aside');
+    // Add wrappers
+    $wrapper_options = array('div' => 'Div', 'span' => 'Span', 'section' => 'Section', 'article' => 'Article', 'header' => 'Header', 'footer' => 'Footer', 'aside' => 'Aside');
     $form['additional_settings']['region_wrapper'] = array(
       '#type' => 'fieldset',
       '#title' => t('Custom wrappers'),
-      '#description' => t('Choose a HTML5 wrapper')
+      '#description' => t('Choose a wrapper')
     );
+
+    // Hide the fieldset in case of the reset layout
+    if ($layout->layout === 'ds_reset') {
+       $form['additional_settings']['region_wrapper']['#access'] = false;
+    }
+
     foreach (array_keys($layout->regions) as $region) {
       $form['additional_settings']['region_wrapper'][$region] = array(
         '#type' => 'select',
