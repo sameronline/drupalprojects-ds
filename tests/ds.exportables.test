@@ -31,7 +31,7 @@ class dsExportablesTests extends dsBaseTest {
     $this->dsExportablesSetup();
 
     // Find a default view mode on admin screen.
-    $this->drupalGet('admin/structure/ds/displays/view_modes');
+    $this->drupalGet('admin/structure/ds/view_modes');
     $this->assertText('Test exportables', t('Exportables view mode found on admin screen.'));
 
     // Find default view mode on layout screen.
@@ -42,7 +42,7 @@ class dsExportablesTests extends dsBaseTest {
     $edit = array(
       'name' => 'Testing 2',
     );
-    $this->drupalPost('admin/structure/ds/displays/view_modes/manage/test_exportables', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/view_modes/manage/test_exportables', $edit, t('Save'));
     $this->assertText(t('The view mode Testing 2 has been saved'), t('Exportables label updated'));
     $this->assertText(t('Revert'), t('Revert button found.'));
 
@@ -51,7 +51,7 @@ class dsExportablesTests extends dsBaseTest {
     $this->assertText('Testing 2', t('Updated exportables view mode found on display screen.'));
 
     // Revert the view mode.
-    $this->drupalPost('admin/structure/ds/displays/view_modes/revert/test_exportables', array(), t('Revert'));
+    $this->drupalPost('admin/structure/ds/view_modes/revert/test_exportables', array(), t('Revert'));
     $this->assertText(t('The view mode Testing 2 has been reverted'), t('Testing view mode reverted'));
     $this->assertText('Test exportables', t('Exportables view mode found on admin screen.'));
 
@@ -130,7 +130,7 @@ class dsExportablesTests extends dsBaseTest {
     $this->dsExportablesSetup();
 
     // Look for default custom field.
-    $this->drupalGet('admin/structure/ds/displays/fields');
+    $this->drupalGet('admin/structure/ds/fields');
     $this->assertText('Exportable field');
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertText('Exportable field');
@@ -140,7 +140,7 @@ class dsExportablesTests extends dsBaseTest {
     $edit = array(
       'name' => 'Overridden field',
     );
-    $this->drupalPost('admin/structure/ds/displays/fields/manage_custom/ds_exportable_field', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_custom/ds_exportable_field', $edit, t('Save'));
     $this->assertText(t('The field Overridden field has been saved'), t('Default exportable field label updated'));
     $this->assertText('Overridden field');
     $this->assertNoText('Exportable field');
@@ -150,7 +150,7 @@ class dsExportablesTests extends dsBaseTest {
 
     // Revert.
     $edit = array();
-    $this->drupalPost('admin/structure/ds/displays/fields/revert/ds_exportable_field', $edit, t('Revert'));
+    $this->drupalPost('admin/structure/ds/fields/revert/ds_exportable_field', $edit, t('Revert'));
     $this->assertText('The field Overridden field has been reverted', t('Field reverted'));
     $this->assertText('Exportable field');
     $this->drupalGet('admin/structure/types/manage/article/display');

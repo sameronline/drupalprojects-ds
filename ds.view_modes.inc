@@ -22,13 +22,13 @@ function ds_view_modes_list() {
       $row[] = check_plain($view_mode_value->label);
       $row[] = $view_mode_key;
       $row[] = ucwords(str_replace('_', ' ', implode(', ', $view_mode_value->entities)));
-      $operations = l(t('Edit'), 'admin/structure/ds/displays/view_modes/manage/' . $view_mode_key, array('alias' => TRUE));
+      $operations = l(t('Edit'), 'admin/structure/ds/view_modes/manage/' . $view_mode_key, array('alias' => TRUE));
 
       if ($view_mode_value->export_type == 3) {
-        $operations .= ' - ' . l(t('Revert'), 'admin/structure/ds/displays/view_modes/revert/' . $view_mode_key, array('alias' => TRUE));
+        $operations .= ' - ' . l(t('Revert'), 'admin/structure/ds/view_modes/revert/' . $view_mode_key, array('alias' => TRUE));
       }
       elseif ($view_mode_value->export_type == 1) {
-        $operations .= ' - ' . l(t('Delete'), 'admin/structure/ds/displays/view_modes/delete/' . $view_mode_key, array('alias' => TRUE));
+        $operations .= ' - ' . l(t('Delete'), 'admin/structure/ds/view_modes/delete/' . $view_mode_key, array('alias' => TRUE));
       }
       $row[] = $operations;
       $rows[] = $row;
@@ -176,7 +176,7 @@ function ds_edit_view_mode_form_submit($form, &$form_state) {
   variable_set('menu_rebuild_needed', TRUE);
 
   // Redirect.
-  $form_state['redirect'] = 'admin/structure/ds/displays/view_modes';
+  $form_state['redirect'] = 'admin/structure/ds/view_modes';
   drupal_set_message(t('The view mode %view_mode has been saved', array('%view_mode' => $view_mode->label)));
 }
 
@@ -218,7 +218,7 @@ function ds_remove_view_mode_confirm($form, &$form_state, $view_mode = '', $acti
     $form['#view_mode'] = $view_mode;
     return confirm_form($form,
       t('Are you sure you want to ' . $action . ' %view_mode?', array('%view_mode' => $view_mode->label)),
-      'admin/structure/ds/displays/view_modes',
+      'admin/structure/ds/view_modes',
       t('This action cannot be undone.'),
       t(drupal_ucfirst($action)),
       t('Cancel')
@@ -226,7 +226,7 @@ function ds_remove_view_mode_confirm($form, &$form_state, $view_mode = '', $acti
   }
   else {
     drupal_set_message(t('This operation is not possible.'));
-    drupal_goto('admin/structure/ds/displays/view_modes');
+    drupal_goto('admin/structure/ds/view_modes');
   }
 }
 
@@ -272,6 +272,6 @@ function ds_remove_view_mode($form, &$form_state, $action = 'deleted') {
   variable_set('menu_rebuild_needed', TRUE);
 
   // Redirect.
-  $form_state['redirect'] = 'admin/structure/ds/displays/view_modes';
+  $form_state['redirect'] = 'admin/structure/ds/view_modes';
   drupal_set_message(t('The view mode %view_mode has been ' . $action . '.', array('%view_mode' => $view_mode->label)));
 }

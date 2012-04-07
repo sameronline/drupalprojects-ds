@@ -11,13 +11,14 @@
 function ds_extras_menu() {
   $items = array();
 
-  $items['admin/structure/ds/extras'] = array(
+  $items['admin/structure/ds/list/extras'] = array(
     'title' => 'Extras',
     'description' => 'Configure extra functionality for Display suite.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_extras_settings'),
     'access arguments' => array('admin_display_suite'),
     'file' => 'ds_extras.admin.inc',
+    'type' => MENU_LOCAL_TASK,
   );
 
   if (variable_get('ds_extras_switch_field')) {
@@ -38,6 +39,7 @@ function ds_extras_menu() {
       'page callback' => 'ds_extras_vd_overview',
       'file' => 'ds_extras.vd.inc',
       'access arguments' => array('admin_display_suite'),
+      'type' => MENU_LOCAL_TASK,
     );
     $items['admin/structure/ds/vd/manage'] = array(
       'title' => 'Manage layout',
@@ -45,6 +47,7 @@ function ds_extras_menu() {
       'page callback' => 'ds_extras_vd_manage',
       'file' => 'ds_extras.vd.inc',
       'access arguments' => array('admin_display_suite'),
+      'type' => MENU_LOCAL_TASK,
     );
   }
 

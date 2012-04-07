@@ -3,4 +3,4 @@ description = "Extend the display options for search results for Drupal Core or 
 core = "7.x"
 package = "Display suite"
 dependencies[] = ds
-configure = admin/structure/ds/search
+configure = admin/structure/ds/list/search

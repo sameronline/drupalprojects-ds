@@ -32,7 +32,7 @@ class dsNodeTests extends dsBaseTest {
 
     // Create field CSS classes.
     $edit = array('ds_classes_fields' => "test_field_class\ntest_field_class_2|Field class 2");
-    $this->drupalPost('admin/structure/ds/displays/classes', $edit, t('Save configuration'));
+    $this->drupalPost('admin/structure/ds/classes', $edit, t('Save configuration'));
 
     // Create a token and php field.
     $token_field = array(
@@ -169,7 +169,7 @@ class dsNodeTests extends dsBaseTest {
     $block = array(
       'block_render' => DS_BLOCK_TITLE_CONTENT,
     );
-    $this->dsCreateBlockField($block, 'admin/structure/ds/displays/fields/manage_block/test_block_field', FALSE);
+    $this->dsCreateBlockField($block, 'admin/structure/ds/fields/manage_block/test_block_field', FALSE);
     $this->drupalGet('node/' . $node->nid);
     $this->assertNoRaw('<h2>Recent content</h2>');
     $this->assertRaw('Recent content');
@@ -177,7 +177,7 @@ class dsNodeTests extends dsBaseTest {
     $block = array(
       'block_render' => DS_BLOCK_CONTENT,
     );
-    $this->dsCreateBlockField($block, 'admin/structure/ds/displays/fields/manage_block/test_block_field', FALSE);
+    $this->dsCreateBlockField($block, 'admin/structure/ds/fields/manage_block/test_block_field', FALSE);
     $this->drupalGet('node/' . $node->nid);
     $this->assertNoRaw('<h2>Recent content</h2>');
     $this->assertNoRaw('Recent content');
@@ -333,7 +333,7 @@ class dsNodeTests extends dsBaseTest {
     $edit = array(
       'additional_settings[fs1][ft-default]' => 'theme_ds_field_reset',
     );
-    $this->drupalPost('admin/structure/ds/extras', $edit, t('Save configuration'));
+    $this->drupalPost('admin/structure/ds/list/extras', $edit, t('Save configuration'));
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
       <p>" . $body_field . "</p>");

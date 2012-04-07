@@ -55,7 +55,7 @@ class dsBaseTest extends DrupalWebTestCase {
       'ds_classes_regions' => "class_name_1\nclass_name_2|Friendly name"
     );
 
-    $this->drupalPost('admin/structure/ds/displays/classes', $edit, t('Save configuration'));
+    $this->drupalPost('admin/structure/ds/classes', $edit, t('Save configuration'));
     $this->assertText(t('The configuration options have been saved.'), t('CSS classes configuration saved'));
     $this->assertRaw('class_name_1', 'Class name 1 found');
     $this->assertRaw('class_name_2', 'Class name 1 found');
@@ -104,7 +104,7 @@ class dsBaseTest extends DrupalWebTestCase {
       'entities[node]' => '1'
     );
 
-    $this->drupalPost('admin/structure/ds/displays/view_modes/manage', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/view_modes/manage', $edit, t('Save'));
     $this->assertText(t('The view mode ' . $edit['name'] . ' has been saved'), t('!name view mode has been saved', array('!name' => $edit['name'])));
   }
 
@@ -114,7 +114,7 @@ class dsBaseTest extends DrupalWebTestCase {
    * @param $edit
    *   An optional array of field properties.
    */
-  function dsCreateCodeField($edit = array(), $url = 'admin/structure/ds/displays/fields/manage_custom') {
+  function dsCreateCodeField($edit = array(), $url = 'admin/structure/ds/fields/manage_custom') {
 
     $edit += array(
       'name' => 'Test field',
@@ -134,7 +134,7 @@ class dsBaseTest extends DrupalWebTestCase {
    * @param $edit
    *   An optional array of field properties.
    */
-  function dsCreateBlockField($edit = array(), $url = 'admin/structure/ds/displays/fields/manage_block', $first = TRUE) {
+  function dsCreateBlockField($edit = array(), $url = 'admin/structure/ds/fields/manage_block', $first = TRUE) {
 
     $edit += array(
       'name' => 'Test block field',
@@ -157,7 +157,7 @@ class dsBaseTest extends DrupalWebTestCase {
    * @param $edit
    *   An optional array of field properties.
    */
-  function dsCreatePreprocessField($edit = array(), $url = 'admin/structure/ds/displays/fields/manage_preprocess', $first = TRUE) {
+  function dsCreatePreprocessField($edit = array(), $url = 'admin/structure/ds/fields/manage_preprocess', $first = TRUE) {
 
     $edit += array(
       'name' => 'Submitted',
@@ -178,7 +178,7 @@ class dsBaseTest extends DrupalWebTestCase {
    * @param $edit
    *   An optional array of field properties.
    */
-  function dsCreateDynamicField($edit = array(), $url = 'admin/structure/ds/displays/fields/manage_ctools', $first = TRUE) {
+  function dsCreateDynamicField($edit = array(), $url = 'admin/structure/ds/fields/manage_ctools', $first = TRUE) {
 
     $edit += array(
       'name' => 'Dynamic',
@@ -226,7 +226,7 @@ class dsFieldsTests extends dsBaseTest {
     $this->dsCreateCodeField($edit);
 
     // Create the same and assert it already exists.
-    $this->drupalPost('admin/structure/ds/displays/fields/manage_custom', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_custom', $edit, t('Save'));
     $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Field testing already exists.'));
 
     $this->dsSelectLayout();
@@ -243,7 +243,7 @@ class dsFieldsTests extends dsBaseTest {
     $edit = array(
       'name' => 'Test field 2',
     );
-    $this->drupalPost('admin/structure/ds/displays/fields/manage_custom/test_field', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_custom/test_field', $edit, t('Save'));
     $this->assertText(t('The field Test field 2 has been saved'), t('Test field label updated'));
 
     // Use the Field UI limit option.
@@ -252,7 +252,7 @@ class dsFieldsTests extends dsBaseTest {
     $edit = array(
       'ui_limit' => 'article|default',
     );
-    $this->drupalPost('admin/structure/ds/displays/fields/manage_custom/test_field', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_custom/test_field', $edit, t('Save'));
 
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[test_field][weight]', t('Test field field found on node article, default.'));
@@ -263,7 +263,7 @@ class dsFieldsTests extends dsBaseTest {
     $edit = array(
       'ui_limit' => 'article|*',
     );
-    $this->drupalPost('admin/structure/ds/displays/fields/manage_custom/test_field', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_custom/test_field', $edit, t('Save'));
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[test_field][weight]', t('Test field field found on node article, default.'));
     $this->drupalGet('admin/structure/types/manage/article/display/teaser');
@@ -272,7 +272,7 @@ class dsFieldsTests extends dsBaseTest {
 
 
     // Remove the field.
-    $this->drupalPost('admin/structure/ds/displays/fields/delete/test_field', array(), t('Delete'));
+    $this->drupalPost('admin/structure/ds/fields/delete/test_field', array(), t('Delete'));
     $this->assertText(t('The field Test field 2 has been deleted'), t('Test field removed'));
 
     // Assert the field is gone at the manage display screen.
@@ -291,7 +291,7 @@ class dsFieldsTests extends dsBaseTest {
     $this->dsCreateBlockField($edit);
 
     // Create the same and assert it already exists.
-    $this->drupalPost('admin/structure/ds/displays/fields/manage_block', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_block', $edit, t('Save'));
     $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Block test field already exists.'));
 
     $this->dsSelectLayout();
@@ -308,11 +308,11 @@ class dsFieldsTests extends dsBaseTest {
     $edit = array(
       'name' => 'Test block field 2',
     );
-    $this->drupalPost('admin/structure/ds/displays/fields/manage_block/test_block_field', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_block/test_block_field', $edit, t('Save'));
     $this->assertText(t('The field Test block field 2 has been saved'), t('Test field label updated'));
 
     // Remove the block field.
-    $this->drupalPost('admin/structure/ds/displays/fields/delete/test_block_field', array(), t('Delete'));
+    $this->drupalPost('admin/structure/ds/fields/delete/test_block_field', array(), t('Delete'));
     $this->assertText(t('The field Test block field 2 has been deleted'), t('Test field removed'));
 
     // Assert the block field is gone at the manage display screen.
@@ -329,7 +329,7 @@ class dsFieldsTests extends dsBaseTest {
     $this->dsCreatePreprocessField($edit);
 
     // Create the same and assert it already exists.
-    $this->drupalPost('admin/structure/ds/displays/fields/manage_custom', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_custom', $edit, t('Save'));
     $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Submitted already exists.'));
 
     $this->dsSelectLayout();
@@ -346,11 +346,11 @@ class dsFieldsTests extends dsBaseTest {
     $edit = array(
       'name' => 'Submitted by',
     );
-    $this->drupalPost('admin/structure/ds/displays/fields/manage_preprocess/submitted', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_preprocess/submitted', $edit, t('Save'));
     $this->assertText(t('The field Submitted by has been saved'), t('Submitted label updated'));
 
     // Remove a field.
-    $this->drupalPost('admin/structure/ds/displays/fields/delete/submitted', array(), t('Delete'));
+    $this->drupalPost('admin/structure/ds/fields/delete/submitted', array(), t('Delete'));
     $this->assertText(t('The field Submitted by has been deleted'), t('Submitted removed'));
 
     // Assert the field is gone at the manage display screen.
@@ -367,7 +367,7 @@ class dsFieldsTests extends dsBaseTest {
     $this->dsCreateDynamicField($edit);
 
     // Create the same and assert it already exists.
-    $this->drupalPost('admin/structure/ds/displays/fields/manage_ctools', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_ctools', $edit, t('Save'));
     $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Dynamic already exists.'));
 
     $this->dsSelectLayout();
@@ -384,11 +384,11 @@ class dsFieldsTests extends dsBaseTest {
     $edit = array(
       'name' => 'Uber dynamic',
     );
-    $this->drupalPost('admin/structure/ds/displays/fields/manage_ctools/dynamic', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_ctools/dynamic', $edit, t('Save'));
     $this->assertText(t('The field Uber dynamic has been saved'), t('Dynamic label updated'));
 
     // Remove a field.
-    $this->drupalPost('admin/structure/ds/displays/fields/delete/dynamic', array(), t('Delete'));
+    $this->drupalPost('admin/structure/ds/fields/delete/dynamic', array(), t('Delete'));
     $this->assertText(t('The field Uber dynamic has been deleted'), t('Dynamic removed'));
 
     // Assert the field is gone at the manage display screen.
@@ -427,7 +427,7 @@ class dsViewModesTests extends dsBaseTest {
     $this->dsCreateViewMode($edit);
 
     // Create the same and assert it already exists.
-    $this->drupalPost('admin/structure/ds/displays/view_modes/manage', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/view_modes/manage', $edit, t('Save'));
     $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('View mode testing already exists.'));
 
     // Assert it's found on the Field UI for article.
@@ -442,11 +442,11 @@ class dsViewModesTests extends dsBaseTest {
     $edit = array(
       'name' => 'Testing 2',
     );
-    $this->drupalPost('admin/structure/ds/displays/view_modes/manage/testing', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/view_modes/manage/testing', $edit, t('Save'));
     $this->assertText(t('The view mode Testing 2 has been saved'), t('Testing label updated'));
 
     // Remove a view mode.
-    $this->drupalPost('admin/structure/ds/displays/view_modes/delete/testing', array(), t('Delete'));
+    $this->drupalPost('admin/structure/ds/view_modes/delete/testing', array(), t('Delete'));
     $this->assertText(t('The view mode Testing 2 has been deleted'), t('Testing view mode removed'));
 
     // Assert the view mode is gone at the manage display screen.

@@ -15,9 +15,28 @@ function ds_forms_menu() {
     $items['admin/structure/ds/forms'] = array(
       'title' => 'Forms',
       'description' => 'Displays a list of forms which can be styled.',
-      'page callback' => 'drupal_goto',
-      'page arguments' => array('admin/structure/rel'),
+      'page callback' => 'rel_builds_overview',
       'access arguments' => array('admin_display_suite'),
+      'file path' => drupal_get_path('module', 'rel'),
+      'file' => 'rel.admin.inc',
+      'type' => MENU_LOCAL_TASK,
+    );
+
+    $items['admin/structure/ds/forms/overview'] = array(
+     'title' => 'Renderable elements',
+     'type' => MENU_DEFAULT_LOCAL_TASK,
+     'weight' => -10,
+    );
+
+    $items['admin/structure/ds/forms/config'] = array(
+      'title' => 'Settings',
+      'description' => 'Enable on site registration of builds.',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('rel_register_admin_form'),
+      'access arguments' => array('rel_build_registration'),
+      'file path' => drupal_get_path('module', 'rel'),
+      'file' => 'rel.admin.inc',
+      'type' => MENU_LOCAL_TASK | MENU_NORMAL_ITEM,
     );
   }
 

@@ -95,7 +95,7 @@ function ds_field_ui_create_vertical_tabs(&$form) {
   $view_mode_admin_access = user_access('admin_view_modes');
   if (isset($form['modes'])) {
     if ($view_mode_admin_access) {
-      $form['modes']['view_modes_custom']['#description'] = l(t('Manage view modes'), 'admin/structure/ds/displays/view_modes');
+      $form['modes']['view_modes_custom']['#description'] = l(t('Manage view modes'), 'admin/structure/ds/view_modes');
     }
     $form['additional_settings']['modes'] = $form['modes'];
     $form['additional_settings']['modes']['#weight'] = -10;
@@ -103,7 +103,7 @@ function ds_field_ui_create_vertical_tabs(&$form) {
   }
   else {
     if ($view_mode_admin_access) {
-      $form['additional_settings']['modes']['view_modes_custom']['#description'] = l(t('Manage view modes'), 'admin/structure/ds/displays/view_modes');
+      $form['additional_settings']['modes']['view_modes_custom']['#description'] = l(t('Manage view modes'), 'admin/structure/ds/view_modes');
     }
   }
 }
@@ -917,7 +917,7 @@ function ds_ds_field_settings_form($field) {
           $title = t('Edit content');
         }
         $form['select'] = array(
-          '#markup' => '<div class="select-content-link">' . l($title, 'admin/structure/ds/displays/fields/manage_ctools/content/' . $action . '/' . $field['entity_type'] . '/' . $field['name'] . $args, array('attributes' => array('class' => array('ctools-use-modal'))) + $query) . '</div>',
+          '#markup' => '<div class="select-content-link">' . l($title, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field['entity_type'] . '/' . $field['name'] . $args, array('attributes' => array('class' => array('ctools-use-modal'))) + $query) . '</div>',
           '#weight' => -10,
         );
         $form['load_terms'] = array(
@@ -976,7 +976,7 @@ function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '',
     $conf = ctools_content_get_defaults($content_type, $subtype);
   }
 
-  $url = 'admin/structure/ds/displays/fields/manage_ctools/content/' . $action . '/' . $entity_type . '/' . $field_name;
+  $url = 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $entity_type . '/' . $field_name;
   $base_url = $url;
   if (!empty($type_name) && !empty($subtype_name)) {
     $url .= '/' . $type_name . '/' . $subtype_name . '/%step';
@@ -1106,7 +1106,7 @@ function ds_ctools_content_select($contexts, $field_name, $action, $entity_type)
         'path' => ctools_content_admin_icon($value),
       );
       $right .= theme('image', $variables) . '&nbsp;';
-      $right .= ctools_ajax_text_button($key, 'admin/structure/ds/displays/fields/manage_ctools/content/' . $action . '/' . $entity_type . '/' . $field_name . '/' . $value['type_name'] . '/' . $value['subtype_name'], $key);
+      $right .= ctools_ajax_text_button($key, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $entity_type . '/' . $field_name . '/' . $value['type_name'] . '/' . $value['subtype_name'], $key);
       $right .= '</div>';
     }
     $right .= '</div>';
@@ -1156,7 +1156,7 @@ function ds_ajax_add_field($js, $field_type) {
   if (!$js) {
     // We don't support degrading this from js because we're not
     // using the server to remember the state of the table.
-    drupal_goto("admin/structure/ds/displays/fields/" . $field_type);
+    drupal_goto("admin/structure/ds/fields/" . $field_type);
     return;
   }
 
@@ -1382,10 +1382,10 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
           '#default_value' => isset($layout->settings['classes'], $layout->settings['classes'][$region]) ? $layout->settings['classes'][$region] : '',
         );
       }
-      $form['additional_settings']['ds_classes']['info'] = array('#markup' => l(t('Manage region  and field CSS classes'), 'admin/structure/ds/displays/classes', array('query' => drupal_get_destination())));
+      $form['additional_settings']['ds_classes']['info'] = array('#markup' => l(t('Manage region  and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())));
     }
     else {
-      $form['additional_settings']['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any CSS classes which can be used on regions.') . '</p><p>' . l(t('Manage region and field CSS classes'), 'admin/structure/ds/displays/classes', array('query' => drupal_get_destination())) . '</p>');
+      $form['additional_settings']['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any CSS classes which can be used on regions.') . '</p><p>' . l(t('Manage region and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())) . '</p>');
     }
   }
   else {
@@ -2063,7 +2063,7 @@ function _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, &$form, $
   $form['additional_settings']['add_custom_fields']['manage_fields'] = array(
     '#type' => 'link',
     '#title' => 'Manage fields',
-    '#href' => 'admin/structure/ds/displays/fields',
+    '#href' => 'admin/structure/ds/fields',
     '#prefix' => '<div>',
     '#suffix' => '</div>',
   );
