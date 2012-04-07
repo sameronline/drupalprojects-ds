@@ -5,10 +5,10 @@
 
 .ds-left {
   width: 20%;
-  float: left;
+  float: left; /* LTR */
 }
 
 .ds-right {
   width: 80%;
-  float: right;
+  float: right; /* LTR */
 }

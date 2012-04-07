@@ -1,21 +1,26 @@
 
+/**
+ * @file
+ * Styling for the ds_form_3col template.
+ */
+
 .ds-form-3col .group-header {
   clear: both;
 }
 
 .ds-form-3col .group-left {
   width: 25%;
-  float: left;
+  float: left; /* LTR */
 }
 
 .ds-form-3col .group-middle {
   width: 50%;
-  float: left;
+  float: left; /* LTR */
 }
 
 .ds-form-3col .group-right {
   width: 25%;
-  float: right;
+  float: right; /* LTR */
 }
 
 .ds-form-3col .group-footer {

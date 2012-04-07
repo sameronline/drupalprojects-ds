@@ -1,0 +1,13 @@
+
+/**
+ * @file
+ * RTL styling for the ds_form template.
+ */
+
+.ds-form .group-left {
+  float: right;
+}
+
+.ds-form .group-right {
+  float: left;
+}

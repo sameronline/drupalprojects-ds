@@ -1,10 +1,16 @@
+
+/**
+ * @file
+ * Styling for the ds_form template.
+ */
+
 .ds-form .group-left {
-  float: left;
+  float: left; /* LTR */
   width: 69%;
 }
 
 .ds-form .group-right {
-  float: right;
+  float: right; /* LTR */
   width: 29%;
 }
 
