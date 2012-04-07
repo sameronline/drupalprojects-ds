@@ -159,6 +159,11 @@ function ds_search_conditions() {
     $conditions['fq'] = $_GET['fq'];
   }
 
+  // Allows for the apachesolr sorting block to work
+  if (!empty($_GET['solrsort'])) {
+    $conditions['apachesolr_search_sort'] = $_GET['solrsort'];
+  }
+
   // We may also have filters added by facet API module. The 'f'
   // is determined by constant FacetapiAdapter::FILTER_KEY. Hard
   // coded here to avoid extra class loading.
