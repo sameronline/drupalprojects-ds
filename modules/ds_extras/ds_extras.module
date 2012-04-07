@@ -339,7 +339,7 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
     // Get the view modes.
     $ds_vm = ds_entity_view_modes('node');
     $layouts = array();
-    $options = array('' => t('Default');
+    $options = array('' => t('Default'));
     foreach ($ds_vm as $key => $item) {
       $overriden = (!empty($view_mode_settings[$key]['custom_settings']) ? TRUE : FALSE);
       if ($overriden) {
