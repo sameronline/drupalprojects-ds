@@ -195,6 +195,18 @@ function ds_extras_settings_validate($form, &$form_state) {
 }
 
 /**
+ * Submit callback: Extras settings screen.
+ */
+function ds_extras_settings_submit($form, &$form_state) {
+  cache_clear_all('ds_fields', 'cache');
+  cache_clear_all('entity_info:', 'cache', TRUE);
+  cache_clear_all('theme_registry:', 'cache', TRUE);
+  cache_clear_all('module_implements', 'cache_bootstrap');
+  cache_clear_all('field_info_fields', 'cache_field');
+  variable_set('menu_rebuild_needed', TRUE);
+}
+
+/**
  * Select the editor depending on layout.
  *
  * @param $entity_type
@@ -239,18 +251,6 @@ function ds_extras_select_layout_editor($entity_type, $bundle_arg, $view_mode) {
     form_load_include($form_state, 'inc', 'field_ui', 'field_ui.admin');
     return drupal_build_form('field_ui_display_overview_form', $form_state);
   }
-}
-
-/**
- * Submit callback: Extras settings screen.
- */
-function ds_extras_settings_submit($form, &$form_state) {
-  cache_clear_all('ds_fields', 'cache');
-  cache_clear_all('entity_info:', 'cache', TRUE);
-  cache_clear_all('theme_registry:', 'cache', TRUE);
-  cache_clear_all('module_implements', 'cache_bootstrap');
-  cache_clear_all('field_info_fields', 'cache_field');
-  variable_set('menu_rebuild_needed', TRUE);
 }
 
 /**
@@ -430,6 +430,9 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
       $colon_checkbox = TRUE;
     }
 
+    $classes = array(
+      'field-name-' . strtr($key, '_', '-'),
+    );
     $form['ft'][$wrapper_key] = array(
       '#type' => 'checkbox',
       '#title' => $value['title'],
@@ -442,9 +445,6 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
       '#size' => '10',
       '#description' => t('E.g. div, span, h2 etc.'),
       '#default_value' => isset($field_settings[$wrapper_key . '-el']) ? $field_settings[$wrapper_key . '-el'] : '',
-    );
-    $classes = array(
-      'field-name-' . strtr($key, '_', '-'),
     );
     $form['ft'][$wrapper_key . '-cl'] = array(
       '#type' => 'textfield',
@@ -484,28 +484,32 @@ function ds_extras_ds_field_format_summary($field) {
  */
 function ds_extras_ds_field_settings_form($field) {
   $form = array();
-  $entity_type = $field['entity_type'];
-  $bundle = $field['bundle'];
-  $view_mode = $field['view_mode'];
-  $settings = isset($field['formatter_settings']['vms']) ? $field['formatter_settings']['vms'] : array();
-  $view_modes = ds_entity_view_modes($entity_type);
 
-  $form['info'] = array(
-    '#markup' => t('Enter a label for the link for the view modes you want to switch to.<br />Leave empty to hide link. They will be localized.'),
-  );
+  // Switch field.
+  if (variable_get('ds_extras_switch_field') && $field['name'] == 'ds_switch_field') {
+    $entity_type = $field['entity_type'];
+    $bundle = $field['bundle'];
+    $view_mode = $field['view_mode'];
+    $settings = isset($field['formatter_settings']['vms']) ? $field['formatter_settings']['vms'] : array();
+    $view_modes = ds_entity_view_modes($entity_type);
 
-  foreach ($view_modes as $key => $value) {
+    $form['info'] = array(
+      '#markup' => t('Enter a label for the link for the view modes you want to switch to.<br />Leave empty to hide link. They will be localized.'),
+    );
 
-    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-    $visible = !empty($view_mode_settings[$key]['custom_settings']);
+    foreach ($view_modes as $key => $value) {
 
-    if ($visible) {
-      $form['vms'][$key] = array(
-        '#type' => 'textfield',
-        '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
-        '#size' => 20,
-        '#title' => check_plain($value['label']),
-      );
+      $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
+      $visible = !empty($view_mode_settings[$key]['custom_settings']);
+
+      if ($visible) {
+        $form['vms'][$key] = array(
+          '#type' => 'textfield',
+          '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
+          '#size' => 20,
+          '#title' => check_plain($value['label']),
+        );
+      }
     }
   }
 
