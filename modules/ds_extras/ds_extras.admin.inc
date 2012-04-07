@@ -471,12 +471,12 @@ function ds_extras_ds_field_format_summary($field) {
   if (isset($field['formatter_settings'])) {
     foreach ($field['formatter_settings'] as $key => $value) {
       if (!empty($value)) {
-        return t('Configured<br/>');
+        return t('Configured');
         break;
       }
     }
   }
-  return t('Not configured<br/>');
+  return t('Not configured');
 }
 
 /**
