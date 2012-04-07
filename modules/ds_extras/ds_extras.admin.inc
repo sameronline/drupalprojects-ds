@@ -487,7 +487,7 @@ function ds_extras_ds_field_settings_form($field) {
   $entity_type = $field['entity_type'];
   $bundle = $field['bundle'];
   $view_mode = $field['view_mode'];
-  $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : array();
+  $settings = isset($field['formatter_settings']['vms']) ? $field['formatter_settings']['vms'] : array();
   $view_modes = ds_entity_view_modes($entity_type);
 
   $form['info'] = array(
