@@ -434,7 +434,7 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
       '#type' => 'checkbox',
       '#title' => $value['title'],
       '#prefix' => '<div class="ft-group ' . $wrapper_key . '">',
-      '#default_value' => isset($field_settings[$wrapper_key]) ? TRUE : FALSE,
+      '#default_value' => isset($field_settings[$wrapper_key]) ? $field_settings[$wrapper_key] : FALSE,
     );
     $form['ft'][$wrapper_key . '-el'] = array(
       '#type' => 'textfield',
