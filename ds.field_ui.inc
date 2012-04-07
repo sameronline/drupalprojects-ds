@@ -1319,7 +1319,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     // Make sure this does not break in case there was
     // a layout created with Panel view modes.
     if (isset($layout->settings['ds_panels'])) {
-      $layout = NULL;
+      $layout = new stdClass();
       $form['#panel'] = TRUE;
     }
   }
@@ -1362,7 +1362,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
 
     // Hide the fieldset in case of the reset layout
     if ($layout->layout === 'ds_reset') {
-       $form['additional_settings']['region_wrapper']['#access'] = false;
+      $form['additional_settings']['region_wrapper']['#access'] = false;
     }
 
     foreach (array_keys($layout->regions) as $region) {
