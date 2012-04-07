@@ -1534,17 +1534,20 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
 
     if (isset($form_state['values']['additional_settings']['layout']) && $form_state['values']['additional_settings']['layout'] != $layout->layout) {
 
+      // Get admin path.
+      $admin_path = _field_ui_bundle_admin_path($entity_type, $bundle) . '/display';
+
       // If regions aren't set we don't have to move fields.
       if (isset($layout->regions)) {
-        $url = 'admin/structure/ds/change-layout/' . $entity_type . '/' . $bundle . '/' . $view_mode . '/' . $layout_string . '?destination=admin/structure/types/manage/' . $bundle . '/display/';
+        $url = 'admin/structure/ds/change-layout/' . $entity_type . '/' . $bundle . '/' . $view_mode . '/' . $layout_string . '?destination=' . $admin_path;
         $form['#validate'][] = 'ds_field_ui_change_layout_validate';
       }
       else {
-        $url = 'admin/structure/types/manage/' . $bundle . '/display/';
+        $url = $admin_path;
       }
 
       if ($view_mode != 'default') {
-        $url .= $view_mode;
+        $url .= '/' . $view_mode;
       }
 
       $form['layout_changed_url'] = array(
