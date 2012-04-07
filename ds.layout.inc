@@ -31,8 +31,8 @@ function ds_layout_list() {
         if ($entity['base table'] == 'node' && (module_exists('ds_forms') && !module_exists('rel'))) {
           $links[] = l(t('Manage form'), $path . '/fields');
         }
-        $rows[] = implode(' - ', $links);
-	$entity_rows[] = $row;
+        $row[] = implode(' - ', $links);
+	      $entity_rows[] = $row;
       }
 
       if (!empty($entity_rows)) {
