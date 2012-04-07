@@ -386,7 +386,7 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
         '#suffix' => '</div>',
       );
 
-      $mode = isset($form_state['input']['ds_switch']) ? $form_state['input']['ds_switch'] : $node->ds_switch;
+      $mode = isset($form_state['input']['ds_switch']) ? $form_state['input']['ds_switch'] : (isset($node->ds_switch) ? $node->ds_switch : '');
       $chosen_layout = $layouts[$mode];
 
       $fallback_image = drupal_get_path('module', 'ds') . '/img/preview.png';
