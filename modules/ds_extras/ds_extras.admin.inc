@@ -500,7 +500,7 @@ function ds_extras_ds_field_settings_form($field) {
     $visible = !empty($view_mode_settings[$key]['custom_settings']);
 
     if ($visible) {
-      $form[$key] = array(
+      $form['vms'][$key] = array(
         '#type' => 'textfield',
         '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
         '#size' => 20,

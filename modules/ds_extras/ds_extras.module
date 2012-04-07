@@ -302,7 +302,7 @@ function ds_extras_switch_view_mode_field($field) {
     $url = $field['entity_type'] . '-' . $field['view_mode'] . '-' . $id . '-';
     $switch = array();
 
-    foreach ($field['formatter_settings'] as $key => $value) {
+    foreach ($field['formatter_settings']['vms'] as $key => $value) {
       if (!empty($value)) {
         $class = 'switch-' . $key;
         if ($key == $field['view_mode']) {
