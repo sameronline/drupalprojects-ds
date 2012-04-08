@@ -893,6 +893,9 @@ function ds_entity_variables(&$vars) {
         $vars[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
       }
     }
+
+    // Let other modules know we have rendered.
+    $vars['rendered_by_ds'] = TRUE;
   }
 }
 

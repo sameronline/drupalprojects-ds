@@ -1252,8 +1252,13 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     $chosen_layout = $ds_layouts[$layout->layout];
     $layout_string = $layout->layout;
     if (empty($chosen_layout['flexible'])) {
+
+      if (isset($chosen_layout['module']) && $chosen_layout['module'] == 'panels') {
+        $layout_string = $chosen_layout['panels']['theme'];
+      }
+
       $selected = t('You have selected the %layout_label layout. The default template can be found in %path', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
-      $suggestions = 'Possible template suggestions are:<ul>';
+      $suggestions = t('Template suggestions') . ':<ul>';
       $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '.tpl.php</li>';
       $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '-' . $bundle . '.tpl.php</li>';
       if (!isset($form_state['no_view_mode_suggestions'])) {
