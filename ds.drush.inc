@@ -20,7 +20,7 @@ function ds_drush_command() {
       'name'    => 'Name for your layout.',
       'regions' => 'Regions for your layout, comma-separated.',
       'css'     => 'Set this to true if you want to include a CSS file for your layout.',
-      'form'    => 'Set this to true if you want to make this template available for forms.'
+      'image'   => 'Set this to true if you want to include a preview image for your layout.',
     ),
     'examples' => array(
       'drush ds-build "My layout name"' => 'Create a layout with a few example regions.',
@@ -98,10 +98,10 @@ function drush_ds_build($name = NULL) {
   }
 
   // Check on form option.
-  $form = drush_get_option('form');
-  if (isset($form)) {
+  $image = drush_get_option('image');
+  if (isset($image)) {
     // Uncomment the Form rule in our configuration.
-    $find[] = "/\/\/ ('form' => TRUE,)/";
+    $find[] = "/\/\/ ('image' => TRUE,)/";
     $replace[] = '$1';
   }
 
@@ -155,11 +155,9 @@ function ds_prepare_regions_html($region_names) {
     $html_class = drupal_html_class($name);
 
     $output[] = <<<END
-  <?php if (\$$machine_name): ?>
-    <div class="ds-$html_class<?php print \${$machine_name}_classes; ?>">
+    <<?php print \${$machine_name}_wrapper; ?> class="ds-$html_class<?php print \${$machine_name}_classes; ?>">
       <?php print \$$machine_name; ?>
-    </div>
-  <?php endif; ?>
+    </<?php print \${$machine_name}_wrapper; ?>>
 END;
   }
 
