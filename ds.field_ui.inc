@@ -1553,7 +1553,13 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
     if (isset($form_state['values']['additional_settings']['layout']) && $form_state['values']['additional_settings']['layout'] != $layout->layout) {
 
       // Get admin path.
-      $admin_path = _field_ui_bundle_admin_path($entity_type, $bundle) . '/display';
+      $admin_path = _field_ui_bundle_admin_path($entity_type, $bundle);
+      if ($view_mode != 'form') {
+        $admin_path .= '/display';
+      }
+      else {
+        $admin_path .= '/fields';
+      }
 
       // If regions aren't set we don't have to move fields.
       if (isset($layout->regions)) {
@@ -1564,7 +1570,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
         $url = $admin_path;
       }
 
-      if ($view_mode != 'default') {
+      if ($view_mode != 'default' && $view_mode != 'form') {
         $url .= '/' . $view_mode;
       }
 
