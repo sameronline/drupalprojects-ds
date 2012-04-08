@@ -410,6 +410,22 @@ function hook_ds_layout_info() {
 }
 
 /**
+ * Alter the layout render array.
+ *
+ * @param $layout_render_array
+ *   The render array
+ * @param $context
+ *   An array with the context that is being rendered. Available keys are
+ *   - entity
+ *   - entity_type
+ *   - bundle
+ *   - view_mode
+ */
+function hook_ds_pre_render_alter(&$layout_render_array, $context) {
+  $layout_render_array['left'][] = array('#markup' => 'cool!', '#weight' => 20);
+}
+
+/**
  * Alter layouts found by Display Suite.
  *
  * @param $layouts

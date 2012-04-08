@@ -865,5 +865,14 @@ class dsHooksTests extends dsBaseTest {
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
     $this->assertRaw('dstest_2col.css', 'Css file included');
+
+    // Alter a region
+    $settings = array(
+      'type' => 'article',
+      'title' => 'Alter me!',
+    );
+    $node = $this->drupalCreateNode($settings);
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertRaw('cool!', 'Region altered');
   }
 }

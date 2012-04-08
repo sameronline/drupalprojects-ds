@@ -880,7 +880,7 @@ function ds_entity_variables(&$vars) {
       $object = 'term';
     }
     if (isset($vars[$object]->preprocess_fields)) {
-      foreach ($vars[$object]->preprocess_fields as $key => $field) {
+      foreach ($vars[$object]->preprocess_fields as $field) {
 
         // Process RDF if the module is enabled before moving preprocess fields.
         if (module_exists('rdf')) {
@@ -892,7 +892,7 @@ function ds_entity_variables(&$vars) {
         // Move the field to content so it renders, remove it
         // because we don't need it anymore.
         if (isset($vars[$field])) {
-          $vars[$render_container][$field] = $vars[$field];
+          $vars[$render_container][$field] = array('#markup' => $vars[$field]);
           if (!isset($vars['preprocess_keep'])) {
             unset($vars[$field]);
           }
@@ -929,7 +929,16 @@ function ds_entity_variables(&$vars) {
     foreach ($layout['regions'] as $region_name => $region) {
 
       // Create the region content.
-      $vars[$region_name] = ds_render_region($vars[$render_container], $region_name, $layout);
+      $layout_render_array[$region_name] = array();
+      if (isset($layout['settings']['regions'][$region_name])) {
+        foreach ($layout['settings']['regions'][$region_name] as $field) {
+          // Make sure the field exists.
+          if (!isset($vars[$render_container][$field])) {
+            continue;
+          }
+          $layout_render_array[$region_name][] = $vars[$render_container][$field];
+        }
+      }
 
       // In case this is a panels layout, add the variable to the $content variable.
       if (isset($layout['module']) && $layout['module'] == 'panels') {
@@ -952,41 +961,14 @@ function ds_entity_variables(&$vars) {
 
     // Add a layout wrapper
     $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
-  }
-}
 
-/**
- * Render a region.
- *
- * @param $content
- *   An array of content fields.
- * @param $region
- *   The name of region to render.
- * @param $layout
- *   The layout definition.
- */
-function ds_render_region($content, $region, $layout) {
-  $output = '';
-
-  if (isset($layout['settings']['regions'][$region])) {
-    foreach ($layout['settings']['regions'][$region] as $key => $field) {
-
-      // Make sure the field exists.
-      if (!isset($content[$field])) {
-        continue;
-      }
-
-      // Safe-guard against strings.
-      if (is_string($content[$field])) {
-        $output .= $content[$field];
-      }
-      else {
-        $output .= drupal_render($content[$field]);
-      }
+    // Let other modules alter the ds array before creating the region variables.
+    $context = array('entity' => $vars[$object], 'entity_type' => $vars['elements']['#entity_type'], 'bundle' => $vars['elements']['#bundle'], 'view_mode' => $vars['elements']['#view_mode']);
+    drupal_alter('ds_pre_render', $layout_render_array, $context);
+    foreach ($layout_render_array as $region_name => $content) {
+      $vars[$region_name] = drupal_render($content);
     }
   }
-
-  return $output;
 }
 
 /**

@@ -343,3 +343,13 @@ function ds_test_form_field_ui_display_overview_form_alter(&$form, &$form_state)
     }
   }
 }
+
+/**
+ * Implements hook_ds_pre_render_alter().
+ */
+function ds_test_ds_pre_render_alter(&$layout_render_array, $context) {
+  $entity = $context['entity'];
+  if ($entity->title === 'Alter me!') {
+    $layout_render_array['left'][] = array('#markup' => 'cool!', '#weight' => 20);
+  }
+}
