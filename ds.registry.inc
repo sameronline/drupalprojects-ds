@@ -243,6 +243,16 @@ function _ds_ds_layout_info() {
       'css' => TRUE,
       'image' => TRUE,
     ),
+    'ds_2col_fluid' => array(
+      'label' => t('Fluid two column'),
+      'path' => $path . '/layouts/ds_2col_fluid',
+      'regions' => array(
+        'left' => t('Left'),
+        'right' => t('Right')
+      ),
+      'css' => TRUE,
+      'image' => TRUE,
+    ),
     'ds_2col_stacked' => array(
       'label' => t('Two column stacked'),
       'path' => $path . '/layouts/ds_2col_stacked',
