@@ -952,6 +952,9 @@ function ds_entity_variables(&$vars) {
       }
     }
 
+    // Let other modules know we have rendered.
+    $vars['rendered_by_ds'] = TRUE;
+
     // Add a layout wrapper
     $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
   }
