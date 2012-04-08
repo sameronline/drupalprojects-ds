@@ -145,6 +145,7 @@ function ds_extras_uninstall() {
   variable_del('ft-kill-colon');
   variable_del('ds_extras_flag');
   variable_del('ds_extras_hidden_region');
+  variable_del('ds_extras_hide_page_sidebars');
   db_drop_field('node_revision', 'ds_switch');
 }
 

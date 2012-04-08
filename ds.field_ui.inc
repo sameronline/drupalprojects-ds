@@ -531,7 +531,6 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
   // Determine layout variables.
   $layout = $form_state['values']['additional_settings']['layout'];
-  $hide_sidebars = $form_state['values']['additional_settings']['hide_sidebars'];
   $old_layout = $form_state['values']['additional_settings']['old_layout'];
   $new_layout = ($layout != $old_layout) || empty($old_layout);
 
@@ -542,7 +541,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $record->bundle = $bundle;
   $record->view_mode = $view_mode;
   $record->layout = $layout;
-  $record->settings = array('hide_sidebars' => $hide_sidebars);
+  $record->settings = array();
 
   // Remove old layout if necessary.
   if (($new_layout && !empty($old_layout)) || $form['#panel']) {
@@ -1332,15 +1331,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   // Load the layout preview form
   $layout->layout_options = $layout_options;
   _ds_field_ui_table_layouts_preview($form, $form_state, $ds_layouts, $layout, $entity_type, $bundle, $view_mode);
-
-  $form['additional_settings']['ds_layouts']['hide_sidebars'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Disable Drupal blocks/regions'),
-    '#description' => t('Check this to have the page disable all sidebar regions displayed in the theme. Note that some themes support this setting better than others. If in doubt, try with stock themes to see.'),
-    '#default_value' => isset($layout->settings['hide_sidebars']) ? $layout->settings['hide_sidebars'] : FALSE,
-    '#access' => $view_mode != 'form',
-    '#weight' => 3,
-  );
 
   if (!empty($layout) && isset($layout->regions)) {
 

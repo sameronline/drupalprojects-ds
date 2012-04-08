@@ -119,13 +119,6 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_switch_view_mode', FALSE),
   );
 
-  $form['additional_settings']['fs4']['ds_extras_switch_field'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('View mode switcher'),
-    '#description' => t('Adds a field with links to switch view modes inline with Ajax. Only works for nodes at this time.'),
-    '#default_value' => variable_get('ds_extras_switch_field', FALSE),
-  );
-
   $form['additional_settings']['fs4']['ds_extras_hide_page_title'] = array(
     '#type' => 'checkbox',
     '#title' => t('Page title options'),
@@ -133,18 +126,11 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_hide_page_title', FALSE),
   );
 
-  $form['additional_settings']['fs4']['ds_extras_hidden_region'] = array(
+  $form['additional_settings']['fs4']['ds_extras_hide_page_sidebars'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Hidden region'),
-    '#description' => t('Add a hidden region to the layouts. Fields will be built but not printed.'),
-    '#default_value' => variable_get('ds_extras_hidden_region', FALSE),
-  );
-
-  $form['additional_settings']['fs4']['ds_extras_flag'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Flag'),
-    '#description' => t('Expose flags as fields on nodes.'),
-    '#default_value' => variable_get('ds_extras_flag', FALSE),
+    '#title' => t('Disable Drupal blocks/regions'),
+    '#description' => t('Add ability to disable all sidebar regions displayed in the theme. Note that some themes support this setting better than others. If in doubt, try with stock themes to see.'),
+    '#default_value' => variable_get('ds_extras_hide_page_sidebars', FALSE),
   );
 
   $form['additional_settings']['fs4']['ds_extras_field_permissions'] = array(
@@ -171,6 +157,29 @@ function ds_extras_settings($form) {
       '#default_value' => variable_get('ds_extras_vd', FALSE),
     );
   }
+
+  if (module_exists('flag')) {
+    $form['additional_settings']['fs4']['ds_extras_flag'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Flag'),
+      '#description' => t('Expose flags as fields on nodes.'),
+      '#default_value' => variable_get('ds_extras_flag', FALSE),
+    );
+  }
+
+  $form['additional_settings']['fs4']['ds_extras_switch_field'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('View mode switcher'),
+    '#description' => t('Adds a field with links to switch view modes inline with Ajax. Only works for nodes at this time.'),
+    '#default_value' => variable_get('ds_extras_switch_field', FALSE),
+  );
+
+  $form['additional_settings']['fs4']['ds_extras_hidden_region'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Hidden region'),
+    '#description' => t('Add a hidden region to the layouts. Fields will be built but not printed.'),
+    '#default_value' => variable_get('ds_extras_hidden_region', FALSE),
+  );
 
   $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/ds_extras.admin.js';
 
@@ -274,6 +283,16 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
       '#title' => t('Custom page title'),
     );
     $form['additional_settings']['ds_page_title']['ds_page_title_options'] = _ds_extras_page_title_options($form['#ds_layout']->settings, $form['#entity_type']);
+  }
+
+  // Disable page regions.
+  if (variable_get('ds_extras_hide_page_sidebars', FALSE) && isset($form['#ds_layout']) && $form['#view_mode'] != 'form') {
+    $form['additional_settings']['ds_layouts']['hide_sidebars'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Disable Drupal blocks/regions'),
+      '#default_value' => isset($form['#ds_layout']->settings['hide_sidebars']) ? $form['#ds_layout']->settings['hide_sidebars'] : FALSE,
+      '#weight' => 3,
+    );
   }
 
   // Region to block only fires if there is a layout and we're working on the

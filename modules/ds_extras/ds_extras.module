@@ -286,6 +286,9 @@ function ds_extras_ds_layout_settings_alter($record, $form_state) {
       $record->settings['page_option_title'] = $form_state['values']['page_option_title'];
     }
   }
+  if (isset($form_state['values']['additional_settings']['hide_sidebars'])) {
+    $record->settings['hide_sidebars'] = $form_state['values']['additional_settings']['hide_sidebars'];
+  }
 }
 
 /**
