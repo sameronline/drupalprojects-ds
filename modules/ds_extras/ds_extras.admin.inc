@@ -317,7 +317,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
     $form['additional_settings']['region_to_block'] = array(
       '#type' => 'fieldset',
       '#title' => t('Block regions'),
-      '#description' => t('Create additional regions in this layout which will be exposed as blocks.')
+      '#description' => t('Create additional regions in this layout which will be exposed as blocks. Note that preprocess fields will fail to print.')
     );
 
     $form['additional_settings']['region_to_block']['new_block_region'] = array(
