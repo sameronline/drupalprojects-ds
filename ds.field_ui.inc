@@ -1694,12 +1694,6 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
     $value = isset($form_state['formatter_settings']) ? $form_state['formatter_settings'] : array();
 
-    // Hacker da hack
-    $form['formatter_settings'] = array(
-      '#type' => 'value',
-      '#value' => '',
-    );
-
     $hidden = array('hidden' => t('<Hidden>'));
     $formatters = isset($field['properties']['formatters']) ? $hidden + $field['properties']['formatters'] : $hidden + array('default' => t('Default'));
 
@@ -1759,6 +1753,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     $field['view_mode'] = $view_mode;
 
     if ($form_state['formatter_settings_edit'] == $key) {
+      $table[$key]['settings_summary']['#attributes']['colspan'] = 2;
       $settings_form = ds_field_settings_form($field, $form_state);
       ds_field_row_form_format_construct($table, $key, $settings_form);
     }
@@ -1857,7 +1852,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       '#field_name' => $key,
     );
 
-    // Summary niet tonen indien we in hidden region zitten
+    // Don't show summary when we are in the hidden region
     if (!isset($field_regions[$key]) || $field_regions[$key] == 'hidden') {
       continue;
     }
@@ -1959,14 +1954,11 @@ function ds_field_row_form_format_construct(&$table, $key, $settings_form) {
     ),
     '#field_name' => $key,
   );
-  $table[$key]['settings_edit'] = array(
+  $table[$key]['format']['settings_edit'] = array(
     '#type' => 'container',
     '#attributes' => array('class' => array('field-formatter-settings-edit-form')),
     '#parents' => array('fields', $key, 'settings_edit_form'),
     '#weight' => -5,
-    'label' => array(
-      '#markup' => t('Format settings:') . ' <span class="formatter-name">' . 'Default' . '</span><br/>',
-    ),
     // Create a settings form where hooks can pick in.
     'settings' => $settings_form,
     'actions' => array(
