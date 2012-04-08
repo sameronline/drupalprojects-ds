@@ -1268,14 +1268,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   foreach ($ds_layouts as $key => $layout) {
     $optgroup = 'Display suite';
 
-    // Continue if view mode is form and the form property is not ok.
-    if ($view_mode == 'form' && (!isset($layout['form']) || (isset($layout['form']) && !$layout['form']))) {
-      continue;
-    }
-    elseif ($view_mode != 'form' && isset($layout['form']) && $layout['form']) {
-      continue;
-    }
-
     // Panels can not be used on Views fields.
     if (!empty($layout['module']) && $layout['module'] == 'panels' && isset($form_state['no_panels'])) {
       continue;

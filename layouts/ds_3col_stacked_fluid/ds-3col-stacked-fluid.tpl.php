@@ -4,8 +4,7 @@
  * @file
  * Display Suite fluid 3 column 25/50/25 stacked template.
  */
-?>
-<?php
+
   // Add sidebar classes so that we can apply the correct width to the center region in css.
   if (($left && !$right) || ($right && !$left)) $classes .= ' group-one-sidebar';
   if ($left && $right) $classes .= ' group-two-sidebars';
@@ -18,11 +17,9 @@
   <?php print render($title_suffix['contextual_links']); ?>
   <?php endif; ?>
 
-  <?php if ($header): ?>
-    <<?php print $header_wrapper ?> class="group-header<?php print $header_classes; ?>">
-      <?php print $header; ?>
-    </<?php print $header_wrapper ?>>
-  <?php endif; ?>
+  <<?php print $header_wrapper ?> class="group-header<?php print $header_classes; ?>">
+    <?php print $header; ?>
+  </<?php print $header_wrapper ?>>
 
   <?php if ($left): ?>
     <<?php print $left_wrapper ?> class="group-left<?php print $left_classes; ?>">
@@ -42,9 +39,8 @@
     </<?php print $right_wrapper ?>>
   <?php endif; ?>
 
-  <?php if ($footer): ?>
-    <<?php print $footer_wrapper ?> class="group-footer<?php print $footer_classes; ?>">
-      <?php print $footer; ?>
-    </<?php print $footer_wrapper ?>>
-  <?php endif; ?>
+  <<?php print $footer_wrapper ?> class="group-footer<?php print $footer_classes; ?>">
+    <?php print $footer; ?>
+  </<?php print $footer_wrapper ?>>
+
 </<?php print $layout_wrapper ?>>

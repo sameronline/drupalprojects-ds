@@ -483,8 +483,8 @@ function hook_ds_label_options_alter(&$field_label_options) {
       ),
       // Add this if there is a default css file.
       'css' => TRUE,
-      // Add this if this template is for a node form.
-      'form' => TRUE,
+      // Add this if there is a default preview image
+      'image' => TRUE,
     );
   }
 
