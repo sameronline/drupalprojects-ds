@@ -79,7 +79,7 @@ Drupal.behaviors.settingsToggle = {
     function ds_show_expert_settings(element, open) {
       field = element;
       ft = $('.ds-extras-field-template', field).val();
-      console.log(ft);
+
       if (ft == 'theme_ds_field_expert') {
         // Show second and third label.
         if ($('.lb .form-item:nth-child(1)', field).is(':visible')) {
