@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Display suite Extras registry file.
+ * Display Suite Extras registry file.
  */
 
 /**
@@ -87,7 +87,7 @@ function _ds_extras_entity_info() {
   // Register a views entity on behalf of Views.
   $return = array(
     'ds_views' => array(
-      'label' => t('Display suite Views'),
+      'label' => t('Display Suite Views'),
       'bundles' => $bundles,
       'ds_display' => TRUE,
       'base table' => 'views_view',

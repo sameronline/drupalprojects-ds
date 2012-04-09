@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Display suite extras fields.
+ * Display Suite extras fields.
  */
 
 /**

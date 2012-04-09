@@ -164,7 +164,7 @@ function ds_revert_layout_field_settings_form_submit(&$form, &$form_state) {
  * Add Regions to 'Manage fields' or 'Manage display' screen.
  *
  * @param $form
- *   The form to add layout fieldset and extra display suite fields.
+ *   The form to add layout fieldset and extra Display Suite fields.
  * @param $form_state
  *   The current form state.
  */
@@ -1265,7 +1265,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   $ds_layouts = ds_get_layout_info();
   $layout_options = array('' => t('- None -'));
   foreach ($ds_layouts as $key => $layout) {
-    $optgroup = 'Display suite';
+    $optgroup = 'Display Suite';
 
     // Panels can not be used on Views fields.
     if (!empty($layout['module']) && $layout['module'] == 'panels' && isset($form_state['no_panels'])) {

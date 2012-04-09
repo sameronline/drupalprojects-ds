@@ -20,7 +20,7 @@ function hook_test_ctools_plugin_api($module, $api) {
 }
 
 /**
- * Expose Display suite field settings.
+ * Expose Display Suite field settings.
  *
  * This hook is called by CTools. For this hook to work, you need
  * hook_ctools_plugin_api(). The values of this hook can be overridden

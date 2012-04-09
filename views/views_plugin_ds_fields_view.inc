@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Provides the Display suite views fields style plugin.
+ * Provides the Display Suite views fields style plugin.
  */
 
 /**

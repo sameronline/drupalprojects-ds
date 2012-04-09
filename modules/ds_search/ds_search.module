@@ -12,7 +12,7 @@ function ds_search_help($path, $arg) {
   switch ($path) {
     case 'admin/structure/ds/list/search':
       $output = '<dl>';
-      $output .= '<dt>' . t('Display suite defines its own search type. You need to enable it at !url and select the engine underneath you wish to use.', array('!url' => l('search settings', 'admin/config/search/settings'))) . '</dt>';
+      $output .= '<dt>' . t('Display Suite defines its own search type. You need to enable it at !url and select the engine underneath you wish to use.', array('!url' => l('search settings', 'admin/config/search/settings'))) . '</dt>';
       $output .= '</dl>';
       return $output;
   }

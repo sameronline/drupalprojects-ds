@@ -1,5 +1,5 @@
 name = "Forms"
 description = "Manage the layout of forms."
 core = "7.x"
-package = "Display suite"
+package = "Display Suite"
 dependencies[] = ds

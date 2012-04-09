@@ -1,6 +1,6 @@
-name = "Display suite Test"
-description = "Test module for display suite"
+name = "Display Suite Test"
+description = "Test module for Display Suite"
 core = "7.x"
-package = "Display suite"
+package = "Display Suite"
 dependencies[] = ds_extras
 hidden = TRUE

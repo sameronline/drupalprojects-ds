@@ -28,7 +28,7 @@ Drupal.behaviors.DSExtrasSummaries = {
 
       return Drupal.t('Disabled');
     });
-    
+
     $('#edit-additional-settings-fs3', context).drupalSetSummary(function (context) {
       var panel_view_modes = $('#edit-additional-settings-fs3-ds-extras-panel-view-modes', context);
 

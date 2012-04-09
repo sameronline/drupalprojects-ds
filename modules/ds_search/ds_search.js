@@ -10,7 +10,7 @@ Drupal.behaviors.DSSearchHighlight = {
     var search = Drupal.settings.ds_search['search'];
     var $selector = $(selector);
     // Split word.
-    
+
     words = search.split(' ');
     for (i = 0; i < words.length; i++) {
       if (words[i] != '') {

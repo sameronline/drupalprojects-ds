@@ -14,7 +14,7 @@ class dsViewsTests extends dsBaseTest {
     return array(
       'name' => t('Views'),
       'description' => t('Tests for Display Suite Views integration.'),
-      'group' => t('Display suite'),
+      'group' => t('Display Suite'),
     );
   }
 

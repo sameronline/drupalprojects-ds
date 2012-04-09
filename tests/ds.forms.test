@@ -14,7 +14,7 @@ class dsFormTests extends dsBaseTest {
     return array(
       'name' => t('Forms'),
       'description' => t('Tests for managing layouts on forms.'),
-      'group' => t('Display suite'),
+      'group' => t('Display Suite'),
     );
   }
 

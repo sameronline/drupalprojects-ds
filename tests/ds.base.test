@@ -206,7 +206,7 @@ class dsFieldsTests extends dsBaseTest {
     return array(
       'name' => t('Fields'),
       'description' => t('Tests for managing custom code, dynamic, preprocess and block fields.'),
-      'group' => t('Display suite'),
+      'group' => t('Display Suite'),
     );
   }
 
@@ -409,7 +409,7 @@ class dsViewModesTests extends dsBaseTest {
     return array(
       'name' => t('View modes'),
       'description' => t('Tests for managing custom view modes.'),
-      'group' => t('Display suite'),
+      'group' => t('Display Suite'),
     );
   }
 
@@ -467,7 +467,7 @@ class dsLayoutsClassesTests extends dsBaseTest {
     return array(
       'name' => t('Layouts'),
       'description' => t('Tests for managing layouts and classes on Field UI screen.'),
-      'group' => t('Display suite'),
+      'group' => t('Display Suite'),
     );
   }
 
@@ -706,7 +706,7 @@ class dsFieldPermissionTests extends dsBaseTest {
     return array(
       'name' => t('Field permissions'),
       'description' => t('Tests for testing field permissions.'),
-      'group' => t('Display suite'),
+      'group' => t('Display Suite'),
     );
   }
 
@@ -755,7 +755,7 @@ class dsHooksTests extends dsBaseTest {
     return array(
       'name' => t('Hooks'),
       'description' => t('Tests for hooks: ds_fields, ds_fields_alter, ds_layouts.'),
-      'group' => t('Display suite'),
+      'group' => t('Display Suite'),
     );
   }
 

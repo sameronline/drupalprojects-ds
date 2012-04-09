@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Display suite Extras page functions.
+ * Display Suite Extras page functions.
  */
 
 /**

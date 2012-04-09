@@ -61,7 +61,7 @@ function ds_menu() {
 
   // Layout overview.
   $items['admin/structure/ds'] = array(
-    'title' => 'Display suite',
+    'title' => 'Display Suite',
     'description' => 'Manage layouts for entitites, and configure fields, view modes etc. for Display Suite.',
     'page callback' => 'ds_layout_list',
     'file' => 'ds.displays.inc',
@@ -85,7 +85,7 @@ function ds_menu() {
   // Emergency page
   $items['admin/structure/ds/list/emergency'] = array(
     'title' => 'Emergency',
-    'description' => 'In case you have errors via Display suite, visit this page.',
+    'description' => 'In case you have errors via Display Suite, visit this page.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_emergency'),
     'access arguments' => array('admin_display_suite'),
@@ -448,7 +448,7 @@ function ds_filter_tips($filter, $format, $long = FALSE) {
 }
 
 /**
- * Function to check if we go on with Display suite.
+ * Function to check if we go on with Display Suite.
  */
 function ds_kill_switch() {
   if (variable_get('ds_disable', FALSE)) {
@@ -480,7 +480,7 @@ function ds_entity_view_modes($entity_type = NULL) {
 }
 
 /**
- * Get Display suite layouts.
+ * Get Display Suite layouts.
  */
 function ds_get_layout_info() {
   static $layouts = FALSE;
@@ -745,7 +745,7 @@ function ds_field_attach_view_alter(&$build, $context) {
   }
 
   // If views and core doesn't send information along on the entity,
-  // Display suite doesn't have a context to render the fields.
+  // Display Suite doesn't have a context to render the fields.
   if (!isset($build['#entity_type']) && !isset($build['#bundle'])) {
     return;
   }

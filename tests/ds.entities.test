@@ -14,7 +14,7 @@ class dsNodeTests extends dsBaseTest {
     return array(
       'name' => t('Node display'),
       'description' => t('Tests for display of nodes and fields.'),
-      'group' => t('Display suite'),
+      'group' => t('Display Suite'),
     );
   }
 

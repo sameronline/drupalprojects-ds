@@ -10,8 +10,8 @@
  * by the system that includes this file.
  */
 $plugin = array(
-  'title' => t('Display suite content'),
-  'category' => t('Display suite'),
+  'title' => t('Display Suite content'),
+  'category' => t('Display Suite'),
   'single' => TRUE,
   'defaults' => array(
     'title' => '',
@@ -19,13 +19,13 @@ $plugin = array(
     'format' => 'ds_code',
     'context' => array(),
   ),
-  'description' => t('Add custom content with the possibility to use the entity object when using the Display suite format.'),
+  'description' => t('Add custom content with the possibility to use the entity object when using the Display Suite format.'),
   'js' => array('misc/textarea.js', 'misc/collapse.js'),
   'all contexts' => TRUE,
 );
 
 /**
- * Output function for the 'Display suite' content type.
+ * Output function for the 'Display Suite' content type.
  */
 function ds_dsc_content_type_render($subtype, $conf, $panel_args, $context, $incoming) {
   $block = new stdClass();
@@ -46,7 +46,7 @@ function ds_dsc_content_type_render($subtype, $conf, $panel_args, $context, $inc
 }
 
 /**
- * The form to add or edit display suite content.
+ * The form to add or edit Display Suite content.
  */
 function ds_dsc_content_type_edit_form($form, &$form_state) {
   $conf = $form_state['conf'];
@@ -68,7 +68,7 @@ function ds_dsc_content_type_edit_form($form, &$form_state) {
 }
 
 /**
- * Save the Display suite content.
+ * Save the Display Suite content.
  */
 function ds_dsc_content_type_edit_form_submit($form, &$form_state) {
   $form_state['conf']['title'] = $form_state['values']['title'];
@@ -78,15 +78,15 @@ function ds_dsc_content_type_edit_form_submit($form, &$form_state) {
 }
 
 /**
- * Returns the administrative title for a Display suite content.
+ * Returns the administrative title for a Display Suite content.
  */
 function ds_dsc_content_type_admin_title($subtype, $conf) {
-  return (!empty($conf['title'])) ? $conf['title'] : t('Display suite content');
+  return (!empty($conf['title'])) ? $conf['title'] : t('Display Suite content');
 }
 
 /**
- * Display the administrative information for a Display suite content pane.
+ * Display the administrative information for a Display Suite content pane.
  */
 function ds_dsc_content_type_admin_info($subtype, $conf) {
-  return 'Display suite content can only be rendered on the frontend.';
+  return 'Display Suite content can only be rendered on the frontend.';
 }

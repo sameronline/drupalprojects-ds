@@ -14,7 +14,7 @@ class dsSearchTests extends dsBaseTest {
     return array(
       'name' => t('Search'),
       'description' => t('Tests for display of search results for nodes and users.'),
-      'group' => t('Display suite'),
+      'group' => t('Display Suite'),
     );
   }
 

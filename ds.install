@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Display suite install file.
+ * Display Suite install file.
  */
 
 /**
@@ -67,7 +67,7 @@ function ds_disable() {
 function ds_schema() {
 
   $schema['ds_field_settings'] = array(
-    'description' => 'The table that holds display suite field settings per display.',
+    'description' => 'The table that holds Display Suite field settings per display.',
 
     // CTools export definitions.
     'export' => array(
@@ -113,7 +113,7 @@ function ds_schema() {
         'default' => '',
       ),
       'settings' => array(
-        'description' => 'The display suite field settings for this layout.',
+        'description' => 'The Display Suite field settings for this layout.',
         'type' => 'blob',
         'not null' => FALSE,
         'size' => 'big',

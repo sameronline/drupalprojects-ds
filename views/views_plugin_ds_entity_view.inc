@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Provides the Display suite views entity style plugin.
+ * Provides the Display Suite views entity style plugin.
  */
 
 /**

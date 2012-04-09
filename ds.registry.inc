@@ -51,16 +51,16 @@ function _ds_features_api() {
     foreach ($api as $key => $value) {
       switch ($key) {
         case 'ds_field_settings':
-          $api[$key]['name'] = 'Display suite field settings';
+          $api[$key]['name'] = 'Display Suite field settings';
           break;
         case 'ds_layout_settings':
-          $api[$key]['name'] = 'Display suite layout settings';
+          $api[$key]['name'] = 'Display Suite layout settings';
           break;
         case 'ds_view_modes':
-          $api[$key]['name'] = 'Display suite view modes';
+          $api[$key]['name'] = 'Display Suite view modes';
           break;
         case 'ds_fields':
-          $api[$key]['name'] = 'Display suite fields';
+          $api[$key]['name'] = 'Display Suite fields';
           break;
       }
     }

@@ -13,7 +13,7 @@ function ds_extras_menu() {
 
   $items['admin/structure/ds/list/extras'] = array(
     'title' => 'Extras',
-    'description' => 'Configure extra functionality for Display suite.',
+    'description' => 'Configure extra functionality for Display Suite.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_extras_settings'),
     'access arguments' => array('admin_display_suite'),
@@ -183,7 +183,7 @@ function ds_extras_ds_field_access($field, $entity_type) {
 function ds_extras_field_attach_view_alter(&$build, $context) {
 
   // If views and core doesn't send information along on the entity,
-  // Display suite doesn't have a context to render the fields.
+  // Display Suite doesn't have a context to render the fields.
   if (!isset($build['#entity_type']) && !isset($build['#bundle'])) {
     return;
   }
@@ -645,7 +645,7 @@ function ds_extras_entity_view_alter(&$build, $entity_type) {
   static $loaded = array();
 
   // If views and core doesn't send information along on the entity,
-  // Display suite doesn't have a context to render the layout.
+  // Display Suite doesn't have a context to render the layout.
   if (!isset($build['#entity_type']) || !isset($build['#bundle'])) {
     return;
   }
