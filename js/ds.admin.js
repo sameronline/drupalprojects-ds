@@ -21,7 +21,7 @@ Drupal.behaviors.CToolsSelection = {
         $('#' + container).show();
         return false;
       });
-    } 
+    }
   }
 };
 
@@ -65,7 +65,7 @@ Drupal.fieldUIDisplayOverview.ds = function (row, data) {
   // Attach change listener to the 'formatter type' select.
   this.$formatSelect = $('select.field-formatter-type', row);
   this.$formatSelect.change(Drupal.fieldUIOverview.onChange); 
-  
+
   return this;
 };
 
