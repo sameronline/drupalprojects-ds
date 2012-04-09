@@ -1828,13 +1828,10 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     }
     $settings += field_info_formatter_settings($formatter_type);
 
-    // Import field template settings
+    // Import field settings and merge with Field API settings.
     if (!isset($form_state['formatter_settings'][$key]) && isset($form['#field_settings'][$key])) {
-      $form_state['formatter_settings'][$key] = $form['#field_settings'][$key];
-    }
-
-    if (!isset($form_state['formatter_settings'][$key]['ft']) && isset($form['#field_settings'][$key]['ft'])) {
-      $form_state['formatter_settings'][$key]['ft'] = $form['#field_settings'][$key]['ft'];
+      $form_state['formatter_settings'][$key] = $settings;
+      $form_state['formatter_settings'][$key] += $form['#field_settings'][$key];
     }
 
     $instance['display'][$view_mode]['type'] = $formatter_type;
