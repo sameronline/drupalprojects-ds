@@ -66,23 +66,6 @@ Drupal.behaviors.settingsToggle = {
 
       var fieldTemplate = $(this);
 
-      // Bind update button.
-      fieldTemplate.find('input[value="Update"]').click(function() {
-        // Check the label.
-        var row = $(this).parents('tr');
-        var label = $('.label-change', settings).val();
-        var original = $('.original-label', row).val();
-        if (label != '') {
-          new_label = label + ' (Original: ' + original + ')<input type="hidden" class="original-label" value="' + original + '">';
-          $('.field-label-row', row).html(new_label);
-        }
-        else {
-          new_label = original + '<input type="hidden" class="original-label" value="' + original + '">';
-          $('.field-label-row', row).html(new_label);
-        }
-        return false;
-      });
-
       // Bind on field template select button.
       fieldTemplate.find('.ds-extras-field-template').change(function() {
         ds_show_expert_settings(fieldTemplate);

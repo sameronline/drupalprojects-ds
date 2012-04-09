@@ -186,7 +186,6 @@ function ds_field_ui_regions($form, $form_state) {
 
   // Change UI to add Region column if we have a layout.
   if ($layout) {
-
     $table = &$form['fields'];
 
     if ($view_mode != 'form') {
@@ -285,7 +284,11 @@ function ds_field_ui_regions($form, $form_state) {
 
       // Add label class.
       if (isset($row['label'])) {
-        $row['label']['#attributes']['class'][] = 'label-change';
+        if (isset($form_state['formatter_settings']) && isset($form_state['formatter_settings'][$name]['ft'])) {
+          if (!empty($form_state['formatter_settings'][$name]['ft']['lb'])) {
+            $row['human_name']['#markup'] = check_plain($form_state['formatter_settings'][$name]['ft']['lb']) . ' ' . t('(Original: !orig)', array('!orig' => $row['human_name']['#markup']));
+          }
+        }
       }
 
       // Limit items.
