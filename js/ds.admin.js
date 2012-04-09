@@ -21,7 +21,7 @@ Drupal.behaviors.CToolsSelection = {
         $('#' + container).show();
         return false;
       });
-    }
+    } 
   }
 };
 
@@ -58,9 +58,14 @@ Drupal.fieldUIDisplayOverview.ds = function (row, data) {
   this.region = data.region;
   this.tableDrag = data.tableDrag;
 
+  // Attach change listener to the 'region' select.
   this.$regionSelect = $('select.ds-field-region', row);
   this.$regionSelect.change(Drupal.fieldUIOverview.onChange);
 
+  // Attach change listener to the 'formatter type' select.
+  this.$formatSelect = $('select.field-formatter-type', row);
+  this.$formatSelect.change(Drupal.fieldUIOverview.onChange); 
+  
   return this;
 };
 
