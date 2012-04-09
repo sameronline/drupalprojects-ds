@@ -1859,7 +1859,12 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
 
     if ($form_state['formatter_settings_edit'] == $key) {
       $function = $formatter['module'] . '_field_formatter_settings_form';
-      $settings_form = $function($field, $instance, $view_mode, $form, $form_state);
+
+      // Add the default formatter settings if any
+      $settings_form = array();
+      if (function_exists($function)) {
+        $settings_form = $function($field, $instance, $view_mode, $form, $form_state);
+      }
 
       // Add the field templates form when needed
       if (module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
