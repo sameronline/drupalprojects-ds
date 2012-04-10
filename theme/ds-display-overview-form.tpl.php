@@ -22,6 +22,11 @@ $field_count = 0;
 if ($rows): ?>
 
 <div id="ds-display-content">
+
+  <div id="ds-nav">
+    <?php print $nav; ?>
+  </div>
+
   <div id="ds-tabs">
     <?php if (!empty($plugins_tabs) || $sync_copy_tab): ?>
       <div id="field-tab" class="tab selected"><a href="javascript:;" onClick="Drupal.DisplaySuite.toggleDisplayTab('field-tab'); return false;"><?php print t('Fields'); ?></a></div>

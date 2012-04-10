@@ -143,3 +143,22 @@ span.field-group {
   background: #fff none repeat scroll 0 0;
   border: 0 none;
 }
+
+#ds-display-overview-form #ds-nav {
+  background: #EFEFEF;
+  margin-bottom: 10px;
+  font-size: 110%;
+  padding: 0.4em;
+}
+#ds-display-overview-form #edit-nav-wrapper {
+  margin: 0;
+}
+#ds-display-overview-form #edit-nav-wrapper label {
+  display: inline-block;
+  line-height: 2;
+  margin: 0;
+}
+#ds-display-overview-form #edit-nav {
+  margin: 0;
+  padding: 0;
+}

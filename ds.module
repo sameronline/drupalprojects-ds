@@ -264,6 +264,25 @@ function ds_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 /**
+ *  Module-aware version of variable_get
+ */
+function ds_variable_get($var_name, $default = '') {
+  $value = $default;
+
+  if (ds_static_variables($var_name)) {
+    $value = ds_static_variables($var_name);
+  }
+  elseif (module_exists('variable') && function_exists('variable_get_value')) {
+    global $language;
+    $value = variable_get_value($var_name, array('default' => $default, 'language' => $language));
+  }
+  else {
+    $value = variable_get($variable_name, $default);
+  }
+  return $value;
+}
+
+/**
  * Set or get static variables at runtime
  *
  * If passed a key and data, will set the data. If passed only a key, will
@@ -280,15 +299,13 @@ function ds_block($op = 'list', $delta = 0, $edit = array()) {
  */
 function ds_static_variables($key, $data = NULL) {
   static $variables = array();
-  if (!isset($data) && isset($key) && isset($variables[$key])) {
+  if (!isset($data) && isset($variables[$key])) {
     return $variables[$key];
   }
-  elseif (!isset($variables[$key]) && isset($data)) {
-    $variables[$key] = array();
-    $variables[$key][] = $data;
-    return TRUE;
-  }
-  elseif (isset($variables[$key]) && isset($data)) {
+  elseif (isset($data)) {
+    if (!isset($variables[$key])) {
+      $variables[$key] = array();
+    }
     $variables[$key][] = $data;
     return TRUE;
   }
@@ -590,6 +607,54 @@ function ds_get_build_modes($module = NULL, $reset = FALSE) {
   else {
     return $build_modes;
   }
+}
+
+/**
+ * API function to retrieve ACTIVE build modes for a module
+ */
+function ds_get_active_build_modes($module, $type = NULL) {
+  $api_info = ds_api_info($module);
+  $build_modes = ds_get_build_modes($module);
+  $filtered_bm = array();
+
+  if (!empty($build_modes)) {
+    if (function_exists($api_info['types'])) {
+      $types = call_user_func($api_info['types']);
+    }
+    else {
+      $types = array();
+    }
+
+    foreach ($types as $tkey => $type_info) {
+
+      // Global exclude.
+      if (variable_get($module .'_type_'. $type_info->type, FALSE)) {
+        continue;
+      }
+
+      $exclude_build_modes = variable_get($module .'_buildmodes_exclude', array());
+      foreach ($build_modes as $key => $value) {
+        // Check if build mode is excluded for this object type.
+        $excluded = (isset($exclude_build_modes[$type_name][$key]) && $exclude_build_modes[$type_name][$key] == TRUE) ? TRUE : FALSE;
+        if ($excluded) {
+          continue;
+        }
+
+        $filtered_bm[$tkey][$key] = $value;
+      }
+    }
+  }
+
+  if (isset($type) && !empty($type)) {
+    if (isset($filtered_bm[$type])){
+      return $filtered_bm[$type];
+    }
+    else {
+      return FALSE;
+    }
+  }
+
+  return $filtered_bm;
 }
 
 /**
