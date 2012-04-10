@@ -233,7 +233,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     $form['delta_fieldset']['delta_fields'] = array(
       '#type' => 'select',
       '#title' => t('Select fields'),
-      '#description' => t('Select fields which "delta" value should be added to the result row. On the manage display of an entity you can decided to look for this delta value to only print that row.'),
+      '#description' => t('Select fields which "delta" value should be added to the result row. On the manage display of an entity you can decide to look for this delta value to only print that row.'),
       '#options' => $delta_fields,
       '#multiple' => TRUE,
       '#default_value' => $this->options['delta_fields'],
