@@ -218,18 +218,23 @@ function ds_search_settings($form, $form_state) {
       ),
     );
 
-    $form['apachesolr_search']['ds_search_apachesolr_form_alter'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Advanced'),
-      '#description' => t('Enable features like "Did you mean?" and the "Retain filter" checkbox.'),
-      '#default_value' => variable_get('ds_search_apachesolr_form_alter'),
-    );
-
     $form['apachesolr_search']['ds_search_apachesolr_hide_current_filters'] = array(
       '#type' => 'checkbox',
       '#title' => t('Hide Retain filters'),
       '#description' => t('Hide the "Retain current filters" checkbox on search results.'),
       '#default_value' => variable_get('ds_search_apachesolr_hide_current_filters'),
+    );
+
+    $form['apachesolr_search']['ds_search_apachesolr_current_filters_default'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Remember filters'),
+      '#description' => t('Remember the filters when you hide the "Retain current filters" checkbox.'),
+      '#default_value' => variable_get('ds_search_apachesolr_current_filters_default'),
+      '#states' => array(
+        'visible' => array(
+          'input[name="ds_search_apachesolr_hide_current_filters"]' => array('checked' => TRUE),
+        ),
+      ),
     );
 
     $form['apachesolr_search']['ds_search_apachesolr_multisite'] = array(
@@ -244,6 +249,11 @@ function ds_search_settings($form, $form_state) {
       '#title' => t('Sort by site'),
       '#description' => t('Enable this to rank the results of the current site first, than all the rest.'),
       '#default_value' => variable_get('ds_search_apachesolr_multisite_boost'),
+      '#states' => array(
+        'visible' => array(
+          'input[name="ds_search_apachesolr_multisite"]' => array('checked' => TRUE),
+        ),
+      ),
     );
 
     $form['apachesolr_search']['ds_search_apachesolr_multisite_group'] = array(
