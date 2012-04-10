@@ -1011,7 +1011,7 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
         $field_settings[$key]['ft']['lb-el'] = check_plain($values['lb-el']);
       }
       if (!(empty($values['lb-cl'])) && $function == 'theme_ds_field_expert') {
-       $field_settings[$key]['ft']['lb-cl'] = check_plain($values['lb-cl']);
+        $field_settings[$key]['ft']['lb-cl'] = check_plain($values['lb-cl']);
       }
       if (!(empty($values['lb-col']))) {
         $field_settings[$key]['ft']['lb-col'] = TRUE;

@@ -1347,7 +1347,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
 
     // Hide the fieldset in case of the reset layout
     if ($layout->layout === 'ds_reset') {
-      $form['additional_settings']['region_wrapper']['#access'] = false;
+      $form['additional_settings']['region_wrapper']['#access'] = FALSE;
     }
 
     foreach (array_keys($layout->regions) as $region) {

@@ -334,8 +334,8 @@ function ds_test_rel_build_info() {
  */
 function ds_test_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
   foreach (element_children($form['fields']) as $key) {
-    if(isset($form['fields'][$key]['settings_edit'])) {
-     $settings = $form['fields'][$key]['settings_edit'];
+    if (isset($form['fields'][$key]['settings_edit'])) {
+      $settings = $form['fields'][$key]['settings_edit'];
       if (!empty($settings)) {
         $form['fields'][$key]['settings_edit']['#type'] = 'submit';
         $form['fields'][$key]['settings_edit']['#value'] = 'edit ' . $key;

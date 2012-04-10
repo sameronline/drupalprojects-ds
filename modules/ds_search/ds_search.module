@@ -639,7 +639,7 @@ function ds_search_apachesolr_query_alter($query) {
     // Make sure this site's search results are first.
     if (variable_get('ds_search_apachesolr_multisite_boost')) {
       $hash = apachesolr_site_hash();
-      $query->addParam('bq', 'hash:' . $hash .'^' . variable_get('ds_search_apachesolr_multisite_boost_nr', 100));
+      $query->addParam('bq', 'hash:' . $hash . '^' . variable_get('ds_search_apachesolr_multisite_boost_nr', 100));
     }
   }
 
