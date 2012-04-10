@@ -64,7 +64,7 @@ function ds_menu() {
     'title' => 'Display Suite',
     'description' => 'Manage layouts for entitites, and configure fields, view modes etc. for Display Suite.',
     'page callback' => 'ds_layout_list',
-    'file' => 'ds.displays.inc',
+    'file' => 'includes/ds.displays.inc',
     'access arguments' => array('admin_display_suite'),
   );
 
@@ -89,7 +89,7 @@ function ds_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_emergency'),
     'access arguments' => array('admin_display_suite'),
-    'file' => 'ds.displays.inc',
+    'file' => 'includes/ds.displays.inc',
     'type' => MENU_LOCAL_TASK,
     'weight' => 100,
   );
@@ -100,7 +100,7 @@ function ds_menu() {
     'description' => 'Define extra CSS class names for regions and fields.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_classes_form'),
-    'file' => 'ds.classes.inc',
+    'file' => 'includes/ds.classes.inc',
     'access arguments' => array('admin_display_suite'),
     'type' => MENU_LOCAL_TASK,
   );
@@ -112,7 +112,7 @@ function ds_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_field_ui_layout_change'),
     'access arguments' => array('admin_display_suite'),
-    'file' => 'ds.field_ui.inc',
+    'file' => 'includes/ds.field_ui.inc',
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
@@ -122,7 +122,7 @@ function ds_menu() {
     'description' => 'Revert layout and field settings.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_revert_layout_field_settings_form'),
-    'file' => 'ds.field_ui.inc',
+    'file' => 'includes/ds.field_ui.inc',
     'access arguments' => array('admin_display_suite'),
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
@@ -132,7 +132,7 @@ function ds_menu() {
     'title' => 'View modes',
     'description' => 'Manage view modes for all content.',
     'page callback' => 'ds_view_modes_list',
-    'file' => 'ds.view_modes.inc',
+    'file' => 'includes/ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
     'weight' => -9,
     'type' => MENU_LOCAL_TASK,
@@ -142,7 +142,7 @@ function ds_menu() {
     'description' => 'Manage a view mode',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_edit_view_mode_form'),
-    'file' => 'ds.view_modes.inc',
+    'file' => 'includes/ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
     'type' => MENU_LOCAL_ACTION,
   );
@@ -151,7 +151,7 @@ function ds_menu() {
     'description' => 'Delete a custom view mode.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_delete_view_mode_confirm'),
-    'file' => 'ds.view_modes.inc',
+    'file' => 'includes/ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
@@ -160,7 +160,7 @@ function ds_menu() {
     'description' => 'Revert a view mode.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_revert_view_mode_confirm'),
-    'file' => 'ds.view_modes.inc',
+    'file' => 'includes/ds.view_modes.inc',
     'access arguments' => array('admin_view_modes'),
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
@@ -170,7 +170,7 @@ function ds_menu() {
     'title' => 'Fields',
     'description' => 'Manage fields for all content.',
     'page callback' => 'ds_custom_fields_list',
-    'file' => 'ds.fields.inc',
+    'file' => 'includes/ds.fields.inc',
     'access arguments' => array('admin_fields'),
     'weight' => -8,
     'type' => MENU_LOCAL_TASK,
@@ -178,7 +178,7 @@ function ds_menu() {
   $items['admin/structure/ds/fields/manage'] = array(
     'title' => 'Fields edit',
     'page callback' => 'ds_custom_manage',
-    'file' => 'ds.fields.inc',
+    'file' => 'includes/ds.fields.inc',
     'access arguments' => array('admin_fields'),
     'type' => MENU_CALLBACK,
   );
@@ -187,7 +187,7 @@ function ds_menu() {
     'description' => 'Manage a field',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_edit_custom_field_form'),
-    'file' => 'ds.fields.inc',
+    'file' => 'includes/ds.fields.inc',
     'access arguments' => array('admin_fields'),
     'type' => MENU_LOCAL_ACTION,
     'weight' => 0,
@@ -197,7 +197,7 @@ function ds_menu() {
     'description' => 'Manage a dynamic field',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_edit_ctools_field_form'),
-    'file' => 'ds.fields.inc',
+    'file' => 'includes/ds.fields.inc',
     'access arguments' => array('admin_fields'),
     'type' => MENU_LOCAL_ACTION,
     'weight' => 1,
@@ -205,7 +205,7 @@ function ds_menu() {
   $items['admin/structure/ds/fields/manage_ctools/content'] = array(
     'title' => 'Ctools field content',
     'page callback' => 'ds_ctools_content',
-    'file' => 'ds.field_ui.inc',
+    'file' => 'includes/ds.field_ui.inc',
     'access arguments' => array('admin_display_suite'),
     'type' => MENU_CALLBACK,
   );
@@ -214,7 +214,7 @@ function ds_menu() {
     'description' => 'Manage a preprocess field',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_edit_preprocess_field_form'),
-    'file' => 'ds.fields.inc',
+    'file' => 'includes/ds.fields.inc',
     'access arguments' => array('admin_fields'),
     'type' => MENU_LOCAL_ACTION,
     'weight' => 3,
@@ -224,7 +224,7 @@ function ds_menu() {
     'description' => 'Delete a field.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_delete_field_confirm'),
-    'file' => 'ds.fields.inc',
+    'file' => 'includes/ds.fields.inc',
     'access arguments' => array('admin_fields'),
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
@@ -233,7 +233,7 @@ function ds_menu() {
     'description' => 'Revert a custom field.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_revert_field_confirm'),
-    'file' => 'ds.fields.inc',
+    'file' => 'includes/ds.fields.inc',
     'access arguments' => array('admin_fields'),
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
@@ -244,7 +244,7 @@ function ds_menu() {
       'description' => 'Manage a block field',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('ds_edit_block_field_form'),
-      'file' => 'ds.fields.inc',
+      'file' => 'includes/ds.fields.inc',
       'access arguments' => array('admin_fields'),
       'type' => MENU_LOCAL_ACTION,
       'weight' => 2,
@@ -257,17 +257,18 @@ function ds_menu() {
     'page callback' => 'ds_ajax_add_field',
     'page arguments' => array(3, 5),
     'access arguments' => array('admin_fields'),
-    'file' => 'ds.field_ui.inc',
+    'file' => 'includes/ds.field_ui.inc',
     'type' => MENU_CALLBACK,
   );
 
+  // Contextual links.
   if (module_exists('contextual') && module_exists('field_ui')) {
     $items['node/%node/display'] = array(
       'title' => 'Manage display',
       'description' => 'Manage display of this content.',
       'page callback' => 'ds_contextual_page_tab',
       'page arguments' => array(1, 'node'),
-      'file' => 'ds.contextual.inc',
+      'file' => 'includes/ds.contextual.inc',
       'access arguments' => array('administer content types'),
       'type' => MENU_LOCAL_TASK,
     );
@@ -277,7 +278,7 @@ function ds_menu() {
       'description' => 'Manage display of this user profile.',
       'page callback' => 'ds_contextual_page_tab',
       'page arguments' => array(1, 'user'),
-      'file' => 'ds.contextual.inc',
+      'file' => 'includes/ds.contextual.inc',
       'access arguments' => array('administer users'),
       'type' => MENU_LOCAL_TASK,
     );
@@ -291,7 +292,7 @@ function ds_menu() {
         'access arguments' => array('administer taxonomy'),
         'type' => MENU_LOCAL_TASK,
         'weight' => 11,
-        'file' => 'ds.contextual.inc',
+        'file' => 'includes/ds.contextual.inc',
       );
     }
   }
@@ -303,7 +304,7 @@ function ds_menu() {
  * Implements hook_menu_alter().
  */
 function ds_menu_alter(&$items) {
-  module_load_include('inc', 'ds', 'ds.registry');
+  module_load_include('inc', 'ds', 'includes/ds.registry');
   return _ds_menu_alter($items);
 }
 
@@ -311,7 +312,7 @@ function ds_menu_alter(&$items) {
  * Implements hook_theme().
  */
 function ds_theme() {
-  module_load_include('inc', 'ds', 'ds.registry');
+  module_load_include('inc', 'ds', 'includes/ds.registry');
   return _ds_theme();
 }
 
@@ -319,7 +320,7 @@ function ds_theme() {
  * Implements hook_ds_layout_info().
  */
 function ds_ds_layout_info() {
-  module_load_include('inc', 'ds', 'ds.registry');
+  module_load_include('inc', 'ds', 'includes/ds.registry');
   return _ds_ds_layout_info();
 }
 
@@ -353,7 +354,7 @@ function ds_views_api() {
  */
 function ds_node_type_update($info) {
   if (!empty($info->old_type) && $info->old_type != $info->type) {
-    module_load_include('inc', 'ds', 'ds.registry');
+    module_load_include('inc', 'ds', 'includes/ds.registry');
     _ds_entity_type_update('node', $info, 'update');
   }
 }
@@ -362,7 +363,7 @@ function ds_node_type_update($info) {
  * Implements hook_node_type_update().
  */
 function ds_node_type_delete($info) {
-  module_load_include('inc', 'ds', 'ds.registry');
+  module_load_include('inc', 'ds', 'includes/ds.registry');
   _ds_entity_type_update('node', $info, 'delete');
 }
 
@@ -370,7 +371,7 @@ function ds_node_type_delete($info) {
  * Implements hook_theme_registry_alter().
  */
 function ds_theme_registry_alter(&$theme_registry) {
-  module_load_include('inc', 'ds', 'ds.registry');
+  module_load_include('inc', 'ds', 'includes/ds.registry');
   _ds_theme_registry_alter($theme_registry);
 }
 
@@ -378,7 +379,7 @@ function ds_theme_registry_alter(&$theme_registry) {
  * Implements hook_entity_info_alter().
  */
 function ds_entity_info_alter(&$entity_info) {
-  module_load_include('inc', 'ds', 'ds.registry');
+  module_load_include('inc', 'ds', 'includes/ds.registry');
   _ds_entity_info_alter($entity_info);
 }
 
@@ -386,10 +387,10 @@ function ds_entity_info_alter(&$entity_info) {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
-  form_load_include($form_state, 'inc', 'ds', 'ds.field_ui');
+  form_load_include($form_state, 'inc', 'ds', 'includes/ds.field_ui');
   // Also load admin on behalf of DS extras when enabled.
   if (module_exists('ds_extras')) {
-    form_load_include($form_state, 'inc', 'ds_extras', 'ds_extras.admin');
+    form_load_include($form_state, 'inc', 'ds_extras', 'includes/ds_extras.admin');
   }
   ds_field_ui_fields_layouts($form, $form_state);
 }
@@ -414,7 +415,7 @@ function ds_module_implements_alter(&$implementations, $hook) {
  * Implements hook_features_api().
  */
 function ds_features_api() {
-  module_load_include('inc', 'ds', 'ds.registry');
+  module_load_include('inc', 'ds', 'includes/ds.registry');
   return _ds_features_api();
 }
 
@@ -454,7 +455,6 @@ function ds_kill_switch() {
   if (variable_get('ds_disable', FALSE)) {
     return TRUE;
   }
-
   return FALSE;
 }
 

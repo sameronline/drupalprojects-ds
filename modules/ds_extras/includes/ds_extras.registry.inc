@@ -13,7 +13,7 @@ function _ds_extras_menu_alter(&$items) {
   // Switch view mode.
   if (variable_get('ds_extras_switch_view_mode', FALSE)) {
     $items['node/%node']['page callback'] = 'ds_extras_node_page_view';
-    $items['node/%node']['file'] = 'ds_extras.pages.inc';
+    $items['node/%node']['file'] = 'includes/ds_extras.pages.inc';
     $items['node/%node']['file path'] = drupal_get_path('module', 'ds_extras');
   }
 
@@ -47,14 +47,14 @@ function _ds_extras_menu_alter(&$items) {
               // to call the right layout callback.
               $items["$path/display"]['page callback'] = 'ds_extras_select_layout_editor';
               $items["$path/display"]['page arguments'] = array($entity_type, $bundle_arg, 'default');
-              $items["$path/display"]['file'] = 'ds_extras.admin.inc';
+              $items["$path/display"]['file'] = 'includes/ds_extras.admin.inc';
               $items["$path/display"]['file path'] = $ds_panels_path;
 
               $view_modes = array('default' => array('label' => t('Default'))) + $entity_info['view modes'];
               foreach ($view_modes as $view_mode => $view_mode_info) {
                 $items["$path/display/$view_mode"]['page callback'] = 'ds_extras_select_layout_editor';
                 $items["$path/display/$view_mode"]['page arguments'] = array($entity_type, $bundle_arg, $view_mode);
-                $items["$path/display/$view_mode"]['file'] = 'ds_extras.admin.inc';
+                $items["$path/display/$view_mode"]['file'] = 'includes/ds_extras.admin.inc';
                 $items["$path/display/$view_mode"]['file path'] = $ds_panels_path;
               }
             }

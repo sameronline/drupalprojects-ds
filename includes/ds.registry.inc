@@ -434,12 +434,12 @@ function _ds_menu_alter(&$items) {
   // Do not conflict with the revisioning module.
   if (module_exists('revisioning')) {
     $items['node/%node/revisions/%vid/view']['page callback'] = 'ds_revision_node_show';
-    $items['node/%node/revisions/%vid/view']['file'] = 'ds.field_ui.inc';
+    $items['node/%node/revisions/%vid/view']['file'] = 'includes/ds.revision.inc';
     $items['node/%node/revisions/%vid/view']['file path'] = drupal_get_path('module', 'ds');
   }
   else {
     $items['node/%node/revisions/%/view']['page callback'] = 'ds_revision_node_show';
-    $items['node/%node/revisions/%/view']['file'] = 'ds.field_ui.inc';
+    $items['node/%node/revisions/%/view']['file'] = 'includes/ds.revision.inc';
     $items['node/%node/revisions/%/view']['file path'] = drupal_get_path('module', 'ds');
   }
 }

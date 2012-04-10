@@ -10,6 +10,15 @@ For documentation of the module, visit the handbook pages:
 To submit bug reports and feature suggestions, or to track changes:
   http://drupal.org/project/issues/ds
   
+-- DRUSH --
+
+Use the Drush command to create custom layouts faster.
+The example layout is located in the drush folder.
+
+$ drush ds-build "My layout name" --regions="Region 1, Region 2"
+
+Type "drush help ds-build" for more help.
+  
 -- RECOMMENDED MODULES --
 
 Entity cache - http://drupal.org/project/entitycache

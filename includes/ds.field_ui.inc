@@ -430,7 +430,7 @@ function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundl
       '#suffix' => '</div>',
     );
 
-    $fallback_image = drupal_get_path('module', 'ds') . '/img/preview.png';
+    $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
     $old_image = (isset($old_layout['image']) &&  !empty($old_layout['image'])) ? $old_layout['path'] . '/' . $old_layout['layout'] . '.png' : $fallback_image;
     if (isset($old_layout['panels']) && !empty($old_layout['panels']['icon'])) {
       $old_image = $old_layout['panels']['path'] . '/' . $old_layout['panels']['icon'];
@@ -439,7 +439,7 @@ function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundl
     if (isset($new_layout['panels']) && !empty($new_layout['panels']['icon'])) {
       $new_image = $new_layout['panels']['path'] . '/' . $new_layout['panels']['icon'];
     }
-    $arrow = drupal_get_path('module', 'ds') . '/img/arrow.png';
+    $arrow = drupal_get_path('module', 'ds') . '/images/arrow.png';
 
     $form['preview']['old_layout'] = array(
       '#markup' => '<div class="ds-layout-preview-image"><img src="' . base_path() . $old_image . '"/></div>',
@@ -794,7 +794,7 @@ function ds_field_settings_summary($field, $form_state) {
   }
 
   if (module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
-    module_load_include('inc', 'ds_extras', 'ds_extras.admin');
+    module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
 
     // Field template summary
     $functions = module_invoke_all('ds_field_theme_functions_info');
@@ -838,7 +838,7 @@ function ds_field_settings_form($field, &$form_state) {
     );
 
     // Load the formatter settings form
-    module_load_include('inc', 'ds_extras', 'ds_extras.admin');
+    module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
     ds_extras_field_template_settings_form($form, $form_state, $context);
   }
 
@@ -1213,7 +1213,7 @@ function ds_ajax_add_field($js, $field_type) {
   );
 
   $output = NULL;
-  form_load_include($form_state, 'inc', 'ds', 'ds.fields');
+  form_load_include($form_state, 'inc', 'ds', 'includes/ds.fields');
 
   $output = ctools_modal_form_wrapper($form_name, $form_state);
 
@@ -1275,7 +1275,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       continue;
     }
 
-    // Create new layout optoin group.
+    // Create new layout option group.
     if (!empty($layout['module'])) {
       $optgroup = drupal_ucfirst($layout['module']);
     }
@@ -1345,7 +1345,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#description' => t('Choose a wrapper')
     );
 
-    // Hide the fieldset in case of the reset layout
+    // Hide the fieldset in case of the reset layout.
     if ($layout->layout === 'ds_reset') {
       $form['additional_settings']['region_wrapper']['#access'] = FALSE;
     }
@@ -1525,7 +1525,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
     }
 
     if (isset($form_state['values']['additional_settings']['layout']) || (!empty($layout) && isset($layout->regions))) {
-      $fallback_image = drupal_get_path('module', 'ds') . '/img/preview.png';
+      $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
       $current_layout = isset($form_state['values']['additional_settings']['layout']) && $form_state['values']['additional_settings']['layout'] != $layout->layout ? t('Current layout (after save)') : t('Current layout');
       $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $layout_string . '.png' : $fallback_image;
       if (isset($chosen_layout['panels']) && !empty($chosen_layout['panels']['icon'])) {
@@ -1637,7 +1637,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
   // Load views file if entity type is not ds_views.
   // We need to cache the hook it's implementing.
   if ($entity_type != 'ds_views' && module_exists('ds_extras') && variable_get('ds_extras_vd', FALSE)) {
-    module_load_include('inc', 'ds_extras', 'ds_extras.vd');
+    module_load_include('inc', 'ds_extras', 'includes/ds_extras.vd');
   }
   drupal_alter('ds_fields_ui', $fields, $context);
 
@@ -1745,7 +1745,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       'settings_edit' => array(),
     );
 
-    // Summary niet tonen indien we in hidden region zitten
+    // Don't show summary in hidden region.
     if (!isset($field_regions[$key]) || $field_regions[$key] == 'hidden') {
       continue;
     }
@@ -1761,7 +1761,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       ds_field_row_form_format_construct($table, $key, $settings_form);
     }
     else {
-      // After saving, the settings are updated here aswell. First we create
+      // After saving, the settings are updated here as well. First we create
       // the element for the table cell.
       $summary = ds_field_settings_summary($field, $form_state);
 
@@ -1803,7 +1803,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
 
   $table = &$form['fields'];
 
-  // Regions for fields
+  // Regions for fields.
   if (isset($form['#ds_layout']->settings['fields'])) {
     $field_regions = $form['#ds_layout']->settings['fields'];
   }
@@ -1874,7 +1874,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
         );
 
         // Load the form
-        module_load_include('inc', 'ds_extras', 'ds_extras.admin');
+        module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
         ds_extras_field_template_settings_form($settings_form, $form_state, $context);
       }
 
@@ -1915,7 +1915,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       $summary = module_invoke($formatter['module'], 'field_formatter_settings_summary', $field, $instance, $view_mode);
 
       if (module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
-        module_load_include('inc', 'ds_extras', 'ds_extras.admin');
+        module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
 
         // Field template summary
         $functions = module_invoke_all('ds_field_theme_functions_info');
@@ -2152,23 +2152,4 @@ function _ds_sort_fields($a, $subkey) {
     $c[$key] = $a[$key];
   }
   return $c;
-}
-
-/**
- * Menu callback: show an individual revision node using the revision view mode.
- */
-function ds_revision_node_show($node, $message = NULL) {
-
-  drupal_set_title(t('Revision of %title from %date', array('%title' => $node->title, '%date' => format_date($node->revision_timestamp))), PASS_THROUGH);
-
-  // Update the history table, stating that this user viewed this node.
-  node_tag_new($node);
-
-  // Determine view mode.
-  $layout = ds_get_layout('node', $node->type, 'revision', FALSE);
-  $view_mode = ($layout) ? 'revision' : 'full';
-  drupal_static('ds_view_mode', $view_mode);
-
-  // For markup consistency with other pages, use node_view_multiple() rather than node_view().
-  return node_view_multiple(array($node->nid => $node), $view_mode);
 }

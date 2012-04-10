@@ -30,7 +30,7 @@ function ds_search_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_search_settings'),
     'access arguments' => array('admin_display_suite'),
-    'file' => 'ds_search.admin.inc',
+    'file' => 'includes/ds_search.admin.inc',
     'type' => MENU_LOCAL_TASK,
   );
 
@@ -45,7 +45,7 @@ function ds_search_theme() {
     'ds_search_page' => array(),
     'ds_search_group_by_type_settings' => array(
       'render element' => 'element',
-      'file' => 'ds_search.admin.inc',
+      'file' => 'includes/ds_search.admin.inc',
     ),
   );
 }
@@ -522,8 +522,8 @@ function ds_build_shared_page_variables(&$build) {
 
   // CSS and JS.
   if (variable_get('ds_search_highlight', FALSE)) {
-    drupal_add_css(drupal_get_path('module', 'ds_search') . '/ds_search.theme.css');
-    drupal_add_js(drupal_get_path('module', 'ds_search') . '/ds_search.js');
+    drupal_add_css(drupal_get_path('module', 'ds_search') . '/css/ds_search.theme.css');
+    drupal_add_js(drupal_get_path('module', 'ds_search') . '/js/ds_search.js');
     drupal_add_js(array(
       'ds_search' => array(
         'selector' => check_plain(variable_get('ds_search_highlight_selector', '.view-mode-search_result')),

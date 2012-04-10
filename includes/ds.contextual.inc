@@ -5,7 +5,6 @@
  * Menu callbacks for contextual links and tabs added by DS.
  */
 
-
 /**
  * Menu callback: redirect to manage display.
  */

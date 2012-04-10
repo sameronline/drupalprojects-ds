@@ -69,7 +69,7 @@ function ds_layout_list() {
 }
 
 /**
- * Emergency page
+ * Emergency page.
  */
 function ds_emergency() {
 

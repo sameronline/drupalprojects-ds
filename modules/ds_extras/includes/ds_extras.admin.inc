@@ -181,7 +181,7 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_hidden_region', FALSE),
   );
 
-  $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/ds_extras.admin.js';
+  $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/js/ds_extras.admin.js';
 
   $form = system_settings_form($form);
   $form['#submit'][] = 'ds_extras_settings_submit';
@@ -249,7 +249,7 @@ function ds_extras_select_layout_editor($entity_type, $bundle_arg, $view_mode) {
 
   // Select the layout editor.
   if ($panels_editor) {
-    module_load_include('inc', 'ds_extras', 'ds_extras.panels');
+    module_load_include('inc', 'ds_extras', 'includes/ds_extras.panels');
     return ds_panels_field_ui($entity_type, $bundle, $view_mode);
   }
   else {
@@ -267,7 +267,7 @@ function ds_extras_select_layout_editor($entity_type, $bundle_arg, $view_mode) {
  */
 function ds_extras_field_ui_alter(&$form, &$form_state) {
   // Attach js.
-  $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/ds_extras.admin.js';
+  $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/js/ds_extras.admin.js';
 
   // Views displays.
   if ($form['#entity_type'] == 'ds_views') {

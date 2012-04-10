@@ -29,8 +29,8 @@ function ds_panels_field_ui($entity_type, $bundle, $view_mode) {
   $panel_layout = '';
 
   // Load ds field ui.
-  module_load_include('inc', 'ds', 'ds.field_ui');
-  module_load_include('inc', 'ds_extras', 'ds.admin');
+  module_load_include('inc', 'ds', 'includes/ds.field_ui');
+  module_load_include('inc', 'ds_extras', 'includes/ds.admin');
 
   // Get the ds layout. Make sure this does not break in case
   // there was a layout created with Field UI.
@@ -240,7 +240,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
   ctools_include('common', 'panels');
 
   // Add css
-  $form['#attached']['css'][] = drupal_get_path('module', 'ds_extras') . '/ds_extras.panels.admin.css';
+  $form['#attached']['css'][] = drupal_get_path('module', 'ds_extras') . '/css/ds_extras.panels.admin.css';
 
   // When panel_layout is empty, render the layout selector with links.
   if (empty($ds_layout) && empty($panel_layout)) {
@@ -414,7 +414,7 @@ function ds_panels_layout($form, $form_state, $entity_type, $bundle, $view_mode,
   $form['#strip_off_layout_from_url'] = $layout_tab_first;
 
   // Add javascript.
-  $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/ds_extras.panels.admin.js';
+  $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/js/ds_extras.panels.admin.js';
 
   return $form;
 }
