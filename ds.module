@@ -634,8 +634,6 @@ function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRU
  */
 function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_mode, $build = array()) {
 
-  static $included_files = array();
-
   $field['entity'] = $entity;
   $field['entity_type'] = $entity_type;
   $field['bundle'] = $bundle;
@@ -654,9 +652,8 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
       break;
 
     case DS_FIELD_TYPE_FUNCTION:
-      if (isset($field['file']) && !isset($included_files[$field['file']])) {
-        $included_files[$field['file']] = TRUE;
-        include $field['file'];
+      if (isset($field['file'])) {
+        include_once $field['file'];
       }
       return $field['function']($field);
 
