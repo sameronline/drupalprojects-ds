@@ -994,8 +994,8 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
       $field_settings[$key]['ft']['func'] = $function;
     }
 
-    // Field styles.
-    if ($function != 'theme_ds_field_expert' && $function != 'theme_ds_field_reset') {
+    // Field classes.
+    if ($function != 'theme_ds_field_expert' && $function != 'theme_ds_field_reset' && isset($values['classes'])) {
       $classes = implode(' ', $values['classes']);
       if (!empty($classes)) {
         $field_settings[$key]['ft']['classes'] = $classes;
