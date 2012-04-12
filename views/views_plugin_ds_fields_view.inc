@@ -91,6 +91,9 @@ function template_preprocess_ds_row_fields(&$vars) {
     // Row index.
     $row_index = $view->row_index;
 
+    // Layout wrapper.
+    $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
+
     // Create region variables based on the layout settings.
     foreach ($layout['regions'] as $region_name => $region) {
 
@@ -114,6 +117,8 @@ function template_preprocess_ds_row_fields(&$vars) {
           $region_content .= $view->style_plugin->rendered_fields[$row_index][$field];
           $region_content .= '</div>';
         }
+        // Region wrapper.
+        $vars[$region_name . '_wrapper'] = isset($layout['settings']['wrappers'][$region_name]) ? $layout['settings']['wrappers'][$region_name] : 'div';
       }
       $vars[$region_name] = $region_content;
 
