@@ -1454,7 +1454,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     $form['additional_settings']['region_wrapper'] = array(
       '#type' => 'fieldset',
       '#title' => t('Custom wrappers'),
-      '#description' => t('Choose a wrapper')
+      '#description' => t('Choose a wrapper. All Display Suite layouts support this option.')
     );
 
     // Hide the fieldset in case of the reset layout.
