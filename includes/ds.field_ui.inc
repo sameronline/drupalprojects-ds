@@ -261,8 +261,8 @@ function ds_field_ui_regions($form, $form_state) {
       '#prefix' => '<div class="limit-float">',
       '#suffix' => '</div><div class="clearfix"></div>',
       '#attributes' => array(
-        'alt' => t('Enter a number to limit the number of items or \'delta\' to print a specific delta (usually configured in views or found in entity->ds_delta). Leave empty to display them all.'),
-        'title' => t('Enter a number to limit the number of items or \'delta\' to print a specific delta (usually configured in views or found in entity->ds_delta). Leave empty to display them all.'),
+        'alt' => t('Enter a number to limit the number of items or \'delta\' to print a specific delta (usually configured in views or found in entity->ds_delta). Leave empty to display them all. Note that depending on the formatter settings, this option might not always work.'),
+        'title' => t('Enter a number to limit the number of items or \'delta\' to print a specific delta (usually configured in views or found in entity->ds_delta). Leave empty to display them all. Note that depending on the formatter settings, this option might not always work.'),
       ),
     );
 
@@ -804,6 +804,87 @@ function ds_field_ui_layout_clone($form, &$form_state) {
   else {
     drupal_set_message(t('No layout was cloned.'));
   }
+}
+
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function ds_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  // Taxonomy view modes.
+  if ($display['type'] === 'ds_taxonomy_view_mode') {
+    $options = array();
+    $view_modes = ds_entity_view_modes('taxonomy_term');
+    foreach ($view_modes as $key => $info) {
+      $options[$key] = $info['label'];
+    }
+    $element['taxonomy_term_reference_view_mode'] = array(
+      '#title'   => t('View mode'),
+      '#type'    => 'select',
+      '#options' => $options,
+      '#default_value' => $settings['taxonomy_term_reference_view_mode'],
+    );
+    return $element;
+  }
+
+  // Taxonomy separated.
+  if ($display['type'] === 'ds_taxonomy_separator') {
+    $element['taxonomy_term_link'] = array(
+      '#title' => t('Link to term'),
+      '#type' => 'checkbox',
+      '#size' => 10,
+      '#default_value' => $settings['taxonomy_term_link'],
+    );
+    $element['taxonomy_term_separator'] = array(
+      '#title' => t('Separator'),
+      '#type' => 'select',
+      '#options' => array(
+        ' ' => t('space'),
+        ', ' => t('comma'),
+        ' - ' => t('dash'),
+        ' / ' => t('slash'),
+      ),
+      '#default_value' => $settings['taxonomy_term_separator'],
+      '#states' => array(
+        'visible' => array(
+          'select[name="fields[field_tags][settings_edit_form][settings][taxonomy_term_list]"]' => array('value' => 'separated_list'),
+        ),
+      ),
+    );
+    return $element;
+  }
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function ds_field_formatter_settings_summary($field, $instance, $view_mode) {
+  $summary = '';
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  if ($display['type'] === 'ds_taxonomy_view_mode') {
+    $entity_info = entity_get_info('taxonomy_term');
+    $modes = $entity_info['view modes'];
+    $mode = $modes[$settings['taxonomy_term_reference_view_mode']]['label'];
+    $summary = t('View mode: %mode', array('%mode' => $mode));
+  }
+
+  if ($display['type'] === 'ds_taxonomy_separator') {
+    $separators = array(
+      ' ' => t('space'),
+      ', ' => t('comma'),
+      ' - ' => t('dash'),
+      ' / ' => t('slash'),
+    );
+    $summary .= t('Separated by !sep', array('!sep' => $separators[$settings['taxonomy_term_separator']]));
+    $summary .= $settings['taxonomy_term_link'] ? ', ' . t('linked') : ', ' . t('not linked');
+  }
+
+  return $summary;
 }
 
 /**
