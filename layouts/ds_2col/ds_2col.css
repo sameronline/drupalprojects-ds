@@ -9,6 +9,6 @@
 }
 
 .ds-2col > .group-right {
-	float: left; /* LTR */
+  float: left; /* LTR */
   width: 50%;
 }
