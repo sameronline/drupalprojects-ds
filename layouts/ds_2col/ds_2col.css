@@ -5,7 +5,7 @@
 
 .ds-2col > .group-left {
   float: left; /* LTR */
-  width: 30%;
+  width: 50%;
 }
 
 .ds-2col > .group-right {
