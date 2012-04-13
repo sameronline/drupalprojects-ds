@@ -574,7 +574,14 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     $record->settings['layout_wrapper'] = 'div';
     $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
     foreach ($fields as $field_key => $field) {
-      if (isset($field['type']) && $field['type'] != 'hidden') {
+
+      // Ignore new fieldgroup, new field or existing field.
+      if (in_array($field_key, array('_add_new_field', '_add_existing_field', '_add_new_group'))) {
+        continue;
+      }
+
+      // Can either be form or display.
+      if ((isset($field['type']) && $field['type'] != 'hidden') || $record->view_mode == 'form') {
         $record->settings['regions'][$first_region][] = $field_key;
         $record->settings['fields'][$field_key] = $first_region;
       }

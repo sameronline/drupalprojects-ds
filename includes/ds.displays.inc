@@ -42,7 +42,7 @@ function ds_layout_list() {
 
         $row[] = $bundle['label'];
         $links = array(l(t('Manage display'), $path . '/display'));
-        if ($entity['base table'] == 'node' && (module_exists('ds_forms') && !module_exists('rel'))) {
+        if (in_array($entity['base table'], array('node', 'comment', 'bean', 'taxonomy_term_data', 'users', 'file_managed', 'field_collection_item')) && (module_exists('ds_forms') && !module_exists('rel'))) {
           $links[] = l(t('Manage form'), $path . '/fields');
         }
         $row[] = implode(' - ', $links);

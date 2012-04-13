@@ -62,7 +62,7 @@ function ds_forms_theme() {
 function ds_forms_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
 
   // We currently only work on node forms or custom forms.
-  if ($form['#entity_type'] == 'node' || $form['#entity_type'] == 'rel_build') {
+  if (in_array($form['#entity_type'], array('node', 'comment', 'bean', 'taxonomy_term', 'user', 'field_collection_item', 'file')) || $form['#entity_type'] == 'rel_build') {
 
     // Add necessary variables for DS Field UI.
     $form['#view_mode'] = 'form';
