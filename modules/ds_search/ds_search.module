@@ -226,7 +226,12 @@ function ds_entity_view_fallback($entity_type, $entities, $view_mode = 'full', $
     return FALSE;
   }
   else {
-    return node_view_multiple($entities, $view_mode);
+    if ($entity_type == 'node') {
+      return node_view_multiple($entities, $view_mode);
+    }
+    elseif ($entity_type == 'file') {
+      return file_view_multiple($entities, $view_mode);
+    }
   }
 }
 
