@@ -3,25 +3,25 @@
  * Styling for the ds-3col-stacked-equal template.
  */
 
-.ds-3col-stacked-equal .group-header {
+.ds-3col-stacked-equal > .group-header {
   clear: both;
 }
 
-.ds-3col-stacked-equal .group-left {
+.ds-3col-stacked-equal > .group-left {
   width: 33%;
   float: left; /* LTR */
 }
 
-.ds-3col-stacked-equal .group-middle {
+.ds-3col-stacked-equal > .group-middle {
   width: 34%;
   float: left; /* LTR */
 }
 
-.ds-3col-stacked-equal .group-right {
+.ds-3col-stacked-equal > .group-right {
   width: 33%;
   float: right; /* LTR */
 }
 
-.ds-3col-stacked-equal .group-footer {
+.ds-3col-stacked-equal > .group-footer {
   clear: both;
 }

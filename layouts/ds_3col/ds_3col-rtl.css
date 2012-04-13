@@ -3,14 +3,14 @@
  * RTL styling for the ds-3col template.
  */
 
-.ds-3col .group-left {
+.ds-3col > .group-left {
   float: right;
 }
 
-.ds-3col .group-middle {
+.ds-3col > .group-middle {
   float: right;
 }
 
-.ds-3col .group-right {
+.ds-3col > .group-right {
   float: left;
 }

@@ -3,14 +3,14 @@
  * RTL styling for the ds-3col-stacked-equal template.
  */
 
-.ds-3col-stacked-equal .group-left {
+.ds-3col-stacked-equal > .group-left {
   float: right;
 }
 
-.ds-3col-stacked-equal .group-middle {
+.ds-3col-stacked-equal > .group-middle {
   float: right;
 }
 
-.ds-3col-stacked-equal .group-right {
+.ds-3col-stacked-equal > .group-right {
   float: left;
 }

@@ -3,10 +3,10 @@
  * RTL styling for the ds_2col_fluid template.
  */
 
-.ds-2col-fluid .group-left {
+.ds-2col-fluid > .group-left {
   float: right;
 }
 
-.ds-2col-fluid .group-right {
+.ds-2col-fluid > .group-right {
   float: left;
 }

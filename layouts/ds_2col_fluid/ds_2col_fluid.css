@@ -3,18 +3,18 @@
  * Styling for the ds_2col_fluid template.
  */
 
-.ds-2col-fluid .group-left {
+.ds-2col-fluid > .group-left {
   float: left; /* LTR */
   width: 50%;
 }
 
-.ds-2col-fluid .group-right {
+.ds-2col-fluid > .group-right {
   float: right; /* LTR */
   width: 50%;
 }
 
-.ds-2col-fluid.group-one-column .group-left,
-.ds-2col-fluid.group-one-column .group-right {
+.ds-2col-fluid.group-one-column > .group-left,
+.ds-2col-fluid.group-one-column > .group-right {
   width: 100%;
   float: none;
 }

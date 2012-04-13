@@ -3,12 +3,12 @@
  * Styling for the ds_2col template.
  */
 
-.ds-2col .group-left {
+.ds-2col > .group-left {
   float: left; /* LTR */
-  width: 50%;
+  width: 30%;
 }
 
-.ds-2col .group-right {
+.ds-2col > .group-right {
 	float: left; /* LTR */
   width: 50%;
 }
