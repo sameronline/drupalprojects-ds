@@ -550,6 +550,30 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     // Let other modules alter the layout settings.
     drupal_alter('ds_layout_settings', $record, $form_state);
 
+    // Move current visible fields into a default region, so
+    // we keep their current settings.
+    $layouts = ds_get_layout_info();
+    $sl = $layouts[$layout];
+    $first_region = key($sl['regions']);
+    $record->settings['regions'] = array();
+    $record->settings['fields'] = array();
+    $record->settings['classes'] = array();
+    $record->settings['wrappers'] = array();
+    $record->settings['layout_wrapper'] = 'div';
+    $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
+    foreach ($fields as $field_key => $field) {
+      if (isset($field['type']) && $field['type'] != 'hidden') {
+        $record->settings['regions'][$first_region][] = $field_key;
+        $record->settings['fields'][$field_key] = $first_region;
+      }
+    }
+    // In case this is the full node view mode and if the comment module
+    // is enabled for this content type, add it as well.
+    if ($record->entity_type == 'node' && $record->view_mode == 'full' && module_exists('comment')) {
+      $record->settings['regions'][$first_region][] = 'comments';
+      $record->settings['fields']['comments'] = $first_region;
+    }
+
     // Save the record.
     drupal_write_record('ds_layout_settings', $record);
   }
