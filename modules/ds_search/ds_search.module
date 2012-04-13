@@ -666,12 +666,9 @@ function ds_search_process_results($results) {
       // Unserialize zs_entity field.
       $entity = @unserialize($result['fields']['zs_entity']);
       if (empty($entity)) {
-        $load = entity_load($result['fields']['entity_type'], array($result['fields']['entity_id']));
-        $entity = reset($load);
+        $entity = entity_load($result['fields']['entity_type'], array($result['fields']['entity_id']));
       }
-      else {
-        $entity = reset($entity);
-      }
+      $entity = reset($entity);
 
       // Add the snippet, url and extra info on the object.
       $entity->search_snippet = $result['snippet'];
