@@ -928,12 +928,15 @@ function ds_entity_variables(&$vars) {
       // Create the region content.
       $layout_render_array[$region_name] = array();
       if (isset($layout['settings']['regions'][$region_name])) {
-        foreach ($layout['settings']['regions'][$region_name] as $field) {
+        foreach ($layout['settings']['regions'][$region_name] as $key => $field) {
           // Make sure the field exists.
           if (!isset($vars[$render_container][$field])) {
             continue;
           }
-          $layout_render_array[$region_name][] = $vars[$render_container][$field];
+          if (!isset($vars[$render_container][$field]['#weight'])) {
+            $vars[$render_container][$field]['#weight'] = $key;
+          }
+          $layout_render_array[$region_name][$key] = $vars[$render_container][$field];
         }
       }
 
