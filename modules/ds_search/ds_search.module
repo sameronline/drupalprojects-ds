@@ -615,15 +615,13 @@ function ds_search_apachesolr_index_document_build(ApacheSolrDocument $document,
   }
   // Creme de la creme: Put the full node object in the index,
   // so no node_loads are needed for results in the Apache Solr engine.
-  // We are using xs_node because this field is not indexed by apachesolr and it
+  // We are using zs_entity because this field is not indexed by apachesolr and it
   // is a single.
-  // @todo It takes 33% more space in the database of solr and is more
-  // processor demanding, maybe add a new field to schema.xml?
   $entity_type = $document->getField('entity_type');
   $entity_id = $document->getField('entity_id');
   $entity_type = $entity_type['value'];
   $entity_id = $entity_id['value'];
-  $document->addField('xs_entity', base64_encode(serialize(entity_load($entity_type, array($entity_id)))));
+  $document->addField('zs_entity', serialize(entity_load($entity_type, array($entity_id))));
 }
 
 /**
@@ -632,7 +630,7 @@ function ds_search_apachesolr_index_document_build(ApacheSolrDocument $document,
 function ds_search_apachesolr_query_alter($query) {
 
   // Get the node from the index.
-  $query->addParam('fl', 'xs_entity');
+  $query->addParam('fl', 'zs_entity');
 
   // Apache Solr multisite support.
   if (variable_get('ds_search_apachesolr_multisite') && variable_get('ds_search_type', 'node') == 'apachesolr_search') {
@@ -665,8 +663,8 @@ function ds_search_process_results($results) {
   if (is_array($results) && !empty($results)) {
     foreach ($results as $result) {
 
-      // Unserialize xs_node field.
-      $entity = @unserialize(@base64_decode($result['fields']['xs_entity']));
+      // Unserialize zs_entity field.
+      $entity = @unserialize($result['fields']['zs_entity']);
       if (empty($entity)) {
         $entity = entity_load($result['fields']['entity_type'], array($result['fields']['entity_id']));
       }
