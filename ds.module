@@ -1116,7 +1116,7 @@ function ds_render_block_field($field) {
 
       // Translate.
       $i18n_block = db_query("SELECT * FROM {block} WHERE module = :module AND delta = :delta", array(':module' => $module, ':delta' => $delta))->fetchObject();
-      if (!empty($block->i18n_mode)) {
+      if (!empty($i18n_block->i18n_mode)) {
         i18n_block_block_view_alter($block, $i18n_block);
         // OH WTF ...
         if (!empty($i18n_block->title)) {
