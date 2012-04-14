@@ -277,7 +277,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
   }
 
   // Page title functionality, currently only works on nodes, users and taxonomy terms.
-  if (variable_get('ds_extras_hide_page_title', FALSE) && isset($form['#ds_layout']) && in_array($form['#entity_type'], array('node', 'user', 'taxonomy_term')) && ($form['#view_mode'] == 'full' || $form['#view_mode'] == 'revision' || (variable_get('ds_extras_switch_view_mode', FALSE) && $form['#entity_type'] == 'node'))) {
+  if (variable_get('ds_extras_hide_page_title', FALSE) && isset($form['#ds_layout']) && (in_array($form['#entity_type'], array('node', 'user', 'taxonomy_term')) && ($form['#view_mode'] == 'full' || $form['#view_mode'] == 'revision' || (variable_get('ds_extras_switch_view_mode', FALSE) && $form['#entity_type'] == 'node')) || $form['#entity_type'] == 'ds_views')) {
     $form['additional_settings']['ds_page_title'] = array(
       '#type' => 'fieldset',
       '#title' => t('Custom page title'),
@@ -617,6 +617,11 @@ function _ds_extras_page_title_options($settings, $entity_type) {
     '#weight' => 100,
   );
 
+  // Display Suite Views currently only supports hiding the page title.
+  if ($entity_type == 'ds_views') {
+    unset($return['page_option_type']['#options'][2]);
+  }
+
   $contexts = ds_get_entity_context($entity_type);
   $rows = array();
   foreach ($contexts as $context) {
@@ -634,6 +639,7 @@ function _ds_extras_page_title_options($settings, $entity_type) {
     '#default_value' => isset($settings['page_option_title']) ? $settings['page_option_title'] : '',
     '#description' => t('The title, you may use substitutions in this title.'),
     '#weight' => 101,
+    '#access' => $entity_type != 'ds_views',
     '#states' => array(
       'visible' => array(
         ':input[name="page_option_type"]' => array('value' => '2'),
@@ -651,6 +657,7 @@ function _ds_extras_page_title_options($settings, $entity_type) {
     //'#collapsed' => TRUE,
     '#value' => theme('table', array('header' => $header, 'rows' => $rows)),
     '#weight' => 102,
+    '#access' => $entity_type != 'ds_views',
     '#states' => array(
       'visible' => array(
         ':input[name="page_option_type"]' => array('value' => '2'),

@@ -261,6 +261,15 @@ function ds_extras_process_page_title(&$variables) {
       drupal_set_title($page_title['head_title']);
     }
   }
+
+  // Support for Views page title, currently only hiding the title.
+  if (variable_get('ds_extras_vd', FALSE) && $view = views_get_page_view()) {
+    if ($layout = ds_get_layout('ds_views', $view->name . '-' . $view->current_display, 'default')) {
+      if (isset($layout['settings']['hide_page_title']) && $layout['settings']['hide_page_title'] == 1) {
+        $variables['title'] = '';
+      }
+    }
+  }
 }
 
 /**
@@ -660,10 +669,10 @@ function ds_extras_entity_view_alter(&$build, $entity_type) {
   // Page title options.
   if (variable_get('ds_extras_hide_page_title', FALSE)) {
     $page_title = &drupal_static('ds_page_title');
-    if (isset($layout['settings']['hide_page_title']) && $layout['settings']['hide_page_title'] == 1) {
+    if (isset($layout['settings']['hide_page_title']) && $layout['settings']['hide_page_title'] == 1 && ds_extras_is_entity_page_view($build, $entity_type)) {
       $page_title['title'] = '';
     }
-    elseif (isset($layout['settings']['hide_page_title']) && $layout['settings']['hide_page_title'] == 2 && !empty($layout['settings']['page_option_title'])) {
+    elseif (isset($layout['settings']['hide_page_title']) && $layout['settings']['hide_page_title'] == 2 && !empty($layout['settings']['page_option_title']) && ds_extras_is_entity_page_view($build, $entity_type)) {
       $contexts = array();
       $id = (arg(0) == 'taxonomy') ? arg(2) : arg(1);
       $entity = entity_load($entity_type, array($id));
@@ -686,6 +695,33 @@ function ds_extras_entity_view_alter(&$build, $entity_type) {
       ctools_set_no_blocks();
     }
   }
+}
+
+/**
+ * Helper function to check if this is a page view.
+ *
+ * The page title option adds the ability to hide or override the page title.
+ * However, it can't happen that an entity bleeds its page title to say a view
+ * or the frontpage.
+ *
+ * See http://drupal.org/node/1526732 and http://drupal.org/node/1446554.
+ */
+function ds_extras_is_entity_page_view($build, $entity_type) {
+  switch ($entity_type) {
+    case 'node':
+      return node_is_page($build['#node']);
+      break;
+    case 'user':
+    $page_account = menu_get_object('user');
+    return (!empty($page_account) ? $page_account->uid == $build['#account']->uid : FALSE);
+    break;
+    case 'taxonomy_term':
+      $page_term = menu_get_object('taxonomy_term', 2);
+      return (!empty($page_term) ? $page_term->tid == $build['#term']->tid : FALSE);
+      break;
+  }
+
+  return FALSE;
 }
 
 /**
