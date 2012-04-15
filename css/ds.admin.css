@@ -7,6 +7,10 @@
   margin-bottom: 1em;
 }
 
+#field-display-overview .field-formatter-settings-edit-form .ft-group .form-item {
+  margin: 0;
+}
+
 .ds-layout-preview-title {
   font-weight: bold;
 }

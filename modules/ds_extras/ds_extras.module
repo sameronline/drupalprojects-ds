@@ -935,14 +935,22 @@ function theme_ds_field_expert($variables) {
       else {
         $class = ' class="label-' . $variables['element']['#label_display'] . '"';
       }
-      $output .= '<' . $config['lb-el'] . $class . '>' . $variables['label'];
+      $attributes = (!empty($config['lb-at']))?  ' ' . $config['lb-at'] : '';
+      $output .= '<' . $config['lb-el'] . $class . $attributes . '>' . $variables['label'];
       if (!isset($config['lb-col'])) {
         $output .= ':&nbsp;';
       }
       $output .= '</' . $config['lb-el'] . '>';
     }
     else {
-      $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
+      if (!empty($config['lb-cl'])) {
+        $class = ' class="label-' . $variables['element']['#label_display'] . ' ' . $config['lb-cl'] . '"';
+      }
+      else {
+        $class = ' class="label-' . $variables['element']['#label_display'] . '"';
+      }
+      $attributes = (!empty($config['lb-at']))?  ' ' . $config['lb-at'] : '';
+      $output .= '<div' . $class . $attributes . '>' . $variables['label'];
       if (!isset($config['lb-col'])) {
         $output .= ':&nbsp;';
       }
@@ -954,7 +962,8 @@ function theme_ds_field_expert($variables) {
   if (isset($config['fis'])) {
     $fis_wrapper = $config['fis-el'];
     $class = (!empty($config['fis-cl'])) ? ' class="' . $config['fis-cl'] . '"' : '';
-    $output .= '<' . $fis_wrapper . $class . '>';
+    $attributes = (!empty($config['fis-at'])) ? ' ' . $config['fis-at'] : '';
+    $output .= '<' . $fis_wrapper . $class . $attributes . '>';
   }
 
   // Field item wrapper.
@@ -966,11 +975,13 @@ function theme_ds_field_expert($variables) {
   foreach ($variables['items'] as $delta => $item) {
     // Field item wrapper.
     if (isset($config['fi'])) {
-      $classes = ($delta % 2 ? 'odd' : 'even');
+      $class = ' class="' . ($delta % 2 ? 'odd' : 'even');
       if (!empty($config['fi-cl'])) {
-        $classes .= ' ' . $config['fi-cl'];
+        $class .= ' ' . $config['fi-cl'];
       }
-      $output .= '<' . $fi_wrapper . ' class="' . $classes . '">';
+      $class .= '"';
+      $attributes = (!empty($config['fi-at']))?  ' ' . $config['fi-at'] : '';
+      $output .= '<' . $fi_wrapper . $class . $attributes .'>';
     }
 
     // Render field content.
@@ -991,7 +1002,8 @@ function theme_ds_field_expert($variables) {
   if (isset($config['ow'])) {
     $ow_wrapper = $config['ow-el'];
     $class = (!empty($config['ow-cl'])) ? ' class="' . $config['ow-cl'] . '"' : '';
-    $output = '<' . $ow_wrapper . $class . '>' . $output . '</' . $ow_wrapper . '>';
+    $attributes = (!empty($config['ow-at'])) ? ' ' . $config['ow-at'] : '';
+    $output = '<' . $ow_wrapper . $class . $attributes . '>' . $output . '</' . $ow_wrapper . '>';
   }
 
   return $output;
@@ -1049,6 +1061,9 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
       if (!(empty($values['lb-cl'])) && $function == 'theme_ds_field_expert') {
         $field_settings[$key]['ft']['lb-cl'] = check_plain($values['lb-cl']);
       }
+      if (!(empty($values['lb-at'])) && $function == 'theme_ds_field_expert') {
+       $field_settings[$key]['ft']['lb-at'] = filter_xss($values['lb-at']);
+      }
       if (!(empty($values['lb-col']))) {
         $field_settings[$key]['ft']['lb-col'] = TRUE;
       }
@@ -1064,6 +1079,8 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
           $field_settings[$key]['ft'][$wrapper_key . '-el'] = !(empty($values[$wrapper_key . '-el'])) ? check_plain($values[$wrapper_key . '-el']) : 'div';
           // Classess.
           $field_settings[$key]['ft'][$wrapper_key . '-cl'] = !(empty($values[$wrapper_key . '-cl'])) ? check_plain($values[$wrapper_key . '-cl']) : '';
+          // Attributes.
+          $field_settings[$key]['ft'][$wrapper_key . '-at'] = !(empty($values[$wrapper_key . '-at'])) ? filter_xss($values[$wrapper_key . '-at']) : '';
         }
       }
     }

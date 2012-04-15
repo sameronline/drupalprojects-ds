@@ -426,9 +426,7 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
 
   // Wrappers and label.
   $wrappers = array(
-    'lb' => array(
-      'title' => t('Label'),
-    ),
+    'lb' => array('title' => t('Label')),
     'ow' => array('title' => t('Outer wrapper')),
     'fis' => array('title' => t('Field items')),
     'fi' => array('title' => t('Field item')),
@@ -471,9 +469,16 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
       '#type' => 'textfield',
       '#title' => t('Classes'),
       '#size' => '10',
-      '#suffix' => '</div><div class="clearfix"></div>',
       '#default_value' => isset($field_settings[$wrapper_key . '-cl']) ? $field_settings[$wrapper_key . '-cl'] : '',
-      '#description' => t('Classes: !classes', array('!classes' => implode(', ', $classes))),
+      '#description' => t('Classes:') . '<br/>' . implode(', ', $classes),
+    );
+    $form['ft'][$wrapper_key . '-at'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Attributes'),
+      '#size' => '20',
+      '#suffix' => '</div><div class="clearfix"></div>',
+      '#default_value' => isset($field_settings[$wrapper_key . '-at']) ? $field_settings[$wrapper_key . '-at'] : '',
+      '#description' => t('E.g. name="anchor"'),
     );
   }
 
