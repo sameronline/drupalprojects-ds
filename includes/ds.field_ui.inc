@@ -527,7 +527,9 @@ function ds_field_ui_layout_change_submit($form, &$form_state) {
  * Save the layout settings from the 'Manage display' screen.
  */
 function ds_field_ui_layouts_save($form, &$form_state) {
-  // Get some default values.
+  $weight = -1;
+
+  // Get default values.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form['#view_mode'];
@@ -582,7 +584,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
       // Can either be form or display.
       if ((isset($field['type']) && $field['type'] != 'hidden') || $record->view_mode == 'form') {
-        $record->settings['regions'][$first_region][] = $field_key;
+        $record->settings['regions'][$first_region][$weight++] = $field_key;
         $record->settings['fields'][$field_key] = $first_region;
       }
     }
@@ -611,7 +613,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       if (!isset($record->settings['regions'][$field['region']])) {
         $record->settings['regions'][$field['region']] = array();
       }
-      $record->settings['regions'][$field['region']][] = $key;
+      $record->settings['regions'][$field['region']][$weight++] = $key;
       $record->settings['fields'][$key] = $field['region'];
 
       // Save limit.
