@@ -432,22 +432,7 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
     'fi' => array('title' => t('Field item')),
   );
 
-  $colon_checkbox = FALSE;
   foreach ($wrappers as $wrapper_key => $value) {
-
-    // Hide colon.
-    if (!$colon_checkbox) {
-      $form['ft']['lb-col'] = array(
-        '#type' => 'checkbox',
-        '#title' => t('Hide label colon'),
-        '#default_value' => isset($field_settings['lb-col']) ? $field_settings['lb-col'] : FALSE,
-        '#attributes' => array(
-          'class' => array('colon-checkbox'),
-        ),
-        '#weight' => 21,
-      );
-      $colon_checkbox = TRUE;
-    }
 
     $classes = array(
       'field-name-' . strtr($key, '_', '-'),
@@ -476,10 +461,44 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
       '#type' => 'textfield',
       '#title' => t('Attributes'),
       '#size' => '20',
-      '#suffix' => '</div><div class="clearfix"></div>',
       '#default_value' => isset($field_settings[$wrapper_key . '-at']) ? $field_settings[$wrapper_key . '-at'] : '',
       '#description' => t('E.g. name="anchor"'),
     );
+
+    // Hide colon.
+    if ($wrapper_key == 'lb') {
+      $form['ft']['lb-col'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Hide label colon'),
+        '#default_value' => isset($field_settings['lb-col']) ? $field_settings['lb-col'] : FALSE,
+        '#attributes' => array(
+          'class' => array('colon-checkbox'),
+        ),
+      );
+    }
+    if ($wrapper_key == 'fi') {
+      $form['ft']['fi-odd-even'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Add odd/even classes'),
+        '#default_value' => isset($field_settings['fi-odd-even']) ? $field_settings['fi-odd-even'] : FALSE,
+      );
+    }
+    $form['ft'][$wrapper_key . '-def-at'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Add default attributes'),
+      '#default_value' => isset($field_settings[$wrapper_key . '-def-at']) ? $field_settings[$wrapper_key . '-def-at'] : FALSE,
+      '#suffix' => in_array($wrapper_key, array('ow', 'lb')) ? '' : '</div><div class="clearfix"></div>',
+    );
+
+    // Default classes for outer wrapper and label.
+    if (in_array($wrapper_key, array('ow', 'lb'))) {
+      $form['ft'][$wrapper_key . '-def-cl'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Add default classes'),
+        '#default_value' => isset($field_settings[$wrapper_key . '-def-cl']) ? $field_settings[$wrapper_key . '-def-cl'] : FALSE,
+        '#suffix' => '</div><div class="clearfix"></div>',
+      );
+    }
   }
 
   // Another label needs some other stuff.
