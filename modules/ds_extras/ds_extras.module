@@ -929,34 +929,17 @@ function theme_ds_field_expert($variables) {
   // Render the label if it's not hidden
   if (!$variables['label_hidden']) {
     // @todo default classes, attributes + tests
-    if (isset($config['lb-el'])) {
-      if (!empty($config['lb-cl'])) {
-        $class = ' class="label-' . $variables['element']['#label_display'] . ' ' . $config['lb-cl'] . '"';
-      }
-      else {
-        $class = ' class="label-' . $variables['element']['#label_display'] . '"';
-      }
-      $attributes = (!empty($config['lb-at']))?  ' ' . $config['lb-at'] : '';
-      $output .= '<' . $config['lb-el'] . $class . $attributes . '>' . $variables['label'];
-      if (!isset($config['lb-col'])) {
-        $output .= ':&nbsp;';
-      }
-      $output .= '</' . $config['lb-el'] . '>';
+    $label_wrapper = isset($config['lb-el']) ? $config['lb-el'] : 'div';
+    if (!empty($config['lb-cl'])) {
+      $class = ' class="label-' . $variables['element']['#label_display'] . ' ' . $config['lb-cl'] . '"';
     }
     else {
-      if (!empty($config['lb-cl'])) {
-        $class = ' class="label-' . $variables['element']['#label_display'] . ' ' . $config['lb-cl'] . '"';
-      }
-      else {
-        $class = ' class="label-' . $variables['element']['#label_display'] . '"';
-      }
-      $attributes = (!empty($config['lb-at']))?  ' ' . $config['lb-at'] : '';
-      $output .= '<div' . $class . $attributes . '>' . $variables['label'];
-      if (!isset($config['lb-col'])) {
-        $output .= ':&nbsp;';
-      }
-      $output .= '</div>';
+      $class = ' class="label-' . $variables['element']['#label_display'] . '"';
     }
+    $attributes = (!empty($config['lb-at']))?  ' ' . $config['lb-at'] : '';
+    $output .= '<' . $label_wrapper . $class . $attributes . '>' . $variables['label'];
+    if (!isset($config['lb-col'])) $output .= ':&nbsp;';
+    $output .= '</' . $label_wrapper . '>';
   }
 
   // Field items wrapper
