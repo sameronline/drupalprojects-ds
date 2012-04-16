@@ -621,7 +621,7 @@ function ds_search_apachesolr_index_document_build(ApacheSolrDocument $document,
   $entity_id = $document->getField('entity_id');
   $entity_type = $entity_type['value'];
   $entity_id = $entity_id['value'];
-  $document->addField('zs_entity', serialize(entity_load($entity_type, array($entity_id))));
+  $document->addField('zs_entity', drupal_json_encode(reset(entity_load($entity_type, array($entity_id)))));
 }
 
 /**
@@ -663,12 +663,15 @@ function ds_search_process_results($results) {
   if (is_array($results) && !empty($results)) {
     foreach ($results as $result) {
 
-      // Unserialize zs_entity field.
-      $entity = @unserialize($result['fields']['zs_entity']);
+      // Json decode zs_entity field.
+      $entity = @drupal_json_decode($result['fields']['zs_entity']);
       if (empty($entity)) {
-        $entity = entity_load($result['fields']['entity_type'], array($result['fields']['entity_id']));
+        $load = entity_load($result['fields']['entity_type'], array($result['fields']['entity_id']));
+        $entity = reset($load);
       }
-      $entity = reset($entity);
+      else {
+        $entity = (object) $entity;
+      }
 
       // Add the snippet, url and extra info on the object.
       $entity->search_snippet = $result['snippet'];
