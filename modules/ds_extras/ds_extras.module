@@ -962,15 +962,9 @@ function theme_ds_field_expert($variables) {
   // Field items wrapper
   if (isset($config['fis'])) {
     // @todo default attributes + tests.
-    $fis_wrapper = $config['fis-el'];
     $class = (!empty($config['fis-cl'])) ? ' class="' . $config['fis-cl'] . '"' : '';
     $attributes = (!empty($config['fis-at'])) ? ' ' . $config['fis-at'] : '';
-    $output .= '<' . $fis_wrapper . $class . $attributes . '>';
-  }
-
-  // Field item wrapper.
-  if (isset($config['fi'])) {
-    $fi_wrapper = $config['fi-el'];
+    $output .= '<' . $config['fis-el'] . $class . $attributes . '>';
   }
 
   // Render items.
@@ -979,15 +973,11 @@ function theme_ds_field_expert($variables) {
     if (isset($config['fi'])) {
       // @todo default attributes + tests.
       $class = array();
-      if (!empty($config['fi-odd-even'])) {
-        $class[] = $delta % 2 ? 'odd' : 'even';
-      }
-      if (!empty($config['fi-cl'])) {
-        $class[] = $config['fi-cl'];
-      }
+      if (!empty($config['fi-odd-even'])) $class[] = $delta % 2 ? 'odd' : 'even';
+      if (!empty($config['fi-cl'])) $class[] = $config['fi-cl'];
       $class = !empty($class) ? ' class="'. implode(' ', $class)  .'"' : '';
       $attributes = (!empty($config['fi-at']))?  ' ' . $config['fi-at'] : '';
-      $output .= '<' . $fi_wrapper . $class . $attributes .'>';
+      $output .= '<' . $config['fi-el'] . $class . $attributes .'>';
     }
 
     // Render field content.
@@ -995,22 +985,24 @@ function theme_ds_field_expert($variables) {
 
     // Closing field item wrapper.
     if (isset($config['fi'])) {
-      $output .= '</' . $fi_wrapper . '>';
+      $output .= '</' . $config['fi-el'] . '>';
     }
   }
 
   // Closing field items wrapper.
   if (isset($config['fis'])) {
-    $output .= '</' . $fis_wrapper . '>';
+    $output .= '</' . $config['fis-el'] . '>';
   }
 
   // Outer wrapper.
   if (isset($config['ow'])) {
-    // @todo default classes and attributes + tests.
-    $ow_wrapper = $config['ow-el'];
-    $class = (!empty($config['ow-cl'])) ? ' class="' . $config['ow-cl'] . '"' : '';
+    // @todo default attributes + tests.
+    $class = array();
+    if (!empty($config['ow-cl'])) $class[] = $config['ow-cl'];
+    if (!empty($config['ow-def-cl'])) $class[] = $variables['classes'];
+    $class = (!empty($class)) ? ' class="' . implode(' ', $class) . '"' : '';
     $attributes = (!empty($config['ow-at'])) ? ' ' . $config['ow-at'] : '';
-    $output = '<' . $ow_wrapper . $class . $attributes . '>' . $output . '</' . $ow_wrapper . '>';
+    $output = '<' . $config['ow-el'] . $class . $attributes . '>' . $output . '</' . $config['ow-el'] . '>';
   }
 
   return $output;

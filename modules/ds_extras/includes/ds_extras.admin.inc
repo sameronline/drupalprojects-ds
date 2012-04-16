@@ -455,7 +455,7 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
       '#title' => t('Classes'),
       '#size' => '10',
       '#default_value' => isset($field_settings[$wrapper_key . '-cl']) ? $field_settings[$wrapper_key . '-cl'] : '',
-      '#description' => t('Classes:') . '<br/>' . implode(', ', $classes),
+      '#description' => t('E.g.') .' ' . implode(', ', $classes),
     );
     $form['ft'][$wrapper_key . '-at'] = array(
       '#type' => 'textfield',
