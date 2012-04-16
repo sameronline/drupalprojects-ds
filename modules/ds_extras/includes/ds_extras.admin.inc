@@ -487,11 +487,11 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
       '#type' => 'checkbox',
       '#title' => t('Add default attributes'),
       '#default_value' => isset($field_settings[$wrapper_key . '-def-at']) ? $field_settings[$wrapper_key . '-def-at'] : FALSE,
-      '#suffix' => in_array($wrapper_key, array('ow', 'lb')) ? '' : '</div><div class="clearfix"></div>',
+      '#suffix' => ($wrapper_key == 'ow') ? '' : '</div><div class="clearfix"></div>',
     );
 
-    // Default classes for outer wrapper and label.
-    if (in_array($wrapper_key, array('ow', 'lb'))) {
+    // Default classes for outer wrapper.
+    if ($wrapper_key == 'ow') {
       $form['ft'][$wrapper_key . '-def-cl'] = array(
         '#type' => 'checkbox',
         '#title' => t('Add default classes'),

@@ -926,17 +926,16 @@ function theme_ds_field_expert($variables) {
 
   $config = $variables['ds-config'];
 
-  // Render the label if it's not hidden
+  // Render the label if it's not hidden.
   if (!$variables['label_hidden']) {
-    // @todo default classes, attributes + tests
     $label_wrapper = isset($config['lb-el']) ? $config['lb-el'] : 'div';
-    if (!empty($config['lb-cl'])) {
-      $class = ' class="label-' . $variables['element']['#label_display'] . ' ' . $config['lb-cl'] . '"';
-    }
-    else {
-      $class = ' class="label-' . $variables['element']['#label_display'] . '"';
-    }
-    $attributes = (!empty($config['lb-at']))?  ' ' . $config['lb-at'] : '';
+    $class = array('label-' . $variables['element']['#label_display']);
+    if (!empty($config['lb-cl'])) $class[] = $config['lb-cl'];
+    $class = !empty($class) ? ' class="' . implode(' ', $class) . '"' : '';
+    $attributes = array();
+    if (!empty($config['lb-at'])) $attributes[] = $config['lb-at'];
+    if (!empty($config['lb-def-at'])) $attributes[] = $variables['title_attributes'];
+    $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
     $output .= '<' . $label_wrapper . $class . $attributes . '>' . $variables['label'];
     if (!isset($config['lb-col'])) $output .= ':&nbsp;';
     $output .= '</' . $label_wrapper . '>';
@@ -1051,6 +1050,9 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
       }
       if (!(empty($values['lb-at'])) && $function == 'theme_ds_field_expert') {
        $field_settings[$key]['ft']['lb-at'] = filter_xss($values['lb-at']);
+      }
+      if (!(empty($values['lb-def-at'])) && $function == 'theme_ds_field_expert') {
+       $field_settings[$key]['ft']['lb-def-at'] = TRUE;
       }
       if (!(empty($values['lb-col']))) {
         $field_settings[$key]['ft']['lb-col'] = TRUE;
