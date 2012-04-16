@@ -647,6 +647,19 @@ class dsNodeTests extends dsBaseTest {
     <div class=\"ow-class field field-name-body field-type-text-with-summary field-label-hidden\"><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>  </div>");
 
+    // Test default attributes on field item.
+    $edit = array(
+      'fields[body][settings_edit_form][settings][ft][ow]' => '1',
+      'fields[body][settings_edit_form][settings][ft][ow-el]' => 'div',
+      'fields[body][settings_edit_form][settings][ft][ow-cl]' => 'ow-class',
+      'fields[body][settings_edit_form][settings][ft][ow-def-cl]' => '1',
+      'fields[body][settings_edit_form][settings][ft][fi-def-at]' => '1',
+    );
+    $this->dsEditFormatterSettings($edit);
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertRaw("<div class=\"group-right\">
+    <div class=\"ow-class field field-name-body field-type-text-with-summary field-label-hidden\"><div class=\"fi-class-2\"><span class=\"even fi-class\"  property=\"content:encoded\"><p>" . $body_field . "</p>
+</span></div></div>  </div>");
 
     // Use the test field theming function to test that this function is
     // registered in the theme registry through ds_extras_theme().

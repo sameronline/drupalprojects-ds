@@ -961,9 +961,11 @@ function theme_ds_field_expert($variables) {
 
   // Field items wrapper
   if (isset($config['fis'])) {
-    // @todo default attributes + tests.
     $class = (!empty($config['fis-cl'])) ? ' class="' . $config['fis-cl'] . '"' : '';
-    $attributes = (!empty($config['fis-at'])) ? ' ' . $config['fis-at'] : '';
+    $attributes = array();
+    if (!empty($config['fis-at'])) $attributes[] = $config['fis-at'];
+    if (!empty($config['fis-def-at'])) $attributes[] = $variables['content_attributes'];
+    $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
     $output .= '<' . $config['fis-el'] . $class . $attributes . '>';
   }
 
@@ -971,12 +973,14 @@ function theme_ds_field_expert($variables) {
   foreach ($variables['items'] as $delta => $item) {
     // Field item wrapper.
     if (isset($config['fi'])) {
-      // @todo default attributes + tests.
       $class = array();
       if (!empty($config['fi-odd-even'])) $class[] = $delta % 2 ? 'odd' : 'even';
       if (!empty($config['fi-cl'])) $class[] = $config['fi-cl'];
       $class = !empty($class) ? ' class="'. implode(' ', $class)  .'"' : '';
-      $attributes = (!empty($config['fi-at']))?  ' ' . $config['fi-at'] : '';
+      $attributes = array();
+      if (!empty($config['fi-at'])) $attributes[] = $config['fi-at'];
+      if (!empty($config['fi-def-at'])) $attributes[] = $variables['item_attributes'][$delta];
+      $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
       $output .= '<' . $config['fi-el'] . $class . $attributes .'>';
     }
 
@@ -996,12 +1000,14 @@ function theme_ds_field_expert($variables) {
 
   // Outer wrapper.
   if (isset($config['ow'])) {
-    // @todo default attributes + tests.
     $class = array();
     if (!empty($config['ow-cl'])) $class[] = $config['ow-cl'];
     if (!empty($config['ow-def-cl'])) $class[] = $variables['classes'];
     $class = (!empty($class)) ? ' class="' . implode(' ', $class) . '"' : '';
-    $attributes = (!empty($config['ow-at'])) ? ' ' . $config['ow-at'] : '';
+    $attributes = array();
+    if (!empty($config['ow-at'])) $attributes[] = $config['ow-at'];
+    if (!empty($config['ow-def-at'])) $attributes[] = $variables['attributes'];
+    $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
     $output = '<' . $config['ow-el'] . $class . $attributes . '>' . $output . '</' . $config['ow-el'] . '>';
   }
 

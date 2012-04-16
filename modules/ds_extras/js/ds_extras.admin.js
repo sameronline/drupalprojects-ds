@@ -81,9 +81,9 @@ Drupal.behaviors.settingsToggle = {
       ft = $('.ds-extras-field-template', field).val();
 
       if (ft == 'theme_ds_field_expert') {
-        // Show second and third label.
+        // Show second, third, fourth, fifth, sixth and seventh label.
         if ($('.lb .form-item:nth-child(1)', field).is(':visible')) {
-          $('.lb .form-item:nth-child(2), .lb .form-item:nth-child(3)', field).show();
+          $('.lb .form-item:nth-child(2), .lb .form-item:nth-child(3), .lb .form-item:nth-child(4), .lb .form-item:nth-child(5), .lb .form-item:nth-child(6), .lb .form-item:nth-child(7)', field).show();
         }
         // Remove margin from update button.
         $('.ft-update', field).css({'margin-top': '-10px'});
@@ -91,8 +91,8 @@ Drupal.behaviors.settingsToggle = {
         $('.ow, .fis, .fi', field).show();
       }
       else {
-        // Hide second and third label.
-        $('.lb .form-item:nth-child(2), .lb .form-item:nth-child(3)', field).hide();
+        // Hide second, third, fourth, fifth, sixth and seventh label.
+        $('.lb .form-item:nth-child(2), .lb .form-item:nth-child(3), .lb .form-item:nth-child(4), .lb .form-item:nth-child(5), .lb .form-item:nth-child(6), .lb .form-item:nth-child(7)', field).hide();
         // Add margin on update button.
         $('.ft-update', field).css({'margin-top': '10px'});
         // Hide wrappers.
