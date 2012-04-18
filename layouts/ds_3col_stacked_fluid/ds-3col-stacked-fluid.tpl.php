@@ -44,3 +44,7 @@
   </<?php print $footer_wrapper ?>>
 
 </<?php print $layout_wrapper ?>>
+
+<?php if (!empty($drupal_render_children)): ?>
+  <?php print $drupal_render_children ?>
+<?php endif; ?>
