@@ -34,7 +34,7 @@ function ds_search_settings($form, $form_state) {
     '#type' => 'textfield',
     '#title' => t('Search path'),
     '#field_prefix' => 'search/',
-    '#description' => t('If you change this, you need to clear the cache so the path is updated in your website.'),
+    '#description' => t('Make sure you don\'t override an existing search path.'),
     '#default_value' => variable_get('ds_search_path', 'content'),
     '#required' => TRUE,
   );
