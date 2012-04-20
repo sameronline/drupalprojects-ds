@@ -129,7 +129,7 @@ function ds_search_extra_info($field) {
 function ds_search_search_info() {
   return array(
     'title' => 'Content',
-    'path' => 'content',
+    'path' => variable_get('ds_search_path', 'content'),
     'conditions_callback' => 'ds_search_conditions',
   );
 }
@@ -691,7 +691,7 @@ function ds_search_process_results($results) {
         // Prefix with site hash so we don't override same id's.
         $markup = $result['fields']['tm_ds_search_result'][0];
         $processed_results[$result['fields']['id'] . '-' . $result['fields']['entity_id']] = array(
-         '#markup' => $markup,
+          '#markup' => $markup,
           '#site_hash' => $result['fields']['hash'],
         );
       }

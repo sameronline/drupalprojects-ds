@@ -30,6 +30,15 @@ function ds_search_settings($form, $form_state) {
     '#default_value' => variable_get('ds_search_type', 'node'),
   );
 
+  $form['general']['ds_search_path'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Search path'),
+    '#field_prefix' => 'search/',
+    '#description' => t('If you change this, you need to clear the cache so the path is updated in your website.'),
+    '#default_value' => variable_get('ds_search_path', 'content'),
+    '#required' => TRUE,
+  );
+
   $entity_view_modes = ds_entity_view_modes('node');
   foreach ($entity_view_modes as $key => $view_mode) {
     $view_mode_options[$key] = $view_mode['label'];
@@ -296,7 +305,17 @@ function ds_search_settings($form, $form_state) {
     );
   }
 
-  return system_settings_form($form);
+  $form = system_settings_form($form);
+  $form['#submit'][] = 'ds_search_settings_submit';
+  return $form;
+}
+
+/**
+ * Submit callback: Search settings submit.
+ */
+function ds_search_settings_submit($form, $form_state) {
+  // Rebuild the menu.
+  variable_set('menu_rebuild_needed', TRUE);
 }
 
 /**
