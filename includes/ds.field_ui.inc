@@ -574,6 +574,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     $record->settings['classes'] = array();
     $record->settings['wrappers'] = array();
     $record->settings['layout_wrapper'] = 'div';
+    $record->settings['layout_attributes'] = '';
     $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
     foreach ($fields as $field_key => $field) {
 
@@ -649,6 +650,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
     // Layout wrapper
     $record->settings['layout_wrapper'] = $form_state['values']['additional_settings']['region_wrapper']['layout_wrapper'];
+    $record->settings['layout_attributes'] = $form_state['values']['additional_settings']['region_wrapper']['layout_attributes'];
 
     $record->settings = $record->settings;
 
@@ -1505,6 +1507,14 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#title' => t('Layout wrapper'),
       '#default_value' => isset($layout->settings['layout_wrapper']) ? $layout->settings['layout_wrapper'] : 'div',
       '#weight' => 10,
+    );
+
+    $form['additional_settings']['region_wrapper']['layout_attributes'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Layout attributes'),
+      '#description' => 'E.g. role="navigation"',
+      '#default_value' => isset($layout->settings['layout_attributes']) ? $layout->settings['layout_attributes'] : '',
+      '#weight' => 11,
     );
 
     // Add extra classes for the regions to have more control while theming.

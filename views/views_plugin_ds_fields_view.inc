@@ -95,6 +95,14 @@ function template_preprocess_ds_row_fields(&$vars) {
     // Layout wrapper.
     $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
 
+    // Layout attributes
+    if (!empty($layout['settings']['layout_attributes'])) {
+      $vars['layout_attributes'] = ' ' . $layout['settings']['layout_attributes'];
+    }
+    else {
+      $vars['layout_attributes'] = '';
+    }
+
     // Create region variables based on the layout settings.
     foreach ($layout['regions'] as $region_name => $region) {
 

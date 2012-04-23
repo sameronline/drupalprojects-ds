@@ -962,6 +962,14 @@ function ds_entity_variables(&$vars) {
     // Add a layout wrapper
     $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
 
+    // Add layout attributes if any
+    if (!empty($layout['settings']['layout_attributes'])) {
+      $vars['layout_attributes'] = ' ' . $layout['settings']['layout_attributes'];
+    }
+    else {
+      $vars['layout_attributes'] = '';
+    }
+
     // Let other modules alter the ds array before creating the region variables.
     $context = array('entity' => $vars[$object], 'entity_type' => $vars['elements']['#entity_type'], 'bundle' => $vars['elements']['#bundle'], 'view_mode' => $vars['elements']['#view_mode']);
     drupal_alter('ds_pre_render', $layout_render_array, $context);

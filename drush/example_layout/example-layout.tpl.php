@@ -21,7 +21,7 @@
  * - $right_wrapper: wrapper surrounding the right region.
  */
 ?>
-<<?php print $layout_wrapper ?> class="<?php print $classes;?> clearfix">
+<<?php print $layout_wrapper; print $layout_attributes; ?> class="<?php print $classes;?> clearfix">
 
   <!-- Needed to activate contextual links -->
   <?php if (isset($title_suffix['contextual_links'])): ?>
