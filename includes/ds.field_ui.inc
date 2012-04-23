@@ -1692,7 +1692,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       );
     }
 
-    if (isset($form_state['values']['additional_settings']['layout']) && $form_state['values']['additional_settings']['layout'] != $layout->layout) {
+    if (isset($form_state['values']['additional_settings']['layout']) && (!isset($layout->layout) || $form_state['values']['additional_settings']['layout'] != $layout->layout)) {
 
       // Get admin path.
       $admin_path = _field_ui_bundle_admin_path($entity_type, $bundle);
