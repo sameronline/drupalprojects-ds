@@ -527,7 +527,7 @@ function ds_field_ui_layout_change_submit($form, &$form_state) {
  * Save the layout settings from the 'Manage display' screen.
  */
 function ds_field_ui_layouts_save($form, &$form_state) {
-  $weight = -1;
+  $weight = 0;
 
   // Get default values.
   $entity_type = $form['#entity_type'];
