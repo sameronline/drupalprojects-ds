@@ -650,7 +650,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
     // Layout wrapper
     $record->settings['layout_wrapper'] = $form_state['values']['additional_settings']['region_wrapper']['layout_wrapper'];
-    $record->settings['layout_attributes'] = $form_state['values']['additional_settings']['region_wrapper']['layout_attributes'];
+    $record->settings['layout_attributes'] = filter_xss_admin($form_state['values']['additional_settings']['region_wrapper']['layout_attributes']);
 
     $record->settings = $record->settings;
 
