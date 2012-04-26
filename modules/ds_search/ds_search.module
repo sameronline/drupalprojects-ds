@@ -637,7 +637,10 @@ function ds_search_apachesolr_index_document_build(ApacheSolrDocument $document,
   $entity_id = $document->getField('entity_id');
   $entity_type = $entity_type['value'];
   $entity_id = $entity_id['value'];
-  $document->addField('zs_entity', drupal_json_encode(reset(entity_load($entity_type, array($entity_id)))));
+  $entities = entity_load($entity_type, array($entity_id));
+  $entity = reset($entities);
+  $json = drupal_json_encode($entity);
+  $document->addField('zs_entity', $json);
 }
 
 /**
