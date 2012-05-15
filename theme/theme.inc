@@ -474,7 +474,7 @@ function theme_ds_multigroup_comma_separated($group) {
     foreach ($row['fields'] as $field) {
       if (!empty($field['content'])) {
         $class = (!empty($field['class']) ? ' '. $field['class'] : '');
-        $row_content .= '<span class="field-item '. $field['key'] . $class .'">';
+        $row_content .= '<span class="field-item '. $class .'">';
         if ($field['labelformat'] == 'inline') {
           $row_content .= '<span class="field-label-inline-first">'. $field['title'] .': </span>';
         }
@@ -492,6 +492,52 @@ function theme_ds_multigroup_comma_separated($group) {
       if (!empty($row['title'])) {
         $row_output = theme('ds_subgroup_label', $row['title']);
       }
+      $row_output .= $row_content;
+      $output .= $row_output;
+      $output .= '</div>';
+    }
+  }
+
+  return $output;
+}
+
+/**
+ * Theme a multigroup so the first field is a label for other fields
+ *
+ * @param string $group
+ *  The multigroup to theme.
+ *
+ * @return bool | string
+ *  A string representing the rendered fieldset, or FALSE if not content is rendered.
+ */
+function theme_ds_multigroup_first_label($group) {
+  $output = '';
+
+  foreach ($group['rows'] as $row_index => $row){
+    $row_content = '';
+    $row_output = '';
+
+    $field_index = 1;
+
+    foreach ($row['fields'] as $field) {
+      if (!empty($field['content'])) {
+        $class = (!empty($field['class']) ? ' '. $field['class'] : '');
+
+        $row_content .= '<span class="field-item '. $class .'">';
+        if ($field_index == 1) {
+          $row_content .= '<span class="field-label-inline-first">'. $field['content'] .': </span>';
+        }
+        else {
+          $row_content .= $field['content'];
+        }
+        $row_content .= '</span>';
+      }
+      $field_index++;
+    }
+
+    // Set a legend if a field title exists
+    if (!empty($row_content)) {
+      $output .= '<div class="'. $row['class'] .'">';
       $row_output .= $row_content;
       $output .= $row_output;
       $output .= '</div>';
