@@ -205,7 +205,7 @@ function theme_ds_group_fieldset($field) {
 /**
  * Theme a multigroup as a collection of simple objects
  *
- * @param string $group 
+ * @param string $group
  *  The multigroup to theme.
  */
 function theme_ds_multigroup_div($group) {
@@ -244,8 +244,11 @@ function theme_ds_multigroup_div($group) {
 /**
  * Theme a multigroup as a collection of fieldsets.
  *
- * @param string $group 
+ * @param string $group
  *  The multigroup to theme.
+ *
+ * @return bool | string
+ *  A string representing the rendered fieldset, or FALSE if not content is rendered.
  */
 function theme_ds_multigroup_fieldset($group) {
   $collapsible = FALSE;
@@ -293,8 +296,11 @@ function theme_ds_multigroup_fieldset($group) {
 /**
  * Theme a multigroup (fieldset).
  *
- * @param string $group 
+ * @param string $group
  *  The multigroup to theme.
+ *
+ * @return bool | string
+ *  A string representing the rendered fieldset, or FALSE if not content is rendered.
  */
 function theme_ds_multigroup_table_simple($group) {
   $headers = array();
@@ -321,7 +327,10 @@ function theme_ds_multigroup_table_simple($group) {
 /**
  * Theme a multigroup (fieldset).
  *
- * @param string $field The field to theme.
+ * @param $group
+ *
+ * @return bool | string
+ *  A string representing the rendered fieldset, or FALSE if not content is rendered.
  */
 function theme_ds_multigroup_table_multiple($group) {
   $headers = array();
@@ -406,7 +415,11 @@ function theme_ds_multigroup_horizontal_line($group) {
 /**
  * Theme a multigroup list.
  *
- * @param string $group The group to theme.
+ * @param string $group
+ *  The group to theme.
+ *
+ * @return bool | string
+ *  A string representing the rendered fieldset, or FALSE if not content is rendered.
  */
 function theme_ds_multigroup_list($group) {
   $variation = array_pop(explode('_', $group['theme']));
@@ -475,6 +488,10 @@ function theme_ds_multigroup_comma_separated($group) {
  * from the tabs module. We use our own theming function because
  * otherwhise we need to loop through our fields to build the
  * right array before we an send it to theme('tabset');
+ *
+ * @param $field
+ *
+ * @return string
  */
 function theme_ds_tabs($field) {
   tabs_load();
@@ -503,6 +520,11 @@ function theme_ds_tabs($field) {
 
 /**
  * Theme the subgroup label
+ *
+ * @param $label
+ * @param null $class
+ *
+ * @return string
  */
 function theme_ds_subgroup_label($label, $class = NULL) {
   $classes = 'content_multigroup';
@@ -515,6 +537,10 @@ function theme_ds_subgroup_label($label, $class = NULL) {
 
 /**
  * Theme author name.
+ *
+ * @param $field
+ *
+ * @return
  */
 function theme_ds_author_nolink($field) {
   return $field['object']->name;
@@ -522,6 +548,10 @@ function theme_ds_author_nolink($field) {
 
 /**
  * Theme author name linked.
+ *
+ * @param $field
+ *
+ * @return mixed
  */
 function theme_ds_author_link($field) {
   return theme('username', $field['object']);
@@ -529,6 +559,10 @@ function theme_ds_author_link($field) {
 
 /**
  * Theme the user picture.
+ *
+ * @param $field
+ *
+ * @return mixed
  */
 function theme_ds_picture($field) {
   return theme('user_picture', $field['object']);
@@ -538,6 +572,8 @@ function theme_ds_picture($field) {
  * Template preprocess function for theme_views_view_row_object().
  * We delegate the manipulation of the object to a function
  * which every module implementing the ds_api should define.
+ *
+ * @param $vars
  */
 function template_preprocess_ds_row_object(&$vars) {
   $options = $vars['options'];
@@ -611,6 +647,8 @@ function template_preprocess_ds_row_object(&$vars) {
 
 /**
  * Preprocess theme function to print a single record from a row, with fields.
+ *
+ * @param $vars
  */
 function template_preprocess_ds_row_fields(&$vars) {
   template_preprocess_views_view_fields($vars);
