@@ -277,17 +277,19 @@ function theme_ds_multigroup_fieldset($group) {
   $content = '';
 
   foreach($group['rows'] as $row){
-    // Set a legend if a field title exists
-    $legend = NULL;
-    if (!empty($row['title']) || $collapsible == TRUE) {
-      if (empty($row['title'])){
-        // @todo - what goes here when no value is present?
-        $row['title'] = 'open/close';
+    if (isset($row['content']) && !empty($row['content'])) {
+      // Set a legend if a field title exists
+      $legend = NULL;
+      if (!empty($row['title']) || $collapsible == TRUE) {
+        if (empty($row['title'])){
+          // @todo - what goes here when no value is present?
+          $row['title'] = 'open/close';
+        }
+        $legend = '<legend>'. $row['title'] .'</legend>';
       }
-      $legend = '<legend>'. $row['title'] .'</legend>';
-    }
 
-    $content .= '<fieldset class="group '. $row['class'] . $class .'">'. $legend . $row['content'] .'</fieldset>';
+      $content .= '<fieldset class="group '. $row['class'] . $class .'">'. $legend . $row['content'] .'</fieldset>';
+    }
   }
   
   return $content;
@@ -348,7 +350,7 @@ function theme_ds_multigroup_table_multiple($group) {
     }
   }
 
-  foreach ($group['fields'] as $field) {
+  foreach ($group['fields'] as $field_name => $field) {
     if(isset($labels) && $labels == TRUE) {
       $headers[0] = array(
         'data' => '',
@@ -372,7 +374,7 @@ function theme_ds_multigroup_table_multiple($group) {
     if(isset($labels) && $labels == TRUE) {
       $cells[0] = array(
         'data' => $row_labels[$row_delta],
-        'class' => $field['class'] .' content-multigroup-cell-row-label',
+        'class' => $row['class'] .' content-multigroup-cell-row-label',
       );
     }
     // Regular content
@@ -397,17 +399,23 @@ function theme_ds_multigroup_table_multiple($group) {
 /**
  * Theme a multigroup divided by horizontal lines
  *
- * @param string $group The group to theme.
+ * @param string $group
+ *  The group to theme.
+ *
+ * @return bool | string
+ *  A string representing the rendered fieldset, or FALSE if not content is rendered.
  */
 function theme_ds_multigroup_horizontal_line($group) {
   $output = '';
   foreach ($group['rows'] as $row_delta => $row) {
-    $divider = ($row_delta > 0 ? '<hr class="content-multigroup" />' : '');
-    $output .= '<div'. drupal_attributes(array('class' => $row['class'])) .'>'. $divider;
-    if (!empty($row['title'])) {
-      $output .= theme('ds_subgroup_label', $row['title']);
+    if (isset($row['rendered']) && !empty($row['rendered'])) {
+      $divider = ($row_delta > 0 ? '<hr class="content-multigroup" />' : '');
+      $output .= '<div'. drupal_attributes(array('class' => $row['class'])) .'>'. $divider;
+      if (!empty($row['title'])) {
+        $output .= theme('ds_subgroup_label', $row['title']);
+      }
+      $output .= $row['rendered'].'</div>';
     }
-    $output .= $row['rendered'].'</div>';
   }
   return $output;
 }
@@ -422,6 +430,7 @@ function theme_ds_multigroup_horizontal_line($group) {
  *  A string representing the rendered fieldset, or FALSE if not content is rendered.
  */
 function theme_ds_multigroup_list($group) {
+  $attr = array();
   $variation = array_pop(explode('_', $group['theme']));
 
   switch ($variation) {
@@ -447,37 +456,46 @@ function theme_ds_multigroup_list($group) {
 /**
  * Theme a multigroup as a comma separated list
  *
- * @param string $group 
+ * @param string $group
  *  The multigroup to theme.
+ *
+ * @return bool | string
+ *  A string representing the rendered fieldset, or FALSE if not content is rendered.
  */
 function theme_ds_multigroup_comma_separated($group) {
   $output = '';
 
   foreach ($group['rows'] as $row){
+    $row_content = '';
     $row_output = '';
-    
-    // Set a legend if a field title exists
-    $output .= '<div class="'. $row['class'] .'">';
-    if (!empty($row['title'])) {
-      $row_output = theme('ds_subgroup_label', $row['title']);
-    }
+
     $n = count($row['fields']);
     $count = 1;
     foreach ($row['fields'] as $field) {
-      $class = (!empty($field['class']) ? ' '. $field['class'] : '');
-      $row_output .= '<span class="field-item '. $field['key'] . $class .'">';
-      if ($field['labelformat'] == 'inline') {
-        $row_output .= '<span class="field-label-inline-first">'. $field['title'] .': </span>';
-      }
-      $row_output .= $field['view'] .'</span>';
-      if ($count != $n) {
-        $row_output .= ', ';
+      if (!empty($field['content'])) {
+        $class = (!empty($field['class']) ? ' '. $field['class'] : '');
+        $row_content .= '<span class="field-item '. $field['key'] . $class .'">';
+        if ($field['labelformat'] == 'inline') {
+          $row_content .= '<span class="field-label-inline-first">'. $field['title'] .': </span>';
+        }
+        $row_content .= $field['content'] .'</span>';
+        if ($count != $n) {
+          $row_content .= ', ';
+        }
       }
       $count++;
     }
 
-    $output .= $row_output;
-    $output .= '</div>';
+    // Set a legend if a field title exists
+    if (!empty($row_content)) {
+      $output .= '<div class="'. $row['class'] .'">';
+      if (!empty($row['title'])) {
+        $row_output = theme('ds_subgroup_label', $row['title']);
+      }
+      $row_output .= $row_content;
+      $output .= $row_output;
+      $output .= '</div>';
+    }
   }
 
   return $output;
