@@ -771,23 +771,29 @@ function ds_render_item($item) {
     // e.g. CCK
 
     case DS_RENDER_NON_DS:
-      $content = $item['content'];
+      if (!empty($item['content'])) {
+        $content = $item['content'];
+      }
+
       break;
 
     // Use ds's built-in rendering
 
     default:
     case DS_RENDER_DEFAULT:
-      // Tabs must use the ds_tabs themeing fuction
-      if (isset($item['tab'])) {
-        $item['theme'] = 'ds_tabs';
-      }
-      // If no theme function is set, use the default
-      elseif (empty($item['theme'])) {
-        $item['theme'] = DS_DEFAULT_THEME_FIELD;
+      if (!empty($item['content'])) {
+        // Tabs must use the ds_tabs themeing fuction
+        if (isset($item['tab'])) {
+          $item['theme'] = 'ds_tabs';
+        }
+        // If no theme function is set, use the default
+        elseif (empty($item['theme'])) {
+          $item['theme'] = DS_DEFAULT_THEME_FIELD;
+        }
+
+        $content = theme($item['theme'], $item);
       }
 
-      $content = theme($item['theme'], $item);
       break;
   }
 
