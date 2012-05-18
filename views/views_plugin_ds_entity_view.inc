@@ -266,6 +266,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
         break;
       case 'file_managed':
         $this->entities = file_load_multiple($ids);
+        break;
       case 'micro':
         $this->entities = entity_load($this->base_table, $ids);
         break;
@@ -431,4 +432,3 @@ function ds_views_row_render_micro($entity, $view_mode, $load_comments) {
   $element = micro_view($entity, $view_mode);
   return drupal_render($element);
 }
-
