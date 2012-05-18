@@ -758,11 +758,6 @@ function ds_field_attach_view_alter(&$build, $context) {
   $entity = $context['entity'];
   $layout = ds_get_layout($entity_type, $bundle, $view_mode);
 
-  // Do not render panel layouts.
-  if (!empty($layout['settings']['ds_panels'])) {
-    return;
-  }
-
   // Check on field/delta limit.
   if (isset($layout['settings']['limit'])) {
     foreach ($layout['settings']['limit'] as $field => $limit) {
@@ -858,11 +853,6 @@ function ds_field_attach_view_alter(&$build, $context) {
  */
 function ds_entity_variables(&$vars) {
   if (isset($vars['elements']) && isset($vars['elements']['#bundle']) && $layout = ds_get_layout($vars['elements']['#entity_type'], $vars['elements']['#bundle'], $vars['elements']['#view_mode'])) {
-
-    // Do not render panel layouts.
-    if (!empty($layout['settings']['ds_panels'])) {
-      return;
-    }
 
     $render_container = 'content';
     // User uses user_profile as container.

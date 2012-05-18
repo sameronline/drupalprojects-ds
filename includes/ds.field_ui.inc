@@ -549,7 +549,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $record->settings = array();
 
   // Remove old layout if necessary.
-  if (($new_layout && !empty($old_layout)) || $form['#panel']) {
+  if ($new_layout && !empty($old_layout)) {
     db_delete('ds_layout_settings')
       ->condition('entity_type', $entity_type)
       ->condition('bundle', $bundle)
@@ -557,7 +557,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       ->execute();
   }
 
-  if (($new_layout && !empty($layout)) || ($form['#panel'] && !empty($layout))) {
+  if ($new_layout && !empty($layout)) {
     // Save new layout.
     $record->settings = $record->settings;
 
@@ -1412,7 +1412,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   foreach ($ds_layouts as $key => $layout) {
     $optgroup = 'Display Suite';
 
-    // Panels can not be used on Views fields.
+    // Panels can not be used on Views fields and forms.
     if (!empty($layout['module']) && $layout['module'] == 'panels' && isset($form_state['no_panels'])) {
       continue;
     }
@@ -1449,15 +1449,8 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   ctools_include('export');
   $layout = new stdClass();
   $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
-  $form['#panel'] = FALSE;
   if (isset($ds_layout_settings[$form['#export_id']])) {
     $layout = $ds_layout_settings[$form['#export_id']];
-    // Make sure this does not break in case there was
-    // a layout created with Panel view modes.
-    if (isset($layout->settings['ds_panels'])) {
-      $layout = new stdClass();
-      $form['#panel'] = TRUE;
-    }
   }
 
   if (!empty($layout) && isset($layout->layout) && isset($ds_layouts[$layout->layout])) {
@@ -1555,7 +1548,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
         if ($row->view_mode == 'form') {
           continue;
         }
-        if ($row->entity_type == $entity_type && $row->bundle == $bundle && !isset($row->settings['ds_panels'])) {
+        if ($row->entity_type == $entity_type && $row->bundle == $bundle) {
           $options[$row->id] = drupal_ucfirst($row->entity_type) . ' > ' . drupal_ucfirst($row->bundle) . ' > ' . drupal_ucfirst($row->view_mode);
         }
       }

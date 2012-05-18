@@ -156,17 +156,14 @@ function ds_extras_vd_manage($bundle = '', $action = '') {
  */
 function ds_extras_vd_field_ui($bundle) {
 
-  // Disable editor switch.
   global $conf;
-  $conf['ds_extras_panel_view_modes'] = FALSE;
-  $conf['ds_extras_switch_editor'] = FALSE;
 
   // Use drupal_build_form instead of drupal_get_form.
   $form_state = array();
   $arguments = array('ds_views', $bundle, 'default');
   $form_state['build_info']['args'] = $arguments;
-  $form_state['no_panels'] = TRUE;
   $form_state['no_view_mode_suggestions'] = TRUE;
+  $form_state['no_panels'] = TRUE;
   form_load_include($form_state, 'inc', 'field_ui', 'field_ui.admin');
   form_load_include($form_state, 'inc', 'ds_extras', 'includes/ds_extras.vd');
 
