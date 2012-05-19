@@ -1373,7 +1373,15 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
   if ($display['type'] === 'ds_taxonomy_view_mode') {
     $view_mode = $display['settings']['taxonomy_term_reference_view_mode'];
     foreach ($items as $delta => $item) {
-      $build = taxonomy_term_view(taxonomy_term_load($item['tid']), $view_mode, $langcode);
+      if ($item['tid'] == 'autocreate') {
+        // We don't necessarily have a link when this is
+        // an autocreated term, ususally in preview.
+        // So just send the term as check plained markup.
+        $build['#markup'] = check_plain($item['name']);
+      }
+      else {
+        $build = taxonomy_term_view(taxonomy_term_load($item['tid']), $view_mode, $langcode);
+      }
       $element[$delta] = $build;
     }
   }
@@ -1383,11 +1391,18 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
 
     $terms = array();
     foreach ($items as $delta => $item) {
-      $term = taxonomy_term_load($item['tid']);
-      $item_display = check_plain($term->name);
-      if ($linked) {
-        $uri = entity_uri('taxonomy_term', $term);
-        $item_display = l($term->name, $uri['path']);
+      if ($item['tid'] == 'autocreate') {
+        // We don't necessarily have a link when this is
+        // an autocreated term, ususally in preview.
+        $item_display = check_plain($item['name']);
+      }
+      else {
+        $term = taxonomy_term_load($item['tid']);
+        $item_display = check_plain($term->name);
+        if ($linked) {
+          $uri = entity_uri('taxonomy_term', $term);
+          $item_display = l($term->name, $uri['path']);
+        }
       }
       $terms[] = $item_display;
     }
