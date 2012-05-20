@@ -1126,6 +1126,13 @@ function ds_render_block_field($field) {
 
   list($module, $delta) = explode('|', $field['properties']['block']);
   $block = module_invoke($module, 'block_view', $delta);
+  $contextual_links = array();
+  // Get contextual links.
+  if (module_exists('contextual') && user_access('access contextual links')) {
+    if (is_array($block['content']) && isset($block['content']['#contextual_links'])) {
+      $contextual_links = $block['content']['#contextual_links'];
+    }
+  }
   if (isset($block['content']) && is_array($block['content'])) {
     $block['content'] = drupal_render($block['content']);
   }
@@ -1176,7 +1183,7 @@ function ds_render_block_field($field) {
         $elements = array('elements' => array('#block' => $block, '#children' => $block->content));
         // Add contextual links
         if (module_exists('contextual') && user_access('access contextual links')) {
-          $elements['elements'] += array('#contextual_links' => array('block' => array('admin/structure/block/manage', array($block->module, $block->delta))));
+          $elements['elements'] += array('#contextual_links' => array_merge($contextual_links, array('block' => array('admin/structure/block/manage', array($block->module, $block->delta)))));
         }
         return theme('block', $elements);
         break;
