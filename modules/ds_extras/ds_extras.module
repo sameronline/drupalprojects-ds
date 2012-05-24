@@ -759,8 +759,12 @@ function theme_ds_field_expert($variables) {
       if (!empty($config['fi-cl'])) $class[] = $config['fi-cl'];
       $class = !empty($class) ? ' class="'. implode(' ', $class)  .'"' : '';
       $attributes = array();
-      if (!empty($config['fi-at'])) $attributes[] = $config['fi-at'];
-      if (!empty($config['fi-def-at'])) $attributes[] = $variables['item_attributes'][$delta];
+      if (!empty($config['fi-at'])) {
+        $attributes[] = token_replace($config['fi-at'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));
+      }
+      if (!empty($config['fi-def-at'])) {
+        $attributes[] = $variables['item_attributes'][$delta];
+      }
       $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
       $output .= '<' . $config['fi-el'] . $class . $attributes .'>';
     }
