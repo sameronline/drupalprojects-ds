@@ -755,8 +755,12 @@ function theme_ds_field_expert($variables) {
     // Field item wrapper.
     if (isset($config['fi'])) {
       $class = array();
-      if (!empty($config['fi-odd-even'])) $class[] = $delta % 2 ? 'odd' : 'even';
-      if (!empty($config['fi-cl'])) $class[] = $config['fi-cl'];
+      if (!empty($config['fi-odd-even'])) {
+        $class[] = $delta % 2 ? 'odd' : 'even';
+      }
+      if (!empty($config['fi-cl'])) {
+        $class[] = $config['fi-cl'];
+      }
       $class = !empty($class) ? ' class="'. implode(' ', $class)  .'"' : '';
       $attributes = array();
       if (!empty($config['fi-at'])) {
