@@ -983,6 +983,8 @@ function ds_field_settings_form($field, &$form_state) {
 
     // Load the formatter settings form
     module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
+    // Protect against empty $form.
+    if (!is_array($form)) $form = array();
     ds_extras_field_template_settings_form($form, $form_state, $context);
   }
 
