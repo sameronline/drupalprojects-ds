@@ -111,7 +111,7 @@ function ds_extras_settings($form) {
   $form['additional_settings']['fs4']['ds_extras_field_permissions'] = array(
     '#type' => 'checkbox',
     '#title' => t('Field permissions'),
-    '#description' => t('Hide or manually set the page title of the "Full content" view mode.'),
+    '#description' => t('Enables view permissions on all Display Suite fields.'),
     '#default_value' => variable_get('ds_extras_field_permissions', FALSE),
   );
 
