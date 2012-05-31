@@ -950,15 +950,17 @@ function ds_entity_variables(&$vars) {
     // Let other modules know we have rendered.
     $vars['rendered_by_ds'] = TRUE;
 
-    // Add a layout wrapper
+    // Add a layout wrapper.
     $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
 
-    // Add layout attributes if any
+    // Add layout attributes if any.
+    $vars['layout_attributes'] = '';
     if (!empty($layout['settings']['layout_attributes'])) {
-      $vars['layout_attributes'] = ' ' . $layout['settings']['layout_attributes'];
+      $vars['layout_attributes'] .= ' ' . $layout['settings']['layout_attributes'];
     }
-    else {
-      $vars['layout_attributes'] = '';
+    // Merge in other attributes which were passed to the template.
+    if ($layout['settings']['layout_attributes_merge']) {
+      $vars['layout_attributes'] .= ' ' . drupal_attributes($vars['attributes_array']);
     }
 
     // Let other modules alter the ds array before creating the region variables.

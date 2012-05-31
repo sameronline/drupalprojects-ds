@@ -575,6 +575,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     $record->settings['wrappers'] = array();
     $record->settings['layout_wrapper'] = 'div';
     $record->settings['layout_attributes'] = '';
+    $record->settings['layout_attributes_merge'] = TRUE;
     $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
     foreach ($fields as $field_key => $field) {
 
@@ -651,6 +652,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     // Layout wrapper
     $record->settings['layout_wrapper'] = $form_state['values']['additional_settings']['region_wrapper']['layout_wrapper'];
     $record->settings['layout_attributes'] = filter_xss_admin($form_state['values']['additional_settings']['region_wrapper']['layout_attributes']);
+    $record->settings['layout_attributes_merge'] = $form_state['values']['additional_settings']['region_wrapper']['layout_attributes_merge'];
 
     $record->settings = $record->settings;
 
@@ -1508,6 +1510,14 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#description' => 'E.g. role="navigation"',
       '#default_value' => isset($layout->settings['layout_attributes']) ? $layout->settings['layout_attributes'] : '',
       '#weight' => 11,
+    );
+
+    $form['additional_settings']['region_wrapper']['layout_attributes_merge'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Merge other layout attributes'),
+      '#description' => 'Certain modules might provide additional attributes for the template wrapper, e.g. RDFa. Disable this option if you prefer to specify these attributes above.',
+      '#default_value' => isset($layout->settings['layout_attributes_merge']) ? $layout->settings['layout_attributes_merge'] : TRUE,
+      '#weight' => 12,
     );
 
     // Add extra classes for the regions to have more control while theming.
