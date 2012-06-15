@@ -27,9 +27,9 @@ function hook_test_ctools_plugin_api($module, $api) {
  * and reverted through the UI.
  */
 function hook_ds_field_settings_info() {
-  $ds_fieldsettings = array();
+  $dsfieldsettings = array();
 
-  $ds_fieldsetting = new stdClass;
+  $dsfieldsetting = new stdClass;
   $dsfieldsetting->disabled = FALSE; /* Edit this to true to make a default dsfieldsetting disabled initially */
   $dsfieldsetting->api_version = 1;
   $dsfieldsetting->id = 'node|article|default';
