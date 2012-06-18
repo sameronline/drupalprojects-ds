@@ -1,7 +1,7 @@
 name = "Display suite"
 description = "Extend the display options for every entity type."
 core = "7.x"
-package = "Display suite"
+package = "Display Suite"
 dependencies[] = ctools
 files[] = views/views_plugin_ds_entity_view.inc
 files[] = views/views_plugin_ds_fields_view.inc
