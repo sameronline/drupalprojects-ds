@@ -202,8 +202,24 @@ function ds_display_overview_form(&$form_state, $type, $build_mode = 'full', $mo
     '#regions' => ds_regions(variable_get('ds_build_mode_'. $build_mode, 'all')),
   );
 
-  if ($synced) {
-    $form['#synced'] = t('You can not edit this buildmode right now because it is synchronised with !bm.', array('!bm' => l($all_build_modes[$synced]['title'], DS_PATH_LAYOUT .'/'. $type .'/'. $synced)));
+  // Navigation to other build modes
+  $options = array('none'=> '-- select --');
+  $build_modes = ds_get_active_build_modes($module, $type);
+  $type_url_str = str_replace('_', '-', $type);
+  foreach ($build_modes as $key => $mode){
+    $mode_path = DS_PATH_LAYOUT . '/'. $type_url_str .'/'. $key;
+    $group = isset($mode['group']) ? $mode['group'] : t('Other');
+    $options[$group][$mode_path] = $mode['title'];
+  }
+  $form['nav'] = array(
+    '#type' => 'select',
+    '#options' => $options,
+    '#title' => t('Edit build mode'),
+  );
+
+  // Sync information
+  if (isset($synced) && !empty($synced)) {
+    $form['#synced'] = t('You can not edit this build mode right now because it is synchronised with !bm.', array('!bm' => l($all_build_modes[$synced]['title'], DS_PATH_LAYOUT .'/'. $type .'/'. $synced)));
   }
 
   // Build style selects for region classes.
