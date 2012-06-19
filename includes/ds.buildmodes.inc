@@ -111,8 +111,12 @@ function ds_build_modes_page($module) {
 /**
  * Build mode form.
  *
- * @param string $module The name of the module.
- * @param string $build_mode The name of the build mode.
+ * @param string $form_state
+ *  The form
+ * @param string $module
+ *  The name of the module.
+ * @param string $build_mode
+ *  The name of the build mode.
  */
 function ds_build_mode_form($form_state, $module, $build_mode = '') {
   $form = array();

@@ -291,7 +291,7 @@ function theme_ds_multigroup_fieldset($group) {
       $content .= '<fieldset class="group '. $row['class'] . $class .'">'. $legend . $row['content'] .'</fieldset>';
     }
   }
-  
+
   return $content;
 }
 
@@ -407,6 +407,7 @@ function theme_ds_multigroup_table_multiple($group) {
  */
 function theme_ds_multigroup_horizontal_line($group) {
   $output = '';
+
   foreach ($group['rows'] as $row_delta => $row) {
     if (isset($row['rendered']) && !empty($row['rendered'])) {
       $divider = ($row_delta > 0 ? '<hr class="content-multigroup" />' : '');
@@ -546,7 +547,6 @@ function theme_ds_multigroup_first_label($group) {
 
   return $output;
 }
-
 /**
  * Theme tabs. This is based on the theme_tabset() function
  * from the tabs module. We use our own theming function because
