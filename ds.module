@@ -181,14 +181,13 @@ function ds_variable_get($var_name, $default = '') {
  */
 function ds_static_variables($key, $data = NULL) {
   static $variables = array();
-  if (!isset($data) && isset($key) && isset($variables[$key])) {
+  if (!isset($data) && isset($variables[$key])) {
     return $variables[$key];
   }
-  elseif (!isset($variables[$key]) && isset($data)) {
-    $variables[$key] = array();
-    $variables[$key][] = $data;
-  }
-  elseif (isset($variables[$key]) && isset($data)) {
+  elseif (isset($data)) {
+    if (!isset($variables[$key])) {
+      $variables[$key] = array();
+    }
     $variables[$key][] = $data;
   }
 }
