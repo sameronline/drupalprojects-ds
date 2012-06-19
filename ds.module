@@ -204,22 +204,23 @@ function ds_api_info($module, $type_name = 'all') {
   if (!isset($api_info[$module][$type_name])) {
 
     // Gather information.
-    $function = $module . '_ds_api';
-    $api_data = $function();
-    $api_info[$module][$type_name] = $api_data;
-    if (!isset($api_info[$module][$type_name]['extra'])) {
-      $api_info[$module][$type_name]['extra'] = array();
-    }
-
-    // Extra info needed or not.
-    if ($type_name != 'all' && !empty($api_data['extra'])) {
-      $extra     = array();
-      $types     = $api_data['types']();
-      $type_info = $types[$type_name];
-      foreach ($api_data['extra'] as $key) {
-        $extra[$key] = $type_info->{$key};
+    $api_data = module_invoke($module, 'ds_api');
+    if (!empty($api_data)) {
+      $api_info[$module][$type_name] = $api_data;
+      if (!isset($api_info[$module][$type_name]['extra'])) {
+        $api_info[$module][$type_name]['extra'] = array();
       }
-      $api_info[$module][$type_name]['extra'] = $extra;
+
+      // Extra info needed or not.
+      if ($type_name != 'all' && !empty($api_data['extra'])) {
+        $extra = array();
+        $types = $api_data['types']();
+        $type_info = $types[$type_name];
+        foreach ($api_data['extra'] as $key) {
+          $extra[$key] = $type_info->{$key};
+        }
+        $api_info[$module][$type_name]['extra'] = $extra;
+      }
     }
   }
 
