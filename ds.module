@@ -973,6 +973,7 @@ function ds_render_multigroup(&$object, $group_key, $vars = array()){
     return $object->ds_fields[$group_key]['rendered'];
   }
   return FALSE;
+
 }
 
 /**
@@ -982,14 +983,14 @@ function ds_render_multigroup(&$object, $group_key, $vars = array()){
  *  the item to set content for
  * @param array $content_vars (optional)
  *  the $vars array, or an array containing possible values
- * @param string $vars_key
+ * @param string $vars_key 
  *  the key within $content_vars to retrieve
  *
- * @return
+ * @return 
  *  the content value as a string, or FALSE if none was found
  */
 function ds_get_content($item, $content_vars = array(), $vars_key = NULL) {
-  if (!is_array($item)) {
+  if (!is_array($item)){
     return FALSE;
   }
 
