@@ -149,6 +149,34 @@ function ds_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 /**
+ * Module-aware version of variable_get
+ *
+ * This searches through several modules trying to find a set variable,
+ * eventually defaulting to core. It also checks the unreleased 'variable'
+ * module, which is currently only available by building from its repository.
+ *
+ * @param string $var_name
+ *  The variable to find
+ * @param string $default [optional]
+ *  An optional default value
+ */
+function ds_variable_get($var_name, $default = '') {
+  $value = $default;
+
+  if (ds_static_variables($var_name)) {
+    $value = ds_static_variables($var_name);
+  }
+  elseif (module_exists('variable') && function_exists('variable_get_value')) {
+    global $language;
+    $value = variable_get_value($var_name, array('default' => $default, 'language' => $language));
+  }
+  else {
+    $value = variable_get($variable_name, $default);
+  }
+  return $value;
+}
+
+/**
  * Set or get static variables at runtime.
  */
 function ds_static_variables($key, $data = NULL) {
