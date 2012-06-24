@@ -411,6 +411,9 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
   $form['ft']['lb']['#size'] = '10';
   $form['ft']['lb']['#attributes'] = array('class' => array('label-change'));
   $form['ft']['lb']['#default_value'] = isset($field_settings['lb']) ? $field_settings['lb'] : '';
+
+  // Let other modules make modifications to the settings form as needed.
+  $form = module_invoke_all('ds_field_theme_functions_settings', $form, $field_settings);
 }
 
 /**
