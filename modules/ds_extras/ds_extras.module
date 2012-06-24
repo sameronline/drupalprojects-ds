@@ -144,6 +144,7 @@ function ds_extras_ds_layout_info_alter(&$layouts) {
  * Implements hook_permission().
  */
 function ds_extras_permission() {
+  $permissions = array();
 
   // Extra check to make sure this doesn't get fired on install.
   if (variable_get('ds_extras_switch_view_mode', FALSE)) {
@@ -153,8 +154,9 @@ function ds_extras_permission() {
         'title' => t('Switch view modes on :type', array(':type' => $name))
       );
     }
-    return $permissions;
   }
+
+  return $permissions;
 }
 
 /**
