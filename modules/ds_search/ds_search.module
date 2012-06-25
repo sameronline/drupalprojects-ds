@@ -76,15 +76,12 @@ function ds_search_ds_fields_info($entity_type) {
   $fields = array();
 
   if ($entity_type == 'node') {
-    if (variable_get('ds_search_type', 'node') == 'apachesolr_search') {
-      $fields['node']['search_snippet'] = array(
-        'title' => t('Snippet'),
-        'field_type' => DS_FIELD_TYPE_FUNCTION,
-        'function' => 'ds_search_snippet',
-        'ui_limit' => array('*|' . variable_get('ds_search_view_mode', 'search_result')),
-      );
-    }
-
+    $fields['node']['search_snippet'] = array(
+      'title' => t('Search snippet'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'ds_search_snippet',
+      'ui_limit' => array('*|' . variable_get('ds_search_view_mode', 'search_result')),
+    );
     $fields['node']['search_info'] = array(
       'title' => t('Search info'),
       'field_type' => DS_FIELD_TYPE_FUNCTION,
@@ -101,11 +98,16 @@ function ds_search_ds_fields_info($entity_type) {
 }
 
 /**
- * Returns the snippet field - only works for Apache Solr.
+ * Returns the snippet field.
  */
 function ds_search_snippet($field) {
+  // Apache Solr
   if (isset($field['entity']->search_snippet)) {
     return $field['entity']->search_snippet;
+  }
+  // Original node snippet
+  elseif (isset($field['entity']->snippet)) {
+    return $field['entity']->snippet;
   }
 }
 
@@ -614,6 +616,20 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
   foreach ($find as $item) {
     $node = node_load($item->sid);
     $node->search_extra = module_invoke_all('node_search_result', $node);
+    // Only build a node search snippet if this field is actually being used.
+    $fields = ds_get_field_settings($node->entity_type, $node->type, 'search_result');
+    if (!empty($fields) && isset($fields['search_snippet'])) {
+      // Because the 'search_result' display is being built right now (and because it is being overridden by Display Suite),
+      // it is necessary to use the 'search_index' display for rendered field content.
+      $build = node_view($node, 'search_index');
+      unset($build['#theme']);
+      // Render the node.
+      $rendered = drupal_render($build);
+      // Attach extra information to the rendered output.
+      $rendered .= ' ' . $node->search_extra;
+      // Generate the snippet based on rendered content.
+      $node->snippet = search_excerpt($keys, $rendered);
+    }
     $results[$item->sid] = $node;
   }
   return $results;
