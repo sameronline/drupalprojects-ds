@@ -961,6 +961,11 @@ function ds_entity_variables(&$vars) {
     }
     // Merge in other attributes which were passed to the template.
     if ($layout['settings']['layout_attributes_merge']) {
+      // handle classes separately
+      if (isset($vars['attributes_array']['class'])) {
+        $vars['classes_array'] += $vars['attributes_array']['class'];
+        unset($vars['attributes_array']['class']);
+      }
       $vars['layout_attributes'] .= ' ' . drupal_attributes($vars['attributes_array']);
     }
 
