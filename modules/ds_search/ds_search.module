@@ -617,7 +617,7 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
     $node = node_load($item->sid);
     $node->search_extra = module_invoke_all('node_search_result', $node);
     // Only build a node search snippet if this field is actually being used.
-    $fields = ds_get_field_settings($node->entity_type, $node->type, 'search_result');
+    $fields = ds_get_field_settings('node', $node->type, 'search_result');
     if (!empty($fields) && isset($fields['search_snippet'])) {
       // Because the 'search_result' display is being built right now (and because it is being overridden by Display Suite),
       // it is necessary to use the 'search_index' display for rendered field content.
