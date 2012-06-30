@@ -1,4 +1,4 @@
-name = "Search display"
+name = "Display Suite Search"
 description = "Extend the display options for search results for Drupal Core or Apache Solr."
 core = "7.x"
 package = "Display suite"
