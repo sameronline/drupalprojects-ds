@@ -1132,13 +1132,13 @@ function ds_render_ctools_field($field) {
  * Render a block field.
  */
 function ds_render_block_field($field) {
-
+  $contextual = module_exists('contextual') && user_access('access contextual links');
   list($module, $delta) = explode('|', $field['properties']['block']);
   $block = module_invoke($module, 'block_view', $delta);
   $contextual_links = array();
   // Get contextual links.
-  if (module_exists('contextual') && user_access('access contextual links')) {
-    if (isset($block['content']['#contextual_links'])) {
+  if ($contextual) {
+    if (is_array($block['content']) && isset($block['content']['#contextual_links'])) {
       $contextual_links = $block['content']['#contextual_links'];
     }
   }
@@ -1191,7 +1191,7 @@ function ds_render_block_field($field) {
         $block->delta = $delta;
         $elements = array('elements' => array('#block' => $block, '#children' => $block->content));
         // Add contextual links
-        if (module_exists('contextual') && user_access('access contextual links')) {
+        if ($contextual) {
           $elements['elements'] += array('#contextual_links' => array_merge($contextual_links, array('block' => array('admin/structure/block/manage', array($block->module, $block->delta)))));
         }
         return theme('block', $elements);
