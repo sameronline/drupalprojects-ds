@@ -1423,10 +1423,12 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
       $terms[] = $item_display;
     }
 
-    $output = '';
-    $separator = $display['settings']['taxonomy_term_separator'];
-    $output = implode($separator, $terms);
-    $element[0] = array('#markup' => $output);
+    if (!empty($terms)) {
+      $output = '';
+      $separator = $display['settings']['taxonomy_term_separator'];
+      $output = implode($separator, $terms);
+      $element[0] = array('#markup' => $output);
+    }
   }
 
   return $element;
