@@ -140,12 +140,12 @@ class views_plugin_ds_entity_view extends views_plugin_row {
         '#type' => 'fieldset',
         '#title' => t('Use view mode of display settings'),
         '#collapsible' => TRUE,
-        '#collapsed' => !$this->options['switch'],
+        '#collapsed' => !$this->options['switch_fieldset']['switch'],
       );
       $form['switch_fieldset']['switch'] = array(
         '#type' => 'checkbox',
         '#title' => t('Use view mode of display settings'),
-        '#default_value' => $this->options['switch'],
+        '#default_value' => $this->options['switch_fieldset']['switch'],
         '#description' => t('Use the alternative view mode selected in the display settings tab.')
       );
     }
@@ -370,9 +370,9 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     // Default view mode.
     $view_mode = $this->options['view_mode'];
 
-    // Display settings view mode
-    if ($this->options['switch']) {
-      if(!empty($this->entities[$row->{$this->field_alias}]->ds_switch)) {
+    // Display settings view mode.
+    if ($this->options['switch_fieldset']['switch']) {
+      if (!empty($this->entities[$row->{$this->field_alias}]->ds_switch)) {
         $view_mode = $this->entities[$row->{$this->field_alias}]->ds_switch;
       }
     }
