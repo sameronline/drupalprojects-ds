@@ -107,7 +107,7 @@ function template_preprocess_ds_row_fields(&$vars) {
             continue;
           }
           $region_content .= '<div class="views-field-' . $field . '">';
-          if (isset($view->field[$field]->options['label'])) {
+          if (!empty($view->field[$field]->options['label'])) {
             $region_content .= '<div class="field-label">';
             $region_content .= check_plain($view->field[$field]->options['label']);
             if ($view->field[$field]->options['element_label_colon']) {
