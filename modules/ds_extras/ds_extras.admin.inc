@@ -90,7 +90,7 @@ function ds_extras_settings($form) {
     $form['additional_settings']['fs3']['ds_extras_panel_view_modes'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use the Panels editor on the \'Manage Display\' screen'),
-      '#description' => t('Use the Panels editor instead of Field UI to manage your layout.'),
+      '#description' => t('Use the Panels editor instead of Field UI to manage your layout. Note that this feature is better managed by the 7.x-3.x branch of the Panelizer project.'),
       '#default_value' => variable_get('ds_extras_panel_view_modes', FALSE),
     );
     $form['additional_settings']['fs3']['ds_extras_editor_switch'] = array(
