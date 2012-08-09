@@ -32,6 +32,8 @@ class views_plugin_ds_fields_view extends views_plugin_row {
       'file_managed' => 'fid',
       'micro' => 'mid',
       'drealty_listing' => 'id',
+      'commerce_product' => 'product_id',
+      'commerce_line_item' => 'line_item_id',
     );
     return isset($base_table_fields[$this->base_table]) ? $base_table_fields[$this->base_table] : 'nid';
   }
