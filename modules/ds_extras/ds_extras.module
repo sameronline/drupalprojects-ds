@@ -947,6 +947,11 @@ function ds_extras_render_panel_layout(&$vars) {
     $element = '#' . $entity_type;
     if ($entity_type == 'user') $element = '#account';
     if ($entity_type == 'taxonomy_term') $element = '#term';
+
+    // Compatibility with #entity elements.
+    if (empty($vars['elements'][$element])&& !empty($vars['elements']['#entity'])) {
+      $element = '#entity';
+    }
     $entity = $vars['elements'][$element];
     ctools_include('plugins', 'panels');
 
