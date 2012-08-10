@@ -263,6 +263,12 @@ class views_plugin_ds_entity_view extends views_plugin_row {
         break;
       case 'taxonomy_term_data':
         $this->entities = taxonomy_term_load_multiple($ids);
+        if (function_exists('i18n_taxonomy_localize_terms')) {
+          global $language;
+          foreach($this->entities as $index => &$entity) {
+            $entity = i18n_taxonomy_localize_terms($entity, $language->language);
+          }
+        }
         break;
       case 'file_managed':
         $this->entities = file_load_multiple($ids);
