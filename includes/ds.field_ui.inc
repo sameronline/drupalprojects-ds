@@ -680,7 +680,8 @@ function ds_field_ui_fields_validate($form, &$form_state) {
     if (isset($form_state['values']['fields'][$key]['settings_edit_form'])) {
       $settings = $form_state['values']['fields'][$key]['settings_edit_form']['settings']['ft'];
       if (!empty($settings)) {
-        $form_state['formatter_settings'][$key]['ft'] = array_merge($form_state['formatter_settings'][$key]['ft'], $settings);
+        $merge = isset($form_state['formatter_settings'][$key]['ft']) ? $form_state['formatter_settings'][$key]['ft'] : array();
+        $form_state['formatter_settings'][$key]['ft'] = array_merge($merge, $settings);
       }
     }
   }
@@ -1815,7 +1816,8 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
   );
   drupal_alter('ds_label_options', $field_label_options);
 
-  // Regions for fields
+  // Regions for fields.
+  $field_regions = array();
   if (isset($form['#ds_layout']->settings['fields'])) {
     $field_regions = $form['#ds_layout']->settings['fields'];
   }
@@ -1964,6 +1966,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
   $table = &$form['fields'];
 
   // Regions for fields.
+  $field_regions = array();
   if (isset($form['#ds_layout']->settings['fields'])) {
     $field_regions = $form['#ds_layout']->settings['fields'];
   }
@@ -2029,7 +2032,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       $formatter = field_info_formatter_types($formatter_type);
       $instance['display'][$view_mode]['type'] = $formatter_type;
       $instance['display'][$view_mode]['module'] = $formatter['module'];
-      $instance['display'][$view_mode]['settings'] = $settings;
+      $instance['display'][$view_mode]['settings'] = $settings + field_info_formatter_settings($formatter_type);
       $function = $formatter['module'] . '_field_formatter_settings_form';
 
       // Add the default formatter settings if any.
