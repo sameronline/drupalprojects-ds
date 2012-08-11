@@ -1663,10 +1663,6 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
 
     if (empty($chosen_layout['flexible'])) {
 
-      if (isset($chosen_layout['module']) && $chosen_layout['module'] == 'panels') {
-        $layout_string = $chosen_layout['panels']['theme'];
-      }
-
       $selected = '<strong>' . $chosen_layout['label'] . '</strong>';
       $selected .= '<br/>' . t('The default template can be found in %path', array('%path' => $chosen_layout['path']));
       $suggestions = t('Template suggestions') . ':<ul>';

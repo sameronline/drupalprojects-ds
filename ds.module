@@ -835,7 +835,6 @@ function ds_field_attach_view_alter(&$build, $context) {
 
   // Add path to css file for this layout and disable block regions if necessary.
   if (isset($layout['css']) && !isset($loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'])) {
-
     // Register css file.
     $loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'] = TRUE;
     // Add css file.
@@ -932,12 +931,6 @@ function ds_entity_variables(&$vars) {
         }
       }
 
-      // In case this is a panels layout, add the variable to the $content variable.
-      if (isset($layout['module']) && $layout['module'] == 'panels') {
-        $vars['content'][$region_name] = $vars[$region_name];
-        unset($vars[$region_name]);
-      }
-
       // Add extras classes to the region.
       if (empty($layout['flexible'])) {
         $vars[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
@@ -973,7 +966,13 @@ function ds_entity_variables(&$vars) {
     $context = array('entity' => isset($vars[$object]) ? $vars[$object] : (isset($vars['elements']['#' . $object]) ? $vars['elements']['#' . $object] : ''), 'entity_type' => $vars['elements']['#entity_type'], 'bundle' => $vars['elements']['#bundle'], 'view_mode' => $vars['elements']['#view_mode']);
     drupal_alter('ds_pre_render', $layout_render_array, $context);
     foreach ($layout_render_array as $region_name => $content) {
-      $vars[$region_name] = drupal_render($content);
+      // In case this is a panels layout, add the region to the $content variable.
+      if (isset($layout['module']) && $layout['module'] == 'panels') {
+        $vars['content'][$region_name] = drupal_render($content);
+      }
+      else {
+        $vars[$region_name] = drupal_render($content);
+      }
     }
   }
 }
