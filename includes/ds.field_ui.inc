@@ -937,18 +937,20 @@ function ds_field_settings_summary($field, $form_state) {
 
   // Not all fields have settings.
   if (isset($field['properties']['settings'])) {
-    $summary = module_invoke($field['module'], 'ds_field_format_summary', $field) . '<br />';
+    $summary = module_invoke($field['module'], 'ds_field_format_summary', $field);
   }
 
   if (module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
     module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
 
     // Field template summary
-    $functions = module_invoke_all('ds_field_theme_functions_info');
-    $default_field_function = variable_get('ft-default', 'theme_field');
-    $field_function = isset($form_state['formatter_settings'][$field['name']]['ft']['func']) ? $form_state['formatter_settings'][$field['name']]['ft']['func'] : $default_field_function;
+    if (!in_array($field['field_type'], array(DS_FIELD_TYPE_IGNORE, DS_FIELD_TYPE_PREPROCESS))) {
+      $functions = module_invoke_all('ds_field_theme_functions_info');
+      $default_field_function = variable_get('ft-default', 'theme_field');
+      $field_function = isset($form_state['formatter_settings'][$field['name']]['ft']['func']) ? $form_state['formatter_settings'][$field['name']]['ft']['func'] : $default_field_function;
 
-    $summary .= ' Field template: ' . check_plain($functions[$field_function]) . '<br />';
+      $summary .= 'Field template: ' . check_plain($functions[$field_function]) . '<br />';
+    }
   }
 
   if (empty($summary)) {
@@ -988,7 +990,12 @@ function ds_field_settings_form($field, &$form_state) {
     module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
     // Protect against empty $form.
     if (!is_array($form)) $form = array();
-    ds_extras_field_template_settings_form($form, $form_state, $context);
+    if (!in_array($field['field_type'], array(DS_FIELD_TYPE_IGNORE, DS_FIELD_TYPE_PREPROCESS))) {
+      ds_extras_field_template_settings_form($form, $form_state, $context);
+    }
+    else {
+      $form['#markup'] = t('This field does not support Field templates.');
+    }
   }
 
   return $form;
@@ -1898,8 +1905,8 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       'settings_edit' => array(),
     );
 
-    // Don't show summary in hidden region.
-    if (!isset($field_regions[$key]) || $field_regions[$key] == 'hidden') {
+    // Don't show summary or cogwheel in hidden region.
+    if (_ds_field_ui_check_hidden_region($key, $form_state, $field_regions)) {
       continue;
     }
 
@@ -1963,6 +1970,14 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
 
   // Field rows.
   foreach ($instances as $key => $instance) {
+
+    // Don't show summary or cogwheel in hidden region.
+    if (_ds_field_ui_check_hidden_region($key, $form_state, $field_regions)) {
+      $table[$key]['settings_summary']['#markup'] = '';
+      $table[$key]['settings_edit'] = array();
+      continue;
+    }
+
     $field = field_info_field($instance['field_name']);
     $display = $instance['display'][$view_mode];
 
@@ -1987,6 +2002,10 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       $form_state['formatter_settings'][$key] += $form['#field_settings'][$key];
     }
 
+    // Change default value or Field API format, so we can change the right
+    // settings form when clicking on the cogwheel.
+    $form['fields'][$key]['format']['type']['#default_value'] = $formatter_type;
+
     $instance['display'][$view_mode]['type'] = $formatter_type;
     $formatter = field_info_formatter_types($formatter_type);
     $instance['display'][$view_mode]['module'] = $formatter['module'];
@@ -2005,15 +2024,15 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       '#field_name' => $key,
     );
 
-    // Don't show summary when we are in the hidden region
-    if (!isset($field_regions[$key]) || $field_regions[$key] == 'hidden') {
-      continue;
-    }
-
     if ($form_state['formatter_settings_edit'] == $key) {
+      $formatter_type = $form_state['complete form']['fields'][$key]['format']['type']['#default_value'];
+      $formatter = field_info_formatter_types($formatter_type);
+      $instance['display'][$view_mode]['type'] = $formatter_type;
+      $instance['display'][$view_mode]['module'] = $formatter['module'];
+      $instance['display'][$view_mode]['settings'] = $settings;
       $function = $formatter['module'] . '_field_formatter_settings_form';
 
-      // Add the default formatter settings if any
+      // Add the default formatter settings if any.
       $settings_form = array();
       if (function_exists($function)) {
         $settings_form = $function($field, $instance, $view_mode, $form, $form_state);
@@ -2075,7 +2094,10 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
         $default_field_function = variable_get('ft-default', 'theme_field');
         $field_function = isset($form_state['formatter_settings'][$key]['ft']['func']) ? $form_state['formatter_settings'][$key]['ft']['func'] : $default_field_function;
 
-        $summary .= '<br /> Field template: ' . check_plain($functions[$field_function]) . '<br />';
+        if (!empty($summary)) {
+          $summary .= '<br />';
+        }
+        $summary .= 'Field template: ' . check_plain($functions[$field_function]) . '<br />';
       }
 
       if (!empty($summary)) {
@@ -2091,6 +2113,23 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       }
     }
   }
+}
+
+/**
+ * Helper function to check if we are in a hidden region or not.
+ */
+function _ds_field_ui_check_hidden_region($key, $form_state, $field_regions) {
+  $continue = FALSE;
+  if (isset($form_state['input']['fields'][$key]['region'])) {
+    if ($form_state['input']['fields'][$key]['region'] == 'hidden') {
+      $continue = TRUE;
+    }
+  }
+  elseif (!isset($field_regions[$key]) || $field_regions[$key] == 'hidden') {
+    $continue = TRUE;
+  }
+
+  return $continue;
 }
 
 /**
