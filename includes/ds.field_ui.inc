@@ -1026,6 +1026,11 @@ function ds_ds_field_format_summary($field) {
       $summary .= ' ' . str_replace('_', ' ', drupal_ucfirst(check_plain($key))) . ': ' . check_plain($value) . '<br />';
     }
   }
+
+  if (empty($summary) && ($field['field_type'] == DS_FIELD_TYPE_CTOOLS)) {
+    $summary .= t('Not configured yet.');
+  }
+
   return $summary;
 }
 
