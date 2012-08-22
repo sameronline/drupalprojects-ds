@@ -634,6 +634,10 @@ function ds_field_ui_layouts_save($form, &$form_state) {
         continue;
       }
 
+      if (isset($form_state['values']['additional_settings']['layout_class'])) {
+        $record->settings['classes']['layout_class'] = $form_state['values']['additional_settings']['layout_class'];
+      }
+
       // Additional classes on regions.
       if (isset($form_state['values']['additional_settings'][$region])) {
         // Do not save empty string.
@@ -1545,13 +1549,22 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
 
     $classes = _ds_classes();
     if (!empty($classes)) {
+
+      $form['additional_settings']['ds_classes']['layout_class'] = array(
+        '#type' => 'select',
+        '#multiple' => TRUE,
+        '#options' => $classes,
+        '#title' => t('Class for layout'),
+        '#default_value' => isset($layout->settings['classes']['layout_class']) ? $layout->settings['classes']['layout_class'] : '',
+      );
+
       foreach (array_keys($layout->regions) as $region) {
         $form['additional_settings']['ds_classes'][$region] = array(
           '#type' => 'select',
           '#multiple' => TRUE,
           '#options' => $classes,
           '#title' => t('Class for @region', array('@region' => $region)),
-          '#default_value' => isset($layout->settings['classes'], $layout->settings['classes'][$region]) ? $layout->settings['classes'][$region] : '',
+          '#default_value' => isset($layout->settings['classes'][$region]) ? $layout->settings['classes'][$region] : '',
         );
       }
       $form['additional_settings']['ds_classes']['info'] = array('#markup' => l(t('Manage region  and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())));
