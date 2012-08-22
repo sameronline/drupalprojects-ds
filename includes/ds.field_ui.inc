@@ -24,8 +24,8 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   // Add layout fieldset.
   _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, $form, $form_state);
 
-  // Add the fields on the table.
-  if ($view_mode != 'form') {
+  // Add/alter fields on the table, but only if a layout is selected.
+  if ($view_mode != 'form' && !empty($form['#ds_layout'])) {
     _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form, $form_state);
 
     // Also alter core fields
