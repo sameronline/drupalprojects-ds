@@ -524,7 +524,7 @@ if (variable_get('ds_user_override_search_page', FALSE)) {
 
 /**
  * Build shared page variables.
-
+ *
  * @param $build
  *   The build array.
  */
