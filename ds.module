@@ -913,7 +913,7 @@ function ds_entity_variables(&$vars) {
       $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $vars['elements']['#entity_type'] . '_' . $vars['elements']['#bundle'] . '_' . $vars['elements']['#view_mode'];
     }
 
-    // If the layout has wrapper class lets add it
+    // If the layout has wrapper class lets add it.
     if (isset($layout['settings']['classes']['layout_class'])) {
       foreach ($layout['settings']['classes']['layout_class'] as $layout_class) {
         $vars['classes_array'][] = $layout_class;
