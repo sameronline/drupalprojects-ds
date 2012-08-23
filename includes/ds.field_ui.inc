@@ -1590,7 +1590,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
           continue;
         }
         if ($row->entity_type == $entity_type && $row->bundle == $bundle) {
-          $options[$row->id] = drupal_ucfirst($row->entity_type) . ' > ' . drupal_ucfirst($row->bundle) . ' > ' . drupal_ucfirst($row->view_mode);
+          $options[$row->id] = drupal_ucfirst(str_replace('_', ' ', $row->entity_type)) . ' > ' . drupal_ucfirst(str_replace('_', ' ', $row->bundle)) . ' > ' . drupal_ucfirst(str_replace('_', ' ', $row->view_mode));
         }
       }
 
