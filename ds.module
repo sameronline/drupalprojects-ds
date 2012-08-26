@@ -900,7 +900,11 @@ function ds_entity_variables(&$vars) {
       if (!isset($vars['classes_array'])) {
         $vars['classes_array'] = array();
       }
-      $vars['classes_array'][] = 'view-mode-' . $vars['elements']['#view_mode'];
+
+      // Add view-mode-{name} to classes.
+      if (!in_array('view-mode-' . $vars['elements']['#view_mode'], $vars['classes_array'])) {
+        $vars['classes_array'][] = 'view-mode-' . $vars['elements']['#view_mode'];
+      }
 
       // In case this is a panels layout, use panels info array.
       if (isset($layout['module']) && $layout['module'] == 'panels') {
