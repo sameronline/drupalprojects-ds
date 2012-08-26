@@ -397,15 +397,7 @@ function _ds_ds_layout_info() {
 
   // Get layouts defined in the active theme and base theme (if applicable).
   $themes = list_themes();
-
-  // Only select the user selected theme if it is available in the
-  // list of themes that can be accessed.
-  $theme = !empty($user->theme) && drupal_theme_access($user->theme) ? $user->theme : variable_get('theme_default', 'bartik');
-
-  // Allow modules to override the theme. Validation has already been performed
-  // inside menu_get_custom_theme(), so we do not need to check it again here.
-  $custom_theme = menu_get_custom_theme();
-  $theme = !empty($custom_theme) ? $custom_theme : $theme;
+  $theme = variable_get('theme_default', 'bartik');
 
   $base_theme = array();
   $ancestor = $theme;
