@@ -360,7 +360,7 @@ function ds_node_type_update($info) {
 }
 
 /**
- * Implements hook_node_type_update().
+ * Implements hook_node_type_delete().
  */
 function ds_node_type_delete($info) {
   module_load_include('inc', 'ds', 'includes/ds.registry');
