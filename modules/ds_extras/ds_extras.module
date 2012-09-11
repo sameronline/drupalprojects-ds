@@ -1001,6 +1001,14 @@ function ds_extras_render_panel_layout(&$vars) {
       $vars['theme_hook_suggestion'] = 'panels_flexible';
     }
 
+    // Responsive layouts.
+    if ($layout['settings']['theme'] == 'layout_responsive') {
+      $vars['settings'] = $vars['renderer'] = '';
+      $vars['display'] = $display;
+      $vars['layout'] = panels_get_layout($layout['layout']);
+      $vars['theme_hook_suggestion'] = 'layout_responsive';
+    }
+
     // Load renderer.
     $pipeline = $layout['settings']['pipeline'];
     $renderer = panels_get_renderer($pipeline, $display);
