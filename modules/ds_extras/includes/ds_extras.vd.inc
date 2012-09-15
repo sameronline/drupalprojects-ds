@@ -116,8 +116,8 @@ function ds_extras_vd_bundle_form_submit($form, &$form_state) {
   drupal_write_record('ds_vd', $record);
 
   // Clear entity cache and field info fields cache.
-  cache_clear_all('field_info_fields', 'cache_field');
-  cache_clear_all('entity_info', 'cache', TRUE);
+  cache('cache_field')->delete('field_info_fields');
+  cache()->deletePrefix('entity_info');
 
   // Message and redirect.
   drupal_set_message(t('Bundle @label has been added.', array('@label' => $record->label)));
@@ -267,8 +267,8 @@ function ds_extras_vd_bundle_remove_submit($form, &$form_state) {
   variable_del('field_bundle_settings_ds_views__' . $bundle);
 
   // Clear entity cache and field info fields cache.
-  cache_clear_all('field_info_fields', 'cache_field');
-  cache_clear_all('entity_info', 'cache', TRUE);
+  cache('cache_field')->delete('field_info_fields');
+  cache()->deletePrefix('entity_info');
 
   drupal_set_message(t('Bundle @label has been removed.', array('@label' => $label)));
 }

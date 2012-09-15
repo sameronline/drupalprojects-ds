@@ -182,11 +182,11 @@ function ds_extras_settings_validate($form, &$form_state) {
  * Submit callback: Extras settings screen.
  */
 function ds_extras_settings_submit($form, &$form_state) {
-  cache_clear_all('ds_fields', 'cache');
-  cache_clear_all('entity_info:', 'cache', TRUE);
-  cache_clear_all('theme_registry:', 'cache', TRUE);
-  cache_clear_all('module_implements', 'cache_bootstrap');
-  cache_clear_all('field_info_fields', 'cache_field');
+  cache()->delete('ds_fields');
+  cache()->deletePrefix('entity_info:');
+  cache()->deletePrefix('theme_registry:');
+  cache('cache_bootstrap')->('module_implements');
+  cache('cache_field')->('field_info_fields');
   variable_set('menu_rebuild_needed', TRUE);
 }
 

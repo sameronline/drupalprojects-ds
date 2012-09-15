@@ -74,8 +74,8 @@ class dsNodeTests extends dsBaseTest {
    */
   function entitiesClearFieldSettings() {
     db_query('TRUNCATE {ds_field_settings}');
-    cache_clear_all('ds_fields', 'cache');
-    cache_clear_all('ds_field_settings', 'cache');
+    cache()->delete('ds_fields');
+    cache()->delete('ds_field_settings');
   }
 
   /**

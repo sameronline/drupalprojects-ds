@@ -5,6 +5,8 @@
  * Display Suite core functions.
  */
 
+use Drupal\Core\Template\Attribute;
+
 /**
  * Constants for field types.
  */
@@ -581,7 +583,8 @@ function ds_get_fields($entity_type, $cache = TRUE) {
   // Get fields from cache.
   if (!$loaded) {
     $loaded = TRUE;
-    if ($cache && $cached_fields = cache_get('ds_fields:' . $GLOBALS[LANGUAGE_TYPE_CONTENT]->language)) {
+    $lang = language(LANGUAGE_TYPE_CONTENT);
+    if ($cache && $cached_fields = cache()->get('ds_fields:' . language(LANGUAGE_TYPE_CONTENT)->langcode)) {
       $fields_cached = $static_fields = $cached_fields->data;
     }
   }
@@ -616,7 +619,7 @@ function ds_get_fields($entity_type, $cache = TRUE) {
 
       // Cache the fields.
       if ($cache) {
-        cache_set('ds_fields:' . $GLOBALS[LANGUAGE_TYPE_CONTENT]->language, $fields_cached, 'cache');
+        cache()->set('ds_fields:' . language(LANGUAGE_TYPE_CONTENT)->langcode, $fields_cached);
       }
     }
     else {
@@ -644,7 +647,7 @@ function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRU
   static $field_settings = NULL;
 
   if (!isset($field_settings)) {
-    if ($cache = cache_get('ds_field_settings')) {
+    if ($cache = cache()->get('ds_field_settings')) {
       $field_settings = $cache->data;
     }
     else {
@@ -658,7 +661,7 @@ function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRU
           $field_settings[$layout_settings->entity_type][$layout_settings->bundle][$layout_settings->view_mode][$field] = $settings;
         }
       }
-      cache_set('ds_field_settings', $field_settings, 'cache');
+      cache()->set('ds_field_settings', $field_settings);
     }
   }
 
@@ -971,14 +974,15 @@ function ds_entity_variables(&$vars) {
       $vars['layout_attributes'] .= ' ' . $layout['settings']['layout_attributes'];
     }
     // Merge in other attributes which were passed to the template.
-    if ($layout['settings']['layout_attributes_merge']) {
+    // @todo fix this
+    /*if ($layout['settings']['layout_attributes_merge']) {
       // handle classes separately
       if (isset($vars['attributes_array']['class'])) {
         $vars['classes_array'] += $vars['attributes_array']['class'];
         unset($vars['attributes_array']['class']);
       }
-      $vars['layout_attributes'] .= ' ' . drupal_attributes($vars['attributes_array']);
-    }
+      $vars['layout_attributes'] .= ' ' . new Attribute($vars['rdf_template_variable_attributes']);
+    }*/
 
     // Let other modules alter the ds array before creating the region variables.
     $context = array('entity' => isset($vars[$object]) ? $vars[$object] : (isset($vars['elements']['#' . $object]) ? $vars['elements']['#' . $object] : ''), 'entity_type' => $vars['elements']['#entity_type'], 'bundle' => $vars['elements']['#bundle'], 'view_mode' => $vars['elements']['#view_mode']);

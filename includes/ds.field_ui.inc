@@ -149,11 +149,11 @@ function ds_revert_layout_field_settings_form_submit(&$form, &$form_state) {
     ->execute();
 
   // Clear the ds_fields cache.
-  cache_clear_all('ds_fields', 'cache');
-  cache_clear_all('ds_field_settings', 'cache');
+  cache()->delete('ds_fields');
+  cache()->delete('ds_field_settings');
 
   // Clear entity info cache.
-  cache_clear_all('entity_info', 'cache', TRUE);
+  cache()->deletePrefix('entity_info');
 
   drupal_set_message(t('Layout has been reverted'));
 
@@ -517,7 +517,7 @@ function ds_field_ui_layout_change_submit($form, &$form_state) {
   drupal_write_record('ds_layout_settings', $record);
 
   // Clear entity info cache.
-  cache_clear_all('entity_info', 'cache', TRUE);
+  cache()->deletePrefix('entity_info');
 
   // Show message.
   drupal_set_message(t('The layout change has been saved.'));
@@ -672,7 +672,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     }
 
     // Clear entity info cache.
-    cache_clear_all('entity_info', 'cache', TRUE);
+    cache()->deletePrefix('entity_info');
   }
 }
 
@@ -750,8 +750,8 @@ function ds_field_ui_fields_save($form, &$form_state) {
   }
 
   // Clear the ds_fields cache.
-  cache_clear_all('ds_fields', 'cache');
-  cache_clear_all('ds_field_settings', 'cache');
+  cache()->delete('ds_fields');
+  cache()->delete('ds_field_settings');
 }
 
 /**
@@ -802,7 +802,7 @@ function ds_field_ui_layout_clone($form, &$form_state) {
     _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $cv);
 
     // Clear entity info cache.
-    cache_clear_all('entity_info', 'cache', TRUE);
+    cache()->deletePrefix('entity_info');
 
     // Show message.
     drupal_set_message(t('The layout has been cloned.'));

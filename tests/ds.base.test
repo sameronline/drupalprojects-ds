@@ -559,8 +559,8 @@ class dsLayoutsClassesTests extends dsBaseTest {
     $record->view_mode = 'default';
     $record->settings = $field_settings;
     drupal_write_record('ds_field_settings', $record, array('id'));
-    cache_clear_all('ds_fields', 'cache');
-    cache_clear_all('ds_field_settings', 'cache');
+    cache()->delete('ds_fields');
+    cache()->delete('ds_field_settings');
 
 
     // Create a article node and verify settings.

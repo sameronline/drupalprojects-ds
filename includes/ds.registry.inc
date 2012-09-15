@@ -122,8 +122,8 @@ function _ds_entity_type_update($entity_type, $info, $action) {
   }
 
   // Clear cache.
-  cache_clear_all('ds_fields', 'cache');
-  cache_clear_all('ds_field_settings', 'cache');
+  cache()->delete('ds_fields');
+  cache()->delete('ds_field_settings');
   field_info_cache_clear();
 }
 
