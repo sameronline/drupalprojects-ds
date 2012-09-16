@@ -2220,7 +2220,7 @@ function ds_field_row_form_format_summary_construct(&$table, $key) {
   $table[$key]['settings_edit'] = $base_button + array(
     '#type' => 'image_button',
     '#name' => $key . '_formatter_settings_edit',
-    '#src' => 'misc/configure.png',
+    '#src' => 'core/misc/configure-dark.png',
     '#attributes' => array('class' => array('field-formatter-settings-edit'), 'alt' => t('Edit')),
     '#op' => 'edit',
     // Do not check errors for the 'Edit' button.
