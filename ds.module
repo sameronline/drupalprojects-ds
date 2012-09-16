@@ -971,8 +971,8 @@ function ds_entity_variables(&$vars) {
       $vars['layout_attributes'] .= ' ' . $layout['settings']['layout_attributes'];
     }
     // Merge in other attributes which were passed to the template.
-    if ($layout['settings']['layout_attributes_merge']) {
-      // handle classes separately
+    if (!empty($layout['settings']['layout_attributes_merge'])) {
+      // Handle classes separately.
       if (isset($vars['attributes_array']['class'])) {
         $vars['classes_array'] += $vars['attributes_array']['class'];
         unset($vars['attributes_array']['class']);
