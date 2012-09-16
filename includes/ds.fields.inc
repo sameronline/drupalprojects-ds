@@ -281,6 +281,7 @@ function ds_edit_custom_field_form($form, &$form_state, $custom_field = '') {
       '#theme' => 'token_tree',
       '#token_types' => 'all',
       '#global_types' => FALSE,
+      '#dialog' => TRUE,
     );
   }
   else {
