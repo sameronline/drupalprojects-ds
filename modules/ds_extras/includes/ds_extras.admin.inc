@@ -182,7 +182,7 @@ function ds_extras_settings_validate($form, &$form_state) {
  * Submit callback: Extras settings screen.
  */
 function ds_extras_settings_submit($form, &$form_state) {
-  cache()->delete('ds_fields');
+  cache()->deletePrefix('ds_fields:');
   cache()->deletePrefix('entity_info:');
   cache()->deletePrefix('theme_registry:');
   cache('cache_bootstrap')->('module_implements');

@@ -559,7 +559,7 @@ class dsLayoutsClassesTests extends dsBaseTest {
     $record->view_mode = 'default';
     $record->settings = $field_settings;
     drupal_write_record('ds_field_settings', $record, array('id'));
-    cache()->delete('ds_fields');
+    cache()->deletePrefix('ds_fields:');
     cache()->delete('ds_field_settings');
 
 

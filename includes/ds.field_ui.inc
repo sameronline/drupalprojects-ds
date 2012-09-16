@@ -149,7 +149,7 @@ function ds_revert_layout_field_settings_form_submit(&$form, &$form_state) {
     ->execute();
 
   // Clear the ds_fields cache.
-  cache()->delete('ds_fields');
+  cache()->deletePrefix('ds_fields:');
   cache()->delete('ds_field_settings');
 
   // Clear entity info cache.
@@ -750,7 +750,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   }
 
   // Clear the ds_fields cache.
-  cache()->delete('ds_fields');
+  cache()->deletePrefix('ds_fields:');
   cache()->delete('ds_field_settings');
 }
 
