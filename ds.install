@@ -310,9 +310,5 @@ function ds_schema() {
 /**
  * Add the ui_limit table to the fields table.
  */
-function ds_update_7201() {
-  $schema = ds_schema();
-  if (!db_field_exists('ds_fields', 'ui_limit')) {
-    db_add_field('ds_fields', 'ui_limit', $schema['ds_fields']['fields']['ui_limit']);
-  }
+function ds_update_8001) {
 }
