@@ -185,8 +185,8 @@ function ds_extras_settings_submit($form, &$form_state) {
   cache()->deletePrefix('ds_fields:');
   cache()->deletePrefix('entity_info:');
   cache()->deletePrefix('theme_registry:');
-  cache('cache_bootstrap')->('module_implements');
-  cache('cache_field')->('field_info_fields');
+  cache('cache_bootstrap')->delete('module_implements');
+  cache('cache_field')->delete('field_info_fields');
   variable_set('menu_rebuild_needed', TRUE);
 }
 

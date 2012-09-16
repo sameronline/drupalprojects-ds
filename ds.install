@@ -310,5 +310,5 @@ function ds_schema() {
 /**
  * Add the ui_limit table to the fields table.
  */
-function ds_update_8001) {
+function ds_update_8001() {
 }
