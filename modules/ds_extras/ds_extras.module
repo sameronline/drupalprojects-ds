@@ -832,14 +832,14 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
     }
 
     // Theme output function.
-    $function = isset($values['func']) ? $values['func'] : '';
+    $function = isset($values['func']) ? $values['func'] : $default_field_function;
     if ($function != $default_field_function) {
       $field_settings[$key]['ft']['func'] = $function;
     }
 
     // Field classes.
     if ($function != 'theme_ds_field_expert' && $function != 'theme_ds_field_reset' && isset($values['classes'])) {
-      $classes = implode(' ', $values['classes']);
+      $classes = is_array($values['classes']) ? implode(' ', $values['classes']) : $values['classes'];
       if (!empty($classes)) {
         $field_settings[$key]['ft']['classes'] = $classes;
       }
