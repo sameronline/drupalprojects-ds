@@ -158,23 +158,19 @@ function _ds_theme_registry_alter(&$theme_registry) {
  */
 function _ds_entity_info_alter(&$entity_info) {
 
-  // Make sure ds_view_modes table exists.
-  if (!db_table_exists('ds_view_modes')) {
-    return;
-  }
-
   ctools_include('export');
 
   // Add custom view modes to entities.
-  $custom_view_modes = ctools_export_crud_load_all('ds_view_modes');
-  foreach ($custom_view_modes as $view_mode_key => $view_mode_value) {
+  $custom_view_modes = config_get_storage_names_with_prefix('ds.view_modes');
+  foreach ($custom_view_modes as $config) {
+    $view_mode_value = config($config)->get();
     $view_mode = array(
-      'label' => check_plain($view_mode_value->label),
+      'label' => check_plain($view_mode_value['label']),
       'custom settings' => FALSE,
     );
-    foreach ($view_mode_value->entities as $entity_type) {
+    foreach ($view_mode_value['entities'] as $entity_type) {
       if (isset($entity_info[$entity_type])) {
-        $entity_info[$entity_type]['view modes'][$view_mode_key] = $view_mode;
+        $entity_info[$entity_type]['view modes'][$view_mode_value['view_mode']] = $view_mode;
       }
     }
   }

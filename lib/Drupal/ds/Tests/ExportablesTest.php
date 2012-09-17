@@ -39,28 +39,6 @@ class ExportablesTest extends BaseTest {
     // Find default view mode on layout screen.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertText('Test exportables', t('Exportables view mode found on display screen.'));
-
-    // Override default view mode.
-    $edit = array(
-      'name' => 'Testing 2',
-    );
-    $this->drupalPost('admin/structure/ds/view_modes/manage/test_exportables', $edit, t('Save'));
-    $this->assertText(t('The view mode Testing 2 has been saved'), t('Exportables label updated'));
-    $this->assertText(t('Revert'), t('Revert button found.'));
-
-    // Find default view mode on layout screen.
-    $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertText('Testing 2', t('Updated exportables view mode found on display screen.'));
-
-    // Revert the view mode.
-    $this->drupalPost('admin/structure/ds/view_modes/revert/test_exportables', array(), t('Revert'));
-    $this->assertText(t('The view mode Testing 2 has been reverted'), t('Testing view mode reverted'));
-    $this->assertText('Test exportables', t('Exportables view mode found on admin screen.'));
-
-    // Assert the view mode is gone at the manage display screen.
-    $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertNoText('Testing 2', t('Overrided exportables view mode not found on display screen.'));
-    $this->assertText('Test exportables', t('Default exportables view mode found on display screen.'));
   }
 
   // Test layout and field settings configuration.

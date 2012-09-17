@@ -197,49 +197,6 @@ function ds_schema() {
     ),
   );
 
-  $schema['ds_view_modes'] = array(
-    'description' => 'The table that holds custom view modes managed by Display Suite.',
-
-    // CTools export definitions.
-    'export' => array(
-      'key' => 'view_mode',
-      'identifier' => 'ds_view_mode',
-      'default hook' => 'ds_view_modes_info',
-      'can disable' => FALSE,
-      'api' => array(
-        'owner' => 'ds',
-        'api' => 'ds',
-        'minimum_version' => 1,
-        'current_version' => 1,
-      ),
-    ),
-
-    'fields' => array(
-      'view_mode' => array(
-        'description' => 'The machine name of the view mode.',
-        'type' => 'varchar',
-        'length' => 32,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'label' => array(
-        'description' => 'The label of the view mode.',
-        'type' => 'varchar',
-        'length' => 32,
-        'not null' => TRUE,
-        'default' => '',
-      ),
-      'entities' => array(
-        'description' => 'The entities for this view mode.',
-        'type' => 'blob',
-        'not null' => FALSE,
-        'size' => 'big',
-        'serialize' => TRUE,
-      ),
-    ),
-    'primary key' => array('view_mode'),
-  );
-
   $schema['ds_fields'] = array(
     'description' => 'The table that holds custom fields managed by Display Suite.',
 

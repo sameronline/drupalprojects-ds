@@ -100,29 +100,6 @@ function hook_ds_layout_settings_info() {
 }
 
 /**
- * Expose default view modes.
- *
- * This hook is called by CTools. For this hook to work, you need
- * hook_ctools_plugin_api(). The values of this hook can be overridden
- * and reverted through the UI.
- */
-function hook_ds_view_modes_info() {
-  $ds_view_modes = array();
-
-  $ds_view_mode = new stdClass;
-  $ds_view_mode->disabled = FALSE; /* Edit this to true to make a default ds_view_mode disabled initially */
-  $ds_view_mode->api_version = 1;
-  $ds_view_mode->view_mode = 'test_exportables';
-  $ds_view_mode->label = 'Test exportables';
-  $ds_view_mode->entities = array(
-    'node' => 'node',
-  );
-  $ds_view_modes['test_exportables'] = $ds_view_mode;
-
-  return $ds_view_modes;
-}
-
-/**
  * Define fields. These fields are not overridable through the interface.
  * If you want those, look at hook_ds_custom_fields_info().
  *

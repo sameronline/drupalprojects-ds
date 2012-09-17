@@ -112,25 +112,6 @@ function ds_exportables_test_ds_layout_settings_info() {
 }
 
 /**
- * Implements hook_ds_view_modes_info().
- */
-function ds_exportables_test_ds_view_modes_info() {
-  $ds_view_modes = array();
-
-  $ds_view_mode = new stdClass;
-  $ds_view_mode->disabled = FALSE; /* Edit this to true to make a default ds_view_mode disabled initially */
-  $ds_view_mode->api_version = 1;
-  $ds_view_mode->view_mode = 'test_exportables';
-  $ds_view_mode->label = 'Test exportables';
-  $ds_view_mode->entities = array(
-    'node' => 'node',
-  );
-  $ds_view_modes['test_exportables'] = $ds_view_mode;
-
-  return $ds_view_modes;
-}
-
-/**
  * Implements hook_ds_vd_info().
  */
 function ds_exportables_test_ds_vd_info() {
