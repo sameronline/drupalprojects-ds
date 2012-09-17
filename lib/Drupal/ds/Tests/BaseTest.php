@@ -17,7 +17,7 @@ class BaseTest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('ctools', 'ds', 'ds_extras', 'search', 'ds_search', 'ds_forms', 'ds_ui', 'ds_test');
+  public static $modules = array('ctools', 'ds', 'ds_extras', 'ds_format', 'search', 'ds_search', 'ds_forms', 'ds_ui', 'ds_test');
 
   protected $profile = 'standard';
 
