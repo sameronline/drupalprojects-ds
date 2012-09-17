@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\ctools;
+
 /**
  * @file
  * Field UI functions for Display Suite.
@@ -88,8 +90,8 @@ function ds_field_ui_create_vertical_tabs(&$form) {
       '#suffix' => '</div>',
       '#tree' => TRUE,
     );
-    $form['#attached']['js'][] = 'misc/form.js';
-    $form['#attached']['js'][] = 'misc/collapse.js';
+    $form['#attached']['js'][] = 'core/misc/form.js';
+    $form['#attached']['js'][] = 'core/misc/collapse.js';
   }
 
   $view_mode_admin_access = user_access('admin_view_modes') && module_exists('ds_ui');
@@ -149,7 +151,7 @@ function ds_revert_layout_field_settings_form_submit(&$form, &$form_state) {
     ->execute();
 
   // Clear the ds_fields cache.
-  cache()->deletePrefix('ds_fields:');
+  cache()->deletePrefix('ds_fields');
   cache()->delete('ds_field_settings');
 
   // Clear entity info cache.
@@ -744,7 +746,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   }
 
   // Clear the ds_fields cache.
-  cache()->deletePrefix('ds_fields:');
+  cache()->deletePrefix('ds_fields');
   cache()->delete('ds_field_settings');
 }
 
@@ -1118,7 +1120,13 @@ function ds_ds_field_settings_form($field) {
  * Add entity contexts.
  */
 function ds_get_entity_context($entity_type) {
+  // @todo this is absolutely freaky ..
+  // for some reason, even if the file exists context.inc is not
+  // included at all .....
+  // @see also ds_create_entity_context in ds.module.
+  return array();
   ctools_include('context');
+
   $arguments = array(
     array(
       'keyword' => $entity_type,
@@ -1961,7 +1969,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     );
 
     if ($form_state['formatter_settings_edit'] == $key) {
-      $formatter_type = $form_state['complete form']['fields'][$key]['format']['type']['#default_value'];
+      $formatter_type = $form_state['complete_form']['fields'][$key]['format']['type']['#default_value'];
       $formatter = field_info_formatter_types($formatter_type);
       $instance['display'][$view_mode]['type'] = $formatter_type;
       $instance['display'][$view_mode]['module'] = $formatter['module'];
@@ -2135,7 +2143,7 @@ function ds_field_row_form_format_summary_construct(&$table, $key) {
   $table[$key]['settings_edit'] = $base_button + array(
     '#type' => 'image_button',
     '#name' => $key . '_formatter_settings_edit',
-    '#src' => 'misc/configure.png',
+    '#src' => 'core/misc/configure-dark.png',
     '#attributes' => array('class' => array('field-formatter-settings-edit'), 'alt' => t('Edit')),
     '#op' => 'edit',
     // Do not check errors for the 'Edit' button.

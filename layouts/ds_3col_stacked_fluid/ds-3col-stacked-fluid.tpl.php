@@ -6,10 +6,10 @@
  */
 
   // Add sidebar classes so that we can apply the correct width to the center region in css.
-  if (($left && !$right) || ($right && !$left)) $classes .= ' group-one-sidebar';
-  if ($left && $right) $classes .= ' group-two-sidebars';
-  if ($left) $classes .= ' group-sidebar-left';
-  if ($right) $classes .= ' group-sidebar-right';
+  if (($left && !$right) || ($right && !$left)) $attributes['class'] .= ' group-one-sidebar';
+  if ($left && $right) $attributes['class'] .= ' group-two-sidebars';
+  if ($left) $attributes['class'] .= ' group-sidebar-left';
+  if ($right) $attributes['class'] .= ' group-sidebar-right';
 ?>
 <<?php print $layout_wrapper; print $layout_attributes; ?> class="ds-3col-stacked-fluid <?php print print $attributes['class'];?> clearfix">
 

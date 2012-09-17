@@ -2,10 +2,13 @@
 
 /**
  * @file
- * Entities tests
+ * Definition of Drupal\ds\Tests\ViewsTest.
  */
 
-class dsViewsTests extends dsBaseTest {
+namespace Drupal\ds\Tests;
+
+// Typo on purpose as views is not completely ready to test.
+class ViewsTestS extends BaseTest {
 
   /**
    * Implements getInfo().

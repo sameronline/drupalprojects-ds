@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Base functions and tests for Display Suite.
+ * Definition of Drupal\ds\Tests\ExportablesTest.
  */
 
-class dsExportablesTests extends dsBaseTest {
+namespace Drupal\ds\Tests;
+
+class ExportablesTest extends BaseTest {
 
   /**
    * Implements getInfo().

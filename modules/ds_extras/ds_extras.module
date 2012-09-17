@@ -260,13 +260,13 @@ function ds_extras_process_page_title(&$variables) {
   }
 
   // Support for Views page title, currently only hiding the title.
-  if (variable_get('ds_extras_vd', FALSE) && $view = views_get_page_view()) {
+  /*if (variable_get('ds_extras_vd', FALSE) && $view = views_get_page_view()) {
     if ($layout = ds_get_layout('ds_views', $view->name . '-' . $view->current_display, 'default')) {
       if (isset($layout['settings']['hide_page_title']) && $layout['settings']['hide_page_title'] == 1) {
         $variables['title'] = '';
       }
     }
-  }
+  }*/
 }
 
 /**
@@ -341,9 +341,9 @@ function ds_extras_switch_view_mode_field($field) {
 function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
 
   // Switch full view mode.
-  if (user_access('ds_switch ' . $form['#node']->type)) {
+  if (user_access('ds_switch ' . $form['#entity']->type)) {
 
-    $view_mode_settings = field_view_mode_settings('node', $form['#node']->type);
+    $view_mode_settings = field_view_mode_settings('node', $form['#entity']->type);
 
     // Get the view modes.
     $ds_vm = ds_entity_view_modes('node');
@@ -352,18 +352,18 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
     foreach ($ds_vm as $key => $item) {
       $overriden = (!empty($view_mode_settings[$key]['custom_settings']) ? TRUE : FALSE);
       if ($overriden) {
-        $layout = ds_get_layout('node', $form['#node']->type, $key, FALSE);
+        $layout = ds_get_layout('node', $form['#entity']->type, $key, FALSE);
         $layouts[$key] = $layout;
         $options[$key] = $item['label'];
       }
     }
 
     // Add default layout settings
-    $layouts[''] = ds_get_layout('node', $form['#node']->type, 'default', FALSE);
+    $layouts[''] = ds_get_layout('node', $form['#entity']->type, 'default', FALSE);
 
     // Only fire if we have more than 1 option.
     if (count($options) > 1) {
-      $node = $form['#node'];
+      $node = $form['#entity'];
 
       if (!isset($form['ds_extras'])) {
         $form['ds_extras'] = array(
@@ -577,7 +577,7 @@ function ds_vd_render_title_field($field) {
 /**
  * Implements hook_entity_view_alter().
  */
-function ds_extras_entity_view_alter(&$build, $entity_type) {
+function ds_extras_entity_view_alter(&$build, $entity) {
   static $loaded = array();
 
   // If views and core doesn't send information along on the entity,
@@ -586,6 +586,7 @@ function ds_extras_entity_view_alter(&$build, $entity_type) {
     return;
   }
 
+  $entity_type = $entity->entityType();
   $bundle = $build['#bundle'];
   $view_mode = $build['#view_mode'];
   if ($overridden_view_mode = ds_extras_get_view_mode()) {
@@ -600,6 +601,11 @@ function ds_extras_entity_view_alter(&$build, $entity_type) {
       $page_title['title'] = '';
     }
     elseif (isset($layout['settings']['hide_page_title']) && $layout['settings']['hide_page_title'] == 2 && !empty($layout['settings']['page_option_title']) && ds_extras_is_entity_page_view($build, $entity_type)) {
+      // @todo this is absolutely freaky ..
+      // for some reason, even if the file exists context.inc is not
+      // included at all .....
+      // @see also ds_get_entity_context in ds.field_ui.inc.
+      return;
       $contexts = array();
       $id = (arg(0) == 'taxonomy') ? arg(2) : arg(1);
       $entity = entity_load($entity_type, array($id));

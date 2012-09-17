@@ -315,7 +315,7 @@ function ds_search_settings($form, $form_state) {
  */
 function ds_search_settings_submit($form, $form_state) {
   // Rebuild the menu.
-  variable_set('menu_rebuild_needed', TRUE);
+  variable_set('menu_router_rebuild_needed', TRUE);
 }
 
 /**

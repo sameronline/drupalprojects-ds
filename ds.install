@@ -307,8 +307,3 @@ function ds_schema() {
   return $schema;
 }
 
-/**
- * Convert to CMI.
- */
-function ds_update_8000() {
-}

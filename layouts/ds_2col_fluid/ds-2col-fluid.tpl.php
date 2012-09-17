@@ -7,7 +7,7 @@
 
   // Add sidebar classes so that we can apply the correct width in css.
   if (($left && !$right) || ($right && !$left)) {
-    $classes .= ' group-one-column';
+    $attributes['class'] .= ' group-one-column';
   }
 ?>
 <<?php print $layout_wrapper; print $layout_attributes; ?> class="ds-2col-fluid <?php print print $attributes['class'];?> clearfix">

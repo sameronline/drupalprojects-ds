@@ -182,12 +182,12 @@ function ds_extras_settings_validate($form, &$form_state) {
  * Submit callback: Extras settings screen.
  */
 function ds_extras_settings_submit($form, &$form_state) {
-  cache()->deletePrefix('ds_fields:');
+  cache()->deletePrefix('ds_fields');
   cache()->deletePrefix('entity_info:');
   cache()->deletePrefix('theme_registry:');
   cache('cache_bootstrap')->delete('module_implements');
   cache('cache_field')->delete('field_info_fields');
-  variable_set('menu_rebuild_needed', TRUE);
+  variable_set('menu_router_rebuild_needed', TRUE);
 }
 
 /**
@@ -580,9 +580,6 @@ function _ds_extras_page_title_options($settings, $entity_type) {
   $return['page_option_contexts'] = array(
     '#type' => 'fieldset',
     '#title' => t('Substitutions'),
-    // Doesn't work because of http://drupal.org/node/1015798
-    //'#collapsible' => TRUE,
-    //'#collapsed' => TRUE,
     '#value' => theme('table', array('header' => $header, 'rows' => $rows)),
     '#weight' => 102,
     '#access' => $entity_type != 'ds_views',

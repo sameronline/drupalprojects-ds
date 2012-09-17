@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Form layout tests.
+ * Definition of Drupal\ds\Tests\FormsTest.
  */
 
-class dsFormTests extends dsBaseTest {
+namespace Drupal\ds\Tests;
+
+class FormsTest extends BaseTest {
 
   /**
    * Implements getInfo().

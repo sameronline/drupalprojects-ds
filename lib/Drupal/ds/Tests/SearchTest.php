@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Search tests
+ * Definition of Drupal\ds\Tests\SearchTest.
  */
 
-class dsSearchTests extends dsBaseTest {
+namespace Drupal\ds\Tests;
+
+class SearchTest extends BaseTest {
 
   /**
    * Implements getInfo().
@@ -34,7 +36,7 @@ class dsSearchTests extends dsBaseTest {
 
     // Set default search.
     $edit = array(
-      'search_default_module' => 'ds_search',
+      'default_module' => 'ds_search',
     );
     $this->drupalPost('admin/config/search/settings', $edit, t('Save configuration'));
 

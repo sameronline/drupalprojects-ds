@@ -5,7 +5,7 @@
  * Display Suite 2 column template.
  */
 ?>
-<div class="<?php print $classes;?> clearfix">
+<div class="<?php print $attributes['class'];?> clearfix">
 
   <?php if (isset($title_suffix['contextual_links'])): ?>
   <?php print render($title_suffix['contextual_links']); ?>

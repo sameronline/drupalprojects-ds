@@ -374,10 +374,9 @@ function ds_get_layout_info() {
  *   Array of layout variables for the regions.
  */
 function ds_get_layout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
-
   static $layouts = array();
-  $layout_key = $entity_type . '_' . $bundle . '_' . $view_mode;
 
+  $layout_key = $entity_type . '_' . $bundle . '_' . $view_mode;
   if (!isset($layouts[$layout_key])) {
 
     $entity_info = entity_get_info();
@@ -651,8 +650,8 @@ function ds_field_attach_view_alter(&$build, $context) {
 
     // Title label.
     if ($key == 'title' && $entity_type == 'node') {
-      $node_type = node_type_get_type($entity);
-      $field['title'] = function_exists('i18n_node_translate_type') ? i18n_node_translate_type($node_type->type, 'title_label') : $node_type->title_label;
+      $node_type = node_type_load($entity->type);
+      $field['title'] = function_exists('i18n_node_translate_type') ? i18n_node_translate_type($entity->type, 'title_label') : $node_type->title_label;
     }
 
     if (!empty($field_value) || (string) $field_value === '0') {
@@ -716,6 +715,7 @@ function ds_entity_variables(&$vars) {
     if ($vars['elements']['#entity_type'] == 'taxonomy_term') {
       $object = 'term';
     }
+
     if (isset($vars[$object]->preprocess_fields)) {
       foreach ($vars[$object]->preprocess_fields as $field) {
 
@@ -861,6 +861,11 @@ function ds_php_eval($code, $entity, $build = array()) {
  * Create entity context.
  */
 function ds_create_entity_context($entity_type, $entity, &$contexts, $context_arguments = array()) {
+  // @todo this is absolutely freaky ..
+  // for some reason, even if the file exists context.inc is not
+  // included at all .....
+  // @see also ds_get_entity_context in ds.field_ui.inc.
+  return array();
   ctools_include('context');
   if (empty($context_arguments)) {
     $context_arguments = array(array(
@@ -1061,7 +1066,7 @@ function ds_render_field($field) {
   }
   elseif (isset($field['properties']['entity_render_key']) && isset($field['entity']->{$field['properties']['entity_render_key']})) {
     if ($field['entity_type'] == 'user' && $field['properties']['entity_render_key'] == 'name') {
-      $output = format_username($field['entity']);
+      $output = user_format_name($field['entity']);
     }
     else {
       $output = $field['entity']->{$field['properties']['entity_render_key']};
@@ -1078,7 +1083,7 @@ function ds_render_field($field) {
       $path = $field['entity']->uri['path'];
     }
     else {
-      $uri_info = entity_uri($field['entity_type'], $field['entity']);
+      $uri_info = $field['entity']->uri();
       $path = $uri_info['path'];
     }
     $output = l($output, $path);
@@ -1271,7 +1276,7 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
         $term = taxonomy_term_load($item['tid']);
         $item_display = check_plain($term->name);
         if ($linked) {
-          $uri = entity_uri('taxonomy_term', $term);
+          $uri = $term->uri();
           $item_display = l($term->name, $uri['path']);
         }
       }
