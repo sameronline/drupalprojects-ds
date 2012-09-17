@@ -15,11 +15,6 @@ function _ds_theme() {
   $layouts = ds_get_layout_info();
   foreach ($layouts as $key => $layout) {
 
-    // We don't need panel layouts to be registered.
-    if (isset($layout['module']) && $layout['module'] == 'panels') {
-      continue;
-    }
-
     $theme_functions[$key] = array(
       'render element' => 'elements',
       'template' => strtr($key, '_', '-'),
@@ -356,44 +351,6 @@ function _ds_ds_layout_info() {
       'image' => TRUE,
     ),
   );
-
-  // Support for panels.
-  if (module_exists('panels')) {
-    ctools_include('plugins', 'panels');
-    $panel_layouts = panels_get_layouts();
-    foreach ($panel_layouts as $key => $layout) {
-      // The easy ones.
-      if (isset($layout['regions'])) {
-        $layouts['panels-' . $key] = array(
-          'label' => $layout['title'],
-          'path' => $layout['path'],
-          'module' => 'panels',
-          // We need the Panels plugin info array to correctly include the
-          // layout and its CSS files later on.
-          'panels' => $layout,
-          'flexible' => FALSE,
-          'regions' => $layout['regions'],
-        );
-        if (!empty($layout['css'])) {
-          $layouts['panels-' . $key]['css'] = TRUE;
-        }
-      }
-      // Flexible panel layouts, ignore the default flexible.
-      else {
-        if ($layout['name'] != 'flexible') {
-          $regions = panels_flexible_panels(array(), array(), $layout);
-          $layouts['panels-' . $key] = array(
-            'label' => $layout['title'],
-            'path' => $layout['path'],
-            'module' => 'panels',
-            'panels' => $layout,
-            'flexible' => TRUE,
-            'regions' => $regions,
-          );
-        }
-      }
-    }
-  }
 
   // Get layouts defined in the active theme and base theme (if applicable).
   $themes = list_themes();

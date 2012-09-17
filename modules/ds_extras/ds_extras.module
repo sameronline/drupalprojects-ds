@@ -400,9 +400,6 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
 
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
       $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $chosen_layout['layout'] . '.png' : $fallback_image;
-      if (isset($chosen_layout['panels']) && !empty($chosen_layout['panels']['icon'])) {
-        $image = $chosen_layout['panels']['path'] . '/' . $chosen_layout['panels']['icon'];
-      }
 
       $form['ds_extras']['preview']['image'] = array(
         '#markup' => '<div class="ds-layout-preview-image"><img src="' . base_path() . $image . '"/></div>',

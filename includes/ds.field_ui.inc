@@ -432,13 +432,7 @@ function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundl
 
     $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
     $old_image = (isset($old_layout['image']) &&  !empty($old_layout['image'])) ? $old_layout['path'] . '/' . $old_layout['layout'] . '.png' : $fallback_image;
-    if (isset($old_layout['panels']) && !empty($old_layout['panels']['icon'])) {
-      $old_image = $old_layout['panels']['path'] . '/' . $old_layout['panels']['icon'];
-    }
     $new_image = (isset($new_layout['image']) &&  !empty($new_layout['image'])) ? $new_layout['path'] . '/' . $new_layout_key . '.png' : $fallback_image;
-    if (isset($new_layout['panels']) && !empty($new_layout['panels']['icon'])) {
-      $new_image = $new_layout['panels']['path'] . '/' . $new_layout['panels']['icon'];
-    }
     $arrow = drupal_get_path('module', 'ds') . '/images/arrow.png';
 
     $form['preview']['old_layout'] = array(
@@ -1357,11 +1351,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   foreach ($ds_layouts as $key => $layout) {
     $optgroup = 'Display Suite';
 
-    // Panels can not be used on Views fields and forms.
-    if (!empty($layout['module']) && $layout['module'] == 'panels' && isset($form_state['no_panels'])) {
-      continue;
-    }
-
     // Create new layout option group.
     if (!empty($layout['module'])) {
       $optgroup = drupal_ucfirst($layout['module']);
@@ -1636,9 +1625,6 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
       $current_layout = isset($form_state['values']['additional_settings']['layout']) && (!isset($layout->layout) || $form_state['values']['additional_settings']['layout'] != $layout->layout) ? t('Current layout (after save)') : t('Current layout');
       $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $layout_string . '.png' : $fallback_image;
-      if (isset($chosen_layout['panels']) && !empty($chosen_layout['panels']['icon'])) {
-        $image = $chosen_layout['panels']['path'] . '/' . $chosen_layout['panels']['icon'];
-      }
 
       $form['additional_settings']['ds_layouts']['preview'] ['title'] = array(
         '#markup' => '<div class="ds-layout-preview-title">' . $current_layout . '</div>',
