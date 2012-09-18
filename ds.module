@@ -261,14 +261,6 @@ function ds_module_implements_alter(&$implementations, $hook) {
 }
 
 /**
- * Implements hook_features_api().
- */
-function ds_features_api() {
-  module_load_include('inc', 'ds', 'includes/ds.registry');
-  return _ds_features_api();
-}
-
-/**
  * Function to check if we go on with Display Suite.
  */
 function ds_kill_switch() {

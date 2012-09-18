@@ -1,0 +1,11 @@
+entities:
+  node: node
+field: exportable_field
+field_type: 5
+label: 'Exportable field'
+properties:
+  code:
+    format: ds_code
+    value: '<?php print "This is an exportable field"; ?>'
+  use_token: 0
+ui_limit: ''

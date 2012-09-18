@@ -134,15 +134,6 @@ function ds_ui_menu() {
     'access arguments' => array('admin_fields'),
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
-  $items['admin/structure/ds/fields/revert'] = array(
-    'title' => 'Revert a custom field',
-    'description' => 'Revert a custom field.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_revert_field_confirm'),
-    'file' => 'includes/ds.fields.inc',
-    'access arguments' => array('admin_fields'),
-    'type' => MENU_VISIBLE_IN_BREADCRUMB,
-  );
   // Block can be disabled.
   if (module_exists('block')) {
     $items['admin/structure/ds/fields/manage_block'] = array(

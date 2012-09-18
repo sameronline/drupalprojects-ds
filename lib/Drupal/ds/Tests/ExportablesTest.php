@@ -28,7 +28,7 @@ class ExportablesTest extends BaseTest {
     drupal_flush_all_caches();
   }
 
-  // Test view modes.
+  // Test view modes config.
   function testDSExportablesViewmodes() {
     $this->dsExportablesSetup();
 
@@ -105,7 +105,7 @@ class ExportablesTest extends BaseTest {
     $this->assertRaw('<a href="' . url('node/1') . '" class="active">Read more</a>', t('Default read more found'));
   }
 
-  // Test custom field exportables.
+  // Test custom field config.
   function testDSExportablesCustomFields() {
     $this->dsExportablesSetup();
 
@@ -113,28 +113,6 @@ class ExportablesTest extends BaseTest {
     $this->drupalGet('admin/structure/ds/fields');
     $this->assertText('Exportable field');
     $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertText('Exportable field');
-
-    // Override custom field.
-    // Update testing label
-    $edit = array(
-      'name' => 'Overridden field',
-    );
-    $this->drupalPost('admin/structure/ds/fields/manage_custom/ds_exportable_field', $edit, t('Save'));
-    $this->assertText(t('The field Overridden field has been saved'), t('Default exportable field label updated'));
-    $this->assertText('Overridden field');
-    $this->assertNoText('Exportable field');
-    $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertText('Overridden field');
-    $this->assertNoText('Exportable field');
-
-    // Revert.
-    $edit = array();
-    $this->drupalPost('admin/structure/ds/fields/revert/ds_exportable_field', $edit, t('Revert'));
-    $this->assertText('The field Overridden field has been reverted', t('Field reverted'));
-    $this->assertText('Exportable field');
-    $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertNoText('Overridden field');
     $this->assertText('Exportable field');
   }
 }

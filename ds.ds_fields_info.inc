@@ -10,28 +10,21 @@
  */
 function ds_ds_fields_info($entity_type) {
 
-  /* --------------------------------------------------------------
-     Custom fields.
-    -------------------------------------------------------------- */
-
-  ctools_include('export');
-  $custom_fields = ctools_export_crud_load_all('ds_fields');
-  foreach ($custom_fields as $key => $field) {
-    if (isset($field->entities[$entity_type])) {
-      $fields[$entity_type][$key] = array(
-        'title' => $field->label,
-        'field_type' => $field->field_type,
-        'properties' => $field->properties,
+  // Custom fields.
+  $custom_fields = config_get_storage_names_with_prefix('ds.field');
+  foreach ($custom_fields as $config) {
+    $field = config($config)->get();
+    if (isset($field['entities'][$entity_type])) {
+      $fields[$entity_type][$field['field']] = array(
+        'title' => $field['label'],
+        'field_type' => $field['field_type'],
+        'properties' => $field['properties'],
       );
-      if (!empty($field->ui_limit)) {
-        $fields[$entity_type][$key]['ui_limit'] = explode("\n", $field->ui_limit);
+      if (!empty($field['ui_limit'])) {
+        $fields[$entity_type][$field['field']]['ui_limit'] = explode("\n", $field['ui_limit']);
       }
     }
   }
-
-  /* --------------------------------------------------------------
-     General node fields.
-    -------------------------------------------------------------- */
 
   // Node title.
   $fields['node']['title'] = array(
