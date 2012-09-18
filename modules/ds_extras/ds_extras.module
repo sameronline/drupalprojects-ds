@@ -36,14 +36,6 @@ function ds_extras_menu() {
 }
 
 /**
- * Implements hook_entity_info().
- */
-function ds_extras_entity_info() {
-  module_load_include('inc', 'ds_extras', 'includes/ds_extras.registry');
-  return _ds_extras_entity_info();
-}
-
-/**
  * Implements hook_ds_layout_info_alter().
  */
 function ds_extras_ds_layout_info_alter(&$layouts) {

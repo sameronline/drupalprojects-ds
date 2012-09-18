@@ -448,12 +448,12 @@ function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRU
     else {
       $ds_field_settings = config_get_storage_names_with_prefix('ds.field_settings');
       foreach ($ds_field_settings as $config) {
-        $config = config($config)->get();
-        if (!isset($layout_settings['settings'])) {
+        $field_setting = config($config)->get();
+        if (!isset($field_setting['settings'])) {
           continue;
         }
-        foreach ($layout_settings['settings'] as $field => $settings) {
-          $field_settings[$layout_settings['entity_type']][$layout_settings['bundle']][$layout_settings['view_mode']][$field] = $settings;
+        foreach ($field_setting['settings'] as $field => $settings) {
+          $field_settings[$field_setting['entity_type']][$field_setting['bundle']][$field_setting['view_mode']][$field] = $settings;
         }
       }
       cache()->set('ds_field_settings', $field_settings);
