@@ -117,13 +117,6 @@ function ds_ui_menu() {
     'type' => MENU_LOCAL_ACTION,
     'weight' => 1,
   );
-  $items['admin/structure/ds/fields/manage_ctools/content'] = array(
-    'title' => 'Ctools field content',
-    'page callback' => 'ds_ctools_content',
-    'file' => 'includes/ds.field_ui.inc',
-    'access arguments' => array('admin_display_suite'),
-    'type' => MENU_CALLBACK,
-  );
   $items['admin/structure/ds/fields/manage_preprocess'] = array(
     'title' => 'Add a preprocess field',
     'description' => 'Manage a preprocess field',

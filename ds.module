@@ -108,6 +108,15 @@ function ds_menu() {
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
+  // CTools content.
+  $items['admin/structure/ds/fields/manage_ctools/content'] = array(
+    'title' => 'Ctools field content',
+    'page callback' => 'ds_ctools_content',
+    'file' => 'includes/ds.field_ui.inc',
+    'access arguments' => array('admin_display_suite'),
+    'type' => MENU_CALLBACK,
+  );
+
   // Contextual links.
   if (module_exists('contextual') && module_exists('field_ui')) {
     $items['node/%node/display'] = array(
