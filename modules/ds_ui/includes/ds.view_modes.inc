@@ -218,12 +218,19 @@ function ds_remove_view_mode($form, &$form_state) {
   config('ds.view_modes.' . $view_mode['view_mode'])->delete();
 
   // Remove layout and field settings for this view mode.
-  db_delete('ds_field_settings')
-    ->condition('view_mode', $view_mode['view_mode'])
-    ->execute();
-  db_delete('ds_layout_settings')
-    ->condition('view_mode', $view_mode['view_mode'])
-    ->execute();
+  $field_settings = config_get_storage_names_with_prefix('ds.field_settings');
+  foreach ($field_settings as $config) {
+    if (config($config)->get('view_mode') == $view_mode['view_mode']) {
+      config($config)->delete();
+    }
+  }
+
+  $layout_settings = config_get_storage_names_with_prefix('ds.layout_settings');
+  foreach ($layout_settings as $config) {
+    if (config($config)->get('view_mode') == $view_mode['view_mode']) {
+      config($config)->delete();
+    }
+  }
 
   // Clear entity info cache and trigger menu build on next request.
   cache()->deletePrefix('entity_info');

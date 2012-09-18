@@ -48,41 +48,35 @@ function _ds_entity_type_update($entity_type, $info, $action) {
 
   // Delete settings.
   if ($action == 'delete') {
-    db_delete('ds_layout_settings')
-      ->condition('entity_type', $entity_type)
-      ->condition('bundle', $info->type)
-      ->execute();
-    db_delete('ds_field_settings')
-      ->condition('entity_type', $entity_type)
-      ->condition('bundle', $info->type)
-      ->execute();
+    $layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $info->type);
+    foreach ($layout_settings as $config) {
+      config($config)->delete();
+    }
+
+    $field_settings = config_get_storage_names_with_prefix('ds.field_settings.' . $entity_type . '.' . $info->type);
+    foreach ($field_settings as $config) {
+      config($config)->delete();
+    }
   }
 
   // Update settings.
   if ($action == 'update') {
-    $records = db_query('SELECT * FROM {ds_layout_settings} WHERE entity_type = :entity_type AND bundle = :bundle', array(':entity_type' => $entity_type, ':bundle' => $info->old_type));
-    foreach ($records as $record) {
-      $old_id = $entity_type . '|' . $info->old_type . '|' . $record->view_mode;
-      $new_id = $entity_type . '|' . $info->type . '|' . $record->view_mode;
-      db_update('ds_layout_settings')
-        ->fields(array(
-          'id' => $new_id,
-          'bundle' => $info->type)
-        )
-        ->condition('id', $old_id)
-        ->execute();
+    $layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $info->old_type);
+    foreach ($layout_settings as $config) {
+      $new_id = $entity_type . '|' . $info->type . '|' . $config['view_mode'];
+      if (config($config)->rename($new_id)) {
+        $new_config = config($new_id)->get();
+        config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
+      }
     }
-    $records = db_query('SELECT * FROM {ds_field_settings} WHERE entity_type = :entity_type AND bundle = :bundle', array(':entity_type' => $entity_type, ':bundle' => $info->old_type));
-    foreach ($records as $record) {
-      $old_id = $entity_type . '|' . $info->old_type . '|' . $record->view_mode;
-      $new_id = $entity_type . '|' . $info->type . '|' . $record->view_mode;
-      db_update('ds_field_settings')
-        ->fields(array(
-          'id' => $new_id,
-          'bundle' => $info->type)
-        )
-        ->condition('id', $old_id)
-        ->execute();
+
+    $field_settings = config_get_storage_names_with_prefix('ds.field_settings.' . $entity_type . '.' . $info->old_type);
+    foreach ($field_settings as $config) {
+      $new_id = $entity_type . '|' . $info->type . '|' . $config['view_mode'];
+      if (config($config)->rename($new_id)) {
+        $new_config = config($new_id)->get();
+        config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
+      }
     }
   }
 
@@ -128,8 +122,6 @@ function _ds_theme_registry_alter(&$theme_registry) {
  */
 function _ds_entity_info_alter(&$entity_info) {
 
-  ctools_include('export');
-
   // Add custom view modes to entities.
   $custom_view_modes = config_get_storage_names_with_prefix('ds.view_modes');
   foreach ($custom_view_modes as $config) {
@@ -147,26 +139,27 @@ function _ds_entity_info_alter(&$entity_info) {
 
   // Add layout if applicable.
   $ds_layouts = ds_get_layout_info();
-  $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
-  foreach ($ds_layout_settings as $row) {
+  $ds_layout_settings = config_get_storage_names_with_prefix('ds.layout_settings');
+  foreach ($ds_layout_settings as $config) {
+    $ds_layout_setting = config($config)->get();
 
     // Don't store any configurations with layouts that don't exist anymore.
-    if (!isset($ds_layouts[$row->layout])) {
+    if (!isset($ds_layouts[$ds_layout_setting['layout']])) {
       continue;
     }
 
-    if (!isset($entity_info[$row->entity_type])) {
+    if (!isset($entity_info[$ds_layout_setting['entity_type']])) {
       continue;
     }
 
-    if (!isset($entity_info[$row->entity_type]['bundles'][$row->bundle])) {
+    if (!isset($entity_info[$ds_layout_setting['entity_type']]['bundles'][$ds_layout_setting['bundle']])) {
       continue;
     }
 
-    $layout = $ds_layouts[$row->layout];
-    $layout['layout'] = $row->layout;
-    $layout['settings'] = $row->settings;
-    $entity_info[$row->entity_type]['bundles'][$row->bundle]['layouts'][$row->view_mode] = $layout;
+    $layout = $ds_layouts[$ds_layout_setting['layout']];
+    $layout['layout'] = $ds_layout_setting['layout'];
+    $layout['settings'] = $ds_layout_setting['settings'];
+    $entity_info[$ds_layout_setting['entity_type']]['bundles'][$ds_layout_setting['bundle']]['layouts'][$ds_layout_setting['view_mode']] = $layout;
   }
 
 

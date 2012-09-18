@@ -20,17 +20,8 @@ class ExportablesTest extends BaseTest {
     );
   }
 
-  /**
-   * Enables the exportables module.
-   */
-  function dsExportablesSetup() {
-    module_enable(array('ds_exportables_test'));
-    drupal_flush_all_caches();
-  }
-
   // Test view modes config.
   function testDSExportablesViewmodes() {
-    $this->dsExportablesSetup();
 
     // Find a default view mode on admin screen.
     $this->drupalGet('admin/structure/ds/view_modes');
@@ -43,10 +34,8 @@ class ExportablesTest extends BaseTest {
 
   // Test layout and field settings configuration.
   function testDSExportablesLayoutFieldsettings() {
-    $this->dsExportablesSetup();
 
     $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertNoText(t('This layout is overridden. Click to revert to default settings.'));
 
     $settings = array(
       'type' => 'article',
@@ -84,7 +73,6 @@ class ExportablesTest extends BaseTest {
     );
 
     $this->dsSelectLayout($layout, $assert);
-    $this->assertText(t('This layout is overridden. Click to revert to default settings.'));
     $this->dsConfigureUI($fields);
 
     $this->drupalGet('node/' . $node->nid);
@@ -92,22 +80,10 @@ class ExportablesTest extends BaseTest {
     $this->assertRaw('group-right', 'Left region found');
     $this->assertRaw('group-header', 'Left region found');
     $this->assertRaw('group-footer', 'Left region found');
-
-    // Revert.
-    $edit = array();
-    $this->drupalPost('admin/structure/ds/revert-layout/node|article|default', $edit, t('Revert'), array('query' => array('destination' => 'admin/structure/types/manage/article/display')));
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertRaw('group-left', 'Left region found');
-    $this->assertRaw('group-right', 'Left region found');
-    $this->assertNoRaw('group-header', 'Left region found');
-    $this->assertNoRaw('group-footer', 'Left region found');
-    $this->assertRaw('<h3><a href="'. url('node/1') . '" class="active">Exportable</a></h3>', t('Default title with h3 found'));
-    $this->assertRaw('<a href="' . url('node/1') . '" class="active">Read more</a>', t('Default read more found'));
   }
 
   // Test custom field config.
   function testDSExportablesCustomFields() {
-    $this->dsExportablesSetup();
 
     // Look for default custom field.
     $this->drupalGet('admin/structure/ds/fields');

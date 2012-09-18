@@ -124,15 +124,6 @@ function ds_extras_settings($form) {
     );
   }
 
-  if (module_exists('views')) {
-    $form['additional_settings']['fs4']['ds_extras_vd'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Views displays'),
-      '#description' => t('Manage the layout of your Views layout with Field UI at !url.', array('!url' => l(url('admin/structure/ds/vd', array('absolute' => TRUE)), 'admin/structure/ds/vd'))),
-      '#default_value' => variable_get('ds_extras_vd', FALSE),
-    );
-  }
-
   if (module_exists('flag')) {
     $form['additional_settings']['fs4']['ds_extras_flag'] = array(
       '#type' => 'checkbox',
@@ -210,7 +201,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
       '#type' => 'fieldset',
       '#title' => t('Custom page title'),
     );
-    $form['additional_settings']['ds_page_title']['ds_page_title_options'] = _ds_extras_page_title_options($form['#ds_layout']->settings, $form['#entity_type']);
+    $form['additional_settings']['ds_page_title']['ds_page_title_options'] = _ds_extras_page_title_options($form['#ds_layout']['settings'], $form['#entity_type']);
   }
 
   // Disable page regions.

@@ -111,58 +111,6 @@ function ds_field_ui_create_vertical_tabs(&$form) {
 }
 
 /**
- * Menu callback: Revert layout and field settings form.
- */
-function ds_revert_layout_field_settings_form($form, &$form_state, $id = '') {
-  $layout = new stdClass();
-  ctools_include('export');
-  $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
-  if (isset($ds_layout_settings[$id])) {
-    $layout = $ds_layout_settings[$id];
-  }
-
-  if (isset($layout) && $layout->export_type == 3) {
-    $form['#layout'] = $layout;
-    return confirm_form($form,
-      t('Are you sure you want to revert the layout for %layout?', array('%layout' => implode(', ', explode('|', $layout->id)))),
-      drupal_get_destination(),
-      t('This action cannot be undone.'),
-      t('Revert'),
-      t('Cancel')
-    );
-  }
-  else {
-    drupal_set_message(t('This operation is not possible.'));
-  }
-}
-
-/**
- * Submit callback: revert layout and field settings.
- */
-function ds_revert_layout_field_settings_form_submit(&$form, &$form_state) {
-  $layout = $form['#layout'];
-
-  db_delete('ds_field_settings')
-    ->condition('id', $layout->id)
-    ->execute();
-
-  db_delete('ds_layout_settings')
-    ->condition('id', $layout->id)
-    ->execute();
-
-  // Clear the ds_fields cache.
-  cache()->deletePrefix('ds_fields');
-  cache()->delete('ds_field_settings');
-
-  // Clear entity info cache.
-  cache()->deletePrefix('entity_info');
-
-  drupal_set_message(t('Layout has been reverted'));
-
-  $form_state['redirect'] = isset($_GET['destination']) ? $_GET['destination'] : drupal_get_destination();
-}
-
-/**
  * Add Regions to 'Manage fields' or 'Manage display' screen.
  *
  * @param $form
@@ -219,7 +167,7 @@ function ds_field_ui_regions($form, $form_state) {
     }
 
     $table['#regions'] = array();
-    foreach ($layout->regions as $region_key => $region_title) {
+    foreach ($layout['regions'] as $region_key => $region_title) {
       $region_options[$region_key] = $region_title;
       $table['#regions'][$region_key] = array(
         'title' => $region_title,
@@ -299,7 +247,7 @@ function ds_field_ui_regions($form, $form_state) {
         $row['format']['type']['#prefix'] = '<div class="limit-float">';
         $row['format']['type']['#suffix'] = '</div>';
         $row['format']['limit'] = $limit_items;
-        $row['format']['limit']['#default_value'] = (isset($layout->settings['limit']) && isset($layout->settings['limit'][$name])) ? $layout->settings['limit'][$name] : '#';
+        $row['format']['limit']['#default_value'] = (isset($layout['settings']['limit']) && isset($layout['settings']['limit'][$name])) ? $layout['settings']['limit'][$name] : '#';
       }
 
       // Disable label and format for views.
@@ -314,7 +262,7 @@ function ds_field_ui_regions($form, $form_state) {
       }
       $second = array_splice($row, $split);
       $row['region'] = $region;
-      $row['region']['#default_value'] = (isset($layout->settings['fields'][$name]) && isset($region_options[$layout->settings['fields'][$name]])) ? $layout->settings['fields'][$name] : 'hidden';
+      $row['region']['#default_value'] = (isset($layout['settings']['fields'][$name]) && isset($region_options[$layout['settings']['fields'][$name]])) ? $layout['settings']['fields'][$name] : 'hidden';
       $row = array_merge($row, $second);
     }
   }
@@ -478,39 +426,32 @@ function ds_field_ui_layout_change_submit($form, &$form_state) {
   $view_mode = $form['#view_mode'];
 
   // Create new record.
-  $record = new stdClass();
-  $record->id = $form['#export_id'];
-  $record->entity_type = $entity_type;
-  $record->bundle = $bundle;
-  $record->view_mode = $view_mode;
-  $record->layout = $new_layout_key;
-  $record->settings = $old_layout['settings'];
-  unset($record->settings['regions']);
-  unset($record->settings['fields']);
+  $record = array();
+  $record['id'] = $form['#export_id'];
+  $record['entity_type'] = $entity_type;
+  $record['bundle'] = $bundle;
+  $record['view_mode'] = $view_mode;
+  $record['layout'] = $new_layout_key;
+  $record['settings'] = $old_layout['settings'];
+  unset($record['settings']['regions']);
+  unset($record['settings']['fields']);
 
   // map old regions to new ones
   foreach ($old_layout['regions'] as $region => $region_title) {
     $new_region = $form_state['values']['ds_' . $region];
     if ($new_region != '' && isset($old_layout['settings']['regions'][$region])) {
       foreach ($old_layout['settings']['regions'][$region] as $field_key => $field) {
-        if (!isset($record->settings['regions'][$new_region])) {
-          $record->settings['regions'][$new_region] = array();
+        if (!isset($record['settings']['regions'][$new_region])) {
+          $record['settings']['regions'][$new_region] = array();
         }
-        $record->settings['regions'][$new_region][] = $field;
-        $record->settings['fields'][$field] = $new_region;
+        $record['settings']['regions'][$new_region][] = $field;
+        $record['settings']['fields'][$field] = $new_region;
       }
     }
   }
 
-  // Remove old record.
-  db_delete('ds_layout_settings')
-    ->condition('entity_type', $entity_type)
-    ->condition('bundle', $bundle)
-    ->condition('view_mode', $view_mode)
-    ->execute();
-
-  // Save new record.
-  drupal_write_record('ds_layout_settings', $record);
+  // Save configuration.
+  config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
 
   // Clear entity info cache.
   cache()->deletePrefix('entity_info');
@@ -536,26 +477,22 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $new_layout = ($layout != $old_layout) || empty($old_layout);
 
   // Save layout and add regions if necessary.
-  $record = new stdClass;
-  $record->id = $form['#export_id'];
-  $record->entity_type = $entity_type;
-  $record->bundle = $bundle;
-  $record->view_mode = $view_mode;
-  $record->layout = $layout;
-  $record->settings = array();
+  $record = array();
+  $record['id'] = $form['#export_id'];
+  $record['entity_type'] = $entity_type;
+  $record['bundle'] = $bundle;
+  $record['view_mode'] = $view_mode;
+  $record['layout'] = $layout;
+  $record['settings'] = array();
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
-    db_delete('ds_layout_settings')
-      ->condition('entity_type', $entity_type)
-      ->condition('bundle', $bundle)
-      ->condition('view_mode', $view_mode)
-      ->execute();
+    config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
   }
 
   if ($new_layout && !empty($layout)) {
     // Save new layout.
-    $record->settings = $record->settings;
+    $record['settings'] = $record['settings'];
 
     // Let other modules alter the layout settings.
     drupal_alter('ds_layout_settings', $record, $form_state);
@@ -565,13 +502,13 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     $layouts = ds_get_layout_info();
     $sl = $layouts[$layout];
     $first_region = key($sl['regions']);
-    $record->settings['regions'] = array();
-    $record->settings['fields'] = array();
-    $record->settings['classes'] = array();
-    $record->settings['wrappers'] = array();
-    $record->settings['layout_wrapper'] = 'div';
-    $record->settings['layout_attributes'] = '';
-    $record->settings['layout_attributes_merge'] = TRUE;
+    $record['settings']['regions'] = array();
+    $record['settings']['fields'] = array();
+    $record['settings']['classes'] = array();
+    $record['settings']['wrappers'] = array();
+    $record['settings']['layout_wrapper'] = 'div';
+    $record['settings']['layout_attributes'] = '';
+    $record['settings']['layout_attributes_merge'] = TRUE;
     $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
     foreach ($fields as $field_key => $field) {
 
@@ -581,20 +518,20 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       }
 
       // Can either be form or display.
-      if ((isset($field['type']) && $field['type'] != 'hidden') || $record->view_mode == 'form') {
-        $record->settings['regions'][$first_region][$weight++] = $field_key;
-        $record->settings['fields'][$field_key] = $first_region;
+      if ((isset($field['type']) && $field['type'] != 'hidden') || $record['view_mode'] == 'form') {
+        $record['settings']['regions'][$first_region][$weight++] = $field_key;
+        $record['settings']['fields'][$field_key] = $first_region;
       }
     }
     // In case this is the full node view mode and if the comment module
     // is enabled for this content type, add it as well.
-    if ($record->entity_type == 'node' && $record->view_mode == 'full' && module_exists('comment')) {
-      $record->settings['regions'][$first_region][] = 'comments';
-      $record->settings['fields']['comments'] = $first_region;
+    if ($record['entity_type'] == 'node' && $record['view_mode'] == 'full' && module_exists('comment')) {
+      $record['settings']['regions'][$first_region][] = 'comments';
+      $record['settings']['fields']['comments'] = $first_region;
     }
 
-    // Save the record.
-    drupal_write_record('ds_layout_settings', $record);
+    // Save the configuration.
+    config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
   }
   // Update existing layout.
   elseif (!empty($layout)) {
@@ -608,21 +545,21 @@ function ds_field_ui_layouts_save($form, &$form_state) {
         continue;
       }
 
-      if (!isset($record->settings['regions'][$field['region']])) {
-        $record->settings['regions'][$field['region']] = array();
+      if (!isset($record['settings']['regions'][$field['region']])) {
+        $record['settings']['regions'][$field['region']] = array();
       }
-      $record->settings['regions'][$field['region']][$weight++] = $key;
-      $record->settings['fields'][$key] = $field['region'];
+      $record['settings']['regions'][$field['region']][$weight++] = $key;
+      $record['settings']['fields'][$key] = $field['region'];
 
       // Save limit.
       $limit = isset($field['format']['limit']) ? trim($field['format']['limit']) : '';
       if (is_numeric($limit) || $limit === 'delta') {
-        $record->settings['limit'][$key] = $limit;
+        $record['settings']['limit'][$key] = $limit;
       }
     }
 
     // Save the region classes.
-    $record->settings['classes'] = array();
+    $record['settings']['classes'] = array();
     foreach (array_keys($form['fields']['#regions']) as $region) {
 
       // Ignore hidden region.
@@ -631,7 +568,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       }
 
       if (isset($form_state['values']['additional_settings']['layout_class'])) {
-        $record->settings['classes']['layout_class'] = $form_state['values']['additional_settings']['layout_class'];
+        $record['settings']['classes']['layout_class'] = $form_state['values']['additional_settings']['layout_class'];
       }
 
       // Additional classes on regions.
@@ -639,33 +576,28 @@ function ds_field_ui_layouts_save($form, &$form_state) {
         // Do not save empty string.
         $classes = is_array($form_state['values']['additional_settings'][$region]) ? implode(' ', $form_state['values']['additional_settings'][$region]) : array();
         if (!empty($classes)) {
-          $record->settings['classes'][$region] = $form_state['values']['additional_settings'][$region];
+          $record['settings']['classes'][$region] = $form_state['values']['additional_settings'][$region];
         }
       }
 
       // Additional wrappers on regions.
       if (isset($form_state['values']['additional_settings']['region_wrapper'][$region])) {
-        $record->settings['wrappers'][$region] = $form_state['values']['additional_settings']['region_wrapper'][$region];
+        $record['settings']['wrappers'][$region] = $form_state['values']['additional_settings']['region_wrapper'][$region];
       }
     }
 
     // Layout wrapper
-    $record->settings['layout_wrapper'] = $form_state['values']['additional_settings']['region_wrapper']['layout_wrapper'];
-    $record->settings['layout_attributes'] = filter_xss_admin($form_state['values']['additional_settings']['region_wrapper']['layout_attributes']);
-    $record->settings['layout_attributes_merge'] = $form_state['values']['additional_settings']['region_wrapper']['layout_attributes_merge'];
+    $record['settings']['layout_wrapper'] = $form_state['values']['additional_settings']['region_wrapper']['layout_wrapper'];
+    $record['settings']['layout_attributes'] = filter_xss_admin($form_state['values']['additional_settings']['region_wrapper']['layout_attributes']);
+    $record['settings']['layout_attributes_merge'] = $form_state['values']['additional_settings']['region_wrapper']['layout_attributes_merge'];
 
-    $record->settings = $record->settings;
+    $record['settings'] = $record['settings'];
 
     // Let other modules alter the layout settings.
     drupal_alter('ds_layout_settings', $record, $form_state);
 
-    $l = $form['#ds_layout'];
-    if ($l->export_type == 2) {
-      drupal_write_record('ds_layout_settings', $record);
-    }
-    else {
-      drupal_write_record('ds_layout_settings', $record, array('id'));
-    }
+    // Save the configuration.
+    config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
 
     // Clear entity info cache.
     cache()->deletePrefix('entity_info');
@@ -695,13 +627,6 @@ function ds_field_ui_fields_save($form, &$form_state) {
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form['#view_mode'];
-
-  // Delete previous field configuration configuration.
-  db_delete('ds_field_settings')
-    ->condition('entity_type', $entity_type)
-    ->condition('bundle', $bundle)
-    ->condition('view_mode', $view_mode)
-    ->execute();
 
   $field_settings = array();
 
@@ -736,13 +661,13 @@ function ds_field_ui_fields_save($form, &$form_state) {
 
   // Save the record.
   if (!empty($field_settings)) {
-    $record = new stdClass;
-    $record->id = $form['#export_id'];
-    $record->entity_type = $entity_type;
-    $record->bundle = $bundle;
-    $record->view_mode = $view_mode;
-    $record->settings = $field_settings;
-    drupal_write_record('ds_field_settings', $record);
+    $config = array();
+    $config['id'] = $form['#export_id'];
+    $config['entity_type'] = $entity_type;
+    $config['bundle'] = $bundle;
+    $config['view_mode'] = $view_mode;
+    $config['settings'] = $field_settings;
+    config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($config)->save();
   }
 
   // Clear the ds_fields cache.
@@ -756,45 +681,33 @@ function ds_field_ui_fields_save($form, &$form_state) {
 function ds_field_ui_layout_clone($form, &$form_state) {
 
   $clone = $form_state['values']['additional_settings']['clone'];
+  list($ce, $cb, $cv) = explode('|', $clone);
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form['#view_mode'];
 
-  ctools_include('export');
-  $layout = ctools_export_crud_load('ds_layout_settings', $clone);
+  $layout = config('ds.layout_settings'. $ce  . '.' . $cb . '.' . $cv)->get();
 
-  // Delete previous layout settings configuration.
-  db_delete('ds_layout_settings')
-    ->condition('entity_type', $entity_type)
-    ->condition('bundle', $bundle)
-    ->condition('view_mode', $view_mode)
-    ->execute();
-
-  // Delete previous field configuration configuration.
-  db_delete('ds_field_settings')
-    ->condition('entity_type', $entity_type)
-    ->condition('bundle', $bundle)
-    ->condition('view_mode', $view_mode)
-    ->execute();
+  // Delete previous field configuration - @todo where's the clone anyway ?
+  config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
 
   // Save new layout record for ds.
   if ($layout) {
     $record = new stdClass();
-    $record->id = $form['#export_id'];
-    $record->entity_type = $entity_type;
-    $record->bundle = $bundle;
-    $record->view_mode = $view_mode;
-    $record->layout = $layout->layout;
-    $record->settings = $layout->settings;
+    $record['id'] = $form['#export_id'];
+    $record['entity_type'] = $entity_type;
+    $record['bundle'] = $bundle;
+    $record['view_mode'] = $view_mode;
+    $record['layout'] = $layout['layout'];
+    $record['settings'] = $layout['settings'];
 
     // Let other modules alter the layout settings.
     drupal_alter('ds_layout_settings', $record, $form_state);
 
     // Save layout record.
-    drupal_write_record('ds_layout_settings', $record);
+    config('ds.layout_settings' . '.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
 
     // Copy the view mode settings.
-    list($ce, $cb, $cv) = explode('|', $clone);
     _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $cv);
 
     // Clear entity info cache.
@@ -995,7 +908,7 @@ function ds_field_settings_form($field, &$form_state) {
       ds_extras_field_template_settings_form($form, $form_state, $context);
     }
     else {
-      $form['#markup'] = t('This field does not support Field templates.');
+      $form['#markup'] = t('This field does not support field templates.');
     }
   }
 
@@ -1388,31 +1301,21 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     '#weight' => -100,
   );
 
-  ctools_include('export');
-  $layout = new stdClass();
-  $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
-  if (isset($ds_layout_settings[$form['#export_id']])) {
-    $layout = $ds_layout_settings[$form['#export_id']];
-  }
+  $layout = array();
+  list($ce, $cb, $cv) = explode('|', $form['#export_id']);
+  $layout = config('ds.layout_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
 
-  if (!empty($layout) && isset($layout->layout) && isset($ds_layouts[$layout->layout])) {
-    $layout->settings = $layout->settings;
-    $layout->regions = $ds_layouts[$layout->layout]['regions'];
+  if (!empty($layout) && isset($layout['layout']) && isset($ds_layouts[$layout['layout']])) {
+    $layout['settings'] = $layout['settings']; // @todo this does not make any sense.
+    $layout['regions'] = $ds_layouts[$layout['layout']]['regions'];
     $form['#ds_layout'] = $layout;
   }
 
-  if (isset($layout->export_type) && $layout->export_type == 3) {
-    $form['additional_settings']['ds_layouts']['revert'] = array(
-      '#markup' => l(t('This layout is overridden. Click to revert to default settings.'), 'admin/structure/ds/revert-layout/' . $form['#export_id'], array('query' => drupal_get_destination())),
-      '#weight' => 1,
-    );
-  }
-
   // Load the layout preview form
-  $layout->layout_options = $layout_options;
+  $layout['layout_options'] = $layout_options;
   _ds_field_ui_table_layouts_preview($form, $form_state, $ds_layouts, $layout, $entity_type, $bundle, $view_mode);
 
-  if (!empty($layout) && isset($layout->regions)) {
+  if (!empty($layout) && isset($layout['regions'])) {
 
     // Add wrappers
     $wrapper_options = array('div' => 'Div', 'span' => 'Span', 'section' => 'Section', 'article' => 'Article', 'header' => 'Header', 'footer' => 'Footer', 'aside' => 'Aside');
@@ -1423,16 +1326,16 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     );
 
     // Hide the fieldset in case of the reset layout.
-    if ($layout->layout === 'ds_reset') {
+    if ($layout['layout'] === 'ds_reset') {
       $form['additional_settings']['region_wrapper']['#access'] = FALSE;
     }
 
-    foreach (array_keys($layout->regions) as $region) {
+    foreach (array_keys($layout['regions']) as $region) {
       $form['additional_settings']['region_wrapper'][$region] = array(
         '#type' => 'select',
         '#options' => $wrapper_options,
-        '#title' => t('Wrapper for @region', array('@region' => $layout->regions[$region])),
-        '#default_value' => isset($layout->settings['wrappers'], $layout->settings['wrappers'][$region]) ? $layout->settings['wrappers'][$region] : 'div',
+        '#title' => t('Wrapper for @region', array('@region' => $layout['regions'][$region])),
+        '#default_value' => isset($layout['settings']['wrappers'], $layout['settings']['wrappers'][$region]) ? $layout['settings']['wrappers'][$region] : 'div',
       );
     }
 
@@ -1440,7 +1343,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#type' => 'select',
       '#options' => $wrapper_options,
       '#title' => t('Layout wrapper'),
-      '#default_value' => isset($layout->settings['layout_wrapper']) ? $layout->settings['layout_wrapper'] : 'div',
+      '#default_value' => isset($layout->settings['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div',
       '#weight' => 10,
     );
 
@@ -1448,7 +1351,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#type' => 'textfield',
       '#title' => t('Layout attributes'),
       '#description' => 'E.g. role="navigation"',
-      '#default_value' => isset($layout->settings['layout_attributes']) ? $layout->settings['layout_attributes'] : '',
+      '#default_value' => isset($layout->settings['layout_attributes']) ? $layout['settings']['layout_attributes'] : '',
       '#weight' => 11,
     );
 
@@ -1456,7 +1359,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#type' => 'checkbox',
       '#title' => t('Merge other layout attributes'),
       '#description' => 'Certain modules might provide additional attributes for the template wrapper, e.g. RDFa. Disable this option if you prefer to specify these attributes above.',
-      '#default_value' => isset($layout->settings['layout_attributes_merge']) ? $layout->settings['layout_attributes_merge'] : TRUE,
+      '#default_value' => isset($layout->settings['layout_attributes_merge']) ? $layout['settings']['layout_attributes_merge'] : TRUE,
       '#weight' => 12,
     );
 
@@ -1479,16 +1382,16 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
         '#multiple' => TRUE,
         '#options' => $classes,
         '#title' => t('Class for layout'),
-        '#default_value' => isset($layout->settings['classes']['layout_class']) ? $layout->settings['classes']['layout_class'] : '',
+        '#default_value' => isset($layout->settings['classes']['layout_class']) ? $layout['settings']['classes']['layout_class'] : '',
       );
 
-      foreach (array_keys($layout->regions) as $region) {
+      foreach (array_keys($layout['regions']) as $region) {
         $form['additional_settings']['ds_classes'][$region] = array(
           '#type' => 'select',
           '#multiple' => TRUE,
           '#options' => $classes,
           '#title' => t('Class for @region', array('@region' => $region)),
-          '#default_value' => isset($layout->settings['classes'][$region]) ? $layout->settings['classes'][$region] : '',
+          '#default_value' => isset($layout['settings']['classes'][$region]) ? $layout['settings']['classes'][$region] : '',
         );
       }
       if ($classes_access) {
@@ -1509,14 +1412,15 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     if ($view_mode != 'form') {
       // See if we can clone from another view mode.
       $options = array();
-      $ds_layout_settings = ctools_export_crud_load_all('ds_layout_settings');
-      foreach ($ds_layout_settings as $row) {
+      $ds_layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $bundle);
+      foreach ($ds_layout_settings as $config) {
+        $row = config($config)->get();
         // Do not clone from form layouts.
-        if ($row->view_mode == 'form') {
+        if ($row['view_mode'] == 'form') {
           continue;
         }
-        if ($row->entity_type == $entity_type && $row->bundle == $bundle) {
-          $options[$row->id] = drupal_ucfirst(str_replace('_', ' ', $row->entity_type)) . ' > ' . drupal_ucfirst(str_replace('_', ' ', $row->bundle)) . ' > ' . drupal_ucfirst(str_replace('_', ' ', $row->view_mode));
+        if ($row['entity_type'] == $entity_type && $row['bundle'] == $bundle) {
+          $options[$row['id']] = drupal_ucfirst(str_replace('_', ' ', $row['entity_type'])) . ' > ' . drupal_ucfirst(str_replace('_', ' ', $row['bundle'])) . ' > ' . drupal_ucfirst(str_replace('_', ' ', $row['view_mode']));
         }
       }
 
@@ -1548,12 +1452,12 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
 
   $form['additional_settings']['ds_layouts']['id'] = array(
     '#type' => 'value',
-    '#value' => isset($layout->id) ? $layout->id : $form['#export_id'],
+    '#value' => isset($layout['id']) ? $layout['id'] : $form['#export_id'],
   );
 
   $form['additional_settings']['ds_layouts']['old_layout'] = array(
     '#type' => 'value',
-    '#value' => isset($layout->layout) ? $layout->layout : 0,
+    '#value' => isset($layout['layout']) ? $layout['layout'] : 0,
   );
 
   // Add validate and submit handlers. Layout needs be first so
@@ -1588,8 +1492,8 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
   $form['additional_settings']['ds_layouts']['layout'] = array(
     '#type' => 'select',
     '#title' => t('Select a layout'),
-    '#options' => $layout->layout_options,
-    '#default_value' => isset($layout->layout) ? $layout->layout : '',
+    '#options' => $layout['layout_options'],
+    '#default_value' => isset($layout['layout']) ? $layout['layout'] : '',
     '#prefix' => '<div class="ds-select-layout">',
     '#suffix' => '</div>',
     '#weight' => -1,
@@ -1606,8 +1510,8 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
     '#weight' => -3,
   );
 
-  if (isset($layout->layout) || isset($form_state['values']['additional_settings']['layout'])) {
-    $layout_string = isset($form_state['values']['additional_settings']['layout']) ? $form_state['values']['additional_settings']['layout'] : $layout->layout;
+  if (isset($layout['layout']) || isset($form_state['values']['additional_settings']['layout'])) {
+    $layout_string = isset($form_state['values']['additional_settings']['layout']) ? $form_state['values']['additional_settings']['layout'] : $layout['layout'];
   }
 
   if (!empty($layout_string)) {
@@ -1629,7 +1533,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       $selected = t('You have selected the flexible %layout_label layout.', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
     }
 
-    if (isset($form_state['values']['additional_settings']['layout']) || (!empty($layout) && isset($layout->regions))) {
+    if (isset($form_state['values']['additional_settings']['layout']) || (!empty($layout) && isset($layout['regions']))) {
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
       $current_layout = isset($form_state['values']['additional_settings']['layout']) && (!isset($layout->layout) || $form_state['values']['additional_settings']['layout'] != $layout->layout) ? t('Current layout (after save)') : t('Current layout');
       $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $layout_string . '.png' : $fallback_image;
@@ -1645,7 +1549,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       );
     }
 
-    if (isset($form_state['values']['additional_settings']['layout']) && (!isset($layout->layout) || $form_state['values']['additional_settings']['layout'] != $layout->layout)) {
+    if (isset($form_state['values']['additional_settings']['layout']) && (!isset($layout['layout']) || $form_state['values']['additional_settings']['layout'] != $layout['layout'])) {
 
       // Get admin path.
       $admin_path = _field_ui_bundle_admin_path($entity_type, $bundle);
@@ -1657,7 +1561,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       }
 
       // If regions aren't set we don't have to move fields.
-      if (isset($layout->regions)) {
+      if (isset($layout['regions'])) {
         $url = 'admin/structure/ds/change-layout/' . $entity_type . '/' . $bundle . '/' . $view_mode . '/' . $layout_string . '?destination=' . $admin_path;
         $form['#validate'][] = 'ds_field_ui_change_layout_validate';
       }
@@ -1759,8 +1663,8 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
   // Regions for fields.
   $field_regions = array();
-  if (isset($form['#ds_layout']->settings['fields'])) {
-    $field_regions = $form['#ds_layout']->settings['fields'];
+  if (isset($form['#ds_layout']['settings']['fields'])) {
+    $field_regions = $form['#ds_layout']['settings']['fields'];
   }
 
   foreach ($fields as $key => $field) {
@@ -1908,8 +1812,8 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
 
   // Regions for fields.
   $field_regions = array();
-  if (isset($form['#ds_layout']->settings['fields'])) {
-    $field_regions = $form['#ds_layout']->settings['fields'];
+  if (isset($form['#ds_layout']['settings']['fields'])) {
+    $field_regions = $form['#ds_layout']['settings']['fields'];
   }
 
   // Field rows.

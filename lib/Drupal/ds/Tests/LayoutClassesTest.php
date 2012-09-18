@@ -76,11 +76,11 @@ class LayoutClassesTest extends BaseTest {
     $this->assertRaw('ds_extras_second_field');
 
     // Assert we have some configuration in our database.
-    $count = db_query("SELECT COUNT(settings) FROM {ds_layout_settings} WHERE entity_type = 'node' AND bundle = 'article' AND view_mode = 'default'")->fetchField();
-    $this->assertEqual($count, 1, t('1 record found for layout serttings for node article'));
+    $count = count(config_get_storage_names_with_prefix('ds.layout_settings.node.article.default'));
+    $this->assertEqual($count, 1, t('1 record found for layout settings for node article'));
 
     // Lookup settings and verify.
-    $data = unserialize(db_query("SELECT settings FROM {ds_layout_settings} WHERE entity_type = 'node' AND bundle = 'article' AND view_mode = 'default'")->fetchField());
+    $data = config('ds.layout_settings.node.article.default')->get('settings');
     $this->assertTrue(in_array('ds_extras_extra_test_field', $data['regions']['header']), t('Extra field is in header'));
     $this->assertTrue(in_array('post_date', $data['regions']['header']), t('Post date is in header'));
     $this->assertTrue(in_array('test_field', $data['regions']['left']), t('Test field is in left'));
@@ -110,7 +110,7 @@ class LayoutClassesTest extends BaseTest {
     $record['bundle'] = 'article';
     $record['view_mode'] = 'default';
     $record['settings'] = $field_settings;
-    drupal_write_record('ds_field_settings', $record, array('id'));
+    config('ds_field_settings' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
     cache()->deletePrefix('ds_fields');
     cache()->delete('ds_field_settings');
 
@@ -229,7 +229,7 @@ class LayoutClassesTest extends BaseTest {
     $this->assertRaw('<td colspan="8">' . t('Block region') . '</td>', 'Block region found');
 
     // Verify settings.
-    $data = unserialize(db_query("SELECT settings FROM {ds_layout_settings} WHERE entity_type = 'node' AND bundle = 'article' AND view_mode = 'full'")->fetchField());
+    $data = config('ds.layout_settings.node.article.full')->get('settings');
     $this->assertTrue(in_array('author', $data['regions']['header']), t('Author is in header'));
     $this->assertTrue(in_array('links', $data['regions']['header']), t('Links field is in header'));
     $this->assertTrue(in_array('body', $data['regions']['footer']), t('Body field is in footer'));

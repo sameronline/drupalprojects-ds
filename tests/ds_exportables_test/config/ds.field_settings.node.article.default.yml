@@ -1,0 +1,13 @@
+bundle: article
+entity_type: node
+id: node|article|default
+settings:
+  node_link:
+    format: default
+    label: hidden
+    weight: '1'
+  title:
+    format: default
+    label: hidden
+    weight: '0'
+view_mode: default

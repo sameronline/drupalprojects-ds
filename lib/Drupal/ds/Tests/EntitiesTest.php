@@ -75,7 +75,10 @@ class EntitiesTest extends BaseTest {
    * Utility function to clear field settings.
    */
   function entitiesClearFieldSettings() {
-    db_query('TRUNCATE {ds_field_settings}');
+    $field_settings = config_get_storage_names_with_prefix('ds_field_settings');
+    foreach ($field_settings as $config) {
+      config($config)->delete();
+    }
     cache()->deletePrefix('ds_fields');
     cache()->delete('ds_field_settings');
   }

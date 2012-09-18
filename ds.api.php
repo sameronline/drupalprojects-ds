@@ -11,95 +11,6 @@
  */
 
 /**
- * Implements hook_ctools_plugin_api().
- */
-function hook_test_ctools_plugin_api($module, $api) {
-  if (($module == 'ds' && $api == 'ds') || ($module == 'ds_extras' && $api == 'ds_extras')) {
-    return array('version' => 1);
-  }
-}
-
-/**
- * Expose Display Suite field settings.
- *
- * This hook is called by CTools. For this hook to work, you need
- * hook_ctools_plugin_api(). The values of this hook can be overridden
- * and reverted through the UI.
- */
-function hook_ds_field_settings_info() {
-  $dsfieldsettings = array();
-
-  $dsfieldsetting = new stdClass;
-  $dsfieldsetting->disabled = FALSE; /* Edit this to true to make a default dsfieldsetting disabled initially */
-  $dsfieldsetting->api_version = 1;
-  $dsfieldsetting->id = 'node|article|default';
-  $dsfieldsetting->entity_type = 'node';
-  $dsfieldsetting->bundle = 'article';
-  $dsfieldsetting->view_mode = 'default';
-  $dsfieldsetting->settings = array(
-    'title' => array(
-      'weight' => '0',
-      'label' => 'hidden',
-      'format' => 'default',
-      'formatter_settings' => array(
-        'link' => '1',
-        'wrapper' => 'h3',
-        'class' => '',
-      ),
-    ),
-    'node_link' => array(
-      'weight' => '1',
-      'label' => 'hidden',
-      'format' => 'default',
-    ),
-  );
-  $dsfieldsettings['node|article|default'] = $dsfieldsetting;
-
-  return $dsfieldsettings;
-}
-
-/**
- * Expose default layout settings info.
- *
- * This hook is called by CTools. For this hook to work, you need
- * hook_ctools_plugin_api(). The values of this hook can be overridden
- * and reverted through the UI.
- */
-function hook_ds_layout_settings_info() {
-  $dslayouts = array();
-
-  $dslayout = new stdClass;
-  $dslayout->disabled = FALSE; /* Edit this to true to make a default dslayout disabled initially */
-  $dslayout->api_version = 1;
-  $dslayout->id = 'node|article|default';
-  $dslayout->entity_type = 'node';
-  $dslayout->bundle = 'article';
-  $dslayout->view_mode = 'default';
-  $dslayout->layout = 'ds_2col';
-  $dslayout->settings = array(
-    'hide_empty_regions' => 0,
-    'regions' => array(
-      'left' => array(
-        0 => 'title',
-        1 => 'node_link',
-      ),
-      'right' => array(
-        0 => 'body',
-      ),
-    ),
-    'fields' => array(
-      'title' => 'left',
-      'node_link' => 'left',
-      'body' => 'right',
-    ),
-    'classes' => array(),
-  );
-  $dslayouts['node|article|default'] = $dslayout;
-
-  return $dslayouts;
-}
-
-/**
  * Define fields. These fields are not overridable through the interface.
  * If you want those, look at hook_ds_custom_fields_info().
  *
@@ -185,25 +96,6 @@ function hook_ds_fields_info($entity_type) {
 
   return array('node' => $fields);
 
-}
-
-/**
- * Expose Views layouts definitions.
- *
- * This hook is called by CTools. For this hook to work, you need
- * hook_ctools_plugin_api(). The values of this hook can be overridden
- * and reverted through the UI.
- */
-function hook_ds_vd_info() {
-  $ds_vds = array();
-
-  $ds_vd = new stdClass;
-  $ds_vd->api_version = 1;
-  $ds_vd->vd = 'frontpage-page';
-  $ds_vd->label = 'Frontpage: Views displays';
-  $ds_vds['frontpage-page'] = $ds_vd;
-
-  return $ds_vds;
 }
 
 /**
@@ -306,7 +198,7 @@ function hook_ds_field_settings_form($field) {
  *   The form_state values.
  */
 function hook_ds_layout_settings_alter($record, $form_state) {
-  $record->settings['hide_page_title'] = TRUE;
+  $record['settings']['hide_page_title'] = TRUE;
 }
 
 /**

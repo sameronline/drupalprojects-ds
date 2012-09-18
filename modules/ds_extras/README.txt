@@ -13,8 +13,5 @@ following functionality:
  - page title options: hide the page title or manually set (with substitutions).
  - contextual links: add the 'manage display' link to contextual links 
    and on the full page view of nodes, users and terms.
- - Views displays: render views (row fields) into a different layout.
-     Important: If you are creating new ds fields for vd,
-     check ds_vd_render_title_field() how to return the content.
  
 Any other functionality will be included in this module.

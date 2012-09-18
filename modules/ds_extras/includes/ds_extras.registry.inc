@@ -32,42 +32,6 @@ function _ds_extras_menu_alter(&$items) {
 }
 
 /**
- * Implements hook_entity_info().
- */
-function _ds_extras_entity_info() {
-
-  if (!variable_get('ds_extras_vd', FALSE)) {
-    return;
-  }
-
-  $bundles = array();
-  ctools_include('export');
-  $vd_settings = ctools_export_crud_load_all('ds_vd');
-  foreach ($vd_settings as $key => $vd) {
-    $bundles[$vd->vd] = array(
-      'label' => check_plain($vd->label),
-      'admin' => array('path' => 'admin/structure/ds/vd/manage/' . $vd->vd),
-    );
-  }
-
-  // Register a views entity on behalf of Views.
-  $return = array(
-    'ds_views' => array(
-      'label' => t('Display Suite Views'),
-      'bundles' => $bundles,
-      'ds_display' => TRUE,
-      'base table' => 'views_view',
-      'entity keys' => array(
-        'id' => 'vid',
-        'label' => 'name',
-      ),
-    ),
-  );
-
-  return $return;
-}
-
-/**
  * Implements hook_theme_registry_alter().
  */
 function _ds_extras_theme_registry_alter(&$theme_registry) {
@@ -118,16 +82,6 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
     'form_node_form_alter',
   );
   if (!variable_get('ds_extras_switch_view_mode', FALSE) && in_array($hook, $switch_hooks)) {
-    unset($implementations['ds_extras']);
-  }
-
-  // Views displays
-  $vd_hooks = array(
-    'entity_info',
-    'ctools_plugin_api',
-    'ds_fields_ui_alter',
-  );
-  if (!variable_get('ds_extras_vd', FALSE) && in_array($hook, $vd_hooks)) {
     unset($implementations['ds_extras']);
   }
 }
