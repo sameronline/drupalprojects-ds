@@ -134,7 +134,6 @@ function ds_search_search_info() {
   return array(
     'title' => 'Content',
     'path' => variable_get('ds_search_path', 'content'),
-    'conditions_callback' => 'ds_search_conditions',
   );
 }
 
