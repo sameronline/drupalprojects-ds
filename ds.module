@@ -16,7 +16,6 @@ define('DS_FIELD_TYPE_PREPROCESS', 3);
 define('DS_FIELD_TYPE_IGNORE', 4);
 define('DS_FIELD_TYPE_CODE', 5);
 define('DS_FIELD_TYPE_BLOCK', 6);
-define('DS_FIELD_TYPE_CTOOLS', 7);
 
 /**
  * Constants for block fields rendering.
@@ -163,24 +162,6 @@ function ds_ds_layout_info() {
 }
 
 /**
- * Implements hook_ctools_plugin_api().
- */
-function ds_ctools_plugin_api($owner, $api) {
-  if ($owner == 'ds' && ($api == 'ds' || $api == 'plugins')) {
-    return array('version' => 1);
-  }
-}
-
-/**
- * Implements hook_ctools_plugin_directory().
- */
-function ds_ctools_plugin_directory($owner, $plugin_type) {
-  if ($owner == 'ctools' && $plugin_type == 'content_types') {
-    return 'plugins/' . $plugin_type;
-  }
-}
-
-/**
  * Implements hook_views_api().
  */
 function ds_views_api() {
@@ -253,7 +234,8 @@ function ds_module_implements_alter(&$implementations, $hook) {
  * Function to check if we go on with Display Suite.
  */
 function ds_kill_switch() {
-  if (variable_get('ds_disable', FALSE)) {
+  // @todo move to state.
+  if (config('ds.settings')->get('disable')) {
     return TRUE;
   }
   return FALSE;
@@ -516,9 +498,6 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
     case DS_FIELD_TYPE_CODE:
       return ds_render_code_field($field);
 
-    case DS_FIELD_TYPE_CTOOLS:
-      return ds_render_ctools_field($field);
-
     case DS_FIELD_TYPE_BLOCK:
       return ds_render_block_field($field);
   }
@@ -529,6 +508,13 @@ function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_
  */
 function ds_field_attach_view_alter(&$build, $context) {
   static $loaded_css = array();
+  static $field_permissions = FALSE;
+  static $loaded = FALSE;
+
+  if (!$loaded) {
+    $loaded = TRUE;
+    $field_permissions = config('ds.extras')->get('field_permissions');
+  }
 
   // Global kill switch. In some edge cases, a view might
   // be inserted into the view of an entity, in which the
@@ -624,7 +610,7 @@ function ds_field_attach_view_alter(&$build, $context) {
           '#object' => $entity,
           '#entity_type' => $entity_type,
           '#view_mode' => $view_mode,
-          '#access' => (variable_get('ds_extras_field_permissions', FALSE) && function_exists('ds_extras_ds_field_access')) ? ds_extras_ds_field_access($key, $entity_type) : TRUE,
+          '#access' => ($field_permissions && function_exists('ds_extras_ds_field_access')) ? ds_extras_ds_field_access($key, $entity_type) : TRUE,
           '#items' => array(
             0 => array(
               'value' => $field_value,
@@ -771,28 +757,6 @@ function ds_entity_variables(&$vars) {
 }
 
 /**
- * Create entity context.
- */
-function ds_create_entity_context($entity_type, $entity, &$contexts, $context_arguments = array()) {
-  // @todo this is absolutely freaky ..
-  // for some reason, even if the file exists context.inc is not
-  // included at all .....
-  // @see also ds_get_entity_context in ds.field_ui.inc.
-  return array();
-  ctools_include('context');
-  if (empty($context_arguments)) {
-    $context_arguments = array(array(
-      'keyword' => $entity_type,
-      'identifier' => drupal_ucfirst($entity_type) . ' being viewed',
-      'id' => 1,
-      'name' => 'entity_id:' . $entity_type,
-      'settings' => array(),
-    ));
-  }
-  ctools_context_get_context_from_arguments($context_arguments, $contexts, array($entity));
-}
-
-/**
  * Render a code field.
  */
 function ds_render_code_field($field) {
@@ -809,80 +773,6 @@ function ds_render_code_field($field) {
       $value = token_replace($value, array($field['entity_type'] => $field['entity']), array('clear' => TRUE));
     }
     return $value;
-  }
-}
-
-/**
- * Render a CTools field.
- */
-function ds_render_ctools_field($field) {
-  if (isset($field['formatter_settings']['ctools'])) {
-
-    // Extreme use case where a taxonomy_term object is not
-    // loaded on the entity and triggers notices if a view is embedded
-    // with taxonomy term fields from the same object.
-    // see http://drupal.org/node/1238132 - To reproduce:
-    // 1) add 2 taxonomy field instances on a bundle
-    // 2) configure a ds layout showing only one
-    // 3) embed a view with the 2 taxonomies as fields.
-    if (isset($field['formatter_settings']['load_terms']) && $field['formatter_settings']['load_terms']) {
-      static $terms_loaded = array();
-      $language = $field['entity']->language;
-      $instances = field_info_instances($field['entity_type'], $field['bundle']);
-      foreach ($instances as $key => $instance) {
-        $info = field_info_field($key);
-        if ($info['module'] == 'taxonomy') {
-          if (empty($field['entity']->{$key})) {
-            continue;
-          }
-          if (!isset($field['entity']->{$key}[$language])) {
-            $language = LANGUAGE_NONE;
-          }
-          foreach ($field['entity']->{$key}[$language] as $tkey => $item) {
-            if (isset($item['tid']) && !isset($item['taxonomy_term'])) {
-              if (!isset($terms_loaded[$item['tid']])) {
-                $terms_loaded[$item['tid']] = taxonomy_term_load($item['tid']);
-              }
-              $field['entity']->{$key}[$language][$tkey]['taxonomy_term'] = $terms_loaded[$item['tid']];
-            }
-          }
-        }
-      }
-    }
-
-    ctools_include('content');
-    ctools_include('context');
-
-    // Get variables.
-    $show_title = $field['formatter_settings']['show_title'];
-    $title_wrapper = trim($field['formatter_settings']['title_wrapper']);
-    $ctools = unserialize($field['formatter_settings']['ctools']);
-    $type = $ctools['type'];
-    $subtype = $ctools['subtype'];
-    $conf = $ctools['conf'];
-    $entity_type = $field['entity_type'];
-    $keywords = $arguments = $contexts = array();
-
-    // Create entity context.
-    ds_create_entity_context($entity_type, $field['entity'], $contexts);
-
-    // Build the content.
-    $data = ctools_content_render($type, $subtype, $conf, $keywords, $arguments, $contexts);
-    // Return content.
-    if (!empty($data->content)) {
-      $content = '';
-      if ($show_title) {
-        if (empty($title_wrapper)) $title_wrapper = 'div';
-        $content .= '<' . check_plain($title_wrapper) . '>' . $data->title . '</' . check_plain($title_wrapper) . '>';
-      }
-      if (is_array($data->content)) {
-        $content .= drupal_render($data->content);
-      }
-      else {
-        $content .= $data->content;
-      }
-      return $content;
-    }
   }
 }
 

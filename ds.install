@@ -19,7 +19,9 @@ function ds_install() {
  * Implements hook_uninstall().
  */
 function ds_uninstall() {
-  variable_del('ds_classes_regions');
+  config('ds.classes')->delete();
+  // @todo Move to state
+  config('ds.settings')->delete();
 }
 
 /**

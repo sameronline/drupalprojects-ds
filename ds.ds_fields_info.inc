@@ -11,7 +11,7 @@
 function ds_ds_fields_info($entity_type) {
 
   // Custom fields.
-  $custom_fields = config_get_storage_names_with_prefix('ds.field');
+  $custom_fields = config_get_storage_names_with_prefix('ds.field.');
   foreach ($custom_fields as $config) {
     $field = config($config)->get();
     if (isset($field['entities'][$entity_type])) {

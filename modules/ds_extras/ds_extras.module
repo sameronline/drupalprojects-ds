@@ -21,7 +21,7 @@ function ds_extras_menu() {
     'type' => MENU_LOCAL_TASK,
   );
 
-  if (variable_get('ds_extras_switch_field')) {
+  if (config('ds.extras')->get('switch_field')) {
     $items['ds-switch-view-mode'] = array(
       'title' => 'Switch view',
       'description' => 'Switches a view mode inline.',
@@ -39,7 +39,7 @@ function ds_extras_menu() {
  * Implements hook_ds_layout_info_alter().
  */
 function ds_extras_ds_layout_info_alter(&$layouts) {
-  if (variable_get('ds_extras_hidden_region')) {
+  if (config('ds.extras')->get('hidden_region')) {
     foreach ($layouts as $key => $layout) {
       $layouts[$key]['regions']['ds_hidden'] = t('Hidden');
     }
@@ -53,7 +53,7 @@ function ds_extras_permission() {
   $permissions = array();
 
   // Extra check to make sure this doesn't get fired on install.
-  if (variable_get('ds_extras_switch_view_mode', FALSE)) {
+  if (config('ds.extras')->get('switch_view_mode', FALSE)) {
     foreach (node_type_get_names() as $key => $name) {
       $permissions['ds_switch ' . $key] = array(
         'title' => t('Switch view modes on :type', array(':type' => $name))
@@ -61,7 +61,7 @@ function ds_extras_permission() {
     }
   }
 
-  if (variable_get('ds_extras_field_permissions', FALSE)) {
+  if (config('ds.extras')->get('field_permissions', FALSE)) {
     $entities = entity_get_info();
     foreach ($entities as $entity_type => $info) {
       $fields = ds_get_fields($entity_type);
@@ -95,14 +95,6 @@ function ds_extras_admin_paths() {
 function ds_extras_menu_alter(&$items) {
   module_load_include('inc', 'ds_extras', 'includes/ds_extras.registry');
   _ds_extras_menu_alter($items);
-}
-
-/**
- * Implements hook_theme_registry_alter().
- */
-function ds_extras_theme_registry_alter(&$theme_registry) {
-  module_load_include('inc', 'ds_extras', 'includes/ds_extras.registry');
-  _ds_extras_theme_registry_alter($theme_registry);
 }
 
 /**
@@ -150,7 +142,7 @@ function ds_extras_field_attach_view_alter(&$build, $context) {
   }
 
   $block_data = &drupal_static('ds_block_region');
-  $region_blocks = variable_get('ds_extras_region_blocks', array());
+  $region_blocks = config('ds.extras')->get('region_blocks');
 
   if (empty($region_blocks)) {
     return;
@@ -209,47 +201,6 @@ function ds_extras_form_field_ui_field_edit_form_alter(&$form, &$form_state, $fo
  */
 function ds_extras_get_view_mode() {
   return drupal_static('ds_extras_view_mode');
-}
-
-/**
- * Page title options for a full entity page view.
- */
-function ds_extras_process_page_title(&$variables) {
-  $page_title = drupal_static('ds_page_title');
-  if (!empty($page_title)) {
-    $variables['title'] = $page_title['title'];
-    if (!empty($page_title['head_title'])) {
-      drupal_set_title($page_title['head_title']);
-    }
-  }
-}
-
-/**
- * Implements hook_ds_layout_settings_alter().
- */
-function ds_extras_ds_layout_settings_alter($record, $form_state) {
-  if (isset($form_state['values']['additional_settings']['ds_page_title']['ds_page_title_options']['page_option_type']) ||
-      isset($form_state['values']['page_option_type'])) {
-
-    // Save page title view type
-    if (isset($form_state['values']['additional_settings']['ds_page_title']['ds_page_title_options']['page_option_type'])) {
-      $record['settings']['hide_page_title'] =  $form_state['values']['additional_settings']['ds_page_title']['ds_page_title_options']['page_option_type'];
-    }
-    else {
-      $form_state['values']['page_option_type'];
-    }
-
-    // Save page title
-    if (isset($form_state['values']['additional_settings']['ds_page_title']['ds_page_title_options']['page_option_title'])) {
-      $record['settings']['page_option_title'] = $form_state['values']['additional_settings']['ds_page_title']['ds_page_title_options']['page_option_title'];
-    }
-    else {
-      $record['settings']['page_option_title'] = $form_state['values']['page_option_title'];
-    }
-  }
-  if (isset($form_state['values']['additional_settings']['hide_sidebars'])) {
-    $record['settings']['hide_sidebars'] = $form_state['values']['additional_settings']['hide_sidebars'];
-  }
 }
 
 /**
@@ -375,7 +326,7 @@ function ds_extras_switch_view_mode_preview_callback($form, $form_state) {
  */
 function ds_extras_block_info() {
 
-  $region_blocks = variable_get('ds_extras_region_blocks', array());
+  $region_blocks = config('ds.extras')->get('region_blocks');
 
   if (empty($region_blocks)) {
     return array();
@@ -395,7 +346,7 @@ function ds_extras_block_info() {
  */
 function ds_extras_block_view($delta = '') {
   $data = drupal_static('ds_block_region');
-  $region_blocks = variable_get('ds_extras_region_blocks', array());
+  $region_blocks = config('ds.extras')->get('region_blocks');
 
   if (!empty($data[$delta])) {
     $block = array();
@@ -410,7 +361,7 @@ function ds_extras_block_view($delta = '') {
  */
 function ds_extras_ds_layout_region_alter($context, &$region_info) {
 
-  $region_blocks = variable_get('ds_extras_region_blocks', array());
+  $region_blocks = config('ds.extras')->get('region_blocks');
 
   // Bail out if region_blocks is empty or we are working on default view mode.
   if (empty($region_blocks) || $context['view_mode'] == 'default') {
@@ -440,8 +391,11 @@ function ds_extras_ds_layout_region_alter($context, &$region_info) {
 function ds_extras_field_extra_fields() {
   $extra = array();
 
-  if (variable_get('ds_extras_fields_extra')) {
-    $fields = explode("\n", variable_get('ds_extras_fields_extra_list', FALSE));
+  if (config('ds.extras')->get('fields_extra')) {
+    $fields = explode("\n", config('ds.extras')->get('fields_extra_list'));
+    if (empty($fields)) {
+      return $extra;
+    }
     foreach ($fields as $field) {
       $field = trim($field);
       if (!empty($field)) {
@@ -463,62 +417,6 @@ function ds_extras_field_extra_fields() {
  */
 function ds_extras_flags_add_flag_link($field) {
   return flag_create_link($field['properties']['flag'], $field['entity']->nid);
-}
-
-/**
- * Implements hook_entity_view_alter().
- */
-function ds_extras_entity_view_alter(&$build, $entity) {
-  static $loaded = array();
-
-  // If views and core doesn't send information along on the entity,
-  // Display Suite doesn't have a context to render the layout.
-  if (!isset($build['#entity_type']) || !isset($build['#bundle'])) {
-    return;
-  }
-
-  $entity_type = $entity->entityType();
-  $bundle = $build['#bundle'];
-  $view_mode = $build['#view_mode'];
-  if ($overridden_view_mode = ds_extras_get_view_mode()) {
-    $view_mode = $overridden_view_mode;
-  }
-  $layout = ds_get_layout($entity_type, $bundle, $view_mode);
-
-  // Page title options.
-  if (variable_get('ds_extras_hide_page_title', FALSE)) {
-    $page_title = &drupal_static('ds_page_title');
-    if (isset($layout['settings']['hide_page_title']) && $layout['settings']['hide_page_title'] == 1 && ds_extras_is_entity_page_view($build, $entity_type)) {
-      $page_title['title'] = '';
-    }
-    elseif (isset($layout['settings']['hide_page_title']) && $layout['settings']['hide_page_title'] == 2 && !empty($layout['settings']['page_option_title']) && ds_extras_is_entity_page_view($build, $entity_type)) {
-      // @todo this is absolutely freaky ..
-      // for some reason, even if the file exists context.inc is not
-      // included at all .....
-      // @see also ds_get_entity_context in ds.field_ui.inc.
-      return;
-      $contexts = array();
-      $id = (arg(0) == 'taxonomy') ? arg(2) : arg(1);
-      $entity = entity_load($entity_type, array($id));
-      ds_create_entity_context($entity_type, $entity[$id], $contexts);
-      $title = $layout['settings']['page_option_title'];
-      $title = filter_xss_admin(ctools_context_keyword_substitute($title, array(), $contexts));
-      $page_title['title'] = $title;
-      $page_title['head_title'] = $title;
-    }
-  }
-
-  // Disable blocks.
-  if (isset($layout['settings']['hide_sidebars']) && !isset($loaded[$entity_type][$bundle][$view_mode])) {
-
-    // Store the setting.
-    $loaded[$entity_type][$bundle][$view_mode] = TRUE;
-
-    // Disable blocks.
-    if (isset($layout['settings']['hide_sidebars']) && $layout['settings']['hide_sidebars']) {
-      ctools_set_no_blocks();
-    }
-  }
 }
 
 /**
@@ -569,7 +467,7 @@ function theme_ds_field_reset($variables) {
   // Render the label.
   if (!$variables['label_hidden']) {
     $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
-    if (!variable_get('ft-kill-colon', FALSE)) {
+    if (!config('ds.extras')->get('ft-kill-colon', FALSE)) {
       $output .= ':&nbsp;';
     }
     $output .= '</div>';
@@ -704,7 +602,7 @@ function theme_ds_field_expert($variables) {
 function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state) {
 
   $fields = $form_state['values']['fields'];
-  $default_field_function = variable_get('ft-default', 'theme_field');
+  $default_field_function = config('ds.extras')->get('ft-default');
 
   $wrappers = array(
     'ow' => t('Wrapper'),
@@ -861,7 +759,7 @@ function ds_extras_preprocess_field(&$variables) {
   }
   // Default theming function.
   else {
-    $field_theme_function = variable_get('ft-default', 'theme_field');
+    $field_theme_function = config('ds.extras')->get('ft-default');
     if ($field_theme_function != 'theme_field') {
       $variables['theme_hook_suggestions'] = array();
       $variables['ds-config'] = $config;

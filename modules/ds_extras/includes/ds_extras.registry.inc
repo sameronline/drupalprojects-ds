@@ -11,7 +11,7 @@
 function _ds_extras_menu_alter(&$items) {
 
   // Switch view mode.
-  if (variable_get('ds_extras_switch_view_mode', FALSE)) {
+  if (config('ds.extras')->get('switch_view_mode', FALSE)) {
 
     // Check if page manager is overriding.
     $skip_node_override = FALSE;
@@ -32,22 +32,6 @@ function _ds_extras_menu_alter(&$items) {
 }
 
 /**
- * Implements hook_theme_registry_alter().
- */
-function _ds_extras_theme_registry_alter(&$theme_registry) {
-
-  // Add views preprocess layout.
-  if (variable_get('ds_extras_vd', FALSE)) {
-    $theme_registry['views_view']['preprocess functions'][] = 'ds_extras_preprocess_view_layout';
-  }
-
-  // Add process page function.
-  if (variable_get('ds_extras_hide_page_title', FALSE)) {
-    $theme_registry['page']['process functions'][] = 'ds_extras_process_page_title';
-  }
-}
-
-/**
  * Implements hook_module_implements_alter().
  */
 function _ds_extras_module_implements_alter(&$implementations, $hook) {
@@ -62,7 +46,7 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
     'form_field_ui_field_edit_form_alter',
     'theme',
   );
-  if (!variable_get('ds_extras_field_template', FALSE) && in_array($hook, $ft_hooks)) {
+  if (!config('ds.extras')->get('field_template') && in_array($hook, $ft_hooks)) {
     unset($implementations['ds_extras']);
   }
 
@@ -73,7 +57,7 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
     'block_info',
     'block_view'
   );
-  if (!variable_get('ds_extras_region_to_block', FALSE) && in_array($hook, $region_hooks)) {
+  if (!config('ds.extras')->get('region_to_block', FALSE) && in_array($hook, $region_hooks)) {
     unset($implementations['ds_extras']);
   }
 
@@ -81,7 +65,7 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
   $switch_hooks = array(
     'form_node_form_alter',
   );
-  if (!variable_get('ds_extras_switch_view_mode', FALSE) && in_array($hook, $switch_hooks)) {
+  if (!config('ds.extras')->get('switch_view_mode', FALSE) && in_array($hook, $switch_hooks)) {
     unset($implementations['ds_extras']);
   }
 }

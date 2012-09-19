@@ -10,43 +10,6 @@ Drupal.DisplaySuite.fieldopened = '';
 Drupal.DisplaySuite.layout_original = '';
 
 /**
- * Ctools selection content.
- */
-Drupal.behaviors.CToolsSelection = {
-  attach: function (context) {
-    if ($('#ctools-content-selection').length > 0) {
-      $('#ctools-content-selection .section-link').click(function() {
-        $('#ctools-content-selection .content').hide();
-        container = $(this).attr('id') + '-container';
-        $('#' + container).show();
-        return false;
-      });
-    }
-  }
-};
-
-/**
- * Save the Dynamic field content configuration.
- */
-$.fn.dsCtoolsContentConfiguration = function (configuration) {
-  $(this[0]).val(configuration);
-}
-
-/**
- * Update the select content text.
- */
-$.fn.dsCtoolsContentUpdate = function () {
-  $(this[0]).html(Drupal.t('Click update to save the configuration'));
-}
-
-/**
- * Save the page after saving a new field.
- */
-$.fn.dsRefreshDisplayTable = function () {
-  $('#edit-submit').click();
-}
-
-/**
  * Row handlers for the 'Manage display' screen.
  */
 Drupal.fieldUIDisplayOverview = Drupal.fieldUIDisplayOverview || {};

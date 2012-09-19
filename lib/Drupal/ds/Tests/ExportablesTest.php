@@ -20,8 +20,17 @@ class ExportablesTest extends BaseTest {
     );
   }
 
+  /**
+   * Enables the exportables module.
+   */
+  function dsExportablesSetup() {
+    module_enable(array('ds_exportables_test'));
+    drupal_flush_all_caches();
+  }
+
   // Test view modes config.
   function testDSExportablesViewmodes() {
+    $this->dsExportablesSetup();
 
     // Find a default view mode on admin screen.
     $this->drupalGet('admin/structure/ds/view_modes');
@@ -34,6 +43,7 @@ class ExportablesTest extends BaseTest {
 
   // Test layout and field settings configuration.
   function testDSExportablesLayoutFieldsettings() {
+    $this->dsExportablesSetup();
 
     $this->drupalGet('admin/structure/types/manage/article/display');
 
@@ -84,6 +94,7 @@ class ExportablesTest extends BaseTest {
 
   // Test custom field config.
   function testDSExportablesCustomFields() {
+    $this->dsExportablesSetup();
 
     // Look for default custom field.
     $this->drupalGet('admin/structure/ds/fields');

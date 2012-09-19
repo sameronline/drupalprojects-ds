@@ -30,8 +30,7 @@ class FieldPermissionsTest extends BaseTest {
       'fields[ds_test_field][region]' => 'left',
     );
 
-    variable_set('ds_extras_field_permissions', TRUE);
-    $this->refreshVariables();
+    config('ds.extras')->set('field_permissions', TRUE)->save();
     module_implements(FALSE, FALSE, TRUE);
 
     $this->dsSelectLayout();

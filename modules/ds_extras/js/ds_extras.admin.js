@@ -9,7 +9,7 @@ Drupal.behaviors.DSExtrasSummaries = {
   attach: function (context) {
 
     $('#edit-additional-settings-fs1', context).drupalSetSummary(function (context) {
-      var fieldtemplates = $('#edit-additional-settings-fs1-ds-extras-field-template', context);
+      var fieldtemplates = $('#edit-additional-settings-fs1-field-template', context);
 
       if (fieldtemplates.is(':checked')) {
         var fieldtemplate = $('#edit-additional-settings-fs1-ft-default option:selected').text();
@@ -20,7 +20,7 @@ Drupal.behaviors.DSExtrasSummaries = {
     });
 
     $('#edit-additional-settings-fs2', context).drupalSetSummary(function (context) {
-      var extra_fields = $('#edit-additional-settings-fs2-ds-extras-fields-extra', context);
+      var extra_fields = $('#edit-additional-settings-fs2-fields-extra', context);
 
       if (extra_fields.is(':checked')) {
         return Drupal.t('Enabled');

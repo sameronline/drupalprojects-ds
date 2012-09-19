@@ -83,13 +83,13 @@ function ds_search_ds_fields_info($entity_type) {
       'title' => t('Search snippet'),
       'field_type' => DS_FIELD_TYPE_FUNCTION,
       'function' => 'ds_search_snippet',
-      'ui_limit' => array('*|' . variable_get('ds_search_view_mode', 'search_result')),
+      'ui_limit' => array('*|' . config('ds.search')->get('view_mode')),
     );
     $fields['node']['search_info'] = array(
       'title' => t('Search info'),
       'field_type' => DS_FIELD_TYPE_FUNCTION,
       'function' => 'ds_search_extra_info',
-      'ui_limit' => array('*|' . variable_get('ds_search_view_mode', 'search_result')),
+      'ui_limit' => array('*|' . config('ds.search')->get('view_mode')),
     );
   }
 
@@ -133,8 +133,7 @@ function ds_search_extra_info($field) {
 function ds_search_search_info() {
   return array(
     'title' => 'Content',
-    'path' => variable_get('ds_search_path', 'content'),
-    'conditions_callback' => 'ds_search_conditions',
+    'path' => config('ds.search')->get('search_path'),
   );
 }
 
@@ -164,7 +163,7 @@ function ds_search_search_execute($keys = NULL, $conditions = NULL) {
   // because some modules already called drupal_render and were unsetting
   // the #theme key. By using our own search info type, we can call
   // hook_search_page ourselves and be as flexible as we need to be.
-  $ds_search_type = variable_get('ds_search_type', 'node') . '_ds_search_execute';
+  $ds_search_type = config('ds.search')->get('search_type') . '_ds_search_execute';
 
   // Make sure the function exists.
   if (function_exists($ds_search_type)) {
@@ -195,14 +194,14 @@ function ds_search_get_keys($keys = NULL) {
  */
 function ds_search_invoke_node_search($hook) {
 
-  $enabled_search_modules = variable_get('search_active_modules', array());
+  $enabled_search_modules = config('search.settings')->get('active_modules');
 
   // If node search is enabled, core is invoking it.
   if (isset($enabled_search_modules['node']) && $enabled_search_modules['node'] === 'node') {
     return;
   }
   else {
-    $ds_search_type = variable_get('ds_search_type', 'node');
+    $ds_search_type = config('ds.search')->get('ds_search_type');
     if ($ds_search_type != 'node') {
       return;
     }
@@ -262,13 +261,13 @@ function ds_search_search_page($results) {
 
   $i = 0;
   // Multi site Apache Solr support.
-  if (variable_get('ds_search_apachesolr_multisite') && variable_get('ds_search_type', 'node') == 'apachesolr_search') {
+  if (config('ds.search')->get('apachesolr_multisite') && config('ds.search')->get('search_type') == 'apachesolr_search') {
     $build['search_results'] = $results;
   }
   else {
     foreach ($results as $id => $result) {
       $entity_type = isset($result->entity_type) ? $result->entity_type : 'node';
-      $data = ds_entity_view_fallback($entity_type, array($result->entity_id => $result), variable_get('ds_search_view_mode', 'search_result'));
+      $data = ds_entity_view_fallback($entity_type, array($result->entity_id => $result), config('ds.search')->get('view_mode'));
       $data = reset($data);
       $data[$result->entity_id]['#weight'] = $i++;
       $build['search_results'][] = $data[$result->entity_id];
@@ -278,9 +277,9 @@ function ds_search_search_page($results) {
   }
 
   // Group by type.
-  if (variable_get('ds_search_group_by_type') && variable_get('ds_search_group_by_type_settings') && !empty($build['search_results'])) {
+  if (config('ds.search')->get('group_by_type') && config('ds.search')->get('group_by_type_settings') && !empty($build['search_results'])) {
 
-    $settings = variable_get('ds_search_group_by_type_settings');
+    $settings = config('ds.search')->get('group_by_type_settings');
     foreach ($build['search_results'] as $id => $result) {
       if ($settings[$result['#bundle']]['status']) {
 
@@ -317,8 +316,8 @@ function ds_search_search_page($results) {
 
         // Other group.
         if (!isset($build['search_results']['ds-other'])) {
-          $title = check_plain(t(variable_get('ds_search_group_by_type_other', 'Other')));
-          $type = variable_get('ds_search_group_by_type_other_wrapper', 'fieldset');
+          $title = check_plain(t(config('ds.search')->get('group_by_type_other')));
+          $type = config('ds.search')->get('group_by_type_other_wrapper');
           $class = 'group-result group-result-other';
           $parity['ds-other'] = 'odd';
           $build['search_results']['ds-other'] = array(
@@ -356,10 +355,10 @@ function ds_search_search_page($results) {
   }
 
   // Apache Solr multisearch grouping.
-  if (variable_get('ds_search_apachesolr_multisite') && variable_get('ds_search_apachesolr_multisite_group') && variable_get('ds_search_type', 'node') == 'apachesolr_search') {
+  if (config('ds.search')->get('apachesolr_multisite') && config('ds.search')->get('apachesolr_multisite_group') && config('ds.search')->get('search_type') == 'apachesolr_search') {
     $site_counter = array();
     $conf_array = array();
-    $config = explode("\n", variable_get('ds_search_apachesolr_multisite_group_config'));
+    $config = explode("\n", config('ds.search')->get('apachesolr_multisite_group_config'));
     foreach ($config as $weight => $conf) {
       $conf = trim($conf);
       if (empty($conf)) {
@@ -422,22 +421,18 @@ function ds_search_search_page($results) {
  */
 function node_ds_search_execute($keys = NULL, $conditions = NULL) {
   // Build matching conditions
-  $query = db_select('search_index', 'i', array('target' => 'slave'))->extend('SearchQuery')->extend('PagerDefault');
+  $query = db_select('search_index', 'i', array('target' => 'slave'))
+    ->extend('Drupal\search\SearchQuery')
+    ->extend('Drupal\Core\Database\Query\PagerSelectExtender');
   $query->join('node', 'n', 'n.nid = i.sid');
   $query
     ->condition('n.status', 1)
     ->addTag('node_access')
     ->searchExpression($keys, 'node');
 
-  // Language.
-  if (variable_get('ds_search_language', FALSE)) {
-    global $language;
-    $query->condition('n.language', $language->language);
-  }
-
   // Insert special keywords.
   $query->setOption('type', 'n.type');
-  $query->setOption('language', 'n.language');
+  $query->setOption('langcode', 'n.langcode');
   if ($query->setOption('term', 'ti.tid')) {
     $query->join('taxonomy_index', 'ti', 'n.nid = ti.nid');
   }
@@ -451,14 +446,14 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
 
   // Load results.
   $find = $query
-    ->limit(variable_get('ds_search_node_limit', 10))
+    ->limit(config('ds.search')->get('search_node_limit'))
     ->execute();
   $results = array();
   foreach ($find as $item) {
     $node = node_load($item->sid);
     $node->entity_type = 'node';
     $node->entity_id = $item->sid;
-    $node->search_extra = module_invoke_all('node_search_result', $node);
+    $node->search_extra = module_invoke_all('node_search_result', $node, $node->langcode);
     // Only build a node search snippet if this field is actually being used.
     $fields = ds_get_field_settings($node->entity_type, $node->type, 'search_result');
     if (!empty($fields) && isset($fields['search_snippet'])) {
@@ -481,7 +476,7 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
 /**
  * Override search results page for users.
  */
-if (variable_get('ds_user_override_search_page', FALSE)) {
+if (config('ds.search')->get('user_override_search_page')) {
   function user_search_page($results) {
     $build = array('#type' => 'user');
     global $base_url;
@@ -512,7 +507,7 @@ if (variable_get('ds_user_override_search_page', FALSE)) {
       if (!empty($uids)) {
         $accounts = user_load_multiple($uids);
         foreach ($accounts as $account) {
-          $build['search_results'][$account->uid] = user_view($account, variable_get('ds_search_view_mode', 'search_result'));
+          $build['search_results'][$account->uid] = user_view($account, config('ds.search')->get('view_mode'));
         }
       }
     }
@@ -529,13 +524,15 @@ if (variable_get('ds_user_override_search_page', FALSE)) {
  *   The build array.
  */
 function ds_build_shared_page_variables(&$build) {
+  $config = config('ds.search');
+
   // Search results title.
-  if (variable_get('ds_search_show_title', FALSE)) {
+  if ($config->get('show_title')) {
     $build['search_title'] = array('#markup' => '<h2>' . t('Search results') . '</h2>');
   }
 
   // Extra variables.
-  if (variable_get('ds_search_variables', 'none') != 'none') {
+  if ($config->get('search_variables') != 'none') {
     $build['search_extra'] = array('#markup' => '<div class="ds-search-extra">' . ds_search_extra_variables(arg(2)) . '</div>');
   }
 
@@ -546,12 +543,12 @@ function ds_build_shared_page_variables(&$build) {
   $build['search_pager'] = array('#markup' => theme('pager', array('tags' => NULL)));
 
   // CSS and JS.
-  if (variable_get('ds_search_highlight', FALSE)) {
+  if ($config->get('highlight')) {
     drupal_add_css(drupal_get_path('module', 'ds_search') . '/css/ds_search.theme.css');
     drupal_add_js(drupal_get_path('module', 'ds_search') . '/js/ds_search.js');
     drupal_add_js(array(
       'ds_search' => array(
-        'selector' => check_plain(variable_get('ds_search_highlight_selector', '.view-mode-search_result')),
+        'selector' => check_plain($config->get('highlight_selector', '.view-mode-search_result')),
         'search' => check_plain(arg(2)),
       ),
     ), 'setting');
@@ -562,7 +559,7 @@ function ds_build_shared_page_variables(&$build) {
  * Return the extra variables.
  */
 function ds_search_extra_variables($arg_keys = NULL) {
-  $type = variable_get('ds_search_variables', 'none');
+  $type = config('ds.search')->get('search_variables');
 
   // Define the number of results being shown on a page.
   // We rely on the apache solr rows for now.
@@ -606,8 +603,8 @@ function ds_search_extra_variables($arg_keys = NULL) {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_search_form_search_form_alter(&$form, $form_state) {
-  if (variable_get('ds_search_type', 'node') == 'node' && $form['module']['#value'] == 'ds_search') {
-    if (variable_get('ds_search_node_form_alter', FALSE)) {
+  if (config('ds.search')->get('search_type') == 'node' && $form['module']['#value'] == 'ds_search') {
+    if (config('ds.search')->get('node_form_alter', FALSE)) {
       $form['module']['#value'] = 'node';
       node_form_search_form_alter($form, $form_state);
     }
@@ -618,9 +615,9 @@ function ds_search_form_search_form_alter(&$form, $form_state) {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_search_form_apachesolr_search_custom_page_search_form_alter(&$form, $form_state) {
-  if (variable_get('ds_search_apachesolr_hide_current_filters', FALSE)) {
+  if (config('ds.search')->get('apachesolr_hide_current_filters')) {
     $form['basic']['retain-filters']['#type'] = 'value';
-    $form['basic']['retain-filters']['#value'] = variable_get('ds_search_apachesolr_current_filters_default', FALSE);
+    $form['basic']['retain-filters']['#value'] = config('ds.search')->get('apachesolr_current_filters_default');
   }
 }
 
@@ -629,9 +626,9 @@ function ds_search_form_apachesolr_search_custom_page_search_form_alter(&$form, 
  */
 function ds_search_apachesolr_index_document_build(ApacheSolrDocument $document, $entity) {
   // Apache Solr multisite support. Render the node already here.
-  if (variable_get('ds_search_apachesolr_multisite')) {
+  if (config('ds.search')->get('apachesolr_multisite')) {
     ob_start();
-    $element = node_view($entity, variable_get('ds_search_view_mode', 'search_result'));
+    $element = node_view($entity, config('ds.search')->get('view_mode'));
     print drupal_render($element);
     $output = ob_get_contents();
     ob_end_clean();
@@ -655,26 +652,27 @@ function ds_search_apachesolr_index_document_build(ApacheSolrDocument $document,
  * Implements hook_apachesolr_query_alter().
  */
 function ds_search_apachesolr_query_alter($query) {
+  $config = config('ds.search');
 
   // Get the node from the index.
   $query->addParam('fl', 'zs_entity');
 
   // Apache Solr multisite support.
-  if (variable_get('ds_search_apachesolr_multisite') && variable_get('ds_search_type', 'node') == 'apachesolr_search') {
+  if ($config->get('apachesolr_multisite') && $config->get('search_type') == 'apachesolr_search') {
     // Site hash.
     $query->addParam('fl', 'hash');
     // Rendered search result.
     $query->addParam('fl', 'tm_ds_search_result');
 
     // Make sure this site's search results are first.
-    if (variable_get('ds_search_apachesolr_multisite_boost')) {
+    if ($config->get('apachesolr_multisite_boost')) {
       $hash = apachesolr_site_hash();
-      $query->addParam('bq', 'hash:' . $hash . '^' . variable_get('ds_search_apachesolr_multisite_boost_nr', 100));
+      $query->addParam('bq', 'hash:' . $hash . '^' . $config->get('apachesolr_multisite_boost_nr'));
     }
   }
 
   // Search per language.
-  if (variable_get('ds_search_language', FALSE)) {
+  if ($config->get('search_language')) {
     global $language;
     $query->addFilter('ss_language', $language->language);
   }
@@ -708,7 +706,7 @@ function ds_search_process_results($results) {
       $entity->entity_id = $result['fields']['entity_id'];
 
       // Apache Solr multisite support.
-      if (variable_get('ds_search_apachesolr_multisite')) {
+      if (config('ds.search')->get('apachesolr_multisite')) {
 
         // Pass along the uri path in case some people want to
         // do cool stuff themselves.

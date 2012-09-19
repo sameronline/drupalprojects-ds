@@ -135,7 +135,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     }
 
     // Use view mode of display settings.
-    if ($entity_type == 'node' && variable_get('ds_extras_switch_view_mode', FALSE)) {
+    if ($entity_type == 'node' && config('ds.extras')->get('switch_view_mode')) {
       $form['switch_fieldset'] = array(
         '#type' => 'fieldset',
         '#title' => t('Use view mode of display settings'),

@@ -9,5 +9,6 @@ settings:
   title:
     format: default
     label: hidden
+    wrapper: h3,
     weight: '0'
 view_mode: default

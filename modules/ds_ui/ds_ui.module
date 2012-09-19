@@ -98,23 +98,6 @@ function ds_ui_menu() {
     'type' => MENU_LOCAL_ACTION,
     'weight' => 0,
   );
-  $items['admin/structure/ds/fields/manage_ctools'] = array(
-    'title' => 'Add a dynamic field',
-    'description' => 'Manage a dynamic field',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_edit_ctools_field_form'),
-    'file' => 'includes/ds.fields.inc',
-    'access arguments' => array('admin_fields'),
-    'type' => MENU_LOCAL_ACTION,
-    'weight' => 1,
-  );
-  $items['admin/structure/ds/fields/manage_ctools/content'] = array(
-    'title' => 'Ctools field content',
-    'page callback' => 'ds_ctools_content',
-    'file' => 'includes/ds.field_ui.inc',
-    'access arguments' => array('admin_display_suite'),
-    'type' => MENU_CALLBACK,
-  );
   $items['admin/structure/ds/fields/manage_preprocess'] = array(
     'title' => 'Add a preprocess field',
     'description' => 'Manage a preprocess field',
@@ -147,16 +130,6 @@ function ds_ui_menu() {
       'weight' => 2,
     );
   }
-
-  // CTools Modal add field.
-  $items['admin/structure/ds/%ctools_js/add_field/%'] = array(
-    'title' => 'Add field',
-    'page callback' => 'ds_ajax_add_field',
-    'page arguments' => array(3, 5),
-    'access arguments' => array('admin_fields'),
-    'file' => 'includes/ds.fields.inc',
-    'type' => MENU_CALLBACK,
-  );
 
   return $items;
 }

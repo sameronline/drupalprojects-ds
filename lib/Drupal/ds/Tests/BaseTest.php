@@ -17,7 +17,7 @@ class BaseTest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('ctools', 'ds', 'ds_extras', 'ds_format', 'search', 'ds_search', 'ds_forms', 'ds_ui', 'ds_test');
+  public static $modules = array('ds', 'ds_extras', 'ds_format', 'search', 'ds_search', 'ds_forms', 'ds_ui', 'ds_test');
 
   protected $profile = 'standard';
 
@@ -27,7 +27,7 @@ class BaseTest extends WebTestBase {
   function setUp() {
     parent::setUp();
 
-    variable_set('search_active_modules', array('node' => '', 'user' => 'user', 'ds_search' => 'ds_search'));
+    config('search.settings')->set('active_modules', array('node' => '', 'user' => 'user', 'ds_search' => 'ds_search'))->save();
     menu_router_rebuild();
 
     $this->admin_user = $this->drupalCreateUser(array('admin_classes', 'admin_view_modes', 'admin_fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions'));
@@ -65,7 +65,7 @@ class BaseTest extends WebTestBase {
   function dsConfigureClasses($edit = array()) {
 
     $edit += array(
-      'ds_classes_regions' => "class_name_1\nclass_name_2|Friendly name"
+      'regions' => "class_name_1\nclass_name_2|Friendly name"
     );
 
     $this->drupalPost('admin/structure/ds/classes', $edit, t('Save configuration'));
@@ -179,27 +179,6 @@ class BaseTest extends WebTestBase {
 
     if ($first) {
       $edit += array('field' => 'submitted');
-    }
-
-    $this->drupalPost($url, $edit, t('Save'));
-    $this->assertText(t('The field ' . $edit['name'] . ' has been saved'), t('!name field has been saved', array('!name' => $edit['name'])));
-  }
-
-  /**
-   * Create a dynamic field.
-   *
-   * @param $edit
-   *   An optional array of field properties.
-   */
-  function dsCreateDynamicField($edit = array(), $url = 'admin/structure/ds/fields/manage_ctools', $first = TRUE) {
-
-    $edit += array(
-      'name' => 'Dynamic',
-      'entities[node]' => '1',
-    );
-
-    if ($first) {
-      $edit += array('field' => 'dynamic');
     }
 
     $this->drupalPost($url, $edit, t('Save'));

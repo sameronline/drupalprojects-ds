@@ -70,7 +70,7 @@ class SearchTest extends BaseTest {
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/display/search_result');
 
     // Configure ds search.
-    $edit = array('ds_user_override_search_page' => '1');
+    $edit = array('user_override_search_page' => '1');
     $this->drupalPost('admin/structure/ds/list/search', $edit, t('Save configuration'));
 
     // Let's search.
@@ -82,7 +82,7 @@ class SearchTest extends BaseTest {
     $this->assertNoText(t('Advanced search'), 'No advanced search found');
 
 
-    $edit = array('ds_search_node_form_alter' => '1');
+    $edit = array('node_form_alter' => '1');
     $this->drupalPost('admin/structure/ds/list/search', $edit, t('Save configuration'));
     $this->drupalGet('search/content/title1');
     $this->assertText(t('Advanced search'), 'Advanced search found');
@@ -129,7 +129,7 @@ class SearchTest extends BaseTest {
     $this->cronRun();
 
     $edit = array(
-      'ds_search_group_by_type' => '1'
+      'group_by_type' => '1'
     );
     $this->drupalPost('admin/structure/ds/list/search', $edit, t('Save configuration'));
 
@@ -139,7 +139,7 @@ class SearchTest extends BaseTest {
     $this->assertRaw('Results for basic page');
 
     $edit = array(
-      'ds_search_group_by_type_settings[article][label]' => 'Article results',
+      'group_by_type_settings[article][label]' => 'Article results',
     );
     $this->drupalPost('admin/structure/ds/list/search', $edit, t('Save configuration'));
     $this->drupalGet('search/content/group');
@@ -148,8 +148,8 @@ class SearchTest extends BaseTest {
     $this->assertRaw('Results for basic page');
 
     $edit = array(
-      'ds_search_group_by_type_settings[page][status]' => FALSE,
-      'ds_search_group_by_type_settings[article][label]' => '',
+      'group_by_type_settings[page][status]' => FALSE,
+      'group_by_type_settings[article][label]' => '',
     );
     $this->drupalPost('admin/structure/ds/list/search', $edit, t('Save configuration'));
     $this->drupalGet('search/content/group');

@@ -33,7 +33,7 @@ class EntitiesTest extends BaseTest {
     $node = $this->drupalCreateNode($settings);
 
     // Create field CSS classes.
-    $edit = array('ds_classes_fields' => "test_field_class\ntest_field_class_2|Field class 2");
+    $edit = array('fields' => "test_field_class\ntest_field_class_2|Field class 2");
     $this->drupalPost('admin/structure/ds/classes', $edit, t('Save configuration'));
 
     // Create a token and php field.
@@ -190,39 +190,6 @@ class EntitiesTest extends BaseTest {
     $this->assertNoRaw('<h2>Recent content</h2>');
     $this->assertNoRaw('Recent content');
 
-    // Remove the page title (we'll use the switch view mode functionality too for this).
-    /*$edit = array('additional_settings[ds_page_title][ds_page_title_options][page_option_type]' => '1');
-    $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display/teaser');
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertRaw('<h1 class="title" id="page-title">
-          '. $node->title . '        </h1>');
-    $edit = array('ds_switch' => 'teaser');
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertNoRaw('<h1 class="title" id="page-title">
-          '. $node->title . '        </h1>');
-
-    // Use page title substitutions.
-    $edit = array('additional_settings[ds_page_title][ds_page_title_options][page_option_type]' => '2', 'additional_settings[ds_page_title][ds_page_title_options][page_option_title]' => 'Change title: %node:type');
-    $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display/teaser');
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertRaw('<h1 class="title" id="page-title">
-          Change title: '. $node->type . '        </h1>');
-    $edit = array('additional_settings[ds_page_title][ds_page_title_options][page_option_type]' => '0');
-    $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display/teaser');
-
-    // Go to home page, page title shouldn't bleed here
-    // see http://drupal.org/node/1446554.
-    $edit = array('ds_switch' => '');
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
-    $edit = array('additional_settings[ds_page_title][ds_page_title_options][page_option_type]' => '2', 'additional_settings[ds_page_title][ds_page_title_options][page_option_title]' => 'Bleed title: %node:type');
-    $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display');
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertRaw('<h1 class="title" id="page-title">
-          Bleed title: article        </h1>');
-    $this->drupalGet('node');
-    $this->assertNoText('Bleed title');*/
-
     // Test revisions. Enable the revision view mode
     $edit = array('additional_settings[modes][view_modes_custom][revision]' => '1');
     $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
@@ -256,13 +223,6 @@ class EntitiesTest extends BaseTest {
     // Assert revision is using 2 col template.
     $this->drupalGet('node/' . $node->nid . '/revisions/1/view');
     $this->assertText('Body:', 'Body label');
-
-    // Change title of revision.
-    $edit = array('additional_settings[ds_page_title][ds_page_title_options][page_option_type]' => '2', 'additional_settings[ds_page_title][ds_page_title_options][page_option_title]' => 'Custom revision title');
-
-    $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display/revision');
-    $this->drupalGet('node/' . $node->nid . '/revisions/1/view');
-    $this->assertText('Custom revision title', 'Custom title on revision view mode');
 
     // Assert full view is using stacked template.
     $this->drupalGet('node/' . $node->nid);
@@ -366,8 +326,7 @@ class EntitiesTest extends BaseTest {
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"label-inline\">My body:&nbsp;</div><p>" . $body_field . "</p>");
 
-    variable_set('ft-kill-colon', TRUE);
-    $this->refreshVariables();
+    config('ds.extras')->set('ft-kill-colon', TRUE)->save();
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"label-inline\">My body</div><p>" . $body_field . "</p>");

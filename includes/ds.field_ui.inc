@@ -1,7 +1,5 @@
 <?php
 
-use Drupal\ctools;
-
 /**
  * @file
  * Field UI functions for Display Suite.
@@ -32,11 +30,6 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
 
     // Also alter core fields
     _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, $form, $form_state);
-  }
-
-  // Add buttons to add fields in overlay.
-  if (isset($form['#ds_layout']) && user_access('admin_fields') && $view_mode != 'form' && module_exists('ds_ui')) {
-    _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, $form, $form_state);
   }
 
   // Special validate function for field group.
@@ -854,13 +847,13 @@ function ds_field_settings_summary($field, $form_state) {
     $summary = module_invoke($field['module'], 'ds_field_format_summary', $field);
   }
 
-  if (module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
+  if (module_exists('ds_extras') && config('ds.extras')->get('field_template')) {
     module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
 
     // Field template summary
     if (!in_array($field['field_type'], array(DS_FIELD_TYPE_IGNORE, DS_FIELD_TYPE_PREPROCESS))) {
       $functions = module_invoke_all('ds_field_theme_functions_info');
-      $default_field_function = variable_get('ft-default', 'theme_field');
+      $default_field_function = config('ds.extras')->get('ft-default');
       $field_function = isset($form_state['formatter_settings'][$field['name']]['ft']['func']) ? $form_state['formatter_settings'][$field['name']]['ft']['func'] : $default_field_function;
 
       $summary .= 'Field template: ' . check_plain($functions[$field_function]) . '<br />';
@@ -890,7 +883,7 @@ function ds_field_settings_form($field, &$form_state) {
   $form = module_invoke($field['module'], 'ds_field_settings_form', $field);
 
   // Add field template settings to every field if enabled.
-  if (module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
+  if (module_exists('ds_extras') && config('ds.extras')->get('field_template', FALSE)) {
     $context = array(
       'instance' => array(
         'entity_type' => $field['entity_type'],
@@ -923,21 +916,13 @@ function ds_ds_field_format_summary($field) {
   $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
   $functions = module_invoke_all('ds_field_theme_functions_info');
   foreach ($settings as $key => $value) {
-    if ($key == 'ctools') {
-      $conf = unserialize($value);
-      $summary .= t('Type: !type', array('!type' => check_plain(drupal_ucfirst(str_replace('_', ' ', $conf['subtype'])))));
-    }
-    elseif ($key == 'ft') {
+    if ($key == 'ft') {
       // Do nothing
     }
     elseif (!empty($value)) {
       $value = is_numeric($value) ? ($value ? t('Yes') : t('No')) : check_plain($value);
       $summary .= ' ' . str_replace('_', ' ', drupal_ucfirst(check_plain($key))) . ': ' . check_plain($value) . '<br />';
     }
-  }
-
-  if (empty($summary) && ($field['field_type'] == DS_FIELD_TYPE_CTOOLS)) {
-    $summary .= t('Not configured yet.');
   }
 
   return $summary;
@@ -983,262 +968,10 @@ function ds_ds_field_settings_form($field) {
           '#description' => isset($value['description']) ? check_plain($value['description']) : '',
         );
         break;
-
-      case 'ctools':
-        ctools_include('modal');
-        ctools_include('object-cache');
-        ctools_modal_add_js();
-        $form[$key] = array(
-          '#type' => 'hidden',
-          '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
-          '#weight' => 2,
-        );
-        $action = 'add';
-        $args = '';
-        $conf = array();
-        $query = array('query' => array('selection' => 1));
-        $title = t('Select content');
-        if (isset($settings[$key])) {
-          $query = array();
-          $ctools = unserialize($settings['ctools']);
-          $type = $ctools['type'];
-          $subtype = $ctools['subtype'];
-          $args = '/' . $type . '/' . $subtype;
-          $action = 'edit';
-          $conf = $ctools['conf'];
-          $title = t('Edit content');
-        }
-        $form['select'] = array(
-          '#markup' => '<div class="select-content-link">' . l($title, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $field['entity_type'] . '/' . $field['name'] . $args, array('attributes' => array('class' => array('ctools-use-modal'))) + $query) . '</div>',
-          '#weight' => -10,
-        );
-        $form['load_terms'] = array(
-          '#type' => 'checkbox',
-          '#title' => t('Load terms'),
-          '#description' => t('Toggle if you are embedding a view with term fields.'),
-          '#default_value' => isset($settings['load_terms']) ? $settings['load_terms'] : '',
-          '#weight' => -1,
-        );
-        $form['show_title']['#weight'] = 0;
-        $form['title_wrapper']['#weight'] = 1;
-        ctools_object_cache_set($field['name'], $field['name'], $conf);
-        break;
     }
   }
 
   return $form;
-}
-
-/**
- * Add entity contexts.
- */
-function ds_get_entity_context($entity_type) {
-  // @todo this is absolutely freaky ..
-  // for some reason, even if the file exists context.inc is not
-  // included at all .....
-  // @see also ds_create_entity_context in ds.module.
-  return array();
-  ctools_include('context');
-
-  $arguments = array(
-    array(
-      'keyword' => $entity_type,
-      'identifier' => drupal_ucfirst($entity_type) . ' being viewed',
-      'id' => 1,
-      'name' => 'entity_id:' . $entity_type,
-      'settings' => array(),
-    ),
-  );
-
-  return ctools_context_get_placeholders_from_argument($arguments);
-}
-
-/**
- * Return the configuration settings for the CTools field.
- */
-function ds_ctools_content($action = 'add', $entity_type = '', $field_name = '', $type_name = '', $subtype_name = '', $step = NULL) {
-
-  ctools_include('modal');
-  ctools_include('ajax');
-  ctools_include('content');
-  ctools_include('object-cache');
-
-  $commands = array();
-  $content_type = ctools_get_content_type($type_name);
-  $subtype = ctools_content_get_subtype($content_type, $subtype_name);
-
-  if ($data = ctools_object_cache_get($field_name, $field_name)) {
-    $conf = $data;
-  }
-  else {
-    $conf = ctools_content_get_defaults($content_type, $subtype);
-  }
-
-  $url = 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $entity_type . '/' . $field_name;
-  $base_url = $url;
-  if (!empty($type_name) && !empty($subtype_name)) {
-    $url .= '/' . $type_name . '/' . $subtype_name . '/%step';
-  }
-  $form_info = array(
-    'path' => $url,
-    'show cancel' => TRUE,
-    'next callback' => 'ds_ctools_content_next',
-  );
-
-  // Get entity context.
-  $contexts = ds_get_entity_context($entity_type);
-
-  $form_state = array(
-    'contexts' => $contexts,
-    'ajax' => TRUE,
-    'modal' => TRUE,
-    'modal return' => TRUE,
-    'field_name' => $field_name,
-  );
-
-  // Call the content form.
-  $output = ctools_content_form($action, $form_info, $form_state, $content_type, $subtype_name, $subtype, $conf, $step);
-
-  if (!empty($form_state['complete']) || isset($_GET['dismiss'])) {
-    $configuration = array(
-      'conf' => $form_state['conf'],
-      'type' => $type_name,
-      'subtype' => $subtype_name,
-    );
-    $commands[] = ctools_modal_command_dismiss();
-    $commands[] = ajax_command_invoke('input[name="fields[' . $field_name . '][settings_edit_form][settings][ctools]"]', 'dsCtoolsContentConfiguration', array(serialize($configuration)));
-    $commands[] = ajax_command_invoke('.select-content-link', 'dsCtoolsContentUpdate', array(serialize($configuration)));
-    ctools_object_cache_clear($field_name, $field_name);
-  }
-  // Content selection
-  elseif (!empty($form_state['cancel']) || isset($_GET['selection'])) {
-    ctools_object_cache_clear($field_name, $field_name);
-    $commands[] = ds_ctools_content_select($contexts, $field_name, $action, $entity_type);
-  }
-  // No configuration anymore.
-  elseif ($output === FALSE && !isset($_GET['dismiss'])) {
-    $output = t('No further configuration exists for this content type.<br/><br/><a href="!close_modal" class="use-ajax">Click here to close the modal and save the settings.</a><br/><br/><a href="!new_content" class="use-ajax">Click here to select new content</a>.', array('!new_content' => url($base_url, array('query' => array('selection' => TRUE))), '!close_modal' => url($url, array('query' => array('dismiss' => 1)))));
-    $commands[] = ctools_modal_command_display(t('Edit content'), $output);
-  }
-  // Form render.
-  else {
-    $commands = ctools_modal_form_render($form_state, $output);
-  }
-
-  print ajax_render($commands);
-  ajax_footer();
-  exit;
-}
-
-/**
- * Handle the 'next' click on the add/edit field form wizard.
- */
-function ds_ctools_content_next(&$form_state) {
-  ctools_object_cache_set($form_state['field_name'], $form_state['field_name'], $form_state['conf']);
-}
-
-/**
- * Select content.
- *
- * @param $contexts
- *   A collection of contexts, usually the entity.
- * @param $field_name
- *   The name of the field.
- * @param $action
- *   The name of the action.
- * @param $entity_type
- *   The name of the entity type.
- */
-function ds_ctools_content_select($contexts, $field_name, $action, $entity_type) {
-
-  // Get content types.
-  $content_types = ctools_content_get_available_types($contexts);
-
-  $categories = $category_names = $ordered = array();
-
-  foreach ($content_types as $type_name => $subtypes) {
-    foreach ($subtypes as $subtype_name => $content_type) {
-      list($category_key, $category) = ds_ctools_get_category($content_type);
-
-      if (empty($categories[$category_key])) {
-        $categories[$category_key] = array(
-          'title' => $category,
-          'content' => array(),
-        );
-        $category_names[$category_key] = $category;
-      }
-
-      $content_title = filter_xss_admin($content_type['title']);
-
-      // Ensure content with the same title doesn't overwrite each other.
-      while (isset($categories[$category_key]['content'][$content_title])) {
-        $content_title .= '-';
-      }
-
-      $categories[$category_key]['content'][$content_title] = $content_type;
-      $categories[$category_key]['content'][$content_title]['type_name'] = $type_name;
-      $categories[$category_key]['content'][$content_title]['subtype_name'] = $subtype_name;
-    }
-  }
-
-  // Now sort
-  natcasesort($category_names);
-  foreach ($category_names as $category => $name) {
-    $ordered[$category] = $categories[$category];
-  }
-
-  $left = '';
-  $right = '<div class="content">' . t('Content options are divided by category. Please select a category from the left to proceed.') . '</div>';
-  foreach ($ordered as $section => $section_content) {
-    // Section.
-    if ($section == 'root') {
-      $section_content['title'] = t('Content');
-    }
-    $left .= '<div class="section"><a href="" id="' . $section . '" class="section-link">' . $section_content['title'] . '</a></div>';
-    // Content.
-    $right .= '<div id="' . $section . '-container" class="selection-hide content">';
-    $right .= '<h2>' . $section_content['title'] . '</h2>';
-    foreach ($section_content['content'] as $key => $value) {
-      $right .= '<div class="content-item">';
-      $variables = array(
-        'path' => ctools_content_admin_icon($value),
-      );
-      $right .= theme('image', $variables) . '&nbsp;';
-      $right .= ctools_ajax_text_button($key, 'admin/structure/ds/fields/manage_ctools/content/' . $action . '/' . $entity_type . '/' . $field_name . '/' . $value['type_name'] . '/' . $value['subtype_name'], $key);
-      $right .= '</div>';
-    }
-    $right .= '</div>';
-  }
-
-  // Create output.
-  $output = '<div id="ctools-content-selection">';
-  $output .= '<div id="ds-left">' . $left . '</div>';
-  $output .= '<div id="ds-right">' . $right . '</div>';
-  $output .= '</div>';
-
-  return ctools_modal_command_display(t('Select content'), $output);
-}
-
-/**
- * Helper function to get the category.
- */
-function ds_ctools_get_category($content_type) {
-  if (isset($content_type['top level'])) {
-    $category = 'root';
-  }
-  elseif (isset($content_type['category'])) {
-    if (is_array($content_type['category'])) {
-      list($category, $weight) = $content_type['category'];
-    }
-    else {
-      $category = $content_type['category'];
-    }
-  }
-  else {
-    $category = t('Uncategorized');
-  }
-
-  return array(preg_replace('/[^a-z0-9]/', '-', drupal_strtolower($category)), $category);
 }
 
 /**
@@ -1640,11 +1373,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     'bundle' => $bundle,
     'view_mode' => $view_mode,
   );
-  // Load views file if entity type is not ds_views.
-  // We need to cache the hook it's implementing.
-  if ($entity_type != 'ds_views' && module_exists('ds_extras') && variable_get('ds_extras_vd', FALSE)) {
-    module_load_include('inc', 'ds_extras', 'includes/ds_extras.vd');
-  }
+
   drupal_alter('ds_fields_ui', $fields, $context);
 
   // Get field settings.
@@ -1887,7 +1616,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       }
 
       // Add the field templates form when needed
-      if (module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
+      if (module_exists('ds_extras') && config('ds.extras')->get('field_template', FALSE)) {
         $context = array(
           'instance' => $instance,
           'view_mode' => $view_mode,
@@ -1934,12 +1663,12 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     else {
       $summary = module_invoke($formatter['module'], 'field_formatter_settings_summary', $field, $instance, $view_mode);
 
-      if (module_exists('ds_extras') && variable_get('ds_extras_field_template', FALSE)) {
+      if (module_exists('ds_extras') && config('ds.extras')->get('field_template', FALSE)) {
         module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
 
         // Field template summary
         $functions = module_invoke_all('ds_field_theme_functions_info');
-        $default_field_function = variable_get('ft-default', 'theme_field');
+        $default_field_function = config('ds.extras')->get('ft-default');
         $field_function = isset($form_state['formatter_settings'][$key]['ft']['func']) ? $form_state['formatter_settings'][$key]['ft']['func'] : $default_field_function;
 
         if (!empty($summary)) {
@@ -2058,69 +1787,6 @@ function ds_field_row_form_format_summary_construct(&$table, $key) {
 }
 
 /**
- * Add tab for adding new fields on the fly.
- *
- * @param $entity_type
- *   The name of the entity type.
- * @param $bundle
- *   The name of the bundle
- * @param $view_mode
- *   The name of the view_mode
- * @param $form
- *   A collection of form properties.
- * @param $form_state
- *   A collection of form_state properties.
- */
-function _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, &$form, $form_state) {
-
-  $form['additional_settings']['add_custom_fields'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Custom fields'),
-    '#description' => t('Click on one of the buttons to create a new field.') . '<p></p>',
-    '#access' => user_access('admin_fields'),
-  );
-
-  // Include the CTools tools that we need.
-  ctools_include('ajax');
-  ctools_include('modal');
-
-  // Add CTools' javascript to the page.
-  ctools_modal_add_js();
-
-  $field_types = array(
-    'custom_field' => t('Add a code field'),
-    'manage_ctools' => t('Add a dynamic field'),
-  );
-  if (module_exists('block')) {
-    $field_types['manage_block'] = t('Add a block field');
-  }
-  $field_types['manage_preprocess'] = t('Add a preprocess field');
-
-  foreach ($field_types as $field_key => $field_title) {
-
-    $form['ctools_add_field_' . $field_key . '_url'] = array(
-      '#type' => 'hidden',
-      '#attributes' => array('class' => array('ctools_add_field_' . $field_key . '-url')),
-      '#value' => url('admin/structure/ds/nojs/add_field/' . $field_key),
-    );
-
-    $form['additional_settings']['add_custom_fields']['ctools_add_field_' . $field_key] = array(
-      '#type' => 'button',
-      '#value' => $field_title,
-      '#attributes' => array('class' => array('ctools-use-modal')),
-      '#id' => 'ctools_add_field_' . $field_key,
-    );
-  }
-  $form['additional_settings']['add_custom_fields']['manage_fields'] = array(
-    '#type' => 'link',
-    '#title' => 'Manage fields',
-    '#href' => 'admin/structure/ds/fields',
-    '#prefix' => '<div>',
-    '#suffix' => '</div>',
-  );
-}
-
-/**
  * Utility function to check if we need to save anything for this field.
  */
 function _ds_field_valid($key, $field, &$form_state, $view_mode = 'default') {
@@ -2152,12 +1818,12 @@ function _ds_field_valid($key, $field, &$form_state, $view_mode = 'default') {
 /**
  * Utility function to return CSS classes.
  */
-function _ds_classes($name = 'ds_classes_regions') {
+function _ds_classes($name = 'regions') {
   static $classes = array();
 
   if (!isset($classes[$name])) {
     $classes[$name] = array();
-    $custom_classes = trim(variable_get($name, ''));
+    $custom_classes = trim(config('ds.classes')->get($name));
     if (!empty($custom_classes)) {
       $classes[$name][''] = t('None');
       $custom_classes = explode("\n", $custom_classes);

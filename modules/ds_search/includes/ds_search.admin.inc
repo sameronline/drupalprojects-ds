@@ -9,6 +9,7 @@
  * Menu callback: Display Suite search settings.
  */
 function ds_search_settings($form, $form_state) {
+  $config = config('ds.search');
 
   $form['general'] = array(
     '#type' => 'fieldset',
@@ -22,20 +23,20 @@ function ds_search_settings($form, $form_state) {
     }
   }
 
-  $form['general']['ds_search_type'] = array(
+  $form['general']['search_type'] = array(
     '#type' => 'select',
     '#title' => t('Search engine'),
     '#description' => t('Select the search engine as the query backend.'),
     '#options' => $engine_options,
-    '#default_value' => variable_get('ds_search_type', 'node'),
+    '#default_value' => $config->get('search_type'),
   );
 
-  $form['general']['ds_search_path'] = array(
+  $form['general']['search_path'] = array(
     '#type' => 'textfield',
     '#title' => t('Search path'),
     '#field_prefix' => 'search/',
     '#description' => t('Make sure you don\'t override an existing search path.'),
-    '#default_value' => variable_get('ds_search_path', 'content'),
+    '#default_value' => $config->get('search_path'),
     '#required' => TRUE,
   );
 
@@ -43,15 +44,15 @@ function ds_search_settings($form, $form_state) {
   foreach ($entity_view_modes as $key => $view_mode) {
     $view_mode_options[$key] = $view_mode['label'];
   }
-  $form['general']['ds_search_view_mode'] = array(
+  $form['general']['view_mode'] = array(
     '#type' => 'select',
     '#title' => t('View mode'),
     '#description' => 'Select another view mode in favor of the default search view mode.',
-    '#default_value' => variable_get('ds_search_view_mode', 'search_result'),
+    '#default_value' => $config->get('view_mode'),
     '#options' => $view_mode_options,
   );
 
-  $form['general']['ds_search_variables'] = array(
+  $form['general']['search_variables'] = array(
     '#type' => 'radios',
     '#options' => array(
       'none' => t('None'),
@@ -61,71 +62,71 @@ function ds_search_settings($form, $form_state) {
     ),
     '#title' => t('Extra variables'),
     '#description' => t('Choose an extra variable to display on the results screen.'),
-    '#default_value' => variable_get('ds_search_variables', 'none'),
+    '#default_value' => $config->get('search_variables'),
   );
 
-  $form['general']['ds_search_show_title'] = array(
+  $form['general']['show_title'] = array(
     '#type' => 'checkbox',
     '#title' => t('Show title'),
     '#description' => t('Display the "Search results" title.'),
-    '#default_value' => variable_get('ds_search_show_title'),
+    '#default_value' => $config->get('show_title'),
   );
 
-  $form['general']['ds_search_language'] = array(
+  $form['general']['search_language'] = array(
     '#type' => 'checkbox',
     '#title' => t('Language'),
     '#description' => t('Search in the language the site is currently in. Enable this if you have at least 2 languages.'),
-    '#default_value' => variable_get('ds_search_language'),
+    '#default_value' => $config->get('search_language'),
   );
 
-  $form['general']['ds_search_highlight'] = array(
+  $form['general']['highlight'] = array(
     '#type' => 'checkbox',
     '#title' => t('Highlight search word'),
     '#description' => t('Use jQuery to highlight the word in the results.'),
-    '#default_value' => variable_get('ds_search_highlight'),
+    '#default_value' => $config->get('highlight'),
   );
 
-  $form['general']['ds_search_highlight_selector'] = array(
+  $form['general']['highlight_selector'] = array(
     '#type' => 'textfield',
     '#title' => t('HTML selector'),
     '#description' => t('Enter the css selector, if not sure, leave this by default.'),
-    '#default_value' => variable_get('ds_search_highlight_selector', '.view-mode-search_result'),
+    '#default_value' => $config->get('highlight_selector'),
     '#states' => array(
       'visible' => array(
-        'input[name="ds_search_highlight"]' => array('checked' => TRUE),
+        'input[name="highlight"]' => array('checked' => TRUE),
       ),
     ),
   );
 
-  $form['general']['ds_search_group_by_type'] = array(
+  $form['general']['group_by_type'] = array(
     '#type' => 'checkbox',
     '#title' => t('Group by type.'),
     '#description' => t('Group the search results per page by type.'),
-    '#default_value' => variable_get('ds_search_group_by_type'),
+    '#default_value' => $config->get('group_by_type'),
   );
 
   // Group by type order.
-  $form['ds_search_group_by_type_settings'] = array(
+  $form['group_by_type_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Group by type settings'),
     '#description' => t('Set the order of the node types which can be grouped. Node types which are not enabled will be showed into a "Other group". Note that this does not work with Apache Solr multisite support.'),
     '#theme' => 'ds_search_group_by_type_settings',
     '#states' => array(
       'visible' => array(
-        'input[name="ds_search_group_by_type"]' => array('checked' => TRUE),
+        'input[name="group_by_type"]' => array('checked' => TRUE),
       ),
     ),
   );
 
   $node_types = node_type_get_names();
-  $ds_search_group_by_type_settings = variable_get('ds_search_group_by_type_settings');
+  $ds_search_group_by_type_settings = $config->get('group_by_type_settings');
   foreach ($node_types as $name => $label) {
 
     $form['ds_search_group_by_type_settings'][$name]['name'] = array(
       '#markup' => check_plain($label),
     );
 
-    $form['ds_search_group_by_type_settings'][$name]['status'] = array(
+    $form['group_by_type_settings'][$name]['status'] = array(
       '#type' => 'checkbox',
       '#title' => t('Weight for @title', array('@title' => $label)),
       '#title_display' => 'invisible',
@@ -133,61 +134,61 @@ function ds_search_settings($form, $form_state) {
       '#parents' => array('ds_search_group_by_type_settings', $name, 'status'),
     );
 
-    $form['ds_search_group_by_type_settings'][$name]['label'] = array(
+    $form['group_by_type_settings'][$name]['label'] = array(
       '#type' => 'textfield',
       '#size' => 30,
       '#title' => t('Group label for @title', array('@title' => $label)),
       '#title_display' => 'invisible',
       '#description' => t('Group label. The label will be translatable. Leave empty for no label.'),
       '#default_value' => isset($ds_search_group_by_type_settings[$name]) ? $ds_search_group_by_type_settings[$name]['label'] : t('Results for @type', array('@type' => drupal_strtolower($node_types[$name]))),
-      '#parents' => array('ds_search_group_by_type_settings', $name, 'label'),
+      '#parents' => array('group_by_type_settings', $name, 'label'),
     );
 
     $wrapper_options = array(
       'fieldset' => t('Fieldset'),
       'markup' => t('Div with H3 headline'),
     );
-    $form['ds_search_group_by_type_settings'][$name]['wrapper'] = array(
+    $form['group_by_type_settings'][$name]['wrapper'] = array(
       '#type' => 'select',
       '#options' => $wrapper_options,
       '#title' => t('Wrapper for @title', array('@title' => $label)),
       '#title_display' => 'invisible',
       '#default_value' => isset($ds_search_group_by_type_settings[$name]) ? $ds_search_group_by_type_settings[$name]['wrapper'] : 'fieldset',
-      '#parents' => array('ds_search_group_by_type_settings', $name, 'wrapper'),
+      '#parents' => array('group_by_type_settings', $name, 'wrapper'),
     );
 
     $weight = isset($ds_search_group_by_type_settings[$name]) ? $ds_search_group_by_type_settings[$name]['weight'] : 0;
-    $form['ds_search_group_by_type_settings'][$name]['weight'] = array(
+    $form['group_by_type_settings'][$name]['weight'] = array(
       '#type' => 'weight',
       '#title' => t('Weight for @title', array('@title' => $label)),
       '#title_display' => 'invisible',
       '#delta' => 30,
       '#default_value' => $weight,
-      '#parents' => array('ds_search_group_by_type_settings', $name, 'weight'),
+      '#parents' => array('group_by_type_settings', $name, 'weight'),
     );
-    $form['ds_search_group_by_type_settings'][$name]['#weight'] = $weight;
+    $form['group_by_type_settings'][$name]['#weight'] = $weight;
   }
 
-  $form['ds_search_group_by_type_settings']['ds_search_group_by_type_other'] = array(
+  $form['group_by_type_settings']['group_by_type_other'] = array(
     '#type' => 'textfield',
     '#title' => t('Other label'),
     '#description' => t('The label of the other group. Leave empty for no label.'),
-    '#default_value' => variable_get('ds_search_group_by_type_other', 'Other'),
+    '#default_value' => $config->get('group_by_type_other'),
     '#states' => array(
       'visible' => array(
-        'input[name="ds_search_group_by_type"]' => array('checked' => TRUE),
+        'input[name="group_by_type"]' => array('checked' => TRUE),
       ),
     ),
   );
-  $form['ds_search_group_by_type_settings']['ds_search_group_by_type_other_wrapper'] = array(
+  $form['group_by_type_settings']['group_by_type_other_wrapper'] = array(
     '#type' => 'select',
     '#options' => $wrapper_options,
     '#title' => t('Other wrapper'),
     '#description' => t('The wrapper of the other group.'),
-    '#default_value' => variable_get('ds_search_group_by_type_other_wrapper', 'fieldset'),
+    '#default_value' => $config->get('group_by_type_other_wrapper'),
     '#states' => array(
       'visible' => array(
-        'input[name="ds_search_group_by_type"]' => array('checked' => TRUE),
+        'input[name="group_by_type"]' => array('checked' => TRUE),
       ),
     ),
   );
@@ -197,21 +198,21 @@ function ds_search_settings($form, $form_state) {
     '#title' => t('Drupal core'),
     '#states' => array(
       'visible' => array(
-        'select[name="ds_search_type"]' => array('value' => 'node'),
+        'select[name="search_type"]' => array('value' => 'node'),
       ),
     ),
   );
 
-  $form['node']['ds_search_node_form_alter'] = array(
+  $form['node']['node_form_alter'] = array(
     '#type' => 'checkbox',
     '#title' => t('Advanced'),
     '#description' => t('Enable the advanced search form.'),
-    '#default_value' => variable_get('ds_search_node_form_alter'),
+    '#default_value' => $config->get('node_form_alter'),
   );
 
-  $form['node']['ds_search_node_limit'] = array(
+  $form['node']['search_node_limit'] = array(
     '#type' => 'textfield',
-    '#default_value' => variable_get('ds_search_node_limit', 10),
+    '#default_value' => config('ds.search')->get('search_node_limit'),
     '#title' => t('Node search limit'),
   );
 
@@ -222,86 +223,86 @@ function ds_search_settings($form, $form_state) {
       '#title' => t('Apache Solr'),
       '#states' => array(
         'visible' => array(
-          'select[name="ds_search_type"]' => array('value' => 'apachesolr_search'),
+          'select[name="search_type"]' => array('value' => 'apachesolr_search'),
         ),
       ),
     );
 
-    $form['apachesolr_search']['ds_search_apachesolr_hide_current_filters'] = array(
+    $form['apachesolr_search']['apachesolr_hide_current_filters'] = array(
       '#type' => 'checkbox',
       '#title' => t('Hide Retain filters'),
       '#description' => t('Hide the "Retain current filters" checkbox on search results.'),
-      '#default_value' => variable_get('ds_search_apachesolr_hide_current_filters'),
+      '#default_value' => $config->get('apachesolr_hide_current_filters'),
     );
 
-    $form['apachesolr_search']['ds_search_apachesolr_current_filters_default'] = array(
+    $form['apachesolr_search']['apachesolr_current_filters_default'] = array(
       '#type' => 'checkbox',
       '#title' => t('Remember filters'),
       '#description' => t('Remember the filters when you hide the "Retain current filters" checkbox.'),
-      '#default_value' => variable_get('ds_search_apachesolr_current_filters_default'),
+      '#default_value' => $config->get('search_apachesolr_current_filters_default'),
       '#states' => array(
         'visible' => array(
-          'input[name="ds_search_apachesolr_hide_current_filters"]' => array('checked' => TRUE),
+          'input[name="apachesolr_hide_current_filters"]' => array('checked' => TRUE),
         ),
       ),
     );
 
-    $form['apachesolr_search']['ds_search_apachesolr_multisite'] = array(
+    $form['apachesolr_search']['apachesolr_multisite'] = array(
       '#type' => 'checkbox',
       '#title' => t('Multisite support'),
       '#description' => t('Enable this in case multiple sites share one index. Note that sometimes you need to make sure that your formatters are creating absolute paths for links or images. Implementing hook_url_outbound_alter() is a good option in which you can set $options[\'absolute\'] to TRUE.'),
-      '#default_value' => variable_get('ds_search_apachesolr_multisite'),
+      '#default_value' => $config->get('apachesolr_multisite'),
     );
 
-    $form['apachesolr_search']['ds_search_apachesolr_multisite_boost'] = array(
+    $form['apachesolr_search']['apachesolr_multisite_boost'] = array(
       '#type' => 'checkbox',
       '#title' => t('Sort by site'),
       '#description' => t('Enable this to rank the results of the current site first, than all the rest.'),
-      '#default_value' => variable_get('ds_search_apachesolr_multisite_boost'),
+      '#default_value' => $config->get('apachesolr_multisite_boost'),
       '#states' => array(
         'visible' => array(
-          'input[name="ds_search_apachesolr_multisite"]' => array('checked' => TRUE),
+          'input[name="apachesolr_multisite"]' => array('checked' => TRUE),
         ),
       ),
     );
 
-    $form['apachesolr_search']['ds_search_apachesolr_multisite_group'] = array(
+    $form['apachesolr_search']['apachesolr_multisite_group'] = array(
       '#type' => 'checkbox',
       '#title' => t('Group results by site'),
-      '#default_value' => variable_get('ds_search_apachesolr_multisite_group'),
+      '#default_value' => $config->get('apachesolr_multisite_group'),
       '#states' => array(
         'visible' => array(
-          'input[name="ds_search_apachesolr_multisite"]' => array('checked' => TRUE),
+          'input[name="apachesolr_multisite"]' => array('checked' => TRUE),
         ),
       ),
     );
 
-    $form['apachesolr_search']['ds_search_apachesolr_multisite_group_config'] = array(
+    $form['apachesolr_search']['apachesolr_multisite_group_config'] = array(
       '#type' => 'textarea',
       '#title' => t('Group by site configuration'),
-      '#default_value' => variable_get('ds_search_apachesolr_multisite_group_config'),
+      '#default_value' => $config->get('apachesolr_multisite_group_config'),
       '#description' => t('Enter sites line by line with following configuration: site-hash|label|wrapper. The <em>site-hash</em> is per site which you can get from Solr. The <em>label</em> is translatable per site. Use !total_per_site in this label for number of results per site. Depending on the number, you will either get "1 result" or "x results" which are translatable. The <em>wrapper</em> can either be "fieldset" or "div".'),
       '#states' => array(
         'visible' => array(
-          'input[name="ds_search_apachesolr_multisite_group"]' => array('checked' => TRUE),
-          'input[name="ds_search_apachesolr_multisite"]' => array('checked' => TRUE),
+          'input[name="apachesolr_multisite_group"]' => array('checked' => TRUE),
+          'input[name="apachesolr_multisite"]' => array('checked' => TRUE),
         ),
       ),
     );
   }
 
-  $active = variable_get('search_active_modules', array('node', 'user'));
+  $active = config('search.settings')->get('active_modules');
   if (isset($active['user']) && $active['user'] !== 0) {
     $form['user'] = array(
       '#type' => 'fieldset',
       '#title' => t('User search'),
     );
 
-    $form['user']['ds_user_override_search_page'] = array(
+    $form['user']['user_override_search_page'] = array(
       '#type' => 'checkbox',
       '#title' => t('Override user search page'),
       '#description' => t('Toggle this checkbox if you want Display Suite to render user search results.'),
-      '#default_value' => variable_get('ds_user_override_search_page'),
+      '#default_value' => $config->get('user_override_search_page'),
     );
   }
 
@@ -314,6 +315,30 @@ function ds_search_settings($form, $form_state) {
  * Submit callback: Search settings submit.
  */
 function ds_search_settings_submit($form, $form_state) {
+
+  config('ds.search')
+    ->set('search_type', $form_state['values']['search_type'])
+    ->set('view_mode', $form_state['values']['view_mode'])
+    ->set('search_path', $form_state['values']['search_path'])
+    ->set('search_variables', $form_state['values']['search_variables'])
+    ->set('show_title', $form_state['values']['show_title'])
+    ->set('search_language', $form_state['values']['search_language'])
+    ->set('highlight', $form_state['values']['highlight'])
+    ->set('highlight_selector', $form_state['values']['highlight_selector'])
+    ->set('group_by_type', $form_state['values']['group_by_type'])
+    ->set('group_by_type_settings', $form_state['values']['group_by_type_settings'])
+    ->set('node_form_alter', $form_state['values']['node_form_alter'])
+    ->set('search_node_limit', $form_state['values']['search_node_limit'])
+    ->set('apachesolr_hide_current_filters', $form_state['values']['apachesolr_hide_current_filters'])
+    ->set('apachesolr_current_filters_default', $form_state['values']['apachesolr_current_filters_default'])
+    ->set('apachesolr_multisite', $form_state['values']['apachesolr_multisite'])
+    ->set('apachesolr_multisite_boost', $form_state['values']['apachesolr_multisite_boost'])
+    ->set('apachesolr_multisite_group', $form_state['values']['apachesolr_multisite_group'])
+    ->set('apachesolr_multisite_group_config', $form_state['values']['apachesolr_multisite_group_config'])
+    ->set('user_override_search_page', $form_state['values']['user_override_search_page'])
+    ->save();
+
+
   // Rebuild the menu.
   variable_set('menu_router_rebuild_needed', TRUE);
 }

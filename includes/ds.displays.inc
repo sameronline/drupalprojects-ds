@@ -82,7 +82,7 @@ function ds_emergency() {
     '#type' => 'checkbox',
     '#title' => t('Disable attaching fields via Display Suite'),
     '#description' => t('In case you get an error after configuring a layout printing a message like "Fatal error: Unsupported operand types", you can temporarily disable adding fields from DS by toggling this checkbox. You probably are trying to render an node inside a node, for instance through a view, which is simply not possible. See <a href="http://drupal.org/node/1264386">http://drupal.org/node/1264386</a>.'),
-    '#default_value' => variable_get('ds_disable', FALSE),
+    '#default_value' => config('ds.settings')->get('disable', FALSE),
     '#weight' => 0,
   );
 
@@ -94,7 +94,7 @@ function ds_emergency() {
   );
 
   if (module_exists('ds_extras')) {
-    $region_blocks = variable_get('ds_extras_region_blocks', array());
+    $region_blocks = config('ds.extras')->get('region_blocks', array());
     if (!empty($region_blocks)) {
 
       $region_blocks_options = array();
@@ -129,7 +129,7 @@ function ds_emergency() {
  * Submit callback of fields error form.
  */
 function ds_emergency_fields_attach($form, &$form_state) {
-  variable_set('ds_disable', $form_state['values']['ds_disable']);
+  config('ds.settings')->set('disable', $form_state['values']['disable'])->save();
   drupal_set_message(t('The configuration options have been saved.'));
 }
 
@@ -138,12 +138,12 @@ function ds_emergency_fields_attach($form, &$form_state) {
  */
 function ds_emergency_region_to_block_submit($form, &$form_state) {
   if (isset($form_state['values']['remove_block_region'])) {
-    $variable_set = FALSE;
-    $region_blocks = variable_get('ds_extras_region_blocks', array());
+    $save = FALSE;
+    $region_blocks = config('ds.extras')->get('region_blocks', array());
     $remove = $form_state['values']['remove_block_region'];
     foreach ($remove as $key => $value) {
       if ($key === $value) {
-        $variable_set = TRUE;
+        $save = TRUE;
         db_delete('block')
           ->condition('delta', $key)
           ->condition('module', 'ds_extras')
@@ -152,9 +152,9 @@ function ds_emergency_region_to_block_submit($form, &$form_state) {
       }
     }
 
-    if ($variable_set) {
+    if ($save) {
       drupal_set_message(t('Block regions were removed.'));
-      variable_set('ds_extras_region_blocks', $region_blocks);
+      config('ds.extras')->et('region_blocks', $region_blocks);
     }
   }
   else {

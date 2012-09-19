@@ -32,10 +32,9 @@ class LayoutClassesTest extends BaseTest {
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('ds_3col_stacked_equal_width', 'ds_3col_stacked_equal_width not available');
 
-    // Create code, dynamic, preprocess block field.
+    // Create code, preprocess block field.
     $this->dsCreateCodeField();
     $this->dsCreateBlockField();
-    $this->dsCreateDynamicField();
     $this->dsCreatePreprocessField();
 
     $layout = array(
@@ -60,7 +59,6 @@ class LayoutClassesTest extends BaseTest {
       'fields[test_field][region]' => 'left',
       'fields[test_block_field][region]' => 'left',
       'fields[submitted][region]' => 'left',
-      'fields[dynamic][region]' => 'left',
       'fields[ds_extras_extra_test_field][region]' => 'header',
     );
 
@@ -88,32 +86,12 @@ class LayoutClassesTest extends BaseTest {
     $this->assertTrue(in_array('links', $data['regions']['left']), t('Links is in left'));
     $this->assertTrue(in_array('test_block_field', $data['regions']['left']), t('Test block field is in left'));
     $this->assertTrue(in_array('submitted', $data['regions']['left']), t('Submitted field is in left'));
-    $this->assertTrue(in_array('dynamic', $data['regions']['left']), t('Dynamic field is in left'));
     $this->assertTrue(in_array('body', $data['regions']['right']), t('Body is in right'));
     $this->assertTrue(in_array('comments', $data['regions']['footer']), t('Comments is in footer'));
     $this->assertTrue(in_array('class_name_1', $data['classes']['header']), t('Class name 1 is in header'));
     $this->assertTrue(empty($data['classes']['left']), t('Left has no classes'));
     $this->assertTrue(empty($data['classes']['right']), t('Right has classes'));
     $this->assertTrue(in_array('class_name_2', $data['classes']['footer']), t('Class name 2 is in header'));
-
-    // Extra save for the dynamic field.
-    $field_settings = ds_get_field_settings('node', 'article', 'default');
-    $formatter_settings = array(
-      'show_title' => 0,
-      'title_wrapper' => '',
-      'ctools' => 'a:3:{s:4:"conf";a:3:{s:7:"context";s:25:"argument_entity_id:node_1";s:14:"override_title";i:0;s:19:"override_title_text";s:0:"";}s:4:"type";s:14:"node_type_desc";s:7:"subtype";s:14:"node_type_desc";}',
-    );
-    $field_settings['dynamic']['formatter_settings'] = $formatter_settings;
-    $record = array();
-    $record['id'] = 'node|article|default';
-    $record['entity_type'] = 'node';
-    $record['bundle'] = 'article';
-    $record['view_mode'] = 'default';
-    $record['settings'] = $field_settings;
-    config('ds_field_settings' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
-    cache()->deletePrefix('ds_fields');
-    cache()->delete('ds_field_settings');
-
 
     // Create a article node and verify settings.
     $settings = array(
@@ -136,18 +114,7 @@ class LayoutClassesTest extends BaseTest {
     $this->assertRaw('field-name-test-block-field', t('Custom block field found'));
     $this->assertRaw('Recent content</h2>', t('Custom block field found'));
     $this->assertRaw('Submitted by', t('Submitted field found'));
-    $this->assertText('Use articles for time-sensitive content like news, press releases or blog posts.', t('Dynamic field found'));
     $this->assertText('This is an extra field made available through "Extra fields" functionality.');
-
-    // Test disable sidebar regions.
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertRaw('sidebar-first', 'Left sidebar found.');
-    $hide = array(
-      'additional_settings[hide_sidebars]' => '1',
-    );
-    $this->dsConfigureUI($hide);
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertNoRaw('sidebar-first', 'Left sidebar not found.');
 
     // Test HTML5 wrappers
     $this->assertNoRaw('<header', 'Header not found.');
