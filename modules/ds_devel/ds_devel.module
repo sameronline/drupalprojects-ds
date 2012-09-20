@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Display Suite Devel
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function ds_devel_menu() {
+  $items = array();
+
+  $items['node/%node/devel/markup'] = array(
+    'title' => 'Markup',
+    'page callback' => 'ds_devel_render_object',
+    'page arguments' => array('node', 1),
+    'access arguments' => array('access devel information'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 101,
+  );
+
+  return $items;
+}
+
+/**
+ * Renders the markup of a node in HTML entities.
+ */
+function ds_devel_render_object($type, $node) {
+
+  $build = node_view($node, 'full');
+  $markup = drupal_render($build);
+
+  return array(
+    '#markup' => '<code><pre>' . check_plain($markup) . '</pre></code>'
+  );
+}
