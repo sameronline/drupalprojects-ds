@@ -23,8 +23,8 @@ function ds_forms_theme() {
  */
 function ds_forms_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
 
-  // Most entities are supported.
-  if (in_array($form['#entity_type'], array('node', 'comment', 'bean', 'taxonomy_term', 'user', 'field_collection_item', 'file'))) {
+  // Determine if this entity type is supported
+  if (_ds_forms_is_entity_type_supported($form['#entity_type'])) {
 
     // Add necessary variables for DS Field UI.
     $form['#view_mode'] = 'form';
@@ -196,5 +196,15 @@ function ds_forms_render_region(&$content, $region, $layout) {
     }
   }
   return $output;
+}
+
+/**
+ * Determines if this entity type is supported by ds_forms.
+ *
+ * Currently supports all fieldable entity types.
+ */
+function _ds_forms_is_entity_type_supported($entity_type) {
+  $info = entity_get_info($entity_type);
+  return !empty($info['fieldable']);
 }
 
