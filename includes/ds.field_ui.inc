@@ -1459,7 +1459,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#type' => 'checkbox',
       '#title' => t('Merge other layout attributes'),
       '#description' => 'Certain modules might provide additional attributes for the template wrapper, e.g. RDFa. Disable this option if you prefer to specify these attributes above.',
-      '#default_value' => isset($layout->settings['layout_attributes_merge']) ? $layout->settings['layout_attributes_merge'] : TRUE,
+      '#default_value' => isset($layout->settings['layout_attributes_merge']) ? $layout->settings['layout_attributes_merge'] : FALSE,
       '#weight' => 12,
     );
 
@@ -1947,9 +1947,9 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     $settings += field_info_formatter_settings($formatter_type);
 
     // Import field settings and merge with Field API settings.
-    if (!isset($form_state['formatter_settings'][$key]) && isset($form['#field_settings'][$key])) {
+    if (!isset($form_state['formatter_settings'][$key]) && !empty($form['#field_settings'][$key]['formatter_settings']['ft'])) {
       $form_state['formatter_settings'][$key] = $settings;
-      $form_state['formatter_settings'][$key] += $form['#field_settings'][$key];
+      $form_state['formatter_settings'][$key]['ft'] = $form['#field_settings'][$key]['formatter_settings']['ft'];
     }
 
     // Change default value or Field API format, so we can change the right
