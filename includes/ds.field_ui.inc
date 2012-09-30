@@ -1627,6 +1627,19 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
         ds_extras_field_template_settings_form($settings_form, $form_state, $context);
       }
 
+      // Allow other modules to alter the formatter settings form.
+      // @todo check whether we can't make this cleaner, because we're
+      // calling this twice now.
+      $context = array(
+        'module' => $formatter['module'],
+        'formatter' => $formatter,
+        'field' => $field,
+        'instance' => $instance,
+        'view_mode' => $view_mode,
+        'form' => $form,
+      );
+      drupal_alter('field_formatter_settings_form', $settings_form, $form_state, $context);
+
       if ($settings_form) {
         $table[$key]['format']['#cell_attributes'] = array('colspan' => 3);
         $table[$key]['format']['settings_edit_form'] = array(
@@ -1662,6 +1675,24 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     }
     else {
       $summary = module_invoke($formatter['module'], 'field_formatter_settings_summary', $field, $instance, $view_mode);
+
+      // Allow other modules to alter the summary.
+      $context = array(
+        'field' => $field,
+        'instance' => $instance,
+        'view_mode' => $view_mode,
+      );
+      drupal_alter('field_formatter_settings_summary', $summary, $context);
+
+      // Allow other modules to alter the formatter summary.
+      // @todo check whether we can't make this cleaner, because we're
+      // calling this twice now.
+      $context = array(
+        'field' => $field,
+        'instance' => $instance,
+        'view_mode' => $view_mode,
+      );
+      drupal_alter('field_formatter_settings_summary', $summary, $context);
 
       if (module_exists('ds_extras') && config('ds.extras')->get('field_template', FALSE)) {
         module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
