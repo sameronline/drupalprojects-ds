@@ -1676,14 +1676,6 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     else {
       $summary = module_invoke($formatter['module'], 'field_formatter_settings_summary', $field, $instance, $view_mode);
 
-      // Allow other modules to alter the summary.
-      $context = array(
-        'field' => $field,
-        'instance' => $instance,
-        'view_mode' => $view_mode,
-      );
-      drupal_alter('field_formatter_settings_summary', $summary, $context);
-
       // Allow other modules to alter the formatter summary.
       // @todo check whether we can't make this cleaner, because we're
       // calling this twice now.
