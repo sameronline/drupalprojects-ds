@@ -682,7 +682,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 function ds_field_ui_fields_validate($form, &$form_state) {
   foreach (element_children($form['fields']) as $key) {
     if (isset($form_state['values']['fields'][$key]['settings_edit_form'])) {
-      $settings = $form_state['values']['fields'][$key]['settings_edit_form']['settings']['ft'];
+      $settings = isset($form_state['values']['fields'][$key]['settings_edit_form']['settings']['ft']) ? $form_state['values']['fields'][$key]['settings_edit_form']['settings']['ft'] : array();
       if (!empty($settings)) {
         $merge = isset($form_state['formatter_settings'][$key]['ft']) ? $form_state['formatter_settings'][$key]['ft'] : array();
         $form_state['formatter_settings'][$key]['ft'] = array_merge($merge, $settings);
