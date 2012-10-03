@@ -1255,11 +1255,17 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       $selected = '<strong>' . $chosen_layout['label'] . '</strong>';
       $selected .= '<br/>' . t('The default template can be found in %path', array('%path' => $chosen_layout['path']));
       $suggestions = t('Template suggestions') . ':<ul>';
-      $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '.tpl.php</li>';
-      $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '-' . $bundle . '.tpl.php</li>';
-      if (!isset($form_state['no_view_mode_suggestions'])) {
-        $suggestions .= '<li>' . $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode . '.tpl.php</li></ul>';
+      $suggestions_array = array();
+
+      $suggestions_array[0] = $layout_string . '--' . $entity_type;
+      $suggestions_array[2] = $layout_string . '--' . $entity_type . '-' . $bundle;
+      if (!isset($form_state['no_view_mode_suggestions']) && $view_mode != 'default') {
+        $suggestions_array[1] = $layout_string . '--' . $entity_type . '-' . $view_mode;
+        $suggestions_array[3] = $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode;
       }
+
+      ksort($suggestions_array);
+      $suggestions = '<ul><li>' . implode('.tpl.php</li><li>', $suggestions_array) . '.tpl.php</li></ul>';
     }
     else {
       $suggestions = '';
