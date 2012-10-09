@@ -936,7 +936,7 @@ function ds_field_formatter_settings_summary($field, $instance, $view_mode) {
  * @return $summary
  *   An markup array.
  */
-function ds_field_settings_summary($field, $form_state) {
+function ds_field_settings_summary($field, $form_state, $view_mode) {
 
   $summary = '';
 
@@ -958,6 +958,15 @@ function ds_field_settings_summary($field, $form_state) {
     }
   }
 
+  // Allow other modules to alter the formatter summary.
+  $context = array(
+    'field' => $field,
+    'instance' => array('display' => array('default' => array('settings' => array()))),
+    'view_mode' => $view_mode,
+    'ds' => TRUE,
+  );
+  drupal_alter('field_formatter_settings_summary', $summary, $context);
+
   if (empty($summary)) {
     return NULL; // no summary return nothing
   }
@@ -977,7 +986,7 @@ function ds_field_settings_summary($field, $form_state) {
  * @return $form
  *   A form definition.
  */
-function ds_field_settings_form($field, &$form_state) {
+function ds_field_settings_form($field, &$form_state, $entity_form, $view_mode) {
   $form = module_invoke($field['module'], 'ds_field_settings_form', $field);
 
   // Add field template settings to every field if enabled.
@@ -1002,6 +1011,26 @@ function ds_field_settings_form($field, &$form_state) {
       $form['#markup'] = t('This field does not support Field templates.');
     }
   }
+
+  // Allow other modules to alter the formatter settings form.
+  $context = array(
+    'ds' => TRUE,
+    'field' => $field,
+    'instance' => array(
+      'label' => $field['title'],
+      'bundle' => $field['bundle'],
+      'entity_type' => $field['entity_type'],
+      'display' => array(
+        'default' => array(
+          'settings' => array()
+        ),
+      ),
+    ),
+    'view_mode' => $view_mode,
+    'form' => $entity_form,
+    'form_state' => $form_state,
+  );
+  drupal_alter('field_formatter_settings_form', $form, $context);
 
   return $form;
 }
@@ -1040,7 +1069,11 @@ function ds_ds_field_format_summary($field) {
 function ds_ds_field_settings_form($field) {
   $form = array();
 
-  $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
+  $settings = !empty($field['formatter_settings']['settings']) ? $field['formatter_settings']['settings'] : (!empty($field['properties']['default']) ? $field['properties']['default'] : array());
+
+  if (empty($field['properties']['settings'])) {
+    return $form;
+  }
 
   foreach ($field['properties']['settings'] as $key => $value) {
 
@@ -1872,13 +1905,13 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
     if ($form_state['formatter_settings_edit'] == $key) {
       $table[$key]['settings_summary']['#attributes']['colspan'] = 2;
-      $settings_form = ds_field_settings_form($field, $form_state);
+      $settings_form = ds_field_settings_form($field, $form_state, $form, $view_mode);
       ds_field_row_form_format_construct($table, $key, $settings_form);
     }
     else {
       // After saving, the settings are updated here as well. First we create
       // the element for the table cell.
-      $summary = ds_field_settings_summary($field, $form_state);
+      $summary = ds_field_settings_summary($field, $form_state, $view_mode);
 
       if (isset($summary)) {
         $table[$key]['settings_summary'] = $summary;
