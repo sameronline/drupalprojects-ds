@@ -9,8 +9,8 @@
  * Implements hook_install().
  */
 function ds_forms_install() {
-  db_update('system')
+  /*db_update('system')
     ->fields(array('weight' => 20))
     ->condition('name', 'ds_forms')
-    ->execute();
+    ->execute();*/
 }
