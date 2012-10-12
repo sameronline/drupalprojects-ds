@@ -348,6 +348,27 @@ function ds_ds_fields_info($entity_type) {
     );
   }
 
+  // Support for ECK Entity title
+  if (module_exists('eck')) {
+    $entity_info = entity_get_info($entity_type);
+    if (isset($entity_info['module']) && $entity_info['module'] == 'eck') {
+      $fields[$entity_type]['title'] = array(
+        'title' => t('Title'),
+        'field_type' => DS_FIELD_TYPE_FUNCTION,
+        'function' => 'ds_render_field',
+        'properties' => array(
+          'entity_render_key' => 'title',
+          'settings' => array(
+            'link' => array('type' => 'select', 'options' => array('no', 'yes')),
+            'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
+            'class' => array('type' => 'textfield', 'description' => t('Put a class on the wrapper. Eg: block-title')),
+          ),
+          'default' => array('wrapper' => 'h2', 'link' => 0, 'class' => ''),
+        )
+      );
+    }
+  }
+
   if (isset($fields[$entity_type])) {
     return array($entity_type => $fields[$entity_type]);
   }
