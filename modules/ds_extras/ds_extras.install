@@ -9,10 +9,7 @@
  * Implements hook_install().
  */
 function ds_extras_install() {
-  /*db_update('system')
-    ->fields(array('weight' => 2))
-    ->condition('name', 'ds_extras')
-    ->execute();*/
+  module_set_weight('ds_extras', 2);
 
   $schema['node_revision'] = array();
   ds_extras_schema_alter($schema);

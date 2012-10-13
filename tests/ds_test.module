@@ -18,10 +18,7 @@ function ds_test_install() {
     ->set('fields_extra_list', "node|article|ds_extras_extra_test_field\nnode|article|ds_extras_second_field")
     ->save();
 
-  /*db_update('system')
-    ->fields(array('weight' => 2))
-    ->condition('name', 'ds_test')
-    ->execute();*/
+  module_set_weight('ds_test', 2);
 }
 
 /**

@@ -9,10 +9,7 @@
  * Implements hook_install().
  */
 function ds_install() {
-  /*db_update('system')
-    ->fields(array('weight' => 1))
-    ->condition('name', 'ds')
-    ->execute();*/
+  module_set_weight('ds', 1);
 }
 
 /**
