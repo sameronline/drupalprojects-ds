@@ -868,6 +868,9 @@ function ds_entity_variables(&$vars) {
       $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $vars['elements']['#entity_type'] . '_' . $vars['elements']['#bundle'] . '_' . $vars['elements']['#view_mode'];
     }
 
+    // Allow modules to alter the region layout before it is rendered.
+    drupal_alter('ds_regions', $layout, $vars[$object]);
+
     // Create region variables based on the layout settings.
     foreach ($layout['regions'] as $region_name => $region) {
 
