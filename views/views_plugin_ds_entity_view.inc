@@ -472,7 +472,15 @@ class views_plugin_ds_entity_view extends views_plugin_row {
 
     $row_function = 'ds_views_row_render_' . $this->base_table;
     $content = $row_function($this->entities[$row->{$this->field_alias}], $view_mode, $load_comments);
-    return $content;
+    // Allow other modules to modify the entity render array in context.
+    $context = array(
+      'row' => $row,
+      'view' => &$this->view,
+      'view_mode' => $view_mode,
+      'load_comments' => $load_comments,
+    );
+    drupal_alter('ds_views_row_render_entity', $content, $context);
+    return drupal_render($content);
   }
 }
 
@@ -484,7 +492,7 @@ function ds_views_row_render_node($entity, $view_mode, $load_comments) {
   if ($load_comments && module_exists('comment')) {
     $node_display['comments'] = comment_node_page_additions($entity);
   }
-  return drupal_render($node_display);
+  return $node_display;
 }
 
 /**
@@ -493,7 +501,7 @@ function ds_views_row_render_node($entity, $view_mode, $load_comments) {
 function ds_views_row_render_comment($entity, $view_mode, $load_comments) {
   $node = node_load($entity->nid);
   $element = comment_view($entity, $node, $view_mode);
-  return drupal_render($element);
+  return $element;
 }
 
 /**
@@ -501,7 +509,7 @@ function ds_views_row_render_comment($entity, $view_mode, $load_comments) {
  */
 function ds_views_row_render_users($entity, $view_mode, $load_comments) {
   $element = user_view($entity, $view_mode);
-  return drupal_render($element);
+  return $element;
 }
 
 /**
@@ -509,7 +517,7 @@ function ds_views_row_render_users($entity, $view_mode, $load_comments) {
  */
 function ds_views_row_render_taxonomy_term_data($entity, $view_mode, $load_comments) {
   $element = taxonomy_term_view($entity, $view_mode);
-  return drupal_render($element);
+  return $element;
 }
 
 /**
@@ -517,7 +525,7 @@ function ds_views_row_render_taxonomy_term_data($entity, $view_mode, $load_comme
  */
 function ds_views_row_render_file_managed($entity, $view_mode, $load_comments) {
   $element = file_view($entity, $view_mode);
-  return drupal_render($element);
+  return $element;
 }
 
 /**
@@ -525,5 +533,5 @@ function ds_views_row_render_file_managed($entity, $view_mode, $load_comments) {
  */
 function ds_views_row_render_micro($entity, $view_mode, $load_comments) {
   $element = micro_view($entity, $view_mode);
-  return drupal_render($element);
+  return $element;
 }
