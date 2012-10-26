@@ -570,7 +570,7 @@ function hook_ds_views_row_render_entity_alter(&$content, &$context) {
   if ($context['view_mode'] == 'my_mode') {
     // Modify the view, or the content render array in the context of a view.
     $view = &$context['view'];
-    $element = &drupal_array_get_nested_value($content, array('field_example', 0)));
+    $element = &drupal_array_get_nested_value($content, array('field_example', 0));
   }
 }
 
