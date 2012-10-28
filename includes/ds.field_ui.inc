@@ -447,7 +447,7 @@ function ds_field_ui_layout_change_submit($form, &$form_state) {
   config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
 
   // Clear entity info cache.
-  cache()->deletePrefix('entity_info');
+  entity_info_cache_clear();
 
   // Show message.
   drupal_set_message(t('The layout change has been saved.'));
@@ -593,7 +593,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
 
     // Clear entity info cache.
-    cache()->deletePrefix('entity_info');
+    entity_info_cache_clear();
   }
 }
 
@@ -664,8 +664,8 @@ function ds_field_ui_fields_save($form, &$form_state) {
   }
 
   // Clear the ds_fields cache.
-  cache()->deletePrefix('ds_fields');
-  cache()->delete('ds_field_settings');
+  cache()->invalidateTags(array('ds_fields' => TRUE));
+  cache()->invalidateTags(array('ds_field_settings' => TRUE));
 }
 
 /**
@@ -704,7 +704,7 @@ function ds_field_ui_layout_clone($form, &$form_state) {
     _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $cv);
 
     // Clear entity info cache.
-    cache()->deletePrefix('entity_info');
+    entity_info_cache_clear();
 
     // Show message.
     drupal_set_message(t('The layout has been cloned.'));

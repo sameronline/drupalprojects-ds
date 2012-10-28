@@ -175,7 +175,7 @@ function ds_edit_view_mode_form_submit($form, &$form_state) {
   config('ds.view_modes.' . $view_mode['view_mode'])->setData($view_mode)->save();
 
   // Clear entity info cache and trigger menu build on next request.
-  cache()->deletePrefix('entity_info');
+  entity_info_cache_clear();
   variable_set('menu_router_rebuild_needed', TRUE);
 
   // Redirect.
@@ -247,7 +247,7 @@ function ds_remove_view_mode($form, &$form_state) {
   }
 
   // Clear entity info cache and trigger menu build on next request.
-  cache()->deletePrefix('entity_info');
+  entity_info_cache_clear();
   variable_set('menu_router_rebuild_needed', TRUE);
 
   // Redirect.
