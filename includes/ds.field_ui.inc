@@ -501,7 +501,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     $record['settings']['wrappers'] = array();
     $record['settings']['layout_wrapper'] = 'div';
     $record['settings']['layout_attributes'] = '';
-    $record['settings']['layout_attributes_merge'] = FALSE;
+    $record['settings']['layout_attributes_merge'] = variable_get('ds_layout_attributes_merge', TRUE);;
     $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
     foreach ($fields as $field_key => $field) {
 
@@ -1092,7 +1092,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#type' => 'checkbox',
       '#title' => t('Merge other layout attributes'),
       '#description' => 'Certain modules might provide additional attributes for the template wrapper, e.g. RDFa. Disable this option if you prefer to specify these attributes above.',
-      '#default_value' => isset($layout->settings['layout_attributes_merge']) ? $layout['settings']['layout_attributes_merge'] : FALSE,
+      '#default_value' => isset($layout->settings['layout_attributes_merge']) ? $layout['settings']['layout_attributes_merge'] : variable_get('ds_layout_attributes_merge', TRUE),
       '#weight' => 12,
     );
 
