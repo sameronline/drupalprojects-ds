@@ -38,7 +38,7 @@ class LayoutClassesTest extends BaseTest {
     $this->dsCreatePreprocessField();
 
     $layout = array(
-      'additional_settings[layout]' => 'ds_2col_stacked',
+      'layout' => 'ds_2col_stacked',
     );
 
     $assert = array(
@@ -121,9 +121,9 @@ class LayoutClassesTest extends BaseTest {
     $this->assertNoRaw('<footer', 'Footer not found.');
     $this->assertNoRaw('<article', 'Article not found.');
     $wrappers = array(
-      'additional_settings[region_wrapper][header]' => 'header',
-      'additional_settings[region_wrapper][right]' => 'footer',
-      'additional_settings[region_wrapper][layout_wrapper]' => 'article',
+      'region_wrapper[header]' => 'header',
+      'region_wrapper[right]' => 'footer',
+      'region_wrapper[layout_wrapper]' => 'article',
     );
     $this->dsConfigureUI($wrappers);
     $this->drupalGet('node/' . $node->nid);
@@ -132,12 +132,12 @@ class LayoutClassesTest extends BaseTest {
     $this->assertRaw('<article', 'Article found.');
 
     // Let's create a block field, enable the full mode first.
-    $edit = array('additional_settings[modes][view_modes_custom][full]' => '1');
+    $edit = array('modes[view_modes_custom][full]' => '1');
     $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
 
     // Select layout.
     $layout = array(
-      'additional_settings[layout]' => 'ds_2col',
+      'layout' => 'ds_2col',
     );
 
     $assert = array(
@@ -150,8 +150,8 @@ class LayoutClassesTest extends BaseTest {
 
     // Create new block field.
     $edit = array(
-      'additional_settings[region_to_block][new_block_region]' => 'Block region',
-      'additional_settings[region_to_block][new_block_region_key]' => 'block_region',
+      'region_to_block[new_block_region]' => 'Block region',
+      'region_to_block[new_block_region_key]' => 'block_region',
     );
     $this->drupalPost('admin/structure/types/manage/article/display/full', $edit, t('Save'));
     $this->assertRaw('<td colspan="8">' . t('Block region') . '</td>', 'Block region found');
@@ -204,8 +204,8 @@ class LayoutClassesTest extends BaseTest {
 
     // Test that a default view mode with no layout is not affected by a disabled view mode.
     $edit = array(
-      'additional_settings[layout]' => '',
-      'additional_settings[modes][view_modes_custom][full]' => FALSE,
+      'layout' => '',
+      'modes[view_modes_custom][full]' => FALSE,
     );
     $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
     $this->drupalGet('node/' . $node->nid);

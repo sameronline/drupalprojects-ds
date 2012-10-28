@@ -36,7 +36,7 @@ class HooksTest extends BaseTest {
     $this->assertText('Field altered', 'Test field altered found on node.');
 
     $empty = array();
-    $edit = array('additional_settings[layout]' => 'ds_2col_stacked');
+    $edit = array('layout' => 'ds_2col_stacked');
     $this->dsSelectLayout($edit, $empty, 'admin/config/people/accounts/display');
 
     // Fields can not be found on user.
@@ -100,7 +100,7 @@ class HooksTest extends BaseTest {
     $this->assertRaw('Test Two column', 'Test Two column layout found');
 
     $layout = array(
-      'additional_settings[layout]' => 'dstest_2col',
+      'layout' => 'dstest_2col',
     );
 
     $assert = array(

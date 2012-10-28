@@ -46,10 +46,10 @@ class SearchTest extends BaseTest {
     $this->assertText(t('100% of the site has been indexed. There are 0 items left to index.'), 'Site has been indexed');
 
     // Configure search result view mode.
-    $svm = array('additional_settings[modes][view_modes_custom][search_result]' => 'search_result');
+    $svm = array('modes[view_modes_custom][search_result]' => 'search_result');
     $this->dsConfigureUI($svm);
     $layout = array(
-      'additional_settings[layout]' => 'ds_2col_stacked',
+      'layout' => 'ds_2col_stacked',
     );
     $assert = array(
       'regions' => array(
@@ -90,7 +90,7 @@ class SearchTest extends BaseTest {
     // Search on user.
     // Configure user. We'll just do default.
     $layout = array(
-      'additional_settings[layout]' => 'ds_2col_stacked',
+      'layout' => 'ds_2col_stacked',
     );
     $assert = array(
       'regions' => array(

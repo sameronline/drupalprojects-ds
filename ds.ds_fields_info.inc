@@ -121,9 +121,9 @@ function ds_ds_fields_info($entity_type) {
     if (module_exists('image')) {
       $key = 'ds_user_picture';
       $type = DS_FIELD_TYPE_FUNCTION;
-      $styles = image_styles();
-      foreach ($styles as $formatter) {
-        $picture_formatters['ds_picture_' . $formatter['name']] = drupal_ucfirst(str_replace('_', ' ', $formatter['name']));
+      $styles =  entity_load_multiple('image_style');
+      foreach ($styles as $style) {
+        $picture_formatters['ds_picture_' . $style->name] = $style->label;
       }
     }
     else {
@@ -229,9 +229,9 @@ function ds_ds_fields_info($entity_type) {
       if (module_exists('image')) {
         $key = 'ds_user_picture';
         $type = DS_FIELD_TYPE_FUNCTION;
-        $styles = image_styles();
-        foreach ($styles as $formatter) {
-          $picture_formatters['ds_picture_' . $formatter['name']] = drupal_ucfirst(str_replace('_', ' ', $formatter['name']));
+        $styles =  entity_load_multiple('image_style');
+        foreach ($styles as $style) {
+          $picture_formatters['ds_picture_' . $style->name] = $style->label;
         }
       }
       else {
@@ -291,9 +291,9 @@ function ds_ds_fields_info($entity_type) {
     if (module_exists('image')) {
       $key = 'ds_user_picture';
       $type = DS_FIELD_TYPE_FUNCTION;
-      $styles = image_styles();
-      foreach ($styles as $formatter) {
-        $picture_formatters['ds_picture_' . $formatter['name']] = drupal_ucfirst(str_replace('_', ' ', $formatter['name']));
+      $styles =  entity_load_multiple('image_style');
+      foreach ($styles as $style) {
+        $picture_formatters['ds_picture_' . $style->name] = $style->label;
       }
     }
     else {

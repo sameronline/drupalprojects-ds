@@ -58,7 +58,7 @@ class ViewsTestS extends BaseTest {
 
     // Configure teaser and full layout.
     $layout = array(
-      'additional_settings[layout]' => 'ds_2col',
+      'layout' => 'ds_2col',
     );
     $fields = array(
       'fields[title][region]' => 'left',
@@ -73,7 +73,7 @@ class ViewsTestS extends BaseTest {
     $this->dsSelectLayout($layout, $assert, 'admin/structure/types/manage/article/display/teaser');
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/display/teaser');
     $layout = array(
-      'additional_settings[layout]' => 'ds_4col',
+      'layout' => 'ds_4col',
     );
     $fields = array(
       'fields[post_date][region]' => 'first',

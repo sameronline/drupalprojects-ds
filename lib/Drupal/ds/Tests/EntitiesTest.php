@@ -123,7 +123,7 @@ class EntitiesTest extends BaseTest {
 
     // Configure teaser layout.
     $teaser = array(
-      'additional_settings[layout]' => 'ds_2col',
+      'layout' => 'ds_2col',
     );
     $teaser_assert = array(
       'regions' => array(
@@ -191,12 +191,12 @@ class EntitiesTest extends BaseTest {
     $this->assertNoRaw('Recent content');
 
     // Test revisions. Enable the revision view mode
-    $edit = array('additional_settings[modes][view_modes_custom][revision]' => '1');
+    $edit = array('modes[view_modes_custom][revision]' => '1');
     $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
 
     // Select layout and configure fields.
     $edit = array(
-      'additional_settings[layout]' => 'ds_2col',
+      'layout' => 'ds_2col',
     );
     $assert = array(
       'regions' => array(

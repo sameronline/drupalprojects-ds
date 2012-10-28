@@ -201,18 +201,19 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
       }
     }
 
-    $form['additional_settings']['region_to_block'] = array(
+    $form['region_to_block'] = array(
       '#type' => 'fieldset',
+      '#group' => 'additional_settings',
       '#title' => t('Block regions'),
       '#description' => t('Create additional regions in this layout which will be exposed as blocks. Note that preprocess fields will fail to print.')
     );
 
-    $form['additional_settings']['region_to_block']['new_block_region'] = array(
+    $form['region_to_block']['new_block_region'] = array(
       '#type' => 'textfield',
       '#title' => t('Region name'),
       '#description' => t('Enter a name to create a new region.'),
     );
-    $form['additional_settings']['region_to_block']['new_block_region_key'] = array(
+    $form['region_to_block']['new_block_region_key'] = array(
       '#title' => t('Machine name'),
       '#type' => 'machine_name',
       '#default_value' => '',
@@ -222,12 +223,12 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
       '#disabled' => FALSE,
       '#machine_name' => array(
         'exists' => 'ds_extras_region_to_block_unique',
-        'source' => array('additional_settings', 'region_to_block', 'new_block_region'),
+        'source' => array('region_to_block', 'new_block_region'),
       ),
     );
 
     if (!empty($region_blocks_options)) {
-      $form['additional_settings']['region_to_block']['remove_block_region'] = array(
+      $form['region_to_block']['remove_block_region'] = array(
         '#type' => 'checkboxes',
         '#title' => t('Existing block regions'),
         '#options' => $region_blocks_options,
@@ -441,7 +442,7 @@ function ds_extras_vd_field_ui_submit($form, &$form_state) {
 function ds_extras_block_submit($form, &$form_state) {
 
   // Create new region.
-  if (!empty($form_state['values']['additional_settings']['region_to_block']['new_block_region'])) {
+  if (!empty($form_state['values']['region_to_block']['new_block_region'])) {
 
     // Get the entity_type, bundle and view mode.
     $entity_type = $form['#entity_type'];
@@ -449,11 +450,11 @@ function ds_extras_block_submit($form, &$form_state) {
     $view_mode = $form['#view_mode'];
 
     $block = array(
-      'title' => $form_state['values']['additional_settings']['region_to_block']['new_block_region'],
+      'title' => $form_state['values']['region_to_block']['new_block_region'],
       'info' => "{$entity_type}_{$bundle}_{$view_mode}",
     );
 
-    $block_key = $form_state['values']['additional_settings']['region_to_block']['new_block_region_key'];
+    $block_key = $form_state['values']['region_to_block']['new_block_region_key'];
     $region_blocks = config('ds.extras')->get('blocks');
     if (empty($region_blocks)) {
       $region_blocks = array();
@@ -463,10 +464,10 @@ function ds_extras_block_submit($form, &$form_state) {
   }
 
   // Remove a region.
-  if (isset($form_state['values']['additional_settings']['region_to_block']['remove_block_region'])) {
+  if (isset($form_state['values']['region_to_block']['remove_block_region'])) {
     $save = FALSE;
     $region_blocks = config('ds.extras')->get('blocks');
-    $remove = $form_state['values']['additional_settings']['region_to_block']['remove_block_region'];
+    $remove = $form_state['values']['region_to_block']['remove_block_region'];
     foreach ($remove as $key => $value) {
       if ($key === $value) {
         $save = TRUE;

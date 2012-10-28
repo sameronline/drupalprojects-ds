@@ -40,7 +40,7 @@ class BaseTest extends WebTestBase {
   function dsSelectLayout($edit = array(), $assert = array(), $url = 'admin/structure/types/manage/article/display', $options = array()) {
 
     $edit += array(
-      'additional_settings[layout]' => 'ds_2col_stacked',
+      'layout' => 'ds_2col_stacked',
     );
 
     $this->drupalPost($url, $edit, t('Save'), $options);
@@ -80,8 +80,8 @@ class BaseTest extends WebTestBase {
   function dsSelectClasses($edit = array(), $url = 'admin/structure/types/manage/article/display') {
 
     $edit += array(
-      "additional_settings[header][]" => 'class_name_1',
-      "additional_settings[footer][]" => 'class_name_2',
+      "header[]" => 'class_name_1',
+      "footer[]" => 'class_name_2',
     );
 
     $this->drupalPost($url, $edit, t('Save'));

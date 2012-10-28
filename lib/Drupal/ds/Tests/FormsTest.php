@@ -30,7 +30,7 @@ class FormsTest extends BaseTest {
 
     // Configure teaser layout.
     $form = array(
-      'additional_settings[layout]' => 'ds_2col_stacked',
+      'layout' => 'ds_2col_stacked',
     );
     $form_assert = array(
       'regions' => array(

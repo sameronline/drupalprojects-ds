@@ -83,22 +83,26 @@ function ds_field_ui_create_vertical_tabs(&$form) {
       '#suffix' => '</div>',
       '#tree' => TRUE,
     );
-    $form['#attached']['js'][] = 'core/misc/form.js';
-    $form['#attached']['js'][] = 'core/misc/collapse.js';
   }
 
   $view_mode_admin_access = user_access('admin_view_modes') && module_exists('ds_ui');
   if (isset($form['modes'])) {
+    $form['modes']['#group'] = 'additional_settings';
+    $form['modes']['#weight'] = -10;
     if ($view_mode_admin_access) {
       $form['modes']['view_modes_custom']['#description'] = l(t('Manage view modes'), 'admin/structure/ds/view_modes');
     }
-    $form['additional_settings']['modes'] = $form['modes'];
-    $form['additional_settings']['modes']['#weight'] = -10;
-    unset($form['modes']);
   }
   else {
     if ($view_mode_admin_access) {
-      $form['additional_settings']['modes']['view_modes_custom']['#description'] = l(t('Manage view modes'), 'admin/structure/ds/view_modes');
+      $form['modes'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Custom display settings'),
+        '#group' => 'additional_settings',
+      );
+      $form['modes']['view_modes_custom'] = array(
+       '#markup' => l(t('Manage view modes'), 'admin/structure/ds/view_modes'),
+      );
     }
   }
 }
@@ -121,7 +125,7 @@ function ds_field_ui_regions($form, $form_state) {
   // Ignore fieldgroup options.
   if (isset($form_state['no_field_group'])) {
     unset($form['fields']['_add_new_group']);
-    $form['additional_settings']['field_group']['#access'] = FALSE;
+    $form['field_group']['#access'] = FALSE;
   }
 
   // Check layout.
@@ -277,8 +281,8 @@ function ds_field_ui_row_region($row) {
  * Move the view modes so Field UI can handle them.
  */
 function ds_field_ui_layouts_validate($form, &$form_state) {
-  if (isset($form_state['values']['additional_settings']['modes']['view_modes_custom'])) {
-    $form_state['values']['view_modes_custom'] = $form_state['values']['additional_settings']['modes']['view_modes_custom'];
+  if (isset($form_state['values']['modes']['view_modes_custom'])) {
+    $form_state['values']['view_modes_custom'] = $form_state['values']['modes']['view_modes_custom'];
   }
 }
 
@@ -465,8 +469,8 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $view_mode = $form['#view_mode'];
 
   // Determine layout variables.
-  $layout = $form_state['values']['additional_settings']['layout'];
-  $old_layout = $form_state['values']['additional_settings']['old_layout'];
+  $layout = $form_state['values']['layout'];
+  $old_layout = $form_state['values']['old_layout'];
   $new_layout = ($layout != $old_layout) || empty($old_layout);
 
   // Save layout and add regions if necessary.
@@ -560,29 +564,29 @@ function ds_field_ui_layouts_save($form, &$form_state) {
         continue;
       }
 
-      if (isset($form_state['values']['additional_settings']['layout_class'])) {
-        $record['settings']['classes']['layout_class'] = $form_state['values']['additional_settings']['layout_class'];
+      if (isset($form_state['values']['layout_class'])) {
+        $record['settings']['classes']['layout_class'] = $form_state['values']['layout_class'];
       }
 
       // Additional classes on regions.
-      if (isset($form_state['values']['additional_settings'][$region])) {
+      if (isset($form_state['values'][$region])) {
         // Do not save empty string.
-        $classes = is_array($form_state['values']['additional_settings'][$region]) ? implode(' ', $form_state['values']['additional_settings'][$region]) : array();
+        $classes = is_array($form_state['values'][$region]) ? implode(' ', $form_state['values'][$region]) : array();
         if (!empty($classes)) {
-          $record['settings']['classes'][$region] = $form_state['values']['additional_settings'][$region];
+          $record['settings']['classes'][$region] = $form_state['values'][$region];
         }
       }
 
       // Additional wrappers on regions.
-      if (isset($form_state['values']['additional_settings']['region_wrapper'][$region])) {
-        $record['settings']['wrappers'][$region] = $form_state['values']['additional_settings']['region_wrapper'][$region];
+      if (isset($form_state['values']['region_wrapper'][$region])) {
+        $record['settings']['wrappers'][$region] = $form_state['values']['region_wrapper'][$region];
       }
     }
 
     // Layout wrapper
-    $record['settings']['layout_wrapper'] = $form_state['values']['additional_settings']['region_wrapper']['layout_wrapper'];
-    $record['settings']['layout_attributes'] = filter_xss_admin($form_state['values']['additional_settings']['region_wrapper']['layout_attributes']);
-    $record['settings']['layout_attributes_merge'] = $form_state['values']['additional_settings']['region_wrapper']['layout_attributes_merge'];
+    $record['settings']['layout_wrapper'] = $form_state['values']['region_wrapper']['layout_wrapper'];
+    $record['settings']['layout_attributes'] = filter_xss_admin($form_state['values']['region_wrapper']['layout_attributes']);
+    $record['settings']['layout_attributes_merge'] = $form_state['values']['region_wrapper']['layout_attributes_merge'];
 
     $record['settings'] = $record['settings'];
 
@@ -673,7 +677,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
  */
 function ds_field_ui_layout_clone($form, &$form_state) {
 
-  $clone = $form_state['values']['additional_settings']['clone'];
+  $clone = $form_state['values']['clone'];
   list($ce, $cb, $cv) = explode('|', $clone);
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
@@ -1025,12 +1029,12 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   }
 
   // Add layouts form.
-  $form['additional_settings']['ds_layouts'] = array(
+  $form['ds_layouts'] = array(
     '#type' => 'fieldset',
     '#title' => t('Layout for !bundle in !view_mode', array('!bundle' => str_replace('_', ' ', $bundle), '!view_mode' => str_replace('_', ' ', $view_mode))),
     '#collapsible' => TRUE,
+    '#group' => 'additional_settings',
     '#collapsed' => FALSE,
-    '#parents' => array('additional_settings'),
     '#weight' => -100,
   );
 
@@ -1052,7 +1056,8 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
 
     // Add wrappers
     $wrapper_options = array('div' => 'Div', 'span' => 'Span', 'section' => 'Section', 'article' => 'Article', 'header' => 'Header', 'footer' => 'Footer', 'aside' => 'Aside');
-    $form['additional_settings']['region_wrapper'] = array(
+    $form['region_wrapper'] = array(
+      '#group' => 'additional_settings',
       '#type' => 'fieldset',
       '#title' => t('Custom wrappers'),
       '#description' => t('Choose a wrapper. All Display Suite layouts support this option.')
@@ -1060,11 +1065,11 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
 
     // Hide the fieldset in case of the reset layout.
     if ($layout['layout'] === 'ds_reset') {
-      $form['additional_settings']['region_wrapper']['#access'] = FALSE;
+      $form['region_wrapper']['#access'] = FALSE;
     }
 
     foreach (array_keys($layout['regions']) as $region) {
-      $form['additional_settings']['region_wrapper'][$region] = array(
+      $form['region_wrapper'][$region] = array(
         '#type' => 'select',
         '#options' => $wrapper_options,
         '#title' => t('Wrapper for @region', array('@region' => $layout['regions'][$region])),
@@ -1072,7 +1077,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       );
     }
 
-    $form['additional_settings']['region_wrapper']['layout_wrapper'] = array(
+    $form['region_wrapper']['layout_wrapper'] = array(
       '#type' => 'select',
       '#options' => $wrapper_options,
       '#title' => t('Layout wrapper'),
@@ -1080,7 +1085,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#weight' => 10,
     );
 
-    $form['additional_settings']['region_wrapper']['layout_attributes'] = array(
+    $form['region_wrapper']['layout_attributes'] = array(
       '#type' => 'textfield',
       '#title' => t('Layout attributes'),
       '#description' => 'E.g. role="navigation"',
@@ -1088,7 +1093,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#weight' => 11,
     );
 
-    $form['additional_settings']['region_wrapper']['layout_attributes_merge'] = array(
+    $form['region_wrapper']['layout_attributes_merge'] = array(
       '#type' => 'checkbox',
       '#title' => t('Merge other layout attributes'),
       '#description' => 'Certain modules might provide additional attributes for the template wrapper, e.g. RDFa. Disable this option if you prefer to specify these attributes above.',
@@ -1097,12 +1102,12 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     );
 
     // Add extra classes for the regions to have more control while theming.
-    $form['additional_settings']['ds_classes'] = array(
+    $form['ds_classes'] = array(
+      '#group' => 'additional_settings',
       '#type' => 'fieldset',
       '#title' => t('Custom classes'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
-      '#parents' => array('additional_settings'),
       '#access' => empty($chosen_layout['flexible']),
     );
 
@@ -1110,7 +1115,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     $classes = _ds_classes();
     if (!empty($classes)) {
 
-      $form['additional_settings']['ds_classes']['layout_class'] = array(
+      $form['ds_classes']['layout_class'] = array(
         '#type' => 'select',
         '#multiple' => TRUE,
         '#options' => $classes,
@@ -1119,7 +1124,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       );
 
       foreach (array_keys($layout['regions']) as $region) {
-        $form['additional_settings']['ds_classes'][$region] = array(
+        $form['ds_classes'][$region] = array(
           '#type' => 'select',
           '#multiple' => TRUE,
           '#options' => $classes,
@@ -1128,15 +1133,15 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
         );
       }
       if ($classes_access) {
-        $form['additional_settings']['ds_classes']['info'] = array('#markup' => l(t('Manage region  and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())));
+        $form['ds_classes']['info'] = array('#markup' => l(t('Manage region  and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())));
       }
     }
     else {
       if ($classes_access) {
-        $form['additional_settings']['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any CSS classes which can be used on regions.') . '</p><p>' . l(t('Manage region and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())) . '</p>');
+        $form['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any CSS classes which can be used on regions.') . '</p><p>' . l(t('Manage region and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())) . '</p>');
       }
       else {
-        $form['additional_settings']['ds_classes']['#access'] = FALSE;
+        $form['ds_classes']['#access'] = FALSE;
       }
     }
   }
@@ -1160,20 +1165,20 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       if (!empty($options)) {
 
         // Clone from another layout.
-        $form['additional_settings']['ds_clone'] = array(
+        $form['ds_clone'] = array(
           '#type' => 'fieldset',
+          '#group' => 'additional_settings',
           '#title' => t('Clone layout'),
           '#collapsible' => TRUE,
           '#collapsed' => TRUE,
-          '#parents' => array('additional_settings'),
         );
-        $form['additional_settings']['ds_clone']['clone'] = array(
+        $form['ds_clone']['clone'] = array(
           '#title' => t('Select an existing layout to clone.'),
           '#type' => 'select',
           '#options' => $options,
           '#weight' => 20,
         );
-        $form['additional_settings']['ds_clone']['clone_submit'] = array(
+        $form['ds_clone']['clone_submit'] = array(
           '#type' => 'submit',
           '#value' => t('Clone layout'),
           '#submit' => array('ds_field_ui_layout_clone'),
@@ -1183,12 +1188,12 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     }
   }
 
-  $form['additional_settings']['ds_layouts']['id'] = array(
+  $form['ds_layouts']['id'] = array(
     '#type' => 'value',
     '#value' => isset($layout['id']) ? $layout['id'] : $form['#export_id'],
   );
 
-  $form['additional_settings']['ds_layouts']['old_layout'] = array(
+  $form['ds_layouts']['old_layout'] = array(
     '#type' => 'value',
     '#value' => isset($layout['layout']) ? $layout['layout'] : 0,
   );
@@ -1222,7 +1227,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
 function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $layout, $entity_type, $bundle, $view_mode) {
   $layout_string = '';
 
-  $form['additional_settings']['ds_layouts']['layout'] = array(
+  $form['ds_layouts']['layout'] = array(
     '#type' => 'select',
     '#title' => t('Select a layout'),
     '#options' => $layout['layout_options'],
@@ -1236,15 +1241,15 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
     ),
   );
 
-  $form['additional_settings']['ds_layouts']['preview'] = array(
+  $form['ds_layouts']['preview'] = array(
     '#type' => 'container',
     '#prefix' => '<div id="ds_layout_wrapper">',
     '#suffix' => '</div>',
     '#weight' => -3,
   );
 
-  if (isset($layout['layout']) || isset($form_state['values']['additional_settings']['layout'])) {
-    $layout_string = isset($form_state['values']['additional_settings']['layout']) ? $form_state['values']['additional_settings']['layout'] : $layout['layout'];
+  if (isset($layout['layout']) || isset($form_state['values']['layout'])) {
+    $layout_string = isset($form_state['values']['layout']) ? $form_state['values']['layout'] : $layout['layout'];
   }
 
   if (!empty($layout_string)) {
@@ -1272,23 +1277,23 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       $selected = t('You have selected the flexible %layout_label layout.', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
     }
 
-    if (isset($form_state['values']['additional_settings']['layout']) || (!empty($layout) && isset($layout['regions']))) {
+    if (isset($form_state['values']['layout']) || (!empty($layout) && isset($layout['regions']))) {
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
-      $current_layout = isset($form_state['values']['additional_settings']['layout']) && (!isset($layout->layout) || $form_state['values']['additional_settings']['layout'] != $layout->layout) ? t('Current layout (after save)') : t('Current layout');
+      $current_layout = isset($form_state['values']['layout']) && (!isset($layout->layout) || $form_state['values']['layout'] != $layout->layout) ? t('Current layout (after save)') : t('Current layout');
       $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $layout_string . '.png' : $fallback_image;
 
-      $form['additional_settings']['ds_layouts']['preview'] ['title'] = array(
+      $form['ds_layouts']['preview'] ['title'] = array(
         '#markup' => '<div class="ds-layout-preview-title">' . $current_layout . '</div>',
       );
-      $form['additional_settings']['ds_layouts']['preview'] ['image'] = array(
+      $form['ds_layouts']['preview'] ['image'] = array(
         '#markup' => '<div class="ds-layout-preview-image"><img src="' . base_path() . $image . '"/></div>',
       );
-      $form['additional_settings']['ds_layouts']['preview'] ['suggestions'] = array(
+      $form['ds_layouts']['preview'] ['suggestions'] = array(
         '#markup' => '<div class="ds-layout-preview-suggestion"><p>' . $selected . '</p><p>' . t('!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p></div>',
       );
     }
 
-    if (isset($form_state['values']['additional_settings']['layout']) && (!isset($layout['layout']) || $form_state['values']['additional_settings']['layout'] != $layout['layout'])) {
+    if (isset($form_state['values']['layout']) && (!isset($layout['layout']) || $form_state['values']['layout'] != $layout['layout'])) {
 
       // Get admin path.
       $admin_path = _field_ui_bundle_admin_path($entity_type, $bundle);
@@ -1326,7 +1331,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
  * Ajax callback for _ds_field_ui_table_layouts_preview().
  */
 function ds_field_ui_table_layouts_preview_callback($form, $form_state) {
-  return $form['additional_settings']['ds_layouts']['preview'];
+  return $form['ds_layouts']['preview'];
 }
 
 /**
