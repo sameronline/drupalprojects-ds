@@ -228,11 +228,11 @@ function ds_shared_form_submit($form, &$form_state) {
 
   // Save field and clear ds_fields.
   config('ds.field.' . $field['field'])->setData($field)->save();
-  cache()->deletePrefix('ds_fields');
+  cache()->Prefix('ds_fields');
 
   // Redirect.
   $form_state['redirect'] = 'admin/structure/ds/fields';
-  drupal_set_message(t('The field %field has been saved', array('%field' => $field['label'])));
+  drupal_set_message(t('The field %field has been saved.', array('%field' => $field['label'])));
 }
 
 /**
@@ -380,7 +380,7 @@ function ds_remove_fields_form($form, &$form_state, $field = '') {
   if ($field = config('ds.field.' . $field)->get()) {
     $form['#ds_field'] = $field;
     return confirm_form($form,
-      t('Are you sure you want to delete %field?', array('%field' => $field['label'])),
+      t('Are you sure you want to delete %field ?', array('%field' => $field['label'])),
       'admin/structure/ds/fields',
       t('This action cannot be undone.'),
       t('Delete'),
@@ -388,7 +388,7 @@ function ds_remove_fields_form($form, &$form_state, $field = '') {
     );
   }
   else {
-    drupal_set_message(t('Unknown field'));
+    drupal_set_message(t('Unknown field.'));
     drupal_goto('admin/structure/ds/fields');
   }
 }

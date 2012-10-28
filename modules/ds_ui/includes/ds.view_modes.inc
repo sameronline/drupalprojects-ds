@@ -180,7 +180,7 @@ function ds_edit_view_mode_form_submit($form, &$form_state) {
 
   // Redirect.
   $form_state['redirect'] = 'admin/structure/ds/view_modes';
-  drupal_set_message(t('The view mode %view_mode has been saved', array('%view_mode' => $view_mode['label'])));
+  drupal_set_message(t('The view mode %view_mode has been saved.', array('%view_mode' => $view_mode['label'])));
 }
 
 /**
@@ -198,7 +198,7 @@ function ds_remove_view_mode_confirm($form, &$form_state, $view_mode = '') {
   if ($view_mode = config('ds.view_modes.' . $view_mode)->get()) {
     $form['#view_mode'] = $view_mode;
     return confirm_form($form,
-      t('Are you sure you want to delete %view_mode?', array('%view_mode' => $view_mode['label'])),
+      t('Are you sure you want to delete %view_mode ?', array('%view_mode' => $view_mode['label'])),
       'admin/structure/ds/view_modes',
       t('This action cannot be undone.'),
       t('Delete'),
