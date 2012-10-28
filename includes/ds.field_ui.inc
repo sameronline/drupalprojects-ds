@@ -584,9 +584,9 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     }
 
     // Layout wrapper
-    $record['settings']['layout_wrapper'] = $form_state['values']['region_wrapper']['layout_wrapper'];
-    $record['settings']['layout_attributes'] = filter_xss_admin($form_state['values']['region_wrapper']['layout_attributes']);
-    $record['settings']['layout_attributes_merge'] = $form_state['values']['region_wrapper']['layout_attributes_merge'];
+    $record['settings']['layout_wrapper'] = $form_state['values']['layout_wrapper'];
+    $record['settings']['layout_attributes'] = filter_xss_admin($form_state['values']['layout_attributes']);
+    $record['settings']['layout_attributes_merge'] = $form_state['values']['layout_attributes_merge'];
 
     $record['settings'] = $record['settings'];
 
