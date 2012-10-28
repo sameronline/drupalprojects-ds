@@ -96,6 +96,7 @@ function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {
     '#disabled' => !empty($view_mode['view_mode']),
     '#machine_name' => array(
       'exists' => 'ds_view_mode_unique',
+      'source' => array('name'),
     ),
   );
 

@@ -150,6 +150,7 @@ function ds_shared_form(&$form, $field) {
     '#disabled' => !empty($field['field']),
     '#machine_name' => array(
       'exists' => 'ds_field_unique',
+      'source' => array('name'),
     ),
   );
 
