@@ -22,9 +22,23 @@ function ds_view_modes_list() {
       $row[] = check_plain($view_mode_value['label']);
       $row[] = $view_mode_value['view_mode'];
       $row[] = ucwords(str_replace('_', ' ', implode(', ', $view_mode_value['entities'])));
-      $operations = l(t('Edit'), 'admin/structure/ds/view_modes/manage/' . $view_mode_value['view_mode'], array('alias' => TRUE));
-      $operations .= ' - ' . l(t('Delete'), 'admin/structure/ds/view_modes/delete/' . $view_mode_value['view_mode'], array('alias' => TRUE));
-      $row[] = $operations;
+      $operations = array();
+      $operations['edit'] = array(
+        'title' => t('Edit'),
+        'href' => 'admin/structure/ds/view_modes/manage/' . $view_mode_value['view_mode'],
+      );
+      $operations['delete'] = array(
+        'title' => t('Delete'),
+        'href' => 'admin/structure/ds/view_modes/delete/' . $view_mode_value['view_mode'],
+      );
+      $row[] = array(
+        'data' => array(
+          '#type' => 'operations',
+          '#subtype' => 'ds',
+          '#links' => $operations,
+        ),
+      );
+
       $rows[] = $row;
     }
 

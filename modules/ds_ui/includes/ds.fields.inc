@@ -22,10 +22,24 @@ function ds_custom_fields_list() {
       $row[] = ds_field_human_name($field_value['field_type']);
       $row[] = $field_value['field'];
       $row[] = ucwords(str_replace('_', ' ', implode(', ', $field_value['entities'])));
-      $operations = l(t('Edit'), 'admin/structure/ds/fields/manage/' . $field_value['field'], array('alias' => TRUE));
-      $operations .= ' - ' . l(t('Delete'), 'admin/structure/ds/fields/delete/' . $field_value['field'], array('alias' => TRUE));
 
-      $row[] = $operations;
+      $operations = array();
+      $operations['edit'] = array(
+        'title' => t('Edit'),
+        'href' => 'admin/structure/ds/fields/manage/' . $field_value['field'],
+      );
+      $operations['delete'] = array(
+        'title' => t('Delete'),
+        'href' => 'admin/structure/ds/fields/delete/' . $field_value['field'],
+      );
+      $row[] = array(
+        'data' => array(
+          '#type' => 'operations',
+          '#subtype' => 'ds',
+          '#links' => $operations,
+        ),
+      );
+
       $rows[] = $row;
     }
 

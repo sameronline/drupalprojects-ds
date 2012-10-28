@@ -42,12 +42,27 @@ function ds_layout_list() {
         }
 
         $row[] = $bundle['label'];
-        $links = array(l(t('Manage display'), $path . '/display'));
+
+        $operations['manage_display'] = array(
+          'title' => t('Manage display'),
+          'href' => $path . '/display',
+        );
         // Add Mangage Form link if this entity type is supported by ds_forms.
         if (module_exists('ds_forms') && _ds_forms_is_entity_type_supported($entity_type)) {
-          $links[] = l(t('Manage form'), $path . '/fields');
+          $operations['manage_form'] = array(
+            'title' => t('Manage form'),
+            'href' => $path . '/fields',
+          );
         }
-        $row[] = implode(' - ', $links);
+        // Render an unordered list of operations links.
+        $row[] = array(
+          'data' => array(
+            '#type' => 'operations',
+            '#subtype' => 'ds',
+            '#links' => $operations,
+          ),
+        );
+
         $rows[] = $row;
       }
 
