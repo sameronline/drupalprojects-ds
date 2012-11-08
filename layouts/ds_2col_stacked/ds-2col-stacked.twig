@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * Display Suite 2 column stacked template.
+ */
+#}
+<{{ layout_wrapper }} {{ layout_attributes }} class="ds-2col-stacked {{ attributes.class }} clearfix">
+
+  <{{ header_wrapper }} class="group-header{{ header_classes }}">
+    {{ header }}
+  </{{ header_wrapper }}>
+
+  <{{ left_wrapper }} class="group-left{{ left_classes }}">
+    {{ left }}
+  </{{ left_wrapper }}>
+
+  <{{ right_wrapper }} class="group-right{{ right_classes }}">
+    {{ right }}
+  </{{ right_wrapper }}>
+
+  <{{ footer_wrapper }} class="group-footer{{ footer_classes }}">
+    {{ footer }}
+  </{{ footer_wrapper }}>
+
+</{{ layout_wrapper }}>
