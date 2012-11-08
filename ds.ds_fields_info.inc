@@ -109,16 +109,18 @@ function ds_ds_fields_info($entity_type) {
     ),
   );
 
-  // "Submitted by"-line.
-  $date_formatters = array('ds_time_ago' => t('Time ago')) + $date_formatters;
-  $fields['node']['submitted_by'] = array(
-    'title' => t('Submitted by'),
-    'field_type' => DS_FIELD_TYPE_FUNCTION,
-    'function' => 'ds_render_submitted_by',
-    'properties' => array(
-      'formatters' => $date_formatters,
-    ),
-  );
+  // "Submitted by"-line. Skip this if the "Submitted By" module is used.
+  if (!module_exists('submitted_by')) {
+    $date_formatters = array('ds_time_ago' => t('Time ago')) + $date_formatters;
+    $fields['node']['submitted_by'] = array(
+      'title' => t('Submitted by'),
+      'field_type' => DS_FIELD_TYPE_FUNCTION,
+      'function' => 'ds_render_submitted_by',
+      'properties' => array(
+        'formatters' => $date_formatters,
+      ),
+    );
+  }
 
   // User picture
   if (variable_get('user_pictures', 0)) {
