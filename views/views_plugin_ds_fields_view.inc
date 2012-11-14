@@ -23,6 +23,12 @@ class views_plugin_ds_fields_view extends views_plugin_row {
   // Return base_field based on base_table. It might not be
   // the cleanest solution, it's the fastest though.
   function ds_views_3_support() {
+    if (strpos($this->base_table, 'eck_') === 0) {
+      // Base tables of entities created by entity construction kit (eck)
+      // are prefixed with 'eck_' and the base field is always 'id'.
+      return 'id';
+    }
+
     $base_table_fields = array(
       'node' => 'nid',
       'comment' => 'cid',
