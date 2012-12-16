@@ -1212,7 +1212,7 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
     foreach ($items as $delta => $item) {
       if ($item['tid'] == 'autocreate') {
         // We don't necessarily have a link when this is
-        // an autocreated term, ususally in preview.
+        // an autocreated term, usually in preview.
         // So just send the term as check plained markup.
         $build['#markup'] = check_plain($item['name']);
       }
@@ -1230,7 +1230,8 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
     foreach ($items as $delta => $item) {
       if ($item['tid'] == 'autocreate') {
         // We don't necessarily have a link when this is
-        // an autocreated term, ususally in preview.
+        // an autocreated term, usually in preview.
+        // So just send the term as check plained markup.
         $item_display = check_plain($item['name']);
       }
       else {
