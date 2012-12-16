@@ -548,6 +548,8 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   $record->layout = $layout;
   $record->settings = array();
 
+  $form_state['layout_saved'] = FALSE;
+
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
     db_delete('ds_layout_settings')
@@ -558,6 +560,9 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   }
 
   if ($new_layout && !empty($layout)) {
+
+    $form_state['layout_saved'] = TRUE;
+
     // Save new layout.
     $record->settings = $record->settings;
 
@@ -602,6 +607,8 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   }
   // Update existing layout.
   elseif (!empty($layout)) {
+
+    $form_state['layout_saved'] = TRUE;
 
     $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
 
@@ -706,6 +713,10 @@ function ds_field_ui_fields_save($form, &$form_state) {
     ->condition('bundle', $bundle)
     ->condition('view_mode', $view_mode)
     ->execute();
+
+  if (empty($form_state['layout_saved'])) {
+    return;
+  }
 
   $field_settings = array();
 
