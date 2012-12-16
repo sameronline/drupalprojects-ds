@@ -1056,6 +1056,12 @@ function ds_ds_field_format_summary($field) {
   $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
   $functions = module_invoke_all('ds_field_theme_functions_info');
   foreach ($settings as $key => $value) {
+
+    // Ignore Field Formatter conditions.
+    if ($key == 'conditions') {
+      continue;
+    }
+
     if ($key == 'ctools') {
       $conf = unserialize($value);
       $summary .= t('Type: !type', array('!type' => check_plain(drupal_ucfirst(str_replace('_', ' ', $conf['subtype'])))));
