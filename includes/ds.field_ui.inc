@@ -936,7 +936,7 @@ function ds_field_formatter_settings_summary($field, $instance, $view_mode) {
  * @return $summary
  *   An markup array.
  */
-function ds_field_settings_summary($field, $form_state, $view_mode) {
+function ds_field_settings_summary($field, $form_state, $form, $view_mode) {
 
   $summary = '';
 
@@ -958,8 +958,16 @@ function ds_field_settings_summary($field, $form_state, $view_mode) {
     }
   }
 
+  if (!empty($form_state['complete form'])) {
+    $formatter_name = $form_state['complete form']['fields'][$field['name']]['format']['type']['#value'];
+  }
+  else {
+    $formatter_name = $form['fields'][$field['name']]['format']['type']['#default_value'];
+  }
+
   // Allow other modules to alter the formatter summary.
   $context = array(
+    'formatter' => $formatter_name,
     'field' => $field,
     'instance' => array('display' => array('default' => array('settings' => array()))),
     'view_mode' => $view_mode,
@@ -1012,9 +1020,12 @@ function ds_field_settings_form($field, &$form_state, $entity_form, $view_mode) 
     }
   }
 
+  $formatter_name = $form_state['complete form']['fields'][$field['name']]['format']['type']['#value'];
+
   // Allow other modules to alter the formatter settings form.
   $context = array(
     'ds' => TRUE,
+    'formatter' => $formatter_name,
     'field' => $field,
     'instance' => array(
       'label' => $field['title'],
@@ -1910,7 +1921,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     else {
       // After saving, the settings are updated here as well. First we create
       // the element for the table cell.
-      $summary = ds_field_settings_summary($field, $form_state, $view_mode);
+      $summary = ds_field_settings_summary($field, $form_state, $form, $view_mode);
 
       if (isset($summary)) {
         $table[$key]['settings_summary'] = $summary;
@@ -2088,6 +2099,8 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
 
       // Allow other modules to alter the formatter summary.
       $context = array(
+        'module' => $formatter['module'],
+        'formatter' => $formatter,
         'field' => $field,
         'instance' => $instance,
         'view_mode' => $view_mode,
