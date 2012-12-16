@@ -828,8 +828,10 @@ function _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode
   foreach ($instances as $instance) {
     // If this field instance has display settings defined for this view mode,
     // respect those settings.
-    $instance['display'][$view_mode] = $instance['display'][$copy_view_mode];
-    field_update_instance($instance);
+    if (isset($instance['display'][$copy_view_mode])) {
+      $instance['display'][$view_mode] = $instance['display'][$copy_view_mode];
+      field_update_instance($instance);
+    }
   }
 
   // Update display settings for 'extra fields'.
