@@ -444,10 +444,14 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
   // Add the ranking expressions.
   _node_rankings($query);
 
-  // Load results.
-  $find = $query
-    ->limit(config('ds.search')->get('search_node_limit'))
-    ->execute();
+  $limit = config('ds.search')->get('search_node_limit');
+  // Only add limit if it is greater than zero so we can display all items.
+  if ($limit) {
+    $query->limit($limit);
+  }
+
+   // Load results.
+  $find = $query->execute();
   $results = array();
   foreach ($find as $item) {
     $node = node_load($item->sid);
