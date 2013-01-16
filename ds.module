@@ -219,14 +219,11 @@ function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
  * Implements hook_module_implements_alter().
  */
 function ds_module_implements_alter(&$implementations, $hook) {
-  // node_field_display_module_alter() disables all labels on all fields
+  // node_entity_display_alter() disables all labels on all fields
   // when the view mode is 'search_index'. If you set display modes for
   // this view mode by hand, then the hook isn't needed. Since this
-  // may be called hundreds of times on some pages, it's worth disabling it.
-  // See http://drupal.org/node/834278
-  // This code is also in Performance hacks module, but it's not bad to
-  // disable this too in Display Suite by default.
-  if ($hook == 'field_display_node_alter') {
+  // may be called dozens of times on some pages, it's worth disabling it.
+  if ($hook == 'entity_display_alter') {
     unset($implementations['node']);
   }
 }
@@ -259,7 +256,7 @@ function ds_entity_view_modes($entity_type = NULL) {
         $entity_info = entity_get_info($entity_type);
         break;
     }
-    return $entity_info['view modes'];
+    return $entity_info['view_modes'];
   }
 }
 
@@ -455,10 +452,6 @@ function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRU
  *   The configuration of a DS field.
  * @param $entity
  *   The current entity.
- * @param $entity_type
- *   The name of the entity.
- * @param $bundle
- *   The name of the bundle.
  * @param $view_mode
  *   The name of the view mode.
  * @param $build
@@ -466,19 +459,14 @@ function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRU
  * @return $markup
  *   The markup of the field used for output.
  */
-function ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_mode, $build = array()) {
+function ds_get_field_value($key, $field, $entity, $view_mode, $build = array()) {
 
   $field['field_name'] = $key;
   $field['entity'] = $entity;
-  $field['entity_type'] = $entity_type;
-  $field['bundle'] = $bundle;
+  $field['entity_type'] = $entity->entityType();
+  $field['bundle'] = $entity->bundle();
   $field['view_mode'] = $view_mode;
   $field['build'] = $build;
-
-  // Special case for ds_views which can handle custom fields now.
-  if ($field['field_type'] != DS_FIELD_TYPE_PREPROCESS && $entity_type == 'ds_views') {
-    $entity->preprocess_fields[] = $key;
-  }
 
   switch ($field['field_type']) {
 
@@ -569,7 +557,7 @@ function ds_field_attach_view_alter(&$build, $context) {
 
   // Add Display Suite display fields.
   $fields = ds_get_fields($entity_type);
-  $field_values = ds_get_field_settings($entity_type, $bundle, $layout['view_mode']);
+  $field_values = ds_get_field_settings($entity_type, $bundle, $view_mode);
 
   foreach ($field_values as $key => $field) {
 
@@ -586,7 +574,7 @@ function ds_field_attach_view_alter(&$build, $context) {
     if (isset($field_values[$key]['formatter_settings'])) {
       $field['formatter_settings'] = $field_values[$key]['formatter_settings'];
     }
-    $field_value = ds_get_field_value($key, $field, $entity, $entity_type, $bundle, $view_mode, $build);
+    $field_value = ds_get_field_value($key, $field, $entity, $view_mode, $build);
 
     // Title label.
     if ($key == 'title' && $entity_type == 'node') {
@@ -596,33 +584,28 @@ function ds_field_attach_view_alter(&$build, $context) {
 
     if (!empty($field_value) || (string) $field_value === '0') {
 
-      // Special case for views.
-      if (!empty($build['render_code_fields'])) {
-        $build[$key] = $field_value;
-      }
-      else {
-        $build[$key] = array(
-          '#theme' => 'field',
-          '#field_type' => 'ds',
-          '#title' => $field['title'],
-          '#weight' => isset($field_values[$key]['weight']) ? $field_values[$key]['weight'] : 0,
-          '#label_display' => isset($field_values[$key]['label']) ? $field_values[$key]['label'] : 'inline',
-          '#field_name' => $key,
-          '#bundle' => $bundle,
-          '#object' => $entity,
-          '#entity_type' => $entity_type,
-          '#view_mode' => $view_mode,
-          '#access' => ($field_permissions && function_exists('ds_extras_ds_field_access')) ? ds_extras_ds_field_access($key, $entity_type) : TRUE,
-          '#items' => array(
-            0 => array(
-              'value' => $field_value,
-            ),
-          ),
+      $build[$key] = array(
+        '#theme' => 'field',
+        '#field_type' => 'ds',
+        '#title' => $field['title'],
+        '#weight' => isset($field_values[$key]['weight']) ? $field_values[$key]['weight'] : 0,
+        '#label_display' => isset($field_values[$key]['label']) ? $field_values[$key]['label'] : 'inline',
+        '#field_name' => $key,
+        '#bundle' => $bundle,
+        '#language' => $entity->langcode,
+        '#object' => $entity,
+        '#entity_type' => $entity_type,
+        '#view_mode' => $view_mode,
+        '#access' => ($field_permissions && function_exists('ds_extras_ds_field_access')) ? ds_extras_ds_field_access($key, $entity_type) : TRUE,
+        '#items' => array(
           0 => array(
-            '#markup' => $field_value,
+            'value' => $field_value,
           ),
-        );
-      }
+        ),
+        0 => array(
+          '#markup' => $field_value,
+        ),
+      );
     }
   }
 
