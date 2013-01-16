@@ -169,11 +169,11 @@ function ds_extras_settings_submit($form, &$form_state) {
   }
 
   // @todo create ds cache clear api function ?
-  cache()->deletePrefix('ds_fields');
+  //cache()->deletePrefix('ds_fields');
   entity_info_cache_clear();
   field_info_cache_clear();
   module_implements_reset();
-  cache()->deletePrefix('theme_registry:');
+  drupal_theme_rebuild();
   // @todo is now state I guess ?
   variable_set('menu_router_rebuild_needed', TRUE);
 }
