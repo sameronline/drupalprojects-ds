@@ -555,7 +555,7 @@ function ds_field_attach_view_alter(&$build, $context) {
     }
   }
 
-  // Add Display Suite display fields.
+  // Add Display Suite fields.
   $fields = ds_get_fields($entity_type);
   $field_values = ds_get_field_settings($entity_type, $bundle, $view_mode);
 
@@ -609,11 +609,11 @@ function ds_field_attach_view_alter(&$build, $context) {
     }
   }
 
-  // Add path to css file for this layout and disable block regions if necessary.
+  // Add css file for this layout.
   if (isset($layout['css']) && !isset($loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'])) {
-    // Register css file.
+    // Register.
     $loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'] = TRUE;
-    // Add css file.
+    // Add to #attached.
     $build['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
   }
 }
