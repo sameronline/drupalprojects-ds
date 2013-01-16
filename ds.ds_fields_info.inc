@@ -88,10 +88,13 @@ function ds_ds_fields_info($entity_type) {
   );
 
   // Created time.
-  $format_types = system_get_date_types();
+  $date_types = system_get_date_formats();
   $date_formatters = array();
-  foreach ($format_types as $formatter) {
-    $date_formatters['ds_post_date_' . $formatter['type']] = t($formatter['title']);
+  foreach ($date_types as $machine_name => $value) {
+    if ($value['locked']) {
+      continue;
+    }
+    $date_formatters['ds_post_date_' . $machine_name] = t($value['name']);
   }
   $fields['node']['post_date'] = array(
     'title' => t('Post date'),
@@ -104,7 +107,7 @@ function ds_ds_fields_info($entity_type) {
 
   // "Submitted by"-line.
   $date_formatters = array('ds_time_ago' => t('Time ago')) + $date_formatters;
-  $fields['node']['submitted_by'] = array(
+  $fields['node']['ds_submitted_by'] = array(
     'title' => t('Submitted by'),
     'field_type' => DS_FIELD_TYPE_FUNCTION,
     'function' => 'ds_render_submitted_by',
@@ -175,10 +178,13 @@ function ds_ds_fields_info($entity_type) {
     );
 
     // Created time.
-    $format_types = system_get_date_types();
+    $date_types = system_get_date_formats();
     $date_formatters = array();
-    foreach ($format_types as $formatter) {
-      $date_formatters['ds_post_date_' . $formatter['type']] = t($formatter['title']);
+    foreach ($date_types as $machine_name => $value) {
+      if ($value['locked']) {
+        continue;
+      }
+      $date_formatters['ds_post_date_' . $machine_name] = t($value['name']);
     }
     $fields['comment']['post_date'] = array(
       'title' => t('Post date'),

@@ -1074,7 +1074,7 @@ function ds_contextual_links_view_alter(&$element, $items) {
     $layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE);
 
     // Get the manage display URI.
-    $admin_path = _field_ui_bundle_admin_path($entity_type, $bundle);
+    $admin_path = field_ui_bundle_admin_path($entity_type, $bundle);
 
     // Check view mode settings.
     $view_mode_settings = field_view_mode_settings($entity_type, $bundle);

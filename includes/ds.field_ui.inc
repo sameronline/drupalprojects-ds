@@ -96,7 +96,7 @@ function ds_field_ui_create_vertical_tabs(&$form) {
   else {
     if ($view_mode_admin_access) {
       $form['modes'] = array(
-        '#type' => 'fieldset',
+        '#type' => 'details',
         '#title' => t('Custom display settings'),
         '#group' => 'additional_settings',
       );
@@ -1030,7 +1030,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
 
   // Add layouts form.
   $form['ds_layouts'] = array(
-    '#type' => 'fieldset',
+    '#type' => 'details',
     '#title' => t('Layout for !bundle in !view_mode', array('!bundle' => str_replace('_', ' ', $bundle), '!view_mode' => str_replace('_', ' ', $view_mode))),
     '#collapsible' => TRUE,
     '#group' => 'additional_settings',
@@ -1058,7 +1058,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     $wrapper_options = array('div' => 'Div', 'span' => 'Span', 'section' => 'Section', 'article' => 'Article', 'header' => 'Header', 'footer' => 'Footer', 'aside' => 'Aside');
     $form['region_wrapper'] = array(
       '#group' => 'additional_settings',
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Custom wrappers'),
       '#description' => t('Choose a wrapper. All Display Suite layouts support this option.')
     );
@@ -1104,7 +1104,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     // Add extra classes for the regions to have more control while theming.
     $form['ds_classes'] = array(
       '#group' => 'additional_settings',
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Custom classes'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
@@ -1166,7 +1166,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
 
         // Clone from another layout.
         $form['ds_clone'] = array(
-          '#type' => 'fieldset',
+          '#type' => 'details',
           '#group' => 'additional_settings',
           '#title' => t('Clone layout'),
           '#collapsible' => TRUE,
@@ -1296,7 +1296,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
     if (isset($form_state['values']['layout']) && (!isset($layout['layout']) || $form_state['values']['layout'] != $layout['layout'])) {
 
       // Get admin path.
-      $admin_path = _field_ui_bundle_admin_path($entity_type, $bundle);
+      $admin_path = field_ui_bundle_admin_path($entity_type, $bundle);
       if ($view_mode != 'form') {
         $admin_path .= '/display';
       }
@@ -1582,7 +1582,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     if (isset($form_state['formatter_settings'][$key])) {
       $settings = array_merge($settings, $form_state['formatter_settings'][$key]);
     }
-    $settings += field_info_formatter_settings($formatter_type);
+    //$settings += field_info_formatter_settings($formatter_type);
 
     // Import field settings and merge with Field API settings.
     if (!isset($form_state['formatter_settings'][$key]) && !empty($form['#field_settings'][$key]['formatter_settings']['ft'])) {
@@ -1596,7 +1596,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
 
     $instance['display'][$view_mode]['type'] = $formatter_type;
     $formatter = field_info_formatter_types($formatter_type);
-    $instance['display'][$view_mode]['module'] = $formatter['module'];
+    //$instance['display'][$view_mode]['module'] = $formatter['module'];
     $instance['display'][$view_mode]['settings'] = $settings;
 
     // Base button element for the various formatter settings actions.
@@ -1685,7 +1685,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       }
     }
     else {
-      $summary = module_invoke($formatter['module'], 'field_formatter_settings_summary', $field, $instance, $view_mode);
+      //$summary = module_invoke($formatter['module'], 'field_formatter_settings_summary', $field, $instance, $view_mode);
 
       // Allow other modules to alter the formatter summary.
       // @todo check whether we can't make this cleaner, because we're

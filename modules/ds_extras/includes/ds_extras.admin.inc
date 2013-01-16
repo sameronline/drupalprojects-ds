@@ -14,18 +14,16 @@ function ds_extras_settings($form) {
 
   $form['additional_settings'] = array(
     '#type' => 'vertical_tabs',
-    '#theme_wrappers' => array('vertical_tabs'),
-    '#prefix' => '<div>',
-    '#suffix' => '</div>',
+  );
+
+  $form['fs1'] = array(
+    '#type' => 'details',
+    '#title' => t('Field Templates'),
+    '#group' => 'additional_settings',
     '#tree' => TRUE,
   );
 
-  $form['additional_settings']['fs1'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Field Templates'),
-  );
-
-  $form['additional_settings']['fs1']['field_template'] = array(
+  $form['fs1']['field_template'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable Field Templates'),
     '#description' => t('Customize the labels and the HTML output of your fields.'),
@@ -34,7 +32,7 @@ function ds_extras_settings($form) {
 
   $theme_functions = module_invoke_all('ds_field_theme_functions_info');
   unset($theme_functions['theme_ds_field_expert']);
-  $form['additional_settings']['fs1']['ft-default'] = array(
+  $form['fs1']['ft-default'] = array(
     '#type' => 'select',
     '#title' => t('Default Field Template'),
     '#options' => $theme_functions,
@@ -47,7 +45,7 @@ function ds_extras_settings($form) {
     ),
   );
 
-  $form['additional_settings']['fs1']['ft-kill-colon'] = array(
+  $form['fs1']['ft-kill-colon'] = array(
     '#type' => 'checkbox',
     '#title' => t('Hide colon'),
     '#default_value' => $config->get('ft-kill-colon'),
@@ -61,19 +59,21 @@ function ds_extras_settings($form) {
   );
 
 
-  $form['additional_settings']['fs2'] = array(
-    '#type' => 'fieldset',
+  $form['fs2'] = array(
+    '#type' => 'details',
     '#title' => t('Extra fields'),
+    '#group' => 'additional_settings',
+    '#tree' => TRUE,
   );
 
-  $form['additional_settings']['fs2']['fields_extra'] = array(
+  $form['fs2']['fields_extra'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable extra fields'),
     '#description' => t('Make fields from other modules available on the "Manage display" screens.'),
     '#default_value' => $config->get('fields_extra'),
   );
 
-  $form['additional_settings']['fs2']['fields_extra_list'] = array(
+  $form['fs2']['fields_extra_list'] = array(
     '#type' => 'textarea',
     '#description' => t('Enter fields line by line, where each line is a combination of entity type, bundle and field name. E.g. node|article|tweetbutton. It might be possible that the actual content of the field depends on configuration of that field/module.'),
     '#default_value' => $config->get('fields_extra_list'),
@@ -84,19 +84,21 @@ function ds_extras_settings($form) {
     ),
   );
 
-  $form['additional_settings']['fs4'] = array(
-    '#type' => 'fieldset',
+  $form['fs4'] = array(
+    '#type' => 'details',
     '#title' => t('Other'),
+    '#group' => 'additional_settings',
+    '#tree' => TRUE,
   );
 
-  $form['additional_settings']['fs4']['switch_view_mode'] = array(
+  $form['fs4']['switch_view_mode'] = array(
     '#type' => 'checkbox',
     '#title' => t('View mode per node'),
     '#description' => t('Change view modes for individual nodes. A new tab \'Display settings\' will appear on the content create form.<br />You can also pass the name of a view mode through the URL, eg node/x?v=full.<br />If you install the Page manager module and override the node view, Page manager will win.'),
     '#default_value' => $config->get('switch_view_mode'),
   );
 
-  $form['additional_settings']['fs4']['field_permissions'] = array(
+  $form['fs4']['field_permissions'] = array(
     '#type' => 'checkbox',
     '#title' => t('Field permissions'),
     '#description' => t('Enables view permissions on all Display Suite fields.'),
@@ -104,7 +106,7 @@ function ds_extras_settings($form) {
   );
 
   if (module_exists('block')) {
-    $form['additional_settings']['fs4']['region_to_block'] = array(
+    $form['fs4']['region_to_block'] = array(
       '#type' => 'checkbox',
       '#title' => t('Region to block'),
       '#description' => t('Create additional regions exposed as block. Note: this will not work on the default view mode.'),
@@ -113,7 +115,7 @@ function ds_extras_settings($form) {
   }
 
   if (module_exists('flag')) {
-    $form['additional_settings']['fs4']['flag'] = array(
+    $form['fs4']['flag'] = array(
       '#type' => 'checkbox',
       '#title' => t('Flag'),
       '#description' => t('Expose flags as fields on nodes.'),
@@ -121,14 +123,14 @@ function ds_extras_settings($form) {
     );
   }
 
-  $form['additional_settings']['fs4']['switch_field'] = array(
+  $form['fs4']['switch_field'] = array(
     '#type' => 'checkbox',
     '#title' => t('View mode switcher'),
     '#description' => t('Adds a field with links to switch view modes inline with Ajax. Only works for nodes at this time.'),
     '#default_value' => $config->get('switch_field'),
   );
 
-  $form['additional_settings']['fs4']['hidden_region'] = array(
+  $form['fs4']['hidden_region'] = array(
     '#type' => 'checkbox',
     '#title' => t('Hidden region'),
     '#description' => t('Add a hidden region to the layouts. Fields will be built but not printed.'),
@@ -146,15 +148,14 @@ function ds_extras_settings($form) {
  * Validate callback: Extras settings screen.
  */
 function ds_extras_settings_validate($form, &$form_state) {
-  foreach ($form_state['values']['additional_settings'] as $tab => $value) {
+  foreach ($form_state['values'] as $tab => $value) {
     if (is_array($value)) {
       foreach ($value as $variable => $val) {
         $form_state['values'][$variable] = $val;
       }
     }
-    unset($form_state['values']['additional_settings'][$tab]);
+    unset($form_state['values'][$tab]);
   }
-  unset($form_state['values']['additional_settings']);
   unset($form_state['values']['submit'], $form_state['values']['form_id'], $form_state['values']['form_token'], $form_state['values']['form_build_id'], $form_state['values']['op']);
 }
 
@@ -167,11 +168,13 @@ function ds_extras_settings_submit($form, &$form_state) {
     config('ds.extras')->set($key, $value)->save();
   }
 
+  // @todo create ds cache clear api function ?
   cache()->deletePrefix('ds_fields');
-  cache()->deletePrefix('entity_info:');
+  entity_info_cache_clear();
+  field_info_cache_clear();
+  module_implements_reset();
   cache()->deletePrefix('theme_registry:');
-  cache('cache_bootstrap')->delete('module_implements');
-  cache('cache_field')->delete('field_info_fields');
+  // @todo is now state I guess ?
   variable_set('menu_router_rebuild_needed', TRUE);
 }
 
@@ -202,7 +205,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
     }
 
     $form['region_to_block'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#group' => 'additional_settings',
       '#title' => t('Block regions'),
       '#description' => t('Create additional regions in this layout which will be exposed as blocks. Note that preprocess fields will fail to print.')
