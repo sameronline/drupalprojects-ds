@@ -91,29 +91,30 @@ function _ds_entity_type_update($entity_type, $info, $action) {
  */
 function _ds_theme_registry_alter(&$theme_registry) {
 
-  // Inject ds_entity_variables in all entity theming functions.
+  // Inject ds_preprocess_ds_layout in all entity theming functions.
   $entity_info = entity_get_info();
-  foreach ($entity_info as $entity => $info) {
-    if (isset($entity_info[$entity]['fieldable']) && $entity_info[$entity]['fieldable']) {
+  foreach ($entity_info as $entity_type => $info) {
+    if (!empty($entity_info[$entity_type]['fieldable'])) {
 
       // User uses user_profile for theming.
-      if ($entity == 'user') $entity = 'user_profile';
+      if ($entity_type == 'user') $entity_type = 'user_profile';
 
       // Only add preprocess functions if entity exposes theme function.
-      if (isset($theme_registry[$entity])) {
-        $theme_registry[$entity]['preprocess functions'][] = 'ds_entity_variables';
+      if (isset($theme_registry[$entity_type])) {
+        $theme_registry[$entity_type]['preprocess functions'][] = 'ds_preprocess_ds_layout';
       }
     }
   }
 
   // Support for File Entity.
   if (isset($theme_registry['file_entity'])) {
-    $theme_registry['file_entity']['preprocess functions'][] = 'ds_entity_variables';
+    $theme_registry['file_entity']['preprocess functions'][] = 'ds_preprocess_ds_layout';
   }
 
   // Support for Entity API.
+  // @todo this might probably go.
   if (isset($theme_registry['entity'])) {
-    $theme_registry['entity']['preprocess functions'][] = 'ds_entity_variables';
+    $theme_registry['entity']['preprocess functions'][] = 'ds_preprocess_ds_layout';
   }
 }
 
@@ -128,11 +129,11 @@ function _ds_entity_info_alter(&$entity_info) {
     $view_mode_value = config($config)->get();
     $view_mode = array(
       'label' => check_plain($view_mode_value['label']),
-      'custom settings' => FALSE,
+      'custom_settings' => FALSE,
     );
     foreach ($view_mode_value['entities'] as $entity_type) {
       if (isset($entity_info[$entity_type])) {
-        $entity_info[$entity_type]['view modes'][$view_mode_value['view_mode']] = $view_mode;
+        $entity_info[$entity_type]['view_modes'][$view_mode_value['view_mode']] = $view_mode;
       }
     }
   }
@@ -165,9 +166,9 @@ function _ds_entity_info_alter(&$entity_info) {
 
   $revision = array(
     'label' => 'Revision',
-    'custom settings' => FALSE,
+    'custom_settings' => FALSE,
   );
-  $entity_info['node']['view modes']['revision'] = $revision;
+  $entity_info['node']['view_modes']['revision'] = $revision;
 }
 
 /**

@@ -1617,7 +1617,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       $formatter = field_info_formatter_types($formatter_type);
       $instance['display'][$view_mode]['type'] = $formatter_type;
       $instance['display'][$view_mode]['module'] = $formatter['module'];
-      $instance['display'][$view_mode]['settings'] = $settings + field_info_formatter_settings($formatter_type);
+      //$instance['display'][$view_mode]['settings'] = $settings + field_info_formatter_settings($formatter_type);
       $function = $formatter['module'] . '_field_formatter_settings_form';
 
       // Add the default formatter settings if any.

@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Template\Attribute;
+use Drupal\entity\Plugin\Core\Entity;
 
 /**
  * Constants for field types.
@@ -526,22 +527,23 @@ function ds_field_attach_view_alter(&$build, $context) {
     return;
   }
 
-  // If views and core doesn't send information along on the entity,
-  // Display Suite doesn't have a context to render the fields.
-  if (!isset($build['#entity_type']) && !isset($build['#bundle'])) {
-    return;
-  }
+  $entity_type = $context['entity']->entityType();
+  $bundle = $context['entity']->bundle();
+  $view_mode = $context['view_mode'];
 
   // If no layout is configured, stop as well.
-  if (!ds_get_layout($build['#entity_type'], $build['#bundle'], $context['view_mode'])) {
+  if (!ds_get_layout($entity_type, $bundle, $view_mode)) {
     return;
   }
 
-  $entity_type = $build['#entity_type'];
-  $bundle = $build['#bundle'];
-  $view_mode = $context['view_mode'];
   $entity = $context['entity'];
   $layout = ds_get_layout($entity_type, $bundle, $view_mode);
+
+  // Put #entity_type, #bundle and #layout on the build so we can
+  // access it in ds_entity_variables().
+  $build['#entity_type'] = $entity_type;
+  $build['#bundle'] = $bundle;
+  $build['#ds_layout'] = $layout;
 
   // Check on field/delta limit.
   if (isset($layout['settings']['limit'])) {
@@ -634,12 +636,14 @@ function ds_field_attach_view_alter(&$build, $context) {
 }
 
 /**
- * Add variables to an entity.
+ * Process layout.
  *
  * This function is added in ds_theme_registry_alter().
  */
-function ds_entity_variables(&$vars) {
-  if (isset($vars['elements']) && isset($vars['elements']['#bundle']) && $layout = ds_get_layout($vars['elements']['#entity_type'], $vars['elements']['#bundle'], $vars['elements']['#view_mode'])) {
+function ds_preprocess_ds_layout(&$vars) {
+  if (isset($vars['elements']['#ds_layout'])) {
+
+    $layout = $vars['elements']['#ds_layout'];
 
     $render_container = 'content';
     // User uses user_profile as container.
