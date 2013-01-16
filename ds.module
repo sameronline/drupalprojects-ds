@@ -7,6 +7,7 @@
 
 use Drupal\Core\Template\Attribute;
 use Drupal\entity\Plugin\Core\Entity;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Constants for field types.
@@ -1025,7 +1026,7 @@ function ds_field_formatter_info() {
 /**
  * Implements hook_field_formatter_view().
  */
-function ds_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+function ds_field_formatter_view(EntityInterface $entity, $field, $instance, $langcode, $items, $display) {
   $element = array();
 
   if ($display['type'] === 'ds_taxonomy_view_mode') {
