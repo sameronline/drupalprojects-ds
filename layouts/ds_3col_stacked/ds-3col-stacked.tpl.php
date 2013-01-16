@@ -5,7 +5,7 @@
  * Display Suite 3 column 25/50/25 stacked template.
  */
 ?>
-<<?php print $layout_wrapper; print $layout_attributes; ?> class="ds-3col-stacked <?php print print $attributes['class'];?> clearfix">
+<<?php print $layout_wrapper; print $layout_attributes; ?> class="ds-3col-stacked <?php print $attributes['class'];?> clearfix"<?php print $attributes; ?>>
 
   <?php if (isset($title_suffix['contextual_links'])): ?>
   <?php print render($title_suffix['contextual_links']); ?>

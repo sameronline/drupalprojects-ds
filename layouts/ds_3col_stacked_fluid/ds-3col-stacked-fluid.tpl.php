@@ -11,7 +11,7 @@
   if ($left) $attributes['class'] .= ' group-sidebar-left';
   if ($right) $attributes['class'] .= ' group-sidebar-right';
 ?>
-<<?php print $layout_wrapper; print $layout_attributes; ?> class="ds-3col-stacked-fluid <?php print print $attributes['class'];?> clearfix">
+<<?php print $layout_wrapper; print $layout_attributes; ?> class="ds-3col-stacked-fluid <?php print $attributes['class'];?> clearfix"<?php print $attributes;?>>
 
   <?php if (isset($title_suffix['contextual_links'])): ?>
   <?php print render($title_suffix['contextual_links']); ?>
