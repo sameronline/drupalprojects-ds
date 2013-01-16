@@ -13,27 +13,26 @@ function ds_layout_list() {
 
   // All entities.
   $rows = array();
-  $entities = entity_get_info();
+  $entity_info = entity_get_info();
 
-  // Change label of node content type to 'Content' and move to the top
-  if (isset($entities['node'])) {
-    $node_entity = $entities['node'];
-    $node_entity['label'] = 'Content';
-    unset($entities['node']);
-    $entities = array_merge(array('node' => $node_entity), $entities);
+  // Move node to the top.
+  if (isset($entity_info['node'])) {
+    $node_entity = $entity_info['node'];
+    unset($entity_info['node']);
+    $entity_info = array_merge(array('node' => $node_entity), $entity_info);
   }
 
-  if (isset($entities['comment'])) {
-    $comment_entity = $entities['comment'];
-    unset($entities['comment']);
-    $entities['comment'] = $comment_entity;
+  if (isset($entity_info['comment'])) {
+    $comment_entity = $entity_info['comment'];
+    unset($entity_info['comment']);
+    $entity_info['comment'] = $comment_entity;
   }
 
-  foreach ($entities as $entity_type => $entity) {
-    if ((isset($entity['fieldable']) && $entity['fieldable']) || isset($entity['ds_display'])) {
+  foreach ($entity_info as $entity_type => $info) {
+    if (!empty($info['fieldable']) && !empty($info['base_table'])) {
 
       $rows = array();
-      foreach ($entity['bundles'] as $bundle_type => $bundle) {
+      foreach ($info['bundles'] as $bundle_type => $bundle) {
         $row = array();
 
         $path = isset($bundle['admin']['real path']) ? $bundle['admin']['real path'] : (isset($bundle['admin']['path']) ? $bundle['admin']['path'] : '');
@@ -47,14 +46,14 @@ function ds_layout_list() {
           'title' => t('Manage display'),
           'href' => $path . '/display',
         );
-        // Add Mangage Form link if this entity type is supported by ds_forms.
-        if (module_exists('ds_forms') && _ds_forms_is_entity_type_supported($entity_type)) {
+        // Add Mangage Form link if Display Suite Forms is enabled.
+        if (module_exists('ds_forms')) {
           $operations['manage_form'] = array(
             'title' => t('Manage form'),
             'href' => $path . '/fields',
           );
         }
-        // Render an unordered list of operations links.
+        // Add operation links.
         $row[] = array(
           'data' => array(
             '#type' => 'operations',
@@ -68,19 +67,20 @@ function ds_layout_list() {
 
       if (!empty($rows)) {
         $variables = array(
-          'header' => array(array('data' => $entity['label']), array('data' => t('operations'), 'class' => 'ds-display-list-options')),
+          'header' => array(array('data' => $info['label']), array('data' => t('operations'), 'class' => 'ds-display-list-options')),
           'rows' => $rows,
         );
         $build['list_' . $entity_type] = array(
           '#markup' => theme('table', $variables)
         );
 
-        $entity_rows = array();
+        $info_rows = array();
         $rows = array();
       }
     }
   }
-  drupal_add_css(drupal_get_path('module', 'ds') . '/css/ds.admin.css');
+
+  $build['#attached']['css'] = array(drupal_get_path('module', 'ds') . '/css/ds.admin.css');
 
   return $build;
 }

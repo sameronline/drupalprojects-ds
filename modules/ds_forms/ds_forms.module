@@ -207,4 +207,3 @@ function _ds_forms_is_entity_type_supported($entity_type) {
   $info = entity_get_info($entity_type);
   return !empty($info['fieldable']);
 }
-
