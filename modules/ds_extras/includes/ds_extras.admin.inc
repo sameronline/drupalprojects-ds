@@ -406,7 +406,7 @@ function ds_extras_ds_field_settings_form($field) {
     $bundle = $field['bundle'];
     $view_mode = $field['view_mode'];
     $settings = isset($field['formatter_settings']['vms']) ? $field['formatter_settings']['vms'] : array();
-    $view_modes = ds_entity_view_modes($entity_type);
+    $view_modes = entity_get_view_modes($entity_type);
 
     $form['info'] = array(
       '#markup' => t('Enter a label for the link for the view modes you want to switch to.<br />Leave empty to hide link. They will be localized.'),

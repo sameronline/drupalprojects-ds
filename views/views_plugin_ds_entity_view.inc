@@ -106,7 +106,7 @@ class views_plugin_ds_entity_view extends views_plugin_row {
     // In case we're working with users or managed files, change the entity type variable.
     if ($entity_type == 'users') $entity_type = 'user';
     if ($entity_type == 'file_managed') $entity_type = 'file';
-    $entity_view_modes = ds_entity_view_modes($entity_type);
+    $entity_view_modes = entity_get_view_modes($entity_type);
     foreach ($entity_view_modes as $key => $view_mode) {
       $view_mode_options[$key] = $view_mode['label'];
     }

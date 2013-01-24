@@ -197,11 +197,19 @@ function ds_theme_registry_alter(&$theme_registry) {
 }
 
 /**
- * Implements hook_entity_info_alter().
+ * Implements ds_entity_bundle_info_alter().
  */
-function ds_entity_info_alter(&$entity_info) {
+function ds_entity_bundle_info_alter(&$bundles) {
   module_load_include('inc', 'ds', 'includes/ds.registry');
-  _ds_entity_info_alter($entity_info);
+  _ds_entity_bundle_info_alter($bundles);
+}
+
+/**
+ * Implements hook_entity_view_mode_info_alter().
+ */
+function ds_entity_view_mode_info_alter(&$view_modes) {
+  module_load_include('inc', 'ds', 'includes/ds.registry');
+  _ds_entity_view_mode_info_alter($view_modes);
 }
 
 /**
@@ -238,27 +246,6 @@ function ds_kill_switch() {
     return TRUE;
   }
   return FALSE;
-}
-
-/**
- * Get entity view modes.
- *
- * @param $entity_type
- *   The name of the entity type.
- */
-function ds_entity_view_modes($entity_type = NULL) {
-  if (!empty($entity_type)) {
-    switch ($entity_type) {
-      // For taxonomy terms the base table and the entity type are different
-      case 'taxonomy_term_data':
-        $entity_info = entity_get_info('taxonomy_term');
-        break;
-      default:
-        $entity_info = entity_get_info($entity_type);
-        break;
-    }
-    return $entity_info['view_modes'];
-  }
 }
 
 /**
@@ -312,7 +299,7 @@ function ds_get_layout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
   $layout_key = $entity_type . '_' . $bundle . '_' . $view_mode;
   if (!isset($layouts[$layout_key])) {
 
-    $entity_info = entity_get_info();
+    $bundles = entity_get_bundles();
 
     $overriden = TRUE;
     if ($view_mode != 'form') {
@@ -320,15 +307,15 @@ function ds_get_layout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
       $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
     }
     // Check if a layout is configured.
-    if (isset($entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode]) && ($overriden || $view_mode == 'default')) {
-      $layouts[$layout_key] = $entity_info[$entity_type]['bundles'][$bundle]['layouts'][$view_mode];
+    if (isset($bundles[$entity_type][$bundle]['layouts'][$view_mode]) && ($overriden || $view_mode == 'default')) {
+      $layouts[$layout_key] = $bundles[$entity_type][$bundle]['layouts'][$view_mode];
       $layouts[$layout_key]['view_mode'] = $view_mode;
     }
 
     // In case $view_mode is not found, check if we have a default layout,
     // but only if the view mode settings aren't overridden for this view mode.
-    if ($view_mode != 'default' && !$overriden && $fallback && isset($entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'])) {
-      $layouts[$layout_key] = $entity_info[$entity_type]['bundles'][$bundle]['layouts']['default'];
+    if ($view_mode != 'default' && !$overriden && $fallback && isset($bundles[$entity_type][$bundle]['layouts']['default'])) {
+      $layouts[$layout_key] = $bundles[$entity_type][$bundle]['layouts']['default'];
       $layouts[$layout_key]['view_mode'] = 'default';
     }
 
@@ -359,8 +346,7 @@ function ds_get_fields($entity_type, $cache = TRUE) {
   // Get fields from cache.
   if (!$loaded) {
     $loaded = TRUE;
-    $lang = language(LANGUAGE_TYPE_CONTENT);
-    if ($cache && $cached_fields = cache()->get('ds_fields:' . language(LANGUAGE_TYPE_CONTENT)->langcode)) {
+    if ($cache && $cached_fields = cache()->get('ds_fields:' . language(LANGUAGE_TYPE_INTERFACE)->langcode)) {
       $fields_cached = $static_fields = $cached_fields->data;
     }
   }
@@ -395,7 +381,7 @@ function ds_get_fields($entity_type, $cache = TRUE) {
 
       // Cache the fields.
       if ($cache) {
-        cache()->set('ds_fields:' . language(LANGUAGE_TYPE_CONTENT)->langcode, $fields_cached);
+        cache()->set('ds_fields:' . language(LANGUAGE_TYPE_INTERFACE)->langcode, $fields_cached);
       }
     }
     else {
@@ -1053,7 +1039,7 @@ function ds_field_formatter_view(EntityInterface $entity, $field, $instance, $la
  */
 function ds_contextual_links_view_alter(&$element, $items) {
 
-  if (isset($element['#element']['#entity_type']) && module_exists('field_ui') && user_access('administer content types')) {
+  if (isset($element['#element']['#entity_type']) && module_exists('field_ui') && user_access('administer node display')) {
     $entity_type = $element['#element']['#entity_type'];
     $bundle = $element['#element']['#bundle'];
     $view_mode = isset($element['#element']['#view_mode']) ? $element['#element']['#view_mode'] : 'default';

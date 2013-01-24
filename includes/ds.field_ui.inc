@@ -760,7 +760,7 @@ function ds_field_formatter_settings_form($field, $instance, $view_mode, $form, 
   // Taxonomy view modes.
   if ($display['type'] === 'ds_taxonomy_view_mode') {
     $options = array();
-    $view_modes = ds_entity_view_modes('taxonomy_term');
+    $view_modes = entity_get_view_modes('taxonomy_term');
     foreach ($view_modes as $key => $info) {
       $options[$key] = $info['label'];
     }

@@ -252,7 +252,7 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
     $view_mode_settings = field_view_mode_settings('node', $form['#entity']->type);
 
     // Get the view modes.
-    $ds_vm = ds_entity_view_modes('node');
+    $ds_vm = entity_get_view_modes('node');
     $layouts = array();
     $options = array('' => t('Default'));
     foreach ($ds_vm as $key => $item) {
@@ -758,8 +758,8 @@ function ds_extras_preprocess_field(&$variables) {
     $variables['theme_hook_suggestions'][] = $suggestion . '__' . $variables['element']['#bundle'];
     $variables['theme_hook_suggestions'][] = $suggestion . '__' . $field_name . '__' . $variables['element']['#bundle'];
   }
-  // Default theming function.
-  else {
+  // Use Display Suite Extras Default theming function.
+  elseif (!isset($config['func']) || empty($config['func'])) {
     $field_theme_function = config('ds.extras')->get('ft-default');
     if ($field_theme_function != 'theme_field') {
       $variables['theme_hook_suggestions'] = array();

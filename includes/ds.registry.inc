@@ -119,24 +119,9 @@ function _ds_theme_registry_alter(&$theme_registry) {
 }
 
 /**
- * Implements hook_entity_info_alter().
+ * Implements ds_entity_bundle_info_alter().
  */
-function _ds_entity_info_alter(&$entity_info) {
-
-  // Add custom view modes to entities.
-  $custom_view_modes = config_get_storage_names_with_prefix('ds.view_modes');
-  foreach ($custom_view_modes as $config) {
-    $view_mode_value = config($config)->get();
-    $view_mode = array(
-      'label' => check_plain($view_mode_value['label']),
-      'custom_settings' => FALSE,
-    );
-    foreach ($view_mode_value['entities'] as $entity_type) {
-      if (isset($entity_info[$entity_type])) {
-        $entity_info[$entity_type]['view_modes'][$view_mode_value['view_mode']] = $view_mode;
-      }
-    }
-  }
+function _ds_entity_bundle_info_alter(&$bundles) {
 
   // Add layout if applicable.
   $ds_layouts = ds_get_layout_info();
@@ -153,22 +138,43 @@ function _ds_entity_info_alter(&$entity_info) {
       continue;
     }
 
-    if (!isset($entity_info[$ds_layout_setting['entity_type']]['bundles'][$ds_layout_setting['bundle']])) {
+    if (!isset($bundles[$ds_layout_setting['entity_type']][$ds_layout_setting['bundle']])) {
       continue;
     }
 
     $layout = $ds_layouts[$ds_layout_setting['layout']];
     $layout['layout'] = $ds_layout_setting['layout'];
     $layout['settings'] = $ds_layout_setting['settings'];
-    $entity_info[$ds_layout_setting['entity_type']]['bundles'][$ds_layout_setting['bundle']]['layouts'][$ds_layout_setting['view_mode']] = $layout;
+    $bundles[$ds_layout_setting['entity_type']][$ds_layout_setting['bundle']]['layouts'][$ds_layout_setting['view_mode']] = $layout;
+  }
+}
+
+/**
+ * Implements hook_entity_view_mode_info_alter().
+ * @param unknown_type $view_modes
+ */
+function _ds_entity_view_mode_info_alter(&$view_modes) {
+  // Add custom view modes to entities.
+  $custom_view_modes = config_get_storage_names_with_prefix('ds.view_modes');
+  foreach ($custom_view_modes as $config) {
+    $view_mode_value = config($config)->get();
+    $view_mode = array(
+      'label' => check_plain($view_mode_value['label']),
+      'custom_settings' => FALSE,
+    );
+    foreach ($view_mode_value['entities'] as $entity_type) {
+      if (isset($view_modes[$entity_type])) {
+        $view_modes[$entity_type][$view_mode_value['view_mode']] = $view_mode;
+      }
+    }
   }
 
-
+  // Add the revision view mode.
   $revision = array(
     'label' => 'Revision',
     'custom_settings' => FALSE,
   );
-  $entity_info['node']['view_modes']['revision'] = $revision;
+  $view_modes['node']['revision'] = $revision;
 }
 
 /**

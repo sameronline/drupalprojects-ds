@@ -153,7 +153,7 @@ function ds_edit_view_mode_form_validate($form, &$form_state) {
       unset($entities[$key]);
     }
     else {
-      $reserved += ds_entity_view_modes($key);
+      $reserved += entity_get_view_modes($key);
     }
   }
 

@@ -30,9 +30,9 @@ function ds_layout_list() {
 
   foreach ($entity_info as $entity_type => $info) {
     if (!empty($info['fieldable']) && !empty($info['base_table'])) {
-
       $rows = array();
-      foreach ($info['bundles'] as $bundle_type => $bundle) {
+      $bundles = entity_get_bundles($entity_type);
+      foreach ($bundles as $bundle_type => $bundle) {
         $row = array();
 
         $path = isset($bundle['admin']['real path']) ? $bundle['admin']['real path'] : (isset($bundle['admin']['path']) ? $bundle['admin']['path'] : '');

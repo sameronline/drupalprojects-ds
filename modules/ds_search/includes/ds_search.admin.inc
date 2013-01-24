@@ -40,7 +40,7 @@ function ds_search_settings($form, $form_state) {
     '#required' => TRUE,
   );
 
-  $entity_view_modes = ds_entity_view_modes('node');
+  $entity_view_modes = entity_get_view_modes('node');
   foreach ($entity_view_modes as $key => $view_mode) {
     $view_mode_options[$key] = $view_mode['label'];
   }

@@ -33,7 +33,7 @@ function ds_devel_render_object($type, $node, $view_mode = 'full') {
 
   $links = array();
   $links[] = l('Default', 'node/' . $node->nid . '/devel/markup/');
-  $view_modes = ds_entity_view_modes('node');
+  $view_modes = entity_get_view_modes('node');
   foreach ($view_modes as $key => $info) {
     if (!empty($info['custom settings'])) {
       $links[] = l($info['label'], 'node/' . $node->nid . '/devel/markup/' . $key);
