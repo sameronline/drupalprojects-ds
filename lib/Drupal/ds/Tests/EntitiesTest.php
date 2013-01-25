@@ -64,7 +64,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][region]' => 'right',
       'fields[node_link][region]' => 'footer',
       'fields[body][label]' => $label,
-      'fields[submitted_by][region]' => 'header',
+      'fields[ds_submitted_by][region]' => 'header',
     );
     $this->dsConfigureUI($fields);
 
@@ -143,7 +143,7 @@ class EntitiesTest extends BaseTest {
 
     // Switch view mode on full node page.
     $edit = array('ds_switch' => 'teaser');
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
+    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save and keep published'));
     $this->assertRaw('view-mode-teaser', 'Switched to teaser mode');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
@@ -151,7 +151,7 @@ class EntitiesTest extends BaseTest {
     $this->assertNoRaw('group-footer', 'Template found (no region footer)');
 
     $edit = array('ds_switch' => '');
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
+    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save and keep published'));
     $this->assertRaw('view-mode-full', 'Switched to full mode again');
 
     // Test all options of a block field.
@@ -217,7 +217,7 @@ class EntitiesTest extends BaseTest {
       'revision' => TRUE,
       'log' => 'Test revision',
     );
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
+    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save and keep published'));
     $this->assertText('Revisions');
 
     // Assert revision is using 2 col template.
@@ -233,7 +233,7 @@ class EntitiesTest extends BaseTest {
       'ds_switch' => '',
       'field_tags[und]' => 'Tag 1, Tag 2'
     );
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
+    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save and keep published'));
     $edit = array(
       'fields[field_tags][region]' => 'right',
     );

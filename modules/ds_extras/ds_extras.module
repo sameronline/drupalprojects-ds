@@ -273,11 +273,10 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
 
       if (!isset($form['ds_extras'])) {
         $form['ds_extras'] = array(
-          '#type' => 'fieldset',
+          '#type' => 'details',
           '#title' => t('Display settings'),
-          '#collapsible' => TRUE,
           '#collapsed' => TRUE,
-          '#group' => 'additional_settings',
+          '#group' => 'advanced',
           '#weight' => 100,
         );
       }

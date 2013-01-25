@@ -5,6 +5,8 @@
  * Display Suite Extras administrative functions.
  */
 
+use Drupal\Core\Extension\ModuleHandler;
+
 /**
  * Menu callback: Display Suite extras settings.
  */
@@ -105,14 +107,14 @@ function ds_extras_settings($form) {
     '#default_value' => $config->get('field_permissions'),
   );
 
-  if (module_exists('block')) {
+  /*if (module_exists('block')) {
     $form['fs4']['region_to_block'] = array(
       '#type' => 'checkbox',
       '#title' => t('Region to block'),
       '#description' => t('Create additional regions exposed as block. Note: this will not work on the default view mode.'),
       '#default_value' => $config->get('region_to_block'),
     );
-  }
+  }*/
 
   if (module_exists('flag')) {
     $form['fs4']['flag'] = array(
@@ -172,7 +174,7 @@ function ds_extras_settings_submit($form, &$form_state) {
   //cache()->deletePrefix('ds_fields');
   entity_info_cache_clear();
   field_info_cache_clear();
-  module_implements_reset();
+  drupal_container()->get('module_handler')->resetImplementations();
   drupal_theme_rebuild();
   // @todo is now state I guess ?
   variable_set('menu_router_rebuild_needed', TRUE);

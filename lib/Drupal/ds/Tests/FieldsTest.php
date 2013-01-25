@@ -93,7 +93,7 @@ class FieldsTest extends BaseTest {
     $this->assertNoRaw('fields[test_field][weight]', t('Test field field not found on node article.'));
 
     // Block fields.
-    $edit = array(
+    /*$edit = array(
       'name' => 'Test block field',
       'field' => 'test_block_field',
       'entities[node]' => '1',
@@ -131,7 +131,7 @@ class FieldsTest extends BaseTest {
     // Assert the block field is gone at the manage display screen.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('fields[test_block_field][weight]', t('Test block field not found on node article.'));
-
+*/
     // Preprocess fields.
     $edit = array(
       'name' => 'Submitted',

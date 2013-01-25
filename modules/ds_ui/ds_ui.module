@@ -118,6 +118,8 @@ function ds_ui_menu() {
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
   // Block can be disabled.
+  // @todo blocks have changed completely - also do some sort of library thing ?
+  /*
   if (module_exists('block')) {
     $items['admin/structure/ds/fields/manage_block'] = array(
       'title' => 'Add a block field',
@@ -129,7 +131,7 @@ function ds_ui_menu() {
       'type' => MENU_LOCAL_ACTION,
       'weight' => 2,
     );
-  }
+  }*/
 
   return $items;
 }

@@ -73,9 +73,9 @@ class LayoutClassesTest extends BaseTest {
     $this->assertRaw('ds_extras_extra_test_field');
     $this->assertRaw('ds_extras_second_field');
 
-    // Assert we have some configuration in our database.
+    // Assert we have configuration.
     $count = count(config_get_storage_names_with_prefix('ds.layout_settings.node.article.default'));
-    $this->assertEqual($count, 1, t('1 record found for layout settings for node article'));
+    $this->assertEqual($count, 1, t('Configuration file found for layout settings for node article'));
 
     // Lookup settings and verify.
     $data = config('ds.layout_settings.node.article.default')->get('settings');
@@ -121,9 +121,9 @@ class LayoutClassesTest extends BaseTest {
     $this->assertNoRaw('<footer', 'Footer not found.');
     $this->assertNoRaw('<article', 'Article not found.');
     $wrappers = array(
-      'region_wrapper[header]' => 'header',
-      'region_wrapper[right]' => 'footer',
-      'region_wrapper[layout_wrapper]' => 'article',
+      'header' => 'header',
+      'right' => 'footer',
+      'layout_wrapper' => 'article',
     );
     $this->dsConfigureUI($wrappers);
     $this->drupalGet('node/' . $node->nid);
