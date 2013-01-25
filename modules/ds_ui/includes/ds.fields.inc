@@ -229,7 +229,7 @@ function ds_shared_form_submit($form, &$form_state) {
 
   // Save field and clear ds_fields.
   config('ds.field.' . $field['field'])->setData($field)->save();
-  cache()->Prefix('ds_fields');
+  cache()->delete('ds_fields');
 
   // Redirect.
   $form_state['redirect'] = 'admin/structure/ds/fields';
@@ -412,7 +412,7 @@ function ds_remove_field_confirm_submit($form, &$form_state) {
   config('ds.field.' . $field['field'])->delete();
 
   // Clear cache.
-  cache()->deletePrefix('ds_fields');
+  cache()->delete('ds_fields');
 
   // Redirect.
   $form_state['redirect'] = 'admin/structure/ds/fields';

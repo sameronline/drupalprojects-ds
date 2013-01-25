@@ -79,7 +79,7 @@ class EntitiesTest extends BaseTest {
     foreach ($field_settings as $config) {
       config($config)->delete();
     }
-    cache()->deletePrefix('ds_fields');
+    cache()->delete('ds_fields');
     cache()->delete('ds_field_settings');
   }
 
