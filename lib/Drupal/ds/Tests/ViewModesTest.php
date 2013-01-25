@@ -42,11 +42,11 @@ class ViewModesTest extends BaseTest {
 
     // Assert it's found on the Field UI for article.
     $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertRaw('additional_settinmodes[view_modes_custom][testing]', t('Testing view mode found on node article.'));
+    $this->assertRaw('view_modes_custom[testing]', t('Testing view mode found on node article.'));
 
     // Assert it's not found on the Field UI for article.
     $this->drupalGet('admin/config/people/accounts/display');
-    $this->assertNoRaw('additional_settinmodes[view_modes_custom][testing]', t('Testing view mode not found on user.'));
+    $this->assertNoRaw('view_modes_custom[testing]', t('Testing view mode not found on user.'));
 
     // Update testing label
     $edit = array(
@@ -61,6 +61,6 @@ class ViewModesTest extends BaseTest {
 
     // Assert the view mode is gone at the manage display screen.
     $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertNoRaw('additional_settinmodes[view_modes_custom][testing]', t('Testing view mode found on node article.'));
+    $this->assertNoRaw('view_modes_custom[testing]', t('Testing view mode found on node article.'));
   }
 }

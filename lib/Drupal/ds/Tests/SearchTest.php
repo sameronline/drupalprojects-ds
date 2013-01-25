@@ -46,7 +46,7 @@ class SearchTest extends BaseTest {
     $this->assertText(t('100% of the site has been indexed. There are 0 items left to index.'), 'Site has been indexed');
 
     // Configure search result view mode.
-    $svm = array('modes[view_modes_custom][search_result]' => 'search_result');
+    $svm = array('view_modes_custom[search_result]' => 'search_result');
     $this->dsConfigureUI($svm);
     $layout = array(
       'layout' => 'ds_2col_stacked',

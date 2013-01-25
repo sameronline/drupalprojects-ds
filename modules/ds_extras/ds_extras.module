@@ -5,6 +5,8 @@
  * Display Suite extras main functions.
  */
 
+use Drupal\node\Plugin\Core\Entity\Node;
+
 /**
  * Implements hook_menu().
  */
@@ -135,11 +137,9 @@ function ds_extras_ds_field_access($field, $entity_type) {
  */
 function ds_extras_field_attach_view_alter(&$build, $context) {
 
-  // If views and core doesn't send information along on the entity,
-  // Display Suite doesn't have a context to render the fields.
-  if (!isset($build['#entity_type']) && !isset($build['#bundle'])) {
-    return;
-  }
+  $entity_type = $context['entity']->entityType();
+  $bundle = $context['entity']->bundle();
+  $view_mode = $context['view_mode'];
 
   $block_data = &drupal_static('ds_block_region');
   $region_blocks = config('ds.extras')->get('region_blocks');
@@ -247,9 +247,10 @@ function ds_extras_switch_view_mode_field($field) {
 function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
 
   // Switch full view mode.
-  if (user_access('ds_switch ' . $form['#entity']->type)) {
+  $node = $form_state['controller']->getEntity($form_state);
+  if (user_access('ds_switch ' . $node->bundle())) {
 
-    $view_mode_settings = field_view_mode_settings('node', $form['#entity']->type);
+    $view_mode_settings = field_view_mode_settings('node', $node->bundle());
 
     // Get the view modes.
     $ds_vm = entity_get_view_modes('node');
@@ -258,18 +259,17 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
     foreach ($ds_vm as $key => $item) {
       $overriden = (!empty($view_mode_settings[$key]['custom_settings']) ? TRUE : FALSE);
       if ($overriden) {
-        $layout = ds_get_layout('node', $form['#entity']->type, $key, FALSE);
+        $layout = ds_get_layout('node', $node->bundle(), $key, FALSE);
         $layouts[$key] = $layout;
         $options[$key] = $item['label'];
       }
     }
 
     // Add default layout settings
-    $layouts[''] = ds_get_layout('node', $form['#entity']->type, 'default', FALSE);
+    $layouts[''] = ds_get_layout('node', $node->bundle(), 'default', FALSE);
 
     // Only fire if we have more than 1 option.
     if (count($options) > 1) {
-      $node = $form['#entity'];
 
       if (!isset($form['ds_extras'])) {
         $form['ds_extras'] = array(

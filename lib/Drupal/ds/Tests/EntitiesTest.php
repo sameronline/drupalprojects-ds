@@ -155,7 +155,7 @@ class EntitiesTest extends BaseTest {
     $this->assertRaw('view-mode-full', 'Switched to full mode again');
 
     // Test all options of a block field.
-    $block = array(
+    /*$block = array(
       'name' => 'Test block field',
       'field' => 'test_block_field',
       'entities[node]' => '1',
@@ -188,10 +188,10 @@ class EntitiesTest extends BaseTest {
     $this->dsCreateBlockField($block, 'admin/structure/ds/fields/manage_block/test_block_field', FALSE);
     $this->drupalGet('node/' . $node->nid);
     $this->assertNoRaw('<h2>Recent content</h2>');
-    $this->assertNoRaw('Recent content');
+    $this->assertNoRaw('Recent content');*/
 
     // Test revisions. Enable the revision view mode
-    $edit = array('modes[view_modes_custom][revision]' => '1');
+    $edit = array('view_modes_custom[revision]' => '1');
     $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
 
     // Select layout and configure fields.

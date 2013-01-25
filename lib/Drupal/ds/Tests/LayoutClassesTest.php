@@ -34,7 +34,7 @@ class LayoutClassesTest extends BaseTest {
 
     // Create code, preprocess block field.
     $this->dsCreateCodeField();
-    $this->dsCreateBlockField();
+    //$this->dsCreateBlockField();
     $this->dsCreatePreprocessField();
 
     $layout = array(
@@ -57,7 +57,7 @@ class LayoutClassesTest extends BaseTest {
       'fields[body][region]' => 'right',
       'fields[comments][region]' => 'footer',
       'fields[test_field][region]' => 'left',
-      'fields[test_block_field][region]' => 'left',
+      //'fields[test_block_field][region]' => 'left',
       'fields[submitted][region]' => 'left',
       'fields[ds_extras_extra_test_field][region]' => 'header',
     );
@@ -84,7 +84,7 @@ class LayoutClassesTest extends BaseTest {
     $this->assertTrue(in_array('test_field', $data['regions']['left']), t('Test field is in left'));
     $this->assertTrue(in_array('author', $data['regions']['left']), t('Author is in left'));
     $this->assertTrue(in_array('links', $data['regions']['left']), t('Links is in left'));
-    $this->assertTrue(in_array('test_block_field', $data['regions']['left']), t('Test block field is in left'));
+    //$this->assertTrue(in_array('test_block_field', $data['regions']['left']), t('Test block field is in left'));
     $this->assertTrue(in_array('submitted', $data['regions']['left']), t('Submitted field is in left'));
     $this->assertTrue(in_array('body', $data['regions']['right']), t('Body is in right'));
     $this->assertTrue(in_array('comments', $data['regions']['footer']), t('Comments is in footer'));
@@ -132,7 +132,7 @@ class LayoutClassesTest extends BaseTest {
     $this->assertRaw('<article', 'Article found.');
 
     // Let's create a block field, enable the full mode first.
-    $edit = array('modes[view_modes_custom][full]' => '1');
+    $edit = array('view_modes_custom[full]' => '1');
     $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
 
     // Select layout.
@@ -205,7 +205,7 @@ class LayoutClassesTest extends BaseTest {
     // Test that a default view mode with no layout is not affected by a disabled view mode.
     $edit = array(
       'layout' => '',
-      'modes[view_modes_custom][full]' => FALSE,
+      'view_modes_custom[full]' => FALSE,
     );
     $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
     $this->drupalGet('node/' . $node->nid);
