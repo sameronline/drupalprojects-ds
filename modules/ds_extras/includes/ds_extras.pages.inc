@@ -21,7 +21,9 @@ function ds_extras_node_page_view($node) {
   drupal_add_html_head_link(array('rel' => 'shortlink', 'href' => url($uri['path'], array_merge($uri['options'], array('alias' => TRUE)))), TRUE);
 
   // Update the history table, stating that this user viewed this node.
-  node_tag_new($node);
+  if (module_exists('history')) {
+    history_write($node->nid);
+  }
 
   // For markup consistency with other pages, use node_view_multiple() rather than node_view().
   $view_mode = (!empty($node->ds_switch)) ? $node->ds_switch : 'full';

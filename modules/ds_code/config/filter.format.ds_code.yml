@@ -5,6 +5,6 @@ weight: '11'
 cache: '0'
 filters:
   ds_code:
-    module: ds_format
+    module: ds_code
     status: '1'
 langcode: und

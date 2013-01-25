@@ -17,7 +17,7 @@ class BaseTest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('ds', 'ds_extras', 'ds_format', 'search', 'ds_search', 'ds_forms', 'ds_ui', 'ds_test');
+  public static $modules = array('ds', 'ds_extras', 'ds_code', 'search', 'ds_search', 'ds_forms', 'ds_ui', 'ds_test');
 
   protected $profile = 'standard';
 
@@ -30,7 +30,7 @@ class BaseTest extends WebTestBase {
     config('search.settings')->set('active_modules', array('node' => '', 'user' => 'user', 'ds_search' => 'ds_search'))->save();
     menu_router_rebuild();
 
-    $this->admin_user = $this->drupalCreateUser(array('admin_classes', 'admin_view_modes', 'admin_fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions'));
+    $this->admin_user = $this->drupalCreateUser(array('admin_classes', 'admin_view_modes', 'admin_fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions', 'administer node fields', 'administer node display'));
     $this->drupalLogin($this->admin_user);
   }
 

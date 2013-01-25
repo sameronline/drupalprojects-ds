@@ -71,15 +71,17 @@ function ds_test_node_view($node, $view_mode, $langcode) {
   );
 
   // Check whether the heavy extra field is rendered or not.
-  if ($node->type == 'article') {
-    $fields = field_extra_fields_get_display('node', 'article', $view_mode);
-    if (isset($fields['heavy_field']) && $fields['heavy_field']['visible']) {
+  // @todo fixme
+  /*if ($node->type == 'article') {
+    $heavy_field = entity_get_display('node', 'article', $view_mode)
+      ->getComponent('heavy_field');
+    if ($heavy_field) {
       $node->content['heavy_field'] = array(
         '#markup' => 'Heavy field',
-        '#weight' => $fields['heavy_field']['weight'],
+        '#weight' => $heavy_field['weight'],
       );
     }
-  }
+  }*/
 }
 
 /**
