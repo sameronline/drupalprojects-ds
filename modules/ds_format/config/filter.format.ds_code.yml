@@ -1,0 +1,10 @@
+format: ds_code
+name: 'Display Suite code'
+status: '1'
+weight: '11'
+cache: '0'
+filters:
+  ds_code:
+    module: ds_format
+    status: '1'
+langcode: und
