@@ -123,7 +123,7 @@ function _ds_theme_registry_alter(&$theme_registry) {
  */
 function _ds_entity_bundle_info_alter(&$bundles) {
 
-  // Add layout if applicable.
+  // Add layout if configured to bundles.
   $ds_layouts = ds_get_layout_info();
   $ds_layout_settings = config_get_storage_names_with_prefix('ds.layout_settings');
   foreach ($ds_layout_settings as $config) {
@@ -134,11 +134,8 @@ function _ds_entity_bundle_info_alter(&$bundles) {
       continue;
     }
 
-    if (!isset($entity_info[$ds_layout_setting['entity_type']])) {
-      continue;
-    }
-
-    if (!isset($bundles[$ds_layout_setting['entity_type']][$ds_layout_setting['bundle']])) {
+    // Make sure the entity type exists and has bundles defined.
+    if (!isset($bundles[$ds_layout_setting['entity_type']]) || !isset($bundles[$ds_layout_setting['entity_type']][$ds_layout_setting['bundle']])) {
       continue;
     }
 
