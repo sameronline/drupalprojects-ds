@@ -7,8 +7,7 @@
 
 namespace Drupal\ds\Tests;
 
-// Typo on purpose as views is not completely ready to test.
-class ViewsTestS extends BaseTest {
+class ViewsTest extends BaseTest {
 
   /**
    * Implements getInfo().
