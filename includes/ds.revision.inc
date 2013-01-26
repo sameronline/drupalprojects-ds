@@ -12,9 +12,6 @@ function ds_revision_node_show($node, $message = NULL) {
 
   drupal_set_title(t('Revision of %title from %date', array('%title' => $node->title, '%date' => format_date($node->revision_timestamp))), PASS_THROUGH);
 
-  // Update the history table, stating that this user viewed this node.
-  node_tag_new($node);
-
   // Determine view mode.
   $layout = ds_get_layout('node', $node->type, 'revision', FALSE);
   $view_mode = ($layout) ? 'revision' : 'full';

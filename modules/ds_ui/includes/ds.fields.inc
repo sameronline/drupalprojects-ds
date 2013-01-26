@@ -90,7 +90,6 @@ function ds_field_human_name($type) {
 function ds_custom_manage($field_key = '') {
   $redirect = '';
   if ($field = config('ds.field.' . $field_key)->get()) {
-    $field = $custom_fields[$field_key];
     switch ($field['field_type']) {
       case DS_FIELD_TYPE_CODE:
         $redirect = 'admin/structure/ds/fields/manage_custom/' . $field_key;
@@ -229,7 +228,7 @@ function ds_shared_form_submit($form, &$form_state) {
 
   // Save field and clear ds_fields.
   config('ds.field.' . $field['field'])->setData($field)->save();
-  cache()->delete('ds_fields');
+  cache()->deleteTags(array('ds_fields' => TRUE));
 
   // Redirect.
   $form_state['redirect'] = 'admin/structure/ds/fields';

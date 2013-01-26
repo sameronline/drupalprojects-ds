@@ -79,7 +79,7 @@ class EntitiesTest extends BaseTest {
     foreach ($field_settings as $config) {
       config($config)->delete();
     }
-    cache()->delete('ds_fields');
+    cache()->deleteTags(array('ds_fields' => TRUE));
     cache()->delete('ds_field_settings');
   }
 
@@ -257,7 +257,7 @@ class EntitiesTest extends BaseTest {
     $edit = array(
       'title' => 'Hi, I am an article <script>alert(\'with a javascript tag in the title\');</script>',
     );
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
+    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save and keep published'));
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw('<h2>Hi, I am an article &lt;script&gt;alert(&#039;with a javascript tag in the title&#039;);&lt;/script&gt;</h2>');
   }

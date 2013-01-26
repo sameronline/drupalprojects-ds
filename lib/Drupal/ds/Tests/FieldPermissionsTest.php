@@ -7,6 +7,8 @@
 
 namespace Drupal\ds\Tests;
 
+use Drupal\Core\Extension\ModuleHandler;
+
 /**
  * Tests for Display Suite field permissions.
  */
@@ -31,7 +33,7 @@ class FieldPermissionsTest extends BaseTest {
     );
 
     config('ds.extras')->set('field_permissions', TRUE)->save();
-    module_implements(FALSE, FALSE, TRUE);
+    drupal_container()->get('module_handler')->resetImplementations();
 
     $this->dsSelectLayout();
     $this->dsConfigureUI($fields);

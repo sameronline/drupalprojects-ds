@@ -8,6 +8,7 @@
 use Drupal\Core\Template\Attribute;
 use Drupal\entity\Plugin\Core\Entity;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Cache\CacheBackendInterface;
 
 /**
  * Constants for field types.
@@ -381,7 +382,7 @@ function ds_get_fields($entity_type, $cache = TRUE) {
 
       // Cache the fields.
       if ($cache) {
-        cache()->set('ds_fields:' . language(LANGUAGE_TYPE_INTERFACE)->langcode, $fields_cached);
+        cache()->set('ds_fields:' . language(LANGUAGE_TYPE_INTERFACE)->langcode, $fields_cached, CacheBackendInterface::CACHE_PERMANENT, array('ds_fields' => TRUE));
       }
     }
     else {
@@ -545,7 +546,6 @@ function ds_field_attach_view_alter(&$build, $context) {
   // Add Display Suite fields.
   $fields = ds_get_fields($entity_type);
   $field_values = ds_get_field_settings($entity_type, $bundle, $view_mode);
-
   foreach ($field_values as $key => $field) {
 
     // Ignore if this field is not a DS field.

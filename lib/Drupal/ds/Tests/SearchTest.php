@@ -103,7 +103,7 @@ class SearchTest extends BaseTest {
     $this->dsSelectLayout($layout, $assert, 'admin/config/people/accounts/display');
     $fields = array(
       'fields[name][region]' => 'left',
-      'fields[summary][region]' => 'right',
+      'fields[member_for][region]' => 'right',
     );
     $this->dsConfigureUI($fields, 'admin/config/people/accounts/display');
 
