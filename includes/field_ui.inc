@@ -5,6 +5,8 @@
  * Field UI functions for Display Suite.
  */
 
+use Drupal\field_ui\DisplayOverview;
+
 /**
  * Adds the Display Suite fields and layouts to the form.
  */
@@ -1504,7 +1506,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     if ($form_state['formatter_settings_edit'] == $key) {
       $table[$key]['settings_summary']['#attributes']['colspan'] = 2;
       $settings_form = ds_field_settings_form($field, $form_state);
-      ds_field_row_form_format_construct($table, $key, $settings_form);
+      ds_field_row_form_format_construct($table, $key, $settings_form, $form_state);
     }
     else {
       // After saving, the settings are updated here as well. First we create
@@ -1513,7 +1515,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
       if (isset($summary)) {
         $table[$key]['settings_summary'] = $summary;
-        ds_field_row_form_format_summary_construct($table, $key);
+        ds_field_row_form_format_summary_construct($table, $key, $form_state);
       }
     }
   }
@@ -1540,6 +1542,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form['#view_mode'];
+  $entity_display = entity_get_display($entity_type, $bundle, $view_mode);
 
   // Gather type information.
   $instances = field_info_instances($entity_type, $bundle);
@@ -1601,10 +1604,10 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     // Base button element for the various formatter settings actions.
     $base_button = array(
       '#submit' => array(
-        'field_ui_display_overview_multistep_submit',
+        array($form_state['build_info']['callback'][0], 'multistepSubmit'),
       ),
       '#ajax' => array(
-        'callback' => 'field_ui_display_overview_multistep_js',
+        'callback' => array($form_state['build_info']['callback'][0], 'multistepAjax'),
         'wrapper' => 'field-display-overview-wrapper',
         'effect' => 'fade',
       ),
@@ -1613,16 +1616,25 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
 
     if ($form_state['formatter_settings_edit'] == $key) {
       $formatter_type = $form_state['complete_form']['fields'][$key]['format']['type']['#default_value'];
-      $formatter = field_info_formatter_types($formatter_type);
-      $instance['display'][$view_mode]['type'] = $formatter_type;
-      $instance['display'][$view_mode]['module'] = $formatter['module'];
-      //$instance['display'][$view_mode]['settings'] = $settings + field_info_formatter_settings($formatter_type);
-      $function = $formatter['module'] . '_field_formatter_settings_form';
+      $display_options = $entity_display->getComponent($key);
+
+      // Get the corresponding formatter object.
+      if ($display_options && $display_options['type'] != 'hidden') {
+        $formatter = drupal_container()->get('plugin.manager.field.formatter')->getInstance(array(
+          'instance' => $instance,
+          'view_mode' => $view_mode,
+          'configuration' => $display_options
+        ));
+      }
+      else {
+        $formatter = NULL;
+      }
+
 
       // Add the default formatter settings if any.
       $settings_form = array();
-      if (function_exists($function)) {
-        $settings_form = $function($field, $instance, $view_mode, $form, $form_state);
+      if ($formatter) {
+        $settings_form = $formatter->settingsForm($form, $form_state);
       }
 
       // Add the field templates form when needed
@@ -1641,7 +1653,6 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       // @todo check whether we can't make this cleaner, because we're
       // calling this twice now.
       $context = array(
-        'module' => $formatter['module'],
         'formatter' => $formatter,
         'field' => $field,
         'instance' => $instance,
@@ -1657,7 +1668,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
           '#attributes' => array('class' => array('field-formatter-settings-edit-form')),
           '#parents' => array('fields', $key, 'settings_edit_form'),
           'label' => array(
-            '#markup' => t('Format settings:') . ' <span class="formatter-name">' . $formatter['label'] . '</span>',
+            '#markup' => t('Format settings:'), // . ' <span class="formatter-name">' . $formatter['label'] . '</span>',
           ),
           'settings' => $settings_form,
           'actions' => array(
@@ -1719,7 +1730,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
           '#cell_attributes' => array('class' => array('field-formatter-summary-cell')),
         );
         // Render the other part of the summary
-        ds_field_row_form_format_summary_construct($table, $key);
+        ds_field_row_form_format_summary_construct($table, $key, $form_state);
       }
     }
   }
@@ -1745,17 +1756,17 @@ function _ds_field_ui_check_hidden_region($key, $form_state, $field_regions) {
 /**
  * Helper function for building the formatter settings.
  */
-function ds_field_row_form_format_construct(&$table, $key, $settings_form) {
+function ds_field_row_form_format_construct(&$table, $key, $settings_form, $form_state) {
 
   $base_button = array(
     '#submit' => array(
-      'field_ui_display_overview_multistep_submit',
+      array($form_state['build_info']['callback'][0], 'multistepSubmit'),
     ),
     '#validate' => array(
       'ds_field_ui_fields_validate',
     ),
     '#ajax' => array(
-      'callback' => 'field_ui_display_overview_multistep_js',
+      'callback' => array($form_state['build_info']['callback'][0], 'multistepAjax'),
       'wrapper' => 'field-display-overview-wrapper',
       'effect' => 'fade',
     ),
@@ -1793,12 +1804,14 @@ function ds_field_row_form_format_construct(&$table, $key, $settings_form) {
 /**
  * Helper function for formatter summary settings.
  */
-function ds_field_row_form_format_summary_construct(&$table, $key) {
+function ds_field_row_form_format_summary_construct(&$table, $key, $form_state) {
 
   $base_button = array(
-    '#submit' => array('field_ui_display_overview_multistep_submit'),
+    '#submit' => array(
+      array($form_state['build_info']['callback'][0], 'multistepSubmit'),
+    ),
     '#ajax' => array(
-      'callback' => 'field_ui_display_overview_multistep_js',
+      'callback' => array($form_state['build_info']['callback'][0], 'multistepAjax'),
       'wrapper' => 'field-display-overview-wrapper',
       'effect' => 'fade',
     ),
