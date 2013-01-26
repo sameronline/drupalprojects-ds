@@ -4,14 +4,18 @@
  * Display Suite 2 column template.
  */
 #}
-<{{ layout_wrapper }} {{ layout_attributes }} class="ds-2col-stacked {{ attributes.class }} clearfix">
+<{{ layout_wrapper }} {{ layout_attributes }} class="ds-2col {{ attributes.class }} clearfix">
 
   <{{ left_wrapper }} class="group-left{{ left_classes }}">
-    {{ left }}
+    {% if left is not null %}
+      {{ left }}
+    {% endif %}
   </{{ left_wrapper }}>
 
   <{{ right_wrapper }} class="group-right{{ right_classes }}">
-    {{ right }}
+    {% if right is not null %}
+      {{ right }}
+    {% endif %}
   </{{ right_wrapper }}>
 
 </{{ layout_wrapper }}>

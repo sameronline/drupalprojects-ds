@@ -228,7 +228,7 @@ function ds_shared_form_submit($form, &$form_state) {
 
   // Save field and clear ds_fields.
   config('ds.field.' . $field['field'])->setData($field)->save();
-  cache()->deleteTags(array('ds_fields' => TRUE));
+  cache()->invalidateTags(array('ds_fields' => TRUE));
 
   // Redirect.
   $form_state['redirect'] = 'admin/structure/ds/fields';

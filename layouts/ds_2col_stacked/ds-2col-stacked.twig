@@ -7,19 +7,27 @@
 <{{ layout_wrapper }} {{ layout_attributes }} class="ds-2col-stacked {{ attributes.class }} clearfix">
 
   <{{ header_wrapper }} class="group-header{{ header_classes }}">
-    {{ header }}
+    {% if header is not null %}
+      {{ header }}
+    {% endif %}
   </{{ header_wrapper }}>
 
   <{{ left_wrapper }} class="group-left{{ left_classes }}">
-    {{ left }}
+    {% if left is not null %}
+      {{ left }}
+    {% endif %}
   </{{ left_wrapper }}>
 
   <{{ right_wrapper }} class="group-right{{ right_classes }}">
-    {{ right }}
+    {% if right is not null %}
+      {{ right }}
+    {% endif %}
   </{{ right_wrapper }}>
 
   <{{ footer_wrapper }} class="group-footer{{ footer_classes }}">
-    {{ footer }}
+    {% if footer is not null %}
+      {{ footer }}
+    {% endif %}
   </{{ footer_wrapper }}>
 
 </{{ layout_wrapper }}>
