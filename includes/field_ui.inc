@@ -851,7 +851,7 @@ function ds_field_settings_summary($field, $form_state) {
   }
 
   if (module_exists('ds_extras') && config('ds.extras')->get('field_template')) {
-    module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
+    module_load_include('inc', 'ds_extras', 'includes/admin');
 
     // Field template summary
     if (!in_array($field['field_type'], array(DS_FIELD_TYPE_IGNORE, DS_FIELD_TYPE_PREPROCESS))) {
@@ -897,7 +897,7 @@ function ds_field_settings_form($field, &$form_state) {
     );
 
     // Load the formatter settings form
-    module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
+    module_load_include('inc', 'ds_extras', 'includes/admin');
     // Protect against empty $form.
     if (!is_array($form)) $form = array();
     if (!in_array($field['field_type'], array(DS_FIELD_TYPE_IGNORE, DS_FIELD_TYPE_PREPROCESS))) {
@@ -1633,7 +1633,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
         );
 
         // Load the form
-        module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
+        module_load_include('inc', 'ds_extras', 'includes/admin');
         ds_extras_field_template_settings_form($settings_form, $form_state, $context);
       }
 
@@ -1697,7 +1697,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       drupal_alter('field_formatter_settings_summary', $summary, $context);
 
       if (module_exists('ds_extras') && config('ds.extras')->get('field_template', FALSE)) {
-        module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
+        module_load_include('inc', 'ds_extras', 'includes/admin');
 
         // Field template summary
         $functions = module_invoke_all('ds_field_theme_functions_info');

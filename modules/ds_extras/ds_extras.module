@@ -19,7 +19,7 @@ function ds_extras_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_extras_settings'),
     'access arguments' => array('admin_display_suite'),
-    'file' => 'includes/ds_extras.admin.inc',
+    'file' => 'includes/admin.inc',
     'type' => MENU_LOCAL_TASK,
   );
 
@@ -29,7 +29,7 @@ function ds_extras_menu() {
       'description' => 'Switches a view mode inline.',
       'page callback' => 'ds_switch_view_mode_inline',
       'access arguments' => array('access content'),
-      'file' => 'includes/ds_extras.pages.inc',
+      'file' => 'includes/pages.inc',
       'type' => MENU_CALLBACK,
     );
   }
@@ -95,7 +95,7 @@ function ds_extras_admin_paths() {
  * Implements hook_menu_alter().
  */
 function ds_extras_menu_alter(&$items) {
-  module_load_include('inc', 'ds_extras', 'includes/ds_extras.registry');
+  module_load_include('inc', 'ds_extras', 'includes/registry');
   _ds_extras_menu_alter($items);
 }
 
@@ -103,7 +103,7 @@ function ds_extras_menu_alter(&$items) {
  * Implements hook_module_implements_alter().
  */
 function ds_extras_module_implements_alter(&$implementations, $hook) {
-  module_load_include('inc', 'ds_extras', 'includes/ds_extras.registry');
+  module_load_include('inc', 'ds_extras', 'includes/registry');
   _ds_extras_module_implements_alter($implementations, $hook);
 }
 
@@ -111,7 +111,7 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_extras_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
-  form_load_include($form_state, 'inc', 'ds_extras', 'includes/ds_extras.admin');
+  form_load_include($form_state, 'inc', 'ds_extras', 'includes/admin');
   ds_extras_field_ui_alter($form, $form_state);
 }
 

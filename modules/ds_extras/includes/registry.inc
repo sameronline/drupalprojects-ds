@@ -25,7 +25,7 @@ function _ds_extras_menu_alter(&$items) {
 
     if (!$skip_node_override) {
       $items['node/%node']['page callback'] = 'ds_extras_node_page_view';
-      $items['node/%node']['file'] = 'includes/ds_extras.pages.inc';
+      $items['node/%node']['file'] = 'includes/pages.inc';
       $items['node/%node']['file path'] = drupal_get_path('module', 'ds_extras');
     }
   }

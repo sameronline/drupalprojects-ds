@@ -60,7 +60,7 @@ function ds_menu() {
     'title' => 'Display Suite',
     'description' => 'Manage layouts for entities and configure fields, view modes etc.',
     'page callback' => 'ds_layout_list',
-    'file' => 'includes/ds.displays.inc',
+    'file' => 'includes/displays.inc',
     'access arguments' => array('admin_display_suite'),
   );
 
@@ -85,7 +85,7 @@ function ds_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_emergency'),
     'access arguments' => array('admin_display_suite'),
-    'file' => 'includes/ds.displays.inc',
+    'file' => 'includes/displays.inc',
     'type' => MENU_LOCAL_TASK,
     'weight' => 100,
   );
@@ -97,7 +97,7 @@ function ds_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_field_ui_layout_change'),
     'access arguments' => array('admin_display_suite'),
-    'file' => 'includes/ds.field_ui.inc',
+    'file' => 'includes/field_ui.inc',
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
@@ -108,7 +108,7 @@ function ds_menu() {
       'description' => 'Manage display of this content.',
       'page callback' => 'ds_contextual_page_tab',
       'page arguments' => array(1, 'node'),
-      'file' => 'includes/ds.contextual.inc',
+      'file' => 'includes/contextual.inc',
       'access arguments' => array('administer content types'),
       'type' => MENU_LOCAL_TASK,
     );
@@ -118,7 +118,7 @@ function ds_menu() {
       'description' => 'Manage display of this user profile.',
       'page callback' => 'ds_contextual_page_tab',
       'page arguments' => array(1, 'user'),
-      'file' => 'includes/ds.contextual.inc',
+      'file' => 'includes/contextual.inc',
       'access arguments' => array('administer users'),
       'type' => MENU_LOCAL_TASK,
     );
@@ -132,7 +132,7 @@ function ds_menu() {
         'access arguments' => array('administer taxonomy'),
         'type' => MENU_LOCAL_TASK,
         'weight' => 11,
-        'file' => 'includes/ds.contextual.inc',
+        'file' => 'includes/contextual.inc',
       );
     }
   }
@@ -144,7 +144,7 @@ function ds_menu() {
  * Implements hook_menu_alter().
  */
 function ds_menu_alter(&$items) {
-  module_load_include('inc', 'ds', 'includes/ds.registry');
+  module_load_include('inc', 'ds', 'includes/registry');
   return _ds_menu_alter($items);
 }
 
@@ -152,7 +152,7 @@ function ds_menu_alter(&$items) {
  * Implements hook_theme().
  */
 function ds_theme() {
-  module_load_include('inc', 'ds', 'includes/ds.registry');
+  module_load_include('inc', 'ds', 'includes/registry');
   return _ds_theme();
 }
 
@@ -160,7 +160,7 @@ function ds_theme() {
  * Implements hook_ds_layout_info().
  */
 function ds_ds_layout_info() {
-  module_load_include('inc', 'ds', 'includes/ds.registry');
+  module_load_include('inc', 'ds', 'includes/registry');
   return _ds_ds_layout_info();
 }
 
@@ -176,7 +176,7 @@ function ds_views_api() {
  */
 function ds_node_type_update($info) {
   if (!empty($info->old_type) && $info->old_type != $info->type) {
-    module_load_include('inc', 'ds', 'includes/ds.registry');
+    module_load_include('inc', 'ds', 'includes/registry');
     _ds_entity_type_update('node', $info, 'update');
   }
 }
@@ -185,7 +185,7 @@ function ds_node_type_update($info) {
  * Implements hook_node_type_delete().
  */
 function ds_node_type_delete($info) {
-  module_load_include('inc', 'ds', 'includes/ds.registry');
+  module_load_include('inc', 'ds', 'includes/registry');
   _ds_entity_type_update('node', $info, 'delete');
 }
 
@@ -193,7 +193,7 @@ function ds_node_type_delete($info) {
  * Implements hook_theme_registry_alter().
  */
 function ds_theme_registry_alter(&$theme_registry) {
-  module_load_include('inc', 'ds', 'includes/ds.registry');
+  module_load_include('inc', 'ds', 'includes/registry');
   _ds_theme_registry_alter($theme_registry);
 }
 
@@ -201,7 +201,7 @@ function ds_theme_registry_alter(&$theme_registry) {
  * Implements ds_entity_bundle_info_alter().
  */
 function ds_entity_bundle_info_alter(&$bundles) {
-  module_load_include('inc', 'ds', 'includes/ds.registry');
+  module_load_include('inc', 'ds', 'includes/registry');
   _ds_entity_bundle_info_alter($bundles);
 }
 
@@ -209,7 +209,7 @@ function ds_entity_bundle_info_alter(&$bundles) {
  * Implements hook_entity_view_mode_info_alter().
  */
 function ds_entity_view_mode_info_alter(&$view_modes) {
-  module_load_include('inc', 'ds', 'includes/ds.registry');
+  module_load_include('inc', 'ds', 'includes/registry');
   _ds_entity_view_mode_info_alter($view_modes);
 }
 
@@ -217,10 +217,10 @@ function ds_entity_view_mode_info_alter(&$view_modes) {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
-  form_load_include($form_state, 'inc', 'ds', 'includes/ds.field_ui');
+  form_load_include($form_state, 'inc', 'ds', 'includes/field_ui');
   // Also load admin on behalf of DS extras when enabled.
   if (module_exists('ds_extras')) {
-    form_load_include($form_state, 'inc', 'ds_extras', 'includes/ds_extras.admin');
+    form_load_include($form_state, 'inc', 'ds_extras', 'includes/admin');
   }
   ds_field_ui_fields_layouts($form, $form_state);
 }

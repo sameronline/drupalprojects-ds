@@ -30,7 +30,7 @@ function ds_search_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_search_settings'),
     'access arguments' => array('admin_display_suite'),
-    'file' => 'includes/ds_search.admin.inc',
+    'file' => 'includes/admin.inc',
     'type' => MENU_LOCAL_TASK,
   );
 
