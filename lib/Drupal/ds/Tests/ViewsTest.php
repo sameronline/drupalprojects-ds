@@ -7,7 +7,7 @@
 
 namespace Drupal\ds\Tests;
 
-class ViewsTest extends BaseTest {
+class ViewsTestS extends BaseTest {
 
   /**
    * Implements getInfo().

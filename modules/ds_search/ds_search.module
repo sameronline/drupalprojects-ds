@@ -45,7 +45,7 @@ function ds_search_theme() {
     'ds_search_page' => array(),
     'ds_search_group_by_type_settings' => array(
       'render element' => 'element',
-      'file' => 'includes/ds_search.admin.inc',
+      'file' => 'includes/admin.inc',
     ),
   );
 }
