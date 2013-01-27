@@ -616,10 +616,6 @@ function ds_preprocess_ds_layout(&$vars) {
     $layout = $vars['elements']['#ds_layout'];
 
     $render_container = 'content';
-    // User uses user_profile as container.
-    if ($vars['elements']['#entity_type'] == 'user') {
-      $render_container = 'user_profile';
-    }
 
     // Move any preprocess fields to render container.
     // Inconsitency in taxonomy term naming.

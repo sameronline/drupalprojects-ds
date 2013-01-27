@@ -95,10 +95,6 @@ function _ds_theme_registry_alter(&$theme_registry) {
   $entity_info = entity_get_info();
   foreach ($entity_info as $entity_type => $info) {
     if (!empty($entity_info[$entity_type]['fieldable'])) {
-
-      // User uses user_profile for theming.
-      if ($entity_type == 'user') $entity_type = 'user_profile';
-
       // Only add preprocess functions if entity exposes theme function.
       if (isset($theme_registry[$entity_type])) {
         $theme_registry[$entity_type]['preprocess functions'][] = 'ds_preprocess_ds_layout';
@@ -109,12 +105,6 @@ function _ds_theme_registry_alter(&$theme_registry) {
   // Support for File Entity.
   if (isset($theme_registry['file_entity'])) {
     $theme_registry['file_entity']['preprocess functions'][] = 'ds_preprocess_ds_layout';
-  }
-
-  // Support for Entity API.
-  // @todo this might probably go.
-  if (isset($theme_registry['entity'])) {
-    $theme_registry['entity']['preprocess functions'][] = 'ds_preprocess_ds_layout';
   }
 }
 
