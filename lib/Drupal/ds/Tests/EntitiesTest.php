@@ -299,7 +299,7 @@ class EntitiesTest extends BaseTest {
     // Reset theming function.
     // -----------------------
     $edit = array(
-      'additional_settings[fs1][ft-default]' => 'theme_ds_field_reset',
+      'fs1[ft-default]' => 'theme_ds_field_reset',
     );
     $this->drupalPost('admin/structure/ds/list/extras', $edit, t('Save configuration'));
     $this->drupalGet('node/' . $node->nid);

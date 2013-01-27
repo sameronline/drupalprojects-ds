@@ -1580,7 +1580,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       $formatter_type = $display['type'];
     }
 
-    $settings = $display['settings'];
+    $settings = $entity_display->getComponent($key);
     if (isset($form_state['formatter_settings'][$key])) {
       $settings = array_merge($settings, $form_state['formatter_settings'][$key]);
     }
@@ -1616,14 +1616,13 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
 
     if ($form_state['formatter_settings_edit'] == $key) {
       $formatter_type = $form_state['complete_form']['fields'][$key]['format']['type']['#default_value'];
-      $display_options = $entity_display->getComponent($key);
 
       // Get the corresponding formatter object.
-      if ($display_options && $display_options['type'] != 'hidden') {
+      if ($settings && $settings['type'] != 'hidden') {
         $formatter = drupal_container()->get('plugin.manager.field.formatter')->getInstance(array(
           'instance' => $instance,
           'view_mode' => $view_mode,
-          'configuration' => $display_options
+          'configuration' => $settings
         ));
       }
       else {
