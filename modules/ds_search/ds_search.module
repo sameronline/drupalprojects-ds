@@ -55,6 +55,9 @@ function ds_search_theme() {
  */
 function theme_ds_search_page($build) {
 
+  // This is probably because we don't declare anything in ds_search_theme().
+  unset($build['theme_hook_original']);
+
   // Check on empty search results.
   if (empty($build['search_results'])) {
 
@@ -104,12 +107,7 @@ function ds_search_ds_fields_info($entity_type) {
  * Returns the snippet field.
  */
 function ds_search_snippet($field) {
-  // Apache Solr
-  if (isset($field['entity']->search_snippet)) {
-    return $field['entity']->search_snippet;
-  }
-  // Original node snippet
-  elseif (isset($field['entity']->snippet)) {
+  if (isset($field['entity']->snippet)) {
     return $field['entity']->snippet;
   }
 }
@@ -201,53 +199,13 @@ function ds_search_invoke_node_search($hook) {
     return;
   }
   else {
-    $ds_search_type = config('ds.search')->get('ds_search_type');
+    $ds_search_type = config('ds.search')->get('search_type');
     if ($ds_search_type != 'node') {
       return;
     }
   }
 
   return module_invoke('node', $hook);
-}
-
-/**
- * DS entity view callback. Straight copy from Entity API module with fallback
- * to Drupal core view callbacks for nodes .
- */
-function ds_entity_view_fallback($entity_type, $entities, $view_mode = 'full', $langcode = NULL, $page = NULL) {
-
-  // Entity support for entity search.
-  if (module_exists('entity')) {
-    $info = entity_get_info($entity_type);
-    if (isset($info['view callback'])) {
-      $entities = ds_entity_key_array_by_property($entities, $info['entity keys']['id']);
-      return $info['view callback']($entities, $view_mode, $langcode, $entity_type);
-    }
-    elseif (in_array('EntityAPIControllerInterface', class_implements($info['controller class']))) {
-      return entity_get_controller($entity_type)->view($entities, $view_mode, $langcode, $page);
-    }
-    return FALSE;
-  }
-  else {
-    if ($entity_type == 'node') {
-      return node_view_multiple($entities, $view_mode);
-    }
-    elseif ($entity_type == 'file') {
-      return file_view_multiple($entities, $view_mode);
-    }
-  }
-}
-
-/**
- * DS entity key array by property.
- */
-function ds_entity_key_array_by_property(array $entities, $property) {
-  $ret = array();
-  foreach ($entities as $entity) {
-    $key = isset($entity->$property) ? $entity->$property : NULL;
-    $ret[$key] = $entity;
-  }
-  return $ret;
 }
 
 /**
@@ -259,159 +217,32 @@ function ds_search_search_page($results) {
   $build = array('#type' => 'node');
   ds_build_shared_page_variables($build);
 
-  $i = 0;
-  // Multi site Apache Solr support.
-  if (config('ds.search')->get('apachesolr_multisite') && config('ds.search')->get('search_type') == 'apachesolr_search') {
-    $build['search_results'] = $results;
-  }
-  else {
-    foreach ($results as $id => $result) {
-      $entity_type = isset($result->entity_type) ? $result->entity_type : 'node';
-      $data = ds_entity_view_fallback($entity_type, array($result->entity_id => $result), config('ds.search')->get('view_mode'));
-      $data = reset($data);
-      $data[$result->entity_id]['#weight'] = $i++;
-      $build['search_results'][] = $data[$result->entity_id];
-      unset($results[$result->entity_id]);
-      unset($result);
-    }
-  }
 
-  // Group by type.
-  if (config('ds.search')->get('group_by_type') && config('ds.search')->get('group_by_type_settings') && !empty($build['search_results'])) {
+  $data = entity_view_multiple($results, config('ds.search')->get('view_mode'));
+  $build['search_results'] = $data;
+  /*$i = 0;
+  $parity = 'odd';
+  foreach ($results as $id => $result) {
+    $data = entity_view_mul($result, config('ds.search')->get('view_mode'));
+    dpm($data);
+    $data[$result->entity_id]['#weight'] = $i;
+    $build['search_results'][$i] = $data[$result->entity_id];
+    $build['search_results'][$i]['#node']->ds_search_zebra = $parity;
+    $parity = $parity == 'odd' ? 'even' : 'odd';
+    unset($results[$result->entity_id]);
+    unset($result);
+    $i++;
+  }*/
 
-    $settings = config('ds.search')->get('group_by_type_settings');
-    foreach ($build['search_results'] as $id => $result) {
-      if ($settings[$result['#bundle']]['status']) {
+  //dsm($build);
 
-        // Type group.
-        if (!isset($build['search_results'][$result['#bundle']])) {
-          $type = $settings[$result['#bundle']]['wrapper'];
-          $title = check_plain(t($settings[$result['#bundle']]['label']));
-          $class = 'group-result group-result-' . strtr($result['#bundle'], '_', '-');
-          $parity[$result['#bundle']] = 'odd';
-          $build['search_results'][$result['#bundle']] = array(
-            '#type' => $type,
-            '#title' => $title,
-            '#weight' => $settings[$result['#bundle']]['weight'],
-            '#attributes' => array(
-              'class' => array($class),
-            ),
-          );
 
-          if ($type == 'markup') {
-            $build['search_results'][$result['#bundle']]['#prefix'] = '<div class="' . $class . '">' . ((!empty($title)) ? ' <h2>' . $title . '</h2>' : '');
-            $build['search_results'][$result['#bundle']]['#suffix'] = '</div>';
-          }
-        }
-
-        // Move result into the wrapper of its type and unset previous.
-        $build['search_results'][$result['#bundle']][$id] = $result;
-        unset($build['search_results'][$id]);
-
-        // Add the parity to the result to enable correct zebra striping.
-        $build['search_results'][$result['#bundle']][$id]['#node']->ds_search_zebra = $parity[$result['#bundle']];
-        $parity[$result['#bundle']] = $parity[$result['#bundle']] == 'odd' ? 'even' : 'odd';
-      }
-      else {
-
-        // Other group.
-        if (!isset($build['search_results']['ds-other'])) {
-          $title = check_plain(t(config('ds.search')->get('group_by_type_other')));
-          $type = config('ds.search')->get('group_by_type_other_wrapper');
-          $class = 'group-result group-result-other';
-          $parity['ds-other'] = 'odd';
-          $build['search_results']['ds-other'] = array(
-            '#type' => $type,
-            '#title' => $title,
-            '#weight' => 100,
-            '#attributes' => array(
-              'class' => array($class),
-            ),
-          );
-
-          if ($type == 'markup') {
-            $build['search_results']['ds-other']['#prefix'] = '<div class="' . $class . '">' . ((!empty($title)) ? '<h2>' . $title . '</h2>' : '');
-            $build['search_results']['ds-other']['#suffix'] = '</div>';
-          }
-        }
-
-        // Move result into other wrapper and unset previous.
-        $build['search_results']['ds-other'][$id] = $result;
-        unset($build['search_results'][$id]);
-
-        // Add the parity to the result to enable correct zebra striping.
-        $build['search_results']['ds-other'][$id]['#node']->ds_search_parity = $parity['ds-other'];
-        $parity['ds-other'] = $parity['ds-other'] == 'odd' ? 'even' : 'odd';
-      }
-    }
-  }
-  else {
     // Provide zebra striping for results that are not grouped.
-    $parity = 'odd';
+    /*$parity = 'odd';
     foreach ($build['search_results'] as $id => $result) {
       $build['search_results'][$id]['#node']->ds_search_zebra = $parity;
       $parity = $parity == 'odd' ? 'even' : 'odd';
-    }
-  }
-
-  // Apache Solr multisearch grouping.
-  if (config('ds.search')->get('apachesolr_multisite') && config('ds.search')->get('apachesolr_multisite_group') && config('ds.search')->get('search_type') == 'apachesolr_search') {
-    $site_counter = array();
-    $conf_array = array();
-    $config = explode("\n", config('ds.search')->get('apachesolr_multisite_group_config'));
-    foreach ($config as $weight => $conf) {
-      $conf = trim($conf);
-      if (empty($conf)) {
-        continue;
-      }
-      $site_conf = explode('|', $conf);
-      $conf_array[$site_conf[0]] = array(
-        'label' => $site_conf[1],
-        'wrapper' => $site_conf[2],
-        'weight' => $weight,
-      );
-    }
-
-    // Iterate over results.
-    foreach ($build['search_results'] as $id => $result) {
-      if (!isset($build['search_results'][$result['#site_hash']])) {
-        $class = 'group-result group-result-' . strtr($result['#site_hash'], '_', '-');
-        $build['search_results'][$result['#site_hash']] = array(
-          '#type' => 'fieldset',
-          '#weight' => $conf_array[$result['#site_hash']]['weight'],
-          '#attributes' => array(
-            'class' => array($class),
-          ),
-        );
-
-        // Create site counter.
-        $site_counter[$result['#site_hash']] = array(
-          'counter' => 0,
-          'title' => $conf_array[$result['#site_hash']]['label'],
-          'type' => $conf_array[$result['#site_hash']]['wrapper'],
-          'class' => $class,
-        );
-      }
-
-      // Move result into other wrapper and unset previous. Also count for
-      // every site so we can populate @total_per_site later on.
-      $site_counter[$result['#site_hash']]['counter']++;
-      $build['search_results'][$result['#site_hash']][$id] = $result;
-      unset($build['search_results'][$id]);
-    }
-
-    // Site counter.
-    foreach ($site_counter as $hash => $values) {
-      $title = check_plain(t($values['title'], array('!total_per_site' => format_plural($values['counter'], '1 result', '@count results'))));
-      if ($values['type'] == 'div') {
-        $build['search_results'][$hash]['#prefix'] = '<div class="' . $values['class'] . '">' . ((!empty($title)) ? '<h2>' . $title . '</h2>' : '');
-        $build['search_results'][$hash]['#suffix'] = '</div>';
-      }
-      else {
-        $build['search_results'][$hash]['#title'] = $title;
-      }
-    }
-  }
+    }*/
 
   return theme('ds_search_page', $build);
 }
@@ -461,8 +292,10 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
     // Only build a node search snippet if this field is actually being used.
     $fields = ds_get_field_settings($node->entity_type, $node->type, 'search_result');
     if (!empty($fields) && isset($fields['search_snippet'])) {
-      // Because the 'search_result' display is being built right now (and because it is being overridden by Display Suite),
-      // it is necessary to use the 'search_index' display for rendered field content.
+      // Because the 'search_result' display is being built right now
+      // and because it is being overridden by Display Suite,
+      // it is necessary to use the 'search_index' display for rendered
+      // field content.
       $build = node_view($node, 'search_index');
       unset($build['#theme']);
       // Render the node.
@@ -615,131 +448,3 @@ function ds_search_form_search_form_alter(&$form, $form_state) {
   }
 }
 
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function ds_search_form_apachesolr_search_custom_page_search_form_alter(&$form, $form_state) {
-  if (config('ds.search')->get('apachesolr_hide_current_filters')) {
-    $form['basic']['retain-filters']['#type'] = 'value';
-    $form['basic']['retain-filters']['#value'] = config('ds.search')->get('apachesolr_current_filters_default');
-  }
-}
-
-/**
- * Implements hook_apachesolr_index_document_build().
- */
-function ds_search_apachesolr_index_document_build(ApacheSolrDocument $document, $entity) {
-  // Apache Solr multisite support. Render the node already here.
-  if (config('ds.search')->get('apachesolr_multisite')) {
-    ob_start();
-    $element = node_view($entity, config('ds.search')->get('view_mode'));
-    print drupal_render($element);
-    $output = ob_get_contents();
-    ob_end_clean();
-    $document->addField('tm_ds_search_result', $output);
-  }
-  // Creme de la creme: Put the full node object in the index,
-  // so no node_loads are needed for results in the Apache Solr engine.
-  // We are using zs_entity because this field is not indexed by apachesolr and it
-  // is a single.
-  $entity_type = $document->getField('entity_type');
-  $entity_id = $document->getField('entity_id');
-  $entity_type = $entity_type['value'];
-  $entity_id = $entity_id['value'];
-  $entities = entity_load($entity_type, array($entity_id));
-  $entity = reset($entities);
-  $json = drupal_json_encode($entity);
-  $document->addField('zs_entity', $json);
-}
-
-/**
- * Implements hook_apachesolr_query_alter().
- */
-function ds_search_apachesolr_query_alter($query) {
-  $config = config('ds.search');
-
-  // Get the node from the index.
-  $query->addParam('fl', 'zs_entity');
-
-  // Apache Solr multisite support.
-  if ($config->get('apachesolr_multisite') && $config->get('search_type') == 'apachesolr_search') {
-    // Site hash.
-    $query->addParam('fl', 'hash');
-    // Rendered search result.
-    $query->addParam('fl', 'tm_ds_search_result');
-
-    // Make sure this site's search results are first.
-    if ($config->get('apachesolr_multisite_boost')) {
-      $hash = apachesolr_site_hash();
-      $query->addParam('bq', 'hash:' . $hash . '^' . $config->get('apachesolr_multisite_boost_nr'));
-    }
-  }
-
-  // Search per language.
-  if ($config->get('search_language')) {
-    global $language;
-    $query->addFilter('ss_language', $language->language);
-  }
-}
-
-/**
- * Process results on behalf of Apache Solr.
- */
-function ds_search_process_results($results) {
-
-  $processed_results = array();
-
-  if (is_array($results) && !empty($results)) {
-    foreach ($results as $result) {
-
-      // Json decode zs_entity field.
-      $entity = @drupal_json_decode($result['fields']['zs_entity']);
-      if (empty($entity)) {
-        $load = entity_load($result['fields']['entity_type'], array($result['fields']['entity_id']));
-        $entity = reset($load);
-      }
-      else {
-        $entity = (object) $entity;
-      }
-
-      // Add the snippet, url and extra info on the object.
-      $entity->search_snippet = $result['snippet'];
-      $entity->search_extra = $result['extra'];
-      $entity->search_as_url = $result['fields']['url'];
-      $entity->entity_type = $result['fields']['entity_type'];
-      $entity->entity_id = $result['fields']['entity_id'];
-
-      // Apache Solr multisite support.
-      if (config('ds.search')->get('apachesolr_multisite')) {
-
-        // Pass along the uri path in case some people want to
-        // do cool stuff themselves.
-        $entity->uri['path'] = $entity->search_as_url;
-        $entity->uri['options'] = array();
-
-        // Prefix with site hash so we don't override same id's.
-        $markup = $result['fields']['tm_ds_search_result'][0];
-        $processed_results[$result['fields']['id'] . '-' . $result['fields']['entity_id']] = array(
-          '#markup' => $markup,
-          '#site_hash' => $result['fields']['hash'],
-        );
-      }
-      else {
-        $processed_results[$result['fields']['id'] . '-' . $result['fields']['entity_id']] = $entity;
-      }
-    }
-  }
-
-  return $processed_results;
-}
-
-/**
- * Implements hook_apachesolr_search_page_alter(&$build, $search_page).
- */
-function ds_search_apachesolr_search_page_alter(&$build, $search_page) {
-  if (!empty($build['search_results']['#results'])) {
-    $results = $build['search_results']['#results'];
-    $results = ds_search_process_results($results);
-    $build['search_results'] = ds_search_search_page($results);
-  }
-}

@@ -12,7 +12,7 @@ function ds_search_settings($form, $form_state) {
   $config = config('ds.search');
 
   $form['general'] = array(
-    '#type' => 'fieldset',
+    '#type' => 'details',
     '#title' => t('General'),
   );
 
@@ -98,103 +98,8 @@ function ds_search_settings($form, $form_state) {
     ),
   );
 
-  $form['general']['group_by_type'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Group by type.'),
-    '#description' => t('Group the search results per page by type.'),
-    '#default_value' => $config->get('group_by_type'),
-  );
-
-  // Group by type order.
-  $form['group_by_type_settings'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Group by type settings'),
-    '#description' => t('Set the order of the node types which can be grouped. Node types which are not enabled will be showed into a "Other group". Note that this does not work with Apache Solr multisite support.'),
-    '#theme' => 'ds_search_group_by_type_settings',
-    '#states' => array(
-      'visible' => array(
-        'input[name="group_by_type"]' => array('checked' => TRUE),
-      ),
-    ),
-  );
-
-  $node_types = node_type_get_names();
-  $ds_search_group_by_type_settings = $config->get('group_by_type_settings');
-  foreach ($node_types as $name => $label) {
-
-    $form['ds_search_group_by_type_settings'][$name]['name'] = array(
-      '#markup' => check_plain($label),
-    );
-
-    $form['group_by_type_settings'][$name]['status'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Weight for @title', array('@title' => $label)),
-      '#title_display' => 'invisible',
-      '#default_value' => isset($ds_search_group_by_type_settings[$name]) ? $ds_search_group_by_type_settings[$name]['status'] : TRUE,
-      '#parents' => array('ds_search_group_by_type_settings', $name, 'status'),
-    );
-
-    $form['group_by_type_settings'][$name]['label'] = array(
-      '#type' => 'textfield',
-      '#size' => 30,
-      '#title' => t('Group label for @title', array('@title' => $label)),
-      '#title_display' => 'invisible',
-      '#description' => t('Group label. The label will be translatable. Leave empty for no label.'),
-      '#default_value' => isset($ds_search_group_by_type_settings[$name]) ? $ds_search_group_by_type_settings[$name]['label'] : t('Results for @type', array('@type' => drupal_strtolower($node_types[$name]))),
-      '#parents' => array('group_by_type_settings', $name, 'label'),
-    );
-
-    $wrapper_options = array(
-      'fieldset' => t('Fieldset'),
-      'markup' => t('Div with H3 headline'),
-    );
-    $form['group_by_type_settings'][$name]['wrapper'] = array(
-      '#type' => 'select',
-      '#options' => $wrapper_options,
-      '#title' => t('Wrapper for @title', array('@title' => $label)),
-      '#title_display' => 'invisible',
-      '#default_value' => isset($ds_search_group_by_type_settings[$name]) ? $ds_search_group_by_type_settings[$name]['wrapper'] : 'fieldset',
-      '#parents' => array('group_by_type_settings', $name, 'wrapper'),
-    );
-
-    $weight = isset($ds_search_group_by_type_settings[$name]) ? $ds_search_group_by_type_settings[$name]['weight'] : 0;
-    $form['group_by_type_settings'][$name]['weight'] = array(
-      '#type' => 'weight',
-      '#title' => t('Weight for @title', array('@title' => $label)),
-      '#title_display' => 'invisible',
-      '#delta' => 30,
-      '#default_value' => $weight,
-      '#parents' => array('group_by_type_settings', $name, 'weight'),
-    );
-    $form['group_by_type_settings'][$name]['#weight'] = $weight;
-  }
-
-  $form['group_by_type_settings']['group_by_type_other'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Other label'),
-    '#description' => t('The label of the other group. Leave empty for no label.'),
-    '#default_value' => $config->get('group_by_type_other'),
-    '#states' => array(
-      'visible' => array(
-        'input[name="group_by_type"]' => array('checked' => TRUE),
-      ),
-    ),
-  );
-  $form['group_by_type_settings']['group_by_type_other_wrapper'] = array(
-    '#type' => 'select',
-    '#options' => $wrapper_options,
-    '#title' => t('Other wrapper'),
-    '#description' => t('The wrapper of the other group.'),
-    '#default_value' => $config->get('group_by_type_other_wrapper'),
-    '#states' => array(
-      'visible' => array(
-        'input[name="group_by_type"]' => array('checked' => TRUE),
-      ),
-    ),
-  );
-
   $form['node'] = array(
-    '#type' => 'fieldset',
+    '#type' => 'details',
     '#title' => t('Drupal core'),
     '#states' => array(
       'visible' => array(
@@ -217,85 +122,10 @@ function ds_search_settings($form, $form_state) {
     '#description' => t('The number of items to display per page. Enter 0 for no limit.'),
   );
 
-  if (module_exists('apachesolr')) {
-
-    $form['apachesolr_search'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Apache Solr'),
-      '#states' => array(
-        'visible' => array(
-          'select[name="search_type"]' => array('value' => 'apachesolr_search'),
-        ),
-      ),
-    );
-
-    $form['apachesolr_search']['apachesolr_hide_current_filters'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Hide Retain filters'),
-      '#description' => t('Hide the "Retain current filters" checkbox on search results.'),
-      '#default_value' => $config->get('apachesolr_hide_current_filters'),
-    );
-
-    $form['apachesolr_search']['apachesolr_current_filters_default'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Remember filters'),
-      '#description' => t('Remember the filters when you hide the "Retain current filters" checkbox.'),
-      '#default_value' => $config->get('search_apachesolr_current_filters_default'),
-      '#states' => array(
-        'visible' => array(
-          'input[name="apachesolr_hide_current_filters"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
-
-    $form['apachesolr_search']['apachesolr_multisite'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Multisite support'),
-      '#description' => t('Enable this in case multiple sites share one index. Note that sometimes you need to make sure that your formatters are creating absolute paths for links or images. Implementing hook_url_outbound_alter() is a good option in which you can set $options[\'absolute\'] to TRUE.'),
-      '#default_value' => $config->get('apachesolr_multisite'),
-    );
-
-    $form['apachesolr_search']['apachesolr_multisite_boost'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Sort by site'),
-      '#description' => t('Enable this to rank the results of the current site first, than all the rest.'),
-      '#default_value' => $config->get('apachesolr_multisite_boost'),
-      '#states' => array(
-        'visible' => array(
-          'input[name="apachesolr_multisite"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
-
-    $form['apachesolr_search']['apachesolr_multisite_group'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Group results by site'),
-      '#default_value' => $config->get('apachesolr_multisite_group'),
-      '#states' => array(
-        'visible' => array(
-          'input[name="apachesolr_multisite"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
-
-    $form['apachesolr_search']['apachesolr_multisite_group_config'] = array(
-      '#type' => 'textarea',
-      '#title' => t('Group by site configuration'),
-      '#default_value' => $config->get('apachesolr_multisite_group_config'),
-      '#description' => t('Enter sites line by line with following configuration: site-hash|label|wrapper. The <em>site-hash</em> is per site which you can get from Solr. The <em>label</em> is translatable per site. Use !total_per_site in this label for number of results per site. Depending on the number, you will either get "1 result" or "x results" which are translatable. The <em>wrapper</em> can either be "fieldset" or "div".'),
-      '#states' => array(
-        'visible' => array(
-          'input[name="apachesolr_multisite_group"]' => array('checked' => TRUE),
-          'input[name="apachesolr_multisite"]' => array('checked' => TRUE),
-        ),
-      ),
-    );
-  }
-
   $active = config('search.settings')->get('active_modules');
   if (isset($active['user']) && $active['user'] !== 0) {
     $form['user'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('User search'),
     );
 
@@ -326,55 +156,12 @@ function ds_search_settings_submit($form, $form_state) {
     ->set('search_language', $form_state['values']['search_language'])
     ->set('highlight', $form_state['values']['highlight'])
     ->set('highlight_selector', $form_state['values']['highlight_selector'])
-    ->set('group_by_type', $form_state['values']['group_by_type'])
-    ->set('group_by_type_settings', $form_state['values']['group_by_type_settings'])
     ->set('node_form_alter', $form_state['values']['node_form_alter'])
     ->set('search_node_limit', $form_state['values']['search_node_limit'])
-    ->set('apachesolr_hide_current_filters', $form_state['values']['apachesolr_hide_current_filters'])
-    ->set('apachesolr_current_filters_default', $form_state['values']['apachesolr_current_filters_default'])
-    ->set('apachesolr_multisite', $form_state['values']['apachesolr_multisite'])
-    ->set('apachesolr_multisite_boost', $form_state['values']['apachesolr_multisite_boost'])
-    ->set('apachesolr_multisite_group', $form_state['values']['apachesolr_multisite_group'])
-    ->set('apachesolr_multisite_group_config', $form_state['values']['apachesolr_multisite_group_config'])
     ->set('user_override_search_page', $form_state['values']['user_override_search_page'])
     ->save();
 
 
   // Rebuild the menu.
   variable_set('menu_router_rebuild_needed', TRUE);
-}
-
-/**
- * Returns HTML for the Group by type settings.
- */
-function theme_ds_search_group_by_type_settings($variables) {
-  $element = $variables['element'];
-
-  // Type order (tabledrag).
-  $rows = array();
-  foreach (element_children($element, TRUE) as $name) {
-
-    if (!isset($element[$name]['name'])) {
-      continue;
-    }
-
-    $element[$name]['weight']['#attributes']['class'][] = 'type-order-weight';
-    $rows[] = array(
-      'data' => array(
-        drupal_render($element[$name]['name']),
-        drupal_render($element[$name]['status']),
-        drupal_render($element[$name]['label']),
-        drupal_render($element[$name]['wrapper']),
-        drupal_render($element[$name]['weight']),
-      ),
-      'class' => array('draggable'),
-    );
-  }
-
-  $header = array(t('Type'), t('Status'), t('Group label'), t('Wrapper'), t('Weight'));
-  $output = drupal_render_children($element);
-  $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'group-by-order')));
-  drupal_add_tabledrag('group-by-order', 'order', 'sibling', 'type-order-weight', NULL, NULL, TRUE);
-
-  return $output;
 }

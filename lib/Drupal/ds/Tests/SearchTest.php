@@ -76,7 +76,7 @@ class SearchTest extends BaseTest {
     // Let's search.
     $this->drupalGet('search/content/title1');
     $this->assertNoRaw('/search/node/title1');
-    $this->assertRaw('view-mode-search_result', 'Search view mode found');
+    $this->assertRaw('view-mode-search-result', 'Search view mode found');
     $this->assertRaw('group-left', 'Search template found');
     $this->assertRaw('group-right', 'Search template found');
     $this->assertNoText(t('Advanced search'), 'No advanced search found');
@@ -111,50 +111,5 @@ class SearchTest extends BaseTest {
     $this->assertRaw('view-mode-search_result', 'Search view mode found');
     $this->assertRaw('group-left', 'Search template found');
     $this->assertRaw('group-right', 'Search template found');
-
-    // Test the group by settings.
-    $article = array(
-      'title' => 'group article 1',
-      'type' => 'article',
-      'promote' => 1,
-    );
-    $this->drupalCreateNode($article);
-
-    $page = array(
-      'title' => 'group page 1',
-      'type' => 'page',
-      'promote' => 1,
-    );
-    $this->drupalCreateNode($page);
-    $this->cronRun();
-
-    $edit = array(
-      'group_by_type' => '1'
-    );
-    $this->drupalPost('admin/structure/ds/list/search', $edit, t('Save configuration'));
-
-    // Let's search.
-    $this->drupalGet('search/content/group');
-    $this->assertRaw('Results for article');
-    $this->assertRaw('Results for basic page');
-
-    $edit = array(
-      'group_by_type_settings[article][label]' => 'Article results',
-    );
-    $this->drupalPost('admin/structure/ds/list/search', $edit, t('Save configuration'));
-    $this->drupalGet('search/content/group');
-    $this->assertNoRaw('Results for article');
-    $this->assertRaw('Article results');
-    $this->assertRaw('Results for basic page');
-
-    $edit = array(
-      'group_by_type_settings[page][status]' => FALSE,
-      'group_by_type_settings[article][label]' => '',
-    );
-    $this->drupalPost('admin/structure/ds/list/search', $edit, t('Save configuration'));
-    $this->drupalGet('search/content/group');
-    $this->assertNoRaw('Article results');
-    $this->assertNoRaw('Results for basic page');
-    $this->assertRaw('Other');
   }
 }
