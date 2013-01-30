@@ -982,7 +982,17 @@ function ds_field_settings_summary($field, $form_state, $form, $view_mode) {
   $context = array(
     'formatter' => $formatter_name,
     'field' => $field,
-    'instance' => array('display' => array('default' => array('settings' => array()))),
+    'instance' => array(
+      'display' => array(
+        $view_mode => array(
+          'label' => '',
+          'type' => '',
+          'weight' => '',
+          'settings' => array(),
+          'module' => '',
+        )
+      )
+    ),
     'view_mode' => $view_mode,
     'ds' => TRUE,
   );
