@@ -401,6 +401,7 @@ function ds_get_layout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
  *   Collection of fields.
  */
 function ds_get_fields($entity_type, $cache = TRUE) {
+  global $language;
 
   static $static_fields, $fields_cached = array();
   static $loaded = FALSE;
@@ -408,7 +409,7 @@ function ds_get_fields($entity_type, $cache = TRUE) {
   // Get fields from cache.
   if (!$loaded) {
     $loaded = TRUE;
-    if ($cache && $cached_fields = cache_get('ds_fields:' . $GLOBALS[LANGUAGE_TYPE_CONTENT]->language)) {
+    if ($cache && $cached_fields = cache_get('ds_fields:' . $language->language)) {
       $fields_cached = $static_fields = $cached_fields->data;
     }
   }
@@ -443,7 +444,7 @@ function ds_get_fields($entity_type, $cache = TRUE) {
 
       // Cache the fields.
       if ($cache) {
-        cache_set('ds_fields:' . $GLOBALS[LANGUAGE_TYPE_CONTENT]->language, $fields_cached, 'cache');
+        cache_set('ds_fields:' . $language->language, $fields_cached, 'cache');
       }
     }
     else {
