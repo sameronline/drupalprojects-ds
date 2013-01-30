@@ -25,6 +25,11 @@ function ds_ds_fields_info($entity_type) {
       );
       if (!empty($field->ui_limit)) {
         $fields[$entity_type][$key]['ui_limit'] = explode("\n", $field->ui_limit);
+        // Ensure that all strings are trimmed, eg. don't have
+        // extra spaces, \r chars etc.
+        foreach ($fields[$entity_type][$key]['ui_limit'] as $k => $v) {
+          $fields[$entity_type][$key]['ui_limit'][$k] = trim($v);
+        }
       }
     }
   }
