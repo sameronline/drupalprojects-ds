@@ -401,7 +401,7 @@ function ds_search_search_page($results) {
  */
 function node_ds_search_execute($keys = NULL, $conditions = NULL) {
   // Build matching conditions
-  $query = db_select('search_index', 'i', array('target' => 'slave'))->extend('SearchQuery')->extend('PagerDefault');
+  $query = db_select('search_index', 'i', array('target' => 'slave'))->extend('SearchQuery');
   $query->join('node', 'n', 'n.nid = i.sid');
   $query
     ->condition('n.status', 1)
@@ -431,6 +431,7 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
   $limit = variable_get('ds_search_node_limit', 10);
   // Only add limit if it is greater than zero so we can display all items.
   if ($limit) {
+    $query->extend('PagerDefault');
     $query->limit($limit);
   }
 
