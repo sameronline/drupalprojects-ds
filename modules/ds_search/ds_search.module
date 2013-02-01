@@ -254,7 +254,6 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
   // Build matching conditions
   $query = db_select('search_index', 'i', array('target' => 'slave'))
     ->extend('Drupal\search\SearchQuery')
-    ->extend('Drupal\Core\Database\Query\PagerSelectExtender');
   $query->join('node', 'n', 'n.nid = i.sid');
   $query
     ->condition('n.status', 1)
@@ -278,6 +277,7 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
   $limit = config('ds.search')->get('search_node_limit');
   // Only add limit if it is greater than zero so we can display all items.
   if ($limit) {
+    $query->extend('Drupal\Core\Database\Query\PagerSelectExtender');
     $query->limit($limit);
   }
 
