@@ -1137,9 +1137,7 @@ function ds_return_picture($entity) {
 
   // Gravatar support.
   if (module_exists('gravatar')) {
-    if (!isset($entity->mail)) {
-      $entity = _gravatar_load_account($entity);
-    }
+    $entity = _gravatar_load_account($entity);
     $entity->picture = _gravatar_get_account_user_picture($entity);
   }
 
