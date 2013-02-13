@@ -429,17 +429,17 @@ class views_plugin_ds_entity_view extends views_plugin_row {
       }
 
       $raw_group_value = isset($row->{$group_field}) ? $row->{$group_field} : '';
-      if (!isset($grouping[$view_name][$raw_group_value])) {
-        $group_value = $raw_group_value;
-        // Special function to format the heading value.
-        if (!empty($this->options['grouping_fieldset']['group_field_function'])) {
-          $function = $this->options['grouping_fieldset']['group_field_function'];
-          if (function_exists($function)) {
-            $group_value = $function($raw_group_value, $this->entities[$row->{$this->field_alias}]);
-          }
+      $group_value = $raw_group_value;
+      // Special function to format the heading value.
+      if (!empty($this->options['grouping_fieldset']['group_field_function'])) {
+        $function = $this->options['grouping_fieldset']['group_field_function'];
+        if (function_exists($function)) {
+          $group_value = $function($raw_group_value, $this->entities[$row->{$this->field_alias}]);
         }
+      }
+      if (!isset($grouping[$view_name][$group_value])) {
         $group_value_content = '<h2 class="grouping-title">' . $group_value . '</h2>';
-        $grouping[$view_name][$raw_group_value] = $raw_group_value;
+        $grouping[$view_name][$group_value] = $group_value;
       }
     }
 
