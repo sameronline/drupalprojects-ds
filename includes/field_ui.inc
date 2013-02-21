@@ -1604,10 +1604,10 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     // Base button element for the various formatter settings actions.
     $base_button = array(
       '#submit' => array(
-        array($form_state['build_info']['callback'][0], 'multistepSubmit'),
+        array($form_state['build_info']['callback_object'], 'multistepSubmit'),
       ),
       '#ajax' => array(
-        'callback' => array($form_state['build_info']['callback'][0], 'multistepAjax'),
+        'callback' => array($form_state['build_info']['callback_object'], 'multistepAjax'),
         'wrapper' => 'field-display-overview-wrapper',
         'effect' => 'fade',
       ),
@@ -1759,13 +1759,13 @@ function ds_field_row_form_format_construct(&$table, $key, $settings_form, $form
 
   $base_button = array(
     '#submit' => array(
-      array($form_state['build_info']['callback'][0], 'multistepSubmit'),
+      array($form_state['build_info']['callback_object'], 'multistepSubmit'),
     ),
     '#validate' => array(
       'ds_field_ui_fields_validate',
     ),
     '#ajax' => array(
-      'callback' => array($form_state['build_info']['callback'][0], 'multistepAjax'),
+      'callback' => array($form_state['build_info']['callback_object'], 'multistepAjax'),
       'wrapper' => 'field-display-overview-wrapper',
       'effect' => 'fade',
     ),
@@ -1807,10 +1807,10 @@ function ds_field_row_form_format_summary_construct(&$table, $key, $form_state) 
 
   $base_button = array(
     '#submit' => array(
-      array($form_state['build_info']['callback'][0], 'multistepSubmit'),
+      array($form_state['build_info']['callback_object'], 'multistepSubmit'),
     ),
     '#ajax' => array(
-      'callback' => array($form_state['build_info']['callback'][0], 'multistepAjax'),
+      'callback' => array($form_state['build_info']['callback_object'], 'multistepAjax'),
       'wrapper' => 'field-display-overview-wrapper',
       'effect' => 'fade',
     ),
