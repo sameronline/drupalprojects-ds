@@ -13,7 +13,7 @@ namespace Drupal\ds\Plugin\ds\field;
 abstract class PostDate extends FunctionPluginBase {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
+   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
    */
   public function renderField($field) {
     $date_format = str_replace('ds_post_date_', '', $field['formatter']);

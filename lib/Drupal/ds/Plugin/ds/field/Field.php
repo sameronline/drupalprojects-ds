@@ -13,7 +13,7 @@ namespace Drupal\ds\Plugin\ds;
 abstract class Field extends FunctionPluginBase {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
+   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
    */
   public function renderField($field) {
     $output = '';

@@ -17,7 +17,7 @@ use Drupal\Core\Annotation\Plugin;
 abstract class Link extends Field {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBase::settingsForm().
+   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::settingsForm().
    */
   public function settingsForm() {
 
@@ -38,7 +38,7 @@ abstract class Link extends Field {
   }
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBase::defaultSettings().
+   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::defaultSettings().
    */
   public function defaultSettings() {
 

@@ -25,7 +25,7 @@ use Drupal\Core\Annotation\Plugin;
 class Username extends Title {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\Title::entityRenderKey().
+   * Overrides \Drupal\ds\Plugin\ds\field\Title::entityRenderKey().
    */
   public function entityRenderKey() {
     return 'name';

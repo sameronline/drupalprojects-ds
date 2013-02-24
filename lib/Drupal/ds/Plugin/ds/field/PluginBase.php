@@ -12,62 +12,38 @@ use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
 /**
  * Base class for all the ds plugins
  */
-abstract class PluginBase extends ComponentPluginBase {
+abstract class PluginBase extends ComponentPluginBase implements PluginBaseInterface {
 
   /**
-   * Renders a field.
-   *
-   * @param array $field
-   *   The field that should be rendered.
-   *
-   * @return string
-   *   Returns the rendered field.
+   * Implements \Drupal\ds\Plugin\ds\field\PluginBaseInterface::renderField()
    */
-  abstract public function renderField($field);
+  public function renderField($field) {
+    return '';
+  }
 
   /**
-   * Returns a settings form for the field.
-   *
-   * @return array
-   *   The render array building the form.
+   * Implements \Drupal\ds\Plugin\ds\field\PluginBaseInterface::settingsForm()
    */
   public function settingsForm() {
     return array();
   }
 
   /**
-   * Returns default settings for the settings form.
-   *
-   * @return array
-   *   The default settings.
+   * Implements \Drupal\ds\Plugin\ds\field\PluginBaseInterface::defaultSettings()
    */
   public function defaultSettings() {
     return array();
   }
 
   /**
-   * Returns a list of possible formatters for this field.
-   *
-   * @return array
-   *   A list of possible formatters
+   * Implements \Drupal\ds\Plugin\ds\field\PluginBaseInterface::formatters()
    */
   public function formatters() {
     return array();
   }
 
   /**
-   * Returns a list of displays where the field will be showed.
-   *
-   * Only used for the manage display screen so you can limit fields to show
-   * based on bundles or view modes the values are always in the form of
-   * $bundle|$view_mode
-   *
-   * You may use * to select all.
-   * Make sure you use the machine name.
-   *
-   * @return array
-   *   Leave empty if you don't want to limit displaying the field.
-   *   Returns FALSE if this field shouldn't be shown anywhere.
+   * Implements \Drupal\ds\Plugin\ds\field\PluginBaseInterface::displays()
    */
   public function displays() {
     $displays = array(

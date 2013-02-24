@@ -24,7 +24,7 @@ use Drupal\Core\Annotation\Plugin;
 class NodeAuthor extends FunctionPluginBase {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
+   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
    */
   public function renderField($field) {
     // Users without a user name are anonymous users. These are never linked.
@@ -43,7 +43,7 @@ class NodeAuthor extends FunctionPluginBase {
   }
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\PluginBase::formatters().
+   * Overrides \Drupal\ds\Plugin\ds\PluginBase::formatters().
    */
   public function formatters() {
 

@@ -17,7 +17,7 @@ use Drupal\Core\Annotation\Plugin;
 abstract class Title extends Field {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBase::settingsForm().
+   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::settingsForm().
    */
   public function settingsForm() {
 
@@ -39,7 +39,7 @@ abstract class Title extends Field {
   }
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\FieldPluginBase::defaultSettings().
+   * Overrides \Drupal\ds\Plugin\ds\FieldPluginBase::defaultSettings().
    */
   public function defaultSettings() {
 
@@ -53,7 +53,7 @@ abstract class Title extends Field {
   }
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\FieldPluginBase::entityRenderKey().
+   * Overrides \Drupal\ds\Plugin\ds\FieldPluginBase::entityRenderKey().
    */
   public function entityRenderKey() {
     return 'title';
