@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPluginManager.
+ * Contains \Drupal\ds\Plugin\DSFieldPluginManager.
  */
 
 namespace Drupal\ds\Plugin;
@@ -16,7 +16,7 @@ use Drupal\Core\Plugin\Discovery\CacheDecorator;
 /**
  * Plugin type manager for all ds plugins.
  */
-class DSPluginManager extends PluginManagerBase {
+class DSFieldPluginManager extends PluginManagerBase {
 
   /**
    * Constructs a DSPluginManager object.
