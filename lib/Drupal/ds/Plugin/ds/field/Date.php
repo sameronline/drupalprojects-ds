@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\ds\function_field\PostDate.
+ * Contains \Drupal\ds\Plugin\ds\field\PostDate.
  */
 
-namespace Drupal\ds\Plugin\ds\function_field;
+namespace Drupal\ds\Plugin\ds\field;
 
 /**
  * The base plugin to create DS post date function fields.
  */
-abstract class PostDate extends FunctionFieldPluginBase {
+abstract class PostDate extends FunctionPluginBase {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\FieldPluginBase\renderField().
+   * Implements \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
    */
   public function renderField($field) {
     $date_format = str_replace('ds_post_date_', '', $field['formatter']);
@@ -21,7 +21,7 @@ abstract class PostDate extends FunctionFieldPluginBase {
   }
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\FieldPluginBase::formatters().
+   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::formatters().
    */
   public function formatters() {
     $date_types = system_get_date_formats();

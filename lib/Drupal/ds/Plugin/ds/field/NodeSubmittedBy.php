@@ -2,18 +2,29 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\ds\function_field\NodeSubmittedBy.
+ * Contains \Drupal\ds\Plugin\ds\field\NodeSubmittedBy.
  */
 
-namespace Drupal\ds\Plugin\ds\function_field;
+namespace Drupal\ds\Plugin\ds\field;
+
+use Drupal\Core\Annotation\Translation;
+use Drupal\Core\Annotation\Plugin;
 
 /**
- * The base plugin to create DS post date function fields.
+ * Function field that renders the submitted by field
+ *
+ * @Plugin(
+ *   id = "node_submitted_by",
+ *   title = @Translation("Submitted by"),
+ *   entity_type = "node",
+ *   module = "node",
+ *   field_type = "function"
+ * )
  */
-abstract class NodeSubmittedBy extends Date {
+class NodeSubmittedBy extends Date {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\FieldPluginBase\function_field\Date::renderField().
+   * Overrides \Drupal\ds\Plugin\ds\field\Date::renderField().
    */
   public function renderField($field) {
     $account = user_load($field['entity']->uid);
@@ -28,7 +39,7 @@ abstract class NodeSubmittedBy extends Date {
   }
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\function_field\Date::formatters().
+   * Overrides \Drupal\ds\Plugin\ds\field\Date::formatters().
    */
   public function formatters() {
     // Fetch all the date formatters

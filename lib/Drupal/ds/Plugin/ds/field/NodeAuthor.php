@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\ds\function_field\NodeAuthor.
+ * Contains \Drupal\ds\Plugin\ds\field\NodeAuthor.
  */
 
-namespace Drupal\ds\Plugin\ds\function_field;
+namespace Drupal\ds\Plugin\ds\field;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Annotation\Plugin;
@@ -17,13 +17,14 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "node_author",
  *   title = @Translation("Author"),
  *   entity_type = "node",
- *   module = "node"
+ *   module = "node",
+ *   field_type = "function"
  * )
  */
-class NodeAuthor extends FunctionFieldPluginBase {
+class NodeAuthor extends FunctionPluginBase {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\FieldPluginBase::renderField().
+   * Implements \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
    */
   public function renderField($field) {
     // Users without a user name are anonymous users. These are never linked.
@@ -42,7 +43,7 @@ class NodeAuthor extends FunctionFieldPluginBase {
   }
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\FieldPluginBase::formatters().
+   * Implements \Drupal\ds\Plugin\ds\PluginBase::formatters().
    */
   public function formatters() {
 

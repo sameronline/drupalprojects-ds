@@ -21,10 +21,7 @@ class DSBundle extends Bundle {
    * Overrides Symfony\Component\HttpKernel\Bundle\Bundle::build().
    */
   public function build(ContainerBuilder $container) {
-    foreach (DS::getFieldPluginTypes() as $type) {
-      $container->register("plugin.manager.ds.$type", 'Drupal\ds\Plugin\DSFieldPluginManager')
-        ->addArgument($type);
-    }
+    $container->register("plugin.manager.ds", 'Drupal\ds\Plugin\DSPluginManager');
   }
 
 }

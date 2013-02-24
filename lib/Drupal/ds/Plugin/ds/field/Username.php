@@ -3,10 +3,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\ds\function_field\Username.
+ * Contains \Drupal\ds\Plugin\ds\field\Username.
  */
 
-namespace Drupal\ds\Plugin\ds\function_field;
+namespace Drupal\ds\Plugin\ds\field;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Annotation\Plugin;
@@ -18,13 +18,14 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "username",
  *   title = @Translation("Username"),
  *   entity_type = "user",
- *   module = "user"
+ *   module = "user",
+ *   field_type = "function"
  * )
  */
 class Username extends Title {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\function_field\Title::entityRenderKey().
+   * Implements \Drupal\ds\Plugin\ds\field\Title::entityRenderKey().
    */
   public function entityRenderKey() {
     return 'name';

@@ -3,10 +3,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\ds\function_field\TaxonomyTermTitle.
+ * Contains \Drupal\ds\Plugin\ds\field\TaxonomyTermTitle.
  */
 
-namespace Drupal\ds\Plugin\ds\function_field;
+namespace Drupal\ds\Plugin\ds\field;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Annotation\Plugin;
@@ -18,13 +18,14 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "taxonomy_term_title",
  *   title = @Translation("Name"),
  *   entity_type = "taxonomy_term",
- *   module = "taxonomy"
+ *   module = "taxonomy",
+ *   field_type = "function"
  * )
  */
 class TaxonomyTermTitle extends Title {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\function_field\Title::entityRenderKey().
+   * Overrides \Drupal\ds\Plugin\ds\field\Title::entityRenderKey().
    */
   public function entityRenderKey() {
     return 'name';

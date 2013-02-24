@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\ds\FieldPluginBase.
+ * Contains \Drupal\ds\Plugin\ds\field\PluginBase.
  */
 
-namespace Drupal\ds\Plugin\ds;
+namespace Drupal\ds\Plugin\ds\field;
 
 use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
 
 /**
  * Base class for all the ds plugins
  */
-abstract class FieldPluginBase extends ComponentPluginBase {
+abstract class PluginBase extends ComponentPluginBase {
 
   /**
    * Renders a field.

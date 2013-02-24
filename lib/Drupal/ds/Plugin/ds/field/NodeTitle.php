@@ -3,10 +3,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\ds\function_field\NodeTitle.
+ * Contains \Drupal\ds\Plugin\ds\field\NodeTitle.
  */
 
-namespace Drupal\ds\Plugin\ds\function_field;
+namespace Drupal\ds\Plugin\ds\field;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Annotation\Plugin;
@@ -18,7 +18,8 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "node_title",
  *   title = @Translation("Title"),
  *   entity_type = "node",
- *   module = "node"
+ *   module = "node",
+ *   field_type = "function"
  * )
  */
 class NodeTitle extends Title {

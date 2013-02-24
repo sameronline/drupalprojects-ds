@@ -3,10 +3,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\ds\function_field\Title.
+ * Contains \Drupal\ds\Plugin\ds\field\Title.
  */
 
-namespace Drupal\ds\Plugin\ds\function_field;
+namespace Drupal\ds\Plugin\ds\field;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Annotation\Plugin;
@@ -17,7 +17,7 @@ use Drupal\Core\Annotation\Plugin;
 abstract class Title extends Field {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\FieldPluginBase::settingsForm().
+   * Implements \Drupal\ds\Plugin\ds\field\PluginBase::settingsForm().
    */
   public function settingsForm() {
 

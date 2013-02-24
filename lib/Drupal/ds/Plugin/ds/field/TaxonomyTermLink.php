@@ -3,10 +3,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\ds\function_field\TaxonomyTermLink.
+ * Contains \Drupal\ds\Plugin\ds\field\TaxonomyTermLink.
  */
 
-namespace Drupal\ds\Plugin\ds\function_field;
+namespace Drupal\ds\Plugin\ds\field;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Annotation\Plugin;
@@ -18,7 +18,8 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "taxonomy_term_link",
  *   title = @Translation("Read more"),
  *   entity_type = "taxonomy_term",
- *   module = "taxonomy"
+ *   module = "taxonomy",
+ *   field_type = "function"
  * )
  */
 class TaxonomyTermLink extends Link {

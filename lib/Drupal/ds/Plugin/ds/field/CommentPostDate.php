@@ -3,10 +3,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\ds\function_field\CommentPostDate.
+ * Contains \Drupal\ds\Plugin\ds\field\CommentPostDate.
  */
 
-namespace Drupal\ds\Plugin\ds\function_field;
+namespace Drupal\ds\Plugin\ds\field;
 
 use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Annotation\Plugin;
@@ -18,7 +18,8 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "node_post_date",
  *   title = @Translation("Post date"),
  *   entity_type = "comment",
- *   module = "comment"
+ *   module = "comment",
+ *   field_type = "function"
  * )
  */
 class CommentPostDate extends Date {

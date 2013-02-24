@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\ds\function_field\Field.
+ * Contains \Drupal\ds\Plugin\ds\Field.
  */
 
-namespace Drupal\ds\Plugin\ds\function_field;
+namespace Drupal\ds\Plugin\ds;
 
 /**
  * The base plugin to create DS field function fields.
  */
-abstract class Field extends FunctionFieldPluginBase {
+abstract class Field extends FunctionPluginBase {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\FieldPluginBase::renderField().
+   * Implements \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
    */
   public function renderField($field) {
     $output = '';
