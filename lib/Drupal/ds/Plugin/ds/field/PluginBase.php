@@ -46,12 +46,7 @@ abstract class PluginBase extends ComponentPluginBase implements PluginBaseInter
    * Implements \Drupal\ds\Plugin\ds\field\PluginBaseInterface::displays()
    */
   public function displays() {
-    $displays = array(
-      'article|full',
-      '*|search_index'
-    );
-
-    return $displays;
+    return array();
   }
 
 }

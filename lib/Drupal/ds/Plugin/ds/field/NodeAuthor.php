@@ -17,11 +17,10 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "node_author",
  *   title = @Translation("Author"),
  *   entity_type = "node",
- *   module = "node",
- *   field_type = "function"
+ *   module = "node"
  * )
  */
-class NodeAuthor extends FunctionPluginBase {
+class NodeAuthor extends PluginBase {
 
   /**
    * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().

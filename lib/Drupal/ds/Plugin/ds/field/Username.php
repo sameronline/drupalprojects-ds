@@ -18,8 +18,7 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "username",
  *   title = @Translation("Username"),
  *   entity_type = "user",
- *   module = "user",
- *   field_type = "function"
+ *   module = "user"
  * )
  */
 class Username extends Title {

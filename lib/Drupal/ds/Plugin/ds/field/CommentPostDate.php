@@ -18,8 +18,7 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "node_post_date",
  *   title = @Translation("Post date"),
  *   entity_type = "comment",
- *   module = "comment",
- *   field_type = "function"
+ *   module = "comment"
  * )
  */
 class CommentPostDate extends Date {

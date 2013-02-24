@@ -18,8 +18,7 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "node_title",
  *   title = @Translation("Title"),
  *   entity_type = "node",
- *   module = "node",
- *   field_type = "function"
+ *   module = "node"
  * )
  */
 class NodeTitle extends Title {

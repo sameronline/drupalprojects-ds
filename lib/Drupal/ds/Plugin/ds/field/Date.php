@@ -10,7 +10,7 @@ namespace Drupal\ds\Plugin\ds\field;
 /**
  * The base plugin to create DS post date function fields.
  */
-abstract class Date extends FunctionPluginBase {
+abstract class Date extends PluginBase {
 
   /**
    * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
