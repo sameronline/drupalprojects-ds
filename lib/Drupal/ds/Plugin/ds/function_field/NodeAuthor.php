@@ -16,13 +16,14 @@ use Drupal\Core\Annotation\Plugin;
  * @Plugin(
  *   id = "node_author",
  *   title = @Translation("Author"),
- *   entity_type = "node"
+ *   entity_type = "node",
+ *   module = "node"
  * )
  */
 class NodeAuthor extends FunctionFieldPluginBase {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\PluginBase\renderField().
+   * Implements \Drupal\ds\Plugin\ds\FieldPluginBase::renderField().
    */
   public function renderField($field) {
     // Users without a user name are anonymous users. These are never linked.
@@ -41,10 +42,11 @@ class NodeAuthor extends FunctionFieldPluginBase {
   }
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\PluginBase\formatters().
+   * Implements \Drupal\ds\Plugin\ds\FieldPluginBase::formatters().
    */
   public function formatters() {
-   'formatters' => array(
+
+   $formatters = array(
       'author' => t('Author'),
       'author_linked' => t('Author linked to profile')
     ),

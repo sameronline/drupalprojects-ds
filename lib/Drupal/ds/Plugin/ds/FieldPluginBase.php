@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of Drupal\ds\Plugin\ds\FieldPluginBase.
+ * Contains \Drupal\ds\Plugin\ds\FieldPluginBase.
  */
 
 namespace Drupal\ds\Plugin\ds;
@@ -53,6 +53,29 @@ abstract class FieldPluginBase extends ComponentPluginBase {
    */
   public function formatters() {
     return array();
+  }
+
+  /**
+   * Returns a list of displays where the field will be showed.
+   *
+   * Only used for the manage display screen so you can limit fields to show
+   * based on bundles or view modes the values are always in the form of
+   * $bundle|$view_mode
+   *
+   * You may use * to select all.
+   * Make sure you use the machine name.
+   *
+   * @return array
+   *   Leave empty if you don't want to limit displaying the field.
+   *   Returns FALSE if this field shouldn't be shown anywhere.
+   */
+  public function displays() {
+    $displays = array(
+      'article|full',
+      '*|search_index'
+    );
+
+    return $displays;
   }
 
 }

@@ -23,7 +23,7 @@ class DSPluginManager extends PluginManagerBase {
    */
   public function __construct($type) {
     $this->discovery = new AnnotatedClassDiscovery('ds', $type);
-    $this->discovery = new AlterDecorator($this->discovery, 'ds_field_plugins_' . $type);
+    $this->discovery = new AlterDecorator($this->discovery, 'ds_' . $type . '_plugins');
     $this->discovery = new CacheDecorator($this->discovery, 'ds:' . $type);
 
     $this->factory = new DefaultFactory($this->discovery);
