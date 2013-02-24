@@ -17,7 +17,8 @@ abstract class BlockPluginBase extends PluginBase {
    */
   public function renderField($field) {
     $contextual = module_exists('contextual') && user_access('access contextual links');
-    list($module, $delta) = explode('|', $field['properties']['block']);
+    $module = $this->blockModule();
+    $delta = $this->blockDelta();
     $block = module_invoke($module, 'block_view', $delta);
     $contextual_links = array();
     // Get contextual links.
@@ -65,29 +66,29 @@ abstract class BlockPluginBase extends PluginBase {
       }
 
       $block = (object) $block;
-      switch ($field['properties']['block_render']) {
-        case DS_BLOCK_TEMPLATE:
-          if (!isset($block->subject)) {
-            $block->subject = NULL;
-          }
-          $block->region = NULL;
-          $block->module = $module;
-          $block->delta = $delta;
-          $elements = array('elements' => array('#block' => $block, '#children' => $block->content));
-          // Add contextual links
-          if ($contextual) {
-            $elements['elements'] += array('#contextual_links' => array_merge($contextual_links, array('block' => array('admin/structure/block/manage', array($block->module, $block->delta)))));
-          }
-          return theme('block', $elements);
-          break;
-        case DS_BLOCK_TITLE_CONTENT:
-          return '<h2 class="block-title">' . $block->subject . '</h2>' . $block->content;
-          break;
-        case DS_BLOCK_CONTENT:
-          return $block->content;
-          break;
-      }
+      $this->renderBlock($block);
     }
+  }
+
+  /**
+   * Returns the module defining the block.
+   */
+  protected function blockModule() {
+    return '';
+  }
+
+  /**
+   * Returns the delte of the block.
+   */
+  protected function blockDelta() {
+    return '';
+  }
+
+  /**
+   * Renders the block.
+   */
+  protected function renderBlock($block) {
+    return '';
   }
 
 }
