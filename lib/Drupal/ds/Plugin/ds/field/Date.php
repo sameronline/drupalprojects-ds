@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\ds\field\PostDate.
+ * Contains \Drupal\ds\Plugin\ds\field\Date.
  */
 
 namespace Drupal\ds\Plugin\ds\field;
@@ -10,7 +10,7 @@ namespace Drupal\ds\Plugin\ds\field;
 /**
  * The base plugin to create DS post date function fields.
  */
-abstract class PostDate extends FunctionPluginBase {
+abstract class Date extends FunctionPluginBase {
 
   /**
    * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
