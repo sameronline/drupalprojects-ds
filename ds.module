@@ -341,6 +341,7 @@ function ds_get_layout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
  */
 function ds_get_fields($entity_type, $cache = TRUE) {
 
+  /*
   static $static_fields, $fields_cached = array();
   static $loaded = FALSE;
 
@@ -391,6 +392,11 @@ function ds_get_fields($entity_type, $cache = TRUE) {
 
     // Store the fields statically.
     $static_fields[$entity_type] = $fields;
+  }
+  */
+
+  foreach (drupal_container()->get('plugin.manager.ds')->getDefinitions() as $plugin_id => $plugin) {
+    $static_fields[$plugin['entity_type']][$plugin_id] = $plugin;
   }
 
   return isset($static_fields[$entity_type]) ? $static_fields[$entity_type] : array();
@@ -456,6 +462,13 @@ function ds_get_field_value($key, $field, $entity, $view_mode, $build = array())
   $field['view_mode'] = $view_mode;
   $field['build'] = $build;
 
+  // Load the plugin.
+  $field_instance = drupal_container()->get('plugin.manager.ds')->createInstance($field['id']);
+
+  // Renderd the field.
+  return $field_instance->renderField($field);
+
+  /*
   switch ($field['field_type']) {
 
     case DS_FIELD_TYPE_PREPROCESS:
@@ -478,6 +491,7 @@ function ds_get_field_value($key, $field, $entity, $view_mode, $build = array())
     case DS_FIELD_TYPE_BLOCK:
       return ds_render_block_field($field);
   }
+  */
 }
 
 /**
