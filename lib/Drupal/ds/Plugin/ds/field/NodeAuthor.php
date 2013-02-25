@@ -26,6 +26,9 @@ class NodeAuthor extends PluginBase {
    * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
    */
   public function renderField($field) {
+
+    dpm($field);
+
     // Users without a user name are anonymous users. These are never linked.
     if (empty($field['entity']->name)) {
       $anonymous_string = config('user.settings')->get('anonymous');
@@ -39,6 +42,10 @@ class NodeAuthor extends PluginBase {
     if ($field['formatter'] == 'author_linked') {
       return theme('username', array('account' => $field['entity']));
     }
+
+    // Formatter handling isn't working yet
+    // Todo remove this once formatters are saved again.
+    return check_plain($field['entity']->name);
   }
 
   /**
@@ -46,10 +53,10 @@ class NodeAuthor extends PluginBase {
    */
   public function formatters() {
 
-   $formatters = array(
+    $formatters = array(
       'author' => t('Author'),
       'author_linked' => t('Author linked to profile')
-    ),
+    );
 
     return $formatters;
   }

@@ -45,7 +45,7 @@ class NodeSubmittedBy extends Date {
     $date_formatters = parent::formatters();
 
     // Add a "time ago" formatter
-    $date_formatters['ds_time_ago'] = t('Time ago')]
+    $date_formatters['ds_time_ago'] = t('Time ago');
 
     return $date_formatters;
   }

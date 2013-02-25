@@ -1,4 +1,3 @@
-
 <?php
 
 /**
@@ -22,15 +21,15 @@ abstract class Title extends Field {
   public function settingsForm() {
 
     $form = array();
-    $form['link'] => array(
+    $form['link'] = array(
       'type' => 'select',
       'options' => array('no', 'yes')
     );
-    $form['wrapper'] => array(
+    $form['wrapper'] = array(
       'type' => 'textfield',
       'description' => t('Eg: h1, h2, p')
     );
-    $form['class'] => array(
+    $form['class'] = array(
       'type' => 'textfield',
       'description' => t('Put a class on the wrapper. Eg: block-title')
     );

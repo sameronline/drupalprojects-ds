@@ -17,15 +17,17 @@ abstract class CodePluginBase extends PluginBase {
    */
   public function renderField($field) {
     if (isset($field['properties']['code'])) {
-      $format = (isset($field['properties']['code']['format'])) ? $field['properties']['code']['format'] : 'plain_text';
+      $format = $this->format();
+      $code = $this->code();
       if ($format == 'ds_code' && module_exists('ds_code')) {
-        $value = ds_code_php_eval($field['properties']['code']['value'], $field['entity'], isset($field['build']) ? $field['build'] : array());
+        $value = ds_code_php_eval($code, $field['entity'], isset($field['build']) ? $field['build'] : array());
       }
       else {
-        $value = check_markup($field['properties']['code']['value'], $format);
+        $value = check_markup($code, $format);
       }
       // Token support - check on token property so we don't run every single field through token.
-      if (isset($field['properties']['use_token']) && $field['properties']['use_token'] == TRUE) {
+      $uses_tokens = $this->usesTokens();
+      if ($uses_tokens == TRUE) {
         $value = token_replace($value, array($field['entity_type'] => $field['entity']), array('clear' => TRUE));
       }
       return $value;
@@ -35,21 +37,21 @@ abstract class CodePluginBase extends PluginBase {
   /**
    * Returns the format of the code field.
    */
-  public function format() {
-    return 'ds_code';
+  protected function format() {
+    return 'plain_text';
   }
 
   /**
    * Returns the value of the code field.
    */
-  public function code() {
+  protected function code() {
     return '';
   }
 
   /**
    * Returns if the code makes use of tokens.
    */
-  public function usesTokens() {
+  protected function usesTokens() {
     return FALSE;
   }
 

@@ -1,4 +1,3 @@
-
 <?php
 
 /**
@@ -21,6 +20,6 @@ use Drupal\Core\Annotation\Plugin;
  *   module = "node"
  * )
  */
-class NodeTitle extends Link {
+class NodeLink extends Link {
 
 }

@@ -1,4 +1,3 @@
-
 <?php
 
 /**
@@ -22,14 +21,14 @@ abstract class Link extends Field {
   public function settingsForm() {
 
     $form = array();
-    $form['link_text'] => array(
+    $form['link_text'] = array(
       'type' => 'textfield'
     );
-    $form['wrapper'] => array(
+    $form['wrapper'] = array(
       'type' => 'textfield',
       'description' => t('Eg: h1, h2, p')
     );
-    $form['class'] => array(
+    $form['class'] = array(
       'type' => 'textfield',
       'description' => t('Put a class on the wrapper. Eg: block-title')
     );

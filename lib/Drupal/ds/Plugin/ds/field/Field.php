@@ -2,23 +2,31 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\ds\Field.
+ * Contains \Drupal\ds\Plugin\ds\field\Field.
  */
 
-namespace Drupal\ds\Plugin\ds;
+namespace Drupal\ds\Plugin\ds\field;
 
 /**
- * The base plugin to create DS field function fields.
+ * The base plugin to create DS field fields.
  */
-abstract class Field extends FunctionPluginBase {
+abstract class Field extends PluginBase {
 
   /**
    * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
    */
   public function renderField($field) {
+
+    // TODO this isn't working yet as we need formatters en settings.
+
+    // Leave this empty for now as it isn't set yet.
+    $field['properties'] = array();
+
     $output = '';
     $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : array();
-    $settings += $field['properties']['default'];
+
+    // TODO Ignore this for now as it doesn't exist.
+    // $settings += $field['properties']['default'];
 
     // Basic string.
     if (isset($settings['link text'])) {
