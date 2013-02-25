@@ -27,8 +27,6 @@ class NodeAuthor extends PluginBase {
    */
   public function renderField($field) {
 
-    dpm($field);
-
     // Users without a user name are anonymous users. These are never linked.
     if (empty($field['entity']->name)) {
       $anonymous_string = config('user.settings')->get('anonymous');
