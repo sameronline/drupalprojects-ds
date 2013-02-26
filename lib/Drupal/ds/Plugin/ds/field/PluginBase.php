@@ -22,9 +22,9 @@ abstract class PluginBase extends ComponentPluginBase implements PluginBaseInter
   }
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBaseInterface::settingsForm()
+   * Implements \Drupal\ds\Plugin\ds\field\PluginBaseInterface::settings()
    */
-  public function settingsForm() {
+  public function settings() {
     return array();
   }
 

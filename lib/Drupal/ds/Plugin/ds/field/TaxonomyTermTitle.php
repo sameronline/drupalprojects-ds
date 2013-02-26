@@ -17,7 +17,7 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "taxonomy_term_title",
  *   title = @Translation("Name"),
  *   entity_type = "taxonomy_term",
- *   module = "taxonomy"
+ *   module = "ds"
  * )
  */
 class TaxonomyTermTitle extends Title {

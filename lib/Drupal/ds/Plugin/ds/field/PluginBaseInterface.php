@@ -24,12 +24,12 @@ interface PluginBaseInterface {
   public function renderField($field);
 
   /**
-   * Returns a settings form for the field.
+   * Returns the settings for the field settings form.
    *
    * @return array
-   *   The render array building the form.
+   *   The rsettings for the form.
    */
-  public function settingsForm();
+  public function settings();
 
   /**
    * Returns default settings for the settings form.

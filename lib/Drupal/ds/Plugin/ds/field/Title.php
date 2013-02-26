@@ -16,29 +16,29 @@ use Drupal\Core\Annotation\Plugin;
 abstract class Title extends Field {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::settingsForm().
+   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::settings().
    */
-  public function settingsForm() {
+  public function settings() {
 
-    $form = array();
-    $form['link'] = array(
+    $settings = array();
+    $settings['link'] = array(
       'type' => 'select',
       'options' => array('no', 'yes')
     );
-    $form['wrapper'] = array(
+    $settings['wrapper'] = array(
       'type' => 'textfield',
       'description' => t('Eg: h1, h2, p')
     );
-    $form['class'] = array(
+    $settings['class'] = array(
       'type' => 'textfield',
       'description' => t('Put a class on the wrapper. Eg: block-title')
     );
 
-    return $form;
+    return $settings;
   }
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\FieldPluginBase::defaultSettings().
+   * Overrides \Drupal\ds\Plugin\ds\PluginBase::defaultSettings().
    */
   public function defaultSettings() {
 
@@ -52,9 +52,9 @@ abstract class Title extends Field {
   }
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\FieldPluginBase::entityRenderKey().
+   * Overrides \Drupal\ds\Plugin\ds\Field::entityRenderKey().
    */
-  public function entityRenderKey() {
+  protected function entityRenderKey() {
     return 'title';
   }
 

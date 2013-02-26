@@ -17,27 +17,23 @@ abstract class Field extends PluginBase {
    */
   public function renderField($field) {
 
-    // TODO this isn't working yet as we need formatters en settings.
-
-    // Leave this empty for now as it isn't set yet.
-    $field['properties'] = array();
-
     $output = '';
     $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : array();
 
-    // TODO Ignore this for now as it doesn't exist.
-    // $settings += $field['properties']['default'];
+    $settings += $this->defaultSettings();
 
     // Basic string.
+    $entity_render_key = $this->entityRenderKey();
+
     if (isset($settings['link text'])) {
       $output = t($settings['link text']);
     }
-    elseif (isset($field['properties']['entity_render_key']) && isset($field['entity']->{$field['properties']['entity_render_key']})) {
-      if ($field['entity_type'] == 'user' && $field['properties']['entity_render_key'] == 'name') {
+    elseif (!empty($entity_render_key) && isset($field['entity']->{$entity_render_key})) {
+      if ($field['entity_type'] == 'user' && $entity_render_key == 'name') {
         $output = user_format_name($field['entity']);
       }
       else {
-        $output = $field['entity']->{$field['properties']['entity_render_key']};
+        $output = $field['entity']->{$entity_render_key};
       }
     }
 
@@ -68,6 +64,13 @@ abstract class Field extends PluginBase {
     }
 
     return $output;
+  }
+
+  /**
+   * Returns the entity render key for this field.
+   */
+  protected function entityRenderKey() {
+    return '';
   }
 
 }

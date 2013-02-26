@@ -10,44 +10,6 @@
  */
 function ds_ds_fields_info($entity_type) {
 
-  // Custom fields.
-  $custom_fields = config_get_storage_names_with_prefix('ds.field.');
-  foreach ($custom_fields as $config) {
-    $field = config($config)->get();
-    if (isset($field['entities'][$entity_type])) {
-      $fields[$entity_type][$field['field']] = array(
-        'title' => $field['label'],
-        'field_type' => $field['field_type'],
-        'properties' => $field['properties'],
-      );
-      if (!empty($field['ui_limit'])) {
-        $fields[$entity_type][$field['field']]['ui_limit'] = explode("\n", $field['ui_limit']);
-      }
-    }
-  }
-
-  // Node title.
-  $fields['node']['title'] = array(
-    'title' => t('Title'),
-    'field_type' => DS_FIELD_TYPE_FUNCTION,
-    'function' => 'ds_render_field',
-    'properties' => array(
-      'entity_render_key' => 'title',
-      'settings' => array(
-        'link' => array('type' => 'select', 'options' => array('no', 'yes')),
-        'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
-        'class' => array('type' => 'textfield', 'description' => t('Put a class on the wrapper. Eg: block-title')),
-      ),
-      'default' => array('wrapper' => 'h2', 'link' => 0, 'class' => ''),
-    )
-  );
-
-  // Links.
-  $fields['node']['links'] = array(
-    'title' => t('Links'),
-    'field_type' => DS_FIELD_TYPE_IGNORE,
-  );
-
   // Comments.
   if (module_exists('comment')) {
     $fields['node']['comments'] = array(
@@ -58,63 +20,6 @@ function ds_ds_fields_info($entity_type) {
       ),
     );
   }
-
-  // Node link.
-  $fields['node']['node_link'] = array(
-    'title' => t('Read more'),
-    'field_type' => DS_FIELD_TYPE_FUNCTION,
-    'function' => 'ds_render_field',
-    'properties' => array(
-      'settings' => array(
-        'link text' => array('type' => 'textfield'),
-        'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
-        'class' => array('type' => 'textfield', 'description' => t('Put a class on the wrapper. Eg: block-title')),
-      ),
-      'default' => array('link text' => 'Read more', 'wrapper' => '', 'class' => '', 'link' => 1),
-    )
-  );
-
-  // Author.
-  $fields['node']['author'] = array(
-    'title' => t('Author'),
-    'field_type' => DS_FIELD_TYPE_FUNCTION,
-    'function' => 'ds_render_author_field',
-    'properties' => array(
-      'formatters' => array(
-        'author' => t('Author'),
-        'author_linked' => t('Author linked to profile')
-      ),
-    ),
-  );
-
-  // Created time.
-  $date_types = system_get_date_formats();
-  $date_formatters = array();
-  foreach ($date_types as $machine_name => $value) {
-    if ($value['locked']) {
-      continue;
-    }
-    $date_formatters['ds_post_date_' . $machine_name] = t($value['name']);
-  }
-  $fields['node']['post_date'] = array(
-    'title' => t('Post date'),
-    'field_type' => DS_FIELD_TYPE_FUNCTION,
-    'function' => 'ds_render_date_field',
-    'properties' => array(
-      'formatters' => $date_formatters,
-    ),
-  );
-
-  // "Submitted by"-line.
-  $date_formatters = array('ds_time_ago' => t('Time ago')) + $date_formatters;
-  $fields['node']['ds_submitted_by'] = array(
-    'title' => t('Submitted by'),
-    'field_type' => DS_FIELD_TYPE_FUNCTION,
-    'function' => 'ds_render_submitted_by',
-    'properties' => array(
-      'formatters' => $date_formatters,
-    ),
-  );
 
   // User picture
   if (variable_get('user_pictures', 0)) {
@@ -175,24 +80,6 @@ function ds_ds_fields_info($entity_type) {
     $fields['comment']['links'] = array(
       'title' => t('Links'),
       'field_type' => DS_FIELD_TYPE_IGNORE,
-    );
-
-    // Created time.
-    $date_types = system_get_date_formats();
-    $date_formatters = array();
-    foreach ($date_types as $machine_name => $value) {
-      if ($value['locked']) {
-        continue;
-      }
-      $date_formatters['ds_post_date_' . $machine_name] = t($value['name']);
-    }
-    $fields['comment']['post_date'] = array(
-      'title' => t('Post date'),
-      'field_type' => DS_FIELD_TYPE_FUNCTION,
-      'function' => 'ds_render_date_field',
-      'properties' => array(
-        'formatters' => $date_formatters,
-      ),
     );
 
     // Permalink.
@@ -260,22 +147,6 @@ function ds_ds_fields_info($entity_type) {
      User support.
     -------------------------------------------------------------- */
 
-  // Username
-  $fields['user']['name'] = array(
-    'title' => t('Username'),
-    'field_type' => DS_FIELD_TYPE_FUNCTION,
-    'function' => 'ds_render_field',
-    'properties' => array(
-      'entity_render_key' => 'name',
-      'settings' => array(
-        'link' => array('type' => 'select', 'options' => array('no', 'yes')),
-        'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
-        'class' => array('type' => 'textfield', 'description' => t('Put a class on the wrapper. Eg: block-title')),
-      ),
-      'default' => array('wrapper' => 'h2', 'link' => 0, 'class' => ''),
-    )
-  );
-
   // User signature
   if (variable_get('user_signatures', 0)) {
     $fields['user']['user_signature'] = array(
@@ -322,37 +193,6 @@ function ds_ds_fields_info($entity_type) {
     -------------------------------------------------------------- */
 
   if (module_exists('taxonomy')) {
-    // Taxonomy term title.
-    $fields['taxonomy_term']['title'] = array(
-      'title' => t('Title'),
-      'field_type' => DS_FIELD_TYPE_FUNCTION,
-      'function' => 'ds_render_field',
-      'properties' => array(
-        'entity_render_key' => 'name',
-        'settings' => array(
-          'link' => array('type' => 'select', 'options' => array('no', 'yes')),
-          'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
-          'class' => array('type' => 'textfield', 'description' => t('Put a class on the wrapper. Eg: block-title')),
-        ),
-        'default' => array('wrapper' => 'h2', 'link' => 0, 'class' => ''),
-      )
-    );
-
-    // Taxonomy term link.
-    $fields['taxonomy_term']['more_link'] = array(
-      'title' => t('Read more'),
-      'field_type' => DS_FIELD_TYPE_FUNCTION,
-      'function' => 'ds_render_field',
-      'properties' => array(
-        'settings' => array(
-          'link text' => array('type' => 'textfield'),
-          'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
-          'class' => array('type' => 'textfield', 'description' => t('Put a class on the wrapper. Eg: block-title')),
-        ),
-        'default' => array('link text' => 'Read more', 'wrapper' => '', 'class' => '', 'link' => 1),
-      )
-    );
-  }
 
   // Support for ECK Entity title
   if (module_exists('eck')) {

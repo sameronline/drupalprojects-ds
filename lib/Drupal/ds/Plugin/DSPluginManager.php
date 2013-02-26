@@ -7,6 +7,7 @@
 
 namespace Drupal\ds\Plugin;
 
+use Drupal\Component\Plugin\Discovery\DerivativeDiscoveryDecorator;
 use Drupal\Component\Plugin\PluginManagerBase;
 use Drupal\Component\Plugin\Factory\DefaultFactory;
 use Drupal\Core\Plugin\Discovery\AlterDecorator;
@@ -23,6 +24,7 @@ class DSPluginManager extends PluginManagerBase {
    */
   public function __construct() {
     $this->discovery = new AnnotatedClassDiscovery('ds', 'field');
+    $this->discovery = new DerivativeDiscoveryDecorator($this->discovery);
     $this->discovery = new AlterDecorator($this->discovery, 'ds_plugins');
     $this->discovery = new CacheDecorator($this->discovery, 'ds');
     $this->factory = new DefaultFactory($this->discovery);

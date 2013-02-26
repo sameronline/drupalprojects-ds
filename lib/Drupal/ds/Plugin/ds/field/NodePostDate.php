@@ -17,7 +17,7 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "node_post_date",
  *   title = @Translation("Post date"),
  *   entity_type = "node",
- *   module = "node"
+ *   module = "ds"
  * )
  */
 class NodePostDate extends Date {

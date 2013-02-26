@@ -17,7 +17,7 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "taxonomy_term_link",
  *   title = @Translation("Read more"),
  *   entity_type = "taxonomy_term",
- *   module = "taxonomy"
+ *   module = "ds"
  * )
  */
 class TaxonomyTermLink extends Link {

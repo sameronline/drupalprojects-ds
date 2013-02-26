@@ -1,4 +1,3 @@
-
 <?php
 
 /**
@@ -18,7 +17,7 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "node_post_date",
  *   title = @Translation("Post date"),
  *   entity_type = "comment",
- *   module = "comment"
+ *   module = "ds"
  * )
  */
 class CommentPostDate extends Date {

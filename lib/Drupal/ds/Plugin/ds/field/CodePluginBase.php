@@ -16,9 +16,9 @@ abstract class CodePluginBase extends PluginBase {
    * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
    */
   public function renderField($field) {
-    if (isset($field['properties']['code'])) {
+    $code = $this->code();
+    if ($code) {
       $format = $this->format();
-      $code = $this->code();
       if ($format == 'ds_code' && module_exists('ds_code')) {
         $value = ds_code_php_eval($code, $field['entity'], isset($field['build']) ? $field['build'] : array());
       }

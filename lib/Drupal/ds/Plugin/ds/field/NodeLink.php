@@ -17,7 +17,7 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "node_link",
  *   title = @Translation("Read more"),
  *   entity_type = "node",
- *   module = "node"
+ *   module = "ds"
  * )
  */
 class NodeLink extends Link {

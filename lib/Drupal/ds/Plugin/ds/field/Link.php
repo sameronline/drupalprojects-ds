@@ -16,24 +16,24 @@ use Drupal\Core\Annotation\Plugin;
 abstract class Link extends Field {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::settingsForm().
+   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::settings().
    */
-  public function settingsForm() {
+  public function settings() {
 
-    $form = array();
-    $form['link_text'] = array(
+    $settings = array();
+    $settings['link text'] = array(
       'type' => 'textfield'
     );
-    $form['wrapper'] = array(
+    $settings['wrapper'] = array(
       'type' => 'textfield',
       'description' => t('Eg: h1, h2, p')
     );
-    $form['class'] = array(
+    $settings['class'] = array(
       'type' => 'textfield',
       'description' => t('Put a class on the wrapper. Eg: block-title')
     );
 
-    return $form;
+    return $settings;
   }
 
   /**

@@ -17,7 +17,7 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "node_author",
  *   title = @Translation("Author"),
  *   entity_type = "node",
- *   module = "node"
+ *   module = "ds"
  * )
  */
 class NodeAuthor extends PluginBase {

@@ -17,7 +17,7 @@ use Drupal\Core\Annotation\Plugin;
  *   id = "node_submitted_by",
  *   title = @Translation("Submitted by"),
  *   entity_type = "node",
- *   module = "node"
+ *   module = "ds"
  * )
  */
 class NodeSubmittedBy extends Date {

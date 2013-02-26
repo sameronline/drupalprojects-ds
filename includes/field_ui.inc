@@ -1446,7 +1446,28 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     $value = isset($form_state['formatter_settings']) ? $form_state['formatter_settings'] : array();
 
     $hidden = array('hidden' => t('<Hidden>'));
-    $formatters = isset($field['properties']['formatters']) ? $hidden + $field['properties']['formatters'] : $hidden + array('default' => t('Default'));
+
+    // Get the formatters from the field instance
+    $field_instance = drupal_container()->get('plugin.manager.ds')->createInstance($field['plugin_id']);
+    $formatters = $field_instance->formatters();
+
+    // This should be temporary. Don't want to copy stuff from the object to
+    // the field each ajax refresh.
+    if (!empty($formatters)) {
+      $formatters = $hidden + $formatters;
+    }
+    else {
+      $formatters = $hidden + array('default' => t('Default'));
+    }
+
+    $field_instance_settings = $field_instance->settings();
+    $field_instance_default_settings = $field_instance->defaultSettings();
+    if (!empty($field_instance_settings)) {
+      $field['properties']['settings'] = $field_instance_settings;
+    }
+    if (!empty($field_instance_default_settings)) {
+      $field['properties']['default'] = $field_instance_default_settings;
+    }
 
     $table[$key] = array(
       '#row_type' => 'field',
