@@ -17,9 +17,11 @@ abstract class Field extends PluginBase {
    */
   public function renderField($field) {
 
+    // Leave this empty for now as it isn't set yet.
+    $field['properties'] = array();
+
     $output = '';
     $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : array();
-
     $settings += $this->defaultSettings();
 
     // Basic string.

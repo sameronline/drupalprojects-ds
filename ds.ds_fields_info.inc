@@ -10,17 +10,6 @@
  */
 function ds_ds_fields_info($entity_type) {
 
-  // Comments.
-  if (module_exists('comment')) {
-    $fields['node']['comments'] = array(
-      'title' => t('Comments'),
-      'field_type' => DS_FIELD_TYPE_IGNORE,
-      'ui_limit' => array(
-        '*|full', '*|default',
-      ),
-    );
-  }
-
   // User picture
   if (variable_get('user_pictures', 0)) {
     $key = 'user_picture';
@@ -50,70 +39,10 @@ function ds_ds_fields_info($entity_type) {
   }
 
   /* --------------------------------------------------------------
-     Book support.
-    -------------------------------------------------------------- */
-
-  if (module_exists('book')) {
-
-    $ui_limit = array();
-    $types = variable_get('book_allowed_types', array('book'));
-    foreach ($types as $type) {
-      $ui_limit[] = $type . '|full';
-    }
-
-    if (!empty($ui_limit)) {
-      $fields['node']['book_navigation'] = array(
-        'title' => t('Book navigation'),
-        'field_type' => DS_FIELD_TYPE_IGNORE,
-        'ui_limit' => $ui_limit,
-      );
-    }
-  }
-
-  /* --------------------------------------------------------------
      Comment support.
     -------------------------------------------------------------- */
 
   if (module_exists('comment')) {
-
-    // Comment Links.
-    $fields['comment']['links'] = array(
-      'title' => t('Links'),
-      'field_type' => DS_FIELD_TYPE_IGNORE,
-    );
-
-    // Permalink.
-    $fields['comment']['permalink'] = array(
-      'title' => t('Permalink'),
-      'field_type' => DS_FIELD_TYPE_PREPROCESS,
-    );
-
-    // Submitted.
-    $fields['comment']['submitted'] = array(
-      'title' => t('Submitted'),
-      'field_type' => DS_FIELD_TYPE_PREPROCESS,
-    );
-
-    // Title.
-    $fields['comment']['title'] = array(
-      'title' => t('Title'),
-      'field_type' => DS_FIELD_TYPE_PREPROCESS,
-    );
-
-    // Author.
-    $fields['comment']['author'] = array(
-      'title' => t('Author'),
-      'field_type' => DS_FIELD_TYPE_PREPROCESS,
-    );
-
-    // User signature.
-    if (variable_get('user_signatures', 0)) {
-      $fields['comment']['signature'] = array(
-        'title' => t('User signature'),
-        'field_type' => DS_FIELD_TYPE_PREPROCESS,
-      );
-    }
-
     // User picture
     if (variable_get('user_pictures', 0)) {
       $key = 'picture';
@@ -147,19 +76,6 @@ function ds_ds_fields_info($entity_type) {
      User support.
     -------------------------------------------------------------- */
 
-  // User signature
-  if (variable_get('user_signatures', 0)) {
-    $fields['user']['user_signature'] = array(
-      'title' => t('User signature'),
-      'field_type' => DS_FIELD_TYPE_FUNCTION,
-      'function' => 'ds_render_markup',
-      'properties' => array(
-        'key' => 'signature',
-        'format' => 'signature_format',
-      ),
-    );
-  }
-
   // User picture
   if (variable_get('user_pictures', 0)) {
     $key = 'user_picture';
@@ -188,11 +104,6 @@ function ds_ds_fields_info($entity_type) {
     }
   }
 
-  /* --------------------------------------------------------------
-     Taxonomy support.
-    -------------------------------------------------------------- */
-
-  if (module_exists('taxonomy')) {
 
   // Support for ECK Entity title
   if (module_exists('eck')) {
@@ -215,8 +126,4 @@ function ds_ds_fields_info($entity_type) {
     }
   }
 
-  if (isset($fields[$entity_type])) {
-    return array($entity_type => $fields[$entity_type]);
-  }
-  return;
 }
