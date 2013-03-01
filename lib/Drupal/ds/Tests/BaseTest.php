@@ -17,9 +17,9 @@ class BaseTest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('ds', 'ds_extras', 'ds_code', 'search', 'ds_search', 'ds_forms', 'ds_ui', 'ds_test', 'views', 'views_ui');
+  public static $modules = array('field_ui', 'comment', 'block', 'ds', 'ds_extras', 'ds_code', 'search', 'ds_search', 'ds_forms', 'ds_ui', 'ds_test', 'views', 'views_ui');
 
-  protected $profile = 'standard';
+  protected $profile = 'testing';
 
   /**
    * Implementation of setUp().
@@ -27,8 +27,12 @@ class BaseTest extends WebTestBase {
   function setUp() {
     parent::setUp();
 
+    $settings = array(
+      'type' => 'article',
+    );
+    $this->drupalCreateContentType($settings);
+
     config('search.settings')->set('active_modules', array('node' => '', 'user' => 'user', 'ds_search' => 'ds_search'))->save();
-    module_disable(array('edit'));
     menu_router_rebuild();
 
     $this->admin_user = $this->drupalCreateUser(array('admin_classes', 'admin_view_modes', 'admin_fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions', 'administer node fields', 'administer node display', 'administer user fields', 'administer user display', 'administer comment fields', 'administer comment display', 'administer views'));
