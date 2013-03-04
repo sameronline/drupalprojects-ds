@@ -1109,7 +1109,7 @@ function ds_ds_field_format_summary($field) {
 function ds_ds_field_settings_form($field) {
   $form = array();
 
-  $settings = !empty($field['formatter_settings']['settings']) ? $field['formatter_settings']['settings'] : (!empty($field['properties']['default']) ? $field['properties']['default'] : array());
+  $settings = !empty($field['formatter_settings']) ? $field['formatter_settings'] : (!empty($field['properties']['default']) ? $field['properties']['default'] : array());
 
   if (empty($field['properties']['settings'])) {
     return $form;
