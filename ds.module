@@ -1034,7 +1034,7 @@ function ds_render_field($field) {
       $output = format_username($field['entity']);
     }
     else {
-      $title_field = $field['properties']['entity_render_key'] == 'title' && $field['entity_type'] == 'node' &&
+      $title_field = $field['properties']['entity_render_key'] == 'title' && $field['entity_type'] == 'node';
       $output = $field['entity']->{$field['properties']['entity_render_key']};
     }
   }
