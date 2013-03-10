@@ -1,0 +1,7 @@
+name: 'Display Suite Format'
+description: 'Provides the Display Suite code format filter.'
+core: 8.x
+package: 'Display Suite'
+configure: admin/structure/ds/list/extras
+dependencies:
+  - ds
