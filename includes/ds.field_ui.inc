@@ -881,7 +881,7 @@ function ds_field_formatter_settings_form($field, $instance, $view_mode, $form, 
   }
 
   // Taxonomy separated.
-  if ($display['type'] === 'ds_taxonomy_separator') {
+  if ($display['type'] === 'ds_taxonomy_separator' || $display['type'] == 'ds_taxonomy_separator_localized') {
     $element['taxonomy_term_link'] = array(
       '#title' => t('Link to term'),
       '#type' => 'checkbox',
@@ -925,7 +925,7 @@ function ds_field_formatter_settings_summary($field, $instance, $view_mode) {
     $summary = t('View mode: %mode', array('%mode' => $mode));
   }
 
-  if ($display['type'] === 'ds_taxonomy_separator') {
+  if ($display['type'] === 'ds_taxonomy_separator' || $display['type'] == 'ds_taxonomy_separator_localized') {
     $separators = array(
       ' ' => t('space'),
       ', ' => t('comma'),
