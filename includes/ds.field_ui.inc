@@ -1087,7 +1087,7 @@ function ds_ds_field_format_summary($field) {
       $conf = unserialize($value);
       $summary .= t('Type: !type', array('!type' => check_plain(drupal_ucfirst(str_replace('_', ' ', $conf['subtype'])))));
     }
-    elseif ($key == 'ft') {
+    elseif ($key == 'ft' || is_array($value)) {
       // Do nothing
     }
     elseif (!empty($value)) {
