@@ -921,7 +921,7 @@ function ds_ds_field_format_summary($field) {
   $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
   $functions = module_invoke_all('ds_field_theme_functions_info');
   foreach ($settings as $key => $value) {
-    if ($key == 'ft') {
+    if ($key == 'ft' || is_array($value)) {
       // Do nothing
     }
     elseif (!empty($value)) {
