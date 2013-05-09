@@ -5,9 +5,9 @@
  * Contains Drupal\ds\Annotation\DSPlugin.
  */
 
-namespace Drupal\ckeditor\Annotation;
+namespace Drupal\ds\Annotation;
 
-use Drupal\ds\Annotation\DSPlugin;
+use Drupal\Component\Annotation\Plugin;
 
 /**
  * Defines a DSPlugin annotation object.
@@ -44,5 +44,6 @@ class DSPlugin extends Plugin {
    *
    * @var string
    */
-  public $entity_type,
+  public $entity_type;
+
 }

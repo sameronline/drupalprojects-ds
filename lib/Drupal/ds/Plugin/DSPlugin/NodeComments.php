@@ -29,7 +29,7 @@ class NodeComments extends PluginBase {
     $displays = array(
       '*|full',
       '*|default',
-    )
+    );
 
     return $displays;
   }

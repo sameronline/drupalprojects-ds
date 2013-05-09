@@ -775,4 +775,5 @@ function ds_contextual_links_view_alter(&$element, $items) {
       'query' => drupal_get_destination(),
     );
   }
+
 }
