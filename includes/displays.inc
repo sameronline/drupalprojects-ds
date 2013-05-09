@@ -32,16 +32,12 @@ function ds_layout_list() {
     if (!empty($info['fieldable']) && !empty($info['base_table'])) {
       $rows = array();
       $bundles = entity_get_bundles($entity_type);
+      $route_base_path = $info['route_base_path'];
       foreach ($bundles as $bundle_type => $bundle) {
         $row = array();
-
-        $path = isset($bundle['admin']['real path']) ? $bundle['admin']['real path'] : (isset($bundle['admin']['path']) ? $bundle['admin']['path'] : '');
-        if (empty($path)) {
-          continue;
-        }
-
         $row[] = $bundle['label'];
 
+        $path = str_replace('{bundle}', $bundle_type, $route_base_path);
         $operations['manage_display'] = array(
           'title' => t('Manage display'),
           'href' => $path . '/display',
