@@ -1,0 +1,4 @@
+services:
+  plugin.manager.ds.plugin:
+    class: Drupal\ds\DSPluginManager
+    arguments: ['@container.namespaces']

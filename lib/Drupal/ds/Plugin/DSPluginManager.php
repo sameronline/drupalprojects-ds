@@ -20,16 +20,19 @@ use Drupal\Core\Plugin\Discovery\CacheDecorator;
 class DSPluginManager extends PluginManagerBase {
 
   /**
-   * Constructs a DSPluginManager object.
+   * Overrides \Drupal\Component\Plugin\PluginManagerBase::__construct().
+   *
+   * @param \Traversable $namespaces
+   *   An object that implements \Traversable which contains the root paths
+   *   keyed by the corresponding namespace to look for plugin implementations,
    */
-  public function __construct() {
-    $this->discovery = new AnnotatedClassDiscovery('ds', 'field');
+  public function __construct(\Traversable $namespaces) {
+    $annotation_namespaces = array('Drupal\ds\Annotation' => $namespaces['Drupal\ds']);
+    $this->discovery = new AnnotatedClassDiscovery('DSPlugin', $namespaces, $annotation_namespaces, 'Drupal\ds\Annotation\DSPlugin');
     $this->discovery = new DerivativeDiscoveryDecorator($this->discovery);
     $this->discovery = new AlterDecorator($this->discovery, 'ds_plugins');
     $this->discovery = new CacheDecorator($this->discovery, 'ds');
     $this->factory = new DefaultFactory($this->discovery);
-
-    // We need a processdecorator if we want to merge defaults.
   }
 
 }

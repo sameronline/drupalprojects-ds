@@ -1448,7 +1448,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     $hidden = array('hidden' => t('<Hidden>'));
 
     // Get the formatters from the field instance
-    $field_instance = drupal_container()->get('plugin.manager.ds')->createInstance($field['plugin_id']);
+    $field_instance = drupal_container()->get('plugin.manager.ds.plugin')->createInstance($field['plugin_id']);
     $formatters = $field_instance->formatters();
 
     // This should be temporary. Don't want to copy stuff from the object to
