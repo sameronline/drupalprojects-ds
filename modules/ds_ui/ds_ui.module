@@ -18,7 +18,7 @@ function ds_ui_permission() {
       'title' => t('Administer fields'),
       'description' => t('Manage fields for every entity.')
     ),
-    'admin_classes' => array(
+    'admin classes' => array(
       'title' => t('Administer classes'),
       'description' => t('Manage classes.')
     ),
@@ -35,10 +35,7 @@ function ds_ui_menu() {
   $items['admin/structure/ds/classes'] = array(
     'title' => 'CSS classes',
     'description' => 'Define extra CSS class names for regions and fields.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_classes_form'),
-    'file' => 'includes/classes.inc',
-    'access arguments' => array('admin_classes'),
+    'route_name' => 'ds_classes',
     'type' => MENU_LOCAL_TASK,
   );
 

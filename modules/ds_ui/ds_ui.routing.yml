@@ -1,0 +1,6 @@
+ds_classes:
+  pattern: 'admin/structure/ds/classes'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\ClassesForm'
+  requirements:
+    _permission: 'admin classes'
