@@ -6,62 +6,6 @@
  */
 
 /**
- * Shows the list of view modes.
- */
-function ds_view_modes_list() {
-  $output = '';
-
-  $view_modes = config_get_storage_names_with_prefix('ds.view_modes');
-  if (!empty($view_modes)) {
-
-    $rows = array();
-    foreach ($view_modes as $config) {
-      $view_mode_value = config($config)->get();
-
-      $row = array();
-      $row[] = check_plain($view_mode_value['label']);
-      $row[] = $view_mode_value['view_mode'];
-      $row[] = ucwords(str_replace('_', ' ', implode(', ', $view_mode_value['entities'])));
-      $operations = array();
-      $operations['edit'] = array(
-        'title' => t('Edit'),
-        'href' => 'admin/structure/ds/view_modes/manage/' . $view_mode_value['view_mode'],
-      );
-      $operations['delete'] = array(
-        'title' => t('Delete'),
-        'href' => 'admin/structure/ds/view_modes/delete/' . $view_mode_value['view_mode'],
-      );
-      $row[] = array(
-        'data' => array(
-          '#type' => 'operations',
-          '#subtype' => 'ds',
-          '#links' => $operations,
-        ),
-      );
-
-      $rows[] = $row;
-    }
-
-    $table = array(
-      'header' => array(
-        'Label',
-        'Machine name',
-        'Entities',
-        'Operations',
-      ),
-      'rows' => $rows,
-    );
-
-    $output = theme('table', $table);
-  }
-  else {
-    $output = t('No custom view modes have been defined.');
-  }
-
-  return $output;
-}
-
-/**
  * Manage a custom view mode.
  */
 function ds_edit_view_mode_form($form, &$form_state, $view_mode = '') {

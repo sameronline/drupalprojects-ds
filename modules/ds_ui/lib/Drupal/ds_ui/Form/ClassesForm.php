@@ -8,30 +8,11 @@
 namespace Drupal\ds_ui\Form;
 
 use Drupal\system\SystemConfigFormBase;
-use Drupal\Core\Config\ConfigFactory;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configures classes used by Display Suite.
  */
 class ClassesForm extends SystemConfigFormBase {
-
-  /**
-   * Constructs a \Drupal\ds_ui\ClassessForm object.
-   *
-   * @param \Drupal\Core\Config\ConfigFactory $config_factory
-   *   The factory for configuration objects.
-   */
-  public function __construct(ConfigFactory $config_factory) {
-    $this->configFactory = $config_factory;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static($container->get('config.factory'));
-  }
 
   /**
    * {@inheritdoc}

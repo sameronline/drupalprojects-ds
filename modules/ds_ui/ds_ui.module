@@ -10,7 +10,7 @@
  */
 function ds_ui_permission() {
   return array(
-    'admin_view_modes' => array(
+    'admin view modes' => array(
       'title' => t('Administer view modes'),
       'description' => t('Manage custom view modes for every entity.')
     ),
@@ -43,9 +43,7 @@ function ds_ui_menu() {
   $items['admin/structure/ds/view_modes'] = array(
     'title' => 'View modes',
     'description' => 'Manage view modes for all content.',
-    'page callback' => 'ds_view_modes_list',
-    'file' => 'includes/view_modes.inc',
-    'access arguments' => array('admin_view_modes'),
+    'route_name' => 'view_modes_list',
     'weight' => -9,
     'type' => MENU_LOCAL_TASK,
   );

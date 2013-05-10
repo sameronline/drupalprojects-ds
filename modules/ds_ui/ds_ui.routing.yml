@@ -4,3 +4,9 @@ ds_classes:
     _form: '\Drupal\ds_ui\Form\ClassesForm'
   requirements:
     _permission: 'admin classes'
+view_modes_list:
+  pattern: 'admin/structure/ds/view_modes'
+  defaults:
+    _content: 'Drupal\ds_ui\Routing\ViewModeController::viewModeList'
+  requirements:
+    _permission: 'admin view modes'
