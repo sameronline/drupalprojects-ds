@@ -10,7 +10,7 @@
  */
 function ds_ui_permission() {
   return array(
-    'admin_view_modes' => array(
+    'admin view modes' => array(
       'title' => t('Administer view modes'),
       'description' => t('Manage custom view modes for every entity.')
     ),
@@ -18,7 +18,7 @@ function ds_ui_permission() {
       'title' => t('Administer fields'),
       'description' => t('Manage fields for every entity.')
     ),
-    'admin_classes' => array(
+    'admin classes' => array(
       'title' => t('Administer classes'),
       'description' => t('Manage classes.')
     ),
@@ -35,10 +35,7 @@ function ds_ui_menu() {
   $items['admin/structure/ds/classes'] = array(
     'title' => 'CSS classes',
     'description' => 'Define extra CSS class names for regions and fields.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_classes_form'),
-    'file' => 'includes/classes.inc',
-    'access arguments' => array('admin_classes'),
+    'route_name' => 'ds_classes',
     'type' => MENU_LOCAL_TASK,
   );
 
@@ -46,28 +43,25 @@ function ds_ui_menu() {
   $items['admin/structure/ds/view_modes'] = array(
     'title' => 'View modes',
     'description' => 'Manage view modes for all content.',
-    'page callback' => 'ds_view_modes_list',
-    'file' => 'includes/view_modes.inc',
-    'access arguments' => array('admin_view_modes'),
+    'route_name' => 'view_modes_list',
     'weight' => -9,
     'type' => MENU_LOCAL_TASK,
   );
   $items['admin/structure/ds/view_modes/manage'] = array(
-    'title' => 'Add a view mode',
-    'description' => 'Manage a view mode',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_edit_view_mode_form'),
-    'file' => 'includes/view_modes.inc',
-    'access arguments' => array('admin_view_modes'),
+    'title' => 'Add view mode',
+    'description' => 'Adds a view mode',
+    'route_name' => 'view_mode_add',
     'type' => MENU_LOCAL_ACTION,
   );
-  $items['admin/structure/ds/view_modes/delete'] = array(
+  $items['admin/structure/ds/view_modes/manage/%'] = array(
+    'title' => 'Edit view mode',
+    'description' => 'Manages a view mode',
+    'route_name' => 'view_mode_manage',
+  );
+  $items['admin/structure/ds/view_modes/delete/%'] = array(
     'title' => 'Delete a view mode',
     'description' => 'Delete a custom view mode.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_delete_view_mode_confirm'),
-    'file' => 'includes/view_modes.inc',
-    'access arguments' => array('admin_view_modes'),
+    'route_name' => 'view_mode_delete',
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
@@ -134,4 +128,15 @@ function ds_ui_menu() {
   }*/
 
   return $items;
+}
+
+/**
+ * Returns whether a view mode machine name is unique.
+ */
+function ds_view_mode_unique($name) {
+  $value = strtr($name, array('-' => '_'));
+  if (config('ds.view_modes.' . $value)->get()) {
+    return TRUE;
+  }
+  return FALSE;
 }

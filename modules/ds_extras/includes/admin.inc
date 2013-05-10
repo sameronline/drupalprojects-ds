@@ -176,8 +176,7 @@ function ds_extras_settings_submit($form, &$form_state) {
   field_info_cache_clear();
   drupal_container()->get('module_handler')->resetImplementations();
   drupal_theme_rebuild();
-  // @todo is now state I guess ?
-  variable_set('menu_router_rebuild_needed', TRUE);
+  menu_router_rebuild();
 }
 
 /**

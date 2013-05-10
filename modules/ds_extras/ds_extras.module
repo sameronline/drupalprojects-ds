@@ -583,7 +583,7 @@ function theme_ds_field_expert($variables) {
   if (isset($config['ow'])) {
     $class = array();
     if (!empty($config['ow-cl'])) $class[] = $config['ow-cl'];
-    if (!empty($config['ow-def-cl'])) $class[] = $variables['classes'];
+    if (!empty($config['ow-def-cl'])) $class[] = $variables['attributes']['class'];
     $class = (!empty($class)) ? ' class="' . implode(' ', $class) . '"' : '';
     $attributes = array();
     if (!empty($config['ow-at'])) $attributes[] = $config['ow-at'];
