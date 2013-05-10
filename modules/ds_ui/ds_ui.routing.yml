@@ -22,3 +22,9 @@ view_mode_manage:
     _form: '\Drupal\ds_ui\Form\ViewModeForm'
   requirements:
     _permission: 'admin view modes'
+view_mode_delete:
+  pattern: 'admin/structure/ds/view_modes/delete/{view_mode}'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\ViewModeDeleteForm'
+  requirements:
+    _permission: 'admin view modes'

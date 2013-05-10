@@ -29,7 +29,7 @@ class ViewModeForm extends SystemConfigFormBase implements ControllerInterface {
   protected $entityManager;
 
   /**
-   * Constructs a \Drupal\system\SystemConfigFormBase object.
+   * Constructs a \Drupal\system\ViewModeForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    *   The factory for configuration objects.

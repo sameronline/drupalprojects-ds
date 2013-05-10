@@ -58,13 +58,10 @@ function ds_ui_menu() {
     'description' => 'Manages a view mode',
     'route_name' => 'view_mode_manage',
   );
-  $items['admin/structure/ds/view_modes/delete'] = array(
+  $items['admin/structure/ds/view_modes/delete/%'] = array(
     'title' => 'Delete a view mode',
     'description' => 'Delete a custom view mode.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_delete_view_mode_confirm'),
-    'file' => 'includes/view_modes.inc',
-    'access arguments' => array('admin_view_modes'),
+    'route_name' => 'view_mode_delete',
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
