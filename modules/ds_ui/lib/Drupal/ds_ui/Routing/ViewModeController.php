@@ -56,8 +56,8 @@ class ViewModeController implements ControllerInterface {
    */
   public function viewModeList() {
     $output = '';
-
     $view_modes = $this->storage->listAll('ds.view_modes');
+
     if (!empty($view_modes)) {
 
       $rows = array();

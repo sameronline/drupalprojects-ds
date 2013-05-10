@@ -48,13 +48,15 @@ function ds_ui_menu() {
     'type' => MENU_LOCAL_TASK,
   );
   $items['admin/structure/ds/view_modes/manage'] = array(
-    'title' => 'Add a view mode',
-    'description' => 'Manage a view mode',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_edit_view_mode_form'),
-    'file' => 'includes/view_modes.inc',
-    'access arguments' => array('admin_view_modes'),
+    'title' => 'Add view mode',
+    'description' => 'Adds a view mode',
+    'route_name' => 'view_mode_add',
     'type' => MENU_LOCAL_ACTION,
+  );
+  $items['admin/structure/ds/view_modes/manage/%'] = array(
+    'title' => 'Edit view mode',
+    'description' => 'Manages a view mode',
+    'route_name' => 'view_mode_manage',
   );
   $items['admin/structure/ds/view_modes/delete'] = array(
     'title' => 'Delete a view mode',
@@ -129,4 +131,15 @@ function ds_ui_menu() {
   }*/
 
   return $items;
+}
+
+/**
+ * Returns whether a view mode machine name is unique.
+ */
+function ds_view_mode_unique($name) {
+  $value = strtr($name, array('-' => '_'));
+  if (config('ds.view_modes.' . $value)->get()) {
+    return TRUE;
+  }
+  return FALSE;
 }

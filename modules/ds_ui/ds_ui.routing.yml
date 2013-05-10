@@ -10,3 +10,15 @@ view_modes_list:
     _content: 'Drupal\ds_ui\Routing\ViewModeController::viewModeList'
   requirements:
     _permission: 'admin view modes'
+view_mode_add:
+  pattern: 'admin/structure/ds/view_modes/manage'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\ViewModeForm'
+  requirements:
+    _permission: 'admin view modes'
+view_mode_manage:
+  pattern: 'admin/structure/ds/view_modes/manage/{view_mode}'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\ViewModeForm'
+  requirements:
+    _permission: 'admin view modes'
