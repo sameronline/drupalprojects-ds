@@ -14,7 +14,7 @@ function ds_ui_permission() {
       'title' => t('Administer view modes'),
       'description' => t('Manage custom view modes for every entity.')
     ),
-    'admin_fields' => array(
+    'admin fields' => array(
       'title' => t('Administer fields'),
       'description' => t('Manage fields for every entity.')
     ),
@@ -69,38 +69,37 @@ function ds_ui_menu() {
   $items['admin/structure/ds/fields'] = array(
     'title' => 'Fields',
     'description' => 'Manage fields for all content.',
-    'page callback' => 'ds_custom_fields_list',
-    'file' => 'includes/fields.inc',
-    'access arguments' => array('admin_fields'),
+    'route_name' => 'custom_fields_list',
     'weight' => -8,
     'type' => MENU_LOCAL_TASK,
   );
-  $items['admin/structure/ds/fields/manage'] = array(
-    'title' => 'Fields edit',
-    'page callback' => 'ds_custom_manage',
-    'file' => 'includes/fields.inc',
-    'access arguments' => array('admin_fields'),
-    'type' => MENU_CALLBACK,
+  $items['admin/structure/ds/fields/manage/%'] = array(
+    'title' => 'Manage fields',
+    'route_name' => 'manage_custom_field',
   );
   $items['admin/structure/ds/fields/manage_custom'] = array(
     'title' => 'Add a code field',
-    'description' => 'Manage a field',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_edit_custom_field_form'),
-    'file' => 'includes/fields.inc',
-    'access arguments' => array('admin_fields'),
+    'description' => 'Add a custom field',
+    'route_name' => 'add_custom_code_field',
     'type' => MENU_LOCAL_ACTION,
     'weight' => 0,
   );
+  $items['admin/structure/ds/fields/manage_custom/%'] = array(
+    'title' => 'Edit a code field',
+    'description' => 'Manage a field',
+    'route_name' => 'manage_custom_code_field',
+  );
   $items['admin/structure/ds/fields/manage_preprocess'] = array(
     'title' => 'Add a preprocess field',
-    'description' => 'Manage a preprocess field',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_edit_preprocess_field_form'),
-    'file' => 'includes/fields.inc',
-    'access arguments' => array('admin_fields'),
+    'description' => 'Adds a preprocess field',
+    'route_name' => 'add_custom_preprocess_field',
     'type' => MENU_LOCAL_ACTION,
     'weight' => 3,
+  );
+  $items['admin/structure/ds/fields/manage_preprocess/%'] = array(
+    'title' => 'Edit a preprocess field',
+    'description' => 'Manage a preprocess field',
+    'route_name' => 'manage_custom_preprocess_field'
   );
   $items['admin/structure/ds/fields/delete'] = array(
     'title' => 'Delete a field',
@@ -108,7 +107,7 @@ function ds_ui_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ds_delete_field_confirm'),
     'file' => 'includes/fields.inc',
-    'access arguments' => array('admin_fields'),
+    'access arguments' => array('admin fields'),
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
   // Block can be disabled.
@@ -136,6 +135,17 @@ function ds_ui_menu() {
 function ds_view_mode_unique($name) {
   $value = strtr($name, array('-' => '_'));
   if (config('ds.view_modes.' . $value)->get()) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Returns whether a field machine name is unique.
+ */
+function ds_field_unique($name) {
+  $value = strtr($name, array('-' => '_'));
+  if (config('ds.field.' . $value)->get()) {
     return TRUE;
   }
   return FALSE;

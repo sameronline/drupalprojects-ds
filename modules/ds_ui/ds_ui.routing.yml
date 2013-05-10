@@ -28,3 +28,39 @@ view_mode_delete:
     _form: '\Drupal\ds_ui\Form\ViewModeDeleteForm'
   requirements:
     _permission: 'admin view modes'
+custom_fields_list:
+  pattern: 'admin/structure/ds/fields'
+  defaults:
+    _content: 'Drupal\ds_ui\Routing\CustomFieldController::customFieldList'
+  requirements:
+    _permission: 'admin fields'
+manage_custom_field:
+  pattern: 'admin/structure/ds/fields/manage/{field_key}'
+  defaults:
+    _content: 'Drupal\ds_ui\Routing\CustomFieldController::manageRedirect'
+  requirements:
+    _permission: 'admin fields'
+manage_custom_code_field:
+  pattern: 'admin/structure/ds/fields/manage_custom/{field_key}'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\CodeFieldForm'
+  requirements:
+    _permission: 'admin fields'
+add_custom_code_field:
+  pattern: 'admin/structure/ds/fields/manage_custom'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\CodeFieldForm'
+  requirements:
+    _permission: 'admin fields'
+manage_custom_preprocess_field:
+  pattern: 'admin/structure/ds/fields/manage_preprocess/{field_key}'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\PreprocessFieldForm'
+  requirements:
+    _permission: 'admin fields'
+add_custom_preprocess_field:
+  pattern: 'admin/structure/ds/fields/manage_preprocess'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\PreprocessFieldForm'
+  requirements:
+    _permission: 'admin fields'

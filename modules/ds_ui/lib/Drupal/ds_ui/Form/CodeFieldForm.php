@@ -2,36 +2,39 @@
 
 /**
  * @file
- * Contains \Drupal\ds_ui\Form\ClassesForm.
+ * Contains \Drupal\ds_ui\Form\CodeFieldForm.
  */
 
 namespace Drupal\ds_ui\Form;
 
-use Drupal\system\SystemConfigFormBase;
+use Drupal\ds_ui\Form\FieldFormBase;
 
 /**
  * Configures classes used by Display Suite.
  */
-class ClassesForm extends SystemConfigFormBase {
+class CodeFieldForm extends FieldFormBase {
 
   /**
    * {@inheritdoc}
    */
   public function getFormID() {
-    return 'ds_classes_form';
+    return 'ds_custom_code_field_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
-    $custom_field = parent::buildForm($form, $form_state);
+  public function buildForm(array $form, array &$form_state, $field_key = '') {
+
+    $form = parent::buildForm($form, $form_state, $field_key);
+
+    $field = $this->field;
 
     $form['code'] = array(
       '#type' => 'text_format',
       '#title' => t('Field code'),
-      '#default_value' => isset($custom_field['properties']['code']['value']) ? $custom_field['properties']['code']['value'] : '',
-      '#format' => isset($custom_field['properties']['code']['format']) ? $custom_field['properties']['code']['format'] : 'ds_code',
+      '#default_value' => isset($field['properties']['code']['value']) ?: '',
+      '#format' => isset($field['properties']['code']['format']) ?: 'ds_code',
       '#base_type' => 'textarea',
       '#required' => TRUE,
     );
@@ -40,7 +43,7 @@ class ClassesForm extends SystemConfigFormBase {
       '#type' => 'checkbox',
       '#title' => t('Token'),
       '#description' => t('Toggle this checkbox if you are using tokens in this field.'),
-      '#default_value' => isset($custom_field['properties']['use_token']) ? $custom_field['properties']['use_token'] : '',
+      '#default_value' => isset($field['properties']['use_token']) ?: '',
     );
 
     // Token support.
@@ -67,7 +70,19 @@ class ClassesForm extends SystemConfigFormBase {
       $form['use_token']['#description'] = t('Toggle this checkbox if you are using tokens in this field. If the token module is installed, you get a nice list of all tokens available in your site.');
     }
 
-  return $form;
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, array &$form_state) {
+    parent::validateForm($form, $form_state);
+
+    $field = &$this->field;
+    $field['field_type'] = DS_FIELD_TYPE_CODE;
+    $field['properties']['code'] = $form_state['values']['code'];
+    $field['properties']['use_token'] = $form_state['values']['use_token'];
   }
 
   /**
@@ -75,11 +90,6 @@ class ClassesForm extends SystemConfigFormBase {
    */
   public function submitForm(array &$form, array &$form_state) {
     parent::submitForm($form, $form_state);
-
-    $config = $this->configFactory->get('ds.classes');
-    $config->set('regions', $form_state['values']['regions'])
-      ->set('fields', $form_state['values']['fields'])
-      ->save();
   }
 
 }
