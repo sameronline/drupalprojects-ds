@@ -12,7 +12,7 @@ function ds_ui_permission() {
   return array(
     'admin view modes' => array(
       'title' => t('Administer view modes'),
-      'description' => t('Manage custom view modes for every entity.')
+      'description' => t('Manage view modes for every entity.')
     ),
     'admin fields' => array(
       'title' => t('Administer fields'),
@@ -60,7 +60,7 @@ function ds_ui_menu() {
   );
   $items['admin/structure/ds/view_modes/delete/%'] = array(
     'title' => 'Delete a view mode',
-    'description' => 'Delete a custom view mode.',
+    'description' => 'Delete a view mode.',
     'route_name' => 'view_mode_delete',
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
@@ -69,46 +69,45 @@ function ds_ui_menu() {
   $items['admin/structure/ds/fields'] = array(
     'title' => 'Fields',
     'description' => 'Manage fields for all content.',
-    'route_name' => 'custom_fields_list',
+    'route_name' => 'fields_list',
     'weight' => -8,
     'type' => MENU_LOCAL_TASK,
   );
   $items['admin/structure/ds/fields/manage/%'] = array(
     'title' => 'Manage fields',
-    'route_name' => 'manage_custom_field',
+    'route_name' => 'manage_field',
   );
-  $items['admin/structure/ds/fields/manage_custom'] = array(
+  $items['admin/structure/ds/fields/delete/%'] = array(
+    'title' => 'Delete a field',
+    'description' => 'Delete a field.',
+    'route_name' => 'delete_field',
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+  );
+  // Code field
+  $items['admin/structure/ds/fields/manage_code'] = array(
     'title' => 'Add a code field',
-    'description' => 'Add a custom field',
-    'route_name' => 'add_custom_code_field',
+    'description' => 'Add a code field',
+    'route_name' => 'add_code_field',
     'type' => MENU_LOCAL_ACTION,
     'weight' => 0,
   );
-  $items['admin/structure/ds/fields/manage_custom/%'] = array(
+  $items['admin/structure/ds/fields/manage_code/%'] = array(
     'title' => 'Edit a code field',
     'description' => 'Manage a field',
-    'route_name' => 'manage_custom_code_field',
+    'route_name' => 'manage_code_field',
   );
+  // Preprocess field
   $items['admin/structure/ds/fields/manage_preprocess'] = array(
     'title' => 'Add a preprocess field',
     'description' => 'Adds a preprocess field',
-    'route_name' => 'add_custom_preprocess_field',
+    'route_name' => 'add_preprocess_field',
     'type' => MENU_LOCAL_ACTION,
     'weight' => 3,
   );
   $items['admin/structure/ds/fields/manage_preprocess/%'] = array(
     'title' => 'Edit a preprocess field',
     'description' => 'Manage a preprocess field',
-    'route_name' => 'manage_custom_preprocess_field'
-  );
-  $items['admin/structure/ds/fields/delete'] = array(
-    'title' => 'Delete a field',
-    'description' => 'Delete a field.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_delete_field_confirm'),
-    'file' => 'includes/fields.inc',
-    'access arguments' => array('admin fields'),
-    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+    'route_name' => 'manage_preprocess_field'
   );
   // Block can be disabled.
   // @todo blocks have changed completely - also do some sort of library thing ?
@@ -116,11 +115,16 @@ function ds_ui_menu() {
   if (module_exists('block')) {
     $items['admin/structure/ds/fields/manage_block'] = array(
       'title' => 'Add a block field',
-      'description' => 'Manage a block field',
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('ds_edit_block_field_form'),
-      'file' => 'includes/fields.inc',
-      'access arguments' => array('admin_fields'),
+      'description' => 'Adds a block field',
+      'rout_name' => 'add_block_field'
+      'type' => MENU_LOCAL_ACTION,
+      'weight' => 2,
+    );
+  if (module_exists('block')) {
+    $items['admin/structure/ds/fields/manage_block'] = array(
+      'title' => 'Edit a block field',
+      'description' => 'Edit a block field',
+      'rout_name' => 'manage_block_field'
       'type' => MENU_LOCAL_ACTION,
       'weight' => 2,
     );

@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\Context\ContextInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Extension\ModuleHandler;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -31,7 +32,7 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
   /**
    * Holds the cache backend
    *
-   * @var Drupal\Core\Cache\CacheBackendInterface
+   * @var \Drupal\Core\Cache\CacheBackendInterface
    */
   protected $cacheBackend;
 
@@ -43,6 +44,13 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
   protected $field;
 
   /**
+   * Drupal module handler
+   *
+   * @var \Drupal\Core\Extension\ModuleHandler
+   */
+  protected $moduleHandler;
+
+  /**
    * Constructs a \Drupal\system\CustomFieldFormBase object.
    *
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
@@ -51,20 +59,29 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
    *   The configuration context to use.
    * @param \Drupal\Core\Entity\EntityManager
    *   The enitity manager.
-   * @param \Drupal\Core\Cache\DatabaseBackend
+   * @param \Drupal\Core\Cache\CacheBackendInterface
    *   The cache backend.
+   * @param \Drupal\Core\Extension\ModuleHandler
+   *   The module handler.
    */
-  public function __construct(ConfigFactory $config_factory, ContextInterface $context, EntityManager $entity_manager, CacheBackendInterface $cache_backend) {
+  public function __construct(ConfigFactory $config_factory, ContextInterface $context, EntityManager $entity_manager, CacheBackendInterface $cache_backend, ModuleHandler $module_handler) {
     parent::__construct($config_factory, $context);
     $this->entityManager = $entity_manager;
     $this->cacheBackend = $cache_backend;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('config.factory'), $container->get('config.context.free'), $container->get('plugin.manager.entity'), $container->get('cache.cache'));
+    return new static(
+      $container->get('config.factory'),
+      $container->get('config.context.free'),
+      $container->get('plugin.manager.entity'),
+      $container->get('cache.cache'),
+      $container->get('module_handler')
+    );
   }
 
 

@@ -33,6 +33,13 @@ class ViewModeDeleteForm extends ConfirmFormBase implements ControllerInterface 
   protected $storage;
 
   /**
+   * The view mode being deleted
+   *
+   * @var array
+   */
+  protected $viewMode;
+
+  /**
    * Constructs a ViewModeDeleteForm object.
    *
    * @param \Drupal\Core\Config\StorageInterface $storage
@@ -98,7 +105,7 @@ class ViewModeDeleteForm extends ConfirmFormBase implements ControllerInterface 
     $this->configFactory->get('ds.view_modes.' . $view_mode['view_mode'])->delete();
 
     // Remove layout and field settings for this view mode.
-    $field_settings = $this->storage->listAll('ds.field_settings');
+    $field_settings = $this->storage->listAll('ds.field_settings.');
     foreach ($field_settings as $config) {
       $config = $this->configFactory->get($config);
       if ($config->get('view_mode') == $view_mode['view_mode']) {

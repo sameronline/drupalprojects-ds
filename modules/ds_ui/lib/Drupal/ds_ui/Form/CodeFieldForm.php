@@ -18,7 +18,7 @@ class CodeFieldForm extends FieldFormBase {
    * {@inheritdoc}
    */
   public function getFormID() {
-    return 'ds_custom_code_field_form';
+    return 'ds_field_form';
   }
 
   /**
@@ -83,13 +83,6 @@ class CodeFieldForm extends FieldFormBase {
     $field['field_type'] = DS_FIELD_TYPE_CODE;
     $field['properties']['code'] = $form_state['values']['code'];
     $field['properties']['use_token'] = $form_state['values']['use_token'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, array &$form_state) {
-    parent::submitForm($form, $form_state);
   }
 
 }

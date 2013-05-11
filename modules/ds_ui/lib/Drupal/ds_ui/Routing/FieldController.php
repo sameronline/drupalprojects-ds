@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ds_ui\Routing\CustomFieldController.
+ * Contains \Drupal\ds_ui\Routing\FieldController.
  */
 
 namespace Drupal\ds_ui\Routing;
@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Route controller for view modes.
  */
-class CustomFieldController implements ControllerInterface {
+class FieldController implements ControllerInterface {
 
   /**
    * Stores the configuration factory.
@@ -52,12 +52,12 @@ class CustomFieldController implements ControllerInterface {
   }
 
   /**
-   * Builds a list of custom fields
+   * Builds a list of fields
    */
-  public function customFieldList() {
+  public function fieldList() {
     $output = '';
 
-    $custom_fields = $this->storage->listAll('ds.field');
+    $custom_fields = $this->storage->listAll('ds.field.');
     if (!empty($custom_fields)) {
 
       $rows = array();
@@ -138,7 +138,7 @@ class CustomFieldController implements ControllerInterface {
     if ($field = $this->configFactory->get('ds.field.' . $field_key)->get()) {
       switch ($field['field_type']) {
         case DS_FIELD_TYPE_CODE:
-          $redirect = 'admin/structure/ds/fields/manage_custom/' . $field_key;
+          $redirect = 'admin/structure/ds/fields/manage_code/' . $field_key;
           break;
 
         case DS_FIELD_TYPE_BLOCK:

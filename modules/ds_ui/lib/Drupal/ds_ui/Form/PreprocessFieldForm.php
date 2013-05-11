@@ -18,7 +18,7 @@ class PreprocessFieldForm extends FieldFormBase {
    * {@inheritdoc}
    */
   public function getFormID() {
-    return 'ds_custom_code_field_form';
+    return 'ds_field_form';
   }
 
   /**
@@ -41,13 +41,6 @@ class PreprocessFieldForm extends FieldFormBase {
 
     $field = &$this->field;
     $field['field_type'] = DS_FIELD_TYPE_PREPROCESS;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, array &$form_state) {
-    parent::submitForm($form, $form_state);
   }
 
 }
