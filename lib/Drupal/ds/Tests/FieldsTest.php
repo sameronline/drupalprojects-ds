@@ -39,7 +39,7 @@ class FieldsTest extends BaseTest {
     $this->dsCreateCodeField($edit);
 
     // Create the same and assert it already exists.
-    $this->drupalPost('admin/structure/ds/fields/manage_custom', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_code', $edit, t('Save'));
     $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Field testing already exists.'));
 
     $this->dsSelectLayout();
@@ -56,7 +56,7 @@ class FieldsTest extends BaseTest {
     $edit = array(
       'name' => 'Test field 2',
     );
-    $this->drupalPost('admin/structure/ds/fields/manage_custom/test_field', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_code/test_field', $edit, t('Save'));
     $this->assertText(t('The field Test field 2 has been saved'), t('Test field label updated'));
 
     // Use the Field UI limit option.
@@ -65,7 +65,7 @@ class FieldsTest extends BaseTest {
     $edit = array(
       'ui_limit' => 'article|default',
     );
-    $this->drupalPost('admin/structure/ds/fields/manage_custom/test_field', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_code/test_field', $edit, t('Save'));
 
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[test_field][weight]', t('Test field field found on node article, default.'));
@@ -76,7 +76,7 @@ class FieldsTest extends BaseTest {
     $edit = array(
       'ui_limit' => 'article|*',
     );
-    $this->drupalPost('admin/structure/ds/fields/manage_custom/test_field', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_code/test_field', $edit, t('Save'));
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[test_field][weight]', t('Test field field found on node article, default.'));
     $this->drupalGet('admin/structure/types/manage/article/display/teaser');
@@ -142,7 +142,7 @@ class FieldsTest extends BaseTest {
     $this->dsCreatePreprocessField($edit);
 
     // Create the same and assert it already exists.
-    $this->drupalPost('admin/structure/ds/fields/manage_custom', $edit, t('Save'));
+    $this->drupalPost('admin/structure/ds/fields/manage_code', $edit, t('Save'));
     $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Submitted already exists.'));
 
     $this->dsSelectLayout();
