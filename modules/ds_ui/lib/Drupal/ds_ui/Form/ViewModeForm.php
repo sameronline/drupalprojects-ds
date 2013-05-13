@@ -93,7 +93,7 @@ class ViewModeForm extends SystemConfigFormBase implements ControllerInterface {
       '#description' => t('The machine-readable name of this view mode. This name must contain only lowercase letters and underscores. This name must be unique.'),
       '#disabled' => !empty($view_mode['view_mode']),
       '#machine_name' => array(
-        'exists' => 'ds_view_mode_unique',
+        'exists' => array($this, 'ds_view_mode_unique'),
         'source' => array('name'),
       ),
     );
@@ -170,6 +170,17 @@ class ViewModeForm extends SystemConfigFormBase implements ControllerInterface {
     // Redirect.
     $form_state['redirect'] = 'admin/structure/ds/view_modes';
     drupal_set_message(t('The view mode %view_mode has been saved.', array('%view_mode' => $view_mode['label'])));
+  }
+
+  /**
+   * Returns whether a view mode machine name is unique.
+   */
+  public function ds_view_mode_unique($name) {
+    $value = strtr($name, array('-' => '_'));
+    if (config('ds.view_modes.' . $value)->get()) {
+      return TRUE;
+    }
+    return FALSE;
   }
 
 }

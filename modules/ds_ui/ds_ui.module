@@ -132,25 +132,3 @@ function ds_ui_menu() {
 
   return $items;
 }
-
-/**
- * Returns whether a view mode machine name is unique.
- */
-function ds_view_mode_unique($name) {
-  $value = strtr($name, array('-' => '_'));
-  if (config('ds.view_modes.' . $value)->get()) {
-    return TRUE;
-  }
-  return FALSE;
-}
-
-/**
- * Returns whether a field machine name is unique.
- */
-function ds_field_unique($name) {
-  $value = strtr($name, array('-' => '_'));
-  if (config('ds.field.' . $value)->get()) {
-    return TRUE;
-  }
-  return FALSE;
-}

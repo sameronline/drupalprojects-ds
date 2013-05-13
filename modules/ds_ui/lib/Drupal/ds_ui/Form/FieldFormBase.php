@@ -129,7 +129,7 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
       '#description' => t('The machine-readable name of this field. This name must contain only lowercase letters and underscores. This name must be unique.'),
       '#disabled' => !empty($field['field']),
       '#machine_name' => array(
-        'exists' => 'ds_field_unique',
+        'exists' => array($this, 'ds_field_unique'),
         'source' => array('name'),
       ),
     );
@@ -200,6 +200,17 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
     // Redirect.
     $form_state['redirect'] = 'admin/structure/ds/fields';
     drupal_set_message(t('The field %field has been saved.', array('%field' => $field['label'])));
+  }
+
+  /**
+   * Returns whether a field machine name is unique.
+   */
+  public function ds_field_unique($name) {
+    $value = strtr($name, array('-' => '_'));
+    if (config('ds.field.' . $value)->get()) {
+      return TRUE;
+    }
+    return FALSE;
   }
 
 }
