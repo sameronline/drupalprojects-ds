@@ -25,49 +25,23 @@ class ClassesForm extends SystemConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    $custom_field = parent::buildForm($form, $form_state);
+    $config = $this->configFactory->get('ds.classes');
 
-    $form['code'] = array(
-      '#type' => 'text_format',
-      '#title' => t('Field code'),
-      '#default_value' => isset($custom_field['properties']['code']['value']) ? $custom_field['properties']['code']['value'] : '',
-      '#format' => isset($custom_field['properties']['code']['format']) ? $custom_field['properties']['code']['format'] : 'ds_code',
-      '#base_type' => 'textarea',
-      '#required' => TRUE,
+    $form['regions'] = array(
+      '#type' => 'textarea',
+      '#title' => t('CSS classes for regions'),
+      '#default_value' => $config->get('regions'),
+      '#description' => t('Configure CSS classes which you can add to regions on the "manage display" screens. Add multiple CSS classes line by line.<br />If you want to have a friendly name, separate class and friendly name by |, but this is not required. eg:<br /><em>class_name_1<br />class_name_2|Friendly name<br />class_name_3</em>')
     );
 
-    $form['use_token'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Token'),
-      '#description' => t('Toggle this checkbox if you are using tokens in this field.'),
-      '#default_value' => isset($custom_field['properties']['use_token']) ? $custom_field['properties']['use_token'] : '',
+    $form['fields'] = array(
+      '#type' => 'textarea',
+      '#title' => t('CSS classes for fields'),
+      '#default_value' => $config->get('fields'),
+      '#description' => t('Configure CSS classes which you can add to fields on the "manage display" screens. Add multiple CSS classes line by line.<br />If you want to have a friendly name, separate class and friendly name by |, but this is not required. eg:<br /><em>class_name_1<br />class_name_2|Friendly name<br />class_name_3</em>')
     );
 
-    // Token support.
-    if (module_exists('token')) {
-
-      $form['tokens'] = array(
-        '#title' => t('Tokens'),
-        '#type' => 'fieldset',
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
-        '#states' => array(
-          'invisible' => array(
-            'input[name="use_token"]' => array('checked' => FALSE),
-          ),
-        ),
-      );
-      $form['tokens']['help'] = array(
-        '#theme' => 'token_tree',
-        '#token_types' => 'all',
-        '#global_types' => FALSE,
-      );
-    }
-    else {
-      $form['use_token']['#description'] = t('Toggle this checkbox if you are using tokens in this field. If the token module is installed, you get a nice list of all tokens available in your site.');
-    }
-
-  return $form;
+    return parent::buildForm($form, $form_state);
   }
 
   /**
