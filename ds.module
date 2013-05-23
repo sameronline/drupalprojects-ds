@@ -843,7 +843,7 @@ function ds_render_field($field) {
       $output = user_format_name($field['entity']);
     }
     else {
-      $output = $field['entity']->{$field['properties']['entity_render_key']};
+      $output = $field['entity']->{$field['properties']['entity_render_key']}->value;
     }
   }
 
