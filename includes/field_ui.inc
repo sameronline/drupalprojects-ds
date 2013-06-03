@@ -1271,7 +1271,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       }
 
       ksort($suggestions_array);
-      $suggestions = '<ul><li>' . implode('.tpl.php</li><li>', $suggestions_array) . '.tpl.php</li></ul>';
+      $suggestions = '<ul><li>' . implode('.html.twig</li><li>', $suggestions_array) . '.html.twig</li></ul>';
     }
     else {
       $suggestions = '';

@@ -61,8 +61,8 @@ function drush_ds_build($name = NULL) {
   }
 
   // Copy the example templates.
-  $tpl_machine_name = strtr($machine_name, '_', '-');
-  drush_op('copy', $ds_layout_path . '/example-layout.tpl.php', $layout_path . "/$tpl_machine_name.tpl.php");
+  $twig_machine_name = strtr($machine_name, '_', '-');
+  drush_op('copy', $ds_layout_path . '/example-layout.html.twig', $layout_path . "/$twig_machine_name.html.twig");
   drush_op('copy', $ds_layout_path . '/example_layout.inc', $layout_path . "/$machine_name.inc");
 
   // Prepare an array of things that need to be rewritten in our templates.
@@ -107,7 +107,7 @@ function drush_ds_build($name = NULL) {
 
   // Replace example region PHP/HTML code.
   if ($regions) {
-    $find[] = '/  <!-- regions -->.+<!-- \/regions -->/s';
+    $find[] = '/  {# regions #}.+{# \/regions #}/s';
     $replace[] = ds_prepare_regions_html($regions);
     $find[] = "/( \* Regions:\n).+(\n \*\/)/s";
     $replace[] = '$1' . ds_prepare_regions_variable_documentation($regions) . '$2';
@@ -116,7 +116,7 @@ function drush_ds_build($name = NULL) {
   }
 
   // Rewrite templates.
-  drush_op('ds_file_preg_replace', array($layout_path . "/$tpl_machine_name.tpl.php", $layout_path . "/$machine_name.inc"), $find, $replace);
+  drush_op('ds_file_preg_replace', array($layout_path . "/$twig_machine_name.html.twig", $layout_path . "/$machine_name.inc"), $find, $replace);
 
   // Notify user of the newly created templates.
   drush_print(dt('Templates for "!name" created in: !path', array('!name' => $name, '!path' => $layout_path)));
@@ -155,9 +155,11 @@ function ds_prepare_regions_html($region_names) {
     $html_class = drupal_html_class($name);
 
     $output[] = <<<END
-    <<?php print \${$machine_name}_wrapper; ?> class="ds-$html_class<?php print \${$machine_name}_classes; ?>">
-      <?php print \$$machine_name; ?>
-    </<?php print \${$machine_name}_wrapper; ?>>
+    <{{ \${$machine_name}_wrapper }} class="group-left{{ \${$machine_name}_classes }}">
+      {% if \${$machine_name} is not null %}
+        {{ \${$machine_name} }}
+      {% endif %}
+    </{{ \${$machine_name}_wrapper }}>
 END;
   }
 
