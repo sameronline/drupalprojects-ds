@@ -9,6 +9,7 @@ use Drupal\Core\Template\Attribute;
 use Drupal\entity\Plugin\Core\Entity;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Language\Language;
 
 /**
  * Constants for field types.
@@ -347,7 +348,7 @@ function ds_get_fields($entity_type, $cache = TRUE) {
   // Get fields from cache.
   if (!$loaded) {
     $loaded = TRUE;
-    if ($cache && $cached_fields = cache()->get('ds_fields:' . language(LANGUAGE_TYPE_INTERFACE)->langcode)) {
+    if ($cache && $cached_fields = cache()->get('ds_fields:' . language(Language::TYPE_INTERFACE)->langcode)) {
       $fields_cached = $static_fields = $cached_fields->data;
     }
   }
@@ -382,7 +383,7 @@ function ds_get_fields($entity_type, $cache = TRUE) {
 
       // Cache the fields.
       if ($cache) {
-        cache()->set('ds_fields:' . language(LANGUAGE_TYPE_INTERFACE)->langcode, $fields_cached, CacheBackendInterface::CACHE_PERMANENT, array('ds_fields' => TRUE));
+        cache()->set('ds_fields:' . language(Language::TYPE_INTERFACE)->langcode, $fields_cached, CacheBackendInterface::CACHE_PERMANENT, array('ds_fields' => TRUE));
       }
     }
     else {
