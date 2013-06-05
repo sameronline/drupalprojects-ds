@@ -2370,6 +2370,8 @@ function _ds_classes($name = 'ds_classes_regions') {
         $classes[$name][check_plain($key)] = $friendly_name;
       }
     }
+    $name_clone = $name; // Prevent the name from being changed.
+    drupal_alter('ds_classes', $classes[$name], $name_clone);
   }
 
   return $classes[$name];
