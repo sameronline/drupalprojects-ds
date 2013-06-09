@@ -988,7 +988,7 @@ function ds_field_settings_summary($field, $form_state, $form, $view_mode) {
           'label' => '',
           'type' => '',
           'weight' => '',
-          'settings' => array(),
+          'settings' => isset($field['formatter_settings']) ? $field['formatter_settings'] : array(),
           'module' => '',
         )
       )
@@ -1056,7 +1056,7 @@ function ds_field_settings_form($field, &$form_state, $entity_form, $view_mode) 
       'entity_type' => $field['entity_type'],
       'display' => array(
         'default' => array(
-          'settings' => array()
+          'settings' => isset($field['formatter_settings']) ? $field['formatter_settings'] : array(),
         ),
       ),
     ),
