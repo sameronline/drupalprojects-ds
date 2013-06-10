@@ -1312,7 +1312,7 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
  */
 function ds_contextual_links_view_alter(&$element, $items) {
 
-  if (isset($element['#element']['#entity_type']) && module_exists('field_ui') && user_access('administer content types')) {
+  if (!empty($element['#element']['#entity_type']) && !empty($element['#element']['#bundle']) && module_exists('field_ui') && user_access('administer content types')) {
     $entity_type = $element['#element']['#entity_type'];
     $bundle = $element['#element']['#bundle'];
     $view_mode = isset($element['#element']['#view_mode']) ? $element['#element']['#view_mode'] : 'default';
