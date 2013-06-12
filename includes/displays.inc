@@ -34,7 +34,7 @@ function ds_layout_list() {
       $bundles = entity_get_bundles($entity_type);
       foreach ($bundles as $bundle_type => $bundle) {
         $row = array();
-        $row[] = $bundle['label'];
+        $row[] = check_plain($bundle['label']);
 
         $path = Drupal::entityManager()->getAdminPath($entity_type, $bundle_type);
         $operations['manage_display'] = array(
