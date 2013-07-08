@@ -1271,7 +1271,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       }
 
       ksort($suggestions_array);
-      $suggestions = '<ul><li>' . implode('.tpl.php</li><li>', $suggestions_array) . '.tpl.php</li></ul>';
+      $suggestions = '<ul><li>' . implode('.html.twig</li><li>', $suggestions_array) . '.html.twig</li></ul>';
     }
     else {
       $suggestions = '';
@@ -1297,7 +1297,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
     if (isset($form_state['values']['layout']) && (!isset($layout['layout']) || $form_state['values']['layout'] != $layout['layout'])) {
 
       // Get admin path.
-      $admin_path = field_ui_bundle_admin_path($entity_type, $bundle);
+      $admin_path = Drupal::entityManager()->getAdminPath($entity_type, $bundle);
       if ($view_mode != 'form') {
         $admin_path .= '/display';
       }

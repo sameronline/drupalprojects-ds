@@ -9,6 +9,7 @@ use Drupal\Core\Template\Attribute;
 use Drupal\entity\Plugin\Core\Entity;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Language\Language;
 
 /**
  * Implements hook_permission().
@@ -275,20 +276,20 @@ function ds_get_layout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
 
     $bundles = entity_get_bundles();
 
-    $overriden = TRUE;
+    $overridden = TRUE;
     if ($view_mode != 'form') {
       $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-      $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
+      $overridden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
     }
     // Check if a layout is configured.
-    if (isset($bundles[$entity_type][$bundle]['layouts'][$view_mode]) && ($overriden || $view_mode == 'default')) {
+    if (isset($bundles[$entity_type][$bundle]['layouts'][$view_mode]) && ($overridden || $view_mode == 'default')) {
       $layouts[$layout_key] = $bundles[$entity_type][$bundle]['layouts'][$view_mode];
       $layouts[$layout_key]['view_mode'] = $view_mode;
     }
 
     // In case $view_mode is not found, check if we have a default layout,
     // but only if the view mode settings aren't overridden for this view mode.
-    if ($view_mode != 'default' && !$overriden && $fallback && isset($bundles[$entity_type][$bundle]['layouts']['default'])) {
+    if ($view_mode != 'default' && !$overridden && $fallback && isset($bundles[$entity_type][$bundle]['layouts']['default'])) {
       $layouts[$layout_key] = $bundles[$entity_type][$bundle]['layouts']['default'];
       $layouts[$layout_key]['view_mode'] = 'default';
     }
@@ -313,14 +314,17 @@ function ds_get_layout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
  *   Collection of fields.
  */
 function ds_get_fields($entity_type, $cache = TRUE) {
+  static $static_fields;
 
-  foreach (drupal_container()->get('plugin.manager.ds.plugin')->getDefinitions() as $plugin_id => $plugin) {
-    // Needed to get derivatives working
-    $plugin['plugin_id'] = $plugin_id;
-    $static_fields[$plugin['entity_type']][$plugin_id] = $plugin;
+  if (!isset($static_fields[$entity_type])) {
+    foreach (drupal_container()->get('plugin.manager.ds.plugin')->getDefinitions() as $plugin_id => $plugin) {
+      // Needed to get derivatives working
+      $plugin['plugin_id'] = $plugin_id;
+      $static_fields[$plugin['entity_type']][$plugin_id] = $plugin;
+    }
   }
 
-  return isset($static_fields[$entity_type]) ? $static_fields[$entity_type] : array();
+  return isset($static_fields[$entity_type]) ?: array();
 }
 
 /**
@@ -355,7 +359,7 @@ function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRU
     }
   }
 
-  return (isset($field_settings[$entity_type][$bundle][$view_mode])) ? $field_settings[$entity_type][$bundle][$view_mode] : (isset($field_settings[$entity_type][$bundle]['default']) && $default ? $field_settings[$entity_type][$bundle]['default'] : array());
+  return (isset($field_settings[$entity_type][$bundle][$view_mode])) ?: (isset($field_settings[$entity_type][$bundle]['default']) && $default ? $field_settings[$entity_type][$bundle]['default'] : array());
 }
 
 /**
@@ -644,62 +648,6 @@ function ds_preprocess_ds_layout(&$vars) {
 }
 
 /**
- * Return the picture.
- */
-function ds_return_picture($entity) {
-
-  // Gravatar support.
-  if (module_exists('gravatar')) {
-    $entity = _gravatar_load_account($entity);
-    $entity->picture = _gravatar_get_account_user_picture($entity);
-  }
-
-  if (!empty($entity->picture)) {
-    if (is_numeric($entity->picture)) {
-      return file_load($entity->picture);
-    }
-    else {
-      return $entity->picture;
-    }
-  }
-  elseif (variable_get('user_picture_default', '')) {
-    return variable_get('user_picture_default', '');
-  }
-}
-
-/**
- * Render a user picture.
- */
-function ds_render_user_picture($field) {
-  $picture = ds_return_picture($field['entity']);
-
-  if (!empty($picture)) {
-    $vars = array();
-    $filepath = (isset($picture->uri)) ? $picture->uri : $picture;
-    $name = !empty($field['entity']->name) ? $field['entity']->name : variable_get('anonymous', t('Anonymous'));
-    $alt = t("@user's picture", array('@user' => $name));
-    $vars = array('path' => $filepath, 'alt' => $alt, 'title' => $alt);
-
-    // If the image does not have a valid Drupal scheme (for eg. HTTP),
-    // don't load image styles.
-    if (module_exists('image') && file_valid_uri($filepath)) {
-      $vars['style_name'] = str_replace('ds_picture_', '', $field['formatter']);
-      $image = theme('image_style', $vars);
-    }
-    else {
-      $image = theme('image', $vars);
-    }
-
-    if (!empty($field['entity']->uid) && user_access('access user profiles')) {
-      return l($image, 'user/' . $field['entity']->uid, array('html' => TRUE));
-    }
-    else {
-      return $image;
-    }
-  }
-}
-
-/**
  * Implements hook_field_formatter_info().
  */
 function ds_field_formatter_info() {
@@ -752,17 +700,14 @@ function ds_contextual_links_view_alter(&$element, $items) {
     $bundle = $element['#element']['#bundle'];
     $view_mode = isset($element['#element']['#view_mode']) ? $element['#element']['#view_mode'] : 'default';
 
-    // Check if we have a configured layout. Do not fallback to default.
-    $layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE);
-
     // Get the manage display URI.
-    $admin_path = field_ui_bundle_admin_path($entity_type, $bundle);
+    $admin_path = Drupal::entityManager()->getAdminPath($entity_type, $bundle);
 
     // Check view mode settings.
     $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-    $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
+    $overridden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
 
-    if (empty($layout) && !$overriden) {
+    if (!$overridden) {
       $admin_path .= '/display';
     }
     else {

@@ -1,0 +1,84 @@
+ds_classes:
+  pattern: 'admin/structure/ds/classes'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\ClassesForm'
+  requirements:
+    _permission: 'admin classes'
+view_modes_list:
+  pattern: 'admin/structure/ds/view_modes'
+  defaults:
+    _content: 'Drupal\ds_ui\Routing\ViewModeController::viewModeList'
+  requirements:
+    _permission: 'admin view modes'
+view_mode_add:
+  pattern: 'admin/structure/ds/view_modes/manage'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\ViewModeForm'
+  requirements:
+    _permission: 'admin view modes'
+view_mode_manage:
+  pattern: 'admin/structure/ds/view_modes/manage/{view_mode}'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\ViewModeForm'
+  requirements:
+    _permission: 'admin view modes'
+view_mode_delete:
+  pattern: 'admin/structure/ds/view_modes/delete/{view_mode}'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\ViewModeDeleteForm'
+  requirements:
+    _permission: 'admin view modes'
+fields_list:
+  pattern: 'admin/structure/ds/fields'
+  defaults:
+    _content: 'Drupal\ds_ui\Routing\FieldController::fieldList'
+  requirements:
+    _permission: 'admin fields'
+manage_field:
+  pattern: 'admin/structure/ds/fields/manage/{field_key}'
+  defaults:
+    _content: 'Drupal\ds_ui\Routing\FieldController::manageRedirect'
+  requirements:
+    _permission: 'admin fields'
+delete_field:
+  pattern: 'admin/structure/ds/fields/delete/{field}'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\FieldDeleteForm'
+  requirements:
+    _permission: 'admin fields'
+manage_code_field:
+  pattern: 'admin/structure/ds/fields/manage_code/{field_key}'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\CodeFieldForm'
+  requirements:
+    _permission: 'admin fields'
+add_code_field:
+  pattern: 'admin/structure/ds/fields/manage_code'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\CodeFieldForm'
+  requirements:
+    _permission: 'admin fields'
+manage_preprocess_field:
+  pattern: 'admin/structure/ds/fields/manage_preprocess/{field_key}'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\PreprocessFieldForm'
+  requirements:
+    _permission: 'admin fields'
+add_preprocess_field:
+  pattern: 'admin/structure/ds/fields/manage_preprocess'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\PreprocessFieldForm'
+  requirements:
+    _permission: 'admin fields'
+manage_block_field:
+  pattern: 'admin/structure/ds/fields/manage_block/{field_key}'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\BlockFieldForm'
+  requirements:
+    _permission: 'admin fields'
+add_block_field:
+  pattern: 'admin/structure/ds/fields/manage_block'
+  defaults:
+    _form: '\Drupal\ds_ui\Form\BlockFieldForm'
+  requirements:
+    _permission: 'admin fields'

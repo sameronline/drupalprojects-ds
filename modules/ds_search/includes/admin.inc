@@ -163,5 +163,5 @@ function ds_search_settings_submit($form, $form_state) {
 
 
   // Rebuild the menu.
-  variable_set('menu_router_rebuild_needed', TRUE);
+  menu_router_rebuild();
 }

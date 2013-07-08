@@ -289,7 +289,7 @@ function hook_ds_layout_region_alter($context, &$region_info) {
 
 /**
  * Alter the field label options. Note that you will either
- * update the preprocess functions or the field.tpl.php file when
+ * update the preprocess functions or the field.html.twig file when
  * adding new options.
  *
  * @param $field_label_options
@@ -306,36 +306,34 @@ function hook_ds_label_options_alter(&$field_label_options) {
  * be used as key for the layout. The folder should at least have 2 files:
  *
  * - key.inc
- * - key.tpl.php
+ * - key.html.twig
  *
  * The css file is optional.
  * - key.css
  *
  * e.g.
  * bartik/ds_layouts/bartik_ds/bartik_ds.inc
- *                            /bartik-ds.tpl.php
+ *                            /bartik-ds.html.tiwg
  *                            /bartik_ds.css
  *
  * bartik_ds.inc must look like this:
  *
-
-  // Fuction name is ds_LAYOUT_KEY
-  function ds_bartik_ds() {
-    return array(
-      'label' => t('Bartik DS'),
-      'regions' => array(
-        // The key of this region name is also the variable used in
-        // the template to print the content of that region.
-        'bartik' => t('Bartik DS'),
-      ),
-      // Add this if there is a default css file.
-      'css' => TRUE,
-      // Add this if there is a default preview image
-      'image' => TRUE,
-    );
-  }
-
+ * Fuction name is ds_LAYOUT_KEY
  */
+function ds_bartik_ds() {
+  return array(
+    'label' => t('Bartik DS'),
+    'regions' => array(
+      // The key of this region name is also the variable used in
+      // the template to print the content of that region.
+      'bartik' => t('Bartik DS'),
+    ),
+    // Add this if there is a default css file.
+    'css' => TRUE,
+    // Add this if there is a default preview image
+    'image' => TRUE,
+  );
+}
 
 /**
  * Alter the view mode just before it's rendered by the DS views entity plugin.

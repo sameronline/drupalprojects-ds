@@ -1,27 +1,30 @@
 {#
 /**
  * @file
- * Display Suite 2 column stacked template.
+ * Display Suite 3 column stacked template.
  *
  * Available variables:
  * - layout_wrapper: @todo
  * - header_wrapper: @todo
  * - left_wrapper: @todo
+ * - middle_wrapper: @todo
  * - right_wrapper: @todo
  * - footer_Wrapper: @todo
  * - layout_attributes: @todo
  * - attributes: @todo
  * - header_classes: @todo
  * - left_classes: @todo
+ * - middle_classes: @todo
  * - right_classes: @todo
  * - footer_classes: @todo
  * - header: @todo
  * - left: @todo
+ * - middle: @todo
  * - right: @todo
  * - footer: @todo
  */
 #}
-<{{ layout_wrapper }} {{ layout_attributes }} class="ds-2col-stacked {{ attributes.class }} clearfix">
+<{{ layout_wrapper }} {{ layout_attributes }} class="ds-3col-stacked {{ attributes.class }} clearfix">
 
   <{{ header_wrapper }} class="group-header{{ header_classes }}">
     {% if header is not null %}
@@ -34,6 +37,12 @@
       {{ left }}
     {% endif %}
   </{{ left_wrapper }}>
+
+  <{{ middle_wrapper }} class="group-middle{{ middle_classes }}">
+    {% if middle is not null %}
+      {{ middle }}
+    {% endif %}
+  </{{ middle_wrapper }}>
 
   <{{ right_wrapper }} class="group-right{{ right_classes }}">
     {% if right is not null %}

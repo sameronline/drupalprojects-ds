@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Display Suite 2 column template.
+ * Display Suite example layout template.
  *
  * Available variables:
  * - layout_wrapper: @todo
@@ -17,6 +17,8 @@
 #}
 <{{ layout_wrapper }} {{ layout_attributes }} class="ds-2col {{ attributes.class }} clearfix">
 
+  {# regions #}
+
   <{{ left_wrapper }} class="group-left{{ left_classes }}">
     {% if left is not null %}
       {{ left }}
@@ -28,5 +30,8 @@
       {{ right }}
     {% endif %}
   </{{ right_wrapper }}>
+
+  {# These comments are required for the Drush command. You can remove them in your own copy #}
+  {# regions #}
 
 </{{ layout_wrapper }}>

@@ -132,7 +132,7 @@ class BaseTest extends WebTestBase {
    * @param $edit
    *   An optional array of field properties.
    */
-  function dsCreateCodeField($edit = array(), $url = 'admin/structure/ds/fields/manage_custom') {
+  function dsCreateCodeField($edit = array(), $url = 'admin/structure/ds/fields/manage_code') {
 
     $edit += array(
       'name' => 'Test field',
