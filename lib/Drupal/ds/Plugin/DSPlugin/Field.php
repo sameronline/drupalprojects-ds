@@ -35,7 +35,7 @@ abstract class Field extends PluginBase {
         $output = user_format_name($field['entity']);
       }
       else {
-        $output = $field['entity']->{$entity_render_key};
+        $output = $field['entity']->{$entity_render_key}->value;
       }
     }
 

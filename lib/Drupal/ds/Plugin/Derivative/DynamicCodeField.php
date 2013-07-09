@@ -7,37 +7,15 @@
 
 namespace Drupal\ds\Plugin\Derivative;
 
-use Drupal\Component\Plugin\Derivative\DerivativeInterface;
+use Drupal\Component\Plugin\Derivative\DerivativeBase;
 
 /**
  * Retrieves block plugin definitions for all custom blocks.
  */
-class DynamicCodeField implements DerivativeInterface {
+class DynamicCodeField extends DerivativeBase {
 
   /**
-   * List of derivative definitions.
-   *
-   * @var array
-   */
-  protected $derivatives = array();
-
-  /**
-   * Implements \Drupal\Component\Plugin\Derivative\DerivativeInterface::getDerivativeDefinition().
-   *
-   * Retrieves a specific custom block definition from storage.
-   */
-  public function getDerivativeDefinition($derivative_id, array $base_plugin_definition) {
-    if (!empty($this->derivatives) && !empty($this->derivatives[$derivative_id])) {
-      return $this->derivatives[$derivative_id];
-    }
-    $this->getDerivativeDefinitions($base_plugin_definition);
-    return $this->derivatives[$derivative_id];
-  }
-
-  /**
-   * Implements \Drupal\Component\Plugin\Derivative\DerivativeInterface::getDerivativeDefinitions().
-   *
-   * Retrieves dynamic code fields from storage.
+   * {@inheritdoc}
    */
   public function getDerivativeDefinitions(array $base_plugin_definition) {
 

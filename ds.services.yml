@@ -1,4 +1,4 @@
 services:
   plugin.manager.ds.plugin:
     class: Drupal\ds\Plugin\DSPluginManager
-    arguments: ['@container.namespaces']
+    arguments: ['@container.namespaces', '@cache.block', '@language_manager', '@module_handler']
