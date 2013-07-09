@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPluginManager.
+ * Contains \Drupal\ds\Plugin\DsPluginManager.
  */
 
 namespace Drupal\ds\Plugin;
@@ -15,10 +15,10 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 /**
  * Plugin type manager for all ds plugins.
  */
-class DSPluginManager extends DefaultPluginManager {
+class DsPluginManager extends DefaultPluginManager {
 
   /**
-   * Constructs a new \Drupal\block\Plugin\Type\DSPluginManager object.
+   * Constructs a new \Drupal\block\Plugin\Type\DsPluginManager object.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
@@ -35,9 +35,9 @@ class DSPluginManager extends DefaultPluginManager {
       'Drupal\ds\Annotation' => DRUPAL_ROOT . '/modules/ds/lib',
     );
 
-    parent::__construct('DSPlugin', $namespaces, $annotation_namespaces, 'Drupal\ds\Annotation\DSPlugin');
+    parent::__construct('DsField', $namespaces, $annotation_namespaces, 'Drupal\ds\Annotation\DsField');
 
-    $this->alterInfo($module_handler, 'ds_plugins');
+    $this->alterInfo($module_handler, 'ds_field');
     $this->setCacheBackend($cache_backend, $language_manager, 'ds');
   }
 

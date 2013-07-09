@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\ds\Annotation\DSPlugin.
+ * Contains Drupal\ds\Annotation\DsField.
  */
 
 namespace Drupal\ds\Annotation;
@@ -10,11 +10,11 @@ namespace Drupal\ds\Annotation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
- * Defines a DSPlugin annotation object.
+ * Defines a DsField annotation object.
  *
  * @Annotation
  */
-class DSPlugin extends Plugin {
+class DsField extends Plugin {
 
   /**
    * The plugin ID.
