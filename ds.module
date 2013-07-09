@@ -324,7 +324,7 @@ function ds_get_fields($entity_type, $cache = TRUE) {
     }
   }
 
-  return isset($static_fields[$entity_type]) ?: array();
+  return isset($static_fields[$entity_type]) ? $static_fields[$entity_type] : array();
 }
 
 /**
@@ -359,7 +359,7 @@ function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRU
     }
   }
 
-  return (isset($field_settings[$entity_type][$bundle][$view_mode])) ?: (isset($field_settings[$entity_type][$bundle]['default']) && $default ? $field_settings[$entity_type][$bundle]['default'] : array());
+  return (isset($field_settings[$entity_type][$bundle][$view_mode])) ? $field_settings[$entity_type][$bundle][$view_mode] : (isset($field_settings[$entity_type][$bundle]['default']) && $default ? $field_settings[$entity_type][$bundle]['default'] : array());
 }
 
 /**
