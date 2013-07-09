@@ -5,6 +5,8 @@
  * Menu callbacks for contextual links and tabs added by DS.
  */
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 /**
  * Menu callback: redirect to manage display.
  */
@@ -47,5 +49,5 @@ function ds_contextual_page_tab($object, $entity_type) {
     $admin_path .= '/display/' . $view_mode;
   }
 
-  drupal_goto($admin_path, array('query' => array('destination' => $destination)));
+  return new RedirectResponse(url($admin_path, array('query' => array('destination' => $destination))));
 }
