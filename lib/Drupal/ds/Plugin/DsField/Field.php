@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\Field.
+ * Contains \Drupal\ds\Plugin\DsField\Field.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 /**
  * The base plugin to create DS field fields.

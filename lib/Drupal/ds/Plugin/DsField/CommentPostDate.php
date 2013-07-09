@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\CommentPostDate.
+ * Contains \Drupal\ds\Plugin\DsField\CommentPostDate.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Annotation\Translation;
-use Drupal\ds\Annotation\DSPlugin;
+use Drupal\ds\Annotation\DsField;
 
 /**
  * Function field that renders the post date of a comment
  *
- * @DSPlugin(
+ * @DsField(
  *   id = "node_post_date",
  *   title = @Translation("Post date"),
  *   entity_type = "comment",

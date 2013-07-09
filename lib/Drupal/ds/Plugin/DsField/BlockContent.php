@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\BlockContent.
+ * Contains \Drupal\ds\Plugin\DsField\BlockContent.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 /**
  * Field that renders the content of a block.

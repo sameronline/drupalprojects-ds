@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\BlockTitleContent.
+ * Contains \Drupal\ds\Plugin\DsField\BlockTitleContent.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 /**
  * Field that renders the titel and the content of a block.

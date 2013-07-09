@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\UserSignature.
+ * Contains \Drupal\ds\Plugin\DsField\UserSignature.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Annotation\Translation;
-use Drupal\ds\Annotation\DSPlugin;
+use Drupal\ds\Annotation\DsField;
 
 /**
  * Function field that renders the user signature
  *
- * @DSPlugin(
+ * @DsField(
  *   id = "user_signature",
  *   title = @Translation("User signature"),
  *   entity_type = "user",

@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\BlockPluginBase.
+ * Contains \Drupal\ds\Plugin\DsField\BlockPluginBase.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 /**
  * The base plugin to create DS block fields.

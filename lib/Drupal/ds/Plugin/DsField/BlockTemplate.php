@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\BlockTemplate.
+ * Contains \Drupal\ds\Plugin\DsField\BlockTemplate.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 /**
  * Field that renders the block in a template.

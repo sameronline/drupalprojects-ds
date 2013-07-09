@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\PluginBase.
+ * Contains \Drupal\ds\Plugin\DsField\PluginBase.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
 

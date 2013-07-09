@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\PreprocessPluginBase.
+ * Contains \Drupal\ds\Plugin\DsField\PreprocessPluginBase.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 /**
  * The base plugin to create DS preprocess fields.

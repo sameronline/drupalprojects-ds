@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\CommentAuthor.
+ * Contains \Drupal\ds\Plugin\DsField\CommentAuthor.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Annotation\Translation;
-use Drupal\ds\Annotation\DSPlugin;
+use Drupal\ds\Annotation\DsField;
 
 /**
  * Function field that renders the author of a comment.
  *
- * @DSPlugin(
+ * @DsField(
  *   id = "comment_author",
  *   title = @Translation("Author"),
  *   entity_type = "comment",

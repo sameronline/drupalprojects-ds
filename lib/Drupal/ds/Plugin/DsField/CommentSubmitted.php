@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\CommentSubmitted.
+ * Contains \Drupal\ds\Plugin\DsField\CommentSubmitted.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Annotation\Translation;
-use Drupal\ds\Annotation\DSPlugin;
+use Drupal\ds\Annotation\DsField;
 
 /**
  * Function field that renders the submitted by element of a comment.
  *
- * @DSPlugin(
+ * @DsField(
  *   id = "comment_submitted",
  *   title = @Translation("Submitted"),
  *   entity_type = "comment",

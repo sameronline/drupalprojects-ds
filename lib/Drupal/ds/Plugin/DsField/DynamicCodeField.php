@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\DynamicCodeField.
+ * Contains \Drupal\ds\Plugin\DsField\DynamicCodeField.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
-use Drupal\ds\Annotation\DSPlugin;
+use Drupal\ds\Annotation\DsField;
 use Drupal\Core\Annotation\Translation;
 
 /**
  * Defines a generic dynamic code field.
  *
- * @DSPlugin(
+ * @DsField(
  *   id = "dynamic_code_field",
  *   derivative = "Drupal\ds\Plugin\Derivative\DynamicCodeField",
  *   module = "ds"

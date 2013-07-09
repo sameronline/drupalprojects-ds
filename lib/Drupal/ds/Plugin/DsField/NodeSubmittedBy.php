@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\NodeSubmittedBy.
+ * Contains \Drupal\ds\Plugin\DsField\NodeSubmittedBy.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Annotation\Translation;
-use Drupal\ds\Annotation\DSPlugin;
+use Drupal\ds\Annotation\DsField;
 
 /**
  * Function field that renders the submitted by field
  *
- * @DSPlugin(
+ * @DsField(
  *   id = "node_submitted_by",
  *   title = @Translation("Submitted by"),
  *   entity_type = "node",

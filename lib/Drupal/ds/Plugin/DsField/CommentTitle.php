@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\CommentTitle.
+ * Contains \Drupal\ds\Plugin\DsField\CommentTitle.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Annotation\Translation;
-use Drupal\ds\Annotation\DSPlugin;
+use Drupal\ds\Annotation\DsField;
 
 /**
  * Function field that renders the title of a comment.
  *
- * @DSPlugin(
+ * @DsField(
  *   id = "comment_title",
  *   title = @Translation("Title"),
  *   entity_type = "comment",

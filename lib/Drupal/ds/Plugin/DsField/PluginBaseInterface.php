@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\PluginBaseInterface.
+ * Contains \Drupal\ds\Plugin\DsField\PluginBaseInterface.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 /**
  * Interface for DS plugins.

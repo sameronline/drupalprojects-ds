@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DSPlugin\CommentLinks.
+ * Contains \Drupal\ds\Plugin\DsField\CommentLinks.
  */
 
-namespace Drupal\ds\Plugin\DSPlugin;
+namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Annotation\Translation;
-use Drupal\ds\Annotation\DSPlugin;
+use Drupal\ds\Annotation\DsField;
 
 /**
  * Function field that renders the administration links of the comment entity.
  *
- * @DSPlugin(
+ * @DsField(
  *   id = "comment_links",
  *   title = @Translation("Links"),
  *   entity_type = "comment",
