@@ -15,35 +15,35 @@ use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
 abstract class PluginBase extends ComponentPluginBase implements PluginBaseInterface {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBaseInterface::renderField()
+   * {@inheritdoc}
    */
   public function renderField($field) {
     return '';
   }
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBaseInterface::settings()
+   * {@inheritdoc}
    */
   public function settings() {
     return array();
   }
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBaseInterface::defaultSettings()
+   * {@inheritdoc}
    */
   public function defaultSettings() {
     return array();
   }
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBaseInterface::formatters()
+   * {@inheritdoc}
    */
   public function formatters() {
     return array();
   }
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBaseInterface::displays()
+   * {@inheritdoc}
    */
   public function displays() {
     return array();

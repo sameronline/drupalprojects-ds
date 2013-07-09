@@ -22,7 +22,7 @@ use Drupal\Core\Annotation\Translation;
 class DynamicCodeField extends CodePluginBase {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\CodePluginBase::code().
+   * {@inheritdoc}
    */
   public function code() {
     $definition = $this->getDefinition();
@@ -30,7 +30,7 @@ class DynamicCodeField extends CodePluginBase {
   }
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\CodePluginBase::format().
+   * {@inheritdoc}
    */
   public function format() {
     $definition = $this->getDefinition();

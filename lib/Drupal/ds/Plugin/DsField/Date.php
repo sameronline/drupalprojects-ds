@@ -13,7 +13,7 @@ namespace Drupal\ds\Plugin\DsField;
 abstract class Date extends PluginBase {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
+   * {@inheritdoc}
    */
   public function renderField($field) {
     $date_format = str_replace('ds_post_date_', '', $field['formatter']);
@@ -21,7 +21,7 @@ abstract class Date extends PluginBase {
   }
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::formatters().
+   * {@inheritdoc}
    */
   public function formatters() {
     $date_types = system_get_date_formats();

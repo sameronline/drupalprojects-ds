@@ -23,7 +23,7 @@ use Drupal\ds\Annotation\DsField;
 class TaxonomyTermTitle extends Title {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\Title::entityRenderKey().
+   * {@inheritdoc}
    */
   public function entityRenderKey() {
     return 'name';

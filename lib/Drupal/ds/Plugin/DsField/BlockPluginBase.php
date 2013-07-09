@@ -13,7 +13,7 @@ namespace Drupal\ds\Plugin\DsField;
 abstract class BlockPluginBase extends PluginBase {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
+   * {@inheritdoc}
    */
   public function renderField($field) {
     $contextual = module_exists('contextual') && user_access('access contextual links');

@@ -16,7 +16,7 @@ use Drupal\ds\Annotation\DsField;
 abstract class Title extends Field {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::settings().
+   * {@inheritdoc}
    */
   public function settings() {
 
@@ -38,7 +38,7 @@ abstract class Title extends Field {
   }
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\PluginBase::defaultSettings().
+   * {@inheritdoc}
    */
   public function defaultSettings() {
 
@@ -52,7 +52,7 @@ abstract class Title extends Field {
   }
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\Field::entityRenderKey().
+   * {@inheritdoc}
    */
   protected function entityRenderKey() {
     return 'title';

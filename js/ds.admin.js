@@ -26,7 +26,7 @@ Drupal.fieldUIDisplayOverview.ds = function (row, data) {
   this.$regionSelect.change(Drupal.fieldUIOverview.onChange);
 
   // Attach change listener to the 'formatter type' select.
-  this.$formatSelect = $('select.field-formatter-type', row);
+  this.$formatSelect = $('select.field-plugin-type', row);
   this.$formatSelect.change(Drupal.fieldUIOverview.onChange);
 
   return this;

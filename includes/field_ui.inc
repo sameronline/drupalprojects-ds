@@ -215,8 +215,8 @@ function ds_field_ui_regions($form, $form_state) {
       ),
     );
 
-    // Hide this if we formatter_settings_edit is not empty so it doesn't confuse users.
-    if (!empty($form_state['formatter_settings_edit'])) {
+    // Hide this if we plugin_settings_edit is not empty so it doesn't confuse users.
+    if (!empty($form_state['plugin_settings_edit'])) {
       $limit_items['#access'] = FALSE;
     }
 
@@ -1044,7 +1044,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   $layout = config('ds.layout_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
 
   if (!empty($layout) && isset($layout['layout']) && isset($ds_layouts[$layout['layout']])) {
-    $layout['settings'] = $layout['settings']; // @todo this does not make any sense.
     $layout['regions'] = $ds_layouts[$layout['layout']]['regions'];
     $form['#ds_layout'] = $layout;
   }
@@ -1524,7 +1523,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     $field['bundle'] = $bundle;
     $field['view_mode'] = $view_mode;
 
-    if ($form_state['formatter_settings_edit'] == $key) {
+    if ($form_state['plugin_settings_edit'] == $key) {
       $table[$key]['settings_summary']['#attributes']['colspan'] = 2;
       $settings_form = ds_field_settings_form($field, $form_state);
       ds_field_row_form_format_construct($table, $key, $settings_form, $form_state);
@@ -1635,7 +1634,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       '#field_name' => $key,
     );
 
-    if ($form_state['formatter_settings_edit'] == $key) {
+    if ($form_state['plugin_settings_edit'] == $key) {
       $formatter_type = $form_state['complete_form']['fields'][$key]['format']['type']['#default_value'];
 
       // Get the corresponding formatter object.
@@ -1841,7 +1840,7 @@ function ds_field_row_form_format_summary_construct(&$table, $key, $form_state) 
   // Add the configure button.
   $table[$key]['settings_edit'] = $base_button + array(
     '#type' => 'image_button',
-    '#name' => $key . '_formatter_settings_edit',
+    '#name' => $key . '_plugin_settings_edit',
     '#src' => 'core/misc/configure-dark.png',
     '#attributes' => array('class' => array('field-formatter-settings-edit'), 'alt' => t('Edit')),
     '#op' => 'edit',

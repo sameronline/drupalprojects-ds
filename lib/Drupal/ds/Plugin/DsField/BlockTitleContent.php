@@ -13,7 +13,7 @@ namespace Drupal\ds\Plugin\DsField;
 class BlockTitleContent extends BlockPluginBase {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\BlockPluginBase::renderBlock().
+   * {@inheritdoc}
    */
   protected function renderBlock($block) {
     return '<h2 class="block-title">' . $block->subject . '</h2>' . $block->content;

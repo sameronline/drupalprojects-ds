@@ -13,7 +13,7 @@ namespace Drupal\ds\Plugin\DsField;
 abstract class ThemePluginBase extends PluginBase {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
+   * {@inheritdoc}
    */
   public function renderField($field) {
     $format = $this->formatter();
