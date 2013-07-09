@@ -23,7 +23,7 @@ use Drupal\ds\Annotation\DsField;
 class NodeAuthor extends PluginBase {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
+   * {@inheritdoc}
    */
   public function renderField($field) {
 
@@ -47,7 +47,7 @@ class NodeAuthor extends PluginBase {
   }
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\PluginBase::formatters().
+   * {@inheritdoc}
    */
   public function formatters() {
 

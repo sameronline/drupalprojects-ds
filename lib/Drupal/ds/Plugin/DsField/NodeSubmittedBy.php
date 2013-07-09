@@ -23,7 +23,7 @@ use Drupal\ds\Annotation\DsField;
 class NodeSubmittedBy extends Date {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\Date::renderField().
+   * {@inheritdoc}
    */
   public function renderField($field) {
     $account = user_load($field['entity']->uid->value);
@@ -38,7 +38,7 @@ class NodeSubmittedBy extends Date {
   }
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\Date::formatters().
+   * {@inheritdoc}
    */
   public function formatters() {
     // Fetch all the date formatters

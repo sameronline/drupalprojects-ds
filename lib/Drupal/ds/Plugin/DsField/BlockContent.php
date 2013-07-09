@@ -13,7 +13,7 @@ namespace Drupal\ds\Plugin\DsField;
 class BlockContent extends BlockPluginBase {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\BlockPluginBase::renderBlock().
+   * {@inheritdoc}
    */
   protected function renderBlock($block) {
 

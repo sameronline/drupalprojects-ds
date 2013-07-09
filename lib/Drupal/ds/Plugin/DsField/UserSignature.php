@@ -23,21 +23,21 @@ use Drupal\ds\Annotation\DsField;
 class UserSignature extends PluginBase {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\Markup::key().
+   * {@inheritdoc}
    */
   public function key() {
     return 'signature';
   }
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\Markup::format().
+   * {@inheritdoc}
    */
   public function format() {
     return 'signature_format';
   }
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\PluginBase::displays().
+   * {@inheritdoc}
    */
   public function displays() {
 

@@ -23,7 +23,7 @@ use Drupal\ds\Annotation\DsField;
 class NodeComments extends PluginBase {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBase::displays().
+   * {@inheritdoc}
    */
   public function displays() {
     $displays = array(

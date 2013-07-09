@@ -8,18 +8,18 @@
 namespace Drupal\ds\Plugin\DsField;
 
 /**
- * The base plugin to create DS field fields.
+ * Ds field markup base field
  */
 abstract class Markup extends PluginBase {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::renderField().
+   * {@inheritdoc}
    */
   public function renderField($field) {
     $key = $this->key();
-    if (isset($field['entity']->{$key})) {
+    if (isset($field['entity']->{$key}->value)) {
       $format = $this->format();
-      return check_markup($field['entity']->{$key}, $format, '', TRUE);
+      return check_markup($field['entity']->{$key}->value, $format, '', TRUE);
     }
   }
 

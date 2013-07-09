@@ -16,7 +16,7 @@ use Drupal\ds\Annotation\DsField;
 abstract class Link extends Field {
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::settings().
+   * {@inheritdoc}
    */
   public function settings() {
 
@@ -37,7 +37,7 @@ abstract class Link extends Field {
   }
 
   /**
-   * Overrides \Drupal\ds\Plugin\ds\field\PluginBase::defaultSettings().
+   * {@inheritdoc}
    */
   public function defaultSettings() {
 
