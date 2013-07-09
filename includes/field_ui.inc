@@ -1408,12 +1408,19 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
   }
 
   foreach ($fields as $key => $field) {
+    // Check if we can display this field here.
+    $plugin_instance = drupal_container()->get('plugin.manager.ds.plugin')->createInstance($field['plugin_id']);
+    $displays = $plugin_instance->displays();
 
-    // Check on ui_limit.
-    if (isset($field['ui_limit'])) {
+    // When $displays returns FALSE we shouldn't show this field
+    if (!is_array($displays) && $displays == FALSE) {
+      continue;
+    }
 
+    // Don't filter out fields when $displays is empty
+    if (!empty($displays)) {
       $continue = TRUE;
-      foreach ($field['ui_limit'] as $limitation) {
+      foreach ($displays as $limitation) {
         list($limit_bundle, $limit_view_mode) = explode('|', $limitation);
         if ($limit_bundle == '*' || $limit_bundle == $bundle) {
           if ($limit_view_mode == '*' || $limit_view_mode == $view_mode) {
@@ -1447,8 +1454,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     $hidden = array('hidden' => t('<Hidden>'));
 
     // Get the formatters from the field instance
-    $field_instance = drupal_container()->get('plugin.manager.ds.plugin')->createInstance($field['plugin_id']);
-    $formatters = $field_instance->formatters();
+    $formatters = $plugin_instance->formatters();
 
     // This should be temporary. Don't want to copy stuff from the object to
     // the field each ajax refresh.
@@ -1459,13 +1465,13 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       $formatters = $hidden + array('default' => t('Default'));
     }
 
-    $field_instance_settings = $field_instance->settings();
-    $field_instance_default_settings = $field_instance->defaultSettings();
-    if (!empty($field_instance_settings)) {
-      $field['properties']['settings'] = $field_instance_settings;
+    $plugin_instance_settings = $plugin_instance->settings();
+    $plugin_instance_default_settings = $plugin_instance->defaultSettings();
+    if (!empty($plugin_instance_settings)) {
+      $field['properties']['settings'] = $plugin_instance_settings;
     }
-    if (!empty($field_instance_default_settings)) {
-      $field['properties']['default'] = $field_instance_default_settings;
+    if (!empty($plugin_instance_default_settings)) {
+      $field['properties']['default'] = $plugin_instance_default_settings;
     }
 
     $table[$key] = array(

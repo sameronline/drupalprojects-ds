@@ -23,7 +23,7 @@ use Drupal\ds\Annotation\DsField;
 class BookNavigation extends PluginBase {
 
   /**
-   * Implements \Drupal\ds\Plugin\ds\field\PluginBase::displays().
+   * {@inheritdoc}
    */
   public function displays() {
 
@@ -31,16 +31,15 @@ class BookNavigation extends PluginBase {
     $types = config('book.settings')->get('allowed_types');
 
     $displays = array();
-    foreach ($types as $type) {
-       $displays[] = $type . '|full';
+    if (!empty($types)) {
+      foreach ($types as $type) {
+         $displays[] = $type . '|full';
+      }
     }
 
     // When there are no displays, never render this field.
     if (empty($displays)) {
       return FALSE;
-    }
-    else {
-      return $displays;
     }
 
     return $displays;
