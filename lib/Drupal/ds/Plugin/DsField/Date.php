@@ -17,7 +17,7 @@ abstract class Date extends PluginBase {
    */
   public function renderField($field) {
     $date_format = str_replace('ds_post_date_', '', $field['formatter']);
-    return format_date($field['entity']->created, $date_format);
+    return format_date($field['entity']->created->value, $date_format);
   }
 
   /**
