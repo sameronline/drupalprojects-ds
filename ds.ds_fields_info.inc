@@ -5,6 +5,11 @@
  * Display Suite fields.
  */
 
+function system_get_date_formats() {
+  // TODO replace me
+  return array();
+}
+
 /**
  * Implements hook_ds_fields_info().
  */

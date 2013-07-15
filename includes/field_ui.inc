@@ -16,7 +16,7 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   // Get the entity_type, bundle and view mode.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form['#view_mode'];
+  $view_mode = $form['#mode'];
 
   $form['#export_id'] = $entity_type . '|' . $bundle . '|' . $view_mode;
 
@@ -122,7 +122,7 @@ function ds_field_ui_regions($form, $form_state) {
   // Get the entity_type, bundle and view mode.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form['#view_mode'];
+  $view_mode = $form['#mode'];
 
   // Ignore fieldgroup options.
   if (isset($form_state['no_field_group'])) {
@@ -314,7 +314,7 @@ function ds_field_ui_layout_change($form, $form_state, $entity_type = '', $bundl
 
     $form['#entity_type'] = $entity_type;
     $form['#bundle'] = $bundle;
-    $form['#view_mode'] = $view_mode;
+    $form['#mode'] = $view_mode;
     $form['#old_layout'] = $old_layout;
     $form['#new_layout'] = $new_layout;
     $form['#new_layout_key'] = $new_layout_key;
@@ -422,7 +422,7 @@ function ds_field_ui_layout_change_submit($form, &$form_state) {
   $new_layout_key = $form['#new_layout_key'];
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form['#view_mode'];
+  $view_mode = $form['#mode'];
 
   // Create new record.
   $record = array();
@@ -468,7 +468,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
   // Get default values.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form['#view_mode'];
+  $view_mode = $form['#mode'];
 
   // Determine layout variables.
   $layout = $form_state['values']['layout'];
@@ -625,7 +625,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   // Setup some variables.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form['#view_mode'];
+  $view_mode = $form['#mode'];
 
   $field_settings = array();
 
@@ -682,7 +682,7 @@ function ds_field_ui_layout_clone($form, &$form_state) {
   list($ce, $cb, $cv) = explode('|', $clone);
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form['#view_mode'];
+  $view_mode = $form['#mode'];
 
   $layout = config('ds.layout_settings'. $ce  . '.' . $cb . '.' . $cv)->get();
 
@@ -1541,7 +1541,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$form_state) {
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form['#view_mode'];
+  $view_mode = $form['#mode'];
   $entity_display = entity_get_display($entity_type, $bundle, $view_mode);
 
   // Gather type information.

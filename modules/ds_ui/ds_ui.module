@@ -10,10 +10,6 @@
  */
 function ds_ui_permission() {
   return array(
-    'admin view modes' => array(
-      'title' => t('Administer view modes'),
-      'description' => t('Manage view modes for every entity.')
-    ),
     'admin fields' => array(
       'title' => t('Administer fields'),
       'description' => t('Manage fields for every entity.')
@@ -37,32 +33,6 @@ function ds_ui_menu() {
     'description' => 'Define extra CSS class names for regions and fields.',
     'route_name' => 'ds_classes',
     'type' => MENU_LOCAL_TASK,
-  );
-
-  // View modes.
-  $items['admin/structure/ds/view_modes'] = array(
-    'title' => 'View modes',
-    'description' => 'Manage view modes for all content.',
-    'route_name' => 'view_modes_list',
-    'weight' => -9,
-    'type' => MENU_LOCAL_TASK,
-  );
-  $items['admin/structure/ds/view_modes/manage'] = array(
-    'title' => 'Add view mode',
-    'description' => 'Adds a view mode',
-    'route_name' => 'view_mode_add',
-    'type' => MENU_LOCAL_ACTION,
-  );
-  $items['admin/structure/ds/view_modes/manage/%'] = array(
-    'title' => 'Edit view mode',
-    'description' => 'Manages a view mode',
-    'route_name' => 'view_mode_manage',
-  );
-  $items['admin/structure/ds/view_modes/delete/%'] = array(
-    'title' => 'Delete a view mode',
-    'description' => 'Delete a view mode.',
-    'route_name' => 'view_mode_delete',
-    'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
   // Fields.
