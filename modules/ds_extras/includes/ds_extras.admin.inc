@@ -31,7 +31,6 @@ function ds_extras_settings($form) {
   );
 
   $theme_functions = module_invoke_all('ds_field_theme_functions_info');
-  unset($theme_functions['theme_ds_field_expert']);
   $form['additional_settings']['fs1']['ft-default'] = array(
     '#type' => 'select',
     '#title' => t('Default Field Template'),
