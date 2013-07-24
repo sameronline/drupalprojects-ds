@@ -102,6 +102,13 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
     // Add the hidden region.
     $layout['regions']['hidden'] = 'Hidden';
 
+    // If the layout has wrapper class lets add it.
+    if (isset($layout['settings']['classes']['layout_class'])) {
+      foreach ($layout['settings']['classes']['layout_class'] as $layout_class) {
+        $vars['attributes']['class'][] = $layout_class;
+      }
+    }
+
     // Create region variables based on the layout settings.
     foreach ($layout['regions'] as $region_name => $region) {
 
@@ -122,16 +129,17 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
       }
     }
 
-    // Add layout attributes if any
+    // Add custom attributes if any.
     if (!empty($layout['settings']['layout_attributes'])) {
-      $vars['layout_attributes'] = ' ' . $layout['settings']['layout_attributes'];
-    }
-    else {
-      $vars['layout_attributes'] = '';
+      $layout_attributes = explode(',', $layout['settings']['layout_attributes']);
+      foreach ($layout_attributes as $layout_attribute) {
+        list($key, $attribute_value) = explode('|', $layout_attribute);
+        $vars['attributes'][$key] = $attribute_value;
+      }
     }
 
     // Ensure there is a class
-    $vars['classes'] = 'ds-form';
+    $vars['attributes']['class'][] = 'ds-form';
 
     // Add a layout wrapper
     $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
