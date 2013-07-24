@@ -382,5 +382,14 @@ function ds_views_row_adv_VIEWS_NAME(&$vars, $view_mode) {
 }
 
 /**
+ * Allow modules to provide additional classes for regions and layouts.
+ */
+function hook_ds_classes_alter(&$classes, $name) {
+  if ('ds_classes_regions' === $name) {
+    $classes['css-class-name'] = t('Custom Styling');
+  }
+}
+
+/**
  * @} End of "addtogroup hooks".
  */
