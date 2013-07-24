@@ -227,8 +227,8 @@ function ds_field_ui_regions($form, $form_state) {
       $row['#region_callback'] = 'ds_field_ui_row_region';
 
       // Remove hidden format.
-      if (isset($row['format']['type']['#options']['hidden'])) {
-        unset($row['format']['type']['#options']['hidden']);
+      if (isset($row['plugin']['type']['#options']['hidden'])) {
+        unset($row['plugin']['type']['#options']['hidden']);
       }
 
       // Add label class.
@@ -243,10 +243,10 @@ function ds_field_ui_regions($form, $form_state) {
       // Limit items.
       $field_info = field_info_field($name);
       if (isset($field_info['cardinality']) && $field_info['cardinality'] != 1 && $view_mode != 'form') {
-        $row['format']['type']['#prefix'] = '<div class="limit-float">';
-        $row['format']['type']['#suffix'] = '</div>';
-        $row['format']['limit'] = $limit_items;
-        $row['format']['limit']['#default_value'] = (isset($layout['settings']['limit']) && isset($layout['settings']['limit'][$name])) ? $layout['settings']['limit'][$name] : '#';
+        $row['plugin']['type']['#prefix'] = '<div class="limit-float">';
+        $row['plugin']['type']['#suffix'] = '</div>';
+        $row['plugin']['limit'] = $limit_items;
+        $row['plugin']['limit']['#default_value'] = (isset($layout['settings']['limit']) && isset($layout['settings']['limit'][$name])) ? $layout['settings']['limit'][$name] : '#';
       }
 
       // Disable label and format for views.
@@ -551,7 +551,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       $record['settings']['fields'][$key] = $field['region'];
 
       // Save limit.
-      $limit = isset($field['format']['limit']) ? trim($field['format']['limit']) : '';
+      $limit = isset($field['plugin']['limit']) ? trim($field['plugin']['limit']) : '';
       if (is_numeric($limit) || $limit === 'delta') {
         $record['settings']['limit'][$key] = $limit;
       }
@@ -645,7 +645,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
     $settings = array();
     $settings['weight'] = $field_values['weight'];
     $settings['label'] = $field_values['label'];
-    $settings['format'] = $field_values['format']['type'];
+    $settings['plugin'] = $field_values['plugin']['type'];
 
     // Any formatter settings.
     if (isset($form_state['formatter_settings'][$field])) {
@@ -1507,11 +1507,11 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
         '#options' => $field_label_options,
         '#default_value' => isset($field_settings[$key]['label']) ? $field_settings[$key]['label'] : 'hidden',
       ),
-      'format' => array(
+      'plugin' => array(
         'type' => array(
           '#type' => 'select',
           '#options' => $formatters,
-          '#default_value' => isset($field_settings[$key]['format']) ? $field_settings[$key]['format'] : 'hidden',
+          '#default_value' => isset($field_settings[$key]['plugin']) ? $field_settings[$key]['plugin'] : 'hidden',
           '#attributes' => array('class' => array('field-formatter-type')),
         ),
       ),
@@ -1610,7 +1610,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     if (isset($form_state['formatter_settings'][$key])) {
       $settings = array_merge($settings, $form_state['formatter_settings'][$key]);
     }
-    //$settings += field_info_formatter_settings($formatter_type);
+    $settings += field_info_formatter_settings($formatter_type);
 
     // Import field settings and merge with Field API settings.
     if (!isset($form_state['formatter_settings'][$key]) && !empty($form['#field_settings'][$key]['formatter_settings']['ft'])) {
@@ -1620,7 +1620,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
 
     // Change default value or Field API format, so we can change the right
     // settings form when clicking on the cogwheel.
-    $form['fields'][$key]['format']['type']['#default_value'] = $formatter_type;
+    $form['fields'][$key]['plugin']['type']['#default_value'] = $formatter_type;
 
     $instance['display'][$view_mode]['type'] = $formatter_type;
     $formatter = field_info_formatter_types($formatter_type);
@@ -1641,24 +1641,30 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     );
 
     if ($form_state['plugin_settings_edit'] == $key) {
-      $formatter_type = $form_state['complete_form']['fields'][$key]['format']['type']['#default_value'];
+      $formatter_type = $form_state['complete_form']['fields'][$key]['plugin']['type']['#default_value'];
 
       // Get the corresponding formatter object.
       if ($settings && $settings['type'] != 'hidden') {
-        $formatter = drupal_container()->get('plugin.manager.field.formatter')->getInstance(array(
-          'instance' => $instance,
+        $options = array(
+          'field_definition' => $instance,
+          'configuration' => array(
+            'type' => $settings['type'],
+            'settings' => $settings['settings'],
+            'label' => $settings['label'],
+            'weight' => $settings['weight'],
+          ),
           'view_mode' => $view_mode,
-          'configuration' => $settings
-        ));
+        );
+
+        $formatter = drupal_container()->get('plugin.manager.field.formatter')->getInstance($options);
       }
       else {
         $formatter = NULL;
       }
 
-
       // Add the default formatter settings if any.
       $settings_form = array();
-      if ($formatter) {
+      if (isset($formatter)) {
         $settings_form = $formatter->settingsForm($form, $form_state);
       }
 
@@ -1687,13 +1693,13 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       drupal_alter('field_formatter_settings_form', $settings_form, $form_state, $context);
 
       if ($settings_form) {
-        $table[$key]['format']['#cell_attributes'] = array('colspan' => 3);
-        $table[$key]['format']['settings_edit_form'] = array(
+        $table[$key]['plugin']['#cell_attributes'] = array('colspan' => 3);
+        $table[$key]['plugin']['settings_edit_form'] = array(
           '#type' => 'container',
           '#attributes' => array('class' => array('field-formatter-settings-edit-form')),
           '#parents' => array('fields', $key, 'settings_edit_form'),
           'label' => array(
-            '#markup' => t('Format settings:'), // . ' <span class="formatter-name">' . $formatter['label'] . '</span>',
+            '#markup' => t('Format settings:'), //. ' <span class="formatter-name">' . $settings['label'] . '</span>',
           ),
           'settings' => $settings_form,
           'actions' => array(
@@ -1716,7 +1722,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
           ),
         );
         $table[$key]['#attributes']['class'][] = 'field-formatter-settings-editing';
-        $table[$key]['format']['type']['#attributes']['class'] = array('element-invisible');
+        $table[$key]['plugin']['type']['#attributes']['class'] = array('element-invisible');
       }
     }
     else {
@@ -1797,7 +1803,7 @@ function ds_field_row_form_format_construct(&$table, $key, $settings_form, $form
     ),
     '#field_name' => $key,
   );
-  $table[$key]['format']['settings_edit'] = array(
+  $table[$key]['plugin']['settings_edit'] = array(
     '#type' => 'container',
     '#attributes' => array('class' => array('field-formatter-settings-edit-form')),
     '#parents' => array('fields', $key, 'settings_edit_form'),
@@ -1823,7 +1829,7 @@ function ds_field_row_form_format_construct(&$table, $key, $settings_form, $form
     ),
   );
   $table[$key]['#attributes']['class'][] = 'field-formatter-settings-editing';
-  $table[$key]['format']['type']['#attributes']['class'] = array('element-invisible');
+  $table[$key]['plugin']['type']['#attributes']['class'] = array('element-invisible');
 }
 
 /**
