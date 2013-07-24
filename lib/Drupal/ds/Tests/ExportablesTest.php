@@ -28,19 +28,6 @@ class ExportablesTest extends BaseTest {
     drupal_flush_all_caches();
   }
 
-  // Test view modes config.
-  function testDSExportablesViewmodes() {
-    $this->dsExportablesSetup();
-
-    // Find a default view mode on admin screen.
-    $this->drupalGet('admin/structure/ds/view_modes');
-    $this->assertText('Test exportables', t('Exportables view mode found on admin screen.'));
-
-    // Find default view mode on layout screen.
-    $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertText('Test exportables', t('Exportables view mode found on display screen.'));
-  }
-
   // Test layout and field settings configuration.
   function testDSExportablesLayoutFieldsettings() {
     $this->dsExportablesSetup();

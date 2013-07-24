@@ -22,6 +22,14 @@ function ds_layout_list() {
     $entity_info = array_merge(array('node' => $node_entity), $entity_info);
   }
 
+  $field_ui_enabled = module_exists('field_ui');
+  if (!$field_ui_enabled) {
+    $build['no_field_ui'] = array(
+      '#markup' => '<p>' . t('You need to enable Field UI to manage the displays of entities.') . '</p>',
+      '#weight' => -10,
+    );
+  }
+
   if (isset($entity_info['comment'])) {
     $comment_entity = $entity_info['comment'];
     unset($entity_info['comment']);
@@ -34,35 +42,50 @@ function ds_layout_list() {
       $bundles = entity_get_bundles($entity_type);
       foreach ($bundles as $bundle_type => $bundle) {
         $row = array();
+        $operations = array();
         $row[] = check_plain($bundle['label']);
 
-        $path = Drupal::entityManager()->getAdminPath($entity_type, $bundle_type);
-        $operations['manage_display'] = array(
-          'title' => t('Manage display'),
-          'href' => $path . '/display',
-        );
-        // Add Mangage Form link if Display Suite Forms is enabled.
-        if (module_exists('ds_forms')) {
-          $operations['manage_form'] = array(
-            'title' => t('Manage form'),
-            'href' => $path . '/fields',
+        if ($field_ui_enabled) {
+          $path = Drupal::entityManager()->getAdminPath($entity_type, $bundle_type);
+          $operations['manage_display'] = array(
+            'title' => t('Manage display'),
+            'href' => $path . '/display',
+          );
+
+          // Add Mangage Form link if Display Suite Forms is enabled.
+          if (module_exists('ds_forms')) {
+            $operations['manage_form'] = array(
+              'title' => t('Manage form'),
+              'href' => $path . '/fields',
+            );
+          }
+        }
+
+        // Add operation links.
+        if (!empty($operations)) {
+          $row[] = array(
+            'data' => array(
+              '#type' => 'operations',
+              '#subtype' => 'ds',
+              '#links' => $operations,
+            ),
           );
         }
-        // Add operation links.
-        $row[] = array(
-          'data' => array(
-            '#type' => 'operations',
-            '#subtype' => 'ds',
-            '#links' => $operations,
-          ),
-        );
+        else {
+          $row[] = array('data' => '');
+        }
 
         $rows[] = $row;
       }
 
       if (!empty($rows)) {
         $variables = array(
-          'header' => array(array('data' => $info['label']), array('data' => t('operations'), 'class' => 'ds-display-list-options')),
+          'header' => array(
+            array('data' => $info['label']),
+            array(
+              'data' => $field_ui_enabled ? t('operations') : '',
+              'class' => 'ds-display-list-options')
+            ),
           'rows' => $rows,
         );
         $build['list_' . $entity_type] = array(

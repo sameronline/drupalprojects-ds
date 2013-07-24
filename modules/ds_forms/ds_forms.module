@@ -27,7 +27,7 @@ function ds_forms_form_field_ui_field_overview_form_alter(&$form, &$form_state) 
   if (_ds_forms_is_entity_type_supported($form['#entity_type'])) {
 
     // Add necessary variables for DS Field UI.
-    $form['#view_mode'] = 'form';
+    $form['#mode'] = 'form';
     $form_state['no_view_mode_suggestions'] = TRUE;
 
     // Make sure the refresh works.

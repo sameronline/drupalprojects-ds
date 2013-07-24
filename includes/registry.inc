@@ -138,24 +138,8 @@ function _ds_entity_bundle_info_alter(&$bundles) {
 
 /**
  * Implements hook_entity_view_mode_info_alter().
- * @param unknown_type $view_modes
  */
 function _ds_entity_view_mode_info_alter(&$view_modes) {
-  // Add custom view modes to entities.
-  $custom_view_modes = config_get_storage_names_with_prefix('ds.view_modes');
-  foreach ($custom_view_modes as $config) {
-    $view_mode_value = config($config)->get();
-    $view_mode = array(
-      'label' => check_plain($view_mode_value['label']),
-      'custom_settings' => FALSE,
-    );
-    foreach ($view_mode_value['entities'] as $entity_type) {
-      if (isset($view_modes[$entity_type])) {
-        $view_modes[$entity_type][$view_mode_value['view_mode']] = $view_mode;
-      }
-    }
-  }
-
   // Add the revision view mode.
   $revision = array(
     'label' => 'Revision',

@@ -188,14 +188,14 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 
   // Region to block only fires if there is a layout and we're working on the
   // a view mode which is not equal to default.
-  if (isset($form['#ds_layout']) && $form['#view_mode'] != 'default' && config('ds.extras')->get('region_to_block', FALSE)) {
+  if (isset($form['#ds_layout']) && $form['#mode'] != 'default' && config('ds.extras')->get('region_to_block', FALSE)) {
 
     $layout = $form['#ds_layout'];
 
     // Get the entity_type, bundle and view mode.
     $entity_type = $form['#entity_type'];
     $bundle = $form['#bundle'];
-    $view_mode = $form['#view_mode'];
+    $view_mode = $form['#mode'];
 
     $region_blocks_options = array();
     $region_blocks = config('ds.extras')->get('region_blocks');
@@ -451,7 +451,7 @@ function ds_extras_block_submit($form, &$form_state) {
     // Get the entity_type, bundle and view mode.
     $entity_type = $form['#entity_type'];
     $bundle = $form['#bundle'];
-    $view_mode = $form['#view_mode'];
+    $view_mode = $form['#mode'];
 
     $block = array(
       'title' => $form_state['values']['region_to_block']['new_block_region'],

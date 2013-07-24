@@ -32,7 +32,7 @@ function ds_menu() {
   // Layout overview.
   $items['admin/structure/ds'] = array(
     'title' => 'Display Suite',
-    'description' => 'Manage layouts for entities and configure fields, view modes etc.',
+    'description' => 'Manage layouts for entities and configure fields etc.',
     'page callback' => 'ds_layout_list',
     'file' => 'includes/displays.inc',
     'access arguments' => array('admin_display_suite'),
