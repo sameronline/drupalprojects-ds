@@ -21,7 +21,7 @@ abstract class Field extends PluginBase {
     $field['properties'] = array();
 
     $output = '';
-    $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : array();
+    $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : array();
     $settings += $this->defaultSettings();
 
     // Basic string.

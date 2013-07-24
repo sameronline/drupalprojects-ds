@@ -233,9 +233,9 @@ function ds_field_ui_regions($form, $form_state) {
 
       // Add label class.
       if (isset($row['label'])) {
-        if (isset($form_state['formatter_settings']) && isset($form_state['formatter_settings'][$name]['ft'])) {
-          if (!empty($form_state['formatter_settings'][$name]['ft']['lb'])) {
-            $row['human_name']['#markup'] = check_plain($form_state['formatter_settings'][$name]['ft']['lb']) . ' ' . t('(Original: !orig)', array('!orig' => $row['human_name']['#markup']));
+        if (isset($form_state['plugin_settings']) && isset($form_state['plugin_settings'][$name]['ft'])) {
+          if (!empty($form_state['plugin_settings'][$name]['ft']['lb'])) {
+            $row['human_name']['#markup'] = check_plain($form_state['plugin_settings'][$name]['ft']['lb']) . ' ' . t('(Original: !orig)', array('!orig' => $row['human_name']['#markup']));
           }
         }
       }
@@ -611,8 +611,8 @@ function ds_field_ui_fields_validate($form, &$form_state) {
     if (isset($form_state['values']['fields'][$key]['settings_edit_form'])) {
       $settings = $form_state['values']['fields'][$key]['settings_edit_form']['settings']['ft'];
       if (!empty($settings)) {
-        $merge = isset($form_state['formatter_settings'][$key]['ft']) ? $form_state['formatter_settings'][$key]['ft'] : array();
-        $form_state['formatter_settings'][$key]['ft'] = array_merge($merge, $settings);
+        $merge = isset($form_state['plugin_settings'][$key]['ft']) ? $form_state['plugin_settings'][$key]['ft'] : array();
+        $form_state['plugin_settings'][$key]['ft'] = array_merge($merge, $settings);
       }
     }
   }
@@ -645,11 +645,11 @@ function ds_field_ui_fields_save($form, &$form_state) {
     $settings = array();
     $settings['weight'] = $field_values['weight'];
     $settings['label'] = $field_values['label'];
-    $settings['plugin'] = $field_values['plugin']['type'];
+    $settings['formatter'] = $field_values['plugin']['type'];
 
     // Any formatter settings.
-    if (isset($form_state['formatter_settings'][$field])) {
-      $settings['formatter_settings'] = $form_state['formatter_settings'][$field];
+    if (isset($form_state['plugin_settings'][$field])) {
+      $settings['plugin_settings'] = $form_state['plugin_settings'][$field];
     }
 
     $field_settings[$field] = $settings;
@@ -859,7 +859,7 @@ function ds_field_settings_summary($field, $form_state) {
     if (!in_array($field['field_type'], array(DS_FIELD_TYPE_IGNORE, DS_FIELD_TYPE_PREPROCESS))) {
       $functions = module_invoke_all('ds_field_theme_functions_info');
       $default_field_function = config('ds.extras')->get('ft-default');
-      $field_function = isset($form_state['formatter_settings'][$field['name']]['ft']['func']) ? $form_state['formatter_settings'][$field['name']]['ft']['func'] : $default_field_function;
+      $field_function = isset($form_state['plugin_settings'][$field['name']]['ft']['func']) ? $form_state['plugin_settings'][$field['name']]['ft']['func'] : $default_field_function;
 
       $summary .= 'Field template: ' . check_plain($functions[$field_function]) . '<br />';
     }
@@ -918,7 +918,7 @@ function ds_field_settings_form($field, &$form_state) {
  */
 function ds_ds_field_format_summary($field) {
   $summary = '';
-  $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
+  $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : $field['properties']['default'];
   $functions = module_invoke_all('ds_field_theme_functions_info');
   foreach ($settings as $key => $value) {
     if ($key == 'ft' || is_array($value)) {
@@ -939,7 +939,7 @@ function ds_ds_field_format_summary($field) {
 function ds_ds_field_settings_form($field) {
   $form = array();
 
-  $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
+  $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : $field['properties']['default'];
 
   foreach ($field['properties']['settings'] as $key => $value) {
 
@@ -1437,19 +1437,19 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     $form['#ds_fields'][] = $key;
 
     // Check on formatter settings.
-    if (isset($form_state['formatter_settings'][$key])) {
-      $field['formatter_settings'] = $form_state['formatter_settings'][$key];
+    if (isset($form_state['plugin_settings'][$key])) {
+      $field['plugin_settings'] = $form_state['plugin_settings'][$key];
     }
-    elseif (isset($field_settings[$key]['formatter_settings'])) {
-      $field['formatter_settings'] = $field_settings[$key]['formatter_settings'];
-      $form_state['formatter_settings'][$key] = $field['formatter_settings'];
+    elseif (isset($field_settings[$key]['plugin_settings'])) {
+      $field['plugin_settings'] = $field_settings[$key]['plugin_settings'];
+      $form_state['plugin_settings'][$key] = $field['plugin_settings'];
     }
 
     if (!isset($field_settings[$key]['ft']) && isset($field_settings[$key]['ft'])) {
-      $form_state['formatter_settings'][$key]['ft'] = $field_settings[$key]['ft'];
+      $form_state['plugin_settings'][$key]['ft'] = $field_settings[$key]['ft'];
     }
 
-    $value = isset($form_state['formatter_settings']) ? $form_state['formatter_settings'] : array();
+    $value = isset($form_state['plugin_settings']) ? $form_state['plugin_settings'] : array();
 
     $hidden = array('hidden' => t('<Hidden>'));
 
@@ -1607,15 +1607,15 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     }
 
     $settings = $entity_display->getComponent($key);
-    if (isset($form_state['formatter_settings'][$key])) {
-      $settings = array_merge($settings, $form_state['formatter_settings'][$key]);
+    if (isset($form_state['plugin_settings'][$key])) {
+      $settings = array_merge($settings, $form_state['plugin_settings'][$key]);
     }
     $settings += field_info_formatter_settings($formatter_type);
 
     // Import field settings and merge with Field API settings.
-    if (!isset($form_state['formatter_settings'][$key]) && !empty($form['#field_settings'][$key]['formatter_settings']['ft'])) {
-      $form_state['formatter_settings'][$key] = $settings;
-      $form_state['formatter_settings'][$key]['ft'] = $form['#field_settings'][$key]['formatter_settings']['ft'];
+    if (!isset($form_state['plugin_settings'][$key]) && !empty($form['#field_settings'][$key]['plugin_settings']['ft'])) {
+      $form_state['plugin_settings'][$key] = $settings;
+      $form_state['plugin_settings'][$key]['ft'] = $form['#field_settings'][$key]['plugin_settings']['ft'];
     }
 
     // Change default value or Field API format, so we can change the right
@@ -1706,13 +1706,13 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
             '#type' => 'actions',
             'save_settings' => $base_button + array(
               '#type' => 'submit',
-              '#name' => $key . '_formatter_settings_update',
+              '#name' => $key . '_plugin_settings_update',
               '#value' => t('Update'),
               '#op' => 'update',
             ),
             'cancel_settings' => $base_button + array(
               '#type' => 'submit',
-              '#name' => $key . '_formatter_settings_cancel',
+              '#name' => $key . '_plugin_settings_cancel',
               '#value' => t('Cancel'),
               '#op' => 'cancel',
               // Do not check errors for the 'Cancel' button, but make sure we
@@ -1744,7 +1744,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
         // Field template summary
         $functions = module_invoke_all('ds_field_theme_functions_info');
         $default_field_function = config('ds.extras')->get('ft-default');
-        $field_function = isset($form_state['formatter_settings'][$key]['ft']['func']) ? $form_state['formatter_settings'][$key]['ft']['func'] : $default_field_function;
+        $field_function = isset($form_state['plugin_settings'][$key]['ft']['func']) ? $form_state['plugin_settings'][$key]['ft']['func'] : $default_field_function;
 
         if (!empty($summary)) {
           $summary .= '<br />';
@@ -1814,13 +1814,13 @@ function ds_field_row_form_format_construct(&$table, $key, $settings_form, $form
       '#type' => 'actions',
       'save_settings' => $base_button + array(
         '#type' => 'submit',
-        '#name' => $key . '_formatter_settings_update',
+        '#name' => $key . '_plugin_settings_update',
         '#value' => t('Update'),
         '#op' => 'update',
       ),
       'cancel_settings' => $base_button + array(
         '#type' => 'submit',
-        '#name' => $key . '_formatter_settings_cancel',
+        '#name' => $key . '_plugin_settings_cancel',
         '#value' => t('Cancel'),
         '#op' => 'cancel',
         // Do not check errors for the 'Cancel' button.

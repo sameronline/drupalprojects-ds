@@ -478,8 +478,8 @@ function ds_field_attach_view_alter(&$build, $context) {
       $field['formatter'] = $field_values[$key]['format'];
     }
 
-    if (isset($field_values[$key]['formatter_settings'])) {
-      $field['formatter_settings'] = $field_values[$key]['formatter_settings'];
+    if (isset($field_values[$key]['plugin_settings'])) {
+      $field['plugin_settings'] = $field_values[$key]['plugin_settings'];
     }
     $field_value = ds_get_field_value($key, $field, $entity, $view_mode, $build);
 

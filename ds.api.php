@@ -179,8 +179,8 @@ function hook_ds_field_format_summary($field) {
  */
 function hook_ds_field_settings_form($field) {
 
-  // Saved formatter settings are on $field['formatter_settings'];
-  $settings = isset($field['formatter_settings']) ? $field['formatter_settings'] : $field['properties']['default'];
+  // Saved formatter settings are on $field['plugin_settings'];
+  $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : $field['properties']['default'];
 
   $form['label'] = array(
     '#type' => 'textfield',

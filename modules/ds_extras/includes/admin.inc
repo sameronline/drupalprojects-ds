@@ -254,7 +254,7 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
   }
   $key = $context['instance']['field_name'];
 
-  $field_settings = isset($form_state['formatter_settings'][$key]) ? $form_state['formatter_settings'][$key]['ft'] : array();
+  $field_settings = isset($form_state['plugin_settings'][$key]) ? $form_state['plugin_settings'][$key]['ft'] : array();
 
   $field_function = isset($field_settings['func']) ? $field_settings['func'] : $default_field_function;
   $field_classes = _ds_classes('fields');
@@ -383,8 +383,8 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
  * Implements hook_ds_field_format_summary().
  */
 function ds_extras_ds_field_format_summary($field) {
-  if (isset($field['formatter_settings'])) {
-    foreach ($field['formatter_settings'] as $key => $value) {
+  if (isset($field['plugin_settings'])) {
+    foreach ($field['plugin_settings'] as $key => $value) {
       if (!empty($value)) {
         return t('Configured');
         break;
@@ -405,7 +405,7 @@ function ds_extras_ds_field_settings_form($field) {
     $entity_type = $field['entity_type'];
     $bundle = $field['bundle'];
     $view_mode = $field['view_mode'];
-    $settings = isset($field['formatter_settings']['vms']) ? $field['formatter_settings']['vms'] : array();
+    $settings = isset($field['plugin_settings']['vms']) ? $field['plugin_settings']['vms'] : array();
     $view_modes = entity_get_view_modes($entity_type);
 
     $form['info'] = array(
