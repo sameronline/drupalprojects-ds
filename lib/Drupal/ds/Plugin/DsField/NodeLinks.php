@@ -20,6 +20,6 @@ use Drupal\ds\Annotation\DsField;
  *   module = "ds"
  * )
  */
-class NodeLinks extends PluginBase {
+class NodeLinks extends DsFieldBase {
 
 }

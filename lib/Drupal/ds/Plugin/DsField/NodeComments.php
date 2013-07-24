@@ -20,7 +20,7 @@ use Drupal\ds\Annotation\DsField;
  *   module = "ds"
  * )
  */
-class NodeComments extends PluginBase {
+class NodeComments extends DsFieldBase {
 
   /**
    * {@inheritdoc}

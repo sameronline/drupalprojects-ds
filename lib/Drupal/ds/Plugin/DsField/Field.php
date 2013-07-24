@@ -10,7 +10,7 @@ namespace Drupal\ds\Plugin\DsField;
 /**
  * The base plugin to create DS field fields.
  */
-abstract class Field extends PluginBase {
+abstract class Field extends DsFieldBase {
 
   /**
    * {@inheritdoc}

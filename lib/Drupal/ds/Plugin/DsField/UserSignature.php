@@ -20,7 +20,7 @@ use Drupal\ds\Annotation\DsField;
  *   module = "ds"
  * )
  */
-class UserSignature extends PluginBase {
+class UserSignature extends DsFieldBase {
 
   /**
    * {@inheritdoc}

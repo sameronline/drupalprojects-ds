@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\PluginBase.
+ * Contains \Drupal\ds\Plugin\DsField\DsFieldBase.
  */
 
 namespace Drupal\ds\Plugin\DsField;
@@ -12,7 +12,7 @@ use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
 /**
  * Base class for all the ds plugins
  */
-abstract class PluginBase extends ComponentPluginBase implements PluginBaseInterface {
+abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterface {
 
   /**
    * {@inheritdoc}

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\PluginBaseInterface.
+ * Contains \Drupal\ds\Plugin\DsField\DsFieldInterface.
  */
 
 namespace Drupal\ds\Plugin\DsField;
@@ -10,7 +10,7 @@ namespace Drupal\ds\Plugin\DsField;
 /**
  * Interface for DS plugins.
  */
-interface PluginBaseInterface {
+interface DsFieldInterface {
 
   /**
    * Renders a field.

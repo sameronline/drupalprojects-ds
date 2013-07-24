@@ -10,7 +10,7 @@ namespace Drupal\ds\Plugin\DsField;
 /**
  * Ds field markup base field
  */
-abstract class Markup extends PluginBase {
+abstract class Markup extends DsFieldBase {
 
   /**
    * {@inheritdoc}

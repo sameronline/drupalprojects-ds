@@ -20,7 +20,7 @@ use Drupal\ds\Annotation\DsField;
  *   module = "ds"
  * )
  */
-class BookNavigation extends PluginBase {
+class BookNavigation extends DsFieldBase {
 
   /**
    * {@inheritdoc}

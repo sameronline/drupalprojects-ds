@@ -10,7 +10,7 @@ namespace Drupal\ds\Plugin\DsField;
 /**
  * The base plugin to create DS preprocess fields.
  */
-abstract class PreprocessPluginBase extends PluginBase {
+abstract class PreprocessPluginBase extends DsFieldBase {
 
   // Does nothing
 
