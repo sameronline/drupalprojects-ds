@@ -3,6 +3,9 @@
 /**
  * @file
  * Display Suite forms integration.
+ *
+ * @todo how to get around seven's hardcoded and
+ *   extremely annoying node_form_alter.
  */
 
 /**
@@ -21,46 +24,12 @@ function ds_forms_theme() {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function ds_forms_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
-
-  // Determine if this entity type is supported
+function ds_forms_form_field_ui_form_display_overview_form_alter(&$form, &$form_state) {
   if (_ds_forms_is_entity_type_supported($form['#entity_type'])) {
 
     // Add necessary variables for DS Field UI.
     $form['#mode'] = 'form';
     $form_state['no_view_mode_suggestions'] = TRUE;
-
-    // Make sure the refresh works.
-    if (!module_exists('field_group')) {
-      // This key is used to store the current updated field.
-      $form_state += array(
-        'formatter_settings_edit' => NULL,
-      );
-      // Add AJAX wrapper.
-      $form['fields']['#prefix'] = '<div id="field-display-overview-wrapper">';
-      $form['fields']['#suffix'] = '</div>';
-
-      // See field_ui.admin.inc for more details on refresh rows.
-      $form['refresh_rows'] = array('#type' => 'hidden');
-      $form['refresh'] = array(
-        '#type' => 'submit',
-        '#value' => t('Refresh'),
-        '#op' => 'refresh_table',
-        '#submit' => array('field_ui_display_overview_multistep_submit'),
-        '#ajax' => array(
-          'callback' => 'field_ui_display_overview_multistep_js',
-          'wrapper' => 'field-display-overview-wrapper',
-          'effect' => 'fade',
-          // The button stays hidden, so we hide the AJAX spinner too. Ad-hoc
-          // spinners will be added manually by the client-side script.
-          'progress' => 'none',
-        ),
-      );
-      $form['#attached']['css'][] = drupal_get_path('module', 'ds_forms') . '/css/ds_forms.admin.css';
-    }
-
-    // Attach js.
-    $form['#attached']['js'][] = drupal_get_path('module', 'ds_forms') . '/js/ds_forms.admin.js';
 
     // Load Display Suite.
     form_load_include($form_state, 'inc', 'ds', 'includes/field_ui');
@@ -92,9 +61,9 @@ function ds_forms_form_alter(&$form, &$form_state, $form_id) {
  */
 function ds_build_load($form, $form_id) {
   $ds_form = FALSE;
-
-  if (isset($form['#entity_type']) && isset($form['#bundle']) && $form_id != 'field_ui_field_overview_form' && $form_id != 'field_ui_display_overview_form'
-      && $form_id != 'field_ui_field_settings_form' && $form_id != 'field_ui_widget_type_form' && $form_id != 'field_ui_field_edit_form') {
+  if (isset($form['#entity_type']) && isset($form['#bundle']) && $form_id != 'field_ui_form_display_overview_form'
+      && $form_id != 'field_ui_field_overview_form' && $form_id != 'field_ui_display_overview_form'
+      && $form_id != 'field_ui_field_instance_edit_form' && $form_id != 'field_ui_field_edit_form') {
     $ds_form = new stdClass();
     $ds_form->entity_type = $form['#entity_type'];
     $ds_form->bundle = $form['#bundle'];

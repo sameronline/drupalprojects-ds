@@ -1302,7 +1302,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
         $admin_path .= '/display';
       }
       else {
-        $admin_path .= '/fields';
+        $admin_path .= '/form-display';
       }
 
       // If regions aren't set we don't have to move fields.

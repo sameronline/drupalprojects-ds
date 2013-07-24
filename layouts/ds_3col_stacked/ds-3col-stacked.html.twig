@@ -57,3 +57,7 @@
   </{{ footer_wrapper }}>
 
 </{{ layout_wrapper }}>
+
+{% if drupal_render_children is not null %}
+  {{ drupal_render_children }}
+{% endif %}
