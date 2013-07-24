@@ -1081,7 +1081,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#type' => 'select',
       '#options' => $wrapper_options,
       '#title' => t('Layout wrapper'),
-      '#default_value' => isset($layout->settings['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div',
+      '#default_value' => isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div',
       '#weight' => 10,
     );
 
@@ -1089,7 +1089,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#type' => 'textfield',
       '#title' => t('Layout attributes'),
       '#description' => 'E.g. role="navigation"',
-      '#default_value' => isset($layout->settings['layout_attributes']) ? $layout['settings']['layout_attributes'] : '',
+      '#default_value' => isset($layout['settings']['layout_attributes']) ? $layout['settings']['layout_attributes'] : '',
       '#weight' => 11,
     );
 
@@ -1097,7 +1097,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#type' => 'checkbox',
       '#title' => t('Merge other layout attributes'),
       '#description' => 'Certain modules might provide additional attributes for the template wrapper, e.g. RDFa. Disable this option if you prefer to specify these attributes above.',
-      '#default_value' => isset($layout->settings['layout_attributes_merge']) ? $layout['settings']['layout_attributes_merge'] : variable_get('ds_layout_attributes_merge', TRUE),
+      '#default_value' => isset($layout['settings']['layout_attributes_merge']) ? $layout['settings']['layout_attributes_merge'] : variable_get('ds_layout_attributes_merge', TRUE),
       '#weight' => 12,
     );
 
@@ -1120,7 +1120,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
         '#multiple' => TRUE,
         '#options' => $classes,
         '#title' => t('Class for layout'),
-        '#default_value' => isset($layout->settings['classes']['layout_class']) ? $layout['settings']['classes']['layout_class'] : '',
+        '#default_value' => isset($layout['settings']['classes']['layout_class']) ? $layout['settings']['classes']['layout_class'] : '',
       );
 
       foreach (array_keys($layout['regions']) as $region) {
