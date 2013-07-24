@@ -8,7 +8,6 @@
  * - left_wrapper: @todo
  * - middle_wrapper: @todo
  * - right_wrapper: @todo
- * - layout_attributes: @todo
  * - attributes: @todo
  * - left_classes: @todo
  * - middle_classes: @todo
@@ -18,7 +17,7 @@
  * - right: @todo
  */
 #}
-<{{ layout_wrapper }} {{ layout_attributes }} class="ds-3col-equal {{ attributes.class }} clearfix">
+<{{ layout_wrapper }} class="ds-3col-equal {{ attributes.class }} clearfix" {{ attributes }}>
 
   <{{ left_wrapper }} class="group-left{{ left_classes }}">
     {% if left is not null %}

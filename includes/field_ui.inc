@@ -1089,7 +1089,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     $form['region_wrapper']['layout_attributes'] = array(
       '#type' => 'textfield',
       '#title' => t('Layout attributes'),
-      '#description' => 'E.g. role="navigation"',
+      '#description' => 'E.g. role|navigation,data-something|some value',
       '#default_value' => isset($layout['settings']['layout_attributes']) ? $layout['settings']['layout_attributes'] : '',
       '#weight' => 11,
     );

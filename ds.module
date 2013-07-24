@@ -279,7 +279,7 @@ function ds_get_layout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
     $overridden = TRUE;
     if ($view_mode != 'form') {
       $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-      $overridden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
+      $overridden = (!empty($view_mode_settings[$view_mode]['status']) ? TRUE : FALSE);
     }
     // Check if a layout is configured.
     if (isset($bundles[$entity_type][$bundle]['layouts'][$view_mode]) && ($overridden || $view_mode == 'default')) {
@@ -566,13 +566,13 @@ function ds_preprocess_ds_layout(&$vars) {
     }
 
     // Template layout.
-    if (!isset($vars['classes_array'])) {
-      $vars['classes_array'] = array();
+    if (!isset($vars['attributes']['class'])) {
+      $vars['attributes']['class'] = array();
     }
 
     // Add view-mode-{name} to classes.
-    if (!in_array('view-mode-' . $vars['elements']['#view_mode'], $vars['classes_array'])) {
-      $vars['classes_array'][] = 'view-mode-' . $vars['elements']['#view_mode'];
+    if (!in_array('view-mode-' . $vars['elements']['#view_mode'], $vars['attributes']['class'])) {
+      $vars['attributes']['class'][] = 'view-mode-' . $vars['elements']['#view_mode'];
     }
 
     $vars['theme_hook_suggestions'][] = $layout['layout'];
@@ -584,7 +584,7 @@ function ds_preprocess_ds_layout(&$vars) {
     // If the layout has wrapper class lets add it.
     if (isset($layout['settings']['classes']['layout_class'])) {
       foreach ($layout['settings']['classes']['layout_class'] as $layout_class) {
-        $vars['classes_array'][] = $layout_class;
+        $vars['attributes']['class'][] = $layout_class;
       }
     }
 
@@ -622,21 +622,15 @@ function ds_preprocess_ds_layout(&$vars) {
     // Add a layout wrapper.
     $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
 
-    // Add layout attributes if any.
-    $vars['layout_attributes'] = '';
+    // Add custom attributes if any.
     if (!empty($layout['settings']['layout_attributes'])) {
-      $vars['layout_attributes'] .= ' ' . $layout['settings']['layout_attributes'];
-    }
-    // Merge in other attributes which were passed to the template.
-    // @todo fix this
-    /*if (!empty($layout['settings']['layout_attributes_merge'])) {
-      // handle classes separately
-      if (isset($vars['attributes_array']['class'])) {
-        $vars['classes_array'] += $vars['attributes_array']['class'];
-        unset($vars['attributes_array']['class']);
+      $layout_attributes = explode(',', $layout['settings']['layout_attributes']);
+      foreach ($layout_attributes as $layout_attribute) {
+        list($key, $attribute_value) = explode('|', $layout_attribute);
+        $vars['attributes'][$key] = $attribute_value;
       }
-      $vars['layout_attributes'] .= ' ' . new Attribute($vars['rdf_template_variable_attributes']);
-    }*/
+    }
+
 
     // Let other modules alter the ds array before creating the region variables.
     $context = array('entity' => isset($vars[$object]) ? $vars[$object] : (isset($vars['elements']['#' . $object]) ? $vars['elements']['#' . $object] : ''), 'entity_type' => $vars['elements']['#entity_type'], 'bundle' => $vars['elements']['#bundle'], 'view_mode' => $vars['elements']['#view_mode']);

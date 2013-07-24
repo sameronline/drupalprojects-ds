@@ -9,7 +9,6 @@
  * - left_wrapper: @todo
  * - right_wrapper: @todo
  * - footer_Wrapper: @todo
- * - layout_attributes: @todo
  * - attributes: @todo
  * - header_classes: @todo
  * - left_classes: @todo
@@ -21,7 +20,7 @@
  * - footer: @todo
  */
 #}
-<{{ layout_wrapper }} {{ layout_attributes }} class="ds-2col-stacked {{ attributes.class }} clearfix">
+<{{ layout_wrapper }} class="ds-2col-stacked {{ attributes.class }} clearfix" {{ attributes }}>
 
   <{{ header_wrapper }} class="group-header{{ header_classes }}">
     {% if header is not null %}

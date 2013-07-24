@@ -5,12 +5,11 @@
  *
  * Available variables:
  * - ds_content_wrapper: @todo
- * - layout_attributes: @todo
  * - attributes: @todo
  * - ds_content: @todo
  */
 #}
-<{{ ds_content_wrapper }} {{ layout_attributes }} class="ds-1col {{ attributes.class }} clearfix">
+<{{ ds_content_wrapper }} class="ds-1col {{ attributes.class }} clearfix" {{ attributes }} >
   {{ ds_content }}
 </{{ ds_content_wrapper }}>
 
