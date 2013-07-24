@@ -15,7 +15,7 @@ abstract class Markup extends PluginBase {
   /**
    * {@inheritdoc}
    */
-  public function renderField($field) {
+  public function render($field) {
     $key = $this->key();
     if (isset($field['entity']->{$key}->value)) {
       $format = $this->format();

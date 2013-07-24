@@ -15,7 +15,7 @@ abstract class CodePluginBase extends PluginBase {
   /**
    * {@inheritdoc}
    */
-  public function renderField($field) {
+  public function render($field) {
     $code = $this->code();
     if ($code) {
       $format = $this->format();

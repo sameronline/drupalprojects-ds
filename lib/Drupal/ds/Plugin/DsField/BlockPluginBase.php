@@ -15,7 +15,7 @@ abstract class BlockPluginBase extends PluginBase {
   /**
    * {@inheritdoc}
    */
-  public function renderField($field) {
+  public function render($field) {
     $contextual = module_exists('contextual') && user_access('access contextual links');
     $module = $this->blockModule();
     $delta = $this->blockDelta();

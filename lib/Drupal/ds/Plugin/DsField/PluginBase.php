@@ -17,7 +17,7 @@ abstract class PluginBase extends ComponentPluginBase implements PluginBaseInter
   /**
    * {@inheritdoc}
    */
-  public function renderField($field) {
+  public function render($field) {
     return '';
   }
 

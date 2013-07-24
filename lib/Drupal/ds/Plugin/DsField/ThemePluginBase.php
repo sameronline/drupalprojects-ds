@@ -15,7 +15,7 @@ abstract class ThemePluginBase extends PluginBase {
   /**
    * {@inheritdoc}
    */
-  public function renderField($field) {
+  public function render($field) {
     $format = $this->formatter();
     return theme($format, $field);
   }

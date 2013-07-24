@@ -15,7 +15,7 @@ abstract class Field extends PluginBase {
   /**
    * {@inheritdoc}
    */
-  public function renderField($field) {
+  public function render($field) {
 
     // Leave this empty for now as it isn't set yet.
     $field['properties'] = array();

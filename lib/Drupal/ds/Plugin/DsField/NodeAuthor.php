@@ -25,7 +25,7 @@ class NodeAuthor extends PluginBase {
   /**
    * {@inheritdoc}
    */
-  public function renderField($field) {
+  public function render($field) {
 
     // Users without a user name are anonymous users. These are never linked.
     if (empty($field['entity']->name)) {

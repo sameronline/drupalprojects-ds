@@ -25,7 +25,7 @@ class NodeSubmittedBy extends Date {
   /**
    * {@inheritdoc}
    */
-  public function renderField($field) {
+  public function render($field) {
     $account = user_load($field['entity']->uid->value);
     switch ($field['formatter']) {
       case 'ds_time_ago':

@@ -21,7 +21,7 @@ interface PluginBaseInterface {
    * @return string
    *   Returns the rendered field.
    */
-  public function renderField($field);
+  public function render($field);
 
   /**
    * Returns the settings for the field settings form.
