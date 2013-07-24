@@ -24,13 +24,16 @@ abstract class Date extends PluginBase {
    * {@inheritdoc}
    */
   public function formatters() {
-    $date_types = system_get_date_formats();
+    $date_types = \Drupal::entityManager()
+      ->getStorageController('date_format')
+      ->loadMultiple();
+
     $date_formatters = array();
     foreach ($date_types as $machine_name => $value) {
-      if ($value['locked']) {
+      if ($value->isLocked()) {
         continue;
       }
-      $date_formatters['ds_post_date_' . $machine_name] = t($value['name']);
+      $date_formatters['ds_post_date_' . $machine_name] = t($value->id());
     }
 
     return $date_formatters;
