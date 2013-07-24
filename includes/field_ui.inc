@@ -870,8 +870,8 @@ function ds_field_settings_summary($field, $form_state) {
   }
 
   return array(
-    '#markup' => '<div class="field-formatter-summary">' . $summary . '</div>',
-    '#cell_attributes' => array('class' => array('field-formatter-summary-cell')),
+    '#markup' => '<div class="field-plugin-summary">' . $summary . '</div>',
+    '#cell_attributes' => array('class' => array('field-plugin-summary-cell')),
   );
 }
 
@@ -1512,7 +1512,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
           '#type' => 'select',
           '#options' => $formatters,
           '#default_value' => isset($field_settings[$key]['plugin']) ? $field_settings[$key]['plugin'] : 'hidden',
-          '#attributes' => array('class' => array('field-formatter-type')),
+          '#attributes' => array('class' => array('field-plugin-type')),
         ),
       ),
       'settings_summary' => array(),
@@ -1696,7 +1696,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
         $table[$key]['plugin']['#cell_attributes'] = array('colspan' => 3);
         $table[$key]['plugin']['settings_edit_form'] = array(
           '#type' => 'container',
-          '#attributes' => array('class' => array('field-formatter-settings-edit-form')),
+          '#attributes' => array('class' => array('field-plugin-settings-edit-form')),
           '#parents' => array('fields', $key, 'settings_edit_form'),
           'label' => array(
             '#markup' => t('Format settings:'), //. ' <span class="formatter-name">' . $settings['label'] . '</span>',
@@ -1721,7 +1721,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
             ),
           ),
         );
-        $table[$key]['#attributes']['class'][] = 'field-formatter-settings-editing';
+        $table[$key]['#attributes']['class'][] = 'field-plugin-settings-editing';
         $table[$key]['plugin']['type']['#attributes']['class'] = array('element-invisible');
       }
     }
@@ -1757,8 +1757,8 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
         $table[$key]['settings_edit'] = array();
 
         $table[$key]['settings_summary'] = array(
-          '#markup' => '<div class="field-formatter-summary">' . $summary . '</div>',
-          '#cell_attributes' => array('class' => array('field-formatter-summary-cell')),
+          '#markup' => '<div class="field-plugin-summary">' . $summary . '</div>',
+          '#cell_attributes' => array('class' => array('field-plugin-summary-cell')),
         );
         // Render the other part of the summary
         ds_field_row_form_format_summary_construct($table, $key, $form_state);
@@ -1805,7 +1805,7 @@ function ds_field_row_form_format_construct(&$table, $key, $settings_form, $form
   );
   $table[$key]['plugin']['settings_edit'] = array(
     '#type' => 'container',
-    '#attributes' => array('class' => array('field-formatter-settings-edit-form')),
+    '#attributes' => array('class' => array('field-plugin-settings-edit-form')),
     '#parents' => array('fields', $key, 'settings_edit_form'),
     '#weight' => -5,
     // Create a settings form where hooks can pick in.
@@ -1828,7 +1828,7 @@ function ds_field_row_form_format_construct(&$table, $key, $settings_form, $form
       ),
     ),
   );
-  $table[$key]['#attributes']['class'][] = 'field-formatter-settings-editing';
+  $table[$key]['#attributes']['class'][] = 'field-plugin-settings-editing';
   $table[$key]['plugin']['type']['#attributes']['class'] = array('element-invisible');
 }
 
@@ -1854,11 +1854,11 @@ function ds_field_row_form_format_summary_construct(&$table, $key, $form_state) 
     '#type' => 'image_button',
     '#name' => $key . '_plugin_settings_edit',
     '#src' => 'core/misc/configure-dark.png',
-    '#attributes' => array('class' => array('field-formatter-settings-edit'), 'alt' => t('Edit')),
+    '#attributes' => array('class' => array('field-plugin-settings-edit'), 'alt' => t('Edit')),
     '#op' => 'edit',
     // Do not check errors for the 'Edit' button.
     '#limit_validation_errors' => array(),
-    '#prefix' => '<div class="field-formatter-settings-edit-wrapper">',
+    '#prefix' => '<div class="field-plugin-settings-edit-wrapper">',
     '#suffix' => '</div>',
   );
 }
