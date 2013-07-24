@@ -557,6 +557,8 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       }
     }
 
+    dpm($form_state['values']);
+
     // Save the region classes.
     $record['settings']['classes'] = array();
     foreach (array_keys($form['fields']['#regions']) as $region) {
@@ -586,9 +588,9 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     }
 
     // Layout wrapper
-    $record['settings']['layout_wrapper'] = $form_state['values']['layout_wrapper'];
-    $record['settings']['layout_attributes'] = filter_xss_admin($form_state['values']['layout_attributes']);
-    $record['settings']['layout_attributes_merge'] = $form_state['values']['layout_attributes_merge'];
+    $record['settings']['layout_wrapper'] = $form_state['values']['region_wrapper']['layout_wrapper'];
+    $record['settings']['layout_attributes'] = filter_xss_admin($form_state['values']['region_wrapper']['layout_attributes']);
+    $record['settings']['layout_attributes_merge'] = $form_state['values']['region_wrapper']['layout_attributes_merge'];
 
     $record['settings'] = $record['settings'];
 
@@ -1060,7 +1062,8 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#group' => 'additional_settings',
       '#type' => 'details',
       '#title' => t('Custom wrappers'),
-      '#description' => t('Choose a wrapper. All Display Suite layouts support this option.')
+      '#description' => t('Choose a wrapper. All Display Suite layouts support this option.'),
+      '#tree' => TRUE,
     );
 
     // Hide the fieldset in case of the reset layout.
