@@ -557,8 +557,6 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       }
     }
 
-    dpm($form_state['values']);
-
     // Save the region classes.
     $record['settings']['classes'] = array();
     foreach (array_keys($form['fields']['#regions']) as $region) {
