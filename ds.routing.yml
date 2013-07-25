@@ -4,6 +4,12 @@ ds_structure:
     _content: '\Drupal\ds\Controller\DsController::listDisplays'
   requirements:
     _permission: 'admin_display_suite'
+ds_list:
+  pattern: 'admin/structure/ds/list'
+  defaults:
+    _content: '\Drupal\ds\Controller\DsController::listDisplays'
+  requirements:
+    _permission: 'admin_display_suite'
 ds_admin_settings:
   pattern: 'admin/structure/ds/settings'
   defaults:

@@ -34,13 +34,19 @@ function ds_menu() {
     'title' => 'Display Suite',
     'description' => 'Manage layouts for entities and configure fields etc.',
     'route_name' => 'ds_structure',
+  );
+
+  // Layout overview.
+  $items['admin/structure/ds/list'] = array(
+    'title' => 'Display Suite',
+    'route_name' => 'ds_list',
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
   // Layout overview, secondary tab.
   $items['admin/structure/ds/list'] = array(
     'title' => 'List',
-    'route_name' => 'ds_structure',
+    'route_name' => 'ds_displays',
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
