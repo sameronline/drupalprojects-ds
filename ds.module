@@ -33,35 +33,29 @@ function ds_menu() {
   $items['admin/structure/ds'] = array(
     'title' => 'Display Suite',
     'description' => 'Manage layouts for entities and configure fields etc.',
-    'page callback' => 'ds_layout_list',
-    'file' => 'includes/displays.inc',
-    'access arguments' => array('admin_display_suite'),
-  );
-
-  // Layout overview, primary tab.
-  $items['admin/structure/ds/list'] = array(
-    'title' => 'Displays',
-    'weight' => -10,
-    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'route_name' => 'ds_structure',
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
   // Layout overview, secondary tab.
-  $items['admin/structure/ds/list/list'] = array(
+  $items['admin/structure/ds/list'] = array(
     'title' => 'List',
-    'weight' => -10,
-    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'route_name' => 'ds_structure',
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+  );
+
+  // Settings page
+  $items['admin/structure/ds/settings'] = array(
+    'title' => 'Settings',
+    'route_name' => 'ds_admin_settings',
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
   // Emergency page
   $items['admin/structure/ds/list/emergency'] = array(
     'title' => 'Emergency',
-    'description' => 'In case you have errors via Display Suite, visit this page.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_emergency'),
-    'access arguments' => array('admin_display_suite'),
-    'file' => 'includes/displays.inc',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 100,
+    'route_name' => 'ds_admin_emergency',
+    'type' => MENU_VISIBLE_IN_BREADCRUMB
   );
 
   // Change layout.

@@ -466,7 +466,7 @@ function theme_ds_field_reset($variables) {
   // Render the label.
   if (!$variables['label_hidden']) {
     $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
-    if (!config('ds.extras')->get('ft-kill-colon', FALSE)) {
+    if (!config('ds.settings')->get('ft-kill-colon', FALSE)) {
       $output .= ':&nbsp;';
     }
     $output .= '</div>';
@@ -517,6 +517,8 @@ function theme_ds_field_expert($variables) {
 
   $config = $variables['ds-config'];
 
+  debug($config);
+
   // Render the label if it's not hidden.
   if (!$variables['label_hidden']) {
     $label_wrapper = isset($config['lb-el']) ? $config['lb-el'] : 'div';
@@ -528,12 +530,12 @@ function theme_ds_field_expert($variables) {
     if (!empty($config['lb-def-at'])) $attributes[] = $variables['title_attributes'];
     $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
     $output .= '<' . $label_wrapper . $class . $attributes . '>' . $variables['label'];
-    if (!isset($config['lb-col'])) $output .= ':&nbsp;';
+    if (empty($config['lb-col'])) $output .= ':&nbsp;';
     $output .= '</' . $label_wrapper . '>';
   }
 
   // Field items wrapper
-  if (isset($config['fis'])) {
+  if (!empty($config['fis'])) {
     $class = (!empty($config['fis-cl'])) ? ' class="' . $config['fis-cl'] . '"' : '';
     $attributes = array();
     if (!empty($config['fis-at'])) $attributes[] = $config['fis-at'];
@@ -545,7 +547,7 @@ function theme_ds_field_expert($variables) {
   // Render items.
   foreach ($variables['items'] as $delta => $item) {
     // Field item wrapper.
-    if (isset($config['fi'])) {
+    if (!empty($config['fi'])) {
       $class = array();
       if (!empty($config['fi-odd-even'])) {
         $class[] = $delta % 2 ? 'odd' : 'even';
@@ -569,13 +571,13 @@ function theme_ds_field_expert($variables) {
     $output .= drupal_render($item);
 
     // Closing field item wrapper.
-    if (isset($config['fi'])) {
+    if (!empty($config['fi'])) {
       $output .= '</' . $config['fi-el'] . '>';
     }
   }
 
   // Closing field items wrapper.
-  if (isset($config['fis'])) {
+  if (!empty($config['fis'])) {
     $output .= '</' . $config['fis-el'] . '>';
   }
 
@@ -601,7 +603,7 @@ function theme_ds_field_expert($variables) {
 function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state) {
 
   $fields = $form_state['values']['fields'];
-  $default_field_function = config('ds.extras')->get('ft-default');
+  $default_field_function = config('ds.settings')->get('ft-default');
 
   $wrappers = array(
     'ow' => t('Wrapper'),
@@ -759,7 +761,7 @@ function ds_extras_preprocess_field(&$variables) {
   }
   // Use Display Suite Extras Default theming function.
   elseif (!isset($config['func']) || empty($config['func'])) {
-    $field_theme_function = config('ds.extras')->get('ft-default');
+    $field_theme_function = config('ds.settings')->get('ft-default');
     if ($field_theme_function != 'theme_field') {
       $variables['theme_hook_suggestions'] = array();
       $variables['ds-config'] = $config;

@@ -9,7 +9,7 @@ namespace Drupal\ds_ui\Routing;
 
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\StorageInterface;
-use Drupal\Core\ControllerInterface;
+use Drupal\Core\Controller\ControllerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

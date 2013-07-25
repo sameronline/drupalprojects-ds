@@ -17,7 +17,6 @@ function ds_install() {
  */
 function ds_uninstall() {
   config('ds.classes')->delete();
-  // @todo Move to state
   config('ds.settings')->delete();
 }
 

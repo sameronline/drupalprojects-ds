@@ -8,7 +8,7 @@
 namespace Drupal\ds_ui\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;
-use Drupal\Core\ControllerInterface;
+use Drupal\Core\Controller\ControllerInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

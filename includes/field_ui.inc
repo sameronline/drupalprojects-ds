@@ -852,17 +852,15 @@ function ds_field_settings_summary($field, $form_state) {
     $summary = module_invoke($field['module'], 'ds_field_format_summary', $field);
   }
 
-  if (module_exists('ds_extras') && config('ds.extras')->get('field_template')) {
+  if (config('ds.settings')->get('fs1.field_template')) {
     module_load_include('inc', 'ds_extras', 'includes/admin');
 
     // Field template summary
-    if (!in_array($field['field_type'], array(DS_FIELD_TYPE_IGNORE, DS_FIELD_TYPE_PREPROCESS))) {
-      $functions = module_invoke_all('ds_field_theme_functions_info');
-      $default_field_function = config('ds.extras')->get('ft-default');
-      $field_function = isset($form_state['plugin_settings'][$field['name']]['ft']['func']) ? $form_state['plugin_settings'][$field['name']]['ft']['func'] : $default_field_function;
+    $functions = module_invoke_all('ds_field_theme_functions_info');
+    $default_field_function = config('ds.settings')->get('fs1.ft-default');
+    $field_function = isset($form_state['plugin_settings'][$field['name']]['ft']['func']) ? $form_state['plugin_settings'][$field['name']]['ft']['func'] : $default_field_function;
 
-      $summary .= 'Field template: ' . check_plain($functions[$field_function]) . '<br />';
-    }
+    $summary .= 'Field template: ' . check_plain($functions[$field_function]) . '<br />';
   }
 
   if (empty($summary)) {
@@ -888,7 +886,7 @@ function ds_field_settings_form($field, &$form_state) {
   $form = module_invoke($field['module'], 'ds_field_settings_form', $field);
 
   // Add field template settings to every field if enabled.
-  if (module_exists('ds_extras') && config('ds.extras')->get('field_template', FALSE)) {
+  if (config('ds.settings')->get('fs1.field_template')) {
     $context = array(
       'instance' => array(
         'entity_type' => $field['entity_type'],
@@ -1670,7 +1668,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       }
 
       // Add the field templates form when needed
-      if (module_exists('ds_extras') && config('ds.extras')->get('field_template', FALSE)) {
+      if (config('ds.settings')->get('fs1.field_template')) {
         $context = array(
           'instance' => $instance,
           'view_mode' => $view_mode,
@@ -1739,12 +1737,12 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       );
       drupal_alter('field_formatter_settings_summary', $summary, $context);
 
-      if (module_exists('ds_extras') && config('ds.extras')->get('field_template', FALSE)) {
+      if (config('ds.settings')->get('field_template')) {
         module_load_include('inc', 'ds_extras', 'includes/admin');
 
         // Field template summary
         $functions = module_invoke_all('ds_field_theme_functions_info');
-        $default_field_function = config('ds.extras')->get('ft-default');
+        $default_field_function = config('ds.settings')->get('ft-default');
         $field_function = isset($form_state['plugin_settings'][$key]['ft']['func']) ? $form_state['plugin_settings'][$key]['ft']['func'] : $default_field_function;
 
         if (!empty($summary)) {

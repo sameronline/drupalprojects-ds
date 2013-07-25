@@ -8,7 +8,7 @@
 namespace Drupal\ds_ui\Form;
 
 use Drupal\system\SystemConfigFormBase;
-use Drupal\Core\ControllerInterface;
+use Drupal\Core\Controller\ControllerInterface;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\Context\ContextInterface;

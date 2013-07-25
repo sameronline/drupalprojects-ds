@@ -1,0 +1,18 @@
+ds_structure:
+  pattern: 'admin/structure/ds'
+  defaults:
+    _content: '\Drupal\ds\Controller\DsController::listDisplays'
+  requirements:
+    _permission: 'admin_display_suite'
+ds_admin_settings:
+  pattern: 'admin/structure/ds/settings'
+  defaults:
+    _form: '\Drupal\ds\Form\SettingsForm'
+  requirements:
+    _permission: 'admin_display_suite'
+ds_admin_emergency:
+  pattern: 'admin/structure/ds/emergency'
+  defaults:
+    _form: '\Drupal\ds\Form\EmergencyForm'
+  requirements:
+    _permission: 'admin_display_suite'

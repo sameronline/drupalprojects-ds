@@ -142,7 +142,7 @@ function ds_extras_settings($form) {
   $form['#submit'][] = 'ds_extras_settings_submit';
   $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/js/ds_extras.admin.js';
 
-  return system_config_form($form, $form_state);
+  return $form;
 }
 
 /**
@@ -248,7 +248,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
  */
 function ds_extras_field_template_settings_form(array &$form, array &$form_state, array $context) {
   $functions = module_invoke_all('ds_field_theme_functions_info');
-  $default_field_function = config('ds.extras')->get('ft-default');
+  $default_field_function = config('ds.settings')->get('ft-default');
   if (empty($default_field_function)) {
     $default_field_function = 'theme_field';
   }

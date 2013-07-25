@@ -1,9 +1,9 @@
-    ____  _            __               _____       _ __     
-   / __ \(_)________  / /___ ___  __   / ___/__  __(_) /____ 
+    ____  _            __               _____       _ __
+   / __ \(_)________  / /___ ___  __   / ___/__  __(_) /____
   / / / / / ___/ __ \/ / __ `/ / / /   \__ \/ / / / / __/ _ \
  / /_/ / (__  ) /_/ / / /_/ / /_/ /   ___/ / /_/ / / /_/  __/
-/_____/_/____/ .___/_/\__,_/\__, /   /____/\__,_/_/\__/\___/ 
-            /_/            /____/                            
+/_____/_/____/ .___/_/\__,_/\__, /   /____/\__,_/_/\__/\___/
+            /_/            /____/
 
 Display Suite gives you full control over the way content is displayed without
 having to maintain dozens of PHP template files.
@@ -12,8 +12,8 @@ Read more: http://drupal.org/node/644662
 -- GETTING STARTED --
 
 1. Install Display Suite in the usual way (http://drupal.org/node/895232)
-2. Go to Administration > Structure > Display Suite > Layout
-   (admin/structure/ds/layout)
+2. Go to Administration > Structure > Display Suite
+   (admin/structure/ds/)
 3. Click "Manage display" for the entity (e.g., "User") whose display you like
    to change
 4. In the vertical tab "Layout for ... in default" choose the desired layout

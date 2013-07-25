@@ -30,18 +30,15 @@ function ds_ui_menu() {
   // Custom CSS classes.
   $items['admin/structure/ds/classes'] = array(
     'title' => 'CSS classes',
-    'description' => 'Define extra CSS class names for regions and fields.',
     'route_name' => 'ds_classes',
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
   // Fields.
   $items['admin/structure/ds/fields'] = array(
     'title' => 'Fields',
-    'description' => 'Manage fields for all content.',
     'route_name' => 'fields_list',
-    'weight' => -8,
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
   $items['admin/structure/ds/fields/manage/%'] = array(
     'title' => 'Manage fields',
@@ -56,10 +53,7 @@ function ds_ui_menu() {
   // Code field
   $items['admin/structure/ds/fields/manage_code'] = array(
     'title' => 'Add a code field',
-    'description' => 'Add a code field',
     'route_name' => 'add_code_field',
-    'type' => MENU_LOCAL_ACTION,
-    'weight' => 0,
   );
   $items['admin/structure/ds/fields/manage_code/%'] = array(
     'title' => 'Edit a code field',
@@ -69,10 +63,7 @@ function ds_ui_menu() {
   // Preprocess field
   $items['admin/structure/ds/fields/manage_preprocess'] = array(
     'title' => 'Add a preprocess field',
-    'description' => 'Adds a preprocess field',
     'route_name' => 'add_preprocess_field',
-    'type' => MENU_LOCAL_ACTION,
-    'weight' => 3,
   );
   $items['admin/structure/ds/fields/manage_preprocess/%'] = array(
     'title' => 'Edit a preprocess field',
