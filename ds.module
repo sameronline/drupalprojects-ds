@@ -46,7 +46,7 @@ function ds_menu() {
   // Layout overview, secondary tab.
   $items['admin/structure/ds/list'] = array(
     'title' => 'List',
-    'route_name' => 'ds_displays',
+    'route_name' => 'ds_list',
     'type' => MENU_VISIBLE_IN_BREADCRUMB,
   );
 
