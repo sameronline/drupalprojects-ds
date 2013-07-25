@@ -104,9 +104,9 @@ class SettingsForm extends SystemConfigFormBase {
     parent::submitForm($form, $form_state);
 
     $config = $this->configFactory->get('ds.settings');
-    $config->set('field_template', $form_state['values']['fs1']['field_template']);
-    $config->set('ft-default', $form_state['values']['fs1']['ft-default']);
-    $config->set('ft-kill-colon', $form_state['values']['fs1']['ft-kill-colon']);
+    $config->set('field_template', $form_state['values']['field_template']);
+    $config->set('ft-default', $form_state['values']['ft-default']);
+    $config->set('ft-kill-colon', $form_state['values']['ft-kill-colon']);
     $config->save();
 
     entity_info_cache_clear();
