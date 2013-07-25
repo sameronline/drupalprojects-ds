@@ -519,9 +519,15 @@ function ds_field_attach_view_alter(&$build, $context) {
  * This function is added in ds_theme_registry_alter().
  */
 function ds_preprocess_ds_layout(&$vars) {
-  if (isset($vars['elements']['#ds_layout'])) {
 
+  // Add extra metadata for contextual links.
+  if (!empty($vars['title_suffix']['contextual_links']['#id'])) {
+    $vars['title_suffix']['contextual_links']['#id'] .= $vars['elements']['#bundle'] . '-' . $vars['view_mode'];
+  }
+
+  if (isset($vars['elements']['#ds_layout'])) {
     $layout = $vars['elements']['#ds_layout'];
+
 
     $render_container = 'content';
 
@@ -676,23 +682,17 @@ function ds_field_formatter_view(EntityInterface $entity, $field, $instance, $la
  * Implements hook_contextual_links_view_alter().
  */
 function ds_contextual_links_view_alter(&$element, $items) {
-
-  // Contextual links changed so much that it is impossible to fetch the bundle
-  // and the view_mode of tho object the contextual link is attached to.
-
-  // This makes me a sad panda as that makes this function useless...
-
-  if (isset($element['#element']['#entity_type']) && module_exists('field_ui') && user_access('administer node display')) {
-    $entity_type = $element['#element']['#entity_type'];
-    $bundle = $element['#element']['#bundle'];
-    $view_mode = isset($element['#element']['#view_mode']) ? $element['#element']['#view_mode'] : 'default';
+  // @todo how can we make this also work for every entity.
+  if (isset($element['#contextual_links']['node']) && module_exists('field_ui') && user_access('administer node display')) {
+    $entity_type = 'node';
+    list($bundle, $view_mode) = explode('-', key($element['#contextual_links']['node'][2]));
 
     // Get the manage display URI.
     $admin_path = Drupal::entityManager()->getAdminPath($entity_type, $bundle);
 
     // Check view mode settings.
     $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-    $overridden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
+    $overridden = (!empty($view_mode_settings[$view_mode]['status']) ? TRUE : FALSE);
 
     if (!$overridden) {
       $admin_path .= '/display';
