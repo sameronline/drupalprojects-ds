@@ -14,8 +14,6 @@ function ds_extras_settings_alter(&$form, &$form_state) {
 
   $config = config('ds.extras');
 
-  dpm($form);
-
   $form['fs2'] = array(
     '#type' => 'details',
     '#title' => t('Extra fields'),
