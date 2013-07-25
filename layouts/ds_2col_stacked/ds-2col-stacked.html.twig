@@ -22,6 +22,10 @@
 #}
 <{{ layout_wrapper }} class="ds-2col-stacked {{ attributes.class }} clearfix" {{ attributes }}>
 
+  {% if title_suffix.contextual_links is not null %}
+    {{ title_suffix.contextual_links }}
+  {% endif %}
+
   <{{ header_wrapper }} class="group-header{{ header_classes }}">
     {% if header is not null %}
       {{ header }}

@@ -690,6 +690,11 @@ function ds_field_formatter_view(EntityInterface $entity, $field, $instance, $la
  */
 function ds_contextual_links_view_alter(&$element, $items) {
 
+  // Contextual links changed so much that it is impossible to fetch the bundle
+  // and the view_mode of tho object the contextual link is attached to.
+
+  // This makes me a sad panda as that makes this function useless...
+
   if (isset($element['#element']['#entity_type']) && module_exists('field_ui') && user_access('administer node display')) {
     $entity_type = $element['#element']['#entity_type'];
     $bundle = $element['#element']['#bundle'];

@@ -19,6 +19,10 @@
 #}
 <{{ layout_wrapper }} class="ds-3col-equal {{ attributes.class }} clearfix" {{ attributes }}>
 
+  {% if title_suffix.contextual_links is not null %}
+    {{ title_suffix.contextual_links }}
+  {% endif %}
+
   <{{ left_wrapper }} class="group-left{{ left_classes }}">
     {% if left is not null %}
       {{ left }}
