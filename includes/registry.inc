@@ -140,6 +140,8 @@ function _ds_entity_bundle_info_alter(&$bundles) {
  * Implements hook_entity_view_mode_info_alter().
  */
 function _ds_entity_view_mode_info_alter(&$view_modes) {
+  // @todo fix me - and also convert revision callback to route.
+  return;
   // Add the revision view mode.
   $revision = array(
     'label' => 'Revision',
