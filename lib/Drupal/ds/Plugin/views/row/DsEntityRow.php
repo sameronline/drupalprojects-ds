@@ -91,7 +91,7 @@ class DsEntityRow extends RowPluginBase {
   }
 
   /**
-   * Overrides Drupal\views\Plugin\views\row\RowPluginBase::defineOptions().
+   * {@inheritdoc}
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
@@ -128,7 +128,7 @@ class DsEntityRow extends RowPluginBase {
   }
 
   /**
-   * Overrides Drupal\views\Plugin\views\row\RowPluginBase::buildOptionsForm().
+   * {@inheritdoc}
    */
   public function buildOptionsForm(&$form, &$form_state) {
     parent::buildOptionsForm($form, $form_state);
@@ -189,7 +189,7 @@ class DsEntityRow extends RowPluginBase {
   }
 
   /**
-   * Overrides Drupal\views\Plugin\views\row\RowPluginBase::submitOptionsForm().
+   * {@inheritdoc}
    */
   public function submitOptionsForm(&$form, &$form_state) {
     $form_state['values']['row_options']['alternating'] = $form_state['values']['row_options']['alternating_fieldset']['alternating'];
@@ -209,7 +209,9 @@ class DsEntityRow extends RowPluginBase {
   }
 
   /**
-   * Overrides Drupal\views\Plugin\views\PluginBase::summaryTitle().
+   * {@inheritdoc}
+   *
+   * @todo add more info.
    */
   public function summaryTitle() {
     $options = $this->buildViewModeOptions();
@@ -262,7 +264,9 @@ class DsEntityRow extends RowPluginBase {
   }
 
   /**
-   * Overrides Drupal\views\Plugin\views\row\RowPluginBase::render().
+   * {@inheritdoc}
+   *
+   * // @todo this can probably go if we extend on entityRow.
    */
   public function render($row) {
     $entity_id = $row->{$this->field_alias};
