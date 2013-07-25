@@ -1710,7 +1710,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
           ),
         );
         $table[$key]['#attributes']['class'][] = 'field-plugin-settings-editing';
-        $table[$key]['plugin']['type']['#attributes']['class'] = array('element-invisible');
+        $table[$key]['plugin']['type']['#attributes']['class'] = array('visually-hidden');
       }
     }
     else {
@@ -1816,7 +1816,7 @@ function ds_field_row_form_format_construct(&$table, $key, $settings_form, $form
     ),
   );
   $table[$key]['#attributes']['class'][] = 'field-plugin-settings-editing';
-  $table[$key]['plugin']['type']['#attributes']['class'] = array('element-invisible');
+  $table[$key]['plugin']['type']['#attributes']['class'] = array('visually-hidden');
 }
 
 /**
