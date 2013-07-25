@@ -97,8 +97,34 @@ class DsEntityRow extends RowPluginBase {
     $options = parent::defineOptions();
 
     $options['view_mode'] = array('default' => '');
-
+    $options['alternating'] = array('default' => FALSE);
+    $options['alternating_fieldset'] = array(
+      'contains' => array(
+        'alternating' => array('default' => FALSE, 'bool' => TRUE),
+        'allpages' => array('default' => FALSE, 'bool' => TRUE),
+        'item' => array(
+          'default' => array(),
+          'export' => 'ds_item_export_option',
+        ),
+      ),
+    );
     return $options;
+  }
+
+  /**
+   * Custom export function for alternating_fieldset items.
+   *
+   * // @todo check if this actually works.
+   */
+  function ds_item_export_option($indent, $prefix, $storage, $option, $definition, $parents) {
+    $output = '';
+    $definition = array('default' => 'teaser');
+    foreach ($storage as $key => $value) {
+      if (strstr($key, 'item_') !== FALSE) {
+        $output .= parent::export_option($indent, $prefix, $storage, $key, $definition, $parents);
+      }
+    }
+    return $output;
   }
 
   /**
@@ -107,13 +133,66 @@ class DsEntityRow extends RowPluginBase {
   public function buildOptionsForm(&$form, &$form_state) {
     parent::buildOptionsForm($form, $form_state);
 
-    $options = $this->buildViewModeOptions();
+    // Default view mode.
+    $view_mode_options = $this->buildViewModeOptions();
     $form['view_mode'] = array(
       '#type' => 'select',
-      '#options' => $options,
+      '#options' => $view_mode_options,
       '#title' => t('View mode'),
       '#default_value' => $this->options['view_mode'],
     );
+
+    // Alternating view modes.
+    // @todo fix fieldset.
+    $form['alternating_fieldset'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Alternating view mode'),
+      '#collapsible' => TRUE,
+      '#collapsed' => !$this->options['alternating'],
+    );
+    $form['alternating_fieldset']['alternating'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use the changing view mode selector'),
+      '#default_value' => $this->options['alternating'],
+    );
+    $form['alternating_fieldset']['allpages'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use this configuration on every page. Otherwhise the default view mode is used as soon you browse away from the first page of this view.'),
+      '#default_value' => (isset($this->options['alternating_fieldset']['allpages'])) ? $this->options['alternating_fieldset']['allpages'] : FALSE,
+    );
+
+    $limit = $this->view->display_handler->getOption('items_per_page');
+    $pager = $this->view->display_handler->getPlugin('pager');
+    $limit = (isset($pager->options['items_per_page'])) ? $pager->options['items_per_page'] : 0;
+    if ($limit == 0 || $limit > 20) {
+      $form['alternating_fieldset']['disabled'] = array(
+        '#markup' => t('This option is disabled because you have unlimited items or listing more than 20 items.'),
+      );
+      $form['alternating_fieldset']['alternating']['#disabled'] = TRUE;
+      $form['alternating_fieldset']['allpages']['#disabled'] = TRUE;
+    }
+    else {
+      $i = 1;
+      $a = 0;
+      while ($limit != 0) {
+        $form['alternating_fieldset']['item_' . $a] = array(
+          '#title' => t('Item @nr', array('@nr' => $i)),
+          '#type' => 'select',
+          '#default_value' => (isset($this->options['alternating_fieldset']['item_' . $a])) ? $this->options['alternating_fieldset']['item_' . $a] : 'teaser',
+          '#options' => $view_mode_options,
+        );
+        $limit--;
+        $a++;
+        $i++;
+      }
+    }
+  }
+
+  /**
+   * Overrides Drupal\views\Plugin\views\row\RowPluginBase::submitOptionsForm().
+   */
+  public function submitOptionsForm(&$form, &$form_state) {
+    $form_state['values']['row_options']['alternating'] = $form_state['values']['row_options']['alternating_fieldset']['alternating'];
   }
 
   /**
@@ -157,8 +236,28 @@ class DsEntityRow extends RowPluginBase {
         $entities[$entity->id()] = $entity;
       }
 
-      // Prepare the render arrays for all rows.
-      $this->build = entity_view_multiple($entities, $this->options['view_mode']);
+      // Change the view mode per row.
+      if ($this->options['alternating']) {
+
+        $i = 0;
+        foreach ($entities as $entity_id => $entity) {
+
+          // Check for paging to determine the view mode.
+          if (isset($_GET['page']) && isset($this->options['alternating_fieldset']['allpages']) && !$this->options['alternating_fieldset']['allpages']) {
+            $view_mode = $this->options['view_mode'];
+          }
+          else {
+            $view_mode = isset($this->options['alternating_fieldset']['item_' . $i]) ? $this->options['alternating_fieldset']['item_' . $i] : $this->options['view_mode'];
+          }
+          $i++;
+
+          $this->build[$entity_id] = entity_view($entity, $view_mode);
+        }
+      }
+      else {
+        // Prepare the render arrays for all rows at once.
+        $this->build = entity_view_multiple($entities, $this->options['view_mode']);
+      }
     }
   }
 
