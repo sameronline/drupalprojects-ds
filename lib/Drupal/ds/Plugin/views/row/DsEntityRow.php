@@ -12,6 +12,7 @@ use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\ViewExecutable;
 use Drupal\Component\Annotation\Plugin;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\views\Plugin\views\row\RowPluginBase;
 
 /**
  * Generic entity row plugin to provide a common base for all entity types.

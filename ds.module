@@ -139,13 +139,6 @@ function ds_ds_layout_info() {
 }
 
 /**
- * Implements hook_views_api().
- */
-function ds_views_api() {
-  return array('api' => 3);
-}
-
-/**
  * Implements hook_node_type_update().
  */
 function ds_node_type_update($info) {
