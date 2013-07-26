@@ -12,6 +12,7 @@ use Drupal\Core\Controller\ControllerInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Provides a form to delete a user's Open ID identity.
@@ -62,14 +63,14 @@ class FieldDeleteForm extends ConfirmFormBase implements ControllerInterface {
   /**
    * {@inheritdoc}
    */
-  protected function getQuestion() {
+  public function getQuestion() {
     return t('Are you sure you want to delete %field ?', array('%field' => $this->field['label']));
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getCancelPath() {
+  public function getCancelPath() {
     return 'admin/structure/ds/fields';
   }
 
@@ -89,7 +90,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ControllerInterface {
 
     if (empty($this->field)) {
       drupal_set_message(t('Field not found.'));
-      drupal_goto('admin/structure/ds/fields');
+      return new RedirectResponse('admin/structure/ds/fields');
     }
 
     return parent::buildForm($form, $form_state);

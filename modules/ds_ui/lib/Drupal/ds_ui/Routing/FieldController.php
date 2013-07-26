@@ -11,6 +11,7 @@ use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Controller\ControllerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Route controller for view modes.
@@ -156,7 +157,7 @@ class FieldController implements ControllerInterface {
       $redirect = 'admin/structure/ds/fields';
     }
 
-    drupal_goto($redirect);
+    return new RedirectResponse(url($redirect));
   }
 
 }

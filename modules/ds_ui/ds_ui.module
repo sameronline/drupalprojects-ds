@@ -5,6 +5,10 @@
  * Display Suite UI.
  */
 
+define('DS_FIELD_TYPE_CODE', 'code_field');
+define('DS_FIELD_TYPE_BLOCK', 'block_field');
+define('DS_FIELD_TYPE_PREPROCESS', 'preprocess_field');
+
 /**
  * Implements hook_permission().
  */
