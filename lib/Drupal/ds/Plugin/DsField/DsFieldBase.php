@@ -49,4 +49,14 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
     return array();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getChosenSettings($field) {
+    $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : array();
+    $settings += $this->defaultSettings();
+
+    return $settings;
+  }
+
 }

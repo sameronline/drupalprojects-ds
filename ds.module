@@ -310,7 +310,7 @@ function ds_get_fields($entity_type, $cache = TRUE) {
   static $static_fields;
 
   if (!isset($static_fields[$entity_type])) {
-    foreach (drupal_container()->get('plugin.manager.ds.plugin')->getDefinitions() as $plugin_id => $plugin) {
+    foreach (\Drupal::service('plugin.manager.ds.plugin')->getDefinitions() as $plugin_id => $plugin) {
       // Needed to get derivatives working
       $plugin['plugin_id'] = $plugin_id;
       $static_fields[$plugin['entity_type']][$plugin_id] = $plugin;
@@ -787,8 +787,6 @@ function theme_ds_field_expert($variables) {
   $output = '';
 
   $config = $variables['ds-config'];
-
-  debug($config);
 
   // Render the label if it's not hidden.
   if (!$variables['label_hidden']) {
