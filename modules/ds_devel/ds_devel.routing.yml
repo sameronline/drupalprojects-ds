@@ -1,0 +1,12 @@
+ds_devel_markup:
+  pattern: 'node/{node}/devel/markup'
+  defaults:
+    _content: '\Drupal\ds_devel\Controller\DsDevelController::nodeMarkup'
+  requirements:
+    _permission: 'access devel information'
+ds_devel_markup_view_mode:
+  pattern: 'node/{node}/devel/markup/{key}'
+  defaults:
+    _content: '\Drupal\ds_devel\Controller\DsDevelController::nodeMarkup'
+  requirements:
+    _permission: 'access devel information'
