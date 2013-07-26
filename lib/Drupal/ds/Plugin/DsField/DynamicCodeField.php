@@ -25,7 +25,7 @@ class DynamicCodeField extends CodePluginBase {
    * {@inheritdoc}
    */
   public function code() {
-    $definition = $this->getDefinition();
+    $definition = $this->getPluginDefinition();
     return $definition['properties']['code']['value'];
   }
 
@@ -33,7 +33,7 @@ class DynamicCodeField extends CodePluginBase {
    * {@inheritdoc}
    */
   public function format() {
-    $definition = $this->getDefinition();
+    $definition = $this->getPluginDefinition();
     return $definition['properties']['code']['format'];
   }
 }

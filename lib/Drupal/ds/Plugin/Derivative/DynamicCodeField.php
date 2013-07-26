@@ -23,15 +23,16 @@ class DynamicCodeField extends DerivativeBase {
 
     foreach ($custom_fields as $config) {
       $field = config($config)->get();
+      $key = 'dynamic_code_field:' . $field['field'];
       foreach ($field['entities'] as $entity_type) {
-        $this->derivatives[$field['field']] = $base_plugin_definition;
-        $this->derivatives[$field['field']] += array(
+        $this->derivatives[$key] = $base_plugin_definition;
+        $this->derivatives[$key] += array(
           'title' => $field['label'],
           'properties' => $field['properties'],
           'entity_type' => $entity_type,
         );
         if (!empty($field['ui_limit'])) {
-          $this->derivatives[$field['field']]['ui_limit'] = explode("\n", $field['ui_limit']);
+          $this->derivatives[$key]['ui_limit'] = explode("\n", $field['ui_limit']);
         }
       }
     }

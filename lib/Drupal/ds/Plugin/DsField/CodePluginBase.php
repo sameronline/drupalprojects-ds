@@ -20,7 +20,9 @@ abstract class CodePluginBase extends DsFieldBase {
     if ($code) {
       $format = $this->format();
       if ($format == 'ds_code' && module_exists('ds_code')) {
-        $value = ds_code_php_eval($code, $field['entity'], isset($field['build']) ? $field['build'] : array());
+        // TODO fix this, use the filter plugin we made to
+        //$value = ds_code_php_eval($code, $field['entity'], isset($field['build']) ? $field['build'] : array());
+        $value = '';
       }
       else {
         $value = check_markup($code, $format);

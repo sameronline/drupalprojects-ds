@@ -33,8 +33,8 @@ class CodeFieldForm extends FieldFormBase {
     $form['code'] = array(
       '#type' => 'text_format',
       '#title' => t('Field code'),
-      '#default_value' => isset($field['properties']['code']['value']) ?: '',
-      '#format' => isset($field['properties']['code']['format']) ?: 'ds_code',
+      '#default_value' => isset($field['properties']['code']['value']) ? $field['properties']['code']['value'] : '',
+      '#format' => isset($field['properties']['code']['format']) ? $field['properties']['code']['format'] : 'ds_code',
       '#base_type' => 'textarea',
       '#required' => TRUE,
     );
@@ -43,7 +43,7 @@ class CodeFieldForm extends FieldFormBase {
       '#type' => 'checkbox',
       '#title' => t('Token'),
       '#description' => t('Toggle this checkbox if you are using tokens in this field.'),
-      '#default_value' => isset($field['properties']['use_token']) ?: '',
+      '#default_value' => isset($field['properties']['use_token']) ? $field['properties']['use_token'] : '',
     );
 
     // Token support.
