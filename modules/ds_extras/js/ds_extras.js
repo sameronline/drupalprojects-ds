@@ -24,6 +24,8 @@ Drupal.behaviors.DSExtrasSwitchViewmode = {
           data: {entity_type: params[0], view_mode: params[3], id: params[2]},
           dataType: 'json',
           success: function (data) {
+            console.log(data);
+            console.log(data.status);
             if (data.status) {
               old_view_mode = params[1];
               wrapper = link.parents('.view-mode-' + old_view_mode);

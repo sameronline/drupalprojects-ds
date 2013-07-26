@@ -224,7 +224,6 @@ function ds_search_search_page($results) {
   $parity = 'odd';
   foreach ($results as $id => $result) {
     $data = entity_view_mul($result, config('ds.search')->get('view_mode'));
-    dpm($data);
     $data[$result->entity_id]['#weight'] = $i;
     $build['search_results'][$i] = $data[$result->entity_id];
     $build['search_results'][$i]['#node']->ds_search_zebra = $parity;

@@ -16,11 +16,7 @@ function ds_extras_menu() {
   if (config('ds.extras')->get('switch_field')) {
     $items['ds-switch-view-mode'] = array(
       'title' => 'Switch view',
-      'description' => 'Switches a view mode inline.',
-      'page callback' => 'ds_switch_view_mode_inline',
-      'access arguments' => array('access content'),
-      'file' => 'includes/pages.inc',
-      'type' => MENU_CALLBACK,
+      'route_name' => 'ds_switch_view_mode',
     );
   }
 
@@ -199,44 +195,6 @@ function ds_extras_form_field_ui_field_edit_form_alter(&$form, &$form_state, $fo
  */
 function ds_extras_get_view_mode() {
   return drupal_static('ds_extras_view_mode');
-}
-
-/**
- * Switch view mode field.
- */
-function ds_extras_switch_view_mode_field($field) {
-  $output = '';
-  static $added = FALSE;
-
-  if (isset($field['plugin_settings'])) {
-
-    $entity = $field['entity'];
-    $id = $entity->nid;
-    $url = $field['entity_type'] . '-' . $field['view_mode'] . '-' . $id . '-';
-    $switch = array();
-
-    foreach ($field['plugin_settings']['vms'] as $key => $value) {
-      if (!empty($value)) {
-        $class = 'switch-' . $key;
-        if ($key == $field['view_mode']) {
-          $switch[] = '<span class="' . $class . '">' . check_plain(t($value)) . '</span>';
-        }
-        else {
-          $switch[] = '<span class="' . $class . '"><a href="" class="' . $url . $key . '">' . check_plain(t($value)) . '</a></span>';
-        }
-      }
-    }
-
-    if (!empty($switch)) {
-      if (!$added) {
-        $add = TRUE;
-        drupal_add_js(drupal_get_path('module', 'ds_extras') . '/js/ds_extras.js');
-      }
-      $output = '<div class="switch-view-mode-field">' . implode(' ', $switch) . '</div>';
-    }
-  }
-
-  return $output;
 }
 
 /**

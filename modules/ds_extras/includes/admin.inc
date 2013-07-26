@@ -216,7 +216,7 @@ function ds_extras_ds_field_settings_form($field) {
   $form = array();
 
   // Switch field.
-  if (config('ds.extras')->get('switch_field') && $field['name'] == 'ds_switch_field') {
+  if (config('ds.extras')->get('switch_field') && $field['name'] == 'switch_field') {
     $entity_type = $field['entity_type'];
     $bundle = $field['bundle'];
     $view_mode = $field['view_mode'];
@@ -230,7 +230,7 @@ function ds_extras_ds_field_settings_form($field) {
     foreach ($view_modes as $key => $value) {
 
       $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-      $visible = !empty($view_mode_settings[$key]['custom_settings']);
+      $visible = !empty($view_mode_settings[$key]['status']);
 
       if ($visible) {
         $form['vms'][$key] = array(
