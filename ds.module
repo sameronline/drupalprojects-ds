@@ -737,7 +737,7 @@ function theme_ds_field_reset($variables) {
   // Render the label.
   if (!$variables['label_hidden']) {
     $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
-    if (!config('ds.settings')->get('ft-kill-colon', FALSE)) {
+    if (!config('ds.settings')->get('ft-kill-colon')) {
       $output .= ':&nbsp;';
     }
     $output .= '</div>';
@@ -1143,7 +1143,7 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
       $form['ft']['lb-col'] = array(
         '#type' => 'checkbox',
         '#title' => t('Hide label colon'),
-        '#default_value' => isset($field_settings['lb-col']) ? $field_settings['lb-col'] : FALSE,
+        '#default_value' => isset($field_settings['lb-col']) ? $field_settings['lb-col'] : config('ds.settings')->get('ft-kill-colon'),
         '#attributes' => array(
           'class' => array('colon-checkbox'),
         ),
