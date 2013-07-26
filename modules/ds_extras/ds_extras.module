@@ -204,6 +204,7 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
 
   // Switch full view mode.
   $node = $form_state['controller']->getEntity($form_state);
+
   if (user_access('ds_switch ' . $node->bundle())) {
 
     $view_mode_settings = field_view_mode_settings('node', $node->bundle());
@@ -213,7 +214,7 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
     $layouts = array();
     $options = array('' => t('Default'));
     foreach ($ds_vm as $key => $item) {
-      $overriden = (!empty($view_mode_settings[$key]['custom_settings']) ? TRUE : FALSE);
+      $overriden = (!empty($view_mode_settings[$key]['status']) ? TRUE : FALSE);
       if ($overriden) {
         $layout = ds_get_layout('node', $node->bundle(), $key, FALSE);
         $layouts[$key] = $layout;
@@ -365,13 +366,6 @@ function ds_extras_field_extra_fields() {
   }
 
   return $extra;
-}
-
-/**
- * Output flag.
- */
-function ds_extras_flags_add_flag_link($field) {
-  return flag_create_link($field['properties']['flag'], $field['entity']->nid);
 }
 
 /**
