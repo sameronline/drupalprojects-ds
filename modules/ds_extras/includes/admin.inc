@@ -136,9 +136,6 @@ function ds_extras_settings_submit($form, &$form_state) {
  * Alter Manage display screen.
  */
 function ds_extras_field_ui_alter(&$form, &$form_state) {
-  // Attach js.
-  $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/js/ds_extras.admin.js';
-
   // Region to block only fires if there is a layout and we're working on the
   // a view mode which is not equal to default.
   if (isset($form['#ds_layout']) && $form['#mode'] != 'default' && config('ds.extras')->get('region_to_block', FALSE)) {
