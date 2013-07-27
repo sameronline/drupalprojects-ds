@@ -527,7 +527,7 @@ function ds_field_attach_view_alter(&$build, $context) {
 function ds_preprocess_ds_layout(&$vars) {
 
   // Add extra metadata for contextual links.
-  if (!empty($vars['title_suffix']['contextual_links']['#id'])) {
+  if (!empty($vars['title_suffix']['contextual_links']['#id']) && !empty($vars['elements']['#bundle'])) {
     $vars['title_suffix']['contextual_links']['#id'] .= $vars['elements']['#bundle'] . '-' . $vars['view_mode'];
   }
 

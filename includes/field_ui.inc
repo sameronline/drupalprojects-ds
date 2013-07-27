@@ -808,7 +808,7 @@ function ds_field_formatter_settings_form($field, $instance, $view_mode, $form, 
  * Implements hook_field_formatter_settings_summary().
  */
 function ds_field_formatter_settings_summary($field, $instance, $view_mode) {
-  $summary = '';
+  $summary = array();
   $display = $instance['display'][$view_mode];
   $settings = $display['settings'];
 
@@ -816,7 +816,7 @@ function ds_field_formatter_settings_summary($field, $instance, $view_mode) {
     $entity_info = entity_get_info('taxonomy_term');
     $modes = $entity_info['view modes'];
     $mode = $modes[$settings['taxonomy_term_reference_view_mode']]['label'];
-    $summary = t('View mode: %mode', array('%mode' => $mode));
+    $summary[] = t('View mode: %mode', array('%mode' => $mode));
   }
 
   if ($display['type'] === 'ds_taxonomy_separator') {
@@ -827,8 +827,8 @@ function ds_field_formatter_settings_summary($field, $instance, $view_mode) {
       ' / ' => t('slash'),
     );
     drupal_alter('ds_taxonomy_term_separators', $separators);
-    $summary .= t('Separated by !sep', array('!sep' => $separators[$settings['taxonomy_term_separator']]));
-    $summary .= $settings['taxonomy_term_link'] ? ', ' . t('linked') : ', ' . t('not linked');
+    $summary[] = t('Separated by !sep', array('!sep' => $separators[$settings['taxonomy_term_separator']]));
+    $summary[] = $settings['taxonomy_term_link'] ? ', ' . t('linked') : ', ' . t('not linked');
   }
 
   return $summary;
@@ -906,7 +906,7 @@ function ds_field_settings_form($field, &$form_state) {
  * Implements hook_ds_field_format_summary().
  */
 function ds_ds_field_format_summary($field) {
-  $summary = '';
+  $summary = array();
   $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : $field['properties']['default'];
   $functions = module_invoke_all('ds_field_theme_functions_info');
   foreach ($settings as $key => $value) {
@@ -915,7 +915,7 @@ function ds_ds_field_format_summary($field) {
     }
     elseif (!empty($value)) {
       $value = is_numeric($value) ? ($value ? t('Yes') : t('No')) : check_plain($value);
-      $summary .= ' ' . str_replace('_', ' ', drupal_ucfirst(check_plain($key))) . ': ' . check_plain($value) . '<br />';
+      $summary[] = str_replace('_', ' ', drupal_ucfirst(check_plain($key))) . ': ' . check_plain($value) . '<br />';
     }
   }
 
@@ -1387,7 +1387,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
   $field_label_options = array(
     'above' => t('Above'),
     'inline' => t('Inline'),
-    'hidden' => t('<Hidden>'),
+    'hidden' => t('- Hidden -'),
   );
   drupal_alter('ds_label_options', $field_label_options);
 
@@ -1441,7 +1441,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
     $value = isset($form_state['plugin_settings']) ? $form_state['plugin_settings'] : array();
 
-    $hidden = array('hidden' => t('<Hidden>'));
+    $hidden = array('hidden' => t('- Hidden -'));
 
     // Get the formatters from the field instance
     $formatters = $plugin_instance->formatters();
@@ -1530,7 +1530,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       $summary = ds_field_settings_summary($field, $form_state);
 
       if (isset($summary)) {
-        $table[$key]['settings_summary'] = $summary;
+        $table[$key]['settings_summary'] = implode('<br />', $summary);
         ds_field_row_form_format_summary_construct($table, $key, $form_state);
       }
     }
@@ -1714,6 +1714,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       }
     }
     else {
+      $summary = array();
       //$summary = module_invoke($formatter['module'], 'field_formatter_settings_summary', $field, $instance, $view_mode);
 
       // Allow other modules to alter the formatter summary.
@@ -1727,16 +1728,11 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       drupal_alter('field_formatter_settings_summary', $summary, $context);
 
       if (config('ds.settings')->get('field_template')) {
-
-        // Field template summary
+        // Field template summary.
         $functions = module_invoke_all('ds_field_theme_functions_info');
         $default_field_function = config('ds.settings')->get('ft-default');
         $field_function = isset($form_state['plugin_settings'][$key]['ft']['func']) ? $form_state['plugin_settings'][$key]['ft']['func'] : $default_field_function;
-
-        if (!empty($summary)) {
-          $summary .= '<br />';
-        }
-        $summary .= 'Field template: ' . check_plain($functions[$field_function]) . '<br />';
+        $summary[] = 'Field template: ' . check_plain($functions[$field_function]);
       }
 
       if (!empty($summary)) {
@@ -1744,7 +1740,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
         $table[$key]['settings_edit'] = array();
 
         $table[$key]['settings_summary'] = array(
-          '#markup' => '<div class="field-plugin-summary">' . $summary . '</div>',
+          '#markup' => '<div class="field-plugin-summary">' . implode('<br />', $summary) . '</div>',
           '#cell_attributes' => array('class' => array('field-plugin-summary-cell')),
         );
         // Render the other part of the summary
