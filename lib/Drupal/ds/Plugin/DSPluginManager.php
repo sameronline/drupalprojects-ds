@@ -41,4 +41,18 @@ class DsPluginManager extends DefaultPluginManager {
     $this->setCacheBackend($cache_backend, $language_manager, 'ds_field_info');
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function findDefinitions() {
+    $definitions = parent::findDefinitions();
+    $module_handler = \Drupal::moduleHandler();
+    foreach ($definitions as $plugin_id => $definition) {
+      if (!$module_handler->moduleExists($definition['provider'])) {
+        unset($definitions[$plugin_id]);
+      }
+    }
+    return $definitions;
+  }
+
 }
