@@ -13,6 +13,7 @@ use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Provides a form to delete a user's Open ID identity.
@@ -84,7 +85,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ControllerInterface {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state, $field = '') {
+  public function buildForm(array $form, array &$form_state, Request $request = NULL, $field = '') {
     $config = $this->configFactory->get('ds.field.' . $field);
     $this->field = $config->get();
 
@@ -93,7 +94,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ControllerInterface {
       return new RedirectResponse('admin/structure/ds/fields');
     }
 
-    return parent::buildForm($form, $form_state);
+    return parent::buildForm($form, $form_state, $request);
   }
 
   /**
