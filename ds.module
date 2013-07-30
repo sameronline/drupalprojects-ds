@@ -1190,7 +1190,6 @@ function ds_field_formatter_settings_summary_alter(&$summary, $context) {
     // Field template summary
     $functions = module_invoke_all('ds_field_theme_functions_info');
     $field = $context['field'];
-    dpm($context);
     $default_field_function = config('ds.settings')->get('ft-default');
     $field_function = isset($form_state['plugin_settings'][$field['name']]['ft']['func']) ? $form_state['plugin_settings'][$field['name']]['ft']['func'] : $default_field_function;
 
