@@ -1182,3 +1182,21 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
   $form['ft']['lb']['#default_value'] = isset($field_settings['lb']) ? $field_settings['lb'] : '';
 }
 
+/**
+ * Implements hook_field_formatter_settings_summary_alter.
+ */
+function ds_field_formatter_settings_summary_alter(&$summary, $context) {
+  if (config('ds.settings')->get('field_template')) {
+    // Field template summary
+    $functions = module_invoke_all('ds_field_theme_functions_info');
+    $field = $context['field'];
+    dpm($context);
+    $default_field_function = config('ds.settings')->get('ft-default');
+    $field_function = isset($form_state['plugin_settings'][$field['name']]['ft']['func']) ? $form_state['plugin_settings'][$field['name']]['ft']['func'] : $default_field_function;
+
+    $summary[] = 'Field template: ' . check_plain($functions[$field_function]);
+  }
+
+  return $summary;
+}
+

@@ -845,28 +845,23 @@ function ds_field_formatter_settings_summary($field, $instance, $view_mode) {
  */
 function ds_field_settings_summary($field, $form_state) {
 
-  $summary = '';
+  $summary = array();
 
   // Not all fields have settings.
+  // TODO FIX THIS
   if (isset($field['properties']['settings'])) {
     $summary = module_invoke($field['module'], 'ds_field_format_summary', $field);
   }
 
-  if (config('ds.settings')->get('field_template')) {
-    // Field template summary
-    $functions = module_invoke_all('ds_field_theme_functions_info');
-    $default_field_function = config('ds.settings')->get('ft-default');
-    $field_function = isset($form_state['plugin_settings'][$field['name']]['ft']['func']) ? $form_state['plugin_settings'][$field['name']]['ft']['func'] : $default_field_function;
-
-    $summary .= 'Field template: ' . check_plain($functions[$field_function]) . '<br />';
-  }
+  // Add field template summary
+  ds_field_formatter_settings_summary_alter($summary, array('field' => $field));
 
   if (empty($summary)) {
     return NULL; // no summary return nothing
   }
 
   return array(
-    '#markup' => '<div class="field-plugin-summary">' . $summary . '</div>',
+    '#markup' => '<div class="field-plugin-summary">' . implode('<br />', $summary) . '</div>',
     '#cell_attributes' => array('class' => array('field-plugin-summary-cell')),
   );
 }
@@ -1714,36 +1709,9 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       }
     }
     else {
-      $summary = array();
-      //$summary = module_invoke($formatter['module'], 'field_formatter_settings_summary', $field, $instance, $view_mode);
-
-      // Allow other modules to alter the formatter summary.
-      // @todo check whether we can't make this cleaner, because we're
-      // calling this twice now.
-      $context = array(
-        'field' => $field,
-        'instance' => $instance,
-        'view_mode' => $view_mode,
-      );
-      drupal_alter('field_formatter_settings_summary', $summary, $context);
-
-      if (config('ds.settings')->get('field_template')) {
-        // Field template summary.
-        $functions = module_invoke_all('ds_field_theme_functions_info');
-        $default_field_function = config('ds.settings')->get('ft-default');
-        $field_function = isset($form_state['plugin_settings'][$key]['ft']['func']) ? $form_state['plugin_settings'][$key]['ft']['func'] : $default_field_function;
-        $summary[] = 'Field template: ' . check_plain($functions[$field_function]);
-      }
-
-      if (!empty($summary)) {
-        $table[$key]['settings_summary'] = array();
+      if (!empty($table[$key]['settings_summary'])) {
         $table[$key]['settings_edit'] = array();
 
-        $table[$key]['settings_summary'] = array(
-          '#markup' => '<div class="field-plugin-summary">' . implode('<br />', $summary) . '</div>',
-          '#cell_attributes' => array('class' => array('field-plugin-summary-cell')),
-        );
-        // Render the other part of the summary
         ds_field_row_form_format_summary_construct($table, $key, $form_state);
       }
     }
