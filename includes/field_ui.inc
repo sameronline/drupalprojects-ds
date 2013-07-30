@@ -1530,7 +1530,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       $summary = ds_field_settings_summary($field, $form_state);
 
       if (isset($summary)) {
-        $table[$key]['settings_summary'] = implode('<br />', $summary);
+        $table[$key]['settings_summary'] = $summary;
         ds_field_row_form_format_summary_construct($table, $key, $form_state);
       }
     }
