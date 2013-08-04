@@ -3,7 +3,7 @@
  * Javascript functionality for the Display Suite Extras module.
  */
 
-(function ($) {
+(function ($, Drupal) {
 
 // Switch view mode inline with AJAX, for the 'View mode switcher' option.
 Drupal.behaviors.DSExtrasSwitchViewmode = {
@@ -54,8 +54,8 @@ Drupal.behaviors.DSExtrasSwitchViewmode = {
  * @param content
  *   The new content
  */
-Drupal.theme.prototype.DisplaySuiteSwitchViewmode = function (wrapper, content) {
+Drupal.theme.DisplaySuiteSwitchViewmode = function (wrapper, content) {
   wrapper.replaceWith(content);
 };
 
-})(jQuery);
+})(jQuery, Drupal);
