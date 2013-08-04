@@ -1496,7 +1496,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
         'type' => array(
           '#type' => 'select',
           '#options' => $formatters,
-          '#default_value' => isset($field_settings[$key]['plugin']) ? $field_settings[$key]['plugin'] : 'hidden',
+          '#default_value' => isset($field_settings[$key]['formatter']) ? $field_settings[$key]['formatter'] : 'hidden',
           '#attributes' => array('class' => array('field-plugin-type')),
         ),
       ),
@@ -1580,7 +1580,8 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     }
 
     $field = field_info_field($instance['field_name']);
-    $display = $instance['display'][$view_mode];
+    $display = entity_get_display($entity_type, $bundle, $view_mode);
+    $component = $display->getComponent($key);
 
     // Check the currently selected formatter, and merge persisted values for
     // formatter settings.
@@ -1588,7 +1589,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       $formatter_type = $form_state['values']['fields'][$key]['type'];
     }
     else {
-      $formatter_type = $display['type'];
+      $formatter_type = $component['type'];
     }
 
     $settings = $entity_display->getComponent($key);
