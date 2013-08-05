@@ -18,17 +18,17 @@ function ds_contextual_page_tab($object, $entity_type) {
       $view_mode = (!empty($object->ds_switch)) ? $object->ds_switch : 'full';
 
       // Let's always go back to the node page.
-      $destination = 'node/' . $object->nid;
+      $destination = 'node/' . $object->id();
       break;
     case 'user':
       $bundle = 'user';
       $view_mode = 'full';
-      $destination = 'user/' . $object->uid;
+      $destination = 'user/' . $object->id();
       break;
     case 'taxonomy_term':
-      $bundle = $object->vocabulary_machine_name;
+      $bundle = $object->bundle();
       $view_mode = 'full';
-      $destination = 'taxonomy/term/' . $object->tid;
+      $destination = 'taxonomy/term/' . $object->id();
       break;
   }
 
