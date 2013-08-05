@@ -26,7 +26,7 @@ function ds_extras_node_page_view($node) {
   }
 
   // For markup consistency with other pages, use node_view_multiple() rather than node_view().
-  $view_mode = (!empty($node->ds_switch)) ? $node->ds_switch : 'full';
+  $view_mode = (!empty($node->get('ds_switch')->value)) ? $node->get('ds_switch')->value : 'full';
 
   // It's also possible to use $_GET['v'] to switch view modes.
   if (isset($_GET['v']) && !empty($_GET['v'])) {

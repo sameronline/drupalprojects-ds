@@ -11,7 +11,7 @@
 function _ds_extras_menu_alter(&$items) {
 
   // Switch view mode.
-  if (config('ds.extras')->get('switch_view_mode', FALSE)) {
+  if (config('ds.extras')->get('switch_view_mode')) {
 
     // Check if page manager is overriding.
     $skip_node_override = FALSE;

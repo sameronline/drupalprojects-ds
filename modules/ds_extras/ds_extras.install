@@ -11,8 +11,12 @@
 function ds_extras_install() {
   module_set_weight('ds_extras', 2);
 
+  $schema['node_field_data'] = array();
   $schema['node_field_revision'] = array();
   ds_extras_schema_alter($schema);
+  foreach ($schema['node_field_data']['fields'] as $name => $spec) {
+    db_add_field('node_field_data', $name, $spec);
+  }
   foreach ($schema['node_field_revision']['fields'] as $name => $spec) {
     db_add_field('node_field_revision', $name, $spec);
   }
@@ -23,9 +27,15 @@ function ds_extras_install() {
  */
 function ds_extras_schema_alter(&$schema) {
 
-  // Add a field ds_switch to the node_revision table in order
-  // to store the name of view mode to switch to.
-  if (isset($schema['node_field_revision'])) {
+  // Add a field ds_switch to the node_field_data and node_field_revision table
+  // in order to store the name of view mode to switch to.
+  if (isset($schema['node_field_data']) && isset($schema['node_field_revision'])) {
+    $schema['node_field_data']['fields']['ds_switch'] = array(
+      'type' => 'varchar',
+      'length' => 255,
+      'not null' => TRUE,
+      'default' => '',
+    );
     $schema['node_field_revision']['fields']['ds_switch'] = array(
       'type' => 'varchar',
       'length' => 255,
@@ -33,6 +43,7 @@ function ds_extras_schema_alter(&$schema) {
       'default' => '',
     );
   }
+
 }
 
 /**
@@ -40,6 +51,7 @@ function ds_extras_schema_alter(&$schema) {
  */
 function ds_extras_uninstall() {
   config('ds.extras')->delete();
+  db_drop_field('node_field_data', 'ds_switch');
   db_drop_field('node_field_revision', 'ds_switch');
 }
 

@@ -41,7 +41,7 @@ function ds_extras_permission() {
   $permissions = array();
 
   // Extra check to make sure this doesn't get fired on install.
-  if (config('ds.extras')->get('switch_view_mode', FALSE)) {
+  if (config('ds.extras')->get('switch_view_mode')) {
     foreach (node_type_get_names() as $key => $name) {
       $permissions['ds_switch ' . $key] = array(
         'title' => t('Switch view modes on :type', array(':type' => $name))
@@ -49,7 +49,7 @@ function ds_extras_permission() {
     }
   }
 
-  if (config('ds.extras')->get('field_permissions', FALSE)) {
+  if (config('ds.extras')->get('field_permissions')) {
     $entities = entity_get_info();
     foreach ($entities as $entity_type => $info) {
       $fields = ds_get_fields($entity_type);
@@ -242,7 +242,7 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
         '#type' => 'select',
         '#title' => t('View mode'),
         '#options' => $options,
-        '#default_value' => isset($node->ds_switch) ? $node->ds_switch : '',
+        '#default_value' => $node->get('ds_switch')->value,
         '#description' => t('Switch to a different view mode to display the full page view of this node.'),
         '#weight' => -1,
         '#ajax' => array(
@@ -257,7 +257,7 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
         '#suffix' => '</div>',
       );
 
-      $mode = isset($form_state['input']['ds_switch']) ? $form_state['input']['ds_switch'] : (isset($node->ds_switch) ? $node->ds_switch : '');
+      $mode = isset($form_state['input']['ds_switch']) ? $form_state['input']['ds_switch'] : $node->get('ds_switch')->value;
       $chosen_layout = $layouts[$mode];
 
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
@@ -275,6 +275,30 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
  */
 function ds_extras_switch_view_mode_preview_callback($form, $form_state) {
   return $form['ds_extras']['preview'];
+}
+
+/**
+ * Implements hook_entity_field_info_alter()
+ */
+function ds_extras_entity_field_info_alter(&$info, $entity_type) {
+  if ($entity_type == 'node') {
+    // Set the ds field as proper field
+    $info['definitions']['ds_switch'] = array(
+      'label' => 'DS switch',
+      'description' => 'Holds the DS view mode of the node',
+      'type' => 'string_field',
+      'settings' => array(
+        'default_value' => '',
+      ),
+      'property_constraints' => array(
+        'value' => array(
+          'Length' => array(
+            'max' => 255,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 /**
