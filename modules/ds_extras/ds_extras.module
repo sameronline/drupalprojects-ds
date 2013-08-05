@@ -138,7 +138,7 @@ function ds_extras_field_attach_view_alter(&$build, $context) {
   $block_data = &drupal_static('ds_block_region');
   $region_blocks = config('ds.extras')->get('region_blocks');
 
-  if (empty($region_blocks)) {
+  if (empty($region_blocks) || empty($build)) {
     return;
   }
 
@@ -298,41 +298,6 @@ function ds_extras_entity_field_info_alter(&$info, $entity_type) {
         ),
       ),
     );
-  }
-}
-
-/**
- * Implements hook_block_info().
- */
-function ds_extras_block_info() {
-
-  $region_blocks = config('ds.extras')->get('region_blocks');
-
-  if (empty($region_blocks)) {
-    return array();
-  }
-
-  foreach ($region_blocks as $key => $block) {
-    $blocks[$key] = array(
-      'info' => $block['title'],
-      'cache' => DRUPAL_NO_CACHE,
-    );
-  }
-  return $blocks;
-}
-
-/**
- * Implements hook_block_view().
- */
-function ds_extras_block_view($delta = '') {
-  $data = drupal_static('ds_block_region');
-  $region_blocks = config('ds.extras')->get('region_blocks');
-
-  if (!empty($data[$delta])) {
-    $block = array();
-    $block['subject'] = $region_blocks[$delta]['title'];
-    $block['content'] = $data[$delta];
-    return $block;
   }
 }
 
