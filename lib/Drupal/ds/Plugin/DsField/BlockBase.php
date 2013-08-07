@@ -36,7 +36,7 @@ abstract class BlockBase extends DsFieldBase {
   }
 
   /**
-   * Returns the delte of the block.
+   * Returns the plugin ID of the block.
    */
   protected function blockPluginId() {
     return '';
