@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\CodePluginBase.
+ * Contains \Drupal\ds\Plugin\DsField\CodeBase.
  */
 
 namespace Drupal\ds\Plugin\DsField;
@@ -10,7 +10,7 @@ namespace Drupal\ds\Plugin\DsField;
 /**
  * The base plugin to create DS block fields.
  */
-abstract class CodePluginBase extends DsFieldBase {
+abstract class CodeBase extends DsFieldBase {
 
   /**
    * {@inheritdoc}

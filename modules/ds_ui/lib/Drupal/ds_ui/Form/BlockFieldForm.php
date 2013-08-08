@@ -8,11 +8,12 @@
 namespace Drupal\ds_ui\Form;
 
 use Drupal\ds_ui\Form\FieldFormBase;
+use Drupal\Core\Controller\ControllerInterface;
 
 /**
  * Configures classes used by Display Suite.
  */
-class BlockFieldForm extends FieldFormBase {
+class BlockFieldForm extends FieldFormBase implements ControllerInterface {
 
   /**
    * {@inheritdoc}
@@ -25,21 +26,17 @@ class BlockFieldForm extends FieldFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state, $field_key = '') {
-
     $form = parent::buildForm($form, $form_state, $field_key);
 
     $field = $this->field;
 
+    $manager = \Drupal::service('plugin.manager.block');
+
     $blocks = array();
-    foreach ($this->modeleHandler->getImplementations('block_info') as $module) {
-      $module_blocks = $this->modeleHandler->invoke($module, 'block_info');
-      if ($module_blocks) {
-        foreach ($module_blocks as $module_key => $info) {
-          $blocks[drupal_ucfirst($module)][$module . '|' . $module_key] = $info['info'];
-        }
-      }
+    foreach ($manager->getDefinitions() as $plugin_id => $plugin_definition) {
+      $blocks[$plugin_id] = $plugin_definition['admin_label'];
     }
-    ksort($blocks);
+    asort($blocks);
 
     $form['block_identity']['block'] = array(
       '#type' => 'select',
@@ -47,17 +44,6 @@ class BlockFieldForm extends FieldFormBase {
       '#title' => t('Block'),
       '#required' => TRUE,
       '#default_value' => isset($field['properties']['block']) ? $field['properties']['block'] : '',
-    );
-    $form['block_identity']['block_render'] = array(
-      '#type' => 'select',
-      '#options' => array(
-        DS_BLOCK_TEMPLATE => t('Default'),
-        DS_BLOCK_TITLE_CONTENT => t('Show block title + content'),
-        DS_BLOCK_CONTENT => t('Show only block content'),
-      ),
-      '#title' => t('Layout'),
-      '#required' => TRUE,
-      '#default_value' => isset($field['properties']['block_render']) ? $field['properties']['block_render'] : '',
     );
 
     return $form;
@@ -73,7 +59,6 @@ class BlockFieldForm extends FieldFormBase {
     $field['field_type'] = DS_FIELD_TYPE_BLOCK;
     $field['properties'] = array();
     $field['properties']['block'] = $form_state['values']['block'];
-    $field['properties']['block_render'] = $form_state['values']['block_render'];
   }
 
 }

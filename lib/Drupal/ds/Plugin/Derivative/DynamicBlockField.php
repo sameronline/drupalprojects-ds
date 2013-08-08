@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\Derivative\DynamicCodeField.
+ * Contains \Drupal\ds\Plugin\Derivative\DynamicBlockField.
  */
 
 namespace Drupal\ds\Plugin\Derivative;
@@ -10,13 +10,13 @@ namespace Drupal\ds\Plugin\Derivative;
 /**
  * Retrieves block plugin definitions for all custom blocks.
  */
-class DynamicCodeField extends DynamicField {
+class DynamicBlockField extends DynamicField {
 
   /**
    * {@inheritdoc}
    */
   protected function getType() {
-    return DS_FIELD_TYPE_CODE;
+    return DS_FIELD_TYPE_BLOCK;
   }
 
 }

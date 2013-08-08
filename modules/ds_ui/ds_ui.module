@@ -74,26 +74,17 @@ function ds_ui_menu() {
     'description' => 'Manage a preprocess field',
     'route_name' => 'manage_preprocess_field'
   );
-  // Block can be disabled.
-  // @todo blocks have changed completely - also do some sort of library thing ?
-  /*
   if (module_exists('block')) {
     $items['admin/structure/ds/fields/manage_block'] = array(
       'title' => 'Add a block field',
-      'description' => 'Adds a block field',
-      'rout_name' => 'add_block_field'
-      'type' => MENU_LOCAL_ACTION,
-      'weight' => 2,
+      'route_name' => 'add_block_field',
     );
-  if (module_exists('block')) {
-    $items['admin/structure/ds/fields/manage_block'] = array(
+    $items['admin/structure/ds/fields/manage_block/%'] = array(
       'title' => 'Edit a block field',
-      'description' => 'Edit a block field',
-      'rout_name' => 'manage_block_field'
-      'type' => MENU_LOCAL_ACTION,
-      'weight' => 2,
+      'description' => 'Manage a block field',
+      'route_name' => 'manage_block_field'
     );
-  }*/
+  }
 
   return $items;
 }

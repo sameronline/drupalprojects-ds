@@ -19,7 +19,7 @@ use Drupal\Core\Annotation\Translation;
  *   module = "ds"
  * )
  */
-class DynamicCodeField extends CodePluginBase {
+class DynamicCodeField extends CodeBase {
 
   /**
    * {@inheritdoc}
