@@ -1265,7 +1265,13 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
         $build['#markup'] = check_plain($item['name']);
       }
       else {
-        $build = taxonomy_term_view(taxonomy_term_load($item['tid']), $view_mode, $langcode);
+        $term = taxonomy_term_load($item['tid']);
+        if (!empty($term)) {
+          $build = taxonomy_term_view($term, $view_mode, $langcode);
+        }
+        else {
+          $build['#markup'] = '';
+        }
       }
       $element[$delta] = $build;
     }
