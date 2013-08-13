@@ -152,8 +152,7 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
 
     $form['ui_limit'] = array(
       '#title' => t('Limit field'),
-      '#description' => t('Limit this field on field UI per bundles and/or view modes. The values are in the form of $bundle|$view_mode. You may use * to select all. Enter one value per line.'),
-      '#type' => 'textarea',
+      '#description' => t('Limit this field on field UI per bundles and/or view modes. The values are in the form of $bundle|$view_mode, where $view_mode may be either a view mode set to use custom settings, or \'default\'. You may use * to select all, e.g article|*, *|full or *|*. Enter one value per line.'),      '#type' => 'textarea',
       '#default_value' => $field['ui_limit'],
     );
 
