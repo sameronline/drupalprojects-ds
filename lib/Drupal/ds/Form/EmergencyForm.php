@@ -67,7 +67,7 @@ class EmergencyForm implements FormInterface {
 
         $form['region_to_block']['submit'] = array(
           '#type' => 'submit',
-          '#value' => t('Update block regions'),
+          '#value' => t('Remove block regions'),
           '#submit' => array(array($this, 'submitRegionToBlock')),
           '#weight' => 1,
         );
