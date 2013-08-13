@@ -617,27 +617,12 @@ function ds_search_apachesolr_index_document_build(ApacheSolrDocument $document,
     ob_end_clean();
     $document->addField('tm_ds_search_result', $output);
   }
-  // Creme de la creme: Put the full node object in the index,
-  // so no node_loads are needed for results in the Apache Solr engine.
-  // We are using zs_entity because this field is not indexed by apachesolr and it
-  // is a single.
-  $entity_type = $document->getField('entity_type');
-  $entity_id = $document->getField('entity_id');
-  $entity_type = $entity_type['value'];
-  $entity_id = $entity_id['value'];
-  $entities = entity_load($entity_type, array($entity_id));
-  $entity = reset($entities);
-  $json = drupal_json_encode($entity);
-  $document->addField('zs_entity', $json);
 }
 
 /**
  * Implements hook_apachesolr_query_alter().
  */
 function ds_search_apachesolr_query_alter($query) {
-
-  // Get the node from the index.
-  $query->addParam('fl', 'zs_entity');
 
   // Apache Solr multisite support.
   if (variable_get('ds_search_apachesolr_multisite') && variable_get('ds_search_type', 'node') == 'apachesolr_search') {
@@ -670,15 +655,8 @@ function ds_search_process_results($results) {
   if (is_array($results) && !empty($results)) {
     foreach ($results as $result) {
 
-      // Json decode zs_entity field.
-      $entity = @drupal_json_decode($result['fields']['zs_entity']);
-      if (empty($entity)) {
-        $load = entity_load($result['fields']['entity_type'], array($result['fields']['entity_id']));
-        $entity = reset($load);
-      }
-      else {
-        $entity = (object) $entity;
-      }
+      $load = entity_load($result['fields']['entity_type'], array($result['fields']['entity_id']));
+      $entity = reset($load);
 
       // Add the snippet, url and extra info on the object.
       $entity->search_snippet = $result['snippet'];
