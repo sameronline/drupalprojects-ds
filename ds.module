@@ -1109,7 +1109,7 @@ function ds_render_author_field($field) {
   }
 
   if ($field['formatter'] == 'author') {
-    $output = check_plain($field['entity']->name);
+    $output = format_username($field['entity']);
   }
 
   if ($field['formatter'] == 'author_linked') {
