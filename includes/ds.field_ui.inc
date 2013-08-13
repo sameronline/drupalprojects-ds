@@ -1097,7 +1097,7 @@ function ds_ds_field_format_summary($field) {
   }
 
   if (empty($summary) && ($field['field_type'] == DS_FIELD_TYPE_CTOOLS)) {
-    $summary .= t('Not configured yet.');
+    $summary .= t('Not configured yet.') . '<br />';
   }
 
   return $summary;
