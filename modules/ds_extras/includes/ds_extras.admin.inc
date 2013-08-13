@@ -204,7 +204,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
   }
 
   // Page title functionality, currently only works on nodes, users and taxonomy terms.
-  if (variable_get('ds_extras_hide_page_title', FALSE) && isset($form['#ds_layout']) && (in_array($form['#entity_type'], array('node', 'user', 'taxonomy_term')) && ($form['#view_mode'] == 'full' || $form['#view_mode'] == 'revision' || (variable_get('ds_extras_switch_view_mode', FALSE) && $form['#entity_type'] == 'node')) || $form['#entity_type'] == 'ds_views')) {
+  if (variable_get('ds_extras_hide_page_title', FALSE) && isset($form['#ds_layout']) && (in_array($form['#entity_type'], array('node', 'user', 'taxonomy_term', 'profile2')) && ($form['#view_mode'] == 'full' || $form['#view_mode'] == 'revision' ||  (variable_get('ds_extras_switch_view_mode', FALSE) && $form['#entity_type'] == 'node')) || $form['#entity_type'] == 'ds_views' || $form['#entity_type'] == 'profile2')) {
     $form['additional_settings']['ds_page_title'] = array(
       '#type' => 'fieldset',
       '#title' => t('Custom page title'),
