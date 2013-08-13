@@ -1673,6 +1673,9 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       'wrapper' => 'ds_layout_wrapper',
     ),
   );
+  if (!isset($layout->layout)) {
+    $form['additional_settings']['ds_layouts']['layout']['#description'] = t("A layout must be selected to enable Display Suite functionality.");
+  }
 
   $form['additional_settings']['ds_layouts']['preview'] = array(
     '#type' => 'container',
