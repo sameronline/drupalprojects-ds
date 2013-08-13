@@ -26,24 +26,21 @@ class NodeAuthor extends DsFieldBase {
    * {@inheritdoc}
    */
   public function render($field) {
+    $user = $field['entity']->getAuthor();
 
     // Users without a user name are anonymous users. These are never linked.
-    if (empty($field['entity']->name)) {
+    if (empty($user->name)) {
       $anonymous_string = config('user.settings')->get('anonymous');
       return check_plain($anonymous_string);
     }
 
     if ($field['formatter'] == 'author') {
-      return user_format_name($field['entity']);
+      return user_format_name($user);
     }
 
     if ($field['formatter'] == 'author_linked') {
-      return theme('username', array('account' => $field['entity']));
+      return theme('username', array('account' => $user));
     }
-
-    // Formatter handling isn't working yet
-    // Todo remove this once formatters are saved again.
-    return check_plain($field['entity']->name);
   }
 
   /**
