@@ -34,7 +34,7 @@ class NodeAuthor extends DsFieldBase {
     }
 
     if ($field['formatter'] == 'author') {
-      return check_plain($field['entity']->name);
+      return user_format_name($field['entity']);
     }
 
     if ($field['formatter'] == 'author_linked') {
