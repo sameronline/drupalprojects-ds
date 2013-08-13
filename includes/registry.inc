@@ -164,6 +164,14 @@ function _ds_ds_layout_info() {
       ),
       'image' => TRUE,
     ),
+    'ds_1col_wrapper' => array(
+       'label' => t('One column + wrapper'),
+        'path' => $path . '/layouts/ds_1col_wrapper',
+        'regions' => array(
+        'ds_content' => t('Content'),
+      ),
+      'image' => TRUE,
+    ),
     'ds_2col' => array(
       'label' => t('Two column'),
       'path' => $path . '/layouts/ds_2col',
