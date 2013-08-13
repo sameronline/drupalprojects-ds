@@ -51,9 +51,7 @@ class CodeFieldForm extends FieldFormBase {
 
       $form['tokens'] = array(
         '#title' => t('Tokens'),
-        '#type' => 'fieldset',
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
+        '#type' => 'container',
         '#states' => array(
           'invisible' => array(
             'input[name="use_token"]' => array('checked' => FALSE),
@@ -64,6 +62,7 @@ class CodeFieldForm extends FieldFormBase {
         '#theme' => 'token_tree',
         '#token_types' => 'all',
         '#global_types' => FALSE,
+        '#dialog' => TRUE,
       );
     }
     else {
