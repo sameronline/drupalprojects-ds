@@ -586,7 +586,7 @@ function ds_search_extra_variables($arg_keys = NULL) {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_search_form_search_form_alter(&$form, $form_state) {
-  if (variable_get('ds_search_type', 'node') == 'node' && $form['module']['#value'] == 'ds_search') {
+  if (variable_get('ds_search_type', 'node') == 'node' && isset($form['module']) && $form['module']['#value'] == 'ds_search') {
     if (variable_get('ds_search_node_form_alter', FALSE)) {
       $form['module']['#value'] = 'node';
       node_form_search_form_alter($form, $form_state);
