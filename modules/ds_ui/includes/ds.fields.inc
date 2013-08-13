@@ -269,8 +269,6 @@ function ds_edit_custom_field_form($form, &$form_state, $custom_field = '') {
     $form['tokens'] = array(
       '#title' => t('Tokens'),
       '#type' => 'container',
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
       '#states' => array(
         'invisible' => array(
           'input[name="use_token"]' => array('checked' => FALSE),
