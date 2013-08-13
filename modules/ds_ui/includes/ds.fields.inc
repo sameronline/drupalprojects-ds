@@ -359,6 +359,9 @@ function ds_edit_block_field_form($form, &$form_state, $custom_block = '') {
     }
   }
   ksort($blocks);
+  foreach($blocks as &$subarray) {
+    asort($subarray);
+  }
 
   $form['block_identity']['block'] = array(
     '#type' => 'select',
