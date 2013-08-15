@@ -11,104 +11,19 @@
  */
 
 /**
- * Define fields. These fields are not overridable through the interface.
- * If you want those, look at hook_ds_custom_fields_info().
+ * Modify the list of available ds field plugins.
  *
- * @param $entity_type
- *   The name of the entity which we are requesting fields for, e.g. 'node'.
+ * This hook may be used to modify plugin properties after they have been
+ * specified by other modules.
  *
- * @return $fields
- *   A collection of fields which keys are the entity type name and values
- *   a collection fields.
+ * @param array $plugins
+ *   An array of all the existing plugin definitions, passed by reference.
  *
- * @see ds_get_fields()
+ * @see \Drupal\views\Plugin\DsPluginManager
  */
-function hook_ds_fields_info($entity_type) {
-  $fields = array();
-
-  $fields['title'] = array(
-
-    // title: title of the field
-    'title' => t('Title'),
-
-    // type: type of field
-    // - DS_FIELD_TYPE_THEME      : calls a theming function.
-    // - DS_FIELD_TYPE_FUNCTION   : calls a custom function.
-    // - DS_FIELD_TYPE_CODE       : calls ds_render_code_field().
-    // - DS_FIELD_TYPE_BLOCK      : calls ds_render_block_field().
-    // - DS_FIELD_TYPE_PREPROCESS : calls nothing, just takes a key from the
-    //                              variable field that is passed on.
-    // - DS_FIELD_TYPE_IGNORE     : calls nothing, use this if you simple want
-    //                              to drag and drop. The field itself will have
-    //                              a theme function.
-    'field_type' => DS_FIELD_TYPE_FUNCTION,
-
-    // ui_limit : only used for the manage display screen so
-    // you can limit fields to show based on bundles or view modes
-    // the values are always in the form of $bundle|$view_mode
-    // You may use * to select all.
-    // Make sure you use the machine name.
-    'ui_limit' => array('article|full', '*|search_index'),
-
-    // file: an optional file in which the function resides.
-    // Only for DS_FIELD_TYPE_FUNCTION.
-    'file' => 'optional_filename',
-
-    // function: only for DS_FIELD_TYPE_FUNCTION.
-    'function' => 'theme_ds_title_field',
-
-    // properties: can have different keys.
-    'properties' => array(
-
-      // formatters: optional if a function is used.
-      // In case the field_type is DS_FIELD_TYPE_THEME, you also
-      // need to register these formatters as a theming function
-      // since the key will be called with theme('function').
-      // The value is the caption used in the selection config on Field UI.
-      'formatters' => array(
-        'node_title_nolink_h1' => t('H1 title'),
-        'node_title_link_h1' => t('H1 title, linked to node'),
-      ),
-
-      // settings & default: optional if you have a settings form for your field.
-      'settings' => array(
-        'wrapper' => array('type' => 'textfield', 'description' => t('Eg: h1, h2, p')),
-        'link' => array('type' => 'select', 'options' => array('yes', 'no')),
-      ),
-      'default' => array('wrapper' => 'h2', 'link' => 0),
-
-      // code: optional, only for code field.
-      'code' => 'my code here',
-
-      // use_token: optional, only for code field.
-      'use_token' => TRUE, // or FALSE,
-
-      // block: the module and delta of the block, only for block fields.
-      'block' => 'user-menu',
-
-      // block_render: block render type, only for block fields.
-      // - DS_BLOCK_CONTENT       : render through block template file.
-      // - DS_BLOCK_TITLE_CONTENT : render only title and content.
-      // - DS_BLOCK_CONTENT       : render only content.
-      'block_render' => DS_BLOCK_CONTENT,
-    )
-  );
-
-  return array('node' => $fields);
-
-}
-
-/**
- * Alter fields defined by Display Suite
- *
- * @param $fields
- *   An array with fields which can be altered just before they get cached.
- * @param $entity_type
- *   The name of the entity type.
- */
-function hook_ds_fields_info_alter(&$fields, $entity_type) {
-  if (isset($fields['title'])) {
-    $fields['title']['title'] = t('My title');
+function hook_ds_fields_info_alter(&$plugins) {
+  if (isset($plugins['title'])) {
+    $plugins['title']['description'] = t('My title');
   }
 }
 

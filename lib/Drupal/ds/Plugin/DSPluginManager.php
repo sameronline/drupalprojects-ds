@@ -38,7 +38,7 @@ class DsPluginManager extends DefaultPluginManager {
     parent::__construct('PLugin\DsField', $namespaces, $annotation_namespaces, 'Drupal\ds\Annotation\DsField');
 
     $this->alterInfo($module_handler, 'ds_field_info');
-    $this->setCacheBackend($cache_backend, $language_manager, 'ds_field_info');
+    $this->setCacheBackend($cache_backend, $language_manager, 'ds_fields_info');
   }
 
   /**
