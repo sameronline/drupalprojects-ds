@@ -32,12 +32,8 @@ abstract class DynamicField extends DerivativeBase {
             'properties' => $field['properties'],
             'entity_type' => $entity_type,
           );
-          dpm($field);
           if (!empty($field['ui_limit'])) {
             $this->derivatives[$key]['ui_limit'] = explode("\n", $field['ui_limit']);
-
-            dpm('wtf');
-            dpm($this->derivatives[$key]);
             // Ensure that all strings are trimmed, eg. don't have extra spaces,
             // \r chars etc.
             foreach ($this->derivatives[$key]['ui_limit'] as $k => $v) {
