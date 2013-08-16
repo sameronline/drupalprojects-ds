@@ -39,17 +39,6 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
   // Because it's possible to turn on/off features for DS extras,
   // we'll unset hooks here if necessary which otherwhise do nothing at all.
 
-  // Field template
-  $ft_hooks = array(
-    'ds_field_settings_alter',
-    'form_ds_classes_form_alter',
-    'form_field_ui_field_edit_form_alter',
-    'theme',
-  );
-  if (!config('ds.extras')->get('field_template') && in_array($hook, $ft_hooks)) {
-    unset($implementations['ds_extras']);
-  }
-
   // Region to block
   $region_hooks = array(
     'ds_layout_region_alter',

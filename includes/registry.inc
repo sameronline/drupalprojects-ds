@@ -23,15 +23,43 @@ function _ds_theme() {
   }
 
   // Field templates
-  $field_functions = module_invoke_all('ds_field_theme_functions_info');
-  foreach ($field_functions as $key => $label) {
-    $theme_functions[$key] = array(
-      'render element' => 'element',
-      'function' => $key,
-    );
+  if (Drupal::config('ds.settings')->get('field_template')) {
+    $field_functions = module_invoke_all('ds_field_theme_functions_info');
+    foreach ($field_functions as $key => $label) {
+      $theme_functions[$key] = array(
+        'render element' => 'element',
+        'function' => $key,
+      );
+    }
   }
 
   return $theme_functions;
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function _ds_module_implements_alter(&$implementations, $hook) {
+
+  // node_entity_display_alter() disables all labels on all fields
+  // when the view mode is 'search_index'. If you set display modes for
+  // this view mode by hand, then the hook isn't needed. Since this
+  // may be called dozens of times on some pages, it's worth disabling it.
+  if ($hook == 'entity_display_alter') {
+    unset($implementations['node']);
+  }
+
+  // Because it's possible to turn on/off field templates,
+  // we'll unset hooks here so ds_preprocess_field() doesn't run.
+
+  $ft_hooks = array(
+    'ds_field_settings_alter',
+    'form_ds_classes_form_alter',
+    'form_field_ui_field_edit_form_alter',
+  );
+  if (!Drupal::config('ds.settings')->get('field_template') && in_array($hook, $ft_hooks)) {
+    unset($implementations['ds']);
+  }
 }
 
 /**
@@ -105,6 +133,14 @@ function _ds_theme_registry_alter(&$theme_registry) {
   // Support for File Entity.
   if (isset($theme_registry['file_entity'])) {
     $theme_registry['file_entity']['preprocess functions'][] = 'ds_preprocess_ds_layout';
+  }
+
+  // Remove ds_preprocess_field in case field templates is not enabled.
+  if (!Drupal::config('ds.settings')->get('field_template')) {
+    $key = array_search('ds_preprocess_field', $theme_registry['field']['preprocess functions']);
+    if (!empty($key)) {
+      unset($theme_registry['field']['preprocess functions'][$key]);
+    }
   }
 }
 

@@ -196,13 +196,8 @@ function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
  * Implements hook_module_implements_alter().
  */
 function ds_module_implements_alter(&$implementations, $hook) {
-  // node_entity_display_alter() disables all labels on all fields
-  // when the view mode is 'search_index'. If you set display modes for
-  // this view mode by hand, then the hook isn't needed. Since this
-  // may be called dozens of times on some pages, it's worth disabling it.
-  if ($hook == 'entity_display_alter') {
-    unset($implementations['node']);
-  }
+  module_load_include('inc', 'ds', 'includes/registry');
+  _ds_module_implements_alter($implementations, $hook);
 }
 
 /**
@@ -919,7 +914,6 @@ function ds_ds_field_settings_alter(&$field_settings, $form, &$form_state) {
  * Implements hook_preprocess_field().
  */
 function ds_preprocess_field(&$variables) {
-
   // We need to be sure this field is in a layout which is rendered by DS.
   if (!ds_get_layout($variables['element']['#entity_type'], $variables['element']['#bundle'], $variables['element']['#view_mode'])) {
     return;
