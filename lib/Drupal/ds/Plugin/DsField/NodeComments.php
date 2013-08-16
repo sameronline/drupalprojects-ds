@@ -25,13 +25,12 @@ class NodeComments extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function displays() {
-    $displays = array(
-      '*|full',
-      '*|default',
-    );
+  public function isAllowed($bundle, $view_mode) {
+    if (in_array($view_mode, array('full', 'default'))) {
+      return TRUE;
+    }
 
-    return $displays;
+    return FALSE;
   }
 
 }

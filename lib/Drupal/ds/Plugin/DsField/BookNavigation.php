@@ -25,7 +25,12 @@ class BookNavigation extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function displays() {
+  public function isAllowed($bundle, $view_mode) {
+
+    // We only allow the 'full' view mode
+    if ($view_mode != 'full') {
+      return FALSE;
+    }
 
     // Get all the allowed types
     $types = config('book.settings')->get('allowed_types');
@@ -33,16 +38,13 @@ class BookNavigation extends DsFieldBase {
     $displays = array();
     if (!empty($types)) {
       foreach ($types as $type) {
-         $displays[] = $type . '|full';
+        if ($type)
+         return TRUE;
       }
     }
 
-    // When there are no displays, never render this field.
-    if (empty($displays)) {
-      return FALSE;
-    }
-
-    return $displays;
+    // Return false when there where no displays
+    return FALSE;
   }
 
 }

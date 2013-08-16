@@ -45,8 +45,8 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
   /**
    * {@inheritdoc}
    */
-  public function displays() {
-    return array();
+  public function isAllowed($bundle, $view_mode) {
+    return TRUE;
   }
 
   /**
