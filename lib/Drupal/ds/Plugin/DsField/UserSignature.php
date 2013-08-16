@@ -41,7 +41,7 @@ class UserSignature extends DsFieldBase {
    */
   public function isAllowed($bunlde, $view_mode) {
     // Checks if user signatures are enabled
-    $user_signatures = config('user.settings')->get('signatures');
+    $user_signatures = \Drupal::config('user.settings')->get('signatures');
 
     // We use this function to decide if we should show this field.
     // When user signatures are disabled we should ignore this.

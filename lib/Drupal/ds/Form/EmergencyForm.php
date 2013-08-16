@@ -34,7 +34,7 @@ class EmergencyForm implements FormInterface {
       '#type' => 'checkbox',
       '#title' => t('Disable attaching fields via Display Suite'),
       '#description' => t('In case you get an error after configuring a layout printing a message like "Fatal error: Unsupported operand types", you can temporarily disable adding fields from DS by toggling this checkbox. You probably are trying to render an node inside a node, for instance through a view, which is simply not possible. See <a href="http://drupal.org/node/1264386">http://drupal.org/node/1264386</a>.'),
-      '#default_value' => config('ds.settings')->get('disable', FALSE),
+      '#default_value' => \Drupal::config('ds.settings')->get('disable', FALSE),
       '#weight' => 0,
     );
 
@@ -46,7 +46,7 @@ class EmergencyForm implements FormInterface {
     );
 
     if (module_exists('ds_extras')) {
-      $region_blocks = config('ds.extras')->get('region_blocks', array());
+      $region_blocks = \Drupal::config('ds.extras')->get('region_blocks', array());
       if (!empty($region_blocks)) {
 
         $region_blocks_options = array();
@@ -95,7 +95,7 @@ class EmergencyForm implements FormInterface {
    * Submit callback for the fields error form.
    */
   public function submitFieldAttach(array &$form, array &$form_state) {
-    config('ds.settings')->set('disable', $form_state['values']['disable'])->save();
+    \Drupal::config('ds.settings')->set('disable', $form_state['values']['disable'])->save();
     drupal_set_message(t('The configuration options have been saved.'));
   }
 
@@ -105,7 +105,7 @@ class EmergencyForm implements FormInterface {
   public function submitRegionToBlock(array &$form, array &$form_state) {
     if (isset($form_state['values']['remove_block_region'])) {
       $save = FALSE;
-      $region_blocks = config('ds.extras')->get('region_blocks', array());
+      $region_blocks = \Drupal::config('ds.extras')->get('region_blocks', array());
       $remove = $form_state['values']['remove_block_region'];
       foreach ($remove as $key => $value) {
         if ($key === $value) {
@@ -120,7 +120,7 @@ class EmergencyForm implements FormInterface {
 
       if ($save) {
         drupal_set_message(t('Block regions were removed.'));
-        config('ds.extras')->et('region_blocks', $region_blocks);
+        \Drupal::config('ds.extras')->et('region_blocks', $region_blocks);
       }
     }
     else {

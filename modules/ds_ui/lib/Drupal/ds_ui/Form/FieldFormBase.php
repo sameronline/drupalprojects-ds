@@ -206,7 +206,7 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
    */
   public function ds_field_unique($name) {
     $value = strtr($name, array('-' => '_'));
-    if (config('ds.field.' . $value)->get()) {
+    if (\Drupal::config('ds.field.' . $value)->get()) {
       return TRUE;
     }
     return FALSE;

@@ -9,5 +9,5 @@
  * Implements hook_uninstall().
  */
 function ds_search_uninstall() {
-  config('ds.search')->delete();
+  Drupal::config('ds.search')->delete();
 }

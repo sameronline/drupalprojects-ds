@@ -77,7 +77,7 @@ class EntitiesTest extends BaseTest {
   function entitiesClearFieldSettings() {
     $field_settings = config_get_storage_names_with_prefix('ds_field_settings');
     foreach ($field_settings as $config) {
-      config($config)->delete();
+      \Drupal::config($config)->delete();
     }
     cache()->deleteTags(array('ds_fields' => TRUE));
     cache()->delete('ds_field_settings');
@@ -326,7 +326,7 @@ class EntitiesTest extends BaseTest {
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"label-inline\">My body:&nbsp;</div><p>" . $body_field . "</p>");
 
-    config('ds.extras')->set('ft-kill-colon', TRUE)->save();
+    \Drupal::config('ds.extras')->set('ft-kill-colon', TRUE)->save();
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"label-inline\">My body</div><p>" . $body_field . "</p>");

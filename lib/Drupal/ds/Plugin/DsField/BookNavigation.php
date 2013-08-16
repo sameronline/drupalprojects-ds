@@ -33,7 +33,7 @@ class BookNavigation extends DsFieldBase {
     }
 
     // Get all the allowed types
-    $types = config('book.settings')->get('allowed_types');
+    $types = \Drupal::config('book.settings')->get('allowed_types');
 
     $displays = array();
     if (!empty($types)) {

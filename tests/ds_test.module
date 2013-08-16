@@ -10,7 +10,7 @@
  */
 function ds_test_install() {
 
-  config('ds.extras')
+  Drupal::config('ds.extras')
     ->set('region_to_block', TRUE)
     ->set('switch_view_mode', TRUE)
     ->set('field_template', TRUE)

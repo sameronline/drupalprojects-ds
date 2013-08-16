@@ -78,7 +78,7 @@ class LayoutClassesTest extends BaseTest {
     $this->assertEqual($count, 1, t('Configuration file found for layout settings for node article'));
 
     // Lookup settings and verify.
-    $data = config('ds.layout_settings.node.article.default')->get('settings');
+    $data = \Drupal::config('ds.layout_settings.node.article.default')->get('settings');
     $this->assertTrue(in_array('ds_extras_extra_test_field', $data['regions']['header']), t('Extra field is in header'));
     $this->assertTrue(in_array('post_date', $data['regions']['header']), t('Post date is in header'));
     $this->assertTrue(in_array('test_field', $data['regions']['left']), t('Test field is in left'));
@@ -196,7 +196,7 @@ class LayoutClassesTest extends BaseTest {
     $this->assertRaw('<td colspan="8">' . t('Block region') . '</td>', 'Block region found');
 
     // Verify settings.
-    $data = config('ds.layout_settings.node.article.full')->get('settings');
+    $data = \Drupal::config('ds.layout_settings.node.article.full')->get('settings');
     $this->assertTrue(in_array('author', $data['regions']['header']), t('Author is in header'));
     $this->assertTrue(in_array('links', $data['regions']['header']), t('Links field is in header'));
     $this->assertTrue(in_array('body', $data['regions']['footer']), t('Body field is in footer'));

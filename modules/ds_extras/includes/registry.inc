@@ -11,7 +11,7 @@
 function _ds_extras_menu_alter(&$items) {
 
   // Switch view mode.
-  if (config('ds.extras')->get('switch_view_mode')) {
+  if (Drupal::config('ds.extras')->get('switch_view_mode')) {
 
     // Check if page manager is overriding.
     $skip_node_override = FALSE;
@@ -46,7 +46,7 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
     'block_info',
     'block_view'
   );
-  if (!config('ds.extras')->get('region_to_block', FALSE) && in_array($hook, $region_hooks)) {
+  if (!Drupal::config('ds.extras')->get('region_to_block', FALSE) && in_array($hook, $region_hooks)) {
     unset($implementations['ds_extras']);
   }
 
@@ -54,7 +54,7 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
   $switch_hooks = array(
     'form_node_form_alter',
   );
-  if (!config('ds.extras')->get('switch_view_mode', FALSE) && in_array($hook, $switch_hooks)) {
+  if (!Drupal::config('ds.extras')->get('switch_view_mode', FALSE) && in_array($hook, $switch_hooks)) {
     unset($implementations['ds_extras']);
   }
 }

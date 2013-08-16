@@ -50,7 +50,7 @@ function ds_extras_schema_alter(&$schema) {
  * Implements hook_uninstall().
  */
 function ds_extras_uninstall() {
-  config('ds.extras')->delete();
+  Drupal::config('ds.extras')->delete();
   db_drop_field('node_field_data', 'ds_switch');
   db_drop_field('node_field_revision', 'ds_switch');
 }

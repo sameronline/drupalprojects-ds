@@ -125,7 +125,7 @@ function ds_extras_settings_submit($form, &$form_state) {
 function ds_extras_field_ui_alter(&$form, &$form_state) {
   // Region to block only fires if there is a layout and we're working on the
   // a view mode which is not equal to default.
-  if (isset($form['#ds_layout']) && $form['#mode'] != 'default' && config('ds.extras')->get('region_to_block')) {
+  if (isset($form['#ds_layout']) && $form['#mode'] != 'default' && Drupal::config('ds.extras')->get('region_to_block')) {
 
     $layout = $form['#ds_layout'];
 
@@ -135,7 +135,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
     $view_mode = $form['#mode'];
 
     $region_blocks_options = array();
-    $region_blocks = config('ds.extras')->get('region_blocks');
+    $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
     foreach ($region_blocks as $key => $block) {
       if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
         $region_blocks_options[$key] = t('Remove') . ' ' . $block['title'];
@@ -203,7 +203,7 @@ function ds_extras_ds_field_settings_form($field) {
   $form = array();
 
   // Switch field.
-  if (config('ds.extras')->get('switch_field') && $field['name'] == 'switch_field') {
+  if (Drupal::config('ds.extras')->get('switch_field') && $field['name'] == 'switch_field') {
     $entity_type = $field['entity_type'];
     $bundle = $field['bundle'];
     $view_mode = $field['view_mode'];
@@ -260,17 +260,17 @@ function ds_extras_block_submit($form, &$form_state) {
     );
 
     $block_key = $form_state['values']['new_block_region_key'];
-    $region_blocks = config('ds.extras')->get('blocks');
+    $region_blocks = Drupal::config('ds.extras')->get('blocks');
     if (empty($region_blocks)) {
       $region_blocks = array();
     }
     $region_blocks[$block_key] = $block;
-    config('ds.extras')->set('region_blocks', $region_blocks)->save();
+    Drupal::config('ds.extras')->set('region_blocks', $region_blocks)->save();
   }
 
   // Remove a region.
   if (isset($form_state['values']['remove_block_region'])) {
-    $region_blocks = config('ds.extras')->get('blocks');
+    $region_blocks = Drupal::config('ds.extras')->get('blocks');
     $remove = $form_state['values']['remove_block_region'];
     foreach ($remove as $key => $value) {
       if ($key === $value) {
@@ -281,7 +281,7 @@ function ds_extras_block_submit($form, &$form_state) {
     // Clear the ds plugin cache
     cache('block_plugins')->invalidateAll();
 
-    config('ds.extras')->set('region_blocks', $region_blocks)->save();
+    Drupal::config('ds.extras')->set('region_blocks', $region_blocks)->save();
   }
 }
 
@@ -289,7 +289,7 @@ function ds_extras_block_submit($form, &$form_state) {
  * Return unique region to block.
  */
 function ds_extras_region_to_block_unique($name) {
-  $region_blocks = config('ds.extras')->get('region_blocks');
+  $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
   if (empty($region_blocks)) {
     $region_blocks = array();
   }

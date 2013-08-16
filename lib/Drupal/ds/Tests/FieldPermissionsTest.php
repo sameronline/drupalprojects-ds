@@ -32,7 +32,7 @@ class FieldPermissionsTest extends BaseTest {
       'fields[ds_test_field][region]' => 'left',
     );
 
-    config('ds.extras')->set('field_permissions', TRUE)->save();
+    \Drupal::config('ds.extras')->set('field_permissions', TRUE)->save();
     drupal_container()->get('module_handler')->resetImplementations();
 
     $this->dsSelectLayout();

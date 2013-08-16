@@ -16,8 +16,8 @@ function ds_install() {
  * Implements hook_uninstall().
  */
 function ds_uninstall() {
-  config('ds.classes')->delete();
-  config('ds.settings')->delete();
+  Drupal::config('ds.classes')->delete();
+  Drupal::config('ds.settings')->delete();
 }
 
 /**

@@ -450,7 +450,7 @@ function ds_field_ui_layout_change_submit($form, &$form_state) {
   }
 
   // Save configuration.
-  config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
+  Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
 
   // Clear entity info cache.
   entity_info_cache_clear();
@@ -486,7 +486,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
-    config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
+    Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
   }
 
   if ($new_layout && !empty($layout)) {
@@ -530,7 +530,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     }
 
     // Save the configuration.
-    config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
+    Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
   }
   // Update existing layout.
   elseif (!empty($layout)) {
@@ -596,7 +596,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     drupal_alter('ds_layout_settings', $record, $form_state);
 
     // Save the configuration.
-    config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
+    Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
 
     // Clear entity info cache.
     entity_info_cache_clear();
@@ -666,7 +666,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
     $config['bundle'] = $bundle;
     $config['view_mode'] = $view_mode;
     $config['settings'] = $field_settings;
-    config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($config)->save();
+    Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($config)->save();
   }
 
   // Clear the ds_fields cache.
@@ -684,10 +684,10 @@ function ds_field_ui_layout_clone($form, &$form_state) {
   $bundle = $form['#bundle'];
   $view_mode = $form['#mode'];
 
-  $layout = config('ds.layout_settings'. $ce  . '.' . $cb . '.' . $cv)->get();
+  $layout = Drupal::config('ds.layout_settings'. $ce  . '.' . $cb . '.' . $cv)->get();
 
   // Delete previous field configuration - @todo where's the clone anyway ?
-  config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
+  Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
 
   // Save new layout record for ds.
   if ($layout) {
@@ -703,7 +703,7 @@ function ds_field_ui_layout_clone($form, &$form_state) {
     drupal_alter('ds_layout_settings', $record, $form_state);
 
     // Save layout record.
-    config('ds.layout_settings' . '.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
+    Drupal::config('ds.layout_settings' . '.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
 
     // Copy the view mode settings.
     _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $cv);
@@ -795,7 +795,7 @@ function ds_field_settings_form($field, &$form_state) {
   $form = module_invoke($field['module'], 'ds_field_settings_form', $field);
 
   // Add field template settings to every field if enabled.
-  if (config('ds.settings')->get('field_template')) {
+  if (Drupal::config('ds.settings')->get('field_template')) {
     $context = array(
       'instance' => array(
         'entity_type' => $field['entity_type'],
@@ -941,7 +941,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
 
   $layout = array();
   list($ce, $cb, $cv) = explode('|', $form['#export_id']);
-  $layout = config('ds.layout_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
+  $layout = Drupal::config('ds.layout_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
 
   if (!empty($layout) && isset($layout['layout']) && isset($ds_layouts[$layout['layout']])) {
     $layout['regions'] = $ds_layouts[$layout['layout']]['regions'];
@@ -1053,7 +1053,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       $options = array();
       $ds_layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $bundle);
       foreach ($ds_layout_settings as $config) {
-        $row = config($config)->get();
+        $row = Drupal::config($config)->get();
         // Do not clone from form layouts.
         if ($row['view_mode'] == 'form') {
           continue;
@@ -1573,7 +1573,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       }
 
       // Add the field templates form when needed
-      if (config('ds.settings')->get('field_template')) {
+      if (Drupal::config('ds.settings')->get('field_template')) {
         $context = array(
           'instance' => $instance,
           'view_mode' => $view_mode,
@@ -1770,7 +1770,7 @@ function _ds_classes($name = 'regions') {
 
   if (!isset($classes[$name])) {
     $classes[$name] = array();
-    $custom_classes = trim(config('ds.classes')->get($name));
+    $custom_classes = trim(Drupal::config('ds.classes')->get($name));
     if (!empty($custom_classes)) {
       $classes[$name][''] = t('None');
       $custom_classes = explode("\n", $custom_classes);

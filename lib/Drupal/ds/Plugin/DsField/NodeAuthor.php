@@ -30,7 +30,7 @@ class NodeAuthor extends DsFieldBase {
 
     // Users without a user name are anonymous users. These are never linked.
     if (empty($user->name)) {
-      $anonymous_string = config('user.settings')->get('anonymous');
+      $anonymous_string = \Drupal::config('user.settings')->get('anonymous');
       return check_plain($anonymous_string);
     }
 

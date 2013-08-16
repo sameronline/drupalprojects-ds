@@ -86,13 +86,13 @@ function ds_search_ds_fields_info($entity_type) {
       'title' => t('Search snippet'),
       'field_type' => DS_FIELD_TYPE_FUNCTION,
       'function' => 'ds_search_snippet',
-      'ui_limit' => array('*|' . config('ds.search')->get('view_mode')),
+      'ui_limit' => array('*|' . Drupal::config('ds.search')->get('view_mode')),
     );
     $fields['node']['search_info'] = array(
       'title' => t('Search info'),
       'field_type' => DS_FIELD_TYPE_FUNCTION,
       'function' => 'ds_search_extra_info',
-      'ui_limit' => array('*|' . config('ds.search')->get('view_mode')),
+      'ui_limit' => array('*|' . Drupal::config('ds.search')->get('view_mode')),
     );
   }
 
@@ -131,7 +131,7 @@ function ds_search_extra_info($field) {
 function ds_search_search_info() {
   return array(
     'title' => 'Content',
-    'path' => config('ds.search')->get('search_path'),
+    'path' => Drupal::config('ds.search')->get('search_path'),
   );
 }
 
@@ -161,7 +161,7 @@ function ds_search_search_execute($keys = NULL, $conditions = NULL) {
   // because some modules already called drupal_render and were unsetting
   // the #theme key. By using our own search info type, we can call
   // hook_search_page ourselves and be as flexible as we need to be.
-  $ds_search_type = config('ds.search')->get('search_type') . '_ds_search_execute';
+  $ds_search_type = Drupal::config('ds.search')->get('search_type') . '_ds_search_execute';
 
   // Make sure the function exists.
   if (function_exists($ds_search_type)) {
@@ -192,14 +192,14 @@ function ds_search_get_keys($keys = NULL) {
  */
 function ds_search_invoke_node_search($hook) {
 
-  $enabled_search_modules = config('search.settings')->get('active_modules');
+  $enabled_search_modules = Drupal::config('search.settings')->get('active_modules');
 
   // If node search is enabled, core is invoking it.
   if (isset($enabled_search_modules['node']) && $enabled_search_modules['node'] === 'node') {
     return;
   }
   else {
-    $ds_search_type = config('ds.search')->get('search_type');
+    $ds_search_type = Drupal::config('ds.search')->get('search_type');
     if ($ds_search_type != 'node') {
       return;
     }
@@ -218,12 +218,12 @@ function ds_search_search_page($results) {
   ds_build_shared_page_variables($build);
 
 
-  $data = entity_view_multiple($results, config('ds.search')->get('view_mode'));
+  $data = entity_view_multiple($results, Drupal::config('ds.search')->get('view_mode'));
   $build['search_results'] = $data;
   /*$i = 0;
   $parity = 'odd';
   foreach ($results as $id => $result) {
-    $data = entity_view_mul($result, config('ds.search')->get('view_mode'));
+    $data = entity_view_mul($result, Drupal::config('ds.search')->get('view_mode'));
     $data[$result->entity_id]['#weight'] = $i;
     $build['search_results'][$i] = $data[$result->entity_id];
     $build['search_results'][$i]['#node']->ds_search_zebra = $parity;
@@ -274,7 +274,7 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
   // Add the ranking expressions.
   _node_rankings($query);
 
-  $limit = config('ds.search')->get('search_node_limit');
+  $limit = Drupal::config('ds.search')->get('search_node_limit');
   $query->limit($limit);
 
    // Load results.
@@ -309,7 +309,7 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
 /**
  * Override search results page for users.
  */
-if (config('ds.search')->get('user_override_search_page')) {
+if (Drupal::config('ds.search')->get('user_override_search_page')) {
   function user_search_page($results) {
     $build = array('#type' => 'user');
     global $base_url;
@@ -340,7 +340,7 @@ if (config('ds.search')->get('user_override_search_page')) {
       if (!empty($uids)) {
         $accounts = user_load_multiple($uids);
         foreach ($accounts as $account) {
-          $build['search_results'][$account->uid] = user_view($account, config('ds.search')->get('view_mode'));
+          $build['search_results'][$account->uid] = user_view($account, Drupal::config('ds.search')->get('view_mode'));
         }
       }
     }
@@ -357,7 +357,7 @@ if (config('ds.search')->get('user_override_search_page')) {
  *   The build array.
  */
 function ds_build_shared_page_variables(&$build) {
-  $config = config('ds.search');
+  $config = Drupal::config('ds.search');
 
   // Search results title.
   if ($config->get('show_title')) {
@@ -392,7 +392,7 @@ function ds_build_shared_page_variables(&$build) {
  * Return the extra variables.
  */
 function ds_search_extra_variables($arg_keys = NULL) {
-  $type = config('ds.search')->get('search_variables');
+  $type = Drupal::config('ds.search')->get('search_variables');
 
   // Define the number of results being shown on a page.
   // We rely on the apache solr rows for now.
@@ -436,8 +436,8 @@ function ds_search_extra_variables($arg_keys = NULL) {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_search_form_search_form_alter(&$form, $form_state) {
-  if (config('ds.search')->get('search_type') == 'node' && isset($form['module']) && $form['module']['#value'] == 'ds_search') {
-    if (config('ds.search')->get('node_form_alter', FALSE)) {
+  if (Drupal::config('ds.search')->get('search_type') == 'node' && isset($form['module']) && $form['module']['#value'] == 'ds_search') {
+    if (Drupal::config('ds.search')->get('node_form_alter', FALSE)) {
       $form['module']['#value'] = 'node';
       node_form_search_form_alter($form, $form_state);
     }

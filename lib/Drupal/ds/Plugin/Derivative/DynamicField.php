@@ -22,7 +22,7 @@ abstract class DynamicField extends DerivativeBase {
     $custom_fields = config_get_storage_names_with_prefix('ds.field.');
 
     foreach ($custom_fields as $config) {
-      $field = config($config)->get();
+      $field = \Drupal::config($config)->get();
       if ($field['field_type'] == $this->getType()) {
         $key = 'dynamic_code_field:' . $field['field'];
         foreach ($field['entities'] as $entity_type) {

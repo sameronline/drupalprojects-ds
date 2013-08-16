@@ -9,7 +9,7 @@
  * Menu callback: Display Suite search settings.
  */
 function ds_search_settings($form, $form_state) {
-  $config = config('ds.search');
+  $config = Drupal::config('ds.search');
 
   $form['general'] = array(
     '#type' => 'details',
@@ -117,12 +117,12 @@ function ds_search_settings($form, $form_state) {
 
   $form['node']['search_node_limit'] = array(
     '#type' => 'textfield',
-    '#default_value' => config('ds.search')->get('search_node_limit'),
+    '#default_value' => Drupal::config('ds.search')->get('search_node_limit'),
     '#title' => t('Node search limit'),
     '#description' => t('The number of items to display per page. Enter 0 for no limit.'),
   );
 
-  $active = config('search.settings')->get('active_modules');
+  $active = Drupal::config('search.settings')->get('active_modules');
   if (isset($active['user']) && $active['user'] !== 0) {
     $form['user'] = array(
       '#type' => 'details',
@@ -147,7 +147,7 @@ function ds_search_settings($form, $form_state) {
  */
 function ds_search_settings_submit($form, $form_state) {
 
-  config('ds.search')
+  Drupal::config('ds.search')
     ->set('search_type', $form_state['values']['search_type'])
     ->set('view_mode', $form_state['values']['view_mode'])
     ->set('search_path', $form_state['values']['search_path'])

@@ -30,7 +30,7 @@ class DsRegionBlock extends BlockBase {
     list(, $id) = explode(':', $this->getPluginId());
 
     $data = drupal_static('ds_block_region');
-    $region_blocks = config('ds.extras')->get('region_blocks');
+    $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
 
     if (!empty($data[$id])) {
       return array(

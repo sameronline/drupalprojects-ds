@@ -13,7 +13,7 @@ use Drupal\node\Plugin\Core\Entity\Node;
 function ds_extras_menu() {
   $items = array();
 
-  if (config('ds.extras')->get('switch_field')) {
+  if (Drupal::config('ds.extras')->get('switch_field')) {
     $items['ds-switch-view-mode'] = array(
       'title' => 'Switch view',
       'route_name' => 'ds_switch_view_mode',
@@ -27,7 +27,7 @@ function ds_extras_menu() {
  * Implements hook_ds_layout_info_alter().
  */
 function ds_extras_ds_layout_info_alter(&$layouts) {
-  if (config('ds.extras')->get('hidden_region')) {
+  if (Drupal::config('ds.extras')->get('hidden_region')) {
     foreach ($layouts as $key => $layout) {
       $layouts[$key]['regions']['ds_hidden'] = t('Hidden');
     }
@@ -41,7 +41,7 @@ function ds_extras_permission() {
   $permissions = array();
 
   // Extra check to make sure this doesn't get fired on install.
-  if (config('ds.extras')->get('switch_view_mode')) {
+  if (Drupal::config('ds.extras')->get('switch_view_mode')) {
     foreach (node_type_get_names() as $key => $name) {
       $permissions['ds_switch ' . $key] = array(
         'title' => t('Switch view modes on :type', array(':type' => $name))
@@ -49,7 +49,7 @@ function ds_extras_permission() {
     }
   }
 
-  if (config('ds.extras')->get('field_permissions')) {
+  if (Drupal::config('ds.extras')->get('field_permissions')) {
     $entities = entity_get_info();
     foreach ($entities as $entity_type => $info) {
       $fields = ds_get_fields($entity_type);
@@ -136,7 +136,7 @@ function ds_extras_field_attach_view_alter(&$build, $context) {
   $view_mode = $context['view_mode'];
 
   $block_data = &drupal_static('ds_block_region');
-  $region_blocks = config('ds.extras')->get('region_blocks');
+  $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
 
   if (empty($region_blocks) || empty($build)) {
     return;
@@ -306,7 +306,7 @@ function ds_extras_entity_field_info_alter(&$info, $entity_type) {
  */
 function ds_extras_ds_layout_region_alter($context, &$region_info) {
 
-  $region_blocks = config('ds.extras')->get('region_blocks');
+  $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
 
   // Bail out if region_blocks is empty or we are working on default view mode.
   if (empty($region_blocks) || $context['view_mode'] == 'default') {
@@ -336,8 +336,8 @@ function ds_extras_ds_layout_region_alter($context, &$region_info) {
 function ds_extras_field_extra_fields() {
   $extra = array();
 
-  if (config('ds.extras')->get('fields_extra')) {
-    $fields = explode("\n", config('ds.extras')->get('fields_extra_list'));
+  if (Drupal::config('ds.extras')->get('fields_extra')) {
+    $fields = explode("\n", Drupal::config('ds.extras')->get('fields_extra_list'));
     if (empty($fields)) {
       return $extra;
     }

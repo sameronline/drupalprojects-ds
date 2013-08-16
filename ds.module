@@ -205,7 +205,7 @@ function ds_module_implements_alter(&$implementations, $hook) {
  */
 function ds_kill_switch() {
   // @todo move to state.
-  if (config('ds.settings')->get('disable')) {
+  if (Drupal::config('ds.settings')->get('disable')) {
     return TRUE;
   }
   return FALSE;
@@ -335,7 +335,7 @@ function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRU
     else {
       $ds_field_settings = config_get_storage_names_with_prefix('ds.field_settings');
       foreach ($ds_field_settings as $config) {
-        $field_setting = config($config)->get();
+        $field_setting = Drupal::config($config)->get();
         if (!isset($field_setting['settings'])) {
           continue;
         }
@@ -398,7 +398,7 @@ function ds_field_attach_view_alter(&$build, $context) {
 
   if (!$loaded) {
     $loaded = TRUE;
-    $field_permissions = config('ds.extras')->get('field_permissions');
+    $field_permissions = Drupal::config('ds.extras')->get('field_permissions');
   }
 
   // Global kill switch. In some edge cases, a view might
@@ -689,7 +689,7 @@ function theme_ds_field_reset($variables) {
   // Render the label.
   if (!$variables['label_hidden']) {
     $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
-    if (!config('ds.settings')->get('ft-kill-colon')) {
+    if (!Drupal::config('ds.settings')->get('ft-kill-colon')) {
       $output .= ':&nbsp;';
     }
     $output .= '</div>';
@@ -824,7 +824,7 @@ function theme_ds_field_expert($variables) {
 function ds_ds_field_settings_alter(&$field_settings, $form, &$form_state) {
 
   $fields = $form_state['values']['fields'];
-  $default_field_function = config('ds.settings')->get('ft-default');
+  $default_field_function = Drupal::config('ds.settings')->get('ft-default');
 
   $wrappers = array(
     'ow' => t('Wrapper'),
@@ -981,7 +981,7 @@ function ds_preprocess_field(&$variables) {
   }
   // Use Display Suite Extras Default theming function.
   elseif (!isset($config['func']) || empty($config['func'])) {
-    $field_theme_function = config('ds.settings')->get('ft-default');
+    $field_theme_function = Drupal::config('ds.settings')->get('ft-default');
     if ($field_theme_function != 'theme_field') {
       $variables['theme_hook_suggestions'] = array();
       $variables['ds-config'] = $config;
@@ -1002,7 +1002,7 @@ function ds_preprocess_field(&$variables) {
  */
 function ds_field_template_settings_form(array &$form, array &$form_state, array $context) {
   $functions = module_invoke_all('ds_field_theme_functions_info');
-  $default_field_function = config('ds.settings')->get('ft-default');
+  $default_field_function = Drupal::config('ds.settings')->get('ft-default');
   if (empty($default_field_function)) {
     $default_field_function = 'theme_field';
   }
@@ -1094,7 +1094,7 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
       $form['ft']['lb-col'] = array(
         '#type' => 'checkbox',
         '#title' => t('Hide label colon'),
-        '#default_value' => isset($field_settings['lb-col']) ? $field_settings['lb-col'] : config('ds.settings')->get('ft-kill-colon'),
+        '#default_value' => isset($field_settings['lb-col']) ? $field_settings['lb-col'] : Drupal::config('ds.settings')->get('ft-kill-colon'),
         '#attributes' => array(
           'class' => array('colon-checkbox'),
         ),
@@ -1137,11 +1137,11 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
  * Implements hook_field_formatter_settings_summary_alter.
  */
 function ds_field_formatter_settings_summary_alter(&$summary, $context) {
-  if (config('ds.settings')->get('field_template')) {
+  if (Drupal::config('ds.settings')->get('field_template')) {
     // Field template summary
     $functions = module_invoke_all('ds_field_theme_functions_info');
     $field = $context['field'];
-    $default_field_function = config('ds.settings')->get('ft-default');
+    $default_field_function = Drupal::config('ds.settings')->get('ft-default');
     $field_function = isset($form_state['plugin_settings'][$field['name']]['ft']['func']) ? $form_state['plugin_settings'][$field['name']]['ft']['func'] : $default_field_function;
 
     $summary[] = 'Field template: ' . check_plain($functions[$field_function]);

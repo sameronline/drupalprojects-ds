@@ -67,7 +67,7 @@ class SwitchField extends DsFieldBase {
   public function displays() {
 
     // Get all the allowed types
-    if (!config('ds.extras')->get('switch_field')) {
+    if (!\Drupal::config('ds.extras')->get('switch_field')) {
       return FALSE;
     }
     else {
@@ -79,7 +79,7 @@ class SwitchField extends DsFieldBase {
   // TODO LOOK INTO FLAG SUPPORT
 
   // Flag support.
-  // if (config('ds.extras')->get('flag') && module_exists('flag')) {
+  // if (\Drupal::config('ds.extras')->get('flag') && module_exists('flag')) {
   //   if ($entity_type == 'node') {
   //     $flags = flag_get_flags('node');
   //     foreach ($flags as $name => $flag) {

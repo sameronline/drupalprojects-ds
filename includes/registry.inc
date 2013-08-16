@@ -78,12 +78,12 @@ function _ds_entity_type_update($entity_type, $info, $action) {
   if ($action == 'delete') {
     $layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $info->type);
     foreach ($layout_settings as $config) {
-      config($config)->delete();
+      Drupal::config($config)->delete();
     }
 
     $field_settings = config_get_storage_names_with_prefix('ds.field_settings.' . $entity_type . '.' . $info->type);
     foreach ($field_settings as $config) {
-      config($config)->delete();
+      Drupal::config($config)->delete();
     }
   }
 
@@ -92,18 +92,18 @@ function _ds_entity_type_update($entity_type, $info, $action) {
     $layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $info->old_type);
     foreach ($layout_settings as $config) {
       $new_id = $entity_type . '|' . $info->type . '|' . $config['view_mode'];
-      if (config($config)->rename($new_id)) {
-        $new_config = config($new_id)->get();
-        config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
+      if (Drupal::config($config)->rename($new_id)) {
+        $new_config = Drupal::config($new_id)->get();
+        Drupal::config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
       }
     }
 
     $field_settings = config_get_storage_names_with_prefix('ds.field_settings.' . $entity_type . '.' . $info->old_type);
     foreach ($field_settings as $config) {
       $new_id = $entity_type . '|' . $info->type . '|' . $config['view_mode'];
-      if (config($config)->rename($new_id)) {
-        $new_config = config($new_id)->get();
-        config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
+      if (Drupal::config($config)->rename($new_id)) {
+        $new_config = Drupal::config($new_id)->get();
+        Drupal::config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
       }
     }
   }
@@ -153,7 +153,7 @@ function _ds_entity_bundle_info_alter(&$bundles) {
   $ds_layouts = ds_get_layout_info();
   $ds_layout_settings = config_get_storage_names_with_prefix('ds.layout_settings');
   foreach ($ds_layout_settings as $config) {
-    $ds_layout_setting = config($config)->get();
+    $ds_layout_setting = Drupal::config($config)->get();
 
     // Don't store any configurations with layouts that don't exist anymore.
     if (!isset($ds_layouts[$ds_layout_setting['layout']])) {
