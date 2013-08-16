@@ -49,6 +49,8 @@ class SettingsForm extends SystemConfigFormBase {
   public function buildForm(array $form, array &$form_state) {
     $config = $this->configFactory->get('ds.settings');
 
+    // @todo fix states and info in vertical tabs - also in extras.
+
     $form['additional_settings'] = array(
       '#type' => 'vertical_tabs',
     );
