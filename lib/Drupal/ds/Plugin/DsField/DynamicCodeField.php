@@ -9,6 +9,7 @@ namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\ds\Annotation\DsField;
 use Drupal\Core\Annotation\Translation;
+use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
  * Defines a generic dynamic code field.
@@ -43,19 +44,6 @@ class DynamicCodeField extends CodeBase {
   public function isAllowed($bundle, $view_mode) {
     $definition = $this->getPluginDefinition();
 
-    if (!isset($definition['ui_limit'])) {
-      return TRUE;
-    }
-
-    $limits = $definition['ui_limit'];
-    foreach ($limits as $limit) {
-      list($bundle_limit, $view_mode_limit) = explode('|', $limit);
-
-      if (($bundle_limit == $bundle || $bundle_limit == '*') && $view_mode_limit == $view_mode) {
-        return FALSE;
-      }
-    }
-
-    return TRUE;
+    return DsFieldBase::dynamicFieldIsAllowed($definition, $bundle, $view_mode);
   }
 }

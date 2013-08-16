@@ -59,4 +59,36 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
     return $settings;
   }
 
+  /**
+   * Checks if the dynamic field is allowed to display on this field UI page.
+   *
+   * This is a helper function for the dynamic plugins defined in the UI.
+   *
+   * @param array $defintion
+   *   The defintion of the plugin
+   * @param string $bundle
+   *   The bundle you're performing the check for.
+   * @param string $view_mode
+   *   The view mode you're performing the check for.
+   */
+  public static function dynamicFieldIsAllowed(array $definition, $bundle, $view_mode) {
+
+    if (!isset($definition['ui_limit'])) {
+      return TRUE;
+    }
+
+    $limits = $definition['ui_limit'];
+    foreach ($limits as $limit) {
+      list($bundle_limit, $view_mode_limit) = explode('|', $limit);
+
+      if (($bundle_limit == $bundle || $bundle_limit == '*') && ($view_mode_limit == $view_mode || $view_mode_limit == '*')) {
+        return TRUE;
+      }
+    }
+
+    // When the current bundle view_mode combination is not allowed we shouldn't
+    // show the field.
+    return FALSE;
+  }
+
 }
