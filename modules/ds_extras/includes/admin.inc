@@ -294,6 +294,9 @@ function ds_extras_block_submit($form, &$form_state) {
       }
     }
 
+    // Clear the ds plugin cache
+    cache('block_plugins')->invalidateAll();
+
     config('ds.extras')->set('region_blocks', $region_blocks)->save();
   }
 }
