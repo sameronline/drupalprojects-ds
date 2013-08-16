@@ -28,4 +28,30 @@ class DynamicBlockField extends BlockBase {
     $definition = $this->getPluginDefinition();
     return $definition['properties']['block'];
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isAllowed($bundle, $view_mode) {
+    $definition = $this->getPluginDefinition();
+
+    if (!isset($definition['ui_limit'])) {
+      return TRUE;
+    }
+
+    $limits = $definition['ui_limit'];
+    dpm($limits);
+    foreach ($limits as $limit) {
+      dpm($limit);
+      dpm('test');
+      list($bundle_limit, $view_mode_limit) = explode('|', $limit);
+
+      if (($bundle_limit == $bundle || $bundle_limit == '*') && $view_mode_limit == $view_mode) {
+        return FALSE;
+      }
+    }
+
+    return TRUE;
+  }
+
 }
