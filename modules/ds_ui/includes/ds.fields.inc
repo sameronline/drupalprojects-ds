@@ -245,6 +245,8 @@ function ds_shared_form_submit($form, &$form_state) {
  * Manage a custom field.
  */
 function ds_edit_custom_field_form($form, &$form_state, $custom_field = '') {
+  drupal_set_title(empty($custom_field) ? t('Add a code field') : t('Edit code field'));
+
   $custom_field = ds_shared_form($form, $custom_field);
 
   $form['code'] = array(
@@ -304,6 +306,8 @@ function ds_custom_field_form_validate($form, &$form_state) {
  * Manage a CTools field.
  */
 function ds_edit_ctools_field_form($form, &$form_state, $ctools_field = '') {
+  drupal_set_title(empty($ctools_field) ? t('Add a dynamic field') : t('Edit dynamic field'));
+
   $custom_field = ds_shared_form($form, $ctools_field);
   $form['info'] = array(
     '#markup' => t('The content of this field is configurable on the "Manage display" screens.'),
@@ -326,6 +330,8 @@ function ds_ctools_field_form_validate($form, &$form_state) {
  * Manage a Preprocess field.
  */
 function ds_edit_preprocess_field_form($form, &$form_state, $preprocess_field = '') {
+  drupal_set_title(empty($preprocess_field) ? t('Add a preprocess field') : t('Edit preprocess field'));
+
   $custom_field = ds_shared_form($form, $preprocess_field);
   $form['info'] = array(
     '#markup' => t('The machine name of this field must reflect the key in the variables, e.g. "submitted". So in most cases, it is very likely you will have to manually edit the machine name as well, which can not be changed anymore after saving. Note that this field type works best on Nodes.'),
@@ -346,6 +352,8 @@ function ds_preprocess_field_form_validate($form, &$form_state) {
  * Manage a custom block.
  */
 function ds_edit_block_field_form($form, &$form_state, $custom_block = '') {
+  drupal_set_title(empty($custom_block) ? t('Add a block field') : t('Edit block field'));
+
   $custom_block = ds_shared_form($form, $custom_block);
 
   $blocks = array();
