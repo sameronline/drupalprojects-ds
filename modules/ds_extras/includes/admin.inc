@@ -286,23 +286,15 @@ function ds_extras_block_submit($form, &$form_state) {
 
   // Remove a region.
   if (isset($form_state['values']['remove_block_region'])) {
-    $save = FALSE;
     $region_blocks = config('ds.extras')->get('blocks');
     $remove = $form_state['values']['remove_block_region'];
     foreach ($remove as $key => $value) {
       if ($key === $value) {
-        $save = TRUE;
-        db_delete('block')
-          ->condition('delta', $key)
-          ->condition('module', 'ds_extras')
-          ->execute();
         unset($region_blocks[$key]);
       }
     }
 
-    if ($save) {
-      config('ds.extras')->set('region_blocks', $region_blocks)->save();
-    }
+    config('ds.extras')->set('region_blocks', $region_blocks)->save();
   }
 }
 
