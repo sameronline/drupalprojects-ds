@@ -8,11 +8,11 @@
 use Drupal\Core\Extension\ModuleHandler;
 
 /**
- * Menu callback: Display Suite extras settings.
+ * Alters the Display Suite settings screen.
  */
 function ds_extras_settings_alter(&$form, &$form_state) {
 
-  $config = config('ds.extras');
+  $config = Drupal::config('ds.extras');
 
   $form['fs2'] = array(
     '#type' => 'details',
@@ -92,25 +92,9 @@ function ds_extras_settings_alter(&$form, &$form_state) {
     '#default_value' => $config->get('hidden_region'),
   );
 
-  $form['#validate'][] = 'ds_extras_settings_validate';
   $form['#submit'][] = 'ds_extras_settings_submit';
   $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/js/ds_extras.admin.js';
 
-}
-
-/**
- * Validate callback: Extras settings screen.
- */
-function ds_extras_settings_validate($form, &$form_state) {
-  foreach ($form_state['values'] as $tab => $value) {
-    if (is_array($value)) {
-      foreach ($value as $variable => $val) {
-        $form_state['values'][$variable] = $val;
-      }
-    }
-    unset($form_state['values'][$tab]);
-  }
-  unset($form_state['values']['submit'], $form_state['values']['form_id'], $form_state['values']['form_token'], $form_state['values']['form_build_id'], $form_state['values']['op']);
 }
 
 /**
@@ -119,18 +103,18 @@ function ds_extras_settings_validate($form, &$form_state) {
 function ds_extras_settings_submit($form, &$form_state) {
   $values = $form_state['values'];
 
-  $config = Drupal::config('ds.extras');
-  $config->set('fields_extra', $values['fields_extra']);
-  $config->set('fields_extra_list', $values['fields_extra_list']);
-  $config->set('switch_view_mode', $values['switch_view_mode']);
-  $config->set('field_permissions', $values['field_permissions']);
+  $config = Drupal::config('ds.extras')
+    ->set('fields_extra', $values['fs2']['fields_extra'])
+    ->set('fields_extra_list', $values['fs2']['fields_extra_list'])
+    ->set('switch_view_mode', $values['fs3']['switch_view_mode'])
+    ->set('field_permissions', $values['fs3']['field_permissions'])
+    ->set('switch_field', $values['fs3']['switch_field'])
+    ->set('hidden_region', $values['fs3']['hidden_region']);
   if (isset($values['flag'])) {
-    $config->set('flag', $values['flag']);
+    $config->set('flag', $values['fs3']['flag']);
   }
-  $config->set('switch_field', $values['switch_field']);
-  $config->set('hidden_region', $values['hidden_region']);
   if (module_exists('block')) {
-    $config->set('region_to_block', $values['region_to_block']);
+    $config->set('region_to_block', $values['fs3']['region_to_block']);
   }
   $config->save();
 }

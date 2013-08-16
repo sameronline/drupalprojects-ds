@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SettingsForm extends SystemConfigFormBase {
 
   /**
-   * Constructs a \Drupal\aggregator\SettingsForm object.
+   * Constructs a \Drupal\ds\SettingsForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    *   The factory for configuration objects.
@@ -103,11 +103,11 @@ class SettingsForm extends SystemConfigFormBase {
   public function submitForm(array &$form, array &$form_state) {
     parent::submitForm($form, $form_state);
 
-    $config = $this->configFactory->get('ds.settings');
-    $config->set('field_template', $form_state['values']['field_template']);
-    $config->set('ft-default', $form_state['values']['ft-default']);
-    $config->set('ft-kill-colon', $form_state['values']['ft-kill-colon']);
-    $config->save();
+    $config = $this->configFactory->get('ds.settings')
+      ->set('field_template', $form_state['values']['fs1']['field_template'])
+      ->set('ft-default', $form_state['values']['fs1']['ft-default'])
+      ->set('ft-kill-colon', $form_state['values']['fs1']['ft-kill-colon'])
+      ->save();
 
     entity_info_cache_clear();
     field_info_cache_clear();
