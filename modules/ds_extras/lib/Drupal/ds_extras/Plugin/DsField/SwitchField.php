@@ -12,7 +12,7 @@ use Drupal\ds\Annotation\DsField;
 use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
- * Function field that renders the title of a node
+ * Function field that generates a link to switch view mode with via ajax.
  *
  * @DsField(
  *   id = "switch_field",
@@ -64,53 +64,12 @@ class SwitchField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function displays() {
+  public function isAllowed($bundle, $view_mode) {
+    if (\Drupal::config('ds.extras')->get('switch_field')) {
+      return TRUE;
+    }
 
-    // Get all the allowed types
-    if (!\Drupal::config('ds.extras')->get('switch_field')) {
-      return FALSE;
-    }
-    else {
-      return array();
-    }
+    return FALSE;
   }
-
-
-  // TODO LOOK INTO FLAG SUPPORT
-
-  // Flag support.
-  // if (\Drupal::config('ds.extras')->get('flag') && module_exists('flag')) {
-  //   if ($entity_type == 'node') {
-  //     $flags = flag_get_flags('node');
-  //     foreach ($flags as $name => $flag) {
-  //       $ui_limit = array();
-  //       if (!empty($flag->types)) {
-  //         foreach ($flag->types as $type) {
-  //           $ui_limit[] = $type . '|*';
-  //         }
-  //       }
-  //       $fields['node']['ds_flag_' . $name] = array(
-  //         'title' => t('Flag: ' . $flag->get_label('title')),
-  //         'field_type' => DS_FIELD_TYPE_FUNCTION,
-  //         'function' => 'ds_extras_flags_add_flag_link',
-  //         'properties' => array(
-  //           'flag' => $name,
-  //         ),
-  //         'ui_limit' => $ui_limit,
-  //       );
-  //     }
-  //   }
-  // }
-
-  // if (!empty($fields)) {
-  //   return $fields;
-  // }
-
-  /**
-   * Output flag.
-   */
-  // function ds_extras_flags_add_flag_link($field) {
-  //   return flag_create_link($field['properties']['flag'], $field['entity']->nid);
-  // }
 
 }

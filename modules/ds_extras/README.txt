@@ -6,7 +6,6 @@ following functionality:
  - block region: add regions which will be exposed as blocks.
  - extra fields: expose extra fields defined by other modules.
  - field permissions: add view permissions on DS fields.
- - Flag: expose flags as fields
  - Hidden region: region which in case it has fields will not be printed.
  - field templates: overwrite any field with custom markup.
  - switch view mode field: switch from one view mode to another inline.

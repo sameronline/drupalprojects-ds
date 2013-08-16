@@ -69,15 +69,6 @@ function ds_extras_settings_alter(&$form, &$form_state) {
     );
   }
 
-  if (module_exists('flag')) {
-    $form['fs3']['flag'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Flag'),
-      '#description' => t('Expose flags as fields on nodes.'),
-      '#default_value' => $config->get('flag'),
-    );
-  }
-
   $form['fs3']['switch_field'] = array(
     '#type' => 'checkbox',
     '#title' => t('View mode switcher'),
@@ -110,9 +101,6 @@ function ds_extras_settings_submit($form, &$form_state) {
     ->set('field_permissions', $values['fs3']['field_permissions'])
     ->set('switch_field', $values['fs3']['switch_field'])
     ->set('hidden_region', $values['fs3']['hidden_region']);
-  if (isset($values['flag'])) {
-    $config->set('flag', $values['fs3']['flag']);
-  }
   if (module_exists('block')) {
     $config->set('region_to_block', $values['fs3']['region_to_block']);
   }
