@@ -204,7 +204,7 @@ function ds_module_implements_alter(&$implementations, $hook) {
  * Implements hook_library_info().
  */
 function ds_library_info() {
-  $libraries['ds.settings'] = array(
+  $libraries['ds.admin.js'] = array(
     'title' => 'Display Suite settings',
     'version' => VERSION,
     'js' => array(
@@ -216,7 +216,13 @@ function ds_library_info() {
       array('system', 'drupal.form'),
     ),
   );
-
+  $libraries['ds.admin.css'] = array(
+    'title' => 'Display Suite administration CSS',
+    'version' => VERSION,
+    'css' => array(
+      drupal_get_path('module', 'ds') . '/css/ds.admin.css' => array(),
+    ),
+  );
   return $libraries;
 }
 

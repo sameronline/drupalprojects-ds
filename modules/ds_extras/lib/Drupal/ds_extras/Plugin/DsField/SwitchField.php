@@ -12,7 +12,7 @@ use Drupal\ds\Annotation\DsField;
 use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
- * Function field that generates a link to switch view mode with via ajax.
+ * Plugin that generates a link to switch view mode with via ajax.
  *
  * @DsField(
  *   id = "switch_field",

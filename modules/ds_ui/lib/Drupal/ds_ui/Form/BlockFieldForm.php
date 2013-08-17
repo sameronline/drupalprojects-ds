@@ -11,7 +11,7 @@ use Drupal\ds_ui\Form\FieldFormBase;
 use Drupal\Core\Controller\ControllerInterface;
 
 /**
- * Configures classes used by Display Suite.
+ * Configure block fields.
  */
 class BlockFieldForm extends FieldFormBase implements ControllerInterface {
 

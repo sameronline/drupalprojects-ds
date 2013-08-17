@@ -18,7 +18,7 @@ use Drupal\Core\Extension\ModuleHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Manages view modes used by Display Suite.
+ * Base form for fields.
  */
 class FieldFormBase extends SystemConfigFormBase implements ControllerInterface {
 

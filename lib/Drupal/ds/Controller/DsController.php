@@ -12,7 +12,7 @@ use Drupal\Core\Entity\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Returns responses for Views UI routes.
+ * Returns responses for Display Suite UI routes.
  */
 class DsController implements ControllerInterface {
 
@@ -24,7 +24,7 @@ class DsController implements ControllerInterface {
   protected $entityManager;
 
   /**
-   * Constructs a new \Drupal\views_ui\Controller\ViewsUIController object.
+   * Constructs a new \Drupal\ds\Controller\DsController object.
    *
    * @param \Drupal\Core\Entity\EntityManager $entity_manager
    *   The Entity manager.
@@ -43,7 +43,7 @@ class DsController implements ControllerInterface {
   }
 
   /**
-   * Lists all instances of fields on any views.
+   * Lists all bundles per entity type.
    *
    * @return array
    *   The Views fields report page.
@@ -138,7 +138,7 @@ class DsController implements ControllerInterface {
       }
     }
 
-    $build['#attached']['css'] = array(drupal_get_path('module', 'ds') . '/css/ds.admin.css');
+    $build['#attached']['library'][] = array('ds', 'ds.admin.css');
 
     return $build;
   }

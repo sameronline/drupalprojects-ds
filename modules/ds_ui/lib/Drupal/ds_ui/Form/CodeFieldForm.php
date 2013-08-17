@@ -10,7 +10,7 @@ namespace Drupal\ds_ui\Form;
 use Drupal\ds_ui\Form\FieldFormBase;
 
 /**
- * Configures classes used by Display Suite.
+ * Configures code fields.
  */
 class CodeFieldForm extends FieldFormBase {
 

@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Provides a form to delete a user's Open ID identity.
+ * Provides a form to delete a DS field.
  */
 class FieldDeleteForm extends ConfirmFormBase implements ControllerInterface {
 

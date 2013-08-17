@@ -10,7 +10,7 @@ namespace Drupal\ds_ui\Form;
 use Drupal\system\SystemConfigFormBase;
 
 /**
- * Configures classes used by Display Suite.
+ * Configures classes used by wrappers and regions.
  */
 class ClassesForm extends SystemConfigFormBase {
 

@@ -12,7 +12,7 @@ use Drupal\Component\Annotation\Plugin;
 use Drupal\Core\Annotation\Translation;
 
 /**
- * Provides an 'Aggregator feed' block with the latest items from the feed.
+ * Provides the region block plugin.
  *
  * @Plugin(
  *   id = "ds_region_block",

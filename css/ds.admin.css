@@ -85,9 +85,10 @@ table th.ds-display-list-options {
 /**
  * Change layout screen.
  */
- .change_ds_layout_info {
-   margin-bottom: 10px;
- }
- .change_ds_layout_old_region {
-   font-weight: bold;
- }
+.change_ds_layout_info {
+  margin-bottom: 10px;
+}
+
+.change_ds_layout_old_region {
+  font-weight: bold;
+}

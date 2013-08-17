@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * Returns responses for Views UI routes.
+ * Returns responses for Display Suite Extra routes.
  */
 class DsExtrasController implements ControllerInterface {
 
@@ -25,7 +25,7 @@ class DsExtrasController implements ControllerInterface {
   protected $entityManager;
 
   /**
-   * Constructs a new \Drupal\views_ui\Controller\ViewsUIController object.
+   * Constructs a new \Drupal\ds_extras\Controller\ViewsUIController object.
    *
    * @param \Drupal\Core\Entity\EntityManager $entity_manager
    *   The Entity manager.
@@ -44,7 +44,7 @@ class DsExtrasController implements ControllerInterface {
   }
 
   /**
-   * Lists all instances of fields on any views.
+   * Returns an node through JSON.
    *
    * @return array
    *   The Views fields report page.

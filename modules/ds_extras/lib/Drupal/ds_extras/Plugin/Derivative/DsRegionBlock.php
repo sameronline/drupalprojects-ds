@@ -10,7 +10,7 @@ namespace Drupal\ds_extras\Plugin\Derivative;
 use Drupal\Component\Plugin\Derivative\DerivativeBase;
 
 /**
- * Provides block plugin definitions for ds blocks
+ * Provides block region definitions for ds blocks
  *
  * @see \Drupal\ds_extras\Plugin\block\block\DsRegionBlock
  */

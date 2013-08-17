@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Route controller for view modes.
+ * Route controller fields.
  */
 class FieldController implements ControllerInterface {
 
