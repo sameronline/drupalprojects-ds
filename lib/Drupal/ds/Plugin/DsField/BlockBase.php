@@ -22,17 +22,11 @@ abstract class BlockBase extends DsFieldBase {
     $id = $this->blockPluginId();
     $block = $manager->createInstance($id);
 
-    // Get render array
+    // Get render array.
+    // @todo check label/subject.
     $block_elements = $block->build();
 
-    // Build the output by looping through the elements
-    $output = '';
-    foreach ($block_elements as $block_element) {
-      $output .= drupal_render($block_element);
-    }
-
-    // Output block
-    return $output;
+    return drupal_render($block_elements);
   }
 
   /**
