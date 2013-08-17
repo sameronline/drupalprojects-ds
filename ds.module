@@ -201,6 +201,26 @@ function ds_module_implements_alter(&$implementations, $hook) {
 }
 
 /**
+ * Implements hook_library_info().
+ */
+function ds_library_info() {
+  $libraries['ds.settings'] = array(
+    'title' => 'Display Suite settings',
+    'version' => VERSION,
+    'js' => array(
+      drupal_get_path('module', 'ds') . '/js/ds.admin.js' => array(),
+    ),
+    'dependencies' => array(
+      array('system', 'jquery'),
+      array('system', 'drupal'),
+      array('system', 'drupal.form'),
+    ),
+  );
+
+  return $libraries;
+}
+
+/**
  * Function to check if we go on with Display Suite.
  */
 function ds_kill_switch() {

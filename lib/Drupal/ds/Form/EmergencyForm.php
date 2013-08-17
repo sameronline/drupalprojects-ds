@@ -10,7 +10,7 @@ namespace Drupal\ds\Form;
 use Drupal\Core\Form\FormInterface;
 
 /**
- * Imports feeds from OPML.
+ * Emergency form for DS.
  */
 class EmergencyForm implements FormInterface {
 

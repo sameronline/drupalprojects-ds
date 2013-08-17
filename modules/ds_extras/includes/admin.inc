@@ -84,8 +84,7 @@ function ds_extras_settings_alter(&$form, &$form_state) {
   );
 
   $form['#submit'][] = 'ds_extras_settings_submit';
-  $form['#attached']['js'][] = drupal_get_path('module', 'ds_extras') . '/js/ds_extras.admin.js';
-
+  $form['#attached']['library'][] = array('ds_extras', 'ds_extras.settings');
 }
 
 /**

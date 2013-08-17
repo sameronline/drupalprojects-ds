@@ -9,6 +9,22 @@ Drupal.DisplaySuite = Drupal.DisplaySuite || {};
 Drupal.DisplaySuite.fieldopened = '';
 Drupal.DisplaySuite.layout_original = '';
 
+Drupal.behaviors.DSSummaries = {
+  attach: function (context) {
+
+    $('#edit-fs1', context).drupalSetSummary(function (context) {
+      var fieldtemplates = $('#edit-fs1-field-template', context);
+
+      if (fieldtemplates.is(':checked')) {
+        var fieldtemplate = $('#edit-fs1-ft-default option:selected').text();
+        return Drupal.t('Enabled') + ': ' + Drupal.t(fieldtemplate);
+      }
+
+      return Drupal.t('Disabled');
+    });
+  }
+};
+
 /**
  * Row handlers for the 'Manage display' screen.
  */

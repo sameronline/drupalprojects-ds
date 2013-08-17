@@ -24,6 +24,26 @@ function ds_extras_menu() {
 }
 
 /**
+ * Implements hook_library_info().
+ */
+function ds_extras_library_info() {
+  $libraries['ds_extras.settings'] = array(
+    'title' => 'Display Suite Extras settings',
+    'version' => VERSION,
+    'js' => array(
+      drupal_get_path('module', 'ds_extras') . '/js/ds_extras.admin.js' => array(),
+    ),
+    'dependencies' => array(
+      array('system', 'jquery'),
+      array('system', 'drupal'),
+      array('system', 'drupal.form'),
+    ),
+  );
+
+  return $libraries;
+}
+
+/**
  * Implements hook_ds_layout_info_alter().
  */
 function ds_extras_ds_layout_info_alter(&$layouts) {

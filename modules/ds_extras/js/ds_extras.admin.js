@@ -8,19 +8,8 @@
 Drupal.behaviors.DSExtrasSummaries = {
   attach: function (context) {
 
-    $('#edit-additional-settings-fs1', context).drupalSetSummary(function (context) {
-      var fieldtemplates = $('#edit-additional-settings-fs1-field-template', context);
-
-      if (fieldtemplates.is(':checked')) {
-        var fieldtemplate = $('#edit-additional-settings-fs1-ft-default option:selected').text();
-        return Drupal.t('Enabled') + ': ' + Drupal.t(fieldtemplate);
-      }
-
-      return Drupal.t('Disabled');
-    });
-
-    $('#edit-additional-settings-fs2', context).drupalSetSummary(function (context) {
-      var extra_fields = $('#edit-additional-settings-fs2-fields-extra', context);
+    $('#edit-fs2', context).drupalSetSummary(function (context) {
+      var extra_fields = $('#edit-fs2-fields-extra', context);
 
       if (extra_fields.is(':checked')) {
         return Drupal.t('Enabled');
@@ -29,7 +18,7 @@ Drupal.behaviors.DSExtrasSummaries = {
       return Drupal.t('Disabled');
     });
 
-    $('#edit-additional-settings-fs4', context).drupalSetSummary(function (context) {
+    $('#edit-fs3', context).drupalSetSummary(function (context) {
       var vals = [];
 
       $('input:checked', context).parent().each(function () {
