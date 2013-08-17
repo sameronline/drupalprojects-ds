@@ -8,7 +8,7 @@
 namespace Drupal\ds\Plugin\DsField;
 
 /**
- * Ds field markup base field
+ * DS field markup base field.
  */
 abstract class Markup extends DsFieldBase {
 

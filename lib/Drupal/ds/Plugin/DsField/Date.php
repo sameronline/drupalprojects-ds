@@ -8,7 +8,7 @@
 namespace Drupal\ds\Plugin\DsField;
 
 /**
- * The base plugin to create DS post date function fields.
+ * The base plugin to create DS post date plugins.
  */
 abstract class Date extends DsFieldBase {
 

@@ -10,7 +10,7 @@ namespace Drupal\ds\Plugin\Derivative;
 use Drupal\Component\Plugin\Derivative\DerivativeBase;
 
 /**
- * Retrieves block plugin definitions for all custom blocks.
+ * Retrieves dynamic field plugin definitions.
  */
 abstract class DynamicField extends DerivativeBase {
 

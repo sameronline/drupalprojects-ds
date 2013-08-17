@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Annotation\DsField;
 
 /**
- * Plugin that renders a view mode
+ * Plugin that renders a view mode.
  *
  * @DsField(
  *   id = "user",

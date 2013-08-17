@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Annotation\DsField;
 
 /**
- * Function field that renders the administration links of the comment entity.
+ * Plugin that renders the administration links of the comment entity.
  *
  * @DsField(
  *   id = "comment_links",

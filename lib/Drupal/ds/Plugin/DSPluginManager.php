@@ -18,7 +18,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 class DsPluginManager extends DefaultPluginManager {
 
   /**
-   * Constructs a new \Drupal\block\Plugin\Type\DsPluginManager object.
+   * Constructs a new \Drupal\ds\Plugin\Type\DsPluginManager object.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths

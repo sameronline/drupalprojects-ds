@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Annotation\DsField;
 
 /**
- * Function field that renders a link.
+ * Plugin that renders a link.
  */
 abstract class Link extends Field {
 

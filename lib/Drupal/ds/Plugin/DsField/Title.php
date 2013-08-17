@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Annotation\DsField;
 
 /**
- * Function field that renders a title.
+ * Plugin that renders a title.
  */
 abstract class Title extends Field {
 

@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Annotation\DsField;
 
 /**
- * Function field that renders the comments of a node.
+ * Plugin that renders the comments of a node.
  *
  * @DsField(
  *   id = "node_comments",

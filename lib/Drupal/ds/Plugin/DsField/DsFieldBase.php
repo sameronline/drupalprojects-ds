@@ -10,7 +10,7 @@ namespace Drupal\ds\Plugin\DsField;
 use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
 
 /**
- * Base class for all the ds plugins
+ * Base class for all the ds plugins.
  */
 abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterface {
 

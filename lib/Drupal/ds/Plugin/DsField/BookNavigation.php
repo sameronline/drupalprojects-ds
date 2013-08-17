@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Annotation\DsField;
 
 /**
- * Function field that renders the title of a node
+ * Plugin that the book naviation.
  *
  * @DsField(
  *   id = "book_navigation",

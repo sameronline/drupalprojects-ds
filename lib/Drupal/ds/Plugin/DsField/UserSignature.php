@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Annotation\DsField;
 
 /**
- * Function field that renders the user signature
+ * Plugin that renders the user signature.
  *
  * @DsField(
  *   id = "user_signature",

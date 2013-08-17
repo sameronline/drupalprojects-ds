@@ -8,7 +8,7 @@
 namespace Drupal\ds\Plugin\DsField;
 
 /**
- * The base plugin to create DS block fields.
+ * The base plugin to create DS code fields.
  */
 abstract class CodeBase extends DsFieldBase {
 

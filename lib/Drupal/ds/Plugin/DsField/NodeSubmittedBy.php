@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Annotation\DsField;
 
 /**
- * Function field that renders the submitted by field
+ * Plugin that renders the submitted by field.
  *
  * @DsField(
  *   id = "node_submitted_by",

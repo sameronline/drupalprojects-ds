@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Annotation\DsField;
 
 /**
- * Function field that renders the title of a node
+ * Plugin that renders the the read more link on taxonomy.
  *
  * @DsField(
  *   id = "taxonomy_term_link",

@@ -8,7 +8,7 @@
 namespace Drupal\ds\Plugin\Derivative;
 
 /**
- * Retrieves block plugin definitions for all custom blocks.
+ * Retrieves dynamic preprocess field plugin definitions.
  */
 class DynamicPreprocessField extends DynamicField {
 

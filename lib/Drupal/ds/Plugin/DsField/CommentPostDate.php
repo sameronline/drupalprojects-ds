@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Annotation\DsField;
 
 /**
- * Function field that renders the post date of a comment
+ * Plugin that renders the post date of a comment.
  *
  * @DsField(
  *   id = "node_post_date",

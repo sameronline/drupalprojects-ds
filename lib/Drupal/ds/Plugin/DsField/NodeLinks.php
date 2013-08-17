@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Annotation\DsField;
 
 /**
- * Function field that renders the administration links of the node entity.
+ * Plugin that renders the links of the node entity.
  *
  * @DsField(
  *   id = "node_links",

@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Annotation\DsField;
 
 /**
- * Function field that renders the user signature of a comment.
+ * Plugin that renders the user signature of a comment.
  *
  * @DsField(
  *   id = "comment_user_signature",

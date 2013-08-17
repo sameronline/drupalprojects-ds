@@ -11,7 +11,7 @@ use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Annotation\DsField;
 
 /**
- * Renders an entity by a given view mode
+ * Renders an entity by a given view mode.
  */
 abstract class Entity extends DsFieldBase {
 
