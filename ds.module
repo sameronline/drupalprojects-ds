@@ -40,28 +40,28 @@ function ds_menu() {
   $items['admin/structure/ds/list'] = array(
     'title' => 'Display Suite',
     'route_name' => 'ds_list',
-    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+    'type' => MENU_SUGGESTED_ITEM,
   );
 
   // Layout overview, secondary tab.
   $items['admin/structure/ds/list'] = array(
     'title' => 'List',
     'route_name' => 'ds_list',
-    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+    'type' => MENU_SUGGESTED_ITEM,
   );
 
   // Settings page
   $items['admin/structure/ds/settings'] = array(
     'title' => 'Settings',
     'route_name' => 'ds_admin_settings',
-    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+    'type' => MENU_SUGGESTED_ITEM,
   );
 
   // Emergency page
   $items['admin/structure/ds/list/emergency'] = array(
     'title' => 'Emergency',
     'route_name' => 'ds_admin_emergency',
-    'type' => MENU_VISIBLE_IN_BREADCRUMB
+    'type' => MENU_SUGGESTED_ITEM,
   );
 
   // Change layout.
