@@ -35,56 +35,22 @@ function ds_ui_menu() {
   $items['admin/structure/ds/classes'] = array(
     'title' => 'CSS classes',
     'route_name' => 'ds_classes',
-    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+    'type' => MENU_SUGGESTED_ITEM,
   );
 
   // Fields.
   $items['admin/structure/ds/fields'] = array(
     'title' => 'Fields',
     'route_name' => 'fields_list',
-    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+    'type' => MENU_SUGGESTED_ITEM,
   );
-  $items['admin/structure/ds/fields/manage/%'] = array(
-    'title' => 'Manage fields',
-    'route_name' => 'manage_field',
-  );
+
   $items['admin/structure/ds/fields/delete/%'] = array(
     'title' => 'Delete a field',
     'description' => 'Delete a field.',
     'route_name' => 'delete_field',
-    'type' => MENU_VISIBLE_IN_BREADCRUMB,
+    'type' => MENU_SUGGESTED_ITEM,
   );
-  // Code field
-  $items['admin/structure/ds/fields/manage_code'] = array(
-    'title' => 'Add a code field',
-    'route_name' => 'add_code_field',
-  );
-  $items['admin/structure/ds/fields/manage_code/%'] = array(
-    'title' => 'Edit a code field',
-    'description' => 'Manage a field',
-    'route_name' => 'manage_code_field',
-  );
-  // Preprocess field
-  $items['admin/structure/ds/fields/manage_preprocess'] = array(
-    'title' => 'Add a preprocess field',
-    'route_name' => 'add_preprocess_field',
-  );
-  $items['admin/structure/ds/fields/manage_preprocess/%'] = array(
-    'title' => 'Edit a preprocess field',
-    'description' => 'Manage a preprocess field',
-    'route_name' => 'manage_preprocess_field'
-  );
-  if (module_exists('block')) {
-    $items['admin/structure/ds/fields/manage_block'] = array(
-      'title' => 'Add a block field',
-      'route_name' => 'add_block_field',
-    );
-    $items['admin/structure/ds/fields/manage_block/%'] = array(
-      'title' => 'Edit a block field',
-      'description' => 'Manage a block field',
-      'route_name' => 'manage_block_field'
-    );
-  }
 
   return $items;
 }

@@ -30,6 +30,13 @@ class CodeFieldForm extends FieldFormBase {
 
     $field = $this->field;
 
+    if (empty($field_key)) {
+      $form['#title'] = 'Add a code field';
+    }
+    else {
+      $form['#title'] = 'Edit a code field';
+    }
+
     $form['code'] = array(
       '#type' => 'text_format',
       '#title' => t('Field code'),

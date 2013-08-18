@@ -28,6 +28,13 @@ class BlockFieldForm extends FieldFormBase implements ControllerInterface {
   public function buildForm(array $form, array &$form_state, $field_key = '') {
     $form = parent::buildForm($form, $form_state, $field_key);
 
+    if (empty($field_key)) {
+      $form['#title'] = 'Add a block field';
+    }
+    else {
+      $form['#title'] = 'Edit a block field';
+    }
+
     $field = $this->field;
 
     $manager = \Drupal::service('plugin.manager.block');
