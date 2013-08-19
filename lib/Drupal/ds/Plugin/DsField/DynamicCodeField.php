@@ -43,7 +43,6 @@ class DynamicCodeField extends CodeBase {
    */
   public function isAllowed($bundle, $view_mode) {
     $definition = $this->getPluginDefinition();
-
     return DsFieldBase::dynamicFieldIsAllowed($definition, $bundle, $view_mode);
   }
 }

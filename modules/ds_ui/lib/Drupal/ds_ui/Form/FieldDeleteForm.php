@@ -103,11 +103,12 @@ class FieldDeleteForm extends ConfirmFormBase implements ControllerInterface {
   public function submitForm(array &$form, array &$form_state) {
     $field = $this->field;
 
-    // Remove field.
+    // Remove field and clear caches.
     $this->configFactory->get('ds.field.' . $field['field'])->delete();
+    $this->cacheBackend->deleteTags(array('ds_fields_info' => TRUE));
 
-    // Clear ds fields cache
-    $this->cacheBackend->invalidateTags(array('ds_fields' => TRUE));
+    // @todo find out how we can clear derivatives without clearing everything.
+    drupal_flush_all_caches();
 
     // Redirect.
     $form_state['redirect'] = 'admin/structure/ds/fields';

@@ -18,18 +18,13 @@ class BaseTest extends WebTestBase {
    */
   public static $modules = array('field_ui', 'comment', 'block', 'ds', 'ds_extras', 'ds_code', 'search', 'ds_search', 'ds_forms', 'ds_ui', 'ds_test', 'views', 'views_ui');
 
-  protected $profile = 'testing';
+  protected $profile = 'standard';
 
   /**
    * Implementation of setUp().
    */
   function setUp() {
     parent::setUp();
-
-    $settings = array(
-      'type' => 'article',
-    );
-    $this->drupalCreateContentType($settings);
 
     \Drupal::config('search.settings')->set('active_modules', array('node' => '', 'user' => 'user', 'ds_search' => 'ds_search'))->save();
     menu_router_rebuild();

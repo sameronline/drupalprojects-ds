@@ -25,16 +25,6 @@ class FormsTest extends BaseTest {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  function setUp() {
-    WebTestBase::setUp();
-
-    $this->admin_user = $this->drupalCreateUser(array('admin classes', 'admin fields', 'admin_display_suite', 'access administration pages', 'administer content types', 'administer nodes', 'bypass node access', 'administer node fields', 'administer node form display'));
-    $this->drupalLogin($this->admin_user);
-  }
-
-  /**
    * Forms tests.
    */
   function testDSForms() {

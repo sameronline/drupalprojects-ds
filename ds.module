@@ -369,7 +369,7 @@ function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRU
           $field_settings[$field_setting['entity_type']][$field_setting['bundle']][$field_setting['view_mode']][$field] = $settings;
         }
       }
-      cache()->set('ds_field_settings', $field_settings, CacheBackendInterface::CACHE_PERMANENT, array('ds_fields' => TRUE));
+      cache()->set('ds_field_settings', $field_settings, CacheBackendInterface::CACHE_PERMANENT, array('ds_fields_info' => TRUE));
     }
   }
 
