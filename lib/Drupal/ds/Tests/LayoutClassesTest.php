@@ -51,14 +51,14 @@ class LayoutClassesTest extends BaseTest {
     );
 
     $fields = array(
-      'fields[post_date][region]' => 'header',
-      'fields[author][region]' => 'left',
-      'fields[links][region]' => 'left',
+      'fields[node_post_date][region]' => 'header',
+      'fields[node_author][region]' => 'left',
+      'fields[node_links][region]' => 'left',
       'fields[body][region]' => 'right',
-      'fields[comments][region]' => 'footer',
-      'fields[test_field][region]' => 'left',
+      'fields[node_comments][region]' => 'footer',
+      'fields[dynamic_code_field:dynamic_code_field:test_field][region]' => 'left',
       //'fields[test_block_field][region]' => 'left',
-      'fields[submitted][region]' => 'left',
+      'fields[dynamic_preprocess_field:dynamic_code_field:submitted][region]' => 'left',
       'fields[ds_extras_extra_test_field][region]' => 'header',
     );
 
@@ -80,14 +80,14 @@ class LayoutClassesTest extends BaseTest {
     // Lookup settings and verify.
     $data = \Drupal::config('ds.layout_settings.node.article.default')->get('settings');
     $this->assertTrue(in_array('ds_extras_extra_test_field', $data['regions']['header']), t('Extra field is in header'));
-    $this->assertTrue(in_array('post_date', $data['regions']['header']), t('Post date is in header'));
-    $this->assertTrue(in_array('test_field', $data['regions']['left']), t('Test field is in left'));
-    $this->assertTrue(in_array('author', $data['regions']['left']), t('Author is in left'));
-    $this->assertTrue(in_array('links', $data['regions']['left']), t('Links is in left'));
+    $this->assertTrue(in_array('node_post_date', $data['regions']['header']), t('Post date is in header'));
+    $this->assertTrue(in_array('dynamic_code_field:dynamic_code_field:test_field', $data['regions']['left']), t('Test field is in left'));
+    $this->assertTrue(in_array('node_author', $data['regions']['left']), t('Author is in left'));
+    $this->assertTrue(in_array('node_links', $data['regions']['left']), t('Links is in left'));
     //$this->assertTrue(in_array('test_block_field', $data['regions']['left']), t('Test block field is in left'));
-    $this->assertTrue(in_array('submitted', $data['regions']['left']), t('Submitted field is in left'));
+    $this->assertTrue(in_array('dynamic_preprocess_field:dynamic_code_field:submitted', $data['regions']['left']), t('Submitted field is in left'));
     $this->assertTrue(in_array('body', $data['regions']['right']), t('Body is in right'));
-    $this->assertTrue(in_array('comments', $data['regions']['footer']), t('Comments is in footer'));
+    $this->assertTrue(in_array('node_comments', $data['regions']['footer']), t('Comments is in footer'));
     $this->assertTrue(in_array('class_name_1', $data['classes']['header']), t('Class name 1 is in header'));
     $this->assertTrue(empty($data['classes']['left']), t('Left has no classes'));
     $this->assertTrue(empty($data['classes']['right']), t('Right has classes'));
@@ -98,7 +98,7 @@ class LayoutClassesTest extends BaseTest {
       'type' => 'article',
     );
     $node = $this->drupalCreateNode($settings);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
 
     // Assert regions.
     $this->assertRaw('group-header', 'Template found (region header)');
@@ -121,9 +121,9 @@ class LayoutClassesTest extends BaseTest {
     $this->assertNoRaw('<footer', 'Footer not found.');
     $this->assertNoRaw('<article', 'Article not found.');
     $wrappers = array(
-      'header' => 'header',
-      'right' => 'footer',
-      'layout_wrapper' => 'article',
+      'region_wrapper[header]' => 'header',
+      'region_wrapper[right]' => 'footer',
+      'region_wrapper[layout_wrapper]' => 'article',
     );
     $this->dsConfigureUI($wrappers);
     $this->drupalGet('node/' . $node->nid);
@@ -132,7 +132,7 @@ class LayoutClassesTest extends BaseTest {
     $this->assertRaw('<article', 'Article found.');
 
     // Let's create a block field, enable the full mode first.
-    $edit = array('view_modes_custom[full]' => '1');
+    $edit = array('display_modes_custom[full]' => '1');
     $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
 
     // Select layout.
@@ -149,23 +149,26 @@ class LayoutClassesTest extends BaseTest {
     $this->dsSelectLayout($layout, $assert, 'admin/structure/types/manage/article/display/full');
 
     // Create new block field.
+    /*
     $edit = array(
       'region_to_block[new_block_region]' => 'Block region',
       'region_to_block[new_block_region_key]' => 'block_region',
     );
     $this->drupalPost('admin/structure/types/manage/article/display/full', $edit, t('Save'));
     $this->assertRaw('<td colspan="8">' . t('Block region') . '</td>', 'Block region found');
+    */
 
     // Configure fields
     $fields = array(
-      'fields[author][region]' => 'left',
-      'fields[links][region]' => 'left',
+      'fields[node_author][region]' => 'left',
+      'fields[node_links][region]' => 'left',
       'fields[body][region]' => 'right',
-      'fields[ds_test_field][region]' => 'block_region',
+      'fields[dynamic_code_field:dynamic_code_field:test_field][region]' => 'block_region',
     );
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/display/full');
 
     // Set block in sidebar
+    /*
     $edit = array(
       'blocks[ds_extras_block_region][region]' => 'sidebar_first',
     );
@@ -175,6 +178,7 @@ class LayoutClassesTest extends BaseTest {
     $this->drupalGet('node/' . $node->nid);
     $this->assertRaw('Block region</h2>', 'Block region found');
     $this->assertText('Test code field on node ' . $node->nid, 'Post date in block');
+    */
 
     // Change layout via admin/structure/ds/layout-change.
     // First verify that header and footer are not here.
@@ -186,7 +190,7 @@ class LayoutClassesTest extends BaseTest {
     $edit = array(
       'ds_left' => 'header',
       'ds_right' => 'footer',
-      'ds_block_region' => 'footer',
+      //'ds_block_region' => 'footer',
     );
     $this->drupalPost('admin/structure/ds/change-layout/node/article/full/ds_2col_stacked', $edit, t('Save'), array('query' => array('destination' => 'admin/structure/types/manage/article/display/full')));
 
@@ -197,15 +201,15 @@ class LayoutClassesTest extends BaseTest {
 
     // Verify settings.
     $data = \Drupal::config('ds.layout_settings.node.article.full')->get('settings');
-    $this->assertTrue(in_array('author', $data['regions']['header']), t('Author is in header'));
-    $this->assertTrue(in_array('links', $data['regions']['header']), t('Links field is in header'));
+    $this->assertTrue(in_array('node_author', $data['regions']['header']), t('Author is in header'));
+    $this->assertTrue(in_array('node_links', $data['regions']['header']), t('Links field is in header'));
     $this->assertTrue(in_array('body', $data['regions']['footer']), t('Body field is in footer'));
-    $this->assertTrue(in_array('ds_test_field', $data['regions']['footer']), t('Test field is in footer'));
+    $this->assertTrue(in_array('dynamic_code_field:dynamic_code_field:test_field', $data['regions']['footer']), t('Test field is in footer'));
 
     // Test that a default view mode with no layout is not affected by a disabled view mode.
     $edit = array(
       'layout' => '',
-      'view_modes_custom[full]' => FALSE,
+      'display_modes_custom[full]' => FALSE,
     );
     $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
     $this->drupalGet('node/' . $node->nid);
