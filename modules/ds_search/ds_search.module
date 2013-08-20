@@ -329,7 +329,17 @@ function ds_search_search_page($results) {
     // Provide zebra striping for results that are not grouped.
     $parity = 'odd';
     foreach ($build['search_results'] as $id => $result) {
-      $build['search_results'][$id]['#node']->ds_search_zebra = $parity;
+      switch ($build['search_results'][$id]['#entity_type']) {
+        case 'taxonomy_term':
+          $key = '#term';
+          break;
+
+         default:
+           $key = '#' . $build['search_results'][$id]['#entity_type'];
+           break;
+      }
+
+      $build['search_results'][$id][$key]->ds_search_zebra = $parity;
       $parity = $parity == 'odd' ? 'even' : 'odd';
     }
   }
