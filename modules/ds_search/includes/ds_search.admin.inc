@@ -51,6 +51,13 @@ function ds_search_settings($form, $form_state) {
     '#options' => $view_mode_options,
   );
 
+  $form['general']['ds_search_file_render'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use default search theming for files'),
+    '#description' => t('File/attachment results are best supported when the file entity module is enabled. Toggle the checkbox in case it is not available or you want to use default search theming.'),
+    '#default_value' => variable_get('ds_search_file_render', FALSE),
+  );
+
   $form['general']['ds_search_variables'] = array(
     '#type' => 'radios',
     '#options' => array(
