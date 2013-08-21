@@ -581,6 +581,8 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     $record->settings['layout_wrapper'] = 'div';
     $record->settings['layout_attributes'] = '';
     $record->settings['layout_attributes_merge'] = variable_get('ds_layout_attributes_merge', TRUE);
+    $record->settings['layout_link_attribute'] = FALSE;
+    $record->settings['layout_link_custom'] = '';
     $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
     foreach ($fields as $field_key => $field) {
 
@@ -664,6 +666,10 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     $record->settings['layout_wrapper'] = $form_state['values']['additional_settings']['region_wrapper']['layout_wrapper'];
     $record->settings['layout_attributes'] = filter_xss_admin($form_state['values']['additional_settings']['region_wrapper']['layout_attributes']);
     $record->settings['layout_attributes_merge'] = $form_state['values']['additional_settings']['region_wrapper']['layout_attributes_merge'];
+
+    // Link attribute.
+    $record->settings['layout_link_attribute'] = $form_state['values']['additional_settings']['region_wrapper']['layout_link_attribute'];
+    $record->settings['layout_link_custom'] = $form_state['values']['additional_settings']['region_wrapper']['layout_link_custom'];
 
     $record->settings = $record->settings;
 
@@ -1534,6 +1540,54 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#default_value' => isset($layout->settings['layout_attributes_merge']) ? $layout->settings['layout_attributes_merge'] : variable_get('ds_layout_attributes_merge', TRUE),
       '#weight' => 12,
     );
+
+    $form['additional_settings']['region_wrapper']['layout_link_attribute'] = array(
+      '#type' => 'select',
+      '#options' => array(
+        '' => t('No link'),
+        'content' => t('Link to content'),
+        'custom' => t('Custom'),
+        'tokens' => t('Tokens')
+      ),
+      '#title' => t('Add link'),
+      '#description' => t('This will add an onclick attribute on the layout wrapper.'),
+      '#default_value' => isset($layout->settings['layout_link_attribute']) ? $layout->settings['layout_link_attribute'] : FALSE,
+      '#weight' => 12,
+    );
+
+    $form['additional_settings']['region_wrapper']['layout_link_custom'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Custom link'),
+      '#description' => t('You may use tokens for this link if you selected tokens.'),
+      '#default_value' => isset($layout->settings['layout_link_custom']) ? $layout->settings['layout_link_custom'] : FALSE,
+      '#weight' => 13,
+      '#states' => array(
+        'visible' => array(array(
+          ':input[name="additional_settings[region_wrapper][layout_link_attribute]"]' => array(array("value" => "tokens"), array("value" => "custom")),
+        )),
+      ),
+    );
+
+    if (module_exists('token')) {
+      $form['additional_settings']['region_wrapper']['tokens'] = array(
+        '#title' => t('Tokens'),
+        '#type' => 'container',
+        '#weight' => 14,
+        '#states' => array(
+          'visible' => array(
+            ':input[name="additional_settings[region_wrapper][layout_link_attribute]"]' => array(array("value" => "tokens")),
+          ),
+        ),
+      );
+      $form['additional_settings']['region_wrapper']['tokens']['help'] = array(
+        '#theme' => 'token_tree',
+        '#token_types' => 'all',
+        '#global_types' => FALSE,
+        '#dialog' => TRUE,
+      );
+    }
+
+
 
     // Add extra classes for the regions to have more control while theming.
     $form['additional_settings']['ds_classes'] = array(
