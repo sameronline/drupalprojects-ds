@@ -32,7 +32,7 @@ class EmergencyForm extends FormBase {
   protected $moduleHandler;
 
   /**
-   * Constructs a DateFormatLocalizeResetForm object.
+   * Constructs a \Drupal\ds\Form\EmergencyForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    *   The config factory.

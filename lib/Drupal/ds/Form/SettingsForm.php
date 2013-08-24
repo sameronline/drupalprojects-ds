@@ -7,8 +7,10 @@
 
 namespace Drupal\ds\Form;
 
-use Drupal\system\SystemConfigFormBase;
 use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\Context\ContextInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\system\SystemConfigFormBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -17,13 +19,26 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SettingsForm extends SystemConfigFormBase {
 
   /**
-   * Constructs a \Drupal\ds\SettingsForm object.
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * Constructs a \Drupal\ds\Form\SettingsForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    *   The factory for configuration objects.
+   * @param \Drupal\Core\Config\Context\ContextInterface $context
+   *   The configuration context to use.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
-  public function __construct(ConfigFactory $config_factory) {
-    $this->configFactory = $config_factory;
+  public function __construct(ConfigFactory $config_factory, ContextInterface $context, ModuleHandlerInterface $module_handler) {
+    parent::__construct($config_factory, $context);
+
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -31,7 +46,9 @@ class SettingsForm extends SystemConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('config.context.free'),
+      $container->get('module_handler')
     );
   }
 
@@ -70,7 +87,7 @@ class SettingsForm extends SystemConfigFormBase {
       '#default_value' => $config->get('field_template'),
     );
 
-    $theme_functions = module_invoke_all('ds_field_theme_functions_info');
+    $theme_functions = $this->moduleHandler->invokeAll('ds_field_theme_functions_info');
     $form['fs1']['ft-default'] = array(
       '#type' => 'select',
       '#title' => t('Default Field Template'),
@@ -114,7 +131,7 @@ class SettingsForm extends SystemConfigFormBase {
 
     entity_info_cache_clear();
     field_info_cache_clear();
-    drupal_container()->get('module_handler')->resetImplementations();
+    $this->moduleHandler->resetImplementations();
     drupal_theme_rebuild();
     menu_router_rebuild();
   }
