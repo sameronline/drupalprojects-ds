@@ -111,7 +111,7 @@ class EntitiesTest extends BaseTest {
     $node_author = user_load($node->uid);
 
     // Look at node and verify token and block field.
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw('view-mode-full', 'Template file found (in full view mode)');
     $this->assertRaw('<div class="token-class">' . $node->title . '</span>', t('Token field found'));
     $this->assertRaw('I am a PHP field', t('PHP field found'));
@@ -143,7 +143,7 @@ class EntitiesTest extends BaseTest {
 
     // Switch view mode on full node page.
     $edit = array('ds_switch' => 'teaser');
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPost('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertRaw('view-mode-teaser', 'Switched to teaser mode');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
@@ -151,7 +151,7 @@ class EntitiesTest extends BaseTest {
     $this->assertNoRaw('group-footer', 'Template found (no region footer)');
 
     $edit = array('ds_switch' => '');
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPost('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertRaw('view-mode-full', 'Switched to full mode again');
 
     // Test all options of a block field.
@@ -171,14 +171,14 @@ class EntitiesTest extends BaseTest {
       'fields[links][region]' => 'hidden',
     );
     $this->dsConfigureUI($fields);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw('Recent content</h2>');
 
     $block = array(
       'block_render' => DS_BLOCK_TITLE_CONTENT,
     );
     $this->dsCreateBlockField($block, 'admin/structure/ds/fields/manage_block/test_block_field', FALSE);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertNoRaw('<h2>Recent content</h2>');
     $this->assertRaw('Recent content');
 
@@ -186,7 +186,7 @@ class EntitiesTest extends BaseTest {
       'block_render' => DS_BLOCK_CONTENT,
     );
     $this->dsCreateBlockField($block, 'admin/structure/ds/fields/manage_block/test_block_field', FALSE);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertNoRaw('<h2>Recent content</h2>');
     $this->assertNoRaw('Recent content');*/
 
@@ -207,8 +207,8 @@ class EntitiesTest extends BaseTest {
     $this->dsSelectLayout($edit, $assert, 'admin/structure/types/manage/article/display/revision');
     $edit = array(
       'fields[body][region]' => 'left',
-      'fields[links][region]' => 'right',
-      'fields[author][region]' => 'right',
+      'fields[node_links][region]' => 'right',
+      'fields[node_author][region]' => 'right',
     );
     $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display/revision');
 
@@ -217,15 +217,15 @@ class EntitiesTest extends BaseTest {
       'revision' => TRUE,
       'log' => 'Test revision',
     );
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPost('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertText('Revisions');
 
     // Assert revision is using 2 col template.
-    $this->drupalGet('node/' . $node->nid . '/revisions/1/view');
+    $this->drupalGet('node/' . $node->id() . '/revisions/1/view');
     $this->assertText('Body:', 'Body label');
 
     // Assert full view is using stacked template.
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertNoText('Body:', 'Body label');
 
     // Test formatter limit on article with tags.
@@ -233,19 +233,19 @@ class EntitiesTest extends BaseTest {
       'ds_switch' => '',
       'field_tags[und]' => 'Tag 1, Tag 2'
     );
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPost('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $edit = array(
       'fields[field_tags][region]' => 'right',
     );
     $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertText('Tag 1');
     $this->assertText('Tag 2');
     $edit = array(
-      'fields[field_tags][format][limit]' => '1',
+      'fields[field_tags][plugin][limit]' => '1',
     );
     $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertText('Tag 1');
     $this->assertNoText('Tag 2');
 
@@ -257,8 +257,8 @@ class EntitiesTest extends BaseTest {
     $edit = array(
       'title' => 'Hi, I am an article <script>alert(\'with a javascript tag in the title\');</script>',
     );
-    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save and keep published'));
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalPost('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw('<h2>Hi, I am an article &lt;script&gt;alert(&#039;with a javascript tag in the title&#039;);&lt;/script&gt;</h2>');
   }
 
@@ -274,22 +274,22 @@ class EntitiesTest extends BaseTest {
     // -------------------------
     // Default theming function.
     // -------------------------
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"field field-name-body field-type-text-with-summary field-label-hidden\"><div class=\"field-items\"><div class=\"field-item even\" property=\"content:encoded\"><p>" . $body_field . "</p>
 </div></div></div>");
 
     $this->entitiesSetLabelClass('above');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"field field-name-body field-type-text-with-summary field-label-above\"><div class=\"field-label\">Body:&nbsp;</div><div class=\"field-items\"><div class=\"field-item even\" property=\"content:encoded\"><p>" . $body_field . "</p>
 </div></div></div>");
 
     $this->entitiesSetLabelClass('above', 'My body');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"field field-name-body field-type-text-with-summary field-label-above\"><div class=\"field-label\">My body:&nbsp;</div><div class=\"field-items\"><div class=\"field-item even\" property=\"content:encoded\"><p>" . $body_field . "</p>
 </div></div></div>");
 
     $this->entitiesSetLabelClass('hidden', '', 'test_field_class');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"field field-name-body field-type-text-with-summary field-label-hidden test_field_class\"><div class=\"field-items\"><div class=\"field-item even\" property=\"content:encoded\"><p>" . $body_field . "</p>
 </div></div></div>");
 
@@ -302,37 +302,37 @@ class EntitiesTest extends BaseTest {
       'fs1[ft-default]' => 'theme_ds_field_reset',
     );
     $this->drupalPost('admin/structure/ds/list/extras', $edit, t('Save configuration'));
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <p>" . $body_field . "</p>");
 
     $this->entitiesSetLabelClass('above');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"label-above\">Body:&nbsp;</div><p>" . $body_field . "</p>");
 
     $this->entitiesSetLabelClass('inline');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"label-inline\">Body:&nbsp;</div><p>" . $body_field . "</p>");
 
     $this->entitiesSetLabelClass('above', 'My body');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"label-above\">My body:&nbsp;</div><p>" . $body_field . "</p>");
 
     $this->entitiesSetLabelClass('inline', 'My body');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"label-inline\">My body:&nbsp;</div><p>" . $body_field . "</p>");
 
     \Drupal::config('ds.extras')->set('ft-kill-colon', TRUE)->save();
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"label-inline\">My body</div><p>" . $body_field . "</p>");
 
     $this->entitiesSetLabelClass('hidden');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <p>" . $body_field . "</p>");
     $this->entitiesClearFieldSettings();
@@ -349,7 +349,7 @@ class EntitiesTest extends BaseTest {
     );
     $this->dsEditFormatterSettings($edit);
 
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div><p>" . $body_field . "</p>
 </div>  </div>");
@@ -361,7 +361,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][ow-cl]' => 'ow-class'
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"ow-class\"><p>" . $body_field . "</p>
 </div>  </div>");
@@ -373,7 +373,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][ow-cl]' => 'ow-class-2'
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <span class=\"ow-class-2\"><p>" . $body_field . "</p>
 </span>  </div>");
@@ -390,7 +390,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][fis-el]' => 'div'
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div><div><p>" . $body_field . "</p>
 </div></div>  </div>");
@@ -405,7 +405,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][fis-cl]' => 'fi-class'
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div><div class=\"fi-class\"><p>" . $body_field . "</p>
 </div></div>  </div>");
@@ -419,7 +419,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][fis-cl]' => 'fi-class'
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div><span class=\"fi-class\"><p>" . $body_field . "</p>
 </span></div>  </div>");
@@ -434,7 +434,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][fis-cl]' => 'fi-class'
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"ow-class\"><span class=\"fi-class\"><p>" . $body_field . "</p>
 </span></div>  </div>");
@@ -449,7 +449,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][fis-cl]' => 'fi-class-2'
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <span class=\"ow-class\"><span class=\"fi-class-2\"><p>" . $body_field . "</p>
 </span></span>  </div>");
@@ -463,7 +463,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][fi]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div><p>" . $body_field . "</p>
 </div>  </div>");
@@ -474,7 +474,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][fi-el]' => 'span',
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <span><p>" . $body_field . "</p>
 </span>  </div>");
@@ -487,7 +487,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][fi-odd-even]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span>  </div>");
@@ -503,7 +503,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][fi-odd-even]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"fi-class-2\"><div class=\"even fi-class\"><p>" . $body_field . "</p>
 </div></div>  </div>");
@@ -521,7 +521,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][fi-odd-even]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"ow-class\"><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>  </div>");
@@ -542,7 +542,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][fi-at]' => 'name="fi-at"',
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"ow-class\" name=\"ow-att\"><div class=\"fi-class-2\" name=\"fis-att\"><span class=\"even fi-class\" name=\"fi-at\"><p>" . $body_field . "</p>
 </span></div></div>  </div>");
@@ -566,37 +566,37 @@ class EntitiesTest extends BaseTest {
 
     // Label tests with custom function.
     $this->entitiesSetLabelClass('above');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"ow-class\"><div class=\"label-above\">Body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>  </div>");
 
     $this->entitiesSetLabelClass('inline');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"ow-class\"><div class=\"label-inline\">Body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>  </div>");
 
     $this->entitiesSetLabelClass('above', 'My body');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"ow-class\"><div class=\"label-above\">My body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>  </div>");
 
     $this->entitiesSetLabelClass('inline', 'My body');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"ow-class\"><div class=\"label-inline\">My body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>  </div>");
 
     $this->entitiesSetLabelClass('inline', 'My body', '', TRUE);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"ow-class\"><div class=\"label-inline\">My body</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>  </div>");
 
     $this->entitiesSetLabelClass('hidden');
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"ow-class\"><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>  </div>");
@@ -609,7 +609,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][ow-def-cl]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"ow-class field field-name-body field-type-text-with-summary field-label-hidden\"><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
 </span></div></div>  </div>");
@@ -623,7 +623,7 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][settings][ft][fi-def-at]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <div class=\"ow-class field field-name-body field-type-text-with-summary field-label-hidden\"><div class=\"fi-class-2\"><span class=\"even fi-class\"  property=\"content:encoded\"><p>" . $body_field . "</p>
 </span></div></div>  </div>");
@@ -635,7 +635,7 @@ class EntitiesTest extends BaseTest {
     );
 
     $this->dsEditFormatterSettings($edit);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     Testing field output through custom function  </div>");
   }

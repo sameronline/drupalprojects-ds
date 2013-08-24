@@ -10,11 +10,14 @@
  */
 function ds_test_install() {
 
+  Drupal::config('ds.settings')
+    ->set('field_template', 1)
+    ->save();
+
   Drupal::config('ds.extras')
-    ->set('region_to_block', TRUE)
-    ->set('switch_view_mode', TRUE)
-    ->set('field_template', TRUE)
-    ->set('fields_extra', TRUE)
+    ->set('region_to_block', 1)
+    ->set('switch_view_mode', 1)
+    ->set('fields_extra', 1)
     ->set('fields_extra_list', "node|article|ds_extras_extra_test_field\nnode|article|ds_extras_second_field")
     ->save();
 
@@ -25,7 +28,7 @@ function ds_test_install() {
  * Helper function to return the tag name basid on tid.
  */
 function ds_test_get_tag_name($raw_value, $object) {
-  $term = taxonomy_term_load($raw_value);
+  $term = entity_load('taxonomy_term', $raw_value);
   return $term->name;
 }
 
