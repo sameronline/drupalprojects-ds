@@ -1,0 +1,15 @@
+ds_block_field_add_local_action:
+  route_name: add_block_field
+  title: 'Add a block field'
+  appears_on:
+    - fields_list
+ds_code_field_add_local_action:
+  route_name: add_code_field
+  title: 'Add a code field'
+  appears_on:
+    - fields_list
+ds_preprocess_field_add_local_action:
+  route_name: add_preprocess_field
+  title: 'Add a preprocess field'
+  appears_on:
+    - fields_list
