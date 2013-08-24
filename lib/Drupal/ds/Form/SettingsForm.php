@@ -9,7 +9,6 @@ namespace Drupal\ds\Form;
 
 use Drupal\system\SystemConfigFormBase;
 use Drupal\Core\Config\ConfigFactory;
-use Drupal\aggregator\Plugin\AggregatorPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
