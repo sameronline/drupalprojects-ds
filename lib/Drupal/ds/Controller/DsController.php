@@ -7,40 +7,12 @@
 
 namespace Drupal\ds\Controller;
 
-use Drupal\Core\Controller\ControllerInterface;
-use Drupal\Core\Entity\EntityManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Controller\ControllerBase;
 
 /**
  * Returns responses for Display Suite UI routes.
  */
-class DsController implements ControllerInterface {
-
-  /**
-   * Stores the Entity manager.
-   *
-   * @var \Drupal\Core\Entity\EntityManager
-   */
-  protected $entityManager;
-
-  /**
-   * Constructs a new \Drupal\ds\Controller\DsController object.
-   *
-   * @param \Drupal\Core\Entity\EntityManager $entity_manager
-   *   The Entity manager.
-   */
-  public function __construct(EntityManager $entity_manager) {
-    $this->entityManager = $entity_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('plugin.manager.entity')
-    );
-  }
+class DsController extends ControllerBase {
 
   /**
    * Lists all bundles per entity type.
@@ -53,7 +25,7 @@ class DsController implements ControllerInterface {
 
     // All entities.
     $rows = array();
-    $entity_info = entity_get_info();
+    $entity_info = $this->entityManager()->getDefinitions();;
 
     // Move node to the top.
     if (isset($entity_info['node'])) {
@@ -62,7 +34,7 @@ class DsController implements ControllerInterface {
       $entity_info = array_merge(array('node' => $node_entity), $entity_info);
     }
 
-    $field_ui_enabled = module_exists('field_ui');
+    $field_ui_enabled = $this->moduleHandler()->moduleExists('field_ui');
     if (!$field_ui_enabled) {
       $build['no_field_ui'] = array(
         '#markup' => '<p>' . t('You need to enable Field UI to manage the displays of entities.') . '</p>',
@@ -86,14 +58,14 @@ class DsController implements ControllerInterface {
           $row[] = check_plain($bundle['label']);
 
           if ($field_ui_enabled) {
-            $path = $this->entityManager->getAdminPath($entity_type, $bundle_type);
+            $path = $this->entityManager()->getAdminPath($entity_type, $bundle_type);
             $operations['manage_display'] = array(
               'title' => t('Manage display'),
               'href' => $path . '/display',
             );
 
             // Add Mangage Form link if Display Suite Forms is enabled.
-            if (module_exists('ds_forms')) {
+            if ($this->moduleHandler()->moduleExists('ds_forms')) {
               $operations['manage_form'] = array(
                 'title' => t('Manage form'),
                 'href' => $path . '/fields',

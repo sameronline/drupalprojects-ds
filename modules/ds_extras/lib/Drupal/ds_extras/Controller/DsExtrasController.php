@@ -7,41 +7,13 @@
 
 namespace Drupal\ds_extras\Controller;
 
-use Drupal\Core\Controller\ControllerInterface;
-use Drupal\Core\Entity\EntityManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Returns responses for Display Suite Extra routes.
  */
-class DsExtrasController implements ControllerInterface {
-
-  /**
-   * Stores the Entity manager.
-   *
-   * @var \Drupal\Core\Entity\EntityManager
-   */
-  protected $entityManager;
-
-  /**
-   * Constructs a new \Drupal\ds_extras\Controller\ViewsUIController object.
-   *
-   * @param \Drupal\Core\Entity\EntityManager $entity_manager
-   *   The Entity manager.
-   */
-  public function __construct(EntityManager $entity_manager) {
-    $this->entityManager = $entity_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('plugin.manager.entity')
-    );
-  }
+class DsExtrasController extends ControllerBase {
 
   /**
    * Returns an node through JSON.
@@ -54,7 +26,7 @@ class DsExtrasController implements ControllerInterface {
     $status = TRUE;
     $error = FALSE;
 
-    $query = \Drupal::request()->query;
+    $query = $this->request()->query;
     $id = $query->get('id');
     $view_mode = $query->get('view_mode');
     $entity_type = $query->get('entity_type');

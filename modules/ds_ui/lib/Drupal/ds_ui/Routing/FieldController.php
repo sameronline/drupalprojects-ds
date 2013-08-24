@@ -7,8 +7,8 @@
 
 namespace Drupal\ds_ui\Routing;
 
-use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Controller\ControllerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -16,14 +16,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 /**
  * Route controller fields.
  */
-class FieldController implements ControllerInterface {
-
-  /**
-   * Stores the configuration factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected $configFactory;
+class FieldController extends ControllerBase implements ControllerInterface {
 
   /**
    * The config storage.
@@ -33,23 +26,20 @@ class FieldController implements ControllerInterface {
   protected $storage;
 
   /**
-   * Constructs a CustomFieldController object.
+   * Constructs a \Drupal\ds_ui\Routing\FieldController object.
    *
    * @param \Drupal\Core\Config\StorageInterface $storage
    *   The configuration storage.
-   * @param \Drupal\Core\Config\ConfigFactory $config_factory
-   *   The factory for configuration objects.
    */
-  public function __construct(StorageInterface $storage, ConfigFactory $config_factory) {
+  public function __construct(StorageInterface $storage) {
     $this->storage = $storage;
-    $this->configFactory = $config_factory;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('config.storage'), $container->get('config.factory'));
+    return new static($container->get('config.storage'));
   }
 
   /**
@@ -63,7 +53,7 @@ class FieldController implements ControllerInterface {
 
       $rows = array();
       foreach ($custom_fields as $config) {
-        $field_value = $this->configFactory->get($config)->get();
+        $field_value = $this->config($config)->get();
         $row = array();
         $row[] = check_plain($field_value['label']);
         $row[] = $this->getHumanNameFieldFromType($field_value['field_type']);
@@ -72,11 +62,11 @@ class FieldController implements ControllerInterface {
 
         $operations = array();
         $operations['edit'] = array(
-          'title' => t('Edit'),
+          'title' => $this->t('Edit'),
           'href' => 'admin/structure/ds/fields/manage/' . $field_value['field'],
         );
         $operations['delete'] = array(
-          'title' => t('Delete'),
+          'title' => $this->t('Delete'),
           'href' => 'admin/structure/ds/fields/delete/' . $field_value['field'],
         );
         $row[] = array(
@@ -104,7 +94,7 @@ class FieldController implements ControllerInterface {
       $output = theme('table', $table);
     }
     else {
-      $output = t('No custom fields have been defined.');
+      $output = $this->t('No custom fields have been defined.');
     }
 
     return $output;
@@ -120,11 +110,11 @@ class FieldController implements ControllerInterface {
 
     switch ($type) {
       case DS_FIELD_TYPE_CODE:
-        return t('Code field');
+        return $this->t('Code field');
       case DS_FIELD_TYPE_BLOCK:
-        return t('Block field');
+        return $this->t('Block field');
       case DS_FIELD_TYPE_PREPROCESS:
-        return t('Preprocess field');
+        return $this->t('Preprocess field');
     }
 
     // Fallback
@@ -153,7 +143,7 @@ class FieldController implements ControllerInterface {
     }
 
     if (!$redirect) {
-      drupal_set_message(t('Field not found'));
+      drupal_set_message($this->t('Field not found'));
       $redirect = 'admin/structure/ds/fields';
     }
 
