@@ -126,7 +126,8 @@ class FieldController extends ControllerBase implements ControllerInterface {
    */
   public function manageRedirect($field_key) {
     $redirect = '';
-    if ($field = $this->configFactory->get('ds.field.' . $field_key)->get()) {
+    $config = $this->config('ds.field.' . $field_key);
+    if ($field = $config->get()) {
       switch ($field['field_type']) {
         case DS_FIELD_TYPE_CODE:
           $redirect = 'admin/structure/ds/fields/manage_code/' . $field_key;
