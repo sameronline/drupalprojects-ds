@@ -4,16 +4,17 @@ ds.settings:
   type: mapping
   label: 'Display Suite settings'
   mapping:
-    disabled:
+    disable:
       type: boolean
-      label: 'Display Suite disabled'
+      label: 'Disable Display Suite attaching fields'
+    additional_settings__active_tab:
+      label: 'Active tab'
     field_template:
       type: boolean
       label: 'Uses field templates'
-    ft_default:
-      type: string
+    ft-default:
       label: 'The default template'
-    ft_kill_colon:
+    ft-kill-colon:
       type: boolean
       label: 'Kill the label colon'
 
@@ -22,8 +23,6 @@ ds.classes:
   label: 'Display Suite classes'
   mapping:
     regions:
-      type: string
       label: 'Region classes'
     fields:
-      type: string
       label: 'Field classes'

@@ -5,13 +5,11 @@ ds.extras:
   label: 'Display Suite extra settings'
   mapping:
     region_blocks:
-      type: string
       label: 'Region blocks'
     fields_extra:
       type: boolean
       label: 'Add extra fields'
     fields_extra_list:
-      type: string
       label: 'List of extra fields'
     switch_view_mode:
       type: boolean
