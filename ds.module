@@ -331,7 +331,7 @@ function ds_get_fields($entity_type, $cache = TRUE) {
   static $static_fields;
 
   if (!isset($static_fields[$entity_type])) {
-    foreach (\Drupal::service('plugin.manager.ds.plugin')->getDefinitions() as $plugin_id => $plugin) {
+    foreach (\Drupal::service('plugin.manager.ds')->getDefinitions() as $plugin_id => $plugin) {
       // Needed to get derivatives working
       $plugin['plugin_id'] = $plugin_id;
       $static_fields[$plugin['entity_type']][$plugin_id] = $plugin;
@@ -402,7 +402,7 @@ function ds_get_field_value($key, $field, $entity, $view_mode, $build = array())
   $field['build'] = $build;
 
   // Load the plugin.
-  $field_instance = drupal_container()->get('plugin.manager.ds.plugin')->createInstance($field['plugin_id']);
+  $field_instance = drupal_container()->get('plugin.manager.ds')->createInstance($field['plugin_id']);
 
   // Special case preprocess fields as they don't need to be rendered
   if ($field_instance InstanceOf PreprocessPluginBase) {

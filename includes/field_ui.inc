@@ -1314,7 +1314,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
   foreach ($fields as $key => $field) {
     // Check if we can display this field here.
-    $plugin_instance = drupal_container()->get('plugin.manager.ds.plugin')->createInstance($field['plugin_id']);
+    $plugin_instance = drupal_container()->get('plugin.manager.ds')->createInstance($field['plugin_id']);
 
     if (!$plugin_instance->isAllowed($bundle, $view_mode)) {
       continue;
