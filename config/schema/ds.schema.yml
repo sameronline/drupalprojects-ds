@@ -1,0 +1,29 @@
+# Schema for the configuration files of the Display Suite module.
+
+ds.settings:
+  type: mapping
+  label: 'Display Suite settings'
+  mapping:
+    disabled:
+      type: boolean
+      label: 'Display Suite disabled'
+    field_template:
+      type: boolean
+      label: 'Uses field templates'
+    ft_default:
+      type: string
+      label: 'The default template'
+    ft_kill_colon:
+      type: boolean
+      label: 'Kill the label colon'
+
+ds.classes:
+  type: mapping
+  label: 'Display Suite classes'
+  mapping:
+    regions:
+      type: string
+      label: 'Region classes'
+    fields:
+      type: string
+      label: 'Field classes'
