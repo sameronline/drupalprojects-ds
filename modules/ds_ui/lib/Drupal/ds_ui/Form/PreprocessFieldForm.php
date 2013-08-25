@@ -50,7 +50,7 @@ class PreprocessFieldForm extends FieldFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getAdminLabel() {
+  public function getTypeLabel() {
     return 'Preprocess field';
   }
 

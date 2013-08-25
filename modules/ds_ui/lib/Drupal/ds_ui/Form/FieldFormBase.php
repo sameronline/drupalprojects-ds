@@ -171,7 +171,7 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
     $field['ui_limit'] = $form_state['values']['ui_limit'];
     $field['properties'] = $this->getProperties($form_state);
     $field['type'] = $this->getType();
-    $field['type_label'] = $this->getAdminLabel();
+    $field['type_label'] = $this->getTypeLabel();
 
     $entities = $form_state['values']['entities'];
     foreach ($entities as $key => $value) {
@@ -210,7 +210,7 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
   /**
    * Returns the admin label for the field on the field overview page
    */
-  public function getAdminLabel() {
+  public function getTypeLabel() {
     return '';
   }
 

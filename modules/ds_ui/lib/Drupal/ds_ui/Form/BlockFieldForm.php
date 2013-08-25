@@ -74,7 +74,7 @@ class BlockFieldForm extends FieldFormBase implements ControllerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getAdminLabel() {
+  public function getTypeLabel() {
     return 'Block field';
   }
 

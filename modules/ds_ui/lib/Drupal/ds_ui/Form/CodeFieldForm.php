@@ -97,7 +97,7 @@ class CodeFieldForm extends FieldFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getAdminLabel() {
+  public function getTypeLabel() {
     return 'Code field';
   }
 
