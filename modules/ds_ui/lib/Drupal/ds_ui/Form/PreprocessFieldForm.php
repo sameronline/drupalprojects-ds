@@ -43,11 +43,15 @@ class PreprocessFieldForm extends FieldFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, array &$form_state) {
-    parent::validateForm($form, $form_state);
+  public function getType() {
+    return DS_FIELD_TYPE_PREPROCESS;
+  }
 
-    $field = &$this->field;
-    $field['field_type'] = DS_FIELD_TYPE_PREPROCESS;
+  /**
+   * {@inheritdoc}
+   */
+  public function getAdminLabel() {
+    return 'Preprocess field';
   }
 
 }

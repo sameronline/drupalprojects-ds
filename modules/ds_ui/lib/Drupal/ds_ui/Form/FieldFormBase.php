@@ -37,18 +37,18 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
   protected $cacheBackend;
 
   /**
-   * The field array
-   *
-   * @var array
-   */
-  protected $field;
-
-  /**
    * Drupal module handler
    *
    * @var \Drupal\Core\Extension\ModuleHandler
    */
   protected $moduleHandler;
+
+  /**
+   * The field properties.
+   *
+   * @var array
+   */
+  protected $field;
 
   /**
    * Constructs a \Drupal\system\CustomFieldFormBase object.
@@ -97,39 +97,35 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
    */
   public function buildForm(array $form, array &$form_state, $field_key = '') {
 
+    // Initalize field.
+    $field = array();
+
+    // Fetch field if it already exists.
     if (!empty($field_key)) {
       $field = $this->configFactory->get('ds.field.' . $field_key)->get();
     }
 
-    if (!isset($field)) {
-      $field = array();
-      $field['label'] = '';
-      $field['field'] = '';
-      $field['ui_limit'] = '';
-      $field['entities'] = array();
-      $field['properties'] = array();
-    }
-
+    // Save the field for future reuse.
     $this->field = $field;
 
     $form['name'] = array(
       '#title' => t('Label'),
       '#type' => 'textfield',
-      '#default_value' => $field['label'],
+      '#default_value' => isset($field['label']) ? $field['label'] : '',
       '#description' => t('The human-readable label of the field.'),
       '#maxlength' => 32,
       '#required' => TRUE,
       '#size' => 30,
     );
 
-    $form['field'] = array(
+    $form['id'] = array(
       '#type' => 'machine_name',
-      '#default_value' => $field['field'],
+      '#default_value' => isset($field['id']) ? $field['id'] : '',
       '#maxlength' => 32,
       '#description' => t('The machine-readable name of this field. This name must contain only lowercase letters and underscores. This name must be unique.'),
-      '#disabled' => !empty($field['field']),
+      '#disabled' => !empty($field['id']),
       '#machine_name' => array(
-        'exists' => array($this, 'ds_field_unique'),
+        'exists' => array($this, 'uniqueFieldName'),
         'source' => array('name'),
       ),
     );
@@ -147,13 +143,13 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
       '#type' => 'checkboxes',
       '#required' => TRUE,
       '#options' => $entity_options,
-      '#default_value' => $field['entities'],
+      '#default_value' => isset($field['entities']) ? $field['entities'] : array(),
     );
 
     $form['ui_limit'] = array(
       '#title' => t('Limit field'),
       '#description' => t('Limit this field on field UI per bundles and/or view modes. The values are in the form of $bundle|$view_mode, where $view_mode may be either a view mode set to use custom settings, or \'default\'. You may use * to select all, e.g article|*, *|full or *|*. Enter one value per line.'),      '#type' => 'textarea',
-      '#default_value' => $field['ui_limit'],
+      '#default_value' => isset($field['ui_limit']) ? $field['ui_limit'] : '',
     );
 
     $form['submit'] = array(
@@ -168,12 +164,14 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, array &$form_state) {
     $field = array();
-    $field['properties'] = array();
-    $field['field'] = $form_state['values']['field'];
+    $field['id'] = $form_state['values']['id'];
     $field['label'] = $form_state['values']['name'];
     $field['ui_limit'] = $form_state['values']['ui_limit'];
+    $field['properties'] = $this->getProperties($form_state);
+    $field['type'] = $this->getType();
+    $field['type_label'] = $this->getAdminLabel();
 
     $entities = $form_state['values']['entities'];
     foreach ($entities as $key => $value) {
@@ -183,17 +181,8 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
     }
     $field['entities'] = $entities;
 
-    $this->field = $field;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, array &$form_state) {
-    $field = $this->field;
-
     // Save field and clear ds_fields.
-    $this->configFactory->get('ds.field.' . $field['field'])->setData($field)->save();
+    $this->configFactory->get('ds.field.' . $field['id'])->setData($field)->save();
     $this->cacheBackend->deleteTags(array('ds_fields_info' => TRUE));
 
     // @todo find out how we can clear derivatives without clearing everything.
@@ -205,11 +194,34 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
   }
 
   /**
+   * Returns the properties for the custom field
+   */
+  public function getProperties($form_state) {
+    return array();
+  }
+
+  /**
+   * Returns the type of the field.
+   */
+  public function getType() {
+    return '';
+  }
+
+  /**
+   * Returns the admin label for the field on the field overview page
+   */
+  public function getAdminLabel() {
+    return '';
+  }
+
+
+  /**
    * Returns whether a field machine name is unique.
    */
-  public function ds_field_unique($name) {
+  public function uniqueFieldName($name) {
     $value = strtr($name, array('-' => '_'));
-    if (\Drupal::config('ds.field.' . $value)->get()) {
+    $config = $this->configFactory->get('ds.field.' . $value);
+    if ($config->get()) {
       return TRUE;
     }
     return FALSE;

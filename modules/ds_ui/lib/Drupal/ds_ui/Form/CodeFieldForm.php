@@ -25,9 +25,7 @@ class CodeFieldForm extends FieldFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state, $field_key = '') {
-
     $form = parent::buildForm($form, $form_state, $field_key);
-
     $field = $this->field;
 
     if (empty($field_key)) {
@@ -82,13 +80,26 @@ class CodeFieldForm extends FieldFormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, array &$form_state) {
-    parent::validateForm($form, $form_state);
-
-    $field = &$this->field;
-    $field['field_type'] = DS_FIELD_TYPE_CODE;
-    $field['properties']['code'] = $form_state['values']['code'];
-    $field['properties']['use_token'] = $form_state['values']['use_token'];
+  public function getProperties($form_state) {
+    return array(
+      'code' => $form_state['values']['code'],
+      'use_token' => $form_state['values']['use_token'],
+    );
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getType() {
+    return DS_FIELD_TYPE_CODE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAdminLabel() {
+    return 'Code field';
+  }
+
 
 }

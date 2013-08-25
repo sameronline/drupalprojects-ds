@@ -27,6 +27,7 @@ class BlockFieldForm extends FieldFormBase implements ControllerInterface {
    */
   public function buildForm(array $form, array &$form_state, $field_key = '') {
     $form = parent::buildForm($form, $form_state, $field_key);
+    $field = $this->field;
 
     if (empty($field_key)) {
       $form['#title'] = 'Add a block field';
@@ -34,8 +35,6 @@ class BlockFieldForm extends FieldFormBase implements ControllerInterface {
     else {
       $form['#title'] = 'Edit a block field';
     }
-
-    $field = $this->field;
 
     $manager = \Drupal::service('plugin.manager.block');
 
@@ -59,13 +58,24 @@ class BlockFieldForm extends FieldFormBase implements ControllerInterface {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, array &$form_state) {
-    parent::validateForm($form, $form_state);
+  public function getProperties($form_state) {
+    return array(
+      'block' => $form_state['values']['block'],
+    );
+  }
 
-    $field = &$this->field;
-    $field['field_type'] = DS_FIELD_TYPE_BLOCK;
-    $field['properties'] = array();
-    $field['properties']['block'] = $form_state['values']['block'];
+  /**
+   * {@inheritdoc}
+   */
+  public function getType() {
+    return DS_FIELD_TYPE_BLOCK;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAdminLabel() {
+    return 'Block field';
   }
 
 }

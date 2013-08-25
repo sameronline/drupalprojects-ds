@@ -91,7 +91,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ControllerInterface {
 
     if (empty($this->field)) {
       drupal_set_message(t('Field not found.'));
-      return new RedirectResponse('admin/structure/ds/fields');
+      return new RedirectResponse('/admin/structure/ds/fields');
     }
 
     return parent::buildForm($form, $form_state, $request);
@@ -104,7 +104,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ControllerInterface {
     $field = $this->field;
 
     // Remove field and clear caches.
-    $this->configFactory->get('ds.field.' . $field['field'])->delete();
+    $this->configFactory->get('ds.field.' . $field['id'])->delete();
     $this->cacheBackend->deleteTags(array('ds_fields_info' => TRUE));
 
     // @todo find out how we can clear derivatives without clearing everything.

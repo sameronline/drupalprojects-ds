@@ -56,18 +56,18 @@ class FieldController extends ControllerBase implements ControllerInterface {
         $field_value = $this->config($config)->get();
         $row = array();
         $row[] = check_plain($field_value['label']);
-        $row[] = $this->getHumanNameFieldFromType($field_value['field_type']);
-        $row[] = $field_value['field'];
+        $row[] = isset($field_value['type_label']) ? $field_value['type_label'] : $this->t('Unknown');
+        $row[] = $field_value['id'];
         $row[] = ucwords(str_replace('_', ' ', implode(', ', $field_value['entities'])));
 
         $operations = array();
         $operations['edit'] = array(
           'title' => $this->t('Edit'),
-          'href' => 'admin/structure/ds/fields/manage/' . $field_value['field'],
+          'href' => 'admin/structure/ds/fields/manage/' . $field_value['id'],
         );
         $operations['delete'] = array(
           'title' => $this->t('Delete'),
-          'href' => 'admin/structure/ds/fields/delete/' . $field_value['field'],
+          'href' => 'admin/structure/ds/fields/delete/' . $field_value['id'],
         );
         $row[] = array(
           'data' => array(
@@ -101,46 +101,13 @@ class FieldController extends ControllerBase implements ControllerInterface {
   }
 
   /**
-   * Return the human name of a field.
-   *
-   * @return $human_name
-   *   The human name of a field.
-   */
-  protected function getHumanNameFieldFromType($type) {
-
-    switch ($type) {
-      case DS_FIELD_TYPE_CODE:
-        return $this->t('Code field');
-      case DS_FIELD_TYPE_BLOCK:
-        return $this->t('Block field');
-      case DS_FIELD_TYPE_PREPROCESS:
-        return $this->t('Preprocess field');
-    }
-
-    // Fallback
-    return t('Unknown');
-  }
-
-  /**
    * Redirect to the correct manage callback.
    */
   public function manageRedirect($field_key) {
     $redirect = '';
     $config = $this->config('ds.field.' . $field_key);
     if ($field = $config->get()) {
-      switch ($field['field_type']) {
-        case DS_FIELD_TYPE_CODE:
-          $redirect = 'admin/structure/ds/fields/manage_code/' . $field_key;
-          break;
-
-        case DS_FIELD_TYPE_BLOCK:
-          $redirect = 'admin/structure/ds/fields/manage_block/' . $field_key;
-          break;
-
-        case DS_FIELD_TYPE_PREPROCESS:
-          $redirect = 'admin/structure/ds/fields/manage_preprocess/' . $field_key;
-          break;
-      }
+      $redirect = 'admin/structure/ds/fields/manage_' . $field['type'] . '/' . $field_key;
     }
 
     if (!$redirect) {
