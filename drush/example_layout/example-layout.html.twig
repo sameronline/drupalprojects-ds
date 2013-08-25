@@ -17,6 +17,11 @@
 #}
 <{{ layout_wrapper }} {{ layout_attributes }} class="ds-2col {{ attributes.class }} clearfix">
 
+  {# Needed to activate contextual links #}
+  {% if title_suffix.contextual_links is not null %}
+    {{ title_suffix.contextual_links }}
+  {% endif %}
+
   {# regions #}
 
   <{{ left_wrapper }} class="group-left{{ left_classes }}">
@@ -32,6 +37,11 @@
   </{{ right_wrapper }}>
 
   {# These comments are required for the Drush command. You can remove them in your own copy #}
-  {# regions #}
+  {# /regions #}
 
 </{{ layout_wrapper }}>
+
+{# Needed to activate display suite support on forms #}
+{% if drupal_render_children is not null %}
+  {{ drupal_render_children }}
+{% endif %}
