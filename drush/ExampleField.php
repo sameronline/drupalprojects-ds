@@ -14,7 +14,7 @@ use Drupal\ds\Plugin\DsField\DsFieldBase;
  * @DsField(
  *   id = "example_field_ExampleField",
  *   title = @Translation("ExampleField"),
- *   entity_type = "node",
+ *   entity_type = "node"
  * )
  */
 class ExampleField extends DsFieldBase {
