@@ -19,8 +19,39 @@ use Drupal\ds\Plugin\DsField\DsFieldBase;
  */
 class ExampleField extends DsFieldBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public function render($field) {
     return '';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settings() {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultSettings() {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function formatters() {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isAllowed($bundle, $view_mode) {
+    return TRUE;
   }
 
 }
