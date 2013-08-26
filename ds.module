@@ -1180,7 +1180,7 @@ function ds_render_user_picture($field) {
  */
 function ds_render_date_field($field) {
   $date_format = str_replace('ds_post_date_', '', $field['formatter']);
-  return ds_edit_support('created', format_date($field['entity']->created, $date_format), $field);
+  return ds_edit_support($field['properties']['entity_render_key'], format_date($field['entity']->{$field['properties']['entity_render_key']}, $date_format), $field);
 }
 
 /**
