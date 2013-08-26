@@ -652,6 +652,26 @@ function ds_preprocess_ds_layout(&$vars) {
       }
     }
 
+    // Add an onclick attribute on the wrapper.
+    if (!empty($layout['settings']['layout_link_attribute'])) {
+      $url = '';
+      switch ($layout['settings']['layout_link_attribute']) {
+        case 'content':
+          $uri = $vars[$object]->uri();
+          $url = $uri['path'];
+          break;
+        case 'custom':
+          $url = $layout['settings']['layout_link_custom'];
+          break;
+        case 'tokens':
+          $url = token_replace($layout['settings']['layout_link_custom'], array($vars['elements']['#entity_type'] => $vars[$object]));
+          break;
+      }
+
+      if (!empty($url)) {
+        $vars['attributes']['onclick'] = 'location.href=\'' . url($url) . '\'';
+      }
+    }
 
     // Let other modules alter the ds array before creating the region variables.
     $context = array('entity' => isset($vars[$object]) ? $vars[$object] : (isset($vars['elements']['#' . $object]) ? $vars['elements']['#' . $object] : ''), 'entity_type' => $vars['elements']['#entity_type'], 'bundle' => $vars['elements']['#bundle'], 'view_mode' => $vars['elements']['#view_mode']);
