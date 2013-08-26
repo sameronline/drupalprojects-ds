@@ -39,7 +39,7 @@ function ds_drush_command() {
       'entity'  => 'Name of the entity',
     ),
     'examples' => array(
-      'drush ds-build "MyField"' => 'Create a field with only a render function',
+      'drush ds-field "MyField"' => 'Create a field with only a render function',
       'drush ds-field "MyTest" --entity=user' => 'Create a field for the user entity',
     ),
   );
