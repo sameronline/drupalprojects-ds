@@ -34,9 +34,7 @@ interface DsFieldInterface {
    * @return array
    *   A render array containing the form.
    */
-  public function settingsForm($field, $settings) {
-    return array();
-  }
+  public function settingsForm($field, $settings);
 
   /**
    * Returns the summary of the chosen settings.
@@ -49,9 +47,7 @@ interface DsFieldInterface {
    * @return array
    *   A render array containing the summary.
    */
-  public function settingsSummary($field, $settings) {
-    return array();
-  }
+  public function settingsSummary($field, $settings);
 
   /**
    * Returns the default settings.
@@ -59,9 +55,7 @@ interface DsFieldInterface {
    * @return array
    *   An array containg the default settings in a key value way.
    */
-  public function defaultSettings() {
-    return array();
-  }
+  public function defaultSettings();
 
   /**
    * Returns a list of possible formatters for this field.
