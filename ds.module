@@ -395,7 +395,7 @@ function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRU
 function ds_get_field_value($key, $field, $entity, $view_mode, $build = array()) {
 
   $field['field_name'] = $key;
-  $field['entity'] = $entity->getNGEntity();
+  $field['entity'] = $entity;
   $field['entity_type'] = $entity->entityType();
   $field['bundle'] = $entity->bundle();
   $field['view_mode'] = $view_mode;
