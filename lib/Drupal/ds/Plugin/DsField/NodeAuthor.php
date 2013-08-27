@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "node_author",
  *   title = @Translation("Author"),
  *   entity_type = "node",
- *   module = "ds"
+ *   provider = "node"
  * )
  */
 class NodeAuthor extends DsFieldBase {

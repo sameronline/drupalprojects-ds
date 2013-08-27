@@ -18,23 +18,55 @@ abstract class Title extends Field {
   /**
    * {@inheritdoc}
    */
-  public function settings() {
+  public function settingsForm($field, $settings) {
 
-    $settings = array();
+    $default_settings = $this->defaultSettings();
+
     $settings['link'] = array(
-      'type' => 'select',
-      'options' => array('no', 'yes')
+      '#type' => 'checkbox',
+      '#title' => 'Link',
+      '#default_value' => isset($settings['link']) ? $settings['link'] : $default_settings['link'],
     );
     $settings['wrapper'] = array(
-      'type' => 'textfield',
-      'description' => t('Eg: h1, h2, p')
+      '#type' => 'textfield',
+      '#title' => 'Wrapper',
+      '#default_value' => isset($settings['wrapper']) ? $settings['wrapper'] : $default_settings['wrapper'],
+      '#description' => t('Eg: h1, h2, p')
     );
     $settings['class'] = array(
-      'type' => 'textfield',
-      'description' => t('Put a class on the wrapper. Eg: block-title')
+      '#type' => 'textfield',
+      '#title' => 'Class',
+      '#default_value' => isset($settings['class']) ? $settings['class'] : $default_settings['class'],
+      '#description' => t('Put a class on the wrapper. Eg: block-title')
     );
 
     return $settings;
+  }
+
+  /**
+   * {@inhertidoc}
+   */
+  public function settingsSummary($field, $settings) {
+    $default_settings = $this->defaultSettings();
+
+    $summary = array();
+    if (isset($settings['link']) && !empty($settings['link'])) {
+      $summary[] = 'Link: yes';
+    }
+    else {
+      $summary[] = 'Link: no';
+    }
+    if (isset($settings['wrapper']) && !empty($settings['wrapper'])) {
+      $summary[] = 'Wrapper: ' . $settings['wrapper'];
+    }
+    else {
+      $summary[] = 'Wrapper: ' . $default_settings['wrapper'];
+    }
+    if (isset($settings['class']) && !empty($settings['class'])) {
+      $summary[] = 'Class: ' . $settings['class'];
+    }
+
+    return $summary;
   }
 
   /**

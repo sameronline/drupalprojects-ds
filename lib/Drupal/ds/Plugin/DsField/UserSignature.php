@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "user_signature",
  *   title = @Translation("User signature"),
  *   entity_type = "user",
- *   module = "ds"
+ *   provider = "user"
  * )
  */
 class UserSignature extends DsFieldBase {

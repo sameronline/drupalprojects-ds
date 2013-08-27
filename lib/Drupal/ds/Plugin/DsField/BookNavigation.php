@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "book_navigation",
  *   title = @Translation("Book navigation"),
  *   entity_type = "node",
- *   module = "ds"
+ *   provider = "book"
  * )
  */
 class BookNavigation extends DsFieldBase {

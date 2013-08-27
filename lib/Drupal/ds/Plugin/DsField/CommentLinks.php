@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "comment_links",
  *   title = @Translation("Links"),
  *   entity_type = "comment",
- *   module = "ds"
+ *   provider = "comment"
  * )
  */
 class CommentLinks extends DsFieldBase {

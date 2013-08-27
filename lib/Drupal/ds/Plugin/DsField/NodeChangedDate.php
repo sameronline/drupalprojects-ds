@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "node_changed_date",
  *   title = @Translation("Last modified"),
  *   entity_type = "node",
- *   module = "ds"
+ *   provider = "node"
  * )
  */
 class NodeChangedDate extends Date {

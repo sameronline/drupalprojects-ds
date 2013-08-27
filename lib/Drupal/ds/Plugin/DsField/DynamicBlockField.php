@@ -17,7 +17,7 @@ use Drupal\ds\Plugin\DsField\DsFieldBase;
  * @DsField(
  *   id = "dynamic_block_field",
  *   derivative = "Drupal\ds\Plugin\Derivative\DynamicBlockField",
- *   module = "ds"
+ *   provider = "block"
  * )
  */
 class DynamicBlockField extends BlockBase {

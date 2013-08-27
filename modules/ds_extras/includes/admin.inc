@@ -169,58 +169,6 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 }
 
 /**
- * Implements hook_ds_field_format_summary().
- */
-function ds_extras_ds_field_format_summary($field) {
-  if (isset($field['plugin_settings'])) {
-    foreach ($field['plugin_settings'] as $key => $value) {
-      if (!empty($value)) {
-        return t('Configured');
-        break;
-      }
-    }
-  }
-  return t('Not configured');
-}
-
-/**
- * Implements hook_ds_field_settings_form().
- */
-function ds_extras_ds_field_settings_form($field) {
-  $form = array();
-
-  // Switch field.
-  if (Drupal::config('ds.extras')->get('switch_field') && $field['name'] == 'switch_field') {
-    $entity_type = $field['entity_type'];
-    $bundle = $field['bundle'];
-    $view_mode = $field['view_mode'];
-    $settings = isset($field['plugin_settings']['vms']) ? $field['plugin_settings']['vms'] : array();
-    $view_modes = entity_get_view_modes($entity_type);
-
-    $form['info'] = array(
-      '#markup' => t('Enter a label for the link for the view modes you want to switch to.<br />Leave empty to hide link. They will be localized.'),
-    );
-
-    foreach ($view_modes as $key => $value) {
-
-      $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-      $visible = !empty($view_mode_settings[$key]['status']);
-
-      if ($visible) {
-        $form['vms'][$key] = array(
-          '#type' => 'textfield',
-          '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
-          '#size' => 20,
-          '#title' => check_plain($value['label']),
-        );
-      }
-    }
-  }
-
-  return $form;
-}
-
-/**
  * Submit callback after Field UI submission of a views display.
  */
 function ds_extras_vd_field_ui_submit($form, &$form_state) {

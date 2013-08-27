@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "node_comments",
  *   title = @Translation("Comments"),
  *   entity_type = "node",
- *   module = "ds"
+ *   provider = "node"
  * )
  */
 class NodeComments extends DsFieldBase {

@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "comment_submitted",
  *   title = @Translation("Submitted"),
  *   entity_type = "comment",
- *   module = "ds"
+ *   provider = "comment"
  * )
  */
 class CommentSubmitted extends PreprocessPluginBase {

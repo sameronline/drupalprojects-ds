@@ -24,7 +24,14 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
   /**
    * {@inheritdoc}
    */
-  public function settings() {
+  public function settingsForm($field, $settings) {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsSummary($field, $settings) {
     return array();
   }
 
@@ -34,6 +41,7 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
   public function defaultSettings() {
     return array();
   }
+
 
   /**
    * {@inheritdoc}

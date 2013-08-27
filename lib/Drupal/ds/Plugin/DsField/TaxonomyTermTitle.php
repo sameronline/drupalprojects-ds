@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "taxonomy_term_title",
  *   title = @Translation("Name"),
  *   entity_type = "taxonomy_term",
- *   module = "ds"
+ *   provider = "taxonomy"
  * )
  */
 class TaxonomyTermTitle extends Title {

@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "comment_permalink",
  *   title = @Translation("Permalink"),
  *   entity_type = "comment",
- *   module = "ds"
+ *   provider = "comment"
  * )
  */
 class CommentPermalink extends PreprocessPluginBase {

@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "node_title",
  *   title = @Translation("Title"),
  *   entity_type = "node",
- *   module = "ds"
+ *   provider = "node"
  * )
  */
 class NodeTitle extends Title {

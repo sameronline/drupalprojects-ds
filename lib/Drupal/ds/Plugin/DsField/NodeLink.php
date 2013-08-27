@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "node_link",
  *   title = @Translation("Read more"),
  *   entity_type = "node",
- *   module = "ds"
+ *   provider = "node"
  * )
  */
 class NodeLink extends Link {

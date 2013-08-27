@@ -676,7 +676,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   }
 
   // Clear the ds_fields cache.
-  cache()->invalidateTags(array('ds_fields' => TRUE));
+  cache()->invalidateTags(array('ds_fields_info' => TRUE));
 }
 
 /**
@@ -767,13 +767,14 @@ function _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode
  */
 function ds_field_settings_summary($field, $form_state) {
 
-  $summary = array();
+    // Grab the saved settings
+  $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : '';
 
-  // Not all fields have settings.
-  // TODO FIX THIS
-  if (isset($field['properties']['settings'])) {
-    $summary = module_invoke($field['module'], 'ds_field_format_summary', $field);
-  }
+  // Fetch the instance
+  $plugin_instance = drupal_container()->get('plugin.manager.ds')->createInstance($field['plugin_id']);
+
+  // Create the form
+  $summary = $plugin_instance->settingsSummary($field, $settings);
 
   // Add field template summary
   ds_field_formatter_settings_summary_alter($summary, array('field' => $field));
@@ -798,7 +799,14 @@ function ds_field_settings_summary($field, $form_state) {
  *   A form definition.
  */
 function ds_field_settings_form($field, &$form_state) {
-  $form = module_invoke($field['module'], 'ds_field_settings_form', $field);
+  // Grab the saved settings
+  $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : '';
+
+  // Fetch the instance
+  $plugin_instance = drupal_container()->get('plugin.manager.ds')->createInstance($field['plugin_id']);
+
+  // Create the form
+  $form = $plugin_instance->settingsForm($field, $settings);
 
   // Add field template settings to every field if enabled.
   if (Drupal::config('ds.settings')->get('field_template')) {
@@ -811,75 +819,7 @@ function ds_field_settings_form($field, &$form_state) {
       'view_mode' => $field['view_mode'],
     );
 
-    // Protect against empty $form.
-    if (!is_array($form)) $form = array();
     ds_field_template_settings_form($form, $form_state, $context);
-  }
-
-  return $form;
-}
-
-/**
- * Implements hook_ds_field_format_summary().
- */
-function ds_ds_field_format_summary($field) {
-  $summary = array();
-  $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : $field['properties']['default'];
-  $functions = module_invoke_all('ds_field_theme_functions_info');
-  foreach ($settings as $key => $value) {
-    if ($key == 'ft' || is_array($value)) {
-      // Do nothing
-    }
-    elseif (!empty($value)) {
-      $value = is_numeric($value) ? ($value ? t('Yes') : t('No')) : check_plain($value);
-      $summary[] = str_replace('_', ' ', drupal_ucfirst(check_plain($key))) . ': ' . check_plain($value) . '<br />';
-    }
-  }
-
-  return $summary;
-}
-
-/**
- * Implements hook_ds_field_settings_form().
- */
-function ds_ds_field_settings_form($field) {
-  $form = array();
-
-  $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : $field['properties']['default'];
-
-  foreach ($field['properties']['settings'] as $key => $value) {
-
-    switch ($value['type']) {
-
-      case 'textfield':
-        $form[$key] = array(
-          '#type' => 'textfield',
-          '#title' => str_replace('_', ' ', check_plain(drupal_ucfirst($key))),
-          '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
-          '#size' => 40,
-          '#description' => isset($value['description']) ? check_plain($value['description']) : '',
-        );
-        break;
-
-      case 'select':
-        $form[$key] = array(
-          '#type' => 'select',
-          '#title' => check_plain(drupal_ucfirst($key)),
-          '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
-          '#options' => $value['options'],
-          '#description' => isset($value['description']) ? check_plain($value['description']) : '',
-        );
-        break;
-
-      case 'checkbox':
-        $form[$key] = array(
-          '#type' => 'checkbox',
-          '#title' => str_replace('_', ' ', check_plain(drupal_ucfirst($key))),
-          '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
-          '#description' => isset($value['description']) ? check_plain($value['description']) : '',
-        );
-        break;
-    }
   }
 
   return $form;
@@ -1418,15 +1358,6 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     }
     else {
       $formatters = $hidden + array('default' => t('Default'));
-    }
-
-    $plugin_instance_settings = $plugin_instance->settings();
-    $plugin_instance_default_settings = $plugin_instance->defaultSettings();
-    if (!empty($plugin_instance_settings)) {
-      $field['properties']['settings'] = $plugin_instance_settings;
-    }
-    if (!empty($plugin_instance_default_settings)) {
-      $field['properties']['default'] = $plugin_instance_default_settings;
     }
 
     $table[$key] = array(

@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "taxonomy_term_link",
  *   title = @Translation("Read more"),
  *   entity_type = "taxonomy_term",
- *   module = "ds"
+ *   provider = "taxonomy"
  * )
  */
 class TaxonomyTermLink extends Link {

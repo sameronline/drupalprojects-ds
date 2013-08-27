@@ -16,8 +16,7 @@ use Drupal\ds\Plugin\DsField\DsFieldBase;
  *
  * @DsField(
  *   id = "dynamic_code_field",
- *   derivative = "Drupal\ds\Plugin\Derivative\DynamicCodeField",
- *   module = "ds"
+ *   derivative = "Drupal\ds\Plugin\Derivative\DynamicCodeField"
  * )
  */
 class DynamicCodeField extends CodeBase {

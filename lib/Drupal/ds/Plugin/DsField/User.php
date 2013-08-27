@@ -16,8 +16,8 @@ use Drupal\ds\Annotation\DsField;
  * @DsField(
  *   id = "user",
  *   title = @Translation("User"),
- *   entity_type = "node",
- *   module = "ds"
+ *   entity_type = "user",
+ *   provider = "user"
  * )
  */
 class User extends Entity {

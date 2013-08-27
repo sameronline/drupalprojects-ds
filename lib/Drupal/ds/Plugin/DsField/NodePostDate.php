@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "node_post_date",
  *   title = @Translation("Post date"),
  *   entity_type = "node",
- *   module = "ds"
+ *   provider = "node"
  * )
  */
 class NodePostDate extends Date {

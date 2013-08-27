@@ -16,8 +16,7 @@ use Drupal\ds\Plugin\DsField\DsFieldBase;
  *
  * @DsField(
  *   id = "dynamic_preprocess_field",
- *   derivative = "Drupal\ds\Plugin\Derivative\DynamicPreprocessField",
- *   module = "ds"
+ *   derivative = "Drupal\ds\Plugin\Derivative\DynamicPreprocessField"
  * )
  */
 class DynamicPreprocessField extends PreprocessBase {

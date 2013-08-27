@@ -16,13 +16,10 @@ abstract class Field extends DsFieldBase {
    * {@inheritdoc}
    */
   public function render($field) {
+    $settings = $this->getChosenSettings($field);
 
-    // Leave this empty for now as it isn't set yet.
-    $field['properties'] = array();
-
+    // Initialize output
     $output = '';
-    $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : array();
-    $settings += $this->defaultSettings();
 
     // Basic string.
     $entity_render_key = $this->entityRenderKey();

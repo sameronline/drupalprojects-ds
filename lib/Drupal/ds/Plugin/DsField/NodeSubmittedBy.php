@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "node_submitted_by",
  *   title = @Translation("Submitted by"),
  *   entity_type = "node",
- *   module = "ds"
+ *   provider = "node"
  * )
  */
 class NodeSubmittedBy extends Date {

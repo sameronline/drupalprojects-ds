@@ -17,7 +17,7 @@ use Drupal\ds\Annotation\DsField;
  *   id = "comment_title",
  *   title = @Translation("Title"),
  *   entity_type = "comment",
- *   module = "ds"
+ *   provider = "comment"
  * )
  */
 class CommentTitle extends PreprocessPluginBase {

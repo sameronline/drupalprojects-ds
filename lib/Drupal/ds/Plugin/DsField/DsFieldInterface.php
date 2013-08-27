@@ -24,20 +24,44 @@ interface DsFieldInterface {
   public function render($field);
 
   /**
-   * Returns the settings for the field settings form.
+   * Returns the settings form for the field.
+   *
+   * @param $field
+   *   Contains all the general configuration of the field.
+   * @param $settings
+   *   Contains the settings of the field.
    *
    * @return array
-   *   The rsettings for the form.
+   *   A render array containing the form.
    */
-  public function settings();
+  public function settingsForm($field, $settings) {
+    return array();
+  }
 
   /**
-   * Returns default settings for the settings form.
+   * Returns the summary of the chosen settings.
+   *
+   * @param $field
+   *   Contains all the general configuration of the field.
+   * @param $settings
+   *   Contains the settings of the field.
    *
    * @return array
-   *   The default settings.
+   *   A render array containing the summary.
    */
-  public function defaultSettings();
+  public function settingsSummary($field, $settings) {
+    return array();
+  }
+
+  /**
+   * Returns the default settings.
+   *
+   * @return array
+   *   An array containg the default settings in a key value way.
+   */
+  public function defaultSettings() {
+    return array();
+  }
 
   /**
    * Returns a list of possible formatters for this field.

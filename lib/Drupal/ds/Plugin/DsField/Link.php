@@ -18,22 +18,51 @@ abstract class Link extends Field {
   /**
    * {@inheritdoc}
    */
-  public function settings() {
+  public function settingsForm($field, $settings) {
+    $default_settings = $this->defaultSettings();
 
-    $settings = array();
-    $settings['link text'] = array(
-      'type' => 'textfield'
+    $form['link text'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Link text',
+      '#default_value' => isset($settings['link text']) ? $settings['link text'] : $default_settings['link text'],
     );
-    $settings['wrapper'] = array(
-      'type' => 'textfield',
-      'description' => t('Eg: h1, h2, p')
+    $form['wrapper'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Wrapper',
+      '#default_value' => isset($settings['wrapper']) ? $settings['wrapper'] : $default_settings['wrapper'],
+      '#description' => t('Eg: h1, h2, p')
     );
-    $settings['class'] = array(
-      'type' => 'textfield',
-      'description' => t('Put a class on the wrapper. Eg: block-title')
+    $form['class'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Class',
+      '#default_value' => isset($settings['class']) ? $settings['class'] : $default_settings['class'],
+      '#description' => t('Put a class on the wrapper. Eg: block-title')
     );
 
-    return $settings;
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsSummary($field, $settings) {
+    $default_settings = $this->defaultSettings();
+
+    $summary = array();
+    if (isset($settings['link text'])) {
+      $summary[] = 'Link text: ' . $settings['link text'];
+    }
+    else {
+      $summary[] = 'Link text: ' . $default_settings['link text'];
+    }
+    if (isset($settings['wrapper']) && !empty($settings['wrapper'])) {
+      $summary[] = 'Wrapper: ' . $settings['wrapper'];
+    }
+    if (isset($settings['class']) && !empty($settings['class'])) {
+      $summary[] = 'Class: ' . $settings['class'];
+    }
+
+    return $summary;
   }
 
   /**
@@ -45,7 +74,7 @@ abstract class Link extends Field {
       'link text' => 'Read more',
       'wrapper' => '',
       'class' => '',
-      'link' => 1 // TODO verify why we have this link here
+      'link' => 1,
     );
 
     return $settings;
