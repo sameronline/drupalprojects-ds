@@ -676,7 +676,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   }
 
   // Clear the ds_fields cache.
-  cache()->invalidateTags(array('ds_fields' => TRUE));
+  cache()->invalidateTags(array('ds_fields_info' => TRUE));
 }
 
 /**
