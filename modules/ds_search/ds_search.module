@@ -250,6 +250,12 @@ function ds_search_search_page($results) {
     foreach ($results as $id => $result) {
       // Use default search result theming for file in case it's configured.
       if ($result->entity_type == 'file' && variable_get('ds_search_file_render', FALSE)) {
+        // Get the file type from the file entity module. We'll overwrite
+        // the bundle here then as that makes more sense as a suggestion.
+        if (function_exists('file_get_type')) {
+          $type = file_get_type($result);
+          $result->original_result['bundle'] = $type;
+        }
         $build['search_results'][] = array(
           '#weight' => $i++,
           '#markup' => theme('search_result', array('result' => $result->original_result, 'module' => 'apachesolr_search')),
