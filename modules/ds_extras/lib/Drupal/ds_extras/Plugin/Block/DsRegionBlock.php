@@ -8,16 +8,15 @@
 namespace Drupal\ds_extras\Plugin\Block;
 
 use Drupal\block\BlockBase;
-use Drupal\Component\Annotation\Plugin;
+use Drupal\Block\Annotation\Block;
 use Drupal\Core\Annotation\Translation;
 
 /**
  * Provides the region block plugin.
  *
- * @Plugin(
+ * @Block(
  *   id = "ds_region_block",
  *   admin_label = @Translation("Ds region block"),
- *   module = "ds_extras",
  *   derivative = "Drupal\ds_extras\Plugin\Derivative\DsRegionBlock"
  * )
  */
