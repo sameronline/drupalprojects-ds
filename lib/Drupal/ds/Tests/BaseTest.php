@@ -112,7 +112,7 @@ class BaseTest extends WebTestBase {
 
     $edit += array(
       'name' => 'Test field',
-      'field' => 'test_field',
+      'id' => 'test_field',
       'entities[node]' => '1',
       'code[value]' => 'Test field',
       'use_token' => '0',
@@ -133,12 +133,11 @@ class BaseTest extends WebTestBase {
     $edit += array(
       'name' => 'Test block field',
       'entities[node]' => '1',
-      'block' => 'node|recent',
-      'block_render' => DS_BLOCK_TEMPLATE,
+      'block' => 'node_recent_block',
     );
 
     if ($first) {
-      $edit += array('field' => 'test_block_field');
+      $edit += array('id' => 'test_block_field');
     }
 
     $this->drupalPost($url, $edit, t('Save'));
@@ -159,7 +158,7 @@ class BaseTest extends WebTestBase {
     );
 
     if ($first) {
-      $edit += array('field' => 'submitted');
+      $edit += array('id' => 'submitted');
     }
 
     $this->drupalPost($url, $edit, t('Save'));
