@@ -147,13 +147,13 @@ function ds_extras_ds_field_access($field, $entity_type) {
 }
 
 /**
- * Implements hook_field_attach_view_alter().
+ * Implements hook_entity_view_alter().
  */
-function ds_extras_field_attach_view_alter(&$build, $context) {
+function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $display) {
 
-  $entity_type = $context['entity']->entityType();
-  $bundle = $context['entity']->bundle();
-  $view_mode = $context['view_mode'];
+  $entity_type = $entity->entityType();
+  $bundle = $entity->bundle();
+  $view_mode = $display->mode;
 
   $block_data = &drupal_static('ds_block_region');
   $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
@@ -161,10 +161,6 @@ function ds_extras_field_attach_view_alter(&$build, $context) {
   if (empty($region_blocks) || empty($build)) {
     return;
   }
-
-  $entity_type = $build['#entity_type'];
-  $bundle = $build['#bundle'];
-  $view_mode = $context['view_mode'];
 
   $properties = array();
   foreach (element_properties($build) as $property) {

@@ -415,7 +415,7 @@ function ds_get_field_value($key, $field, $entity, $view_mode, $build = array())
 }
 
 /**
- * Implements ds_entity_view_alter().
+ * Implements hook_entity_view_alter().
  */
 function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $display) {
   static $loaded_css = array();

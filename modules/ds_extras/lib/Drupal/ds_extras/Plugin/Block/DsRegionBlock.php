@@ -27,13 +27,11 @@ class DsRegionBlock extends BlockBase {
    */
   public function build() {
     list(, $id) = explode(':', $this->getPluginId());
-
     $data = drupal_static('ds_block_region');
-    $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
 
     if (!empty($data[$id])) {
       return array(
-        $data[$id],
+        '#markup' => drupal_render_children($data[$id]),
       );
     }
     else {
