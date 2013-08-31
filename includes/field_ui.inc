@@ -87,7 +87,7 @@ function ds_field_ui_create_vertical_tabs(&$form) {
     );
   }
 
-  $view_mode_admin_access = user_access('admin_view_modes') && Drupal::moduleHandler()->moduleExists('ds_ui');
+  $view_mode_admin_access = Drupal::currentUser()->hasPermission('admin_view_modes') && Drupal::moduleHandler()->moduleExists('ds_ui');
   if (isset($form['modes'])) {
     $form['modes']['#group'] = 'additional_settings';
     $form['modes']['#weight'] = -10;
@@ -1064,7 +1064,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#access' => empty($chosen_layout['flexible']),
     );
 
-    $classes_access = (user_access('admin_classes') && Drupal::moduleHandler()->moduleExists('ds_ui'));
+    $classes_access = (Drupal::currentUser()->hasPermission('admin_classes') && Drupal::moduleHandler()->moduleExists('ds_ui'));
     $classes = _ds_classes();
     if (!empty($classes)) {
 

@@ -686,7 +686,7 @@ function ds_preprocess_ds_layout(&$vars) {
  */
 function ds_contextual_links_view_alter(&$element, $items) {
   // @todo how can we make this also work for every entity.
-  if (isset($element['#contextual_links']['node']) && Drupal::moduleHandler()->moduleExists('field_ui') && user_access('administer node display')) {
+  if (isset($element['#contextual_links']['node']) && Drupal::moduleHandler()->moduleExists('field_ui') && Drupal::currentUser()->hasPermission('administer node display')) {
     $entity_type = 'node';
     list($bundle, $view_mode) = explode('-', key($element['#contextual_links']['node'][2]));
 
