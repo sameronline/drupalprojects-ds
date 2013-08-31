@@ -36,45 +36,6 @@ function ds_menu() {
     'route_name' => 'ds_structure',
   );
 
-  // Layout overview.
-  $items['admin/structure/ds/list'] = array(
-    'title' => 'Display Suite',
-    'route_name' => 'ds_list',
-    'type' => MENU_SUGGESTED_ITEM,
-  );
-
-  // Layout overview, secondary tab.
-  $items['admin/structure/ds/list'] = array(
-    'title' => 'List',
-    'route_name' => 'ds_list',
-    'type' => MENU_SUGGESTED_ITEM,
-  );
-
-  // Settings page
-  $items['admin/structure/ds/settings'] = array(
-    'title' => 'Settings',
-    'route_name' => 'ds_admin_settings',
-    'type' => MENU_SUGGESTED_ITEM,
-  );
-
-  // Emergency page
-  $items['admin/structure/ds/list/emergency'] = array(
-    'title' => 'Emergency',
-    'route_name' => 'ds_admin_emergency',
-    'type' => MENU_SUGGESTED_ITEM,
-  );
-
-  // Change layout.
-  $items['admin/structure/ds/change-layout'] = array(
-    'title' => 'Change layout',
-    'description' => 'Act on layout change to move fields elsewhere',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ds_field_ui_layout_change'),
-    'access arguments' => array('admin_display_suite'),
-    'file' => 'includes/field_ui.inc',
-    'type' => MENU_VISIBLE_IN_BREADCRUMB,
-  );
-
   // Contextual links.
   if (Drupal::moduleHandler()->moduleExists('contextual') && Drupal::moduleHandler()->moduleExists('field_ui')) {
     $items['node/%node/display'] = array(
