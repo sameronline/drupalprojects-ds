@@ -14,8 +14,8 @@ function ds_contextual_page_tab($object, $entity_type) {
 
   switch ($entity_type) {
     case 'node':
-      $bundle = $object->type;
-      $view_mode = (!empty($object->ds_switch)) ? $object->ds_switch : 'full';
+      $bundle = $object->bundle();
+      $view_mode = (!empty($object->ds_switch->value)) ? $object->ds_switch->value : 'full';
 
       // Let's always go back to the node page.
       $destination = 'node/' . $object->id();
