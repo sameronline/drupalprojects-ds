@@ -20,7 +20,7 @@ function ds_extras_node_page_view($node) {
   drupal_add_html_head_link(array('rel' => 'shortlink', 'href' => url($uri['path'], array_merge($uri['options'], array('alias' => TRUE)))), TRUE);
 
   // Update the history table, stating that this user viewed this node.
-  if (module_exists('history')) {
+  if (Drupal::moduleHandler()->moduleExists('history')) {
     history_write($node->id());
   }
 

@@ -15,7 +15,7 @@ function _ds_extras_menu_alter(&$items) {
 
     // Check if page manager is overriding.
     $skip_node_override = FALSE;
-    if (module_exists('page_manager')) {
+    if (Drupal::moduleHandler()->moduleExists('page_manager')) {
       if ($task = page_manager_get_task('node_view')) {
         if (isset($task['disabled']) && !$task['disabled']) {
           $skip_node_override = TRUE;

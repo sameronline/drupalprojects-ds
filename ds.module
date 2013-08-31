@@ -76,7 +76,7 @@ function ds_menu() {
   );
 
   // Contextual links.
-  if (module_exists('contextual') && module_exists('field_ui')) {
+  if (Drupal::moduleHandler()->moduleExists('contextual') && Drupal::moduleHandler()->moduleExists('field_ui')) {
     $items['node/%node/display'] = array(
       'title' => 'Manage display',
       'description' => 'Manage display of this content.',
@@ -97,7 +97,7 @@ function ds_menu() {
       'type' => MENU_LOCAL_TASK,
     );
 
-    if (module_exists('taxonomy')) {
+    if (Drupal::moduleHandler()->moduleExists('taxonomy')) {
       $items['taxonomy/term/%taxonomy_term/display'] = array(
         'title' => 'Manage display',
         'description' => 'Manage display of this term.',
@@ -186,7 +186,7 @@ function ds_entity_view_mode_info_alter(&$view_modes) {
 function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
   form_load_include($form_state, 'inc', 'ds', 'includes/field_ui');
   // Also load admin on behalf of DS extras when enabled.
-  if (module_exists('ds_extras')) {
+  if (Drupal::moduleHandler()->moduleExists('ds_extras')) {
     form_load_include($form_state, 'inc', 'ds_extras', 'includes/admin');
   }
   ds_field_ui_fields_layouts($form, $form_state);
@@ -246,7 +246,7 @@ function ds_get_layout_info() {
   if (!$layouts) {
     $errors = array();
 
-    $layouts = module_invoke_all('ds_layout_info');
+    $layouts = Drupal::moduleHandler()->invokeAll('ds_layout_info');
 
     // Give modules a chance to alter the layouts information.
     drupal_alter('ds_layout_info', $layouts);
@@ -568,7 +568,7 @@ function ds_preprocess_ds_layout(&$vars) {
       foreach ($vars[$object]->preprocess_fields as $field) {
 
         // Process RDF if the module is enabled before moving preprocess fields.
-        if (module_exists('rdf')) {
+        if (Drupal::moduleHandler()->moduleExists('rdf')) {
           rdf_process($vars, $field);
           // Remove it so we can unset the field later on.
           unset($vars['rdf_template_variable_attributes_array'][$field]);
@@ -686,7 +686,7 @@ function ds_preprocess_ds_layout(&$vars) {
  */
 function ds_contextual_links_view_alter(&$element, $items) {
   // @todo how can we make this also work for every entity.
-  if (isset($element['#contextual_links']['node']) && module_exists('field_ui') && user_access('administer node display')) {
+  if (isset($element['#contextual_links']['node']) && Drupal::moduleHandler()->moduleExists('field_ui') && user_access('administer node display')) {
     $entity_type = 'node';
     list($bundle, $view_mode) = explode('-', key($element['#contextual_links']['node'][2]));
 
@@ -711,6 +711,21 @@ function ds_contextual_links_view_alter(&$element, $items) {
     );
   }
 
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ds_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) {
+  $theme_functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
+  $form['instance']['ds_field_template'] = array(
+    '#type' => 'select',
+    '#title' => t('Field Template'),
+    '#default_value' => isset($form['#instance']['ds_field_template']) ? $form['#instance']['ds_field_template'] : '',
+    '#options' => $theme_functions,
+    '#description' => t('Choose the default HTML for this field.'),
+    '#empty_option' => t('Use sitewide default'),
+  );
 }
 
 /**
@@ -1046,7 +1061,7 @@ function ds_preprocess_field(&$variables) {
  * Field template settings form
  */
 function ds_field_template_settings_form(array &$form, array &$form_state, array $context) {
-  $functions = module_invoke_all('ds_field_theme_functions_info');
+  $functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
   $default_field_function = Drupal::config('ds.settings')->get('ft-default');
   if (empty($default_field_function)) {
     $default_field_function = 'theme_field';
@@ -1184,7 +1199,7 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
 function ds_field_formatter_settings_summary_alter(&$summary, $context) {
   if (Drupal::config('ds.settings')->get('field_template')) {
     // Field template summary
-    $functions = module_invoke_all('ds_field_theme_functions_info');
+    $functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
     $field = $context['field'];
     $default_field_function = Drupal::config('ds.settings')->get('ft-default');
     $field_function = isset($form_state['plugin_settings'][$field['name']]['ft']['func']) ? $form_state['plugin_settings'][$field['name']]['ft']['func'] : $default_field_function;

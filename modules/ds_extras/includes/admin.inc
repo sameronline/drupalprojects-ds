@@ -60,7 +60,7 @@ function ds_extras_settings_alter(&$form, &$form_state) {
     '#default_value' => $config->get('field_permissions'),
   );
 
-  if (module_exists('block')) {
+  if (Drupal::moduleHandler()->moduleExists('block')) {
     $form['fs3']['region_to_block'] = array(
       '#type' => 'checkbox',
       '#title' => t('Region to block'),
@@ -100,7 +100,7 @@ function ds_extras_settings_submit($form, &$form_state) {
     ->set('field_permissions', $values['fs3']['field_permissions'])
     ->set('switch_field', $values['fs3']['switch_field'])
     ->set('hidden_region', $values['fs3']['hidden_region']);
-  if (module_exists('block')) {
+  if (Drupal::moduleHandler()->moduleExists('block')) {
     $config->set('region_to_block', $values['fs3']['region_to_block']);
   }
   $config->save();

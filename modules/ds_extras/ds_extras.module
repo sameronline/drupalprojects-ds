@@ -171,22 +171,6 @@ function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityDis
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
- */
-function ds_extras_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) {
-  $theme_functions = module_invoke_all('ds_field_theme_functions_info');
-  unset($theme_functions['theme_ds_field_expert']);
-  $form['instance']['ds_extras_field_template'] = array(
-    '#type' => 'select',
-    '#title' => t('Field Template'),
-    '#default_value' => isset($form['#instance']['ds_extras_field_template']) ? $form['#instance']['ds_extras_field_template'] : '',
-    '#options' => $theme_functions,
-    '#description' => t('Choose the default HTML for this field.'),
-    '#empty_option' => t('Use sitewide default'),
-  );
-}
-
-/**
  * Utility funtion to return the view mode for the current entity.
  *
  * The drupal_static is called in ds_extras_node_show to set

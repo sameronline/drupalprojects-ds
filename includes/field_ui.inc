@@ -87,7 +87,7 @@ function ds_field_ui_create_vertical_tabs(&$form) {
     );
   }
 
-  $view_mode_admin_access = user_access('admin_view_modes') && module_exists('ds_ui');
+  $view_mode_admin_access = user_access('admin_view_modes') && Drupal::moduleHandler()->moduleExists('ds_ui');
   if (isset($form['modes'])) {
     $form['modes']['#group'] = 'additional_settings';
     $form['modes']['#weight'] = -10;
@@ -526,7 +526,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     }
     // In case this is the full node view mode and if the comment module
     // is enabled for this content type, add it as well.
-    if ($record['entity_type'] == 'node' && $record['view_mode'] == 'full' && module_exists('comment')) {
+    if ($record['entity_type'] == 'node' && $record['view_mode'] == 'full' && Drupal::moduleHandler()->moduleExists('comment')) {
       $record['settings']['regions'][$first_region][] = 'comments';
       $record['settings']['fields']['comments'] = $first_region;
     }
@@ -772,7 +772,7 @@ function ds_field_settings_summary($field, $form_state) {
   // Not all fields have settings.
   // TODO FIX THIS
   if (isset($field['properties']['settings'])) {
-    $summary = module_invoke($field['module'], 'ds_field_format_summary', $field);
+    $summary = Drupal::moduleHandler()->invoke($field['module'], 'ds_field_format_summary', $field);
   }
 
   // Add field template summary
@@ -798,7 +798,7 @@ function ds_field_settings_summary($field, $form_state) {
  *   A form definition.
  */
 function ds_field_settings_form($field, &$form_state) {
-  $form = module_invoke($field['module'], 'ds_field_settings_form', $field);
+  $form = Drupal::moduleHandler()->invoke($field['module'], 'ds_field_settings_form', $field);
 
   // Add field template settings to every field if enabled.
   if (Drupal::config('ds.settings')->get('field_template')) {
@@ -825,7 +825,7 @@ function ds_field_settings_form($field, &$form_state) {
 function ds_ds_field_format_summary($field) {
   $summary = array();
   $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : $field['properties']['default'];
-  $functions = module_invoke_all('ds_field_theme_functions_info');
+  $functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
   foreach ($settings as $key => $value) {
     if ($key == 'ft' || is_array($value)) {
       // Do nothing
@@ -1035,7 +1035,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       ),
     );
 
-    if (module_exists('token')) {
+    if (Drupal::moduleHandler()->moduleExists('token')) {
       $form['region_wrapper']['tokens'] = array(
         '#title' => t('Tokens'),
         '#type' => 'container',
@@ -1064,7 +1064,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#access' => empty($chosen_layout['flexible']),
     );
 
-    $classes_access = (user_access('admin_classes') && module_exists('ds_ui'));
+    $classes_access = (user_access('admin_classes') && Drupal::moduleHandler()->moduleExists('ds_ui'));
     $classes = _ds_classes();
     if (!empty($classes)) {
 
