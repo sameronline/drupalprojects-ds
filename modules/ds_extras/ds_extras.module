@@ -124,7 +124,7 @@ function ds_extras_form_ds_admin_form_alter(&$form, &$form_state) {
  */
 function ds_extras_ds_field_access($field, $entity_type) {
 
-  if (user_access('view ' . $field . ' on ' . $entity_type)) {
+  if (Drupal::currentUser()->hasPermission('view ' . $field . ' on ' . $entity_type)) {
     return TRUE;
   }
 
@@ -206,7 +206,7 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
   // Switch full view mode.
   $node = $form_state['controller']->getEntity($form_state);
 
-  if (user_access('ds_switch ' . $node->bundle())) {
+  if (Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
 
     $view_mode_settings = field_view_mode_settings('node', $node->bundle());
 
