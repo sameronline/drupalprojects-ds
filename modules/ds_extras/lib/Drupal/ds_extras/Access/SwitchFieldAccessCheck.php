@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
 
 /**
- * Provides an access check for aggregator categories routes.
+ * Provides an access check for ds extras switch field routes.
  */
 class SwitchFieldAccessCheck implements StaticAccessCheckInterface {
 
