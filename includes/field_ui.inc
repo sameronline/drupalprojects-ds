@@ -1305,8 +1305,12 @@ function ds_field_ui_change_layout_validate(&$form, &$form_state) {
  * Form submission handler for _ds_field_ui_table_layouts_preview().
  */
 function ds_field_ui_change_layout_submit($form, &$form_state) {
-  unset($_GET['destination']);
   global $base_url;
+
+  // Remove original destination
+  Drupal::request()->query->remove('destination');
+
+  // Build new destination
   $url = $base_url . '/' . $form_state['values']['layout_changed_url'];
   $form_state['redirect'] = $url;
 }
