@@ -3,28 +3,28 @@ ds_structure:
   defaults:
     _content: '\Drupal\ds\Controller\DsController::listDisplays'
   requirements:
-    _permission: 'admin_display_suite'
+    _permission: 'admin display suite'
 ds_list:
   pattern: 'admin/structure/ds/list'
   defaults:
     _content: '\Drupal\ds\Controller\DsController::listDisplays'
   requirements:
-    _permission: 'admin_display_suite'
+    _permission: 'admin display suite'
 ds_admin_settings:
   pattern: 'admin/structure/ds/settings'
   defaults:
     _form: '\Drupal\ds\Form\SettingsForm'
   requirements:
-    _permission: 'admin_display_suite'
+    _permission: 'admin display suite'
 ds_admin_emergency:
   pattern: 'admin/structure/ds/emergency'
   defaults:
     _form: '\Drupal\ds\Form\EmergencyForm'
   requirements:
-    _permission: 'admin_display_suite'
+    _permission: 'admin display suite'
 ds_change_layout:
   pattern: 'admin/structure/ds/change-layout/{entity_type}/{bundle}/{display_mode}/{new_layout}'
   defaults:
     _form: '\Drupal\ds\Form\ChangeLayoutForm'
   requirements:
-    _permission: 'admin_display_suite'
+    _permission: 'admin display suite'

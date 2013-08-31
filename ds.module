@@ -16,7 +16,7 @@ use Drupal\entity\Entity\EntityDisplay;
  */
 function ds_permission() {
   return array(
-    'admin_display_suite' => array(
+    'admin display suite' => array(
       'title' => t('Administer Display Suite'),
       'description' => t('General permission for Display Suite settings pages.')
     ),
