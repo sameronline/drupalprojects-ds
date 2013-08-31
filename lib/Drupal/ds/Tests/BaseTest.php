@@ -26,6 +26,9 @@ class BaseTest extends WebTestBase {
   function setUp() {
     parent::setUp();
 
+    // Disable edit for now
+    \Drupal::moduleHandler()->disable(array('edit'));
+
     \Drupal::config('search.settings')->set('active_modules', array('node' => '', 'user' => 'user', 'ds_search' => 'ds_search'))->save();
     menu_router_rebuild();
 
