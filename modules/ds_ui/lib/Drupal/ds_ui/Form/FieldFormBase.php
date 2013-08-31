@@ -181,12 +181,12 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
     }
     $field['entities'] = $entities;
 
-    // Save field and clear ds_fields.
+    // Save field and clear ds_fields_info cache.
     $this->configFactory->get('ds.field.' . $field['id'])->setData($field)->save();
     $this->cacheBackend->deleteTags(array('ds_fields_info' => TRUE));
 
-    // @todo find out how we can clear derivatives without clearing everything.
-    drupal_flush_all_caches();
+    // Also clear the ds plugin cache
+    \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
     // Redirect.
     $form_state['redirect'] = 'admin/structure/ds/fields';
