@@ -272,7 +272,7 @@ function ds_extras_block_submit($form, &$form_state) {
         $ids = Drupal::entityQuery('block')
           ->condition('plugin', 'ds_region_block:' . $key)
           ->execute();
-        $block_storage = \Drupal::entityManager()->getStorageController('block');
+        $block_storage = Drupal::entityManager()->getStorageController('block');
         foreach ($block_storage->loadMultiple($ids) as $block) {
           $block->delete();
         }
