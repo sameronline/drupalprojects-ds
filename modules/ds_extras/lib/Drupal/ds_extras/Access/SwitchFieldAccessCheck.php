@@ -8,7 +8,6 @@
 namespace Drupal\ds_extras\Access;
 
 use Drupal\Core\Access\StaticAccessCheckInterface;
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Config\ConfigFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;

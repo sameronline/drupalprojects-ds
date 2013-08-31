@@ -28,3 +28,34 @@ ds_change_layout:
     _form: '\Drupal\ds\Form\ChangeLayoutForm'
   requirements:
     _permission: 'admin display suite'
+
+ds_contextual_tab_node:
+  pattern: '/node/{entity_id}/display'
+  defaults:
+    _controller: '\Drupal\ds\Controller\DsController::contextualTab'
+    entity_type: 'node'
+  options:
+    _access_mode: 'ALL'
+  requirements:
+    _permission: 'administer content'
+    _access_ds_contextual_tab: 'TRUE'
+ds_contextual_tab_user:
+  pattern: '/user/{entity_id}/display'
+  defaults:
+    _controller: '\Drupal\ds\Controller\DsController::contextualTab'
+    entity_type: 'user'
+  options:
+    _access_mode: 'ALL'
+  requirements:
+    _permission: 'administer users'
+    _access_ds_contextual_tab: 'TRUE'
+ds_contextual_tab_taxonomy_term:
+  pattern: '/taxonomy/term/{entity_id}/display'
+  defaults:
+    _controller: '\Drupal\ds\Controller\DsController::contextualTab'
+    entity_type: 'taxonomy_term'
+  options:
+    _access_mode: 'ALL'
+  requirements:
+    _permission: 'administer taxonomy'
+    _access_ds_contextual_tab: 'TRUE'

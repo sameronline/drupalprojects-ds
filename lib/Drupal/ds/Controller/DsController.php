@@ -8,6 +8,7 @@
 namespace Drupal\ds\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Returns responses for Display Suite UI routes.
@@ -113,6 +114,52 @@ class DsController extends ControllerBase {
     $build['#attached']['library'][] = array('ds', 'ds.admin.css');
 
     return $build;
+  }
+
+  /**
+   * Adds a contextual tab to nodes, users and taxonomy terms.
+   */
+  public function contextualTab($entity_id, $entity_type) {
+    $object = entity_load($entity_type, $entity_id);
+
+    switch ($entity_type) {
+      case 'node':
+        $bundle = $object->bundle();
+        $view_mode = (!empty($object->ds_switch->value)) ? $object->ds_switch->value : 'full';
+
+        // Let's always go back to the node page.
+        $destination = 'node/' . $object->id();
+        break;
+      case 'user':
+        $bundle = 'user';
+        $view_mode = 'full';
+        $destination = 'user/' . $object->id();
+        break;
+      case 'taxonomy_term':
+        $bundle = $object->bundle();
+        $view_mode = 'full';
+        $destination = 'taxonomy/term/' . $object->id();
+        break;
+    }
+
+    // Check if we have a configured layout. Do not fallback to default.
+    $layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE);
+
+    // Get the manage display URI.
+    $admin_path = $this->entityManager()->getAdminPath($entity_type, $bundle);
+
+    // Check view mode settings.
+    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
+    $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
+
+    if (empty($layout) && !$overriden) {
+      $admin_path .= '/display';
+    }
+    else {
+      $admin_path .= '/display/' . $view_mode;
+    }
+
+    return new RedirectResponse(url($admin_path, array('query' => array('destination' => $destination))));
   }
 
 }

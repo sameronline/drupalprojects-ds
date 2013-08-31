@@ -40,34 +40,21 @@ function ds_menu() {
   if (Drupal::moduleHandler()->moduleExists('contextual') && Drupal::moduleHandler()->moduleExists('field_ui')) {
     $items['node/%node/display'] = array(
       'title' => 'Manage display',
-      'description' => 'Manage display of this content.',
-      'page callback' => 'ds_contextual_page_tab',
-      'page arguments' => array(1, 'node'),
-      'file' => 'includes/contextual.inc',
-      'access arguments' => array('administer content types'),
+      'route_name' => 'ds_contextual_tab_node',
       'type' => MENU_LOCAL_TASK,
     );
 
     $items['user/%user/display'] = array(
       'title' => 'Manage display',
-      'description' => 'Manage display of this user profile.',
-      'page callback' => 'ds_contextual_page_tab',
-      'page arguments' => array(1, 'user'),
-      'file' => 'includes/contextual.inc',
-      'access arguments' => array('administer users'),
+      'route_name' => 'ds_contextual_tab_user',
       'type' => MENU_LOCAL_TASK,
     );
 
     if (Drupal::moduleHandler()->moduleExists('taxonomy')) {
       $items['taxonomy/term/%taxonomy_term/display'] = array(
         'title' => 'Manage display',
-        'description' => 'Manage display of this term.',
-        'page callback' => 'ds_contextual_page_tab',
-        'page arguments' => array(2, 'taxonomy_term'),
-        'access arguments' => array('administer taxonomy'),
+        'route_name' => 'ds_contextual_tab_taxonomy_term',
         'type' => MENU_LOCAL_TASK,
-        'weight' => 11,
-        'file' => 'includes/contextual.inc',
       );
     }
   }
