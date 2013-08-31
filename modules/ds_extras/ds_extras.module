@@ -5,23 +5,8 @@
  * Display Suite extras main functions.
  */
 
-use Drupal\node\Plugin\Core\Entity\Node;
-
-/**
- * Implements hook_menu().
- */
-function ds_extras_menu() {
-  $items = array();
-
-  if (Drupal::config('ds.extras')->get('switch_field')) {
-    $items['ds-switch-view-mode'] = array(
-      'title' => 'Switch view',
-      'route_name' => 'ds_switch_view_mode',
-    );
-  }
-
-  return $items;
-}
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\entity\Entity\EntityDisplay;
 
 /**
  * Implements hook_library_info().
