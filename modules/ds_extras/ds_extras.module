@@ -183,74 +183,76 @@ function ds_extras_get_view_mode() {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_form_alter().
  */
-function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
+function ds_extras_form_alter(&$form, &$form_state, $form_id) {
 
-  // Switch full view mode.
-  $node = $form_state['controller']->getEntity($form_state);
+  if (isset($form['#entity_type']) && $form['#entity_type'] == 'node' && isset($form_state['controller'])) {
+    // Switch full view mode.
+    $node = $form_state['controller']->getEntity($form_state);
 
-  if (Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
+    if (Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
 
-    $view_mode_settings = field_view_mode_settings('node', $node->bundle());
+      $view_mode_settings = field_view_mode_settings('node', $node->bundle());
 
-    // Get the view modes.
-    $ds_vm = entity_get_view_modes('node');
-    $layouts = array();
-    $options = array('' => t('Default'));
-    foreach ($ds_vm as $key => $item) {
-      $overriden = (!empty($view_mode_settings[$key]['status']) ? TRUE : FALSE);
-      if ($overriden) {
-        $layout = ds_get_layout('node', $node->bundle(), $key, FALSE);
-        $layouts[$key] = $layout;
-        $options[$key] = $item['label'];
+      // Get the view modes.
+      $ds_vm = entity_get_view_modes('node');
+      $layouts = array();
+      $options = array('' => t('Default'));
+      foreach ($ds_vm as $key => $item) {
+        $overriden = (!empty($view_mode_settings[$key]['status']) ? TRUE : FALSE);
+        if ($overriden) {
+          $layout = ds_get_layout('node', $node->bundle(), $key, FALSE);
+          $layouts[$key] = $layout;
+          $options[$key] = $item['label'];
+        }
       }
-    }
 
-    // Add default layout settings
-    $layouts[''] = ds_get_layout('node', $node->bundle(), 'default', FALSE);
+      // Add default layout settings
+      $layouts[''] = ds_get_layout('node', $node->bundle(), 'default', FALSE);
 
-    // Only fire if we have more than 1 option.
-    if (count($options) > 1) {
+      // Only fire if we have more than 1 option.
+      if (count($options) > 1) {
 
-      if (!isset($form['ds_extras'])) {
-        $form['ds_extras'] = array(
-          '#type' => 'details',
-          '#title' => t('Display settings'),
-          '#collapsed' => TRUE,
-          '#group' => 'advanced',
-          '#weight' => 100,
+        if (!isset($form['ds_extras'])) {
+          $form['ds_extras'] = array(
+            '#type' => 'details',
+            '#title' => t('Display settings'),
+            '#collapsed' => TRUE,
+            '#group' => 'advanced',
+            '#weight' => 100,
+          );
+        }
+
+        $form['ds_extras']['ds_switch'] = array(
+          '#type' => 'select',
+          '#title' => t('View mode'),
+          '#options' => $options,
+          '#default_value' => $node->get('ds_switch')->value,
+          '#description' => t('Switch to a different view mode to display the full page view of this node.'),
+          '#weight' => -1,
+          '#ajax' => array(
+            'callback' => 'ds_extras_switch_view_mode_preview_callback',
+            'wrapper' => 'ds_switch_preview_wrapper',
+          ),
+        );
+
+        $form['ds_extras']['preview'] = array(
+          '#type' => 'container',
+          '#prefix' => '<div id="ds_switch_preview_wrapper">',
+          '#suffix' => '</div>',
+        );
+
+        $mode = isset($form_state['input']['ds_switch']) ? $form_state['input']['ds_switch'] : $node->get('ds_switch')->value;
+        $chosen_layout = $layouts[$mode];
+
+        $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
+        $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $chosen_layout['layout'] . '.png' : $fallback_image;
+
+        $form['ds_extras']['preview']['image'] = array(
+          '#markup' => '<div class="ds-layout-preview-image"><img src="' . base_path() . $image . '"/></div>',
         );
       }
-
-      $form['ds_extras']['ds_switch'] = array(
-        '#type' => 'select',
-        '#title' => t('View mode'),
-        '#options' => $options,
-        '#default_value' => $node->get('ds_switch')->value,
-        '#description' => t('Switch to a different view mode to display the full page view of this node.'),
-        '#weight' => -1,
-        '#ajax' => array(
-          'callback' => 'ds_extras_switch_view_mode_preview_callback',
-          'wrapper' => 'ds_switch_preview_wrapper',
-        ),
-      );
-
-      $form['ds_extras']['preview'] = array(
-        '#type' => 'container',
-        '#prefix' => '<div id="ds_switch_preview_wrapper">',
-        '#suffix' => '</div>',
-      );
-
-      $mode = isset($form_state['input']['ds_switch']) ? $form_state['input']['ds_switch'] : $node->get('ds_switch')->value;
-      $chosen_layout = $layouts[$mode];
-
-      $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
-      $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $chosen_layout['layout'] . '.png' : $fallback_image;
-
-      $form['ds_extras']['preview']['image'] = array(
-        '#markup' => '<div class="ds-layout-preview-image"><img src="' . base_path() . $image . '"/></div>',
-      );
     }
   }
 }

@@ -824,7 +824,7 @@ function ds_field_settings_form($field, &$form_state) {
  */
 function ds_ds_field_format_summary($field) {
   $summary = array();
-  $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : $field['properties']['default'];
+  $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : isset($field['properties']['default']) ? $field['properties']['default'] : array();
   $functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
   foreach ($settings as $key => $value) {
     if ($key == 'ft' || is_array($value)) {

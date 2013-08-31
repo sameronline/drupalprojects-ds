@@ -48,19 +48,11 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
     unset($implementations['ds_extras']);
   }
 
-  // Switch view mode
-  $switch_hooks = array(
-    'form_node_form_alter',
-  );
-  if (!Drupal::config('ds.extras')->get('switch_view_mode') && in_array($hook, $switch_hooks)) {
-    unset($implementations['ds_extras']);
-  }
-
   // Extra fields
-   $extra_fields_hooks = array(
+  $extra_fields_hooks = array(
     'field_extra_fields',
   );
-  if (!Drupal::config('ds.extras')->get('fields_extra') && in_array($hook, $switch_hooks)) {
+  if (!Drupal::config('ds.extras')->get('fields_extra') && in_array($hook, $extra_fields_hooks)) {
     unset($implementations['ds_extras']);
   }
 
