@@ -62,11 +62,11 @@ class ExportablesTest extends BaseTest {
     );
 
     $fields = array(
-      'fields[post_date][region]' => 'header',
-      'fields[author][region]' => 'left',
-      'fields[links][region]' => 'left',
+      'fields[node_post_date][region]' => 'header',
+      'fields[node_author][region]' => 'left',
+      'fields[node_links][region]' => 'left',
       'fields[body][region]' => 'right',
-      'fields[comments][region]' => 'footer',
+      'fields[node_comments][region]' => 'footer',
     );
 
     $this->dsSelectLayout($layout, $assert);
