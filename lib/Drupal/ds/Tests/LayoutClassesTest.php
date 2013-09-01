@@ -59,6 +59,7 @@ class LayoutClassesTest extends BaseTest {
       'fields[dynamic_code_field:dynamic_field:node:test_field][region]' => 'left',
       'fields[dynamic_block_field:dynamic_field:node:test_block_field][region]' => 'left',
       'fields[dynamic_preprocess_field:dynamic_field:node:submitted][region]' => 'left',
+      'fields[node_submitted_by][region]' => 'left',
       'fields[ds_extras_extra_test_field][region]' => 'header',
     );
 
@@ -84,7 +85,7 @@ class LayoutClassesTest extends BaseTest {
     $this->assertTrue(in_array('dynamic_code_field:dynamic_field:node:test_field', $data['regions']['left']), t('Test field is in left'));
     $this->assertTrue(in_array('node_author', $data['regions']['left']), t('Author is in left'));
     $this->assertTrue(in_array('node_links', $data['regions']['left']), t('Links is in left'));
-    //$this->assertTrue(in_array('test_block_field', $data['regions']['left']), t('Test block field is in left'));
+    $this->assertTrue(in_array('dynamic_block_field:dynamic_field:node:test_block_field', $data['regions']['left']), t('Test block field is in left'));
     $this->assertTrue(in_array('dynamic_preprocess_field:dynamic_field:node:submitted', $data['regions']['left']), t('Submitted field is in left'));
     $this->assertTrue(in_array('body', $data['regions']['right']), t('Body is in right'));
     $this->assertTrue(in_array('node_comments', $data['regions']['footer']), t('Comments is in footer'));
@@ -109,16 +110,18 @@ class LayoutClassesTest extends BaseTest {
     $this->assertRaw('group-footer class_name_2', 'Class found (class_name_2)');
 
     // Assert custom fields.
+    // @todo code field is broken at the moment
     $this->assertRaw('field-name-test-field', t('Custom field found'));
     $this->assertRaw('Test field', t('Custom field found'));
-    $this->assertRaw('field-name-test-block-field', t('Custom block field found'));
-    $this->assertRaw('Recent content</h2>', t('Custom block field found'));
+    $this->assertRaw('field-name-dynamic-block-field:dynamic-field:node:test-block-field', t('Custom block field found'));
+    // @todo title isn't set, cause we are dealing with the block itself not the instance
+    //$this->assertRaw('Recent content</h2>', t('Custom block field found'));
     $this->assertRaw('Submitted by', t('Submitted field found'));
     $this->assertText('This is an extra field made available through "Extra fields" functionality.');
 
     // Test HTML5 wrappers
-    $this->assertNoRaw('<header', 'Header not found.');
-    $this->assertNoRaw('<footer', 'Footer not found.');
+    $this->assertNoRaw('<header class="group-header', 'Header not found.');
+    $this->assertNoRaw('<footer class="group-right', 'Footer not found.');
     $this->assertNoRaw('<article', 'Article not found.');
     $wrappers = array(
       'region_wrapper[header]' => 'header',
@@ -126,9 +129,9 @@ class LayoutClassesTest extends BaseTest {
       'region_wrapper[layout_wrapper]' => 'article',
     );
     $this->dsConfigureUI($wrappers);
-    $this->drupalGet('node/' . $node->nid);
-    $this->assertRaw('<header', 'Header found.');
-    $this->assertRaw('<footer', 'Footer found.');
+    $this->drupalGet('node/' . $node->id());
+    $this->assertRaw('<header class="group-header', 'Header found.');
+    $this->assertRaw('<footer class="group-right', 'Footer found.');
     $this->assertRaw('<article', 'Article found.');
 
     // Let's create a block field, enable the full mode first.
@@ -161,11 +164,14 @@ class LayoutClassesTest extends BaseTest {
       'fields[node_author][region]' => 'left',
       'fields[node_links][region]' => 'left',
       'fields[body][region]' => 'right',
-      'fields[dynamic_code_field:dynamic_field:node::test_field][region]' => 'block_region',
+      'fields[dynamic_code_field:dynamic_field:node:test_field][region]' => 'block_region',
     );
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/display/full');
 
     // Set block in sidebar
+
+    // @todo fix this
+
     /*
     $edit = array(
       'blocks[ds_extras_block_region][region]' => 'sidebar_first',
@@ -210,7 +216,7 @@ class LayoutClassesTest extends BaseTest {
       'display_modes_custom[full]' => FALSE,
     );
     $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertNoText('Test code field on node 1', 'No ds field from full view mode layout');
   }
 }
