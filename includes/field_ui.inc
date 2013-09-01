@@ -6,6 +6,7 @@
  */
 
 use Drupal\field_ui\DisplayOverview;
+use Drupal\field\Field;
 
 /**
  * Adds the Display Suite fields and layouts to the form.
@@ -241,7 +242,7 @@ function ds_field_ui_regions($form, $form_state) {
       }
 
       // Limit items.
-      $field_info = field_info_field($name);
+      $field_info = Field::fieldInfo()->getField($entity_type, $name);
       if (isset($field_info['cardinality']) && $field_info['cardinality'] != 1 && $view_mode != 'form') {
         $row['plugin']['type']['#prefix'] = '<div class="limit-float">';
         $row['plugin']['type']['#suffix'] = '</div>';
@@ -1382,7 +1383,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       continue;
     }
 
-    $field = field_info_field($instance['field_name']);
+    $field = Field::fieldInfo()->getField($entity_type, $instance['field_name']);
     $display = entity_get_display($entity_type, $bundle, $view_mode);
     $component = $display->getComponent($key);
 
