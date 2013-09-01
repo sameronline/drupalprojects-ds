@@ -8,12 +8,12 @@
 namespace Drupal\ds_ui\Form;
 
 use Drupal\ds_ui\Form\FieldFormBase;
-use Drupal\Core\Controller\ControllerInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 
 /**
  * Configure block fields.
  */
-class BlockFieldForm extends FieldFormBase implements ControllerInterface {
+class BlockFieldForm extends FieldFormBase implements ContainerInjectionInterface {
 
   /**
    * {@inheritdoc}
