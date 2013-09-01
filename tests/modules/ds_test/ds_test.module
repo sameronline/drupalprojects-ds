@@ -103,9 +103,9 @@ function ds_test_theming_function($variables) {
 /**
  * Implements hook_ds_fields_info_alter().
  */
-function ds_test_ds_fields_info_alter(&$fields, $entity_type) {
-  if (isset($fields['ds_test_field_2'])) {
-    $fields['ds_test_field_2']['title'] = 'Field altered';
+function ds_test_ds_fields_info_alter(&$definitions) {
+  if (isset($definitions['test_field_2'])) {
+    $definitions['test_field_2']['title'] = 'Field altered';
   }
 }
 
@@ -156,7 +156,7 @@ function ds_test_form_field_ui_display_overview_form_alter(&$form, &$form_state)
  */
 function ds_test_ds_pre_render_alter(&$layout_render_array, $context) {
   $entity = $context['entity'];
-  if (isset($entity->title) && $entity->title === 'Alter me!') {
+  if (isset($entity->title->value) && $entity->title->value === 'Alter me!') {
     $layout_render_array['left'][] = array('#markup' => 'cool!', '#weight' => 20);
   }
 }

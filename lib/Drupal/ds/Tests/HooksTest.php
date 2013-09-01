@@ -32,7 +32,7 @@ class HooksTest extends BaseTest {
 
     // Find the two extra fields from the test module on the node type.
     $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertText('Test code field from hook', 'Test field found on node.');
+    $this->assertText('Test code field from plugin', 'Test field found on node.');
     $this->assertText('Field altered', 'Test field altered found on node.');
 
     $empty = array();
@@ -41,31 +41,31 @@ class HooksTest extends BaseTest {
 
     // Fields can not be found on user.
     $this->drupalGet('admin/config/people/accounts/display');
-    $this->assertNoText('Test code field from hook', 'Test field not found on user.');
+    $this->assertNoText('Test code field from plugin', 'Test field not found on user.');
     $this->assertNoText('Field altered', 'Test field altered not found on user.');
 
     // Select layout.
     $this->dsSelectLayout();
 
     $fields = array(
-      'fields[author][region]' => 'left',
-      'fields[links][region]' => 'left',
+      'fields[node_author][region]' => 'left',
+      'fields[node_links][region]' => 'left',
       'fields[body][region]' => 'right',
-      'fields[ds_test_field][region]' => 'right',
-      'fields[ds_test_field_empty_string][region]' => 'right',
-      'fields[ds_test_field_empty_string][label]' => 'inline',
-      'fields[ds_test_field_false][region]' => 'right',
-      'fields[ds_test_field_false][label]' => 'inline',
-      'fields[ds_test_field_null][region]' => 'right',
-      'fields[ds_test_field_null][label]' => 'inline',
-      'fields[ds_test_field_nothing][region]' => 'right',
-      'fields[ds_test_field_nothing][label]' => 'inline',
-      'fields[ds_test_field_zero_int][region]' => 'right',
-      'fields[ds_test_field_zero_int][label]' => 'inline',
-      'fields[ds_test_field_zero_string][region]' => 'right',
-      'fields[ds_test_field_zero_string][label]' => 'inline',
-      'fields[ds_test_field_zero_float][region]' => 'right',
-      'fields[ds_test_field_zero_float][label]' => 'inline',
+      'fields[test_field][region]' => 'right',
+      'fields[test_field_empty_string][region]' => 'right',
+      'fields[test_field_empty_string][label]' => 'inline',
+      'fields[test_field_false][region]' => 'right',
+      'fields[test_field_false][label]' => 'inline',
+      'fields[test_field_null][region]' => 'right',
+      'fields[test_field_null][label]' => 'inline',
+      'fields[test_field_nothing][region]' => 'right',
+      'fields[test_field_nothing][label]' => 'inline',
+      'fields[test_field_zero_int][region]' => 'right',
+      'fields[test_field_zero_int][label]' => 'inline',
+      'fields[test_field_zero_string][region]' => 'right',
+      'fields[test_field_zero_string][label]' => 'inline',
+      'fields[test_field_zero_float][region]' => 'right',
+      'fields[test_field_zero_float][label]' => 'inline',
     );
 
     $this->dsSelectLayout();
@@ -74,11 +74,11 @@ class HooksTest extends BaseTest {
     // Create a node.
     $settings = array('type' => 'article');
     $node = $this->drupalCreateNode($settings);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
 
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
-    $this->assertText('Test code field on node ' . $node->nid, 'Test code field found');
+    $this->assertText('Test code field on node ' . $node->id(), 'Test code field found');
     $this->assertNoText('Test code field that returns an empty string', 'Test code field that returns an empty string is not visible.');
     $this->assertNoText('Test code field that returns FALSE', 'Test code field that returns FALSE is not visible.');
     $this->assertNoText('Test code field that returns NULL', 'Test code field that returns NULL is not visible.');
@@ -111,8 +111,8 @@ class HooksTest extends BaseTest {
     );
 
     $fields = array(
-      'fields[author][region]' => 'left',
-      'fields[links][region]' => 'left',
+      'fields[node_author][region]' => 'left',
+      'fields[node_links][region]' => 'left',
       'fields[body][region]' => 'right',
     );
 
@@ -123,7 +123,7 @@ class HooksTest extends BaseTest {
     $settings = array('type' => 'article');
     $node = $this->drupalCreateNode($settings);
 
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
     $this->assertRaw('dstest_2col.css', 'Css file included');
@@ -134,7 +134,7 @@ class HooksTest extends BaseTest {
       'title' => 'Alter me!',
     );
     $node = $this->drupalCreateNode($settings);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw('cool!', 'Region altered');
   }
 }

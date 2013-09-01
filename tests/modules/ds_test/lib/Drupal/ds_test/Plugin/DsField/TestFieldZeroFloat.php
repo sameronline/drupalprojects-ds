@@ -12,11 +12,11 @@ use Drupal\ds\Annotation\DsField;
 use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
- * Test code field that returns zero as a float.
+ * Test code field that returns zero as a floating point number.
  *
  * @DsField(
  *   id = "test_field_zero_float",
- *   title = @Translation("Test code field that returns zero as a float"),
+ *   title = @Translation("Test code field that returns zero as a floating point number"),
  *   entity_type = "node"
  * )
  */

@@ -179,9 +179,9 @@ class LayoutClassesTest extends BaseTest {
     $this->drupalPost('admin/structure/block', $edit, t('Save blocks'));
 
     // Assert the block is on the node page.
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw('Block region</h2>', 'Block region found');
-    $this->assertText('Test code field on node ' . $node->nid, 'Post date in block');
+    $this->assertText('Test code field on node ' . $node->id(), 'Post date in block');
     */
 
     // Change layout via admin/structure/ds/layout-change.
