@@ -56,9 +56,9 @@ class LayoutClassesTest extends BaseTest {
       'fields[node_links][region]' => 'left',
       'fields[body][region]' => 'right',
       'fields[node_comments][region]' => 'footer',
-      'fields[dynamic_code_field:dynamic_field:node:test_field][region]' => 'left',
-      'fields[dynamic_block_field:dynamic_field:node:test_block_field][region]' => 'left',
-      'fields[dynamic_preprocess_field:dynamic_field:node:submitted][region]' => 'left',
+      'fields[dynamic_code_field:node-test_field][region]' => 'left',
+      'fields[dynamic_block_field:node-test_block_field][region]' => 'left',
+      'fields[dynamic_preprocess_field:node-submitted][region]' => 'left',
       'fields[node_submitted_by][region]' => 'left',
       'fields[ds_extras_extra_test_field][region]' => 'header',
     );
@@ -82,11 +82,11 @@ class LayoutClassesTest extends BaseTest {
     $data = \Drupal::config('ds.layout_settings.node.article.default')->get('settings');
     $this->assertTrue(in_array('ds_extras_extra_test_field', $data['regions']['header']), t('Extra field is in header'));
     $this->assertTrue(in_array('node_post_date', $data['regions']['header']), t('Post date is in header'));
-    $this->assertTrue(in_array('dynamic_code_field:dynamic_field:node:test_field', $data['regions']['left']), t('Test field is in left'));
+    $this->assertTrue(in_array('dynamic_code_field:node-test_field', $data['regions']['left']), t('Test field is in left'));
     $this->assertTrue(in_array('node_author', $data['regions']['left']), t('Author is in left'));
     $this->assertTrue(in_array('node_links', $data['regions']['left']), t('Links is in left'));
-    $this->assertTrue(in_array('dynamic_block_field:dynamic_field:node:test_block_field', $data['regions']['left']), t('Test block field is in left'));
-    $this->assertTrue(in_array('dynamic_preprocess_field:dynamic_field:node:submitted', $data['regions']['left']), t('Submitted field is in left'));
+    $this->assertTrue(in_array('dynamic_block_field:node-test_block_field', $data['regions']['left']), t('Test block field is in left'));
+    $this->assertTrue(in_array('dynamic_preprocess_field:node-submitted', $data['regions']['left']), t('Submitted field is in left'));
     $this->assertTrue(in_array('body', $data['regions']['right']), t('Body is in right'));
     $this->assertTrue(in_array('node_comments', $data['regions']['footer']), t('Comments is in footer'));
     $this->assertTrue(in_array('class_name_1', $data['classes']['header']), t('Class name 1 is in header'));
@@ -113,7 +113,7 @@ class LayoutClassesTest extends BaseTest {
     // @todo code field is broken at the moment
     $this->assertRaw('field-name-test-field', t('Custom field found'));
     $this->assertRaw('Test field', t('Custom field found'));
-    $this->assertRaw('field-name-dynamic-block-field:dynamic-field:node:test-block-field', t('Custom block field found'));
+    $this->assertRaw('field-name-dynamic-block-field:node-test-block-field', t('Custom block field found'));
     // @todo title isn't set, cause we are dealing with the block itself not the instance
     //$this->assertRaw('Recent content</h2>', t('Custom block field found'));
     $this->assertRaw('Submitted by', t('Submitted field found'));
@@ -164,7 +164,7 @@ class LayoutClassesTest extends BaseTest {
       'fields[node_author][region]' => 'left',
       'fields[node_links][region]' => 'left',
       'fields[body][region]' => 'right',
-      'fields[dynamic_code_field:dynamic_field:node:test_field][region]' => 'block_region',
+      'fields[dynamic_code_field:node-test_field][region]' => 'block_region',
     );
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/display/full');
 
@@ -208,7 +208,7 @@ class LayoutClassesTest extends BaseTest {
     $this->assertTrue(in_array('node_author', $data['regions']['header']), t('Author is in header'));
     $this->assertTrue(in_array('node_links', $data['regions']['header']), t('Links field is in header'));
     $this->assertTrue(in_array('body', $data['regions']['footer']), t('Body field is in footer'));
-    $this->assertTrue(in_array('dynamic_code_field:dynamic_field:node:test_field', $data['regions']['footer']), t('Test field is in footer'));
+    $this->assertTrue(in_array('dynamic_code_field:node-test_field', $data['regions']['footer']), t('Test field is in footer'));
 
     // Test that a default view mode with no layout is not affected by a disabled view mode.
     $edit = array(
