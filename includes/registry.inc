@@ -24,7 +24,7 @@ function _ds_theme() {
 
   // Field templates
   if (Drupal::config('ds.settings')->get('field_template')) {
-    $field_functions = module_invoke_all('ds_field_theme_functions_info');
+    $field_functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
     foreach ($field_functions as $key => $label) {
       $theme_functions[$key] = array(
         'render element' => 'element',
@@ -109,7 +109,7 @@ function _ds_entity_type_update($entity_type, $info, $action) {
   }
 
   // Clear cache.
-  cache()->invalidateTags(array('ds_fields' => TRUE));
+  cache()->invalidateTags(array('ds_fields_info' => TRUE));
   cache()->invalidateTags(array('ds_field_settings' => TRUE));
   field_info_cache_clear();
 }
@@ -369,7 +369,7 @@ function _ds_layouts_scan_theme($theme, &$layouts) {
  */
 function _ds_menu_alter(&$items) {
   // Do not conflict with the revisioning module.
-  if (module_exists('revisioning')) {
+  if (Drupal::moduleHandler()->moduleExists('revisioning')) {
     $items['node/%node/revisions/%vid/view']['page callback'] = 'ds_revision_node_show';
     $items['node/%node/revisions/%vid/view']['file'] = 'includes/revision.inc';
     $items['node/%node/revisions/%vid/view']['file path'] = drupal_get_path('module', 'ds');

@@ -26,10 +26,13 @@ class BaseTest extends WebTestBase {
   function setUp() {
     parent::setUp();
 
+    // Disable edit for now
+    \Drupal::moduleHandler()->disable(array('edit'));
+
     \Drupal::config('search.settings')->set('active_modules', array('node' => '', 'user' => 'user', 'ds_search' => 'ds_search'))->save();
     menu_router_rebuild();
 
-    $this->admin_user = $this->drupalCreateUser(array('admin classes', 'admin fields', 'admin_display_suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions', 'administer node fields', 'administer node display', 'administer node form display', 'administer user fields', 'administer user display', 'administer user form display', 'administer comment fields', 'administer comment display', 'administer comment form display', 'administer views'));
+    $this->admin_user = $this->drupalCreateUser(array('admin classes', 'admin fields', 'admin display suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions', 'administer node fields', 'administer node display', 'administer node form display', 'administer user fields', 'administer user display', 'administer user form display', 'administer comment fields', 'administer comment display', 'administer comment form display', 'administer views'));
     $this->drupalLogin($this->admin_user);
   }
 
@@ -112,7 +115,7 @@ class BaseTest extends WebTestBase {
 
     $edit += array(
       'name' => 'Test field',
-      'field' => 'test_field',
+      'id' => 'test_field',
       'entities[node]' => '1',
       'code[value]' => 'Test field',
       'use_token' => '0',
@@ -133,12 +136,11 @@ class BaseTest extends WebTestBase {
     $edit += array(
       'name' => 'Test block field',
       'entities[node]' => '1',
-      'block' => 'node|recent',
-      'block_render' => DS_BLOCK_TEMPLATE,
+      'block' => 'node_recent_block',
     );
 
     if ($first) {
-      $edit += array('field' => 'test_block_field');
+      $edit += array('id' => 'test_block_field');
     }
 
     $this->drupalPost($url, $edit, t('Save'));
@@ -159,7 +161,7 @@ class BaseTest extends WebTestBase {
     );
 
     if ($first) {
-      $edit += array('field' => 'submitted');
+      $edit += array('id' => 'submitted');
     }
 
     $this->drupalPost($url, $edit, t('Save'));

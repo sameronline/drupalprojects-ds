@@ -29,11 +29,11 @@ class FieldPermissionsTest extends BaseTest {
 
     $fields = array(
       'fields[body][region]' => 'right',
-      'fields[ds_test_field][region]' => 'left',
+      'fields[test_field][region]' => 'left',
     );
 
     \Drupal::config('ds.extras')->set('field_permissions', TRUE)->save();
-    drupal_container()->get('module_handler')->resetImplementations();
+    \Drupal::moduleHandler()->resetImplementations();
 
     $this->dsSelectLayout();
     $this->dsConfigureUI($fields);
@@ -41,18 +41,18 @@ class FieldPermissionsTest extends BaseTest {
     // Create a node.
     $settings = array('type' => 'article');
     $node = $this->drupalCreateNode($settings);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw('group-right', 'Template found (region right)');
-    $this->assertNoText('Test code field on node ' . $node->nid, 'Test code field not found');
+    $this->assertNoText('Test code field on node ' . $node->id(), 'Test code field not found');
 
     // Give permissions.
     $edit = array(
-      'authenticated[view author on node]' => 1,
-      'authenticated[view ds_test_field on node]' => 1,
+      'authenticated[view node_author on node]' => 1,
+      'authenticated[view test_field on node]' => 1,
     );
     $this->drupalPost('admin/people/permissions', $edit, t('Save permissions'));
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw('group-left', 'Template found (region left)');
-    $this->assertText('Test code field on node ' . $node->nid, 'Test code field found');
+    $this->assertText('Test code field on node ' . $node->id(), 'Test code field found');
   }
 }

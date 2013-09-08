@@ -3,6 +3,6 @@ description: 'Contains additional features for Display Suite.'
 core: 8.x
 type: module
 package: 'Display Suite'
-configure: admin/structure/ds/list/extras
+configure: admin/structure/ds/settings
 dependencies:
   - ds

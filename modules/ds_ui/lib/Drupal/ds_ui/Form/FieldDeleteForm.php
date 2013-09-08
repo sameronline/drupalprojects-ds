@@ -8,7 +8,7 @@
 namespace Drupal\ds_ui\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;
-use Drupal\Core\Controller\ControllerInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Provides a form to delete a DS field.
  */
-class FieldDeleteForm extends ConfirmFormBase implements ControllerInterface {
+class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInterface {
 
   /**
    * Stores the configuration factory.
@@ -107,8 +107,8 @@ class FieldDeleteForm extends ConfirmFormBase implements ControllerInterface {
     $this->configFactory->get('ds.field.' . $field['id'])->delete();
     $this->cacheBackend->deleteTags(array('ds_fields_info' => TRUE));
 
-    // @todo find out how we can clear derivatives without clearing everything.
-    drupal_flush_all_caches();
+    // Also clear the ds plugin cache
+    \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
     // Redirect.
     $form_state['redirect'] = 'admin/structure/ds/fields';

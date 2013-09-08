@@ -39,21 +39,21 @@ class ViewsTestS extends BaseTest {
       'created' => REQUEST_TIME,
     );
     $node_1 = $this->drupalCreateNode($settings_1);
-    $this->drupalPost('node/' . $node_1->nid . '/edit', $edit_tag_1, t('Save'));
+    $this->drupalPost('node/' . $node_1->id() . '/edit', $edit_tag_1, t('Save'));
     $settings_2 = array(
       'type' => 'article',
       'title' => 'Article 2',
       'created' => REQUEST_TIME + 3600,
     );
     $node_2 = $this->drupalCreateNode($settings_2);
-    $this->drupalPost('node/' . $node_2->nid . '/edit', $edit_tag_1, t('Save'));
+    $this->drupalPost('node/' . $node_2->id() . '/edit', $edit_tag_1, t('Save'));
     $settings_3 = array(
       'type' => 'article',
       'title' => 'Article 3',
       'created' => REQUEST_TIME + 7200,
     );
     $node_3 = $this->drupalCreateNode($settings_3);
-    $this->drupalPost('node/' . $node_3->nid . '/edit', $edit_tag_2, t('Save'));
+    $this->drupalPost('node/' . $node_3->id() . '/edit', $edit_tag_2, t('Save'));
 
     // Configure teaser and full layout.
     $layout = array(

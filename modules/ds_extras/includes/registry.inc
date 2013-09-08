@@ -15,7 +15,7 @@ function _ds_extras_menu_alter(&$items) {
 
     // Check if page manager is overriding.
     $skip_node_override = FALSE;
-    if (module_exists('page_manager')) {
+    if (Drupal::moduleHandler()->moduleExists('page_manager')) {
       if ($task = page_manager_get_task('node_view')) {
         if (isset($task['disabled']) && !$task['disabled']) {
           $skip_node_override = TRUE;
@@ -42,19 +42,18 @@ function _ds_extras_module_implements_alter(&$implementations, $hook) {
   // Region to block
   $region_hooks = array(
     'ds_layout_region_alter',
-    'field_attach_view_alter',
-    'block_info',
-    'block_view'
+    'entity_view_alter',
   );
-  if (!Drupal::config('ds.extras')->get('region_to_block', FALSE) && in_array($hook, $region_hooks)) {
+  if (!Drupal::config('ds.extras')->get('region_to_block') && in_array($hook, $region_hooks)) {
     unset($implementations['ds_extras']);
   }
 
-  // Switch view mode
-  $switch_hooks = array(
-    'form_node_form_alter',
+  // Extra fields
+  $extra_fields_hooks = array(
+    'field_extra_fields',
   );
-  if (!Drupal::config('ds.extras')->get('switch_view_mode', FALSE) && in_array($hook, $switch_hooks)) {
+  if (!Drupal::config('ds.extras')->get('fields_extra') && in_array($hook, $extra_fields_hooks)) {
     unset($implementations['ds_extras']);
   }
+
 }

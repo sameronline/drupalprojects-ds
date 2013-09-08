@@ -17,7 +17,8 @@ abstract class Date extends DsFieldBase {
    */
   public function render($field) {
     $date_format = str_replace('ds_post_date_', '', $field['formatter']);
-    return format_date($field['entity']->created->value, $date_format);
+    $render_key = $this->getRenderKey();
+    return format_date($field['entity']->{$render_key}->value, $date_format);
   }
 
   /**
@@ -37,6 +38,13 @@ abstract class Date extends DsFieldBase {
     }
 
     return $date_formatters;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRenderKey() {
+    return 'created';
   }
 
 }

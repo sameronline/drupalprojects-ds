@@ -20,6 +20,6 @@ use Drupal\ds\Annotation\DsField;
  *   module = "ds"
  * )
  */
-class CommentUserSignature extends PreprocessPluginBase {
+class CommentUserSignature extends PreprocessBase {
 
 }

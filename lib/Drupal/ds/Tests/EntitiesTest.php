@@ -39,14 +39,14 @@ class EntitiesTest extends BaseTest {
     // Create a token and php field.
     $token_field = array(
       'name' => 'Token field',
-      'field' => 'token_field',
+      'id' => 'token_field',
       'entities[node]' => '1',
       'code[value]' => '<div class="token-class">[node:title]</span>',
       'use_token' => '1',
     );
     $php_field = array(
       'name' => 'PHP field',
-      'field' => 'php_field',
+      'id' => 'php_field',
       'entities[node]' => '1',
       'code[value]' => "<?php echo 'I am a PHP field'; ?>",
       'use_token' => '0',
@@ -59,12 +59,12 @@ class EntitiesTest extends BaseTest {
 
     // Configure fields.
     $fields = array(
-      'fields[token_field][region]' => 'header',
-      'fields[php_field][region]' => 'left',
+      'fields[dynamic_code_field:node-token_field][region]' => 'header',
+      'fields[dynamic_code_field:node-php_field][region]' => 'left',
       'fields[body][region]' => 'right',
       'fields[node_link][region]' => 'footer',
       'fields[body][label]' => $label,
-      'fields[ds_submitted_by][region]' => 'header',
+      'fields[node_submitted_by][region]' => 'header',
     );
     $this->dsConfigureUI($fields);
 
@@ -134,10 +134,10 @@ class EntitiesTest extends BaseTest {
     $this->dsSelectLayout($teaser, $teaser_assert, 'admin/structure/types/manage/article/display/teaser');
 
     $fields = array(
-      'fields[token_field][region]' => 'left',
-      'fields[php_field][region]' => 'left',
+      'fields[dynamic_code_field:node-token_field][region]' => 'left',
+      'fields[dynamic_code_field:node-php_field][region]' => 'left',
       'fields[body][region]' => 'right',
-      'fields[links][region]' => 'right',
+      'fields[node_links][region]' => 'right',
     );
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/display/teaser');
 
@@ -164,9 +164,9 @@ class EntitiesTest extends BaseTest {
     );
     $this->dsCreateBlockField($block);
     $fields = array(
-      'fields[test_block_field][region]' => 'left',
-      'fields[token_field][region]' => 'hidden',
-      'fields[php_field][region]' => 'hidden',
+      'fields[dynamic_block_field:node-test_block_field][region]' => 'left',
+      'fields[dynamic_code_field:node-token_field][region]' => 'hidden',
+      'fields[dynamic_code_field:node-php_field][region]' => 'hidden',
       'fields[body][region]' => 'hidden',
       'fields[links][region]' => 'hidden',
     );

@@ -3,7 +3,7 @@
  * Javascript functionality for Display Suite's administration UI.
  */
 
-(function($) {
+(function($, Drupal) {
 
 Drupal.DisplaySuite = Drupal.DisplaySuite || {};
 Drupal.DisplaySuite.fieldopened = '';
@@ -167,4 +167,4 @@ Drupal.behaviors.settingsToggle = {
   }
 };
 
-})(jQuery);
+})(jQuery, Drupal);

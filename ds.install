@@ -13,15 +13,6 @@ function ds_install() {
 }
 
 /**
- * Implements hook_uninstall().
- */
-function ds_uninstall() {
-  // @todo doesn't config clean this up for us automatically nowadays ?
-  Drupal::config('ds.classes')->delete();
-  Drupal::config('ds.settings')->delete();
-}
-
-/**
  * Update to CMI.
  */
 function ds_update_8000() {

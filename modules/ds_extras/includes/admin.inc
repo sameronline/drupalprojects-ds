@@ -60,7 +60,7 @@ function ds_extras_settings_alter(&$form, &$form_state) {
     '#default_value' => $config->get('field_permissions'),
   );
 
-  if (module_exists('block')) {
+  if (Drupal::moduleHandler()->moduleExists('block')) {
     $form['fs3']['region_to_block'] = array(
       '#type' => 'checkbox',
       '#title' => t('Region to block'),
@@ -100,7 +100,7 @@ function ds_extras_settings_submit($form, &$form_state) {
     ->set('field_permissions', $values['fs3']['field_permissions'])
     ->set('switch_field', $values['fs3']['switch_field'])
     ->set('hidden_region', $values['fs3']['hidden_region']);
-  if (module_exists('block')) {
+  if (Drupal::moduleHandler()->moduleExists('block')) {
     $config->set('region_to_block', $values['fs3']['region_to_block']);
   }
   $config->save();
@@ -123,9 +123,12 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 
     $region_blocks_options = array();
     $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
-    foreach ($region_blocks as $key => $block) {
-      if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
-        $region_blocks_options[$key] = t('Remove') . ' ' . $block['title'];
+
+    if (!empty($region_blocks)) {
+      foreach ($region_blocks as $key => $block) {
+        if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
+          $region_blocks_options[$key] = t('Remove') . ' ' . $block['title'];
+        }
       }
     }
 
@@ -247,7 +250,7 @@ function ds_extras_block_submit($form, &$form_state) {
     );
 
     $block_key = $form_state['values']['new_block_region_key'];
-    $region_blocks = Drupal::config('ds.extras')->get('blocks');
+    $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
     if (empty($region_blocks)) {
       $region_blocks = array();
     }
@@ -257,17 +260,30 @@ function ds_extras_block_submit($form, &$form_state) {
 
   // Remove a region.
   if (isset($form_state['values']['remove_block_region'])) {
-    $region_blocks = Drupal::config('ds.extras')->get('blocks');
+    $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
     $remove = $form_state['values']['remove_block_region'];
     foreach ($remove as $key => $value) {
       if ($key === $value) {
         unset($region_blocks[$key]);
       }
+
+      // Make sure there is no active block instance for this ds block region.
+      if (Drupal::moduleHandler()->moduleExists('block')) {
+        $ids = Drupal::entityQuery('block')
+          ->condition('plugin', 'ds_region_block:' . $key)
+          ->execute();
+        $block_storage = Drupal::entityManager()->getStorageController('block');
+        foreach ($block_storage->loadMultiple($ids) as $block) {
+          $block->delete();
+        }
+      }
     }
 
-    // Clear the ds plugin cache
-    cache('block_plugins')->invalidateAll();
+    // Clear cached block and ds plugin defintions
+    Drupal::service('plugin.manager.block')->clearCachedDefinitions();
+    Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
+    // Remove the region from ds settings
     Drupal::config('ds.extras')->set('region_blocks', $region_blocks)->save();
   }
 }

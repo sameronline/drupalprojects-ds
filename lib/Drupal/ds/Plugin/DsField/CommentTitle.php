@@ -20,6 +20,6 @@ use Drupal\ds\Annotation\DsField;
  *   module = "ds"
  * )
  */
-class CommentTitle extends PreprocessPluginBase {
+class CommentTitle extends PreprocessBase {
 
 }

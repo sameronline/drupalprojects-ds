@@ -9,14 +9,14 @@ namespace Drupal\ds_ui\Routing;
 
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Controller\ControllerInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Route controller fields.
  */
-class FieldController extends ControllerBase implements ControllerInterface {
+class FieldController extends ControllerBase implements ContainerInjectionInterface {
 
   /**
    * The config storage.

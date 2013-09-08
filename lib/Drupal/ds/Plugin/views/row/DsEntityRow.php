@@ -245,7 +245,8 @@ class DsEntityRow extends RowPluginBase {
         foreach ($entities as $entity_id => $entity) {
 
           // Check for paging to determine the view mode.
-          if (isset($_GET['page']) && isset($this->options['alternating_fieldset']['allpages']) && !$this->options['alternating_fieldset']['allpages']) {
+          $page = Drupal::request()->get('page');
+          if (!empty($page) && isset($this->options['alternating_fieldset']['allpages']) && !$this->options['alternating_fieldset']['allpages']) {
             $view_mode = $this->options['view_mode'];
           }
           else {

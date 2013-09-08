@@ -52,7 +52,7 @@ class CodeFieldForm extends FieldFormBase {
     );
 
     // Token support.
-    if (module_exists('token')) {
+    if (\Drupal::moduleHandler()->moduleExists('token')) {
 
       $form['tokens'] = array(
         '#title' => t('Tokens'),

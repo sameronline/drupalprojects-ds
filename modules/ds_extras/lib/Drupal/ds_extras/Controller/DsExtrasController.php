@@ -9,6 +9,7 @@ namespace Drupal\ds_extras\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Returns responses for Display Suite Extra routes.
@@ -21,19 +22,19 @@ class DsExtrasController extends ControllerBase {
    * @return array
    *   The Views fields report page.
    */
-  public function switchViewModeInline() {
+  public function switchViewModeInline(Request $request) {
     $content = '';
     $status = TRUE;
     $error = FALSE;
 
-    $query = $this->request()->query;
+    $query = $request->query;
     $id = $query->get('id');
     $view_mode = $query->get('view_mode');
     $entity_type = $query->get('entity_type');
     $entity = entity_load($entity_type, $id);
 
     if (node_access('view', $entity)) {
-      $element = node_view($entity->getBCENtity(), $view_mode);
+      $element = entity_view($entity, $view_mode);
       $content = drupal_render($element);
     }
     else {
