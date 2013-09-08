@@ -25,7 +25,7 @@ abstract class DynamicField extends DerivativeBase {
       $field = \Drupal::config($config)->get();
       if ($field['type'] == $this->getType()) {
         foreach ($field['entities'] as $entity_type) {
-          $key = 'dynamic_field:' . $entity_type . ':' . $field['id'];
+          $key = $entity_type . '-' . $field['id'];
           $this->derivatives[$key] = $base_plugin_definition;
           $this->derivatives[$key] += array(
             'title' => $field['label'],

@@ -8,7 +8,7 @@
 namespace Drupal\ds_ui\Form;
 
 use Drupal\system\SystemConfigFormBase;
-use Drupal\Core\Controller\ControllerInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\Context\ContextInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Base form for fields.
  */
-class FieldFormBase extends SystemConfigFormBase implements ControllerInterface {
+class FieldFormBase extends SystemConfigFormBase implements ContainerInjectionInterface {
 
   /**
    * Holds the entity manager
@@ -113,7 +113,7 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
       '#type' => 'textfield',
       '#default_value' => isset($field['label']) ? $field['label'] : '',
       '#description' => t('The human-readable label of the field.'),
-      '#maxlength' => 32,
+      '#maxlength' => 128,
       '#required' => TRUE,
       '#size' => 30,
     );
@@ -181,12 +181,12 @@ class FieldFormBase extends SystemConfigFormBase implements ControllerInterface 
     }
     $field['entities'] = $entities;
 
-    // Save field and clear ds_fields.
+    // Save field and clear ds_fields_info cache.
     $this->configFactory->get('ds.field.' . $field['id'])->setData($field)->save();
     $this->cacheBackend->deleteTags(array('ds_fields_info' => TRUE));
 
-    // @todo find out how we can clear derivatives without clearing everything.
-    drupal_flush_all_caches();
+    // Also clear the ds plugin cache
+    \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
     // Redirect.
     $form_state['redirect'] = 'admin/structure/ds/fields';

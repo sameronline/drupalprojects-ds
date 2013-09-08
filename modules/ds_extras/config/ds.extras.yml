@@ -1,8 +1,8 @@
-region_blocks: {  }
-ft-default: theme_field
 fields_extra: '0'
 fields_extra_list: ''
-switch_view_mode: '0'
 field_permissions: '0'
-switch_field: '0'
 hidden_region: '0'
+region_to_block: '1'
+region_blocks: { }
+switch_field: '0'
+switch_view_mode: '0'

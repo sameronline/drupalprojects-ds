@@ -39,7 +39,7 @@ class ExportablesTest extends BaseTest {
       'title' => 'Exportable'
     );
     $node = $this->drupalCreateNode($settings);
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw('group-left', 'Left region found');
     $this->assertRaw('group-right', 'Right region found');
     $this->assertNoRaw('group-header', 'No header region found');
@@ -62,17 +62,17 @@ class ExportablesTest extends BaseTest {
     );
 
     $fields = array(
-      'fields[post_date][region]' => 'header',
-      'fields[author][region]' => 'left',
-      'fields[links][region]' => 'left',
+      'fields[node_post_date][region]' => 'header',
+      'fields[node_author][region]' => 'left',
+      'fields[node_links][region]' => 'left',
       'fields[body][region]' => 'right',
-      'fields[comments][region]' => 'footer',
+      'fields[node_comments][region]' => 'footer',
     );
 
     $this->dsSelectLayout($layout, $assert);
     $this->dsConfigureUI($fields);
 
-    $this->drupalGet('node/' . $node->nid);
+    $this->drupalGet('node/' . $node->id());
     $this->assertRaw('group-left', 'Left region found');
     $this->assertRaw('group-right', 'Left region found');
     $this->assertRaw('group-header', 'Left region found');

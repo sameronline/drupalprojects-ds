@@ -11,8 +11,6 @@ use Drupal\simpletest\WebTestBase;
 
 class FormsTest extends BaseTest {
 
-  protected $profile = 'standard';
-
   /**
    * {@inheritdoc}
    */

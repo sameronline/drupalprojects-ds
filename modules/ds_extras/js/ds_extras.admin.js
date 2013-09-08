@@ -3,7 +3,7 @@
  * Javascript functionality for the Display Suite Extras administration UI.
  */
 
-(function ($) {
+(function ($, Drupal) {
 
 Drupal.behaviors.DSExtrasSummaries = {
   attach: function (context) {
@@ -33,4 +33,4 @@ Drupal.behaviors.DSExtrasSummaries = {
   }
 };
 
-})(jQuery);
+})(jQuery, Drupal);

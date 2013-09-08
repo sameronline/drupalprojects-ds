@@ -20,6 +20,6 @@ use Drupal\ds\Annotation\DsField;
  *   provider = "comment"
  * )
  */
-class CommentSubmitted extends PreprocessPluginBase {
+class CommentSubmitted extends PreprocessBase {
 
 }

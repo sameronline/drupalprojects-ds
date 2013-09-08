@@ -65,6 +65,9 @@ class EmergencyForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
+
+    $form['#title'] = 'Emergency settings';
+
     $form['ds_fields_error'] = array(
       '#type' => 'fieldset',
       '#title' => $this->t('Fields error'),
@@ -138,22 +141,35 @@ class EmergencyForm extends FormBase {
   public function submitRegionToBlock(array &$form, array &$form_state) {
     if (isset($form_state['values']['remove_block_region'])) {
       $save = FALSE;
-      $region_blocks = $this->configFactory->get('ds.extras')->get('region_blocks', array());
+      $region_blocks = $this->configFactory->get('ds.extras')->get('region_blocks');
       $remove = $form_state['values']['remove_block_region'];
       foreach ($remove as $key => $value) {
         if ($key === $value) {
           $save = TRUE;
-          db_delete('block')
-            ->condition('delta', $key)
-            ->condition('module', 'ds_extras')
-            ->execute();
+
+          // Make sure there is no active block instance for this ds block region.
+          if (\Drupal::moduleHandler()->moduleExists('block')) {
+            $ids = \Drupal::entityQuery('block')
+              ->condition('plugin', 'ds_region_block:' . $key)
+              ->execute();
+            $block_storage = \Drupal::entityManager()->getStorageController('block');
+            foreach ($block_storage->loadMultiple($ids) as $block) {
+              $block->delete();
+            }
+          }
+
           unset($region_blocks[$key]);
         }
       }
 
       if ($save) {
         drupal_set_message(t('Block regions were removed.'));
-        $this->configFactory->get('ds.extras')->get('region_blocks', $region_blocks);
+
+        // Clear cached block and ds plugin defintions
+        \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
+        \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
+
+        $this->configFactory->get('ds.extras')->set('region_blocks', $region_blocks)->save();
       }
     }
     else {
