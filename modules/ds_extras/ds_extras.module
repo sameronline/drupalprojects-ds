@@ -14,7 +14,7 @@ use Drupal\entity\Entity\EntityDisplay;
 function ds_extras_library_info() {
   $libraries['ds_extras.settings'] = array(
     'title' => 'Display Suite Extras settings',
-    'version' => VERSION,
+    'version' => Drupal::VERSION,
     'js' => array(
       drupal_get_path('module', 'ds_extras') . '/js/ds_extras.admin.js' => array(),
     ),
