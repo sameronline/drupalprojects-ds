@@ -236,7 +236,7 @@ function ds_get_layout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
   $layout_key = $entity_type . '_' . $bundle . '_' . $view_mode;
   if (!isset($layouts[$layout_key])) {
 
-    $bundles = Drupal::entityManager()->getAllBundles();
+    $bundles = Drupal::entityManager()->getAllBundleInfo();
 
     $overridden = TRUE;
     if ($view_mode != 'form') {
