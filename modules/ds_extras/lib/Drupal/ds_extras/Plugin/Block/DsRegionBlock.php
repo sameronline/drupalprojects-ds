@@ -17,6 +17,7 @@ use Drupal\Core\Annotation\Translation;
  * @Block(
  *   id = "ds_region_block",
  *   admin_label = @Translation("Ds region block"),
+ *   category = @Translation("Display Suite"),
  *   derivative = "Drupal\ds_extras\Plugin\Derivative\DsRegionBlock"
  * )
  */
