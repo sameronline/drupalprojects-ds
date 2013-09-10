@@ -1,0 +1,22 @@
+ds_display_task:
+  route_name: ds_structure
+  title: Displays
+  tab_root_id: ds_display_task
+  weight: 0
+ds_list_task:
+  route_name: ds_list
+  title: List
+  tab_root_id: ds_display_task
+  tab_parent_id: ds_display_task
+ds_settings_task:
+  route_name: ds_admin_settings
+  title: Settings
+  tab_root_id: ds_display_task
+  tab_parent_id: ds_display_task
+  weight: 10
+ds_emergency_task:
+  route_name: ds_admin_emergency
+  title: Emergency
+  tab_root_id: ds_display_task
+  tab_parent_id: ds_display_task
+  weight: 100
