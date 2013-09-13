@@ -1,13 +1,13 @@
 
-(function($) {
+(function($, Drupal, drupalSettings) {
 
 /**
  * Highlight words in search results with jQuery.
  */
 Drupal.behaviors.DSSearchHighlight = {
   attach: function (context) {
-    var selector = Drupal.settings.ds_search['selector'];
-    var search = Drupal.settings.ds_search['search'];
+    var selector = drupalSettings.ds_search['selector'];
+    var search = drupalSettings.ds_search['search'];
     var $selector = $(selector);
     // Split word.
 
@@ -65,5 +65,5 @@ jQuery.fn.highlight = function(pat) {
  });
 };
 
-})(jQuery);
+})(jQuery, Drupal, drupalSettings);
 

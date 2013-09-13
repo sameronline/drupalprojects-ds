@@ -41,10 +41,10 @@ abstract class Date extends DsFieldBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Returns the entity render key for this field.
    */
   public function getRenderKey() {
-    return 'created';
+    return '';
   }
 
 }

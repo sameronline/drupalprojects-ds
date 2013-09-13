@@ -22,4 +22,11 @@ use Drupal\ds\Annotation\DsField;
  */
 class NodePostDate extends Date {
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getRenderKey() {
+    return 'created';
+  }
+
 }
