@@ -71,8 +71,10 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
   /**
    * {@inheritdoc}
    */
-  public function getCancelPath() {
-    return 'admin/structure/ds/fields';
+  public function getCancelRoute() {
+    return array(
+      'route_name' => 'fields_list',
+    );
   }
 
   /**
