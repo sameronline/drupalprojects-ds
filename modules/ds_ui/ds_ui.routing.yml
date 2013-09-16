@@ -1,65 +1,65 @@
 ds_classes:
-  pattern: 'admin/structure/ds/classes'
+  path: 'admin/structure/ds/classes'
   defaults:
     _form: '\Drupal\ds_ui\Form\ClassesForm'
   requirements:
     _permission: 'admin classes'
 fields_list:
-  pattern: 'admin/structure/ds/fields'
+  path: 'admin/structure/ds/fields'
   defaults:
     _content: 'Drupal\ds_ui\Routing\FieldController::fieldList'
     _title: 'Fields'
   requirements:
     _permission: 'admin fields'
 manage_field:
-  pattern: 'admin/structure/ds/fields/manage/{field_key}'
+  path: 'admin/structure/ds/fields/manage/{field_key}'
   defaults:
     _content: 'Drupal\ds_ui\Routing\FieldController::manageRedirect'
   requirements:
     _permission: 'admin fields'
 delete_field:
-  pattern: 'admin/structure/ds/fields/delete/{field}'
+  path: 'admin/structure/ds/fields/delete/{field}'
   defaults:
     _form: '\Drupal\ds_ui\Form\FieldDeleteForm'
   requirements:
     _permission: 'admin fields'
 manage_code_field:
-  pattern: 'admin/structure/ds/fields/manage_code/{field_key}'
+  path: 'admin/structure/ds/fields/manage_code/{field_key}'
   defaults:
     _form: '\Drupal\ds_ui\Form\CodeFieldForm'
     _title: 'Edit a code field'
   requirements:
     _permission: 'admin fields'
 add_code_field:
-  pattern: 'admin/structure/ds/fields/manage_code'
+  path: 'admin/structure/ds/fields/manage_code'
   defaults:
     _form: '\Drupal\ds_ui\Form\CodeFieldForm'
     _title: 'Add a code field'
   requirements:
     _permission: 'admin fields'
 manage_preprocess_field:
-  pattern: 'admin/structure/ds/fields/manage_preprocess/{field_key}'
+  path: 'admin/structure/ds/fields/manage_preprocess/{field_key}'
   defaults:
     _form: '\Drupal\ds_ui\Form\PreprocessFieldForm'
     _title: 'Edit a preprocess field'
   requirements:
     _permission: 'admin fields'
 add_preprocess_field:
-  pattern: 'admin/structure/ds/fields/manage_preprocess'
+  path: 'admin/structure/ds/fields/manage_preprocess'
   defaults:
     _form: '\Drupal\ds_ui\Form\PreprocessFieldForm'
     _title: 'Add a preprocess field'
   requirements:
     _permission: 'admin fields'
 manage_block_field:
-  pattern: 'admin/structure/ds/fields/manage_block/{field_key}'
+  path: 'admin/structure/ds/fields/manage_block/{field_key}'
   defaults:
     _form: '\Drupal\ds_ui\Form\BlockFieldForm'
     _title: 'Edit a block field'
   requirements:
     _permission: 'admin fields'
 add_block_field:
-  pattern: 'admin/structure/ds/fields/manage_block'
+  path: 'admin/structure/ds/fields/manage_block'
   defaults:
     _form: '\Drupal\ds_ui\Form\BlockFieldForm'
     _title: 'Add a block field'

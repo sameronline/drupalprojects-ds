@@ -7,7 +7,7 @@
 
 namespace Drupal\ds_ui\Form;
 
-use Drupal\system\SystemConfigFormBase;
+use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Config\ConfigFactory;
@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Base form for fields.
  */
-class FieldFormBase extends SystemConfigFormBase implements ContainerInjectionInterface {
+class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterface {
 
   /**
    * Holds the entity manager

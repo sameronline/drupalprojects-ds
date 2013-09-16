@@ -10,13 +10,13 @@ namespace Drupal\ds\Form;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\Context\ContextInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\system\SystemConfigFormBase;
+use Drupal\Core\Form\ConfigFormBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configures Display Suite settings for this site.
  */
-class SettingsForm extends SystemConfigFormBase {
+class SettingsForm extends ConfigFormBase {
 
   /**
    * The module handler.

@@ -7,12 +7,12 @@
 
 namespace Drupal\ds_ui\Form;
 
-use Drupal\system\SystemConfigFormBase;
+use Drupal\Core\Form\ConfigFormBase;
 
 /**
  * Configures classes used by wrappers and regions.
  */
-class ClassesForm extends SystemConfigFormBase {
+class ClassesForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
