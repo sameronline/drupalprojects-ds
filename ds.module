@@ -5,11 +5,10 @@
  * Display Suite core functions.
  */
 
-use Drupal\Core\Template\Attribute;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
-use Drupal\Core\Language\Language;
 use Drupal\entity\Entity\EntityDisplay;
+use Drupal\field\Field;
 
 /**
  * Implements hook_permission().
@@ -37,7 +36,7 @@ function ds_menu() {
   );
 
   // Contextual links.
-  if (Drupal::moduleHandler()->moduleExists('contextual') && Drupal::moduleHandler()->moduleExists('field_ui')) {
+  if (\Drupal::moduleHandler()->moduleExists('contextual') && Drupal::moduleHandler()->moduleExists('field_ui')) {
     $items['node/%node/display'] = array(
       'title' => 'Manage display',
       'route_name' => 'ds.contextual_tab_node',
@@ -67,7 +66,7 @@ function ds_menu() {
  */
 function ds_menu_alter(&$items) {
   module_load_include('inc', 'ds', 'includes/registry');
-  return _ds_menu_alter($items);
+  _ds_menu_alter($items);
 }
 
 /**
@@ -134,7 +133,7 @@ function ds_entity_view_mode_info_alter(&$view_modes) {
 function ds_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
   form_load_include($form_state, 'inc', 'ds', 'includes/field_ui');
   // Also load admin on behalf of DS extras when enabled.
-  if (Drupal::moduleHandler()->moduleExists('ds_extras')) {
+  if (\Drupal::moduleHandler()->moduleExists('ds_extras')) {
     form_load_include($form_state, 'inc', 'ds_extras', 'includes/admin');
   }
   ds_field_ui_fields_layouts($form, $form_state);
@@ -197,7 +196,7 @@ function ds_get_layout_info() {
     $layouts = Drupal::moduleHandler()->invokeAll('ds_layout_info');
 
     // Give modules a chance to alter the layouts information.
-    drupal_alter('ds_layout_info', $layouts);
+    \Drupal::moduleHandler()->alter('ds_layout_info', $layouts);
 
     // Check that there is no 'content' region, but ignore panel layouts.
     // Because when entities are rendered, the field items are stored into a
@@ -270,12 +269,11 @@ function ds_get_layout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
  *
  * @param $entity_type
  *   The name of the entity.
- * @param $cache
- *   Whether we need to get the fields from cache or not.
- * @return
+ *
+ * @return array
  *   Collection of fields.
  */
-function ds_get_fields($entity_type, $cache = TRUE) {
+function ds_get_fields($entity_type) {
   static $static_fields;
 
   if (!isset($static_fields[$entity_type])) {
@@ -298,6 +296,9 @@ function ds_get_fields($entity_type, $cache = TRUE) {
  *   The name of bundle (ie, page or story for node types, profile for users)
  * @param $view_mode
  *   The name of view mode.
+ * @param bool $default
+ *
+ * @return array
  */
 function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRUE) {
   static $field_settings = NULL;
@@ -350,14 +351,14 @@ function ds_get_field_value($key, $field, $entity, $view_mode, $build = array())
   $field['build'] = $build;
 
   // Load the plugin.
-  $field_instance = drupal_container()->get('plugin.manager.ds')->createInstance($field['plugin_id']);
+  $field_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id']);
 
   // Special case preprocess fields as they don't need to be rendered
   if ($field_instance InstanceOf PreprocessPluginBase) {
     $entity->preprocess_fields[] = $key;
   }
 
-  // Renderd the field.
+  // Render the field.
   return $field_instance->render($field);
 
 }
@@ -506,7 +507,7 @@ function ds_preprocess_ds_layout(&$vars) {
     $render_container = 'content';
 
     // Move any preprocess fields to render container.
-    // Inconsitency in taxonomy term naming.
+    // Inconsistency in taxonomy term naming.
     $object = $vars['elements']['#entity_type'];
     if ($vars['elements']['#entity_type'] == 'taxonomy_term') {
       $object = 'term';
@@ -622,7 +623,7 @@ function ds_preprocess_ds_layout(&$vars) {
 
     // Let other modules alter the ds array before creating the region variables.
     $context = array('entity' => isset($vars[$object]) ? $vars[$object] : (isset($vars['elements']['#' . $object]) ? $vars['elements']['#' . $object] : ''), 'entity_type' => $vars['elements']['#entity_type'], 'bundle' => $vars['elements']['#bundle'], 'view_mode' => $vars['elements']['#view_mode']);
-    drupal_alter('ds_pre_render', $layout_render_array, $context);
+    \Drupal::moduleHandler()->alter('ds_pre_render', $layout_render_array, $context);
     foreach ($layout_render_array as $region_name => $content) {
       $vars[$region_name] = drupal_render($content);
     }
@@ -704,7 +705,7 @@ function theme_ds_field_reset($variables) {
   }
 
   // Render the items.
-  foreach ($variables['items'] as $delta => $item) {
+  foreach ($variables['items'] as $item) {
     $output .= drupal_render($item);
   }
 
@@ -732,7 +733,7 @@ function theme_ds_field_minimal($variables) {
   }
 
   // Render the items.
-  foreach ($variables['items'] as $delta => $item) {
+  foreach ($variables['items'] as $item) {
     $output .= drupal_render($item);
   }
   $output .="</div>";
@@ -934,13 +935,12 @@ function ds_preprocess_field(&$variables) {
   $config = array();
   static $field_settings = array();
   if (!isset($field_settings[$entity_type][$bundle][$view_mode])) {
-    $layout = ds_get_layout($entity_type, $bundle, $view_mode);
     $field_settings[$entity_type][$bundle][$view_mode] = ds_get_field_settings($entity_type, $bundle, $view_mode);
   }
 
   // Get the field name and field instance info - if available.
   $field_name = $variables['element']['#field_name'];
-  $field_instance_info = field_info_instance($entity_type, $field_name, $bundle);
+  $field_instance_info = Field::fieldInfo()->getInstance($entity_type, $field_name, $bundle);
 
   // Check if this field has custom output settings.
   $variables['ds-config'] = array();

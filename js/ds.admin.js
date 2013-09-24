@@ -12,7 +12,7 @@ Drupal.DisplaySuite.layout_original = '';
 Drupal.behaviors.DSSummaries = {
   attach: function (context) {
 
-    $('#edit-fs1', context).drupalSetSummary(function (context) {
+    $(context).find('#edit-fs1').drupalSetSummary(function (context) {
       var fieldtemplates = $('#edit-fs1-field-template', context);
 
       if (fieldtemplates.is(':checked')) {
