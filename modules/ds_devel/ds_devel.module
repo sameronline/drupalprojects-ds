@@ -13,11 +13,11 @@ function ds_devel_menu() {
 
   $items['node/%node/devel/markup'] = array(
     'title' => 'Markup',
-    'route_name' => 'ds.devel_markup'
+    'route_name' => 'ds_devel.markup'
   );
   $items['node/%node/devel/markup/%key'] = array(
     'title' => 'Markup',
-    'route_name' => 'ds.devel_markup_view_mode'
+    'route_name' => 'ds_devel.markup_view_mode'
   );
 
   return $items;
