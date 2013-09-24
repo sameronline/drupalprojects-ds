@@ -13,7 +13,7 @@ namespace Drupal\ds\Plugin\DsField;
  * @DsField(
  *   id = "user",
  *   title = @Translation("User"),
- *   entity_type = "user",
+ *   entity_type = "node",
  *   provider = "user"
  * )
  */

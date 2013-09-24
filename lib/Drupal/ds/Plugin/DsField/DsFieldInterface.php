@@ -28,7 +28,6 @@ interface DsFieldInterface {
    *
    * @param $field
    *   Contains all the general configuration of the field.
-   * @param $settings
    *   Contains the settings of the field.
    *
    * @return array
