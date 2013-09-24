@@ -7,8 +7,6 @@
 
 namespace Drupal\ds\Plugin\DsField;
 
-use Drupal\ds\Annotation\DsField;
-use Drupal\Core\Annotation\Translation;
 use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**

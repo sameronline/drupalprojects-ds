@@ -29,6 +29,21 @@ function ds_drush_command() {
     ),
   );
 
+  $items['ds-field'] = array(
+    'description' => 'Create a Display Suite plugin',
+    'arguments' => array(
+      'name'    => 'Name for your Display Suite field class',
+    ),
+    'options' => array(
+      'name'    => 'Name for your class.',
+      'entity'  => 'Name of the entity',
+    ),
+    'examples' => array(
+      'drush ds-field "MyField"' => 'Create a field with only a render function',
+      'drush ds-field "MyTest" --entity=user' => 'Create a field for the user entity',
+    ),
+  );
+
   return $items;
 }
 
@@ -217,4 +232,58 @@ END;
   }
 
   return implode("\n\n", $output);
+}
+
+/**
+ * Create a Display Suite plugin.
+ */
+function drush_ds_field($name = NULL) {
+  // Determine the layout name.
+  if (!isset($name)) {
+    $name = drush_get_option('name');
+  }
+  if (!$name) {
+    drush_die(dt('You need to set a name for your field class'));
+  }
+
+  // We assume you run this command in the root of your module
+  // Fetch the current path
+  $current_path = drush_cwd();
+
+  // Fetch the module name from the path
+  $parts = explode('/', $current_path);
+  $module_name = end($parts);
+
+  // Class path
+  $class_path = $current_path . "/lib/Drupal/$module_name/plugin/DsField/";
+  drush_mkdir($class_path);
+
+  // Determine the path to our example layout templates.
+  $ds_class_path = dirname(__FILE__);
+
+  // Copy the example templates.
+  drush_op('copy', $ds_class_path . '/ExampleField.php', $class_path . "/$name.php");
+
+  // Prepare an array of things that need to be rewritten in our class.
+  $find = array();
+  $replace = array();
+
+  // Replace example text.
+  $find[] = '/ExampleField/';
+  $replace[] = $name;
+  $find[] = '/example_field/';
+  $replace[] = $module_name;
+
+  // Determine entity_type.
+  $entity_type = drush_get_option('entity');
+  if ($entity_type) {
+    $find[] = '/entity_type = \"node\"/';
+    $replace[] = 'entity_type = "' . $entity_type . '"';
+  }
+
+  // Rewrite class.
+  drush_op('ds_file_preg_replace', array($class_path . "/$name.php"), $find, $replace);
+
+  // Notify user of the newly created class.
+  drush_print(dt('"!name" class created in: !class_path', array('!name' => $name, '!class_path' => $class_path)));
 }

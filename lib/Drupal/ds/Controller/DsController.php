@@ -52,7 +52,7 @@ class DsController extends ControllerBase {
     foreach ($entity_info as $entity_type => $info) {
       if (!empty($info['fieldable']) && !empty($info['base_table'])) {
         $rows = array();
-        $bundles = entity_get_bundles($entity_type);
+        $bundles = $this->entityManager()->getBundleInfo($entity_type);
         foreach ($bundles as $bundle_type => $bundle) {
           $row = array();
           $operations = array();
