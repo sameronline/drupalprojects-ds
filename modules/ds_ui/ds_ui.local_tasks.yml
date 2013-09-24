@@ -1,10 +1,10 @@
-ds_classes_task:
-  route_name: ds_classes
+ds.classes_task:
+  route_name: ds.classes
   title: Classes
-  tab_root_id: ds_display_task
+  tab_root_id: ds.display_task
   weight: 1
-ds_fields_task:
-  route_name: fields_list
+ds.fields_task:
+  route_name: ds.fields_list
   title: Fields
-  tab_root_id: ds_display_task
+  tab_root_id: ds.display_task
   weight: 2

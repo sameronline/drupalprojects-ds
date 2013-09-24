@@ -1,22 +1,22 @@
-ds_display_task:
-  route_name: ds_structure
+ds.display_task:
+  route_name: ds.structure
   title: Displays
-  tab_root_id: ds_display_task
+  tab_root_id: ds.display_task
   weight: 0
-ds_list_task:
-  route_name: ds_list
+ds.list_task:
+  route_name: ds.list
   title: List
-  tab_root_id: ds_display_task
-  tab_parent_id: ds_display_task
-ds_settings_task:
-  route_name: ds_admin_settings
+  tab_root_id: ds.display_task
+  tab_parent_id: ds.display_task
+ds.settings_task:
+  route_name: ds.admin_settings
   title: Settings
-  tab_root_id: ds_display_task
-  tab_parent_id: ds_display_task
+  tab_root_id: ds.display_task
+  tab_parent_id: ds.display_task
   weight: 10
-ds_emergency_task:
-  route_name: ds_admin_emergency
+ds.emergency_task:
+  route_name: ds.admin_emergency
   title: Emergency
-  tab_root_id: ds_display_task
-  tab_parent_id: ds_display_task
+  tab_root_id: ds.display_task
+  tab_parent_id: ds.display_task
   weight: 100
