@@ -1,4 +1,4 @@
-ds_switch_view_mode:
+ds_extras.switch_view_mode:
   path: 'ds-switch-view-mode'
   defaults:
     _controller: '\Drupal\ds_extras\Controller\DsExtrasController::switchViewModeInline'

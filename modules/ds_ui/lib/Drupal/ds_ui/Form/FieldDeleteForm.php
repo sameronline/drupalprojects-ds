@@ -73,7 +73,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
    */
   public function getCancelRoute() {
     return array(
-      'route_name' => 'fields_list',
+      'route_name' => 'ds_ui.fields_list',
     );
   }
 

@@ -33,27 +33,27 @@ function ds_menu() {
   $items['admin/structure/ds'] = array(
     'title' => 'Display Suite',
     'description' => 'Manage layouts for entities and configure fields etc.',
-    'route_name' => 'ds_structure',
+    'route_name' => 'ds.structure',
   );
 
   // Contextual links.
   if (Drupal::moduleHandler()->moduleExists('contextual') && Drupal::moduleHandler()->moduleExists('field_ui')) {
     $items['node/%node/display'] = array(
       'title' => 'Manage display',
-      'route_name' => 'ds_contextual_tab_node',
+      'route_name' => 'ds.contextual_tab_node',
       'type' => MENU_LOCAL_TASK,
     );
 
     $items['user/%user/display'] = array(
       'title' => 'Manage display',
-      'route_name' => 'ds_contextual_tab_user',
+      'route_name' => 'ds.contextual_tab_user',
       'type' => MENU_LOCAL_TASK,
     );
 
     if (Drupal::moduleHandler()->moduleExists('taxonomy')) {
       $items['taxonomy/term/%taxonomy_term/display'] = array(
         'title' => 'Manage display',
-        'route_name' => 'ds_contextual_tab_taxonomy_term',
+        'route_name' => 'ds.contextual_tab_taxonomy_term',
         'type' => MENU_LOCAL_TASK,
       );
     }

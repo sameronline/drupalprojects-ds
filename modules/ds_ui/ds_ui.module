@@ -34,21 +34,21 @@ function ds_ui_menu() {
   // Custom CSS classes.
   $items['admin/structure/ds/classes'] = array(
     'title' => 'CSS classes',
-    'route_name' => 'ds_classes',
+    'route_name' => 'ds_ui.classes',
     'type' => MENU_SUGGESTED_ITEM,
   );
 
   // Fields.
   $items['admin/structure/ds/fields'] = array(
     'title' => 'Fields',
-    'route_name' => 'fields_list',
+    'route_name' => 'ds_ui.fields_list',
     'type' => MENU_SUGGESTED_ITEM,
   );
 
   $items['admin/structure/ds/fields/delete/%'] = array(
     'title' => 'Delete a field',
     'description' => 'Delete a field.',
-    'route_name' => 'delete_field',
+    'route_name' => 'ds_ui.delete_field',
     'type' => MENU_SUGGESTED_ITEM,
   );
 
