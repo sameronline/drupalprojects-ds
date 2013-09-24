@@ -7,9 +7,6 @@
 
 namespace Drupal\ds\Plugin\DsField;
 
-use Drupal\Core\Annotation\Translation;
-use Drupal\ds\Annotation\DsField;
-
 /**
  * Plugin that renders the 'read more' link of a node.
  *

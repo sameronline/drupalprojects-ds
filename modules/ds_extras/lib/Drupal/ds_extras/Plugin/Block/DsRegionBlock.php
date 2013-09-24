@@ -8,8 +8,6 @@
 namespace Drupal\ds_extras\Plugin\Block;
 
 use Drupal\block\BlockBase;
-use Drupal\Block\Annotation\Block;
-use Drupal\Core\Annotation\Translation;
 
 /**
  * Provides the region block plugin.

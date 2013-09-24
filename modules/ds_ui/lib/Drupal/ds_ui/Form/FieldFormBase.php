@@ -58,7 +58,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
    * @param \Drupal\Core\Config\Context\ContextInterface $context
    *   The configuration context to use.
    * @param \Drupal\Core\Entity\EntityManager
-   *   The enitity manager.
+   *   The entity manager.
    * @param \Drupal\Core\Cache\CacheBackendInterface
    *   The cache backend.
    * @param \Drupal\Core\Extension\ModuleHandler
