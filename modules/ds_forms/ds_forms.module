@@ -4,8 +4,7 @@
  * @file
  * Display Suite forms integration.
  *
- * @todo how to get around seven's hardcoded and
- *   extremely annoying node_form_alter.
+ * @todo how to get around seven's hardcoded and extremely annoying node_form_alter.
  */
 
 /**
@@ -158,6 +157,8 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
  *   The name of region to render.
  * @param $layout
  *   The layout definition.
+ *
+ * @return string
  */
 function ds_forms_render_region(&$content, $region, $layout) {
   $output = '';
@@ -181,6 +182,6 @@ function ds_forms_render_region(&$content, $region, $layout) {
  * Currently supports all fieldable entity types.
  */
 function _ds_forms_is_entity_type_supported($entity_type) {
-  $info = entity_get_info($entity_type);
+  $info = \Drupal::entityManager()->getDefinition($entity_type);
   return !empty($info['fieldable']);
 }

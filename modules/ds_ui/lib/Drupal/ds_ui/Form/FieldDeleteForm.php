@@ -30,8 +30,8 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
   /**
    * Holds the cache backend
    *
-   * @var Drupal\Core\Cache\CacheBackendInterface
-   */
+  * @var \Drupal\Core\Cache\CacheBackendInterface
+*/
   protected $cacheBackend;
 
   /**
