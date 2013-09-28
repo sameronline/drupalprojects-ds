@@ -239,8 +239,13 @@ function ds_get_layout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
 
     $overridden = TRUE;
     if ($view_mode != 'form') {
-      $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-      $overridden = (!empty($view_mode_settings[$view_mode]['status']) ? TRUE : FALSE);
+      $entity_display = entity_load('entity_display', $entity_type . '.' . $bundle . '.' . $view_mode);
+      if ($entity_display) {
+        $overridden = $entity_display->status();
+      }
+      else {
+        $overridden = FALSE;
+      }
     }
     // Check if a layout is configured.
     if (isset($bundles[$entity_type][$bundle]['layouts'][$view_mode]) && ($overridden || $view_mode == 'default')) {
@@ -643,8 +648,8 @@ function ds_contextual_links_view_alter(&$element, $items) {
     $admin_path = Drupal::entityManager()->getAdminPath($entity_type, $bundle);
 
     // Check view mode settings.
-    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-    $overridden = (!empty($view_mode_settings[$view_mode]['status']) ? TRUE : FALSE);
+    $entity_display = entity_load('entity_display', $entity_type . '.' . $bundle . '.' . $view_mode);
+    $overridden = $entity_display->status();
 
     if (!$overridden) {
       $admin_path .= '/display';

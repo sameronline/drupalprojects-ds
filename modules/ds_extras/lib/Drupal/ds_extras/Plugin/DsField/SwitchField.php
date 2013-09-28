@@ -65,7 +65,6 @@ class SwitchField extends DsFieldBase {
   public function settingsForm($field, $settings) {
     $entity_type = $field['entity_type'];
     $bundle = $field['bundle'];
-    $view_mode = $field['view_mode'];
     $settings = isset($settings['vms']) ? $settings['vms'] : array();
     $view_modes = entity_get_view_modes($entity_type);
 
@@ -73,10 +72,9 @@ class SwitchField extends DsFieldBase {
       '#markup' => t('Enter a label for the link for the view modes you want to switch to.<br />Leave empty to hide link. They will be localized.'),
     );
 
-    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-
     foreach ($view_modes as $key => $value) {
-      $visible = $view_mode_settings[$key]['status'];
+      $entity_display = entity_load('entity_display', $entity_type .  '.' . $bundle . '.' . $key);
+      $visible = $entity_display->status();
 
       if ($visible) {
         $form['vms'][$key] = array(

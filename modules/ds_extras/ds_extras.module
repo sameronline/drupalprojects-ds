@@ -192,16 +192,14 @@ function ds_extras_form_alter(&$form, &$form_state, $form_id) {
     $node = $form_state['controller']->getEntity($form_state);
 
     if (Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
-
-      $view_mode_settings = field_view_mode_settings('node', $node->bundle());
-
       // Get the view modes.
       $ds_vm = entity_get_view_modes('node');
       $layouts = array();
       $options = array('' => t('Default'));
       foreach ($ds_vm as $key => $item) {
-        $overriden = (!empty($view_mode_settings[$key]['status']) ? TRUE : FALSE);
-        if ($overriden) {
+        $entity_display = entity_load('entity_display', 'node.' . $node->bundle() . '.' . $key);
+        $overridden = $entity_display->status();
+        if ($overridden) {
           $layout = ds_get_layout('node', $node->bundle(), $key, FALSE);
           $layouts[$key] = $layout;
           $options[$key] = $item['label'];

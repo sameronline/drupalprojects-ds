@@ -149,10 +149,13 @@ class DsController extends ControllerBase {
     $admin_path = $this->entityManager()->getAdminPath($entity_type, $bundle);
 
     // Check view mode settings.
-    $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-    $overriden = (!empty($view_mode_settings[$view_mode]['custom_settings']) ? TRUE : FALSE);
+    $overridden = FALSE;
+    $entity_display = entity_load('entity_display', $entity_type . '.' . $bundle . '.' . $view_mode);
+    if ($entity_display) {
+      $overridden = $entity_display->status();
+    }
 
-    if (empty($layout) && !$overriden) {
+    if (empty($layout) && !$overridden) {
       $admin_path .= '/display';
     }
     else {
