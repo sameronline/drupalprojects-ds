@@ -19,14 +19,14 @@ Drupal.behaviors.DSExtrasSummaries = {
     });
 
     $('#edit-fs3', context).drupalSetSummary(function (context) {
-      var vals = [];
+      var values = [];
 
       $('input:checked', context).parent().each(function () {
-        vals.push(Drupal.checkPlain($.trim($('.option', this).text())));
+        values.push(Drupal.checkPlain($.trim($('.option', this).text())));
       });
 
-      if (vals.length > 0) {
-        return vals.join(', ');
+      if (values.length > 0) {
+        return values.join(', ');
       }
       return Drupal.t('Disabled');
     });
