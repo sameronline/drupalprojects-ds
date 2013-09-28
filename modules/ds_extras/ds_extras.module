@@ -197,8 +197,11 @@ function ds_extras_form_alter(&$form, &$form_state, $form_id) {
       $layouts = array();
       $options = array('' => t('Default'));
       foreach ($ds_vm as $key => $item) {
+        $overridden = FALSE;
         $entity_display = entity_load('entity_display', 'node.' . $node->bundle() . '.' . $key);
-        $overridden = $entity_display->status();
+        if ($entity_display) {
+          $overridden = $entity_display->status();
+        }
         if ($overridden) {
           $layout = ds_get_layout('node', $node->bundle(), $key, FALSE);
           $layouts[$key] = $layout;

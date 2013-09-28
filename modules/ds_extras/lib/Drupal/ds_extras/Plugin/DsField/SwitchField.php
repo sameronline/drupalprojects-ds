@@ -95,15 +95,14 @@ class SwitchField extends DsFieldBase {
   public function settingsSummary($field, $settings) {
     $entity_type = $field['entity_type'];
     $bundle = $field['bundle'];
-    $view_mode = $field['view_mode'];
     $settings = isset($settings['vms']) ? $settings['vms'] : array();
     $view_modes = entity_get_view_modes($entity_type);
 
     $summary[] = 'View mode labels';
 
     foreach ($view_modes as $key => $value) {
-      $view_mode_settings = field_view_mode_settings($entity_type, $bundle);
-      $visible = !empty($view_mode_settings[$key]['status']);
+      $entity_display = entity_load('entity_display', $entity_type .  '.' . $bundle . '.' . $key);
+      $visible = $entity_display->status();
 
       if ($visible) {
         $label = isset($settings[$key]) ? $settings[$key] : $key;
