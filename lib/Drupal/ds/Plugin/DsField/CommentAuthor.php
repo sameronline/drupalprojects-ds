@@ -17,6 +17,14 @@ namespace Drupal\ds\Plugin\DsField;
  *   provider = "comment"
  * )
  */
-class CommentAuthor extends PreprocessBase {
+class CommentAuthor extends Field {
+
+  /**
+   * @inheritdoc
+   */
+  protected function entityRenderKey() {
+    return 'name';
+  }
+
 
 }

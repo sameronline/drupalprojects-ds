@@ -19,4 +19,11 @@ namespace Drupal\ds\Plugin\DsField;
  */
 class CommentPostDate extends Date {
 
+  /**
+   * Returns the entity render key for this field.
+   */
+  public function getRenderKey() {
+    return 'created';
+  }
+
 }

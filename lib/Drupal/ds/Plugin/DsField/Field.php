@@ -41,7 +41,7 @@ abstract class Field extends DsFieldBase {
     }
 
     // Link.
-    if ($settings['link']) {
+    if (!empty($settings['link'])) {
       if (isset($field['entity']->uri['path'])) {
         $path = $field['entity']->uri['path'];
       }

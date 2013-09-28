@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\CommentSubmitted.
+ * Contains \Drupal\ds\Plugin\DsField\CommentSubmittedBy.
  */
 
 namespace Drupal\ds\Plugin\DsField;
@@ -12,11 +12,11 @@ namespace Drupal\ds\Plugin\DsField;
  *
  * @DsField(
  *   id = "comment_submitted",
- *   title = @Translation("Submitted"),
+ *   title = @Translation("Submitted by"),
  *   entity_type = "comment",
  *   provider = "comment"
  * )
  */
-class CommentSubmitted extends PreprocessBase {
+class CommentSubmittedBy extends PreprocessBase {
 
 }

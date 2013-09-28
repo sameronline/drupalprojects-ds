@@ -17,7 +17,7 @@ namespace Drupal\ds\Plugin\DsField;
  *   provider = "user"
  * )
  */
-class UserSignature extends DsFieldBase {
+class UserSignature extends Markup {
 
   /**
    * {@inheritdoc}
@@ -42,7 +42,7 @@ class UserSignature extends DsFieldBase {
 
     // We use this function to decide if we should show this field.
     // When user signatures are disabled we should ignore this.
-    if ($user_signatures) {
+    if (!empty($user_signatures)) {
       return TRUE;
     }
     else {

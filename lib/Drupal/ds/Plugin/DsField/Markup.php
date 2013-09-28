@@ -1,4 +1,4 @@
-  <?php
+<?php
 
 /**
  * @file
@@ -19,7 +19,7 @@ abstract class Markup extends DsFieldBase {
     $key = $this->key();
     if (isset($field['entity']->{$key}->value)) {
       $format = $this->format();
-      return check_markup($field['entity']->{$key}->value, $format, '', TRUE);
+      return check_markup($field['entity']->{$key}->value, $field['entity']->{$format}->value, '', TRUE);
     }
   }
 

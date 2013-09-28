@@ -17,6 +17,21 @@ namespace Drupal\ds\Plugin\DsField;
  *   provider = "comment"
  * )
  */
-class CommentUserSignature extends PreprocessBase {
+class CommentUserSignature extends UserSignature {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function render($field) {
+    $comment = $field['entity'];
+    $user_id = $comment->uid->target_id;
+    $user = entity_load('user', $user_id);
+
+    $key = $this->key();
+    if (isset($user->{$key}->value)) {
+      $format = $this->format();
+      return check_markup($user->{$key}->value, $user->{$format}->value, '', TRUE);
+    }
+  }
 
 }
