@@ -7,14 +7,14 @@ ds_ui.classes:
 ds_ui.fields_list:
   path: 'admin/structure/ds/fields'
   defaults:
-    _content: 'Drupal\ds_ui\Routing\FieldController::fieldList'
+    _content: 'Drupal\ds_ui\Controller\FieldController::fieldList'
     _title: 'Fields'
   requirements:
     _permission: 'admin fields'
 ds_ui.manage_field:
   path: 'admin/structure/ds/fields/manage/{field_key}'
   defaults:
-    _content: 'Drupal\ds_ui\Routing\FieldController::manageRedirect'
+    _content: 'Drupal\ds_ui\Controller\FieldController::manageRedirect'
   requirements:
     _permission: 'admin fields'
 ds_ui.delete_field:

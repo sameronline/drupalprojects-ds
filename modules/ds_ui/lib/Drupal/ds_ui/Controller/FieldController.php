@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ds_ui\Routing\FieldController.
+ * Contains \Drupal\ds_ui\Controller\FieldController.
  */
 
 namespace Drupal\ds_ui\Routing;
