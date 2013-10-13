@@ -589,11 +589,11 @@ function _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode
  */
 function ds_field_settings_summary($field, $form_state) {
 
-    // Grab the saved settings
+  // Grab the saved settings
   $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : '';
 
   // Fetch the instance
-  $plugin_instance = drupal_container()->get('plugin.manager.ds')->createInstance($field['plugin_id']);
+  $plugin_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id']);
 
   // Create the form
   $summary = $plugin_instance->settingsSummary($field, $settings);
@@ -669,10 +669,11 @@ function _ds_field_group_field_ui_fix_notices($form, &$form_state) {
  *   The name of the view_mode
  * @param $form
  *   A collection of form properties.
+ * @param $form_state
+ *   The form_state
  */
 function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $form_state) {
 
-  $layout_options = array();
   $ds_layouts = ds_get_layout_info();
   $layout_options = array('' => t('- None -'));
   foreach ($ds_layouts as $key => $layout) {
@@ -707,7 +708,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     '#weight' => -100,
   );
 
-  $layout = array();
   list($ce, $cb, $cv) = explode('|', $form['#export_id']);
   $layout = \Drupal::config('ds.layout_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
 
@@ -1597,6 +1597,9 @@ function _ds_classes($name = 'regions') {
  *   The array to sort.
  * @param $subkey
  *   The subkey to sort by.
+ *
+ * @return array
+ *   The sorted array.
  */
 function _ds_sort_fields($a, $subkey) {
   $c = array();
