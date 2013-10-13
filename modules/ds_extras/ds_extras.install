@@ -5,7 +5,7 @@
  * Install file.
  */
 
- /**
+/**
  * Implements hook_install().
  */
 function ds_extras_install() {
@@ -50,7 +50,6 @@ function ds_extras_schema_alter(&$schema) {
  * Implements hook_uninstall().
  */
 function ds_extras_uninstall() {
-  Drupal::config('ds.extras')->delete();
   db_drop_field('node_field_data', 'ds_switch');
   db_drop_field('node_field_revision', 'ds_switch');
 }

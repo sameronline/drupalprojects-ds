@@ -95,7 +95,14 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
 
     // Add path to css file.
     if (isset($layout['css'])) {
-      drupal_add_css($layout['path'] . '/' . $layout['layout'] . '.css');
+      $build['css'] = array(
+        '#attached' => array(
+          'css' => array(
+            $layout['path'] . '/' . $layout['layout'] . '.css',
+          ),
+        ),
+      );
+      drupal_render($build);
     }
 
     // Add the hidden region.
@@ -164,7 +171,7 @@ function ds_forms_render_region(&$content, $region, $layout) {
   $output = '';
 
   if (isset($layout['settings']['regions'][$region])) {
-    foreach ($layout['settings']['regions'][$region] as $key => $field) {
+    foreach ($layout['settings']['regions'][$region] as $field) {
       if ($region == 'hidden') {
         $content[$field]['#access'] = FALSE;
       }

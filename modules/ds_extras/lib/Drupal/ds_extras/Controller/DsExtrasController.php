@@ -48,4 +48,33 @@ class DsExtrasController extends ControllerBase {
     ), 200);
   }
 
+  /**
+   * Renders the node
+   */
+  public function nodeView($node, Request $request) {
+
+    $node = entity_load('node', $node);
+    $uri = $node->uri();
+    // Set the node path as the canonical URL to prevent duplicate content.
+    drupal_add_html_head_link(array('rel' => 'canonical', 'href' => url($uri['path'], $uri['options'])), TRUE);
+    // Set the non-aliased path as a default shortlink.
+    drupal_add_html_head_link(array('rel' => 'shortlink', 'href' => url($uri['path'], array_merge($uri['options'], array('alias' => TRUE)))), TRUE);
+
+    // Update the history table, stating that this user viewed this node.
+    if ($this->moduleHandler()->moduleExists('history')) {
+      history_write($node->id());
+    }
+
+    $view_mode = (!empty($node->get('ds_switch')->value)) ? $node->get('ds_switch')->value : 'full';
+
+    // It's also possible to use a query argument named 'v' to switch view modes.
+    $query_view_mode = $request->query->get('v');
+    if (!empty($query_view_mode)) {
+      $view_mode = $query_view_mode;
+    }
+
+    drupal_static('ds_extras_view_mode', $view_mode);
+    return entity_view($node, $view_mode);
+  }
+
 }

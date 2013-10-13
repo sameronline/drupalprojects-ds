@@ -14,7 +14,7 @@ use Drupal\entity\Entity\EntityDisplay;
 function ds_extras_library_info() {
   $libraries['ds_extras.settings'] = array(
     'title' => 'Display Suite Extras settings',
-    'version' => Drupal::VERSION,
+    'version' => \Drupal::VERSION,
     'js' => array(
       drupal_get_path('module', 'ds_extras') . '/js/ds_extras.admin.js' => array(),
     ),
@@ -32,7 +32,7 @@ function ds_extras_library_info() {
  * Implements hook_ds_layout_info_alter().
  */
 function ds_extras_ds_layout_info_alter(&$layouts) {
-  if (Drupal::config('ds.extras')->get('hidden_region')) {
+  if (\Drupal::config('ds.extras')->get('hidden_region')) {
     foreach ($layouts as $key => $layout) {
       $layouts[$key]['regions']['ds_hidden'] = t('Hidden');
     }
@@ -46,7 +46,7 @@ function ds_extras_permission() {
   $permissions = array();
 
   // Extra check to make sure this doesn't get fired on install.
-  if (Drupal::config('ds.extras')->get('switch_view_mode')) {
+  if (\Drupal::config('ds.extras')->get('switch_view_mode')) {
     foreach (node_type_get_names() as $key => $name) {
       $permissions['ds_switch ' . $key] = array(
         'title' => t('Switch view modes on :type', array(':type' => $name))
@@ -54,8 +54,8 @@ function ds_extras_permission() {
     }
   }
 
-  if (Drupal::config('ds.extras')->get('field_permissions')) {
-    $entities = entity_get_info();
+  if (\Drupal::config('ds.extras')->get('field_permissions')) {
+    $entities = \Drupal::entityManager()->getDefinitions();
     foreach ($entities as $entity_type => $info) {
       $fields = ds_get_fields($entity_type);
       foreach ($fields as $key => $finfo) {
@@ -73,7 +73,8 @@ function ds_extras_permission() {
  * Implements hook_admin_paths().
  */
 function ds_extras_admin_paths() {
-  if (variable_get('node_admin_theme')) {
+  $config = \Drupal::config('node.settings');
+  if ($config->get('use_admin_theme')) {
     return array(
       'node/*/display' => TRUE,
       'user/*/display' => TRUE,
@@ -83,19 +84,28 @@ function ds_extras_admin_paths() {
 }
 
 /**
- * Implements hook_menu_alter().
- */
-function ds_extras_menu_alter(&$items) {
-  module_load_include('inc', 'ds_extras', 'includes/registry');
-  _ds_extras_menu_alter($items);
-}
-
-/**
  * Implements hook_module_implements_alter().
  */
 function ds_extras_module_implements_alter(&$implementations, $hook) {
-  module_load_include('inc', 'ds_extras', 'includes/registry');
-  _ds_extras_module_implements_alter($implementations, $hook);
+  // Because it's possible to turn on/off features for DS extras,
+  // we'll unset hooks here if necessary which otherwhise do nothing at all.
+
+  // Region to block
+  $region_hooks = array(
+    'ds_layout_region_alter',
+    'entity_view_alter',
+  );
+  if (!\Drupal::config('ds.extras')->get('region_to_block') && in_array($hook, $region_hooks)) {
+    unset($implementations['ds_extras']);
+  }
+
+  // Extra fields
+  $extra_fields_hooks = array(
+    'field_extra_fields',
+  );
+  if (!\Drupal::config('ds.extras')->get('fields_extra') && in_array($hook, $extra_fields_hooks)) {
+    unset($implementations['ds_extras']);
+  }
 }
 
 /**
@@ -121,13 +131,13 @@ function ds_extras_form_ds_admin_form_alter(&$form, &$form_state) {
  *   The machine name of the field
  * @param $entity_type
  *   The name of the entity type.
+ *
+ * @return bool
  */
 function ds_extras_ds_field_access($field, $entity_type) {
-
-  if (Drupal::currentUser()->hasPermission('view ' . $field . ' on ' . $entity_type)) {
+  if (\Drupal::currentUser()->hasPermission('view ' . $field . ' on ' . $entity_type)) {
     return TRUE;
   }
-
   return FALSE;
 }
 
@@ -141,7 +151,7 @@ function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityDis
   $view_mode = $display->mode;
 
   $block_data = &drupal_static('ds_block_region');
-  $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
+  $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
 
   if (empty($region_blocks) || empty($build)) {
     return;
@@ -156,7 +166,7 @@ function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityDis
   if ($layout = ds_get_layout($entity_type, $bundle, $view_mode)) {
     foreach ($region_blocks as $block_key => $block) {
       if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}" && isset($layout['settings']['regions'][$block_key]) && !empty($layout['settings']['regions'][$block_key])) {
-        foreach ($layout['settings']['regions'][$block_key] as $key => $field) {
+        foreach ($layout['settings']['regions'][$block_key] as $field) {
           if (isset($build[$field])) {
             $block_data[$block_key][$field] = $build[$field];
             unset($build[$field]);
@@ -185,13 +195,13 @@ function ds_extras_get_view_mode() {
 /**
  * Implements hook_form_alter().
  */
-function ds_extras_form_alter(&$form, &$form_state, $form_id) {
+function ds_extras_form_alter(&$form, &$form_state) {
 
   if (isset($form['#entity_type']) && $form['#entity_type'] == 'node' && isset($form_state['controller'])) {
     // Switch full view mode.
     $node = $form_state['controller']->getEntity($form_state);
 
-    if (Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
+    if (\Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
       // Get the view modes.
       $ds_vm = entity_get_view_modes('node');
       $layouts = array();
@@ -294,7 +304,7 @@ function ds_extras_entity_field_info_alter(&$info, $entity_type) {
  */
 function ds_extras_ds_layout_region_alter($context, &$region_info) {
 
-  $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
+  $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
 
   // Bail out if region_blocks is empty or we are working on default view mode.
   if (empty($region_blocks) || $context['view_mode'] == 'default') {
@@ -324,7 +334,7 @@ function ds_extras_ds_layout_region_alter($context, &$region_info) {
 function ds_extras_field_extra_fields() {
   $extra = array();
 
-  if (Drupal::config('ds.extras')->get('fields_extra')) {
+  if (\Drupal::config('ds.extras')->get('fields_extra')) {
     $fields = explode("\n", Drupal::config('ds.extras')->get('fields_extra_list'));
     if (empty($fields)) {
       return $extra;
@@ -358,15 +368,12 @@ function ds_extras_is_entity_page_view($build, $entity_type) {
   switch ($entity_type) {
     case 'node':
       return node_is_page($build['#node']);
-      break;
     case 'user':
-    $page_account = menu_get_object('user');
-    return (!empty($page_account) ? $page_account->uid == $build['#account']->uid : FALSE);
-    break;
+      $page_account = menu_get_object('user');
+      return (!empty($page_account) ? $page_account->uid == $build['#account']->uid : FALSE);
     case 'taxonomy_term':
       $page_term = menu_get_object('taxonomy_term', 2);
       return (!empty($page_term) ? $page_term->tid == $build['#term']->tid : FALSE);
-      break;
   }
 
   return FALSE;

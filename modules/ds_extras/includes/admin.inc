@@ -5,14 +5,12 @@
  * Display Suite Extras administrative functions.
  */
 
-use Drupal\Core\Extension\ModuleHandler;
-
 /**
  * Alters the Display Suite settings screen.
  */
 function ds_extras_settings_alter(&$form, &$form_state) {
 
-  $config = Drupal::config('ds.extras');
+  $config = \Drupal::config('ds.extras');
 
   $form['fs2'] = array(
     '#type' => 'details',
@@ -93,14 +91,14 @@ function ds_extras_settings_alter(&$form, &$form_state) {
 function ds_extras_settings_submit($form, &$form_state) {
   $values = $form_state['values'];
 
-  $config = Drupal::config('ds.extras')
+  $config = \Drupal::config('ds.extras')
     ->set('fields_extra', $values['fs2']['fields_extra'])
     ->set('fields_extra_list', $values['fs2']['fields_extra_list'])
     ->set('switch_view_mode', $values['fs3']['switch_view_mode'])
     ->set('field_permissions', $values['fs3']['field_permissions'])
     ->set('switch_field', $values['fs3']['switch_field'])
     ->set('hidden_region', $values['fs3']['hidden_region']);
-  if (Drupal::moduleHandler()->moduleExists('block')) {
+  if (\Drupal::moduleHandler()->moduleExists('block')) {
     $config->set('region_to_block', $values['fs3']['region_to_block']);
   }
   $config->save();
@@ -112,9 +110,7 @@ function ds_extras_settings_submit($form, &$form_state) {
 function ds_extras_field_ui_alter(&$form, &$form_state) {
   // Region to block only fires if there is a layout and we're working on the
   // a view mode which is not equal to default.
-  if (isset($form['#ds_layout']) && $form['#mode'] != 'default' && Drupal::config('ds.extras')->get('region_to_block')) {
-
-    $layout = $form['#ds_layout'];
+  if (isset($form['#ds_layout']) && $form['#mode'] != 'default' && \Drupal::config('ds.extras')->get('region_to_block')) {
 
     // Get the entity_type, bundle and view mode.
     $entity_type = $form['#entity_type'];
@@ -122,7 +118,7 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
     $view_mode = $form['#mode'];
 
     $region_blocks_options = array();
-    $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
+    $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
 
     if (!empty($region_blocks)) {
       foreach ($region_blocks as $key => $block) {
@@ -198,17 +194,17 @@ function ds_extras_block_submit($form, &$form_state) {
     );
 
     $block_key = $form_state['values']['new_block_region_key'];
-    $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
+    $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
     if (empty($region_blocks)) {
       $region_blocks = array();
     }
     $region_blocks[$block_key] = $block;
-    Drupal::config('ds.extras')->set('region_blocks', $region_blocks)->save();
+    \Drupal::config('ds.extras')->set('region_blocks', $region_blocks)->save();
   }
 
   // Remove a region.
   if (isset($form_state['values']['remove_block_region'])) {
-    $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
+    $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
     $remove = $form_state['values']['remove_block_region'];
     foreach ($remove as $key => $value) {
       if ($key === $value) {
@@ -216,8 +212,8 @@ function ds_extras_block_submit($form, &$form_state) {
       }
 
       // Make sure there is no active block instance for this ds block region.
-      if (Drupal::moduleHandler()->moduleExists('block')) {
-        $ids = Drupal::entityQuery('block')
+      if (\Drupal::moduleHandler()->moduleExists('block')) {
+        $ids = \Drupal::entityQuery('block')
           ->condition('plugin', 'ds_region_block:' . $key)
           ->execute();
         $block_storage = Drupal::entityManager()->getStorageController('block');
@@ -228,11 +224,11 @@ function ds_extras_block_submit($form, &$form_state) {
     }
 
     // Clear cached block and ds plugin defintions
-    Drupal::service('plugin.manager.block')->clearCachedDefinitions();
-    Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
+    \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
+    \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
     // Remove the region from ds settings
-    Drupal::config('ds.extras')->set('region_blocks', $region_blocks)->save();
+    \Drupal::config('ds.extras')->set('region_blocks', $region_blocks)->save();
   }
 }
 
@@ -240,7 +236,7 @@ function ds_extras_block_submit($form, &$form_state) {
  * Return unique region to block.
  */
 function ds_extras_region_to_block_unique($name) {
-  $region_blocks = Drupal::config('ds.extras')->get('region_blocks');
+  $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
   if (empty($region_blocks)) {
     $region_blocks = array();
   }

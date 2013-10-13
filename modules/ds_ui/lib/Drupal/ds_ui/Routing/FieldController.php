@@ -46,8 +46,6 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
    * Builds a list of fields
    */
   public function fieldList() {
-    $output = '';
-
     $custom_fields = $this->storage->listAll('ds.field.');
     if (!empty($custom_fields)) {
 
