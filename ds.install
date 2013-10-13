@@ -11,10 +11,3 @@
 function ds_install() {
   module_set_weight('ds', 1);
 }
-
-/**
- * Update to CMI.
- */
-function ds_update_8000() {
-  // @todo
-}
