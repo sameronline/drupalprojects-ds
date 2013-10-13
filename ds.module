@@ -451,12 +451,6 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
 
     $field_value = ds_get_field_value($key, $field, $entity, $view_mode, $build);
 
-    // Title label.
-    if ($key == 'title' && $entity_type == 'node') {
-      $node_type = node_type_load($entity->bundle());
-      $field['title'] = function_exists('i18n_node_translate_type') ? i18n_node_translate_type($entity->type, 'title_label', $node_type->title_label) : $node_type->title_label;
-    }
-
     if (!empty($field_value) || (string) $field_value === '0') {
 
       $build[$key] = array(
@@ -523,9 +517,8 @@ function ds_preprocess_ds_layout(&$vars) {
 
         // Process RDF if the module is enabled before moving preprocess fields.
         if (Drupal::moduleHandler()->moduleExists('rdf')) {
-          rdf_process($vars, $field);
-          // Remove it so we can unset the field later on.
-          unset($vars['rdf_template_variable_attributes_array'][$field]);
+          $mapping = rdf_get_mapping($vars['entity_type'], $vars['bundle']);
+          rdf_rdfa_attributes($mapping, $field);
         }
 
         // Move the field to content so it renders, remove it
@@ -670,7 +663,7 @@ function ds_contextual_links_view_alter(&$element, $items) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function ds_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) {
+function ds_form_field_ui_field_edit_form_alter(&$form, &$form_state) {
   $theme_functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
   $form['instance']['ds_field_template'] = array(
     '#type' => 'select',
@@ -793,7 +786,7 @@ function theme_ds_field_expert($variables) {
       $class = !empty($class) ? ' class="'. implode(' ', $class)  .'"' : '';
       $attributes = array();
       if (!empty($config['fi-at'])) {
-        $attributes[] = token_replace($config['fi-at'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));
+        $attributes[] = \Drupal::service('token')->replace($config['fi-at'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));
       }
       if (!empty($config['fi-def-at'])) {
         $attributes[] = $variables['item_attributes'][$delta];
