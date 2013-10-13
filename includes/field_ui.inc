@@ -275,6 +275,9 @@ function ds_field_ui_regions($form, $form_state) {
  *
  * @param $row
  *   The current row that is being rendered in the Field UI screen.
+ *
+ * @return string
+ *   The region.
  */
 function ds_field_ui_row_region($row) {
   return isset($row['region']['#value']) ? $row['region']['#value'] : 'hidden';
@@ -584,8 +587,8 @@ function _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode
  * @param $field
  *   The configuration of the field.
  *
- * @return $summary
- *   An markup array.
+ * @return array $summary
+ *   The summary
  */
 function ds_field_settings_summary($field, $form_state) {
 
@@ -602,7 +605,7 @@ function ds_field_settings_summary($field, $form_state) {
   ds_field_formatter_settings_summary_alter($summary, array('field' => $field));
 
   if (empty($summary)) {
-    return NULL; // no summary return nothing
+    return array();
   }
 
   return array(
@@ -616,9 +619,10 @@ function ds_field_settings_summary($field, $form_state) {
  * .
  * @param $field
  *   The field definition.
+ * @param $form_state
+ *   The form_state
  *
- * @return $form
- *   A form definition.
+ * @return mixed $form
  */
 function ds_field_settings_form($field, &$form_state) {
   // Grab the saved settings
@@ -676,6 +680,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
 
   $ds_layouts = ds_get_layout_info();
   $layout_options = array('' => t('- None -'));
+  $optgroup = '';
   foreach ($ds_layouts as $key => $layout) {
     $optgroup = 'Display Suite';
 
@@ -1107,7 +1112,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     'view_mode' => $view_mode,
   );
 
-  drupal_alter('ds_fields_ui', $fields, $context);
+  \Drupal::moduleHandler()->alter('ds_fields_ui', $fields, $context);
 
   // Get field settings.
   $field_settings = ds_get_field_settings($entity_type, $bundle, $view_mode, FALSE);
@@ -1168,8 +1173,6 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     if (!isset($field_settings[$key]['ft']) && isset($field_settings[$key]['ft'])) {
       $form_state['plugin_settings'][$key]['ft'] = $field_settings[$key]['ft'];
     }
-
-    $value = isset($form_state['plugin_settings']) ? $form_state['plugin_settings'] : array();
 
     $hidden = array('hidden' => t('- Hidden -'));
 
@@ -1264,12 +1267,6 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 /**
  * Alter the core field on the the Field UI form.
  *
- * @param $entity_type
- *   The name of the entity type.
- * @param $bundle
- *   The name of the bundle
- * @param $view_mode
- *   The name of the view_mode
  * @param $form
  *   A collection of form properties.
  * @param $form_state
@@ -1282,7 +1279,7 @@ function _ds_field_ui_core_fields(&$form, &$form_state) {
   $entity_display = entity_get_display($entity_type, $bundle, $view_mode);
 
   // Gather type information.
-  $instances = field_info_instances($entity_type, $bundle);
+  $instances = Field::fieldInfo()->getBundleInstances($entity_type, $bundle);
 
   $table = &$form['fields'];
 
@@ -1576,7 +1573,7 @@ function _ds_classes($name = 'regions') {
     if (!empty($custom_classes)) {
       $classes[$name][''] = t('None');
       $custom_classes = explode("\n", $custom_classes);
-      foreach ($custom_classes as $key => $value) {
+      foreach ($custom_classes as $value) {
         $classes_splitted = explode("|", $value);
         $key = trim($classes_splitted[0]);
         $friendly_name = isset($classes_splitted[1]) ? trim($classes_splitted[1]) : $key;
