@@ -515,29 +515,30 @@ function ds_field_ui_layout_clone($form, &$form_state) {
   $bundle = $form['#bundle'];
   $view_mode = $form['#mode'];
 
-  $layout = \Drupal::config('ds.layout_settings'. $ce  . '.' . $cb . '.' . $cv)->get();
+  $layout = \Drupal::config('ds.layout_settings.' . $ce  . '.' . $cb . '.' . $cv)->get();
+  $field_settings = \Drupal::config('ds.field_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
 
-  // Delete previous field configuration - @todo where's the clone anyway ?
+  // Delete previous layout configuration
+  \Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
+
+  // Delete previous field configuration
   \Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
 
   // Save new layout record for ds.
   if ($layout) {
-    $record = new stdClass();
-    $record['id'] = $form['#export_id'];
-    $record['entity_type'] = $entity_type;
-    $record['bundle'] = $bundle;
-    $record['view_mode'] = $view_mode;
-    $record['layout'] = $layout['layout'];
-    $record['settings'] = $layout['settings'];
+    $layout['id'] = $form['#export_id'];
+    $layout['entity_type'] = $entity_type;
+    $layout['bundle'] = $bundle;
+    $layout['view_mode'] = $view_mode;
 
     // Let other modules alter the layout settings.
-    drupal_alter('ds_layout_settings', $record, $form_state);
+    \Drupal::moduleHandler()->alter('ds_layout_settings', $record, $form_state);
 
     // Save layout record.
-    \Drupal::config('ds.layout_settings' . '.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
+    \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($layout)->save();
 
     // Copy the view mode settings.
-    _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $cv);
+    _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $cv, $field_settings, $form['#export_id']);
 
     // Clear entity info cache.
     entity_info_cache_clear();
@@ -557,28 +558,24 @@ function ds_field_ui_layout_clone($form, &$form_state) {
  * This is almost a straight copy from Field UI, but with the addition
  * that we can pass the view mode from which we want to clone from.
  */
-function _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $copy_view_mode) {
-
-  $settings = field_bundle_settings($entity_type, $bundle);
-
-  // Update display settings for field instances.
-  $instances = entity_load_multiple_by_properties('field_instance', array('entity_type' => $entity_type, 'bundle' => $bundle));
-  foreach ($instances as $instance) {
-    // If this field instance has display settings defined for this view mode,
-    // respect those settings.
-    $instance->display[$view_mode] = $instance->display[$copy_view_mode];
-    field_update_instance($instance);
-  }
+function _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $copy_view_mode, $field_settings, $id) {
+  // @todo fix this
+  // $copy_display = entity_get_display($entity_type, $bundle, $view_mode)->createCopy($copy_view_mode);
+  // $copy_display->save();
 
   // Update display settings for 'extra fields'.
-  foreach (array_keys($settings['extra_fields']['display']) as $name) {
-    if (isset($settings['extra_fields']['display'][$name][$copy_view_mode])) {
-      $settings['extra_fields']['display'][$name][$view_mode] = $settings['extra_fields']['display'][$name][$copy_view_mode];
+  foreach (array_keys($field_settings['settings']['extra_fields']['display']) as $name) {
+    if (isset($field_settings['settings']['extra_fields']['display'][$name][$copy_view_mode])) {
+      $field_settings['settings']['extra_fields']['display'][$name][$view_mode] = $field_settings['extra_fields']['display'][$name][$copy_view_mode];
     }
   }
 
-  // Save the settings.
-  field_bundle_settings($entity_type, $bundle, $settings);
+  $field_settings['id'] = $id;
+  $field_settings['entity_type'] = $entity_type;
+  $field_settings['bundle'] = $bundle;
+  $field_settings['view_mode'] = $view_mode;
+
+  \Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($field_settings)->save();
 }
 
 /**
