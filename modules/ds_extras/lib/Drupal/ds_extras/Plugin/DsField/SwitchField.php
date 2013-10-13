@@ -7,7 +7,7 @@
 
 namespace Drupal\ds_extras\Plugin\DsField;
 
-use Drupal\Core\Annotation\Translation;
+use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
  * Plugin that generates a link to switch view mode with via ajax.
