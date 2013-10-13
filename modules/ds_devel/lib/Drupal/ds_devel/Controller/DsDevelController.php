@@ -19,7 +19,7 @@ class DsDevelController {
    *   The Views fields report page.
    */
   public function nodeMarkup($node, $key = 'default') {
-    $build = node_view($node, $key);
+    $build = entity_view($node, $key);
     $markup = drupal_render($build);
 
     $links = array();
@@ -32,7 +32,7 @@ class DsDevelController {
     }
 
     return array(
-      '#markup' => '<div>' . implode(' - ', $links) . '</div><hr /><code><pre>' . check_plain($markup) . '</pre></code>'
+      '#markup' => '<div>' . implode(' - ', $links) . '</div><hr/><code><pre>' . check_plain($markup) . '</pre></code>'
     );
   }
 
