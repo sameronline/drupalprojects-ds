@@ -32,7 +32,7 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
     _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form, $form_state);
 
     // Also alter core fields
-    _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, $form, $form_state);
+    _ds_field_ui_core_fields($form, $form_state);
   }
 
   // Special validate function for field group.
@@ -88,7 +88,7 @@ function ds_field_ui_create_vertical_tabs(&$form) {
     );
   }
 
-  $view_mode_admin_access = Drupal::currentUser()->hasPermission('admin_view_modes') && Drupal::moduleHandler()->moduleExists('ds_ui');
+  $view_mode_admin_access = \Drupal::currentUser()->hasPermission('admin_view_modes') && \Drupal::moduleHandler()->moduleExists('ds_ui');
   if (isset($form['modes'])) {
     $form['modes']['#group'] = 'additional_settings';
     $form['modes']['#weight'] = -10;
@@ -125,7 +125,7 @@ function ds_field_ui_regions($form, $form_state) {
   $bundle = $form['#bundle'];
   $view_mode = $form['#mode'];
 
-  // Ignore fieldgroup options.
+  // Ignore field_group options.
   if (isset($form_state['no_field_group'])) {
     unset($form['fields']['_add_new_group']);
     $form['field_group']['#access'] = FALSE;
@@ -167,6 +167,7 @@ function ds_field_ui_regions($form, $form_state) {
     }
 
     $table['#regions'] = array();
+    $region_options = array();
     foreach ($layout['regions'] as $region_key => $region_title) {
       $region_options[$region_key] = $region_title;
       $table['#regions'][$region_key] = array(
@@ -185,7 +186,7 @@ function ds_field_ui_regions($form, $form_state) {
       'region_options' => &$region_options,
       'table_regions' => &$table['#regions'],
     );
-    drupal_alter('ds_layout_region', $context, $region_info);
+    \Drupal::moduleHandler()->alter('ds_layout_region', $context, $region_info);
 
     $region_options['hidden'] = $view_mode != 'form' ? t('Disabled') : t('Hidden');
     $table['#regions']['hidden'] = array(
@@ -205,7 +206,6 @@ function ds_field_ui_regions($form, $form_state) {
     $limit_items = array(
       '#type' => 'textfield',
       '#size' => 2,
-      '#default_value' => '',
       '#weight' => 10,
       '#default_value' => '#',
       '#prefix' => '<div class="limit-float">',
@@ -243,7 +243,7 @@ function ds_field_ui_regions($form, $form_state) {
 
       // Limit items.
       $field_info = Field::fieldInfo()->getField($entity_type, $name);
-      if (isset($field_info['cardinality']) && $field_info['cardinality'] != 1 && $view_mode != 'form') {
+      if (!empty($field_info) && $field_info->getFieldCardinality() != 1 && $view_mode != 'form') {
         $row['plugin']['type']['#prefix'] = '<div class="limit-float">';
         $row['plugin']['type']['#suffix'] = '</div>';
         $row['plugin']['limit'] = $limit_items;
@@ -316,15 +316,12 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
-    Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
+    \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
   }
 
   if ($new_layout && !empty($layout)) {
-    // Save new layout.
-    $record['settings'] = $record['settings'];
-
     // Let other modules alter the layout settings.
-    drupal_alter('ds_layout_settings', $record, $form_state);
+    \Drupal::moduleHandler()->alter('ds_layout_settings', $record, $form_state);
 
     // Move current visible fields into a default region, so
     // we keep their current settings.
@@ -337,7 +334,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     $record['settings']['wrappers'] = array();
     $record['settings']['layout_wrapper'] = 'div';
     $record['settings']['layout_attributes'] = '';
-    $record['settings']['layout_attributes_merge'] = variable_get('ds_layout_attributes_merge', TRUE);
+    $record['settings']['layout_attributes_merge'] = settings()->get('ds_layout_attributes_merge', TRUE);
     $record['settings']['layout_link_attribute'] = FALSE;
     $record['settings']['layout_link_custom'] = '';
     $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
@@ -356,13 +353,13 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     }
     // In case this is the full node view mode and if the comment module
     // is enabled for this content type, add it as well.
-    if ($record['entity_type'] == 'node' && $record['view_mode'] == 'full' && Drupal::moduleHandler()->moduleExists('comment')) {
+    if ($record['entity_type'] == 'node' && $record['view_mode'] == 'full' && \Drupal::moduleHandler()->moduleExists('comment')) {
       $record['settings']['regions'][$first_region][] = 'comments';
       $record['settings']['fields']['comments'] = $first_region;
     }
 
     // Save the configuration.
-    Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
+    \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
   }
   // Update existing layout.
   elseif (!empty($layout)) {
@@ -426,13 +423,11 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     $record['settings']['layout_link_attribute'] = $form_state['values']['region_wrapper']['layout_link_attribute'];
     $record['settings']['layout_link_custom'] = $form_state['values']['region_wrapper']['layout_link_custom'];
 
-    $record['settings'] = $record['settings'];
-
     // Let other modules alter the layout settings.
-    drupal_alter('ds_layout_settings', $record, $form_state);
+    \Drupal::moduleHandler()->alter('ds_layout_settings', $record, $form_state);
 
     // Save the configuration.
-    Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
+    \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
 
     // Clear entity info cache.
     entity_info_cache_clear();
@@ -467,7 +462,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
 
   // Save settings for each field.
   $fields = $form['#ds_fields'];
-  foreach ($fields as $key => $field) {
+  foreach ($fields as $field) {
 
     // Field settings.
     $field_values = $form_state['values']['fields'][$field];
@@ -492,7 +487,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   }
 
   // Allow other modules to modify the field settings before they get saved.
-  drupal_alter('ds_field_settings', $field_settings, $form, $form_state);
+  \Drupal::moduleHandler()->alter('ds_field_settings', $field_settings, $form, $form_state);
 
   // Save the record.
   if (!empty($field_settings)) {
@@ -502,7 +497,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
     $config['bundle'] = $bundle;
     $config['view_mode'] = $view_mode;
     $config['settings'] = $field_settings;
-    Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($config)->save();
+    \Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($config)->save();
   }
 
   // Clear the ds_fields cache.
@@ -520,10 +515,10 @@ function ds_field_ui_layout_clone($form, &$form_state) {
   $bundle = $form['#bundle'];
   $view_mode = $form['#mode'];
 
-  $layout = Drupal::config('ds.layout_settings'. $ce  . '.' . $cb . '.' . $cv)->get();
+  $layout = \Drupal::config('ds.layout_settings'. $ce  . '.' . $cb . '.' . $cv)->get();
 
   // Delete previous field configuration - @todo where's the clone anyway ?
-  Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
+  \Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
 
   // Save new layout record for ds.
   if ($layout) {
@@ -539,7 +534,7 @@ function ds_field_ui_layout_clone($form, &$form_state) {
     drupal_alter('ds_layout_settings', $record, $form_state);
 
     // Save layout record.
-    Drupal::config('ds.layout_settings' . '.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
+    \Drupal::config('ds.layout_settings' . '.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
 
     // Copy the view mode settings.
     _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $cv);
@@ -567,11 +562,11 @@ function _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode
   $settings = field_bundle_settings($entity_type, $bundle);
 
   // Update display settings for field instances.
-  $instances = field_read_instances(array('entity_type' => $entity_type, 'bundle' => $bundle));
+  $instances = entity_load_multiple_by_properties('field_instance', array('entity_type' => $entity_type, 'bundle' => $bundle));
   foreach ($instances as $instance) {
     // If this field instance has display settings defined for this view mode,
     // respect those settings.
-    $instance['display'][$view_mode] = $instance['display'][$copy_view_mode];
+    $instance->display[$view_mode] = $instance->display[$copy_view_mode];
     field_update_instance($instance);
   }
 
@@ -639,7 +634,7 @@ function ds_field_settings_form($field, &$form_state) {
   $form = $plugin_instance->settingsForm($field, $settings);
 
   // Add field template settings to every field if enabled.
-  if (Drupal::config('ds.settings')->get('field_template')) {
+  if (\Drupal::config('ds.settings')->get('field_template')) {
     $context = array(
       'instance' => array(
         'entity_type' => $field['entity_type'],
@@ -717,7 +712,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
 
   $layout = array();
   list($ce, $cb, $cv) = explode('|', $form['#export_id']);
-  $layout = Drupal::config('ds.layout_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
+  $layout = \Drupal::config('ds.layout_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
 
   if (!empty($layout) && isset($layout['layout']) && isset($ds_layouts[$layout['layout']])) {
     $layout['regions'] = $ds_layouts[$layout['layout']]['regions'];
@@ -774,7 +769,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#type' => 'checkbox',
       '#title' => t('Merge other layout attributes'),
       '#description' => 'Certain modules might provide additional attributes for the template wrapper, e.g. RDFa. Disable this option if you prefer to specify these attributes above.',
-      '#default_value' => isset($layout['settings']['layout_attributes_merge']) ? $layout['settings']['layout_attributes_merge'] : variable_get('ds_layout_attributes_merge', TRUE),
+      '#default_value' => isset($layout['settings']['layout_attributes_merge']) ? $layout['settings']['layout_attributes_merge'] : settings()->get('ds_layout_attributes_merge', TRUE),
       '#weight' => 12,
     );
 
@@ -805,7 +800,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       ),
     );
 
-    if (Drupal::moduleHandler()->moduleExists('token')) {
+    if (\Drupal::moduleHandler()->moduleExists('token')) {
       $form['region_wrapper']['tokens'] = array(
         '#title' => t('Tokens'),
         '#type' => 'container',
@@ -834,7 +829,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#access' => empty($chosen_layout['flexible']),
     );
 
-    $classes_access = (Drupal::currentUser()->hasPermission('admin_classes') && Drupal::moduleHandler()->moduleExists('ds_ui'));
+    $classes_access = (\Drupal::currentUser()->hasPermission('admin_classes') && \Drupal::moduleHandler()->moduleExists('ds_ui'));
     $classes = _ds_classes();
     if (!empty($classes)) {
 
@@ -875,7 +870,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       $options = array();
       $ds_layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $bundle);
       foreach ($ds_layout_settings as $config) {
-        $row = Drupal::config($config)->get();
+        $row = \Drupal::config($config)->get();
         // Do not clone from form layouts.
         if ($row['view_mode'] == 'form') {
           continue;
@@ -986,9 +981,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
 
       $selected = '<strong>' . $chosen_layout['label'] . '</strong>';
       $selected .= '<br/>' . t('The default template can be found in %path', array('%path' => $chosen_layout['path']));
-      $suggestions = t('Template suggestions') . ':<ul>';
       $suggestions_array = array();
-
       $suggestions_array[0] = $layout_string . '--' . $entity_type;
       $suggestions_array[2] = $layout_string . '--' . $entity_type . '-' . $bundle;
       if (!isset($form_state['no_view_mode_suggestions']) && $view_mode != 'default') {
@@ -997,7 +990,8 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       }
 
       ksort($suggestions_array);
-      $suggestions = '<ul><li>' . implode('.html.twig</li><li>', $suggestions_array) . '.html.twig</li></ul>';
+      $suggestions = t('Template suggestions') . ':<ul>';
+      $suggestions .= '<ul><li>' . implode('.html.twig</li><li>', $suggestions_array) . '.html.twig</li></ul>';
     }
     else {
       $suggestions = '';
@@ -1023,7 +1017,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
     if (isset($form_state['values']['layout']) && (!isset($layout['layout']) || $form_state['values']['layout'] != $layout['layout'])) {
 
       // Get admin path.
-      $admin_path = Drupal::entityManager()->getAdminPath($entity_type, $bundle);
+      $admin_path = \Drupal::entityManager()->getAdminPath($entity_type, $bundle);
       if ($view_mode != 'form') {
         $admin_path .= '/display';
       }
@@ -1078,7 +1072,7 @@ function ds_field_ui_change_layout_submit($form, &$form_state) {
   global $base_url;
 
   // Remove original destination
-  Drupal::request()->query->remove('destination');
+  \Drupal::request()->query->remove('destination');
 
   // Build new destination
   $url = $base_url . '/' . $form_state['values']['layout_changed_url'];
@@ -1130,7 +1124,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     'inline' => t('Inline'),
     'hidden' => t('- Hidden -'),
   );
-  drupal_alter('ds_label_options', $field_label_options);
+  \Drupal::moduleHandler()->alter('ds_label_options', $field_label_options);
 
   // Regions for fields.
   $field_regions = array();
@@ -1140,7 +1134,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
   foreach ($fields as $key => $field) {
     // Check if we can display this field here.
-    $plugin_instance = drupal_container()->get('plugin.manager.ds')->createInstance($field['plugin_id']);
+    $plugin_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id']);
 
     if (!$plugin_instance->isAllowed($bundle, $view_mode)) {
       continue;
@@ -1284,7 +1278,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
  * @param $form_state
  *   A collection of form_state properties.
  */
-function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$form_state) {
+function _ds_field_ui_core_fields(&$form, &$form_state) {
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form['#mode'];
@@ -1292,9 +1286,6 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
 
   // Gather type information.
   $instances = field_info_instances($entity_type, $bundle);
-
-  $field_types = field_info_field_types();
-  $extra_fields = field_info_extra_fields($entity_type, $bundle, 'display');
 
   $table = &$form['fields'];
 
@@ -1314,7 +1305,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       continue;
     }
 
-    $field = Field::fieldInfo()->getField($entity_type, $instance['field_name']);
+    $field = Field::fieldInfo()->getField($entity_type, $instance->getFieldName());
     $display = entity_get_display($entity_type, $bundle, $view_mode);
     $component = $display->getComponent($key);
 
@@ -1331,7 +1322,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     if (isset($form_state['plugin_settings'][$key])) {
       $settings = array_merge($settings, $form_state['plugin_settings'][$key]);
     }
-    $settings += field_info_formatter_settings($formatter_type);
+    $settings += \Drupal::service('plugin.manager.field.formatter')->getDefaultSettings($formatter_type);
 
     // Import field settings and merge with Field API settings.
     if (!isset($form_state['plugin_settings'][$key]) && !empty($form['#field_settings'][$key]['plugin_settings']['ft'])) {
@@ -1343,10 +1334,8 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     // settings form when clicking on the cogwheel.
     $form['fields'][$key]['plugin']['type']['#default_value'] = $formatter_type;
 
-    $instance['display'][$view_mode]['type'] = $formatter_type;
-    $formatter = field_info_formatter_types($formatter_type);
-    //$instance['display'][$view_mode]['module'] = $formatter['module'];
-    $instance['display'][$view_mode]['settings'] = $settings;
+    $instance->display[$view_mode]['type'] = $formatter_type;
+    $instance->display[$view_mode]['settings'] = $settings;
 
     // Base button element for the various formatter settings actions.
     $base_button = array(
@@ -1362,7 +1351,6 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
     );
 
     if ($form_state['plugin_settings_edit'] == $key) {
-      $formatter_type = $form_state['complete_form']['fields'][$key]['plugin']['type']['#default_value'];
 
       // Get the corresponding formatter object.
       if ($settings && $settings['type'] != 'hidden') {
@@ -1377,7 +1365,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
           'view_mode' => $view_mode,
         );
 
-        $formatter = drupal_container()->get('plugin.manager.field.formatter')->getInstance($options);
+        $formatter = \Drupal::service('plugin.manager.field.formatter')->getInstance($options);
       }
       else {
         $formatter = NULL;
@@ -1390,7 +1378,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
       }
 
       // Add the field templates form when needed
-      if (Drupal::config('ds.settings')->get('field_template')) {
+      if (\Drupal::config('ds.settings')->get('field_template')) {
         $context = array(
           'instance' => $instance,
           'view_mode' => $view_mode,
@@ -1409,7 +1397,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
         'view_mode' => $view_mode,
         'form' => $form,
       );
-      drupal_alter('field_formatter_settings_form', $settings_form, $form_state, $context);
+      \Drupal::moduleHandler()->alter('field_formatter_settings_form', $settings_form, $form_state, $context);
 
       if ($settings_form) {
         $table[$key]['plugin']['#cell_attributes'] = array('colspan' => 3);
@@ -1587,7 +1575,7 @@ function _ds_classes($name = 'regions') {
 
   if (!isset($classes[$name])) {
     $classes[$name] = array();
-    $custom_classes = trim(Drupal::config('ds.classes')->get($name));
+    $custom_classes = trim(\Drupal::config('ds.classes')->get($name));
     if (!empty($custom_classes)) {
       $classes[$name][''] = t('None');
       $custom_classes = explode("\n", $custom_classes);
@@ -1599,7 +1587,7 @@ function _ds_classes($name = 'regions') {
       }
     }
     $name_clone = $name; // Prevent the name from being changed.
-    drupal_alter('ds_classes', $classes[$name], $name_clone);
+    \Drupal::moduleHandler()->alter('ds_classes', $classes[$name], $name_clone);
   }
 
   return $classes[$name];
@@ -1614,6 +1602,7 @@ function _ds_classes($name = 'regions') {
  *   The subkey to sort by.
  */
 function _ds_sort_fields($a, $subkey) {
+  $c = array();
   foreach ($a as $k => $v) {
     if (isset($v[$subkey])) {
       $b[$k] = $v[$subkey];
