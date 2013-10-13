@@ -81,30 +81,6 @@ function hook_ds_field_format_summary($field) {
 }
 
 /**
- * Return a settings form for a Display Suite field.
- *
- * As soon as you have hook_ds_fields and one of the fields
- * has a settings key, Display Suite will call this hook for field form.
- *
- * @param $field
- *   The configuration of the field.
- *
- * @return $form
- *   A form definition.
- */
-function hook_ds_field_settings_form($field) {
-
-  // Saved formatter settings are on $field['plugin_settings'];
-  $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : $field['properties']['default'];
-
-  $form['label'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Label'),
-    '#default_value' => $settings['label'],
-  );
-}
-
-/**
  * Modify the layout settings just before they get saved.
  *
  * @param $record
@@ -195,15 +171,17 @@ function hook_ds_layout_info_alter(&$layouts) {
  *   and 'table_regions'.
  */
 function hook_ds_layout_region_alter($context, &$region_info) {
-  $region_info['region_options'][$block_key] = $block['title'];
-  $region_info['table_regions'][$block_key] = array(
-    'title' => check_plain($block['title']),
+  $region_info['region_options']['my_region'] = 'New region';
+  $region_info['table_regions']['my_region'] = array(
+    'title' => check_plain('New region'),
     'message' => t('No fields are displayed in this region'),
   );
 }
 
 /**
- * Alter the field label options. Note that you will either
+ * Alter the field label options.
+ *
+ * Note that you will either
  * update the preprocess functions or the field.html.twig file when
  * adding new options.
  *
