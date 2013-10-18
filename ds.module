@@ -518,7 +518,9 @@ function ds_preprocess_ds_layout(&$vars) {
         // Process RDF if the module is enabled before moving preprocess fields.
         if (Drupal::moduleHandler()->moduleExists('rdf')) {
           $mapping = rdf_get_mapping($vars['entity_type'], $vars['bundle']);
-          rdf_rdfa_attributes($mapping, $field);
+          rdfa_attributes($mapping, $field);
+          // Remove it so we can unset the field later on.
+          unset($vars['rdf_template_variable_attributes_array'][$field]);
         }
 
         // Move the field to content so it renders, remove it
@@ -663,7 +665,7 @@ function ds_contextual_links_view_alter(&$element, $items) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function ds_form_field_ui_field_edit_form_alter(&$form, &$form_state) {
+function ds_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) {
   $theme_functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
   $form['instance']['ds_field_template'] = array(
     '#type' => 'select',
@@ -786,7 +788,7 @@ function theme_ds_field_expert($variables) {
       $class = !empty($class) ? ' class="'. implode(' ', $class)  .'"' : '';
       $attributes = array();
       if (!empty($config['fi-at'])) {
-        $attributes[] = \Drupal::service('token')->replace($config['fi-at'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));
+        $attributes[] = token_replace($config['fi-at'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));
       }
       if (!empty($config['fi-def-at'])) {
         $attributes[] = $variables['item_attributes'][$delta];
