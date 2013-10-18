@@ -17,7 +17,7 @@ class ClassesForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'ds_classes_form';
   }
 

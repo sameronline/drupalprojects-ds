@@ -284,7 +284,7 @@ function ds_extras_entity_field_info_alter(&$info, $entity_type) {
     $info['definitions']['ds_switch'] = array(
       'label' => 'DS switch',
       'description' => 'Holds the DS view mode of the node',
-      'type' => 'string_field',
+      'type' => 'field_item:string',
       'settings' => array(
         'default_value' => '',
       ),

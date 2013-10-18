@@ -57,7 +57,7 @@ class EmergencyForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'ds_emergy_form';
   }
 

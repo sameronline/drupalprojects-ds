@@ -88,7 +88,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'ds_custom_field_form';
   }
 

@@ -17,7 +17,7 @@ class ChangeLayoutForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'ds_change_layout';
   }
 

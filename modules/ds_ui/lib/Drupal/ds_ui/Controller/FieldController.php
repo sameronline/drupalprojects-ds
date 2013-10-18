@@ -5,7 +5,7 @@
  * Contains \Drupal\ds_ui\Controller\FieldController.
  */
 
-namespace Drupal\ds_ui\Routing;
+namespace Drupal\ds_ui\Controller;
 
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Controller\ControllerBase;

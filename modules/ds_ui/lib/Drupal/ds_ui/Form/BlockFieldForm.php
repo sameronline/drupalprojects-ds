@@ -18,7 +18,7 @@ class BlockFieldForm extends FieldFormBase implements ContainerInjectionInterfac
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'ds_field_form';
   }
 
