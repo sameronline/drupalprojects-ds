@@ -15,8 +15,8 @@ abstract class Field extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render($field) {
-    $settings = $this->getChosenSettings($field);
+  public function render() {
+    $settings = $this->getChosenSettings();
 
     // Initialize output
     $output = '';
@@ -27,12 +27,12 @@ abstract class Field extends DsFieldBase {
     if (isset($settings['link text'])) {
       $output = t($settings['link text']);
     }
-    elseif (!empty($entity_render_key) && isset($field['entity']->{$entity_render_key})) {
-      if ($field['entity_type'] == 'user' && $entity_render_key == 'name') {
-        $output = user_format_name($field['entity']);
+    elseif (!empty($entity_render_key) && isset($this->entity->{$entity_render_key})) {
+      if ($this->entityType() == 'user' && $entity_render_key == 'name') {
+        $output = $this->entity->getUsername();
       }
       else {
-        $output = $field['entity']->{$entity_render_key}->value;
+        $output = $this->entity->{$entity_render_key}->value;
       }
     }
 
@@ -42,13 +42,8 @@ abstract class Field extends DsFieldBase {
 
     // Link.
     if (!empty($settings['link'])) {
-      if (isset($field['entity']->uri['path'])) {
-        $path = $field['entity']->uri['path'];
-      }
-      else {
-        $uri_info = $field['entity']->uri();
-        $path = $uri_info['path'];
-      }
+      $uri_info = $this->entity->uri();
+      $path = $uri_info['path'];
       $output = l($output, $path);
     }
     else {

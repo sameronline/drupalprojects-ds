@@ -22,7 +22,7 @@ class ExampleField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render($field) {
+  public function render() {
     return array();
   }
 
@@ -50,7 +50,7 @@ class ExampleField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function isAllowed($bundle, $view_mode) {
+  public function isAllowed() {
     return TRUE;
   }
 

@@ -22,10 +22,10 @@ class User extends Entity {
   /**
    * {@inhertidoc}
    */
-  public function render($field) {
-    $view_mode = $this->getViewMode($field);
+  public function render() {
+    $view_mode = $this->getViewMode();
 
-    $node = $field['entity'];
+    $node = $this->entity();
     $uid = $node->getAuthorId();
 
     $user = entity_load('user', $uid);
@@ -37,7 +37,7 @@ class User extends Entity {
   /**
    * {@inhertidoc}
    */
-  public function entity() {
+  public function linkedEntity() {
     return 'user';
   }
 

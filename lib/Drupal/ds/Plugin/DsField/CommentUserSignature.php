@@ -22,8 +22,8 @@ class CommentUserSignature extends UserSignature {
   /**
    * {@inheritdoc}
    */
-  public function render($field) {
-    $comment = $field['entity'];
+  public function render() {
+    $comment = $this->entity();
     $user_id = $comment->uid->target_id;
     $user = entity_load('user', $user_id);
 

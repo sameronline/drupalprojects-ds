@@ -15,7 +15,7 @@ abstract class Title extends Field {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($field, $settings) {
+  public function settingsForm($settings) {
 
     $default_settings = $this->defaultSettings();
 
@@ -43,7 +43,7 @@ abstract class Title extends Field {
   /**
    * {@inhertidoc}
    */
-  public function settingsSummary($field, $settings) {
+  public function settingsSummary($settings) {
     $default_settings = $this->defaultSettings();
 
     $summary = array();

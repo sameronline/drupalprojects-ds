@@ -15,7 +15,7 @@ abstract class BlockBase extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render($field) {
+  public function render() {
     $manager = \Drupal::service('plugin.manager.block');
 
     // Create the wanted block class

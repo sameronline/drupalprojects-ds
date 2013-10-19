@@ -15,13 +15,13 @@ abstract class Markup extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render($field) {
+  public function render() {
     $key = $this->key();
-    if (isset($field['entity']->{$key}->value)) {
+    if (isset($this->entity->{$key}->value)) {
       $format = $this->format();
 
       return array(
-        '#markup' => check_markup($field['entity']->{$key}->value, $field['entity']->{$format}->value, '', TRUE),
+        '#markup' => check_markup($this->entity->{$key}->value, $field['entity']->{$format}->value, '', TRUE),
       );
     }
   }

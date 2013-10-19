@@ -15,7 +15,7 @@ abstract class CodeBase extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render($field) {
+  public function render() {
     $code = $this->code();
     if ($code) {
       $format = $this->format();
@@ -30,7 +30,7 @@ abstract class CodeBase extends DsFieldBase {
       // Token support - check on token property so we don't run every single field through token.
       $uses_tokens = $this->usesTokens();
       if ($uses_tokens == TRUE) {
-        $value = token_replace($value, array($field['entity_type'] => $field['entity']), array('clear' => TRUE));
+        $value = token_replace($value, array($this->entityType() => $this->entity()), array('clear' => TRUE));
       }
       return array(
         '#markup' => $value,

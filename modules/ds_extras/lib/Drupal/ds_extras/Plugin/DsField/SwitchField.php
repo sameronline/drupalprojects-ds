@@ -23,16 +23,16 @@ class SwitchField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render($field) {
+  public function render() {
     $output = '';
     static $added = FALSE;
 
-    $settings = $this->getChosenSettings($field);
+    $settings = $this->getChosenSettings();
     if (!empty($settings)) {
 
-      $entity = $field['entity'];
+      $entity = $this->entity();
       $id = $entity->id();
-      $url = $field['entity_type'] . '-' . $field['view_mode'] . '-' . $id . '-';
+      $url = $this->entityType() . '-' . $this->viewMode(). '-' . $id . '-';
       $switch = array();
 
       foreach ($settings['vms'] as $key => $value) {
@@ -70,9 +70,9 @@ class SwitchField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($field, $settings) {
-    $entity_type = $field['entity_type'];
-    $bundle = $field['bundle'];
+  public function settingsForm($settings) {
+    $entity_type = $this->entityType();
+    $bundle = $this->bundle();
     $settings = isset($settings['vms']) ? $settings['vms'] : array();
     $view_modes = entity_get_view_modes($entity_type);
 
@@ -100,9 +100,9 @@ class SwitchField extends DsFieldBase {
   /**
    * {@inhertidoc}
    */
-  public function settingsSummary($field, $settings) {
-    $entity_type = $field['entity_type'];
-    $bundle = $field['bundle'];
+  public function settingsSummary($settings) {
+    $entity_type = $this->entityType();
+    $bundle = $this->bundle();
     $settings = isset($settings['vms']) ? $settings['vms'] : array();
     $view_modes = entity_get_view_modes($entity_type);
 
@@ -124,7 +124,7 @@ class SwitchField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function isAllowed($bundle, $view_mode) {
+  public function isAllowed() {
     if (\Drupal::config('ds.extras')->get('switch_field')) {
       return TRUE;
     }

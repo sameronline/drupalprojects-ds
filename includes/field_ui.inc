@@ -590,19 +590,12 @@ function _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode
  * @return array $summary
  *   The summary
  */
-function ds_field_settings_summary($field, $form_state) {
-
-  // Grab the saved settings
-  $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : '';
-
-  // Fetch the instance
-  $plugin_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id']);
-
+function ds_field_settings_summary($plugin_instance, $settings, $form_state) {
   // Create the form
-  $summary = $plugin_instance->settingsSummary($field, $settings);
+  $summary = $plugin_instance->settingsSummary($settings);
 
   // Add field template summary
-  ds_field_formatter_settings_summary_alter($summary, array('field' => $field));
+  ds_field_formatter_settings_summary_alter($summary, array('field' => $plugin_instance), $form_state);
 
   if (empty($summary)) {
     return array();
@@ -624,25 +617,19 @@ function ds_field_settings_summary($field, $form_state) {
  *
  * @return mixed $form
  */
-function ds_field_settings_form($field, &$form_state) {
-  // Grab the saved settings
-  $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : '';
-
-  // Fetch the instance
-  $plugin_instance = drupal_container()->get('plugin.manager.ds')->createInstance($field['plugin_id']);
-
+function ds_field_settings_form($plugin_instance, $settings, &$form_state) {
   // Create the form
-  $form = $plugin_instance->settingsForm($field, $settings);
+  $form = $plugin_instance->settingsForm($settings);
 
   // Add field template settings to every field if enabled.
   if (\Drupal::config('ds.settings')->get('field_template')) {
     $context = array(
       'instance' => array(
-        'entity_type' => $field['entity_type'],
-        'bundle' => $field['bundle'],
-        'field_name' => $field['name'],
+        'entity_type' => $plugin_instance->entityType(),
+        'bundle' => $plugin_instance->bundle(),
+        'field_name' => $plugin_instance->getFieldName(),
       ),
-      'view_mode' => $field['view_mode'],
+      'view_mode' => $plugin_instance->viewMode(),
     );
 
     ds_field_template_settings_form($form, $form_state, $context);
@@ -1135,8 +1122,16 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
   }
 
   foreach ($fields as $key => $field) {
+    $configuration = array(
+      'field' => $field,
+      'field_name' => $key,
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+      'view_mode' => $view_mode,
+    );
+
     // Check if we can display this field here.
-    $plugin_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id']);
+    $plugin_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id'], $configuration);
 
     if (!$plugin_instance->isAllowed($bundle, $view_mode)) {
       continue;
@@ -1162,12 +1157,13 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     $form['#ds_fields'][] = $key;
 
     // Check on formatter settings.
+    $plugin_settings = array();
     if (isset($form_state['plugin_settings'][$key])) {
-      $field['plugin_settings'] = $form_state['plugin_settings'][$key];
+      $plugin_settings = $form_state['plugin_settings'][$key];
     }
     elseif (isset($field_settings[$key]['plugin_settings'])) {
-      $field['plugin_settings'] = $field_settings[$key]['plugin_settings'];
-      $form_state['plugin_settings'][$key] = $field['plugin_settings'];
+      $plugin_settings = $field_settings[$key]['plugin_settings'];
+      $form_state['plugin_settings'][$key] = $plugin_settings;
     }
 
     if (!isset($field_settings[$key]['ft']) && isset($field_settings[$key]['ft'])) {
@@ -1238,20 +1234,15 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       continue;
     }
 
-    $field['name'] = $key;
-    $field['entity_type'] = $entity_type;
-    $field['bundle'] = $bundle;
-    $field['view_mode'] = $view_mode;
-
     if ($form_state['plugin_settings_edit'] == $key) {
       $table[$key]['settings_summary']['#attributes']['colspan'] = 2;
-      $settings_form = ds_field_settings_form($field, $form_state);
+      $settings_form = ds_field_settings_form($plugin_instance, $plugin_settings, $form_state);
       ds_field_row_form_format_construct($table, $key, $settings_form, $form_state);
     }
     else {
       // After saving, the settings are updated here as well. First we create
       // the element for the table cell.
-      $summary = ds_field_settings_summary($field, $form_state);
+      $summary = ds_field_settings_summary($plugin_instance, $plugin_settings, $form_state);
 
       if (isset($summary)) {
         $table[$key]['settings_summary'] = $summary;

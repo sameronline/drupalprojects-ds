@@ -15,8 +15,8 @@ abstract class Entity extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($field, $settings) {
-    $entity = $this->entity();
+  public function settingsForm($settings) {
+    $entity = $this->linkedEntity();
     $view_modes = entity_get_view_modes($entity);
 
     $options = array();
@@ -37,8 +37,8 @@ abstract class Entity extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsSummary($field, $settings) {
-    $entity = $this->entity();
+  public function settingsSummary($settings) {
+    $entity = $this->linkedEntity();
     $view_modes = entity_get_view_modes($entity);
 
     // When no view modes are found no summary is displayed
@@ -63,7 +63,7 @@ abstract class Entity extends DsFieldBase {
    * {@inheritdoc}
    */
   public function defaultSettings() {
-    $entity = $this->entity();
+    $entity = $this->linkedEntity();
     $view_modes = entity_get_view_modes($entity);
     reset($view_modes);
     $default_view_mode = key($view_modes);
@@ -78,16 +78,15 @@ abstract class Entity extends DsFieldBase {
   /**
    * Gets the wanted entity
    */
-  public function entity() {
+  public function linkedEntity() {
     return '';
   }
 
   /**
    * Gets the view mode
    */
-  public function getViewMode($field) {
-    $settings = $this->getChosenSettings($field);
-
+  public function getViewMode() {
+    $settings = $this->getChosenSettings();
     return $settings['view_mode'];
   }
 

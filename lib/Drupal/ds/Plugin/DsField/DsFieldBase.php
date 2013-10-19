@@ -15,23 +15,101 @@ use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
 abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterface {
 
   /**
+   * The entity we are working on.
+   *
+   * @var /Drupal/Core/Entity/EntityInterface
+   */
+  protected $entity = NULL;
+
+  /**
+   * The build of the current entity.
+   *
+   * @var array
+   */
+  protected $build = array();
+
+  /**
+   * The entity type of the current display.
+   *
+   * @var string
+   */
+  protected $entity_type = '';
+
+  /**
+   * The bundle of the current display.
+   *
+   * @var string
+   */
+  protected $bundle = '';
+
+  /**
+   * The view mode of the current display.
+   *
+   * @var string
+   */
+  protected $view_mode = '';
+
+  /**
+   * The name of the field
+   *
+   * @var string
+   */
+  protected $field_name = '';
+
+  /**
+   * The configuration of the field.
+   *
+   * @var array
+   */
+  protected $field_configuration = array();
+
+  /**
+   * Constructs a Display Suite field plugin.
+   */
+  public function __construct($configuration, $plugin_id, $plugin_definition) {
+    if (isset($configuration['entity'])) {
+      $this->entity = $configuration['entity'];
+    }
+    if (isset($configuration['entity_type'])) {
+      $this->entity = $configuration['entity_type'];
+    }
+    if (isset($configuration['bundle'])) {
+      $this->entity = $configuration['bundle'];
+    }
+    if (isset($configuration['build'])) {
+      $this->build = $configuration['build'];
+    }
+    if (isset($configuration['view_mode'])) {
+      $this->build = $configuration['view_mode'];
+    }
+    if (isset($configuration['field_name'])) {
+      $this->field_name = $configuration['field_name'];
+    }
+    if (isset($configuration['field'])) {
+      $this->field_configuration = $configuration['field'];
+    }
+
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
    * {@inheritdoc}
    */
-  public function render($field) {
+  public function render() {
     return array();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($field, $settings) {
+  public function settingsForm($settings) {
     return array();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function settingsSummary($field, $settings) {
+  public function settingsSummary($settings) {
     return array();
   }
 
@@ -53,18 +131,61 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
   /**
    * {@inheritdoc}
    */
-  public function isAllowed($bundle, $view_mode) {
+  public function isAllowed() {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getChosenSettings($field) {
-    $settings = isset($field['plugin_settings']) ? $field['plugin_settings'] : array();
+  public function getChosenSettings() {
+    $field_configuration = $this->getFieldConfiguration();
+    $settings = isset($field_configuration['plugin_settings']) ? $field_configuration['plugin_settings'] : array();
     $settings += $this->defaultSettings();
 
     return $settings;
+  }
+
+  /**
+   * Gets the current entity.
+   */
+  public function entity() {
+    return $this->entity;
+  }
+
+  /**
+   * Gets the current entity type.
+   */
+  public function entityType() {
+    return $this->entity_type;
+  }
+
+  /**
+   * Gets the current bundle.
+   */
+  public function bundle() {
+    return $this->bundle;
+  }
+
+  /**
+   * Gets the view mode
+   */
+  public function viewMode() {
+    return $this->view_mode;
+  }
+
+  /**
+   * Gets the field configuration
+   */
+  public function getFieldConfiguration() {
+    return $this->field_configuration;
+  }
+
+  /**
+   * Gets the field name
+   */
+  public function getFieldName() {
+    return $this->field_name;
   }
 
   /**

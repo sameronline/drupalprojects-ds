@@ -15,12 +15,13 @@ abstract class Date extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render($field) {
+  public function render() {
+    $field = $this->getFieldConfiguration();
     $date_format = str_replace('ds_post_date_', '', $field['formatter']);
     $render_key = $this->getRenderKey();
 
     return array(
-      '#markup' => format_date($field['entity']->{$render_key}->value, $date_format),
+      '#markup' => format_date($this->entity()->{$render_key}->value, $date_format),
     );
   }
 

@@ -348,15 +348,16 @@ function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRU
  */
 function ds_get_field_value($key, $field, $entity, $view_mode, $build = array()) {
 
-  $field['field_name'] = $key;
-  $field['entity'] = $entity;
-  $field['entity_type'] = $entity->entityType();
-  $field['bundle'] = $entity->bundle();
-  $field['view_mode'] = $view_mode;
-  $field['build'] = $build;
+  $configuration = array(
+    'field' => $field,
+    'field_name' => $key,
+    'entity' => $entity,
+    'build' => $build,
+    'view_mode' => $view_mode,
+  );
 
   // Load the plugin.
-  $field_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id']);
+  $field_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id'], $configuration);
 
   // Special case preprocess fields as they don't need to be rendered
   if ($field_instance InstanceOf PreprocessPluginBase) {
@@ -364,7 +365,7 @@ function ds_get_field_value($key, $field, $entity, $view_mode, $build = array())
   }
 
   // Render the field.
-  return $field_instance->render($field);
+  return $field_instance->render();
 
 }
 
@@ -1053,7 +1054,7 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
       '#multiple' => TRUE,
       '#options' => $field_classes,
       '#title' => t('Choose additional CSS classes for the field'),
-      '#default_value' => isset($field_settings['classes']) ? explode(' ', $field_settings['classes']) : array(),
+      '#default_value' => isset($field_settings['classes']) ? $field_settings['classes'] : array(),
       '#prefix' => '<div class="field-classes">',
       '#suffix' => '</div>',
     );
@@ -1154,20 +1155,14 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
 /**
  * Implements hook_field_formatter_settings_summary_alter.
  */
-function ds_field_formatter_settings_summary_alter(&$summary, $context) {
+function ds_field_formatter_settings_summary_alter(&$summary, $context, $form_state) {
   if (Drupal::config('ds.settings')->get('field_template')) {
     // Field template summary
     $functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
     $field = $context['field'];
     $default_field_function = Drupal::config('ds.settings')->get('ft-default');
 
-    // @todo fix me
-    if (is_array($field)) {
-      $field_function = isset($form_state['plugin_settings'][$field['name']]['ft']['func']) ? $form_state['plugin_settings'][$field['name']]['ft']['func'] : $default_field_function;
-    }
-    else {
-      $field_function = isset($form_state['plugin_settings'][$field->getFieldName()]['ft']['func']) ? $form_state['plugin_settings'][$field->getFieldName()]['ft']['func'] : $default_field_function;
-    }
+    $field_function = isset($form_state['plugin_settings'][$field->getFieldName()]['ft']['func']) ? $form_state['plugin_settings'][$field->getFieldName()]['ft']['func'] : $default_field_function;
 
     $summary[] = 'Field template: ' . check_plain($functions[$field_function]);
   }

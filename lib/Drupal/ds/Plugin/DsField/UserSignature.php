@@ -36,7 +36,7 @@ class UserSignature extends Markup {
   /**
    * {@inheritdoc}
    */
-  public function isAllowed($bunlde, $view_mode) {
+  public function isAllowed() {
     // Checks if user signatures are enabled
     $user_signatures = \Drupal::config('user.settings')->get('signatures');
 

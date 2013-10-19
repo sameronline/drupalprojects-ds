@@ -14,14 +14,8 @@ interface DsFieldInterface {
 
   /**
    * Renders a field.
-   *
-   * @param array $field
-   *   The field that should be rendered.
-   *
-   * @return array
-   *   Returns a render array.
    */
-  public function render($field);
+  public function render();
 
   /**
    * Returns the settings form for the field.
@@ -33,7 +27,7 @@ interface DsFieldInterface {
    * @return array
    *   A render array containing the form.
    */
-  public function settingsForm($field, $settings);
+  public function settingsForm($settings);
 
   /**
    * Returns the summary of the chosen settings.
@@ -46,7 +40,7 @@ interface DsFieldInterface {
    * @return array
    *   A render array containing the summary.
    */
-  public function settingsSummary($field, $settings);
+  public function settingsSummary($settings);
 
   /**
    * Returns the default settings.
@@ -66,12 +60,7 @@ interface DsFieldInterface {
 
   /**
    * Returns if the field is allowed on the field UI screen.
-   *
-   * @param $bundle
-   *   The bundle we want to display this field on.
-   * @param $view_mode
-   *   The view mode we want to display this field on.
    */
-  public function isAllowed($bundle, $view_mode);
+  public function isAllowed();
 
 }

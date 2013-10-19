@@ -22,8 +22,8 @@ class NodeComments extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function isAllowed($bundle, $view_mode) {
-    if (in_array($view_mode, array('full', 'default'))) {
+  public function isAllowed() {
+    if (in_array($this->viewMode(), array('full', 'default'))) {
       return TRUE;
     }
 

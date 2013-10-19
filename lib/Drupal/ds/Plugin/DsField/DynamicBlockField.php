@@ -31,10 +31,10 @@ class DynamicBlockField extends BlockBase {
   /**
    * {@inheritdoc}
    */
-  public function isAllowed($bundle, $view_mode) {
+  public function isAllowed() {
     $definition = $this->getPluginDefinition();
 
-    return DsFieldBase::dynamicFieldIsAllowed($definition, $bundle, $view_mode);
+    return DsFieldBase::dynamicFieldIsAllowed($definition, $this->bundle(), $this->viewMode());
   }
 
 }

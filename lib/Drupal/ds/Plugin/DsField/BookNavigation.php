@@ -22,17 +22,16 @@ class BookNavigation extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function isAllowed($bundle, $view_mode) {
+  public function isAllowed() {
 
     // We only allow the 'full' view mode
-    if ($view_mode != 'full') {
+    if ($this->viewMode() != 'full') {
       return FALSE;
     }
 
     // Get all the allowed types
     $types = \Drupal::config('book.settings')->get('allowed_types');
 
-    $displays = array();
     if (!empty($types)) {
       foreach ($types as $type) {
         if ($type)
