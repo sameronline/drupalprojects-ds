@@ -365,7 +365,7 @@ function ds_get_field_value($key, $field, $entity, $view_mode, $build = array())
   }
 
   // Render the field.
-  return $field_instance->render();
+  return $field_instance->build();
 
 }
 

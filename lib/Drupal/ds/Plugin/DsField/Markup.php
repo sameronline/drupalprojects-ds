@@ -15,7 +15,7 @@ abstract class Markup extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render() {
+  public function build() {
     $key = $this->key();
     if (isset($this->entity->{$key}->value)) {
       $format = $this->format();

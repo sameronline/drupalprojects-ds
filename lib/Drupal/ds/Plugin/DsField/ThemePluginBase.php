@@ -15,7 +15,7 @@ abstract class ThemePluginBase extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render() {
+  public function build() {
     $field = $this->getFieldConfiguration();
     $format = $this->formatter();
 

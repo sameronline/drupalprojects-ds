@@ -15,7 +15,7 @@ interface DsFieldInterface {
   /**
    * Renders a field.
    */
-  public function render();
+  public function build();
 
   /**
    * Returns the settings form for the field.

@@ -15,7 +15,7 @@ abstract class CodeBase extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render() {
+  public function build() {
     $code = $this->code();
     if ($code) {
       $format = $this->format();

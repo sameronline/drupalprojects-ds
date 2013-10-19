@@ -22,7 +22,7 @@ class NodeAuthor extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render() {
+  public function build() {
     $user = $this->entity->getAuthor();
 
     // Users without a user name are anonymous users. These are never linked.

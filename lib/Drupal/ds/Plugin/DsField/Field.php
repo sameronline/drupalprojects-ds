@@ -15,7 +15,7 @@ abstract class Field extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render() {
+  public function build() {
     $settings = $this->getChosenSettings();
 
     // Initialize output

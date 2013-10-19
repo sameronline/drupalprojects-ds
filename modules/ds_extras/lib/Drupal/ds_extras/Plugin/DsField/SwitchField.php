@@ -23,7 +23,7 @@ class SwitchField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render() {
+  public function build() {
     $output = '';
     static $added = FALSE;
 

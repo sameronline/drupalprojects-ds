@@ -22,7 +22,7 @@ class User extends Entity {
   /**
    * {@inhertidoc}
    */
-  public function render() {
+  public function build() {
     $view_mode = $this->getViewMode();
 
     $node = $this->entity();

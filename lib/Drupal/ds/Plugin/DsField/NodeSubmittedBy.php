@@ -22,7 +22,7 @@ class NodeSubmittedBy extends Date {
   /**
    * {@inheritdoc}
    */
-  public function render() {
+  public function build() {
     $field = $this->getFieldConfiguration();
     $account = $this->entity->getAuthor();
     switch ($field['formatter']) {

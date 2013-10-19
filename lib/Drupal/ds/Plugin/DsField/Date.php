@@ -15,7 +15,7 @@ abstract class Date extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render() {
+  public function build() {
     $field = $this->getFieldConfiguration();
     $date_format = str_replace('ds_post_date_', '', $field['formatter']);
     $render_key = $this->getRenderKey();
