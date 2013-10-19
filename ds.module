@@ -1150,7 +1150,14 @@ function ds_field_formatter_settings_summary_alter(&$summary, $context) {
     $functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
     $field = $context['field'];
     $default_field_function = Drupal::config('ds.settings')->get('ft-default');
-    $field_function = isset($form_state['plugin_settings'][$field['name']]['ft']['func']) ? $form_state['plugin_settings'][$field['name']]['ft']['func'] : $default_field_function;
+
+    // @todo fix me
+    if (is_array($field)) {
+      $field_function = isset($form_state['plugin_settings'][$field['name']]['ft']['func']) ? $form_state['plugin_settings'][$field['name']]['ft']['func'] : $default_field_function;
+    }
+    else {
+      $field_function = isset($form_state['plugin_settings'][$field->getFieldName()]['ft']['func']) ? $form_state['plugin_settings'][$field->getFieldName()]['ft']['func'] : $default_field_function;
+    }
 
     $summary[] = 'Field template: ' . check_plain($functions[$field_function]);
   }
