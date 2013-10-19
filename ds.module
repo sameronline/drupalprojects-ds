@@ -1014,7 +1014,14 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
   if (empty($default_field_function)) {
     $default_field_function = 'theme_field';
   }
-  $key = $context['instance']['field_name'];
+
+  // @todo fix me
+  if (is_array($context['instance'])) {
+    $key = $context['instance']['field_name'];
+  }
+  else {
+    $key = $context['instance']->getFieldName();
+  }
 
   $field_settings = isset($form_state['plugin_settings'][$key]) ? $form_state['plugin_settings'][$key]['ft'] : array();
 
