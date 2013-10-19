@@ -38,7 +38,7 @@ class SwitchField extends DsFieldBase {
       foreach ($settings['vms'] as $key => $value) {
         if (!empty($value)) {
           $class = 'switch-' . $key;
-          if ($key == $field['view_mode']) {
+          if ($key == $this->viewMode()) {
             $switch[] = '<span class="' . $class . '">' . check_plain(t($value)) . '</span>';
           }
           else {
