@@ -18,8 +18,8 @@ interface DsFieldInterface {
    * @param array $field
    *   The field that should be rendered.
    *
-   * @return string
-   *   Returns the rendered field.
+   * @return array
+   *   Returns a render array.
    */
   public function render($field);
 
@@ -52,7 +52,7 @@ interface DsFieldInterface {
    * Returns the default settings.
    *
    * @return array
-   *   An array containg the default settings in a key value way.
+   *   An array containing the default settings in a key value way.
    */
   public function defaultSettings();
 

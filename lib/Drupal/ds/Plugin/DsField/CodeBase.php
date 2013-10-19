@@ -32,7 +32,9 @@ abstract class CodeBase extends DsFieldBase {
       if ($uses_tokens == TRUE) {
         $value = token_replace($value, array($field['entity_type'] => $field['entity']), array('clear' => TRUE));
       }
-      return $value;
+      return array(
+        '#markup' => $value,
+      );
     }
   }
 

@@ -18,7 +18,7 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
    * {@inheritdoc}
    */
   public function render($field) {
-    return '';
+    return array();
   }
 
   /**

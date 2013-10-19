@@ -37,7 +37,7 @@ abstract class Field extends DsFieldBase {
     }
 
     if (empty($output)) {
-      return;
+      return array();
     }
 
     // Link.
@@ -62,7 +62,9 @@ abstract class Field extends DsFieldBase {
       $output = '<' . $wrapper . $class . '>' . $output . '</' . $wrapper . '>';
     }
 
-    return $output;
+    return array(
+      '#markup' => $output,
+    );
   }
 
   /**

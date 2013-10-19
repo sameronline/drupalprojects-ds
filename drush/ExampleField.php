@@ -23,7 +23,7 @@ class ExampleField extends DsFieldBase {
    * {@inheritdoc}
    */
   public function render($field) {
-    return '';
+    return array();
   }
 
   /**

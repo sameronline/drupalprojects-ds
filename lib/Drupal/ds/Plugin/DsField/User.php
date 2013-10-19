@@ -31,7 +31,7 @@ class User extends Entity {
     $user = entity_load('user', $uid);
     $build = entity_view($user, $view_mode);
 
-    return drupal_render($build);
+    return $build;
   }
 
   /**

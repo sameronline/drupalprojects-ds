@@ -26,7 +26,7 @@ abstract class BlockBase extends DsFieldBase {
     // @todo check label/subject.
     $block_elements = $block->build();
 
-    return drupal_render($block_elements);
+    return $block_elements;
   }
 
   /**

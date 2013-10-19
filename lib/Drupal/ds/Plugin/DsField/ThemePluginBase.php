@@ -17,7 +17,10 @@ abstract class ThemePluginBase extends DsFieldBase {
    */
   public function render($field) {
     $format = $this->formatter();
-    return theme($format, $field);
+
+    return array(
+      '#markup' => theme($format, $field),
+    );
   }
 
   /**

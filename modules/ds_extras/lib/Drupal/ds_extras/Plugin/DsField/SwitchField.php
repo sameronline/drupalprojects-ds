@@ -47,12 +47,20 @@ class SwitchField extends DsFieldBase {
         }
       }
 
+      $output = array();
+
       if (!empty($switch)) {
         if (!$added) {
           $added = TRUE;
-          drupal_add_js(drupal_get_path('module', 'ds_extras') . '/js/ds_extras.js');
+          $output['#attached'] = array(
+            'js' => array(
+              drupal_get_path('module', 'ds_extras') . '/js/ds_extras.js',
+            ),
+          );
         }
-        $output = '<div class="switch-view-mode-field">' . implode(' ', $switch) . '</div>';
+        $output['view_mode'] = array(
+          '#markup' => '<div class="switch-view-mode-field">' . implode(' ', $switch) . '</div>',
+        );
       }
     }
 

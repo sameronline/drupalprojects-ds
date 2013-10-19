@@ -28,15 +28,21 @@ class NodeAuthor extends DsFieldBase {
     // Users without a user name are anonymous users. These are never linked.
     if (empty($user->name)) {
       $anonymous_string = \Drupal::config('user.settings')->get('anonymous');
-      return check_plain($anonymous_string);
+      return array(
+        '#markup' => check_plain($anonymous_string),
+      );
     }
 
     if ($field['formatter'] == 'author') {
-      return user_format_name($user);
+      return array(
+        '#markup' => $user->getUsername(),
+      );
     }
 
     if ($field['formatter'] == 'author_linked') {
-      return theme('username', array('account' => $user));
+      return array(
+        '#markup' => theme('username', array('account' => $user)),
+      );
     }
   }
 

@@ -19,7 +19,10 @@ abstract class Markup extends DsFieldBase {
     $key = $this->key();
     if (isset($field['entity']->{$key}->value)) {
       $format = $this->format();
-      return check_markup($field['entity']->{$key}->value, $field['entity']->{$format}->value, '', TRUE);
+
+      return array(
+        '#markup' => check_markup($field['entity']->{$key}->value, $field['entity']->{$format}->value, '', TRUE),
+      );
     }
   }
 

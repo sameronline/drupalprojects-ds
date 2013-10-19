@@ -451,6 +451,9 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
 
     $field_value = ds_get_field_value($key, $field, $entity, $view_mode, $build);
 
+    // Render the value
+    $rendered_field_value =  drupal_render($field_value);
+
     if (!empty($field_value) || (string) $field_value === '0') {
 
       $build[$key] = array(
@@ -468,11 +471,11 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
         '#access' => ($field_permissions && function_exists('ds_extras_ds_field_access')) ? ds_extras_ds_field_access($key, $entity_type) : TRUE,
         '#items' => array(
           0 => array(
-            'value' => $field_value,
+            'value' => $rendered_field_value,
           ),
         ),
         0 => array(
-          '#markup' => $field_value,
+          '#markup' => $rendered_field_value,
         ),
       );
     }
