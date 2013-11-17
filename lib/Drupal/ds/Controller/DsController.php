@@ -127,15 +127,15 @@ class DsController extends ControllerBase {
   /**
    * Adds a contextual tabs to taxonomy terms
    */
-  public function contextualTaxonomyTermTab(EntityInterface $term) {
-    return $this->contextualTab($term->entityType(), $term->id());
+  public function contextualTaxonomyTermTab(EntityInterface $taxonomy_term) {
+    return $this->contextualTab($taxonomy_term->entityType(), $taxonomy_term->id());
   }
 
   /**
    * Adds a contextual tabs to nodes
    */
-  public function contextualNodeTab(EntityInterface $taxonomy_term) {
-    return $this->contextualTab($taxonomy_term->entityType(), $taxonomy_term->id());
+  public function contextualNodeTab(EntityInterface $node) {
+    return $this->contextualTab($node->entityType(), $node->id());
   }
 
   /**
