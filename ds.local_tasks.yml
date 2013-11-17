@@ -20,3 +20,18 @@ ds.emergency_task:
   tab_root_id: ds.display_task
   tab_parent_id: ds.display_task
   weight: 100
+ds.manage_node_display:
+  route_name: ds.contextual_tab_node
+  tab_root_id: node.view
+  title: 'Manage display'
+  weight: 10
+ds.manage_taxonomy_term_display:
+  route_name: ds.contextual_tab_taxonomy_term
+  tab_root_id: taxonomy.term_page
+  title: 'Manage display'
+  weight: 10
+ds.manage_user_display:
+  route_name: ds.contextual_tab_user
+  tab_root_id: user.view
+  title: 'Manage display'
+  weight: 10

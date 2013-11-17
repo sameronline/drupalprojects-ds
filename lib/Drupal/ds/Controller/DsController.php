@@ -8,6 +8,7 @@
 namespace Drupal\ds\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -117,40 +118,50 @@ class DsController extends ControllerBase {
   }
 
   /**
-   * Adds a contextual tab to nodes, users and taxonomy terms.
+   * Adds a contextual tabs to users
    */
-  public function contextualTab($entity_id, $entity_type) {
-    $object = entity_load($entity_type, $entity_id);
+  public function contextualUserTab(EntityInterface $user) {
+    return $this->contextualTab($user->entityType(), $user->id());
+  }
 
-    switch ($entity_type) {
-      case 'node':
-        $bundle = $object->bundle();
-        $view_mode = (!empty($object->ds_switch->value)) ? $object->ds_switch->value : 'full';
+  /**
+   * Adds a contextual tabs to taxonomy terms
+   */
+  public function contextualTaxonomyTermTab(EntityInterface $term) {
+    return $this->contextualTab($term->entityType(), $term->id());
+  }
 
-        // Let's always go back to the node page.
-        $destination = 'node/' . $object->id();
-        break;
-      case 'user':
-        $bundle = 'user';
-        $view_mode = 'full';
-        $destination = 'user/' . $object->id();
-        break;
-      case 'taxonomy_term':
-        $bundle = $object->bundle();
-        $view_mode = 'full';
-        $destination = 'taxonomy/term/' . $object->id();
-        break;
+  /**
+   * Adds a contextual tabs to nodes
+   */
+  public function contextualNodeTab(EntityInterface $taxonomy_term) {
+    return $this->contextualTab($taxonomy_term->entityType(), $taxonomy_term->id());
+  }
+
+  /**
+   * Adds a contextual tab to entities.
+   */
+  public function contextualTab($entity_type, $entity_id) {
+    $entity = entity_load($entity_type, $entity_id);
+
+    $destination = $entity->uri();
+
+    if (!empty($entity->ds_switch->value)) {
+      $view_mode = $entity->ds_switch->value;
+    }
+    else {
+      $view_mode = 'full';
     }
 
     // Check if we have a configured layout. Do not fallback to default.
-    $layout = ds_get_layout($entity_type, $bundle, $view_mode, FALSE);
+    $layout = ds_get_layout($entity_type, $entity->bundle(), $view_mode, FALSE);
 
     // Get the manage display URI.
-    $admin_path = $this->entityManager()->getAdminPath($entity_type, $bundle);
+    $admin_path = $this->entityManager()->getAdminPath($entity_type, $entity->bundle());
 
     // Check view mode settings.
     $overridden = FALSE;
-    $entity_display = entity_load('entity_display', $entity_type . '.' . $bundle . '.' . $view_mode);
+    $entity_display = entity_load('entity_display', $entity_type . '.' . $entity->bundle() . '.' . $view_mode);
     if ($entity_display) {
       $overridden = $entity_display->status();
     }
@@ -162,7 +173,7 @@ class DsController extends ControllerBase {
       $admin_path .= '/display/' . $view_mode;
     }
 
-    return new RedirectResponse(url($admin_path, array('query' => array('destination' => $destination))));
+    return new RedirectResponse(url($admin_path, array('query' => array('destination' => $destination['path']))));
   }
 
 }

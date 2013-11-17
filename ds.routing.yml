@@ -30,32 +30,26 @@ ds.change_layout:
     _permission: 'admin display suite'
 
 ds.contextual_tab_node:
-  path: '/node/{entity_id}/display'
+  path: '/node/{node}/display'
   defaults:
-    _controller: '\Drupal\ds\Controller\DsController::contextualTab'
+    _controller: '\Drupal\ds\Controller\DsController::contextualNodeTab'
     entity_type: 'node'
-  options:
-    _access_mode: 'ALL'
   requirements:
     _permission: 'administer content'
     _access_ds_contextual_tab: 'TRUE'
 ds.contextual_tab_user:
-  path: '/user/{entity_id}/display'
+  path: '/user/{user}/display'
   defaults:
-    _controller: '\Drupal\ds\Controller\DsController::contextualTab'
+    _controller: '\Drupal\ds\Controller\DsController::contextualUserTab'
     entity_type: 'user'
-  options:
-    _access_mode: 'ALL'
   requirements:
     _permission: 'administer users'
     _access_ds_contextual_tab: 'TRUE'
 ds.contextual_tab_taxonomy_term:
-  path: '/taxonomy/term/{entity_id}/display'
+  path: '/taxonomy/term/{taxonomy_term}/display'
   defaults:
-    _controller: '\Drupal\ds\Controller\DsController::contextualTab'
+    _controller: '\Drupal\ds\Controller\DsController::contextualTaxonomyTermTab'
     entity_type: 'taxonomy_term'
-  options:
-    _access_mode: 'ALL'
   requirements:
     _permission: 'administer taxonomy'
     _access_ds_contextual_tab: 'TRUE'

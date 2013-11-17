@@ -35,29 +35,6 @@ function ds_menu() {
     'route_name' => 'ds.structure',
   );
 
-  // Contextual links.
-  if (\Drupal::moduleHandler()->moduleExists('contextual') && Drupal::moduleHandler()->moduleExists('field_ui')) {
-    $items['node/%node/display'] = array(
-      'title' => 'Manage display',
-      'route_name' => 'ds.contextual_tab_node',
-      'type' => MENU_LOCAL_TASK,
-    );
-
-    $items['user/%user/display'] = array(
-      'title' => 'Manage display',
-      'route_name' => 'ds.contextual_tab_user',
-      'type' => MENU_LOCAL_TASK,
-    );
-
-    if (Drupal::moduleHandler()->moduleExists('taxonomy')) {
-      $items['taxonomy/term/%taxonomy_term/display'] = array(
-        'title' => 'Manage display',
-        'route_name' => 'ds.contextual_tab_taxonomy_term',
-        'type' => MENU_LOCAL_TASK,
-      );
-    }
-  }
-
   return $items;
 }
 
@@ -499,8 +476,13 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
 function ds_preprocess_ds_layout(&$vars) {
 
   // Add extra metadata for contextual links.
-  if (!empty($vars['title_suffix']['contextual_links']['#id']) && !empty($vars['elements']['#node'])) {
-    $vars['title_suffix']['contextual_links']['#id'] .= $vars['elements']['#node']->bundle() . '-' . $vars['view_mode'];
+  if (!empty($vars['title_suffix']['contextual_links']['#id'])) {
+    $contextual_links_id_array = explode(':', $vars['title_suffix']['contextual_links']['#id']);
+    $entity_type = $contextual_links_id_array[0];
+
+    if (!empty($vars['elements']['#' . $entity_type])) {
+      $vars['title_suffix']['contextual_links']['#id'] .= $vars['elements']['#' . $entity_type]->bundle() . '-' . $vars['view_mode'];
+    }
   }
 
   if (isset($vars['elements']['#ds_layout'])) {
@@ -638,32 +620,51 @@ function ds_preprocess_ds_layout(&$vars) {
  * Implements hook_contextual_links_view_alter().
  */
 function ds_contextual_links_view_alter(&$element, $items) {
-  // @todo how can we make this also work for every entity.
-  if (isset($element['#contextual_links']['node']) && Drupal::moduleHandler()->moduleExists('field_ui') && Drupal::currentUser()->hasPermission('administer node display')) {
-    $entity_type = 'node';
-    list($bundle, $view_mode) = explode('-', key($element['#contextual_links']['node'][2]));
-
-    // Get the manage display URI.
-    $admin_path = Drupal::entityManager()->getAdminPath($entity_type, $bundle);
-
-    // Check view mode settings.
-    $entity_display = entity_load('entity_display', $entity_type . '.' . $bundle . '.' . $view_mode);
-    $overridden = $entity_display->status();
-
-    if (!$overridden) {
-      $admin_path .= '/display';
+  $entity_type = '';
+  $found_key = '';
+  $keys = array_keys($items);
+  foreach ($keys as $key) {
+    if ($key == 'node.page_edit') {
+      $entity_type = 'node';
+      $found_key = $key;
     }
-    else {
-      $admin_path .= '/display/' . $view_mode;
+    elseif ($key == 'user.edit') {
+      $entity_type = 'user';
+      $found_key = $key;
     }
+    elseif ($key == 'taxonomy.term_edit') {
+      $entity_type = 'taxonomy_term';
+      $found_key = $key;
+    }
+  }
+
+  if (!empty($entity_type) && \Drupal::moduleHandler()->moduleExists('field_ui') && \Drupal::currentUser()->hasPermission('administer node display')) {
+    list($bundle, $view_mode) = explode('-', key($items[$found_key]['metadata']));
+
+    $route_name = "field_ui.display_overview_$entity_type" . '_' . $view_mode;
 
     $element['#links']['manage-display'] = array(
       'title' => t('Manage display'),
-      'href' => $admin_path,
+      'route_name' => $route_name,
+      'route_parameters' => array(
+        'entity_type' => $entity_type,
+        'bundle' => $bundle,
+        'mode' => $view_mode,
+      ),
       'query' => drupal_get_destination(),
     );
   }
+}
 
+/**
+ * Implements hook_local_tasks_alter()
+ */
+function ds_local_tasks_alter(&$local_tasks) {
+  if (!\Drupal::moduleHandler()->moduleExists('contextual') || !\Drupal::moduleHandler()->moduleExists('field_ui')) {
+    unset($local_tasks['ds.manage_node_display']);
+    unset($local_tasks['ds.manage_user_display']);
+    unset($local_tasks['ds.manage_taxonomy_term_display']);
+  }
 }
 
 /**
