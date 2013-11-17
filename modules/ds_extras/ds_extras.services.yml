@@ -1,9 +1,4 @@
 services:
-  access_check.ds_extras.switch_field:
-    class: Drupal\ds_extras\Access\SwitchFieldAccessCheck
-    arguments: ['@config.factory']
-    tags:
-      - { name: access_check }
   ds_extras.route_subscriber:
     class: Drupal\ds_extras\EventSubscriber\RouteSubscriber
     tags:

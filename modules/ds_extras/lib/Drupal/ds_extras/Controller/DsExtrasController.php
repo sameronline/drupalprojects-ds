@@ -7,6 +7,7 @@
 
 namespace Drupal\ds_extras\Controller;
 
+use Drupal\Core\Access\AccessInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,6 +47,13 @@ class DsExtrasController extends ControllerBase {
       'status' => $status,
       'errorMessage' => $error
     ), 200);
+  }
+
+  /**
+   * Checks access for the switch view mode route
+   */
+  public function accessSwitchViewMode(Request $request) {
+    return ($this->currentUser()->hasPermission('access content') && $this->config('ds.extras')->get('switch_field') ? AccessInterface::ALLOW : AccessInterface::DENY);
   }
 
   /**

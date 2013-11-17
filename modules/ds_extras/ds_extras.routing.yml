@@ -3,4 +3,4 @@ ds_extras.switch_view_mode:
   defaults:
     _controller: '\Drupal\ds_extras\Controller\DsExtrasController::switchViewModeInline'
   requirements:
-    _access_switch_field: 'TRUE'
+    _custom_access: '\Drupal\ds_extras\Controller\DsExtrasController::accessSwitchViewMode'

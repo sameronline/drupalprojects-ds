@@ -8,6 +8,7 @@
 namespace Drupal\ds\Access;
 
 use Drupal\Core\Access\StaticAccessCheckInterface;
+use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
 
@@ -26,7 +27,7 @@ class ContextualTabAccessCheck implements StaticAccessCheckInterface {
   /**
    * {@inheritdoc}
    */
-  public function access(Route $route, Request $request) {
+  public function access(Route $route, Request $request, AccountInterface $account) {
     return \Drupal::moduleHandler()->moduleExists('contextual') && \Drupal::moduleHandler()->moduleExists('field_ui') ? static::ALLOW : static::DENY;
   }
 
