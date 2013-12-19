@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\FieldDefinition;
 use Drupal\entity\Entity\EntityDisplay;
 
 /**
@@ -281,21 +282,11 @@ function ds_extras_switch_view_mode_preview_callback($form, $form_state) {
 function ds_extras_entity_field_info_alter(&$info, $entity_type) {
   if ($entity_type == 'node') {
     // Set the ds field as proper field
-    $info['definitions']['ds_switch'] = array(
-      'label' => 'DS switch',
-      'description' => 'Holds the DS view mode of the node',
-      'type' => 'field_item:string',
-      'settings' => array(
-        'default_value' => '',
-      ),
-      'property_constraints' => array(
-        'value' => array(
-          'Length' => array(
-            'max' => 255,
-          ),
-        ),
-      ),
-    );
+    $info['definitions']['ds_switch'] = FieldDefinition::create('string')
+      ->setLabel(t('DS switch'))
+      ->setDescription(t('Holds the DS view mode of the node.'))
+      ->setSetting('default_value', '')
+      ->setPropertyConstraints('value', array('Length' => array('max' => 255)));
   }
 }
 

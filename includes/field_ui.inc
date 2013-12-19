@@ -5,7 +5,7 @@
  * Field UI functions for Display Suite.
  */
 
-use Drupal\field_ui\DisplayOverview;
+use Drupal\Component\Utility\String;
 use Drupal\field\Field;
 
 /**
@@ -243,7 +243,7 @@ function ds_field_ui_regions($form, $form_state) {
 
       // Limit items.
       $field_info = Field::fieldInfo()->getField($entity_type, $name);
-      if (!empty($field_info) && $field_info->getFieldCardinality() != 1 && $view_mode != 'form') {
+      if (!empty($field_info) && $field_info->getCardinality() != 1 && $view_mode != 'form') {
         $row['plugin']['type']['#prefix'] = '<div class="limit-float">';
         $row['plugin']['type']['#suffix'] = '</div>';
         $row['plugin']['limit'] = $limit_items;
@@ -627,7 +627,7 @@ function ds_field_settings_form($plugin_instance, $settings, &$form_state) {
       'instance' => array(
         'entity_type' => $plugin_instance->entityType(),
         'bundle' => $plugin_instance->bundle(),
-        'field_name' => $plugin_instance->getFieldName(),
+        'field_name' => $plugin_instance->getName(),
       ),
       'view_mode' => $plugin_instance->viewMode(),
     );
@@ -1190,7 +1190,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       '#region_callback' => 'field_ui_display_overview_row_region',
       '#attributes' => array('class' => array('draggable', 'tabledrag-leaf')),
       'human_name' => array(
-        '#markup' => check_plain($field['title']),
+        '#markup' => String::checkPlain($field['title']),
       ),
       'weight' => array(
         '#type' => 'textfield',
@@ -1290,7 +1290,7 @@ function _ds_field_ui_core_fields(&$form, &$form_state) {
       continue;
     }
 
-    $field = Field::fieldInfo()->getField($entity_type, $instance->getFieldName());
+    $field = Field::fieldInfo()->getField($entity_type, $instance->getName());
     $display = entity_get_display($entity_type, $bundle, $view_mode);
     $component = $display->getComponent($key);
 

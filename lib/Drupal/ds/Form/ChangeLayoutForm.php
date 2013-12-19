@@ -69,7 +69,7 @@ class ChangeLayoutForm extends FormBase {
       $region_info = array(
         'region_options' => $regions,
       );
-      drupal_alter('ds_layout_region', $context, $region_info);
+      \Drupal::moduleHandler()->alter('ds_layout_region', $context, $region_info);
       $regions = $region_info['region_options'];
       $form['#old_layout']['regions'] = $regions;
 
@@ -77,7 +77,7 @@ class ChangeLayoutForm extends FormBase {
       $region_info = array(
         'region_options' => $new_layout['regions'],
       );
-      drupal_alter('ds_layout_region', $context, $region_info);
+      \Drupal::moduleHandler()->alter('ds_layout_region', $context, $region_info);
       $new_layout['regions'] = $region_info['region_options'];
       $form['#new_layout']['regions'] = $new_layout['regions'];
 
@@ -144,7 +144,6 @@ class ChangeLayoutForm extends FormBase {
   public function submitForm(array &$form, array &$form_state) {
     // Prepare some variables.
     $old_layout = $form['#old_layout'];
-    $new_layout = $form['#new_layout'];
     $new_layout_key = $form['#new_layout_key'];
     $entity_type = $form['#entity_type'];
     $bundle = $form['#bundle'];
@@ -165,7 +164,7 @@ class ChangeLayoutForm extends FormBase {
     foreach ($old_layout['regions'] as $region => $region_title) {
       $new_region = $form_state['values']['ds_' . $region];
       if ($new_region != '' && isset($old_layout['settings']['regions'][$region])) {
-        foreach ($old_layout['settings']['regions'][$region] as $field_key => $field) {
+        foreach ($old_layout['settings']['regions'][$region] as $field) {
           if (!isset($record['settings']['regions'][$new_region])) {
             $record['settings']['regions'][$new_region] = array();
           }

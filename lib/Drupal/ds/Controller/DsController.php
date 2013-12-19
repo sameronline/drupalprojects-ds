@@ -7,6 +7,7 @@
 
 namespace Drupal\ds\Controller;
 
+use Drupal\Component\Utility\String;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -26,7 +27,6 @@ class DsController extends ControllerBase {
     $build = array();
 
     // All entities.
-    $rows = array();
     $entity_info = $this->entityManager()->getDefinitions();;
 
     // Move node to the top.
@@ -57,7 +57,7 @@ class DsController extends ControllerBase {
         foreach ($bundles as $bundle_type => $bundle) {
           $row = array();
           $operations = array();
-          $row[] = check_plain($bundle['label']);
+          $row[] = String::checkPlain($bundle['label']);
 
           if ($field_ui_enabled) {
             $path = $this->entityManager()->getAdminPath($entity_type, $bundle_type);
@@ -66,7 +66,7 @@ class DsController extends ControllerBase {
               'href' => $path . '/display',
             );
 
-            // Add Mangage Form link if Display Suite Forms is enabled.
+            // Add Manage Form link if Display Suite Forms is enabled.
             if ($this->moduleHandler()->moduleExists('ds_forms')) {
               $operations['manage_form'] = array(
                 'title' => t('Manage form'),
@@ -105,9 +105,6 @@ class DsController extends ControllerBase {
           $build['list_' . $entity_type] = array(
             '#markup' => theme('table', $variables)
           );
-
-          $info_rows = array();
-          $rows = array();
         }
       }
     }
