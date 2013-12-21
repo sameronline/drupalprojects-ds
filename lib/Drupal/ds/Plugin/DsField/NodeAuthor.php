@@ -33,7 +33,7 @@ class NodeAuthor extends DsFieldBase {
       );
     }
 
-    $field = $this->getFieldConfiguration();
+    $field = $this->getConfiguration();
     if ($field['formatter'] == 'author') {
       return array(
         '#markup' => $user->getUsername(),

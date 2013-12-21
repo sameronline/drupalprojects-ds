@@ -29,6 +29,7 @@ function _ds_theme() {
       $theme_functions[$key] = array(
         'render element' => 'element',
         'function' => $key,
+        'base hook' => 'field',
       );
     }
   }

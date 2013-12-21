@@ -23,7 +23,7 @@ class NodeSubmittedBy extends Date {
    * {@inheritdoc}
    */
   public function build() {
-    $field = $this->getFieldConfiguration();
+    $field = $this->getConfiguration();
     $account = $this->entity->getAuthor();
     switch ($field['formatter']) {
       case 'ds_time_ago':

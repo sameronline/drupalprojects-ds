@@ -284,6 +284,7 @@ function ds_extras_entity_field_info_alter(&$info, $entity_type) {
     // Set the ds field as proper field
     $info['definitions']['ds_switch'] = FieldDefinition::create('string')
       ->setLabel(t('DS switch'))
+      ->setName('ds_switch')
       ->setDescription(t('Holds the DS view mode of the node.'))
       ->setSetting('default_value', '')
       ->setPropertyConstraints('value', array('Length' => array('max' => 255)));
