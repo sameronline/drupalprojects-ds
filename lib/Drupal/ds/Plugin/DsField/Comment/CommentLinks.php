@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\CommentLinks.
+ * Contains \Drupal\ds\Plugin\DsField\Comment\CommentLinks.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Comment;
+
+use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
  * Plugin that renders the administration links of the comment entity.

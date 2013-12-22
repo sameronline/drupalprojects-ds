@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\NodeChangedDate.
+ * Contains \Drupal\ds\Plugin\DsField\Node\NodeChangedDate.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Node;
+
+use Drupal\ds\Plugin\DsField\Date;
 
 /**
  * Plugin that renders the post date of a node.

@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\CommentTitle.
+ * Contains \Drupal\ds\Plugin\DsField\Comment\CommentTitle.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Comment;
+
+use Drupal\ds\Plugin\DsField\Field;
 
 /**
  * Plugin that renders the title of a comment.

@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\CommentSubmittedBy.
+ * Contains \Drupal\ds\Plugin\DsField\Comment\CommentSubmittedBy.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Comment;
+
+use Drupal\ds\Plugin\DsField\PreprocessBase;
 
 /**
  * Plugin that renders the submitted by element of a comment.

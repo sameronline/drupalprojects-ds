@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\Username.
+ * Contains \Drupal\ds\Plugin\DsField\User\Username.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\User;
+
+use Drupal\ds\Plugin\DsField\Title;
 
 /**
  * Plugin that renders the username.

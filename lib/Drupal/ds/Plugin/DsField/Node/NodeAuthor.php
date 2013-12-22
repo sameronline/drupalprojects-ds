@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\NodeAuthor.
+ * Contains \Drupal\ds\Plugin\DsField\Node\NodeAuthor.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Node;
+
+use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
  * Plugin that renders the author of a node.

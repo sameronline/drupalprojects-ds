@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\User.
+ * Contains \Drupal\ds\Plugin\DsField\User\User.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\User;
+
+use Drupal\ds\Plugin\DsField\Entity;
 
 /**
  * Plugin that renders a view mode.

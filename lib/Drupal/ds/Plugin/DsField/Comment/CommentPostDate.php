@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\CommentPostDate.
+ * Contains \Drupal\ds\Plugin\DsField\Comment\CommentPostDate.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Comment;
+
+use Drupal\ds\Plugin\DsField\Date;
 
 /**
  * Plugin that renders the post date of a comment.

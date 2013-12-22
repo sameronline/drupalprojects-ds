@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\NodeTitle.
+ * Contains \Drupal\ds\Plugin\DsField\Node\NodeTitle.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Node;
+
+use Drupal\ds\Plugin\DsField\Link;
 
 /**
  * Plugin that renders the 'read more' link of a node.

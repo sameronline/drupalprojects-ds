@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\NodeTitle.
+ * Contains \Drupal\ds\Plugin\Node\DsField\NodeTitle.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Node;
+
+use Drupal\ds\Plugin\DsField\Title;
 
 /**
  * Plugin that renders the title of a node.

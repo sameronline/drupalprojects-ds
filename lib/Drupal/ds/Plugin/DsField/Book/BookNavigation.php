@@ -5,10 +5,12 @@
  * Contains \Drupal\ds\Plugin\DsField\BookNavigation.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Book;
+
+use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
- * Plugin that the book naviation.
+ * Plugin that the book navigation.
  *
  * @DsField(
  *   id = "book_navigation",

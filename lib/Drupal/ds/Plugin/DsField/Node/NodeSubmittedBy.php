@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\NodeSubmittedBy.
+ * Contains \Drupal\ds\Plugin\DsField\Node\NodeSubmittedBy.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Node;
+
+use Drupal\ds\Plugin\DsField\Date;
 
 /**
  * Plugin that renders the submitted by field.

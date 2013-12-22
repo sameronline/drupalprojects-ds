@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\CommentPermalink.
+ * Contains \Drupal\ds\Plugin\DsField\Comment\CommentPermalink.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Comment;
+
+use Drupal\ds\Plugin\DsField\PreprocessBase;
 
 /**
  * Plugin that renders the permalink of a comment.

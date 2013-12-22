@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\CommentChangedDate.
+ * Contains \Drupal\ds\Plugin\DsField\Comment\CommentChangedDate.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Comment;
+
+use Drupal\ds\Plugin\DsField\Date;
 
 /**
  * Plugin that renders the changed date of a comment.

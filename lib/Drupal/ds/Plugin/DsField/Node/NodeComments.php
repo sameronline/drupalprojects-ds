@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\NodeComments.
+ * Contains \Drupal\ds\Plugin\DsField\Node\NodeComments.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Node;
+
+use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
  * Plugin that renders the comments of a node.

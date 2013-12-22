@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\NodeLinks.
+ * Contains \Drupal\ds\Plugin\DsField\Node\NodeLinks.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Node;
+
+use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
  * Plugin that renders the links of the node entity.

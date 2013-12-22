@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\TaxonomyTermLink.
+ * Contains \Drupal\ds\Plugin\DsField\Taxonomy\TaxonomyTermLink.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Taxonomy;
+
+use Drupal\ds\Plugin\DsField\Link;
 
 /**
  * Plugin that renders the the read more link on taxonomy.

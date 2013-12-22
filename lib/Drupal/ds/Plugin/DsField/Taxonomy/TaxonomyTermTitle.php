@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\TaxonomyTermTitle.
+ * Contains \Drupal\ds\Plugin\DsField\Taxonomy\TaxonomyTermTitle.
  */
 
 namespace Drupal\ds\Plugin\DsField;

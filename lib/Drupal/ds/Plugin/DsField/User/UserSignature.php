@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\UserSignature.
+ * Contains \Drupal\ds\Plugin\DsField\User\UserSignature.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\User;
+
+use Drupal\ds\Plugin\DsField\Markup;
 
 /**
  * Plugin that renders the user signature.

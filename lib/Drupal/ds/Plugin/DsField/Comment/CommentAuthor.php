@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\CommentAuthor.
+ * Contains \Drupal\ds\Plugin\DsField\Comment\CommentAuthor.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Comment;
+
+use Drupal\ds\Plugin\DsField\Field;
 
 /**
  * Plugin that renders the author of a comment.
@@ -25,6 +27,5 @@ class CommentAuthor extends Field {
   protected function entityRenderKey() {
     return 'name';
   }
-
 
 }
