@@ -78,7 +78,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
     return new static(
       $container->get('config.factory'),
       $container->get('config.context.free'),
-      $container->get('plugin.manager.entity'),
+      $container->get('entity.manager'),
       $container->get('cache.cache'),
       $container->get('module_handler')
     );

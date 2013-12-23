@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ds_ui\Form\CodeFieldForm.
+ * Contains \Drupal\ds_ui\Form\TokenFieldForm.
  */
 
 namespace Drupal\ds_ui\Form;
@@ -10,9 +10,9 @@ namespace Drupal\ds_ui\Form;
 use Drupal\ds_ui\Form\FieldFormBase;
 
 /**
- * Configures code fields.
+ * Configures token fields.
  */
-class CodeFieldForm extends FieldFormBase {
+class TokenFieldForm extends FieldFormBase {
 
   /**
    * {@inheritdoc}
@@ -29,31 +29,23 @@ class CodeFieldForm extends FieldFormBase {
     $field = $this->field;
 
     if (empty($field_key)) {
-      $form['#title'] = 'Add a code field';
+      $form['#title'] = 'Add a token field';
     }
     else {
-      $form['#title'] = 'Edit a code field';
+      $form['#title'] = 'Edit a token field';
     }
 
-    $form['code'] = array(
+    $form['content'] = array(
       '#type' => 'text_format',
-      '#title' => t('Field code'),
-      '#default_value' => isset($field['properties']['code']['value']) ? $field['properties']['code']['value'] : '',
-      '#format' => isset($field['properties']['code']['format']) ? $field['properties']['code']['format'] : 'ds_code',
+      '#title' => t('Field content'),
+      '#default_value' => isset($field['properties']['content']['value']) ? $field['properties']['content']['value'] : '',
+      '#format' => isset($field['properties']['content']['format']) ? $field['properties']['content']['format'] : 'ds_token',
       '#base_type' => 'textarea',
       '#required' => TRUE,
     );
 
-    $form['use_token'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Token'),
-      '#description' => t('Toggle this checkbox if you are using tokens in this field.'),
-      '#default_value' => isset($field['properties']['use_token']) ? $field['properties']['use_token'] : '',
-    );
-
     // Token support.
     if (\Drupal::moduleHandler()->moduleExists('token')) {
-
       $form['tokens'] = array(
         '#title' => t('Tokens'),
         '#type' => 'container',
@@ -70,9 +62,6 @@ class CodeFieldForm extends FieldFormBase {
         '#dialog' => TRUE,
       );
     }
-    else {
-      $form['use_token']['#description'] = t('Toggle this checkbox if you are using tokens in this field. If the token module is installed, you get a nice list of all tokens available in your site.');
-    }
 
     return $form;
   }
@@ -82,8 +71,7 @@ class CodeFieldForm extends FieldFormBase {
    */
   public function getProperties($form_state) {
     return array(
-      'code' => $form_state['values']['code'],
-      'use_token' => $form_state['values']['use_token'],
+      'content' => $form_state['values']['content'],
     );
   }
 
@@ -91,15 +79,14 @@ class CodeFieldForm extends FieldFormBase {
    * {@inheritdoc}
    */
   public function getType() {
-    return DS_FIELD_TYPE_CODE;
+    return DS_FIELD_TYPE_TOKEN;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getTypeLabel() {
-    return 'Code field';
+    return 'Token field';
   }
-
 
 }

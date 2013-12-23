@@ -23,18 +23,18 @@ ds_ui.delete_field:
     _form: '\Drupal\ds_ui\Form\FieldDeleteForm'
   requirements:
     _permission: 'admin fields'
-ds_ui.manage_code_field:
-  path: 'admin/structure/ds/fields/manage_code/{field_key}'
+ds_ui.manage_token_field:
+  path: 'admin/structure/ds/fields/manage_token/{field_key}'
   defaults:
-    _form: '\Drupal\ds_ui\Form\CodeFieldForm'
-    _title: 'Edit a code field'
+    _form: '\Drupal\ds_ui\Form\TokenFieldForm'
+    _title: 'Edit a token field'
   requirements:
     _permission: 'admin fields'
-ds_ui.add_code_field:
-  path: 'admin/structure/ds/fields/manage_code'
+ds_ui.add_token_field:
+  path: 'admin/structure/ds/fields/manage_token'
   defaults:
-    _form: '\Drupal\ds_ui\Form\CodeFieldForm'
-    _title: 'Add a code field'
+    _form: '\Drupal\ds_ui\Form\TokenFieldForm'
+    _title: 'Add a token field'
   requirements:
     _permission: 'admin fields'
 ds_ui.manage_preprocess_field:

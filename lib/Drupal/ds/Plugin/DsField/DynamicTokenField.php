@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\DsField\DynamicCodeField.
+ * Contains \Drupal\ds\Plugin\DsField\DynamicTokenField.
  */
 
 namespace Drupal\ds\Plugin\DsField;
@@ -13,18 +13,18 @@ use Drupal\ds\Plugin\DsField\DsFieldBase;
  * Defines a generic dynamic code field.
  *
  * @DsField(
- *   id = "dynamic_code_field",
- *   derivative = "Drupal\ds\Plugin\Derivative\DynamicCodeField"
+ *   id = "dynamic_token_field",
+ *   derivative = "Drupal\ds\Plugin\Derivative\DynamicTokenField"
  * )
  */
-class DynamicCodeField extends CodeBase {
+class DynamicTokenField extends TokenBase {
 
   /**
    * {@inheritdoc}
    */
-  public function code() {
+  public function content() {
     $definition = $this->getPluginDefinition();
-    return $definition['properties']['code']['value'];
+    return $definition['properties']['content']['value'];
   }
 
   /**
@@ -32,7 +32,7 @@ class DynamicCodeField extends CodeBase {
    */
   public function format() {
     $definition = $this->getPluginDefinition();
-    return $definition['properties']['code']['format'];
+    return $definition['properties']['content']['format'];
   }
 
   /**

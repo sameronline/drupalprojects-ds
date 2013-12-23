@@ -29,13 +29,6 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
   protected $build = array();
 
   /**
-   * The entity type of the current display.
-   *
-   * @var string
-   */
-  protected $entity_type = '';
-
-  /**
    * The bundle of the current display.
    *
    * @var string
@@ -69,9 +62,6 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
   public function __construct($configuration, $plugin_id, $plugin_definition) {
     if (isset($configuration['entity'])) {
       $this->entity = $configuration['entity'];
-    }
-    if (isset($configuration['entity_type'])) {
-      $this->entity = $configuration['entity_type'];
     }
     if (isset($configuration['bundle'])) {
       $this->entity = $configuration['bundle'];
@@ -157,7 +147,7 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
    * Gets the current entity type.
    */
   public function entityType() {
-    return $this->entity_type;
+    return $this->entity->entityType();
   }
 
   /**
