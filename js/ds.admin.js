@@ -5,6 +5,8 @@
 
 (function($, Drupal) {
 
+"use strict";
+
 Drupal.DisplaySuite = Drupal.DisplaySuite || {};
 Drupal.DisplaySuite.fieldopened = '';
 Drupal.DisplaySuite.layout_original = '';
@@ -117,7 +119,7 @@ Drupal.behaviors.settingsToggle = {
     // Show / hide settings on field template form.
     function ds_show_expert_settings(element, open) {
       field = element;
-      ft = $('.ds-extras-field-template', field).val();
+      var ft = $('.ds-extras-field-template', field).val();
 
       if (ft == 'theme_ds_field_expert') {
         // Show second, third, fourth, fifth and sixth label.
@@ -158,7 +160,7 @@ Drupal.behaviors.settingsToggle = {
     $('.label-change').change(function() {
       var field = $(this).parents('tr');
       if ($('.field-template', field).length > 0) {
-        ft = $('.ds-extras-field-template', field).val();
+        var ft = $('.ds-extras-field-template', field).val();
         if (ft == 'theme_field' || ft == 'theme_ds_field_reset') {
           $('.colon-checkbox', field).parent().hide();
         }

@@ -5,6 +5,8 @@
 
 (function ($, Drupal, drupalSettings) {
 
+"use strict";
+
 // Switch view mode inline with AJAX, for the 'View mode switcher' option.
 Drupal.behaviors.DSExtrasSwitchViewmode = {
   attach: function (context) {
@@ -24,11 +26,9 @@ Drupal.behaviors.DSExtrasSwitchViewmode = {
           data: {entity_type: params[0], view_mode: params[3], id: params[2]},
           dataType: 'json',
           success: function (data) {
-            console.log(data);
-            console.log(data.status);
             if (data.status) {
-              old_view_mode = params[1];
-              wrapper = link.parents('.view-mode-' + old_view_mode);
+              var old_view_mode = params[1];
+              var wrapper = link.parents('.view-mode-' + old_view_mode);
               Drupal.theme('DisplaySuiteSwitchViewmode', wrapper, data.content);
               Drupal.attachBehaviors();
             }

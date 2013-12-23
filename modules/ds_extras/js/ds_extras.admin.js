@@ -5,6 +5,8 @@
 
 (function ($, Drupal) {
 
+"use strict";
+
 Drupal.behaviors.DSExtrasSummaries = {
   attach: function (context) {
 
