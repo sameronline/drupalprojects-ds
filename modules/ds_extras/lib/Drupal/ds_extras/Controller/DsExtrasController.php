@@ -34,7 +34,7 @@ class DsExtrasController extends ControllerBase {
     $entity_type = $query->get('entity_type');
     $entity = entity_load($entity_type, $id);
 
-    if (node_access('view', $entity)) {
+    if ($entity->access('view')) {
       $element = entity_view($entity, $view_mode);
       $content = drupal_render($element);
     }

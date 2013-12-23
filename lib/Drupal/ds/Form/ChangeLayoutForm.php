@@ -49,7 +49,7 @@ class ChangeLayoutForm extends FormBase {
 
       $form['info'] = array(
         '#markup' => t('You are changing from %old to %new layout for !bundle in !view_mode view mode.', array('%old' => $old_layout['label'], '%new' => $new_layout['label'], '!bundle' => $bundle, '!view_mode' => $display_mode)),
-        '#prefix' => "<div class='change_ds_layout_info'>",
+        '#prefix' => "<div class='change-ds-layout-info'>",
         '#suffix' => "</div>",
       );
 
@@ -89,7 +89,7 @@ class ChangeLayoutForm extends FormBase {
           '#type' => 'container',
         );
         $form['region_' . $region]['ds_label_' . $region] = array(
-          '#markup' => 'Fields in <span class="change_ds_layout_old_region"> ' . $region_title . '</span> go into',
+          '#markup' => 'Fields in <span class="change-ds-layout-old-region"> ' . $region_title . '</span> go into',
         );
         $form['region_' . $region]['ds_' . $region] = array(
           '#type' => 'select',

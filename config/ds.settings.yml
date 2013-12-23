@@ -1,4 +1,4 @@
-disabled: '0'
-field_template: '0'
+disabled: false
+field_template: false
 ft-default: theme_field
-ft-kill-colon: '0'
+ft-kill-colon: false

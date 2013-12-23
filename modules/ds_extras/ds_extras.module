@@ -5,8 +5,10 @@
  * Display Suite extras main functions.
  */
 
+use Drupal\Component\Utility\String;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldDefinition;
+use Drupal\Core\Render\Element;
 use Drupal\entity\Entity\EntityDisplay;
 
 /**
@@ -159,7 +161,7 @@ function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityDis
   }
 
   $properties = array();
-  foreach (element_properties($build) as $property) {
+  foreach (Element::properties($build) as $property) {
     $properties[$property] = $build[$property];
   }
   $properties['#view_mode'] = $view_mode;
@@ -312,7 +314,7 @@ function ds_extras_ds_layout_region_alter($context, &$region_info) {
       $region_info['region_options'][$block_key] = $block['title'];
       if (isset($region_info['table_regions'])) {
         $region_info['table_regions'][$block_key] = array(
-          'title' => check_plain($block['title']),
+          'title' => String::checkPlain($block['title']),
           'message' => t('No fields are displayed in this region'),
         );
       }
@@ -335,9 +337,9 @@ function ds_extras_field_extra_fields() {
       $field = trim($field);
       if (!empty($field)) {
         list($entity, $bundle, $field_name) = explode('|', $field);
-        $extra[check_plain($entity)][check_plain($bundle)]['display'][$field_name] = array(
-          'label' => drupal_ucfirst(str_replace('_', ' ', check_plain($field_name))),
-          'description' => drupal_ucfirst(str_replace('_', ' ', check_plain($field_name))),
+        $extra[String::checkPlain($entity)][String::checkPlain($bundle)]['display'][$field_name] = array(
+          'label' => drupal_ucfirst(str_replace('_', ' ', String::checkPlain($field_name))),
+          'description' => drupal_ucfirst(str_replace('_', ' ', String::checkPlain($field_name))),
           'weight' => 0,
         );
       }

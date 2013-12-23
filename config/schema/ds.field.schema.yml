@@ -26,21 +26,18 @@ ds.field.properties.preprocess:
   type: views_display
   label: 'Display Suite preprocess field properties'
 
-ds.field.properties.code:
+ds.field.properties.token:
   type: mapping
-  label: 'Display Suite code field field properties'
+  label: 'Display Suite token field field properties'
   mapping:
-    code:
+    content:
       type: mapping
-      label: 'Code properties'
+      label: 'Token properties'
       mapping:
         value:
-          label: 'The code'
+          label: 'The content'
         format:
           label: 'The format'
-    use_token:
-      type: boolean
-      label: 'Uses tokens'
 
 ds.field.properties.block:
   type: mapping

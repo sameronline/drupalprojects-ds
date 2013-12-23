@@ -7,6 +7,7 @@
 
 namespace Drupal\ds_extras\Plugin\DsField;
 
+use Drupal\Component\Utility\String;
 use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
@@ -39,7 +40,7 @@ class SwitchField extends DsFieldBase {
         if (!empty($value)) {
           $class = 'switch-' . $key;
           if ($key == $this->viewMode()) {
-            $switch[] = '<span class="' . $class . '">' . check_plain(t($value)) . '</span>';
+            $switch[] = '<span class="' . $class . '">' . String::checkPlain(t($value)) . '</span>';
           }
           else {
             $switch[] = '<span class="' . $class . '"><a href="" class="' . $url . $key . '">' . check_plain(t($value)) . '</a></span>';

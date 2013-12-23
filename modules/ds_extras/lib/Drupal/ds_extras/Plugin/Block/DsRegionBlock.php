@@ -25,7 +25,7 @@ class DsRegionBlock extends BlockBase {
    * {@inheritdoc}
    */
   public function build() {
-    list(, $id) = explode(':', $this->getPluginId());
+    $id = $this->getBasePluginId();
     $data = drupal_static('ds_block_region');
 
     if (!empty($data[$id])) {
