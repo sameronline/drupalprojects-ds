@@ -2252,6 +2252,7 @@ function _ds_field_ui_core_fields($entity_type, $bundle, $view_mode, &$form, &$f
 
         // Load the form
         module_load_include('inc', 'ds_extras', 'includes/ds_extras.admin');
+        if (!is_array($settings_form)) $settings_form = array();
         ds_extras_field_template_settings_form($settings_form, $form_state, $context);
       }
 
