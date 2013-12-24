@@ -173,7 +173,7 @@ function hook_ds_layout_info_alter(&$layouts) {
 function hook_ds_layout_region_alter($context, &$region_info) {
   $region_info['region_options']['my_region'] = 'New region';
   $region_info['table_regions']['my_region'] = array(
-    'title' => check_plain('New region'),
+    'title' => \Drupal\Component\Utility\String::checkPlain('New region'),
     'message' => t('No fields are displayed in this region'),
   );
 }

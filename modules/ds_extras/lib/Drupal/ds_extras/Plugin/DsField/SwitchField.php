@@ -43,7 +43,7 @@ class SwitchField extends DsFieldBase {
             $switch[] = '<span class="' . $class . '">' . String::checkPlain(t($value)) . '</span>';
           }
           else {
-            $switch[] = '<span class="' . $class . '"><a href="" class="' . $url . $key . '">' . check_plain(t($value)) . '</a></span>';
+            $switch[] = '<span class="' . $class . '"><a href="" class="' . $url . $key . '">' . String::checkPlain(t($value)) . '</a></span>';
           }
         }
       }
@@ -90,7 +90,7 @@ class SwitchField extends DsFieldBase {
           '#type' => 'textfield',
           '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
           '#size' => 20,
-          '#title' => check_plain($value['label']),
+          '#title' => String::checkPlain($value['label']),
         );
       }
     }

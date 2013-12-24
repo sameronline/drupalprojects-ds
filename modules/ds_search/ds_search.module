@@ -1,4 +1,5 @@
 <?php
+use Drupal\Component\Utility\String;
 
 /**
  * @file
@@ -381,8 +382,8 @@ function ds_build_shared_page_variables(&$build) {
     drupal_add_js(drupal_get_path('module', 'ds_search') . '/js/ds_search.js');
     drupal_add_js(array(
       'ds_search' => array(
-        'selector' => check_plain($config->get('highlight_selector', '.view-mode-search_result')),
-        'search' => check_plain(arg(2)),
+        'selector' => String::checkPlain($config->get('highlight_selector', '.view-mode-search_result')),
+        'search' => String::checkPlain(arg(2)),
       ),
     ), 'setting');
   }

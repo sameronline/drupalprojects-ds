@@ -7,6 +7,7 @@
 
 namespace Drupal\ds\Plugin\DsField\Node;
 
+use Drupal\Component\Utility\String;
 use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
@@ -31,7 +32,7 @@ class NodeAuthor extends DsFieldBase {
     if (empty($user->name)) {
       $anonymous_string = \Drupal::config('user.settings')->get('anonymous');
       return array(
-        '#markup' => check_plain($anonymous_string),
+        '#markup' => String::checkPlain($anonymous_string),
       );
     }
 

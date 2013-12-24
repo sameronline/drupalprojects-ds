@@ -7,6 +7,8 @@
 
 namespace Drupal\ds\Tests;
 
+use Drupal\Component\Utility\String;
+
 class EntitiesTest extends BaseTest {
 
   /**
@@ -119,7 +121,7 @@ class EntitiesTest extends BaseTest {
     $this->assertRaw('group-footer', 'Template found (region footer)');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
-    $this->assertPattern('/<div[^>]*>Submitted[^<]*<a[^>]+href="\/user\/' . $node_author->uid . '"[^>]*>' . check_plain($node_author->name) . '<\/a>.<\/div>/', t('Submitted by line found'));
+    $this->assertPattern('/<div[^>]*>Submitted[^<]*<a[^>]+href="\/user\/' . $node_author->uid . '"[^>]*>' . String::checkPlain($node_author->name) . '<\/a>.<\/div>/', t('Submitted by line found'));
 
     // Configure teaser layout.
     $teaser = array(
@@ -249,7 +251,7 @@ class EntitiesTest extends BaseTest {
     $this->assertText('Tag 1');
     $this->assertNoText('Tag 2');
 
-    // Test check_plain() on ds_render_field() with the title field.
+    // Test \Drupal\Component\Utility\String::checkPlain() on ds_render_field() with the title field.
     $edit = array(
       'fields[title][region]' => 'right',
     );

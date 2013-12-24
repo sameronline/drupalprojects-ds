@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\ds\Plugin\DsField;
+use Drupal\Component\Utility\String;
 
 /**
  * The base plugin to create DS fields.
@@ -47,13 +48,13 @@ abstract class Field extends DsFieldBase {
       $output = l($output, $path);
     }
     else {
-      $output = check_plain($output);
+      $output = String::checkPlain($output);
     }
 
     // Wrapper and class.
     if (!empty($settings['wrapper'])) {
-      $wrapper = check_plain($settings['wrapper']);
-      $class = (!empty($settings['class'])) ? ' class="' . check_plain($settings['class']) . '"' : '';
+      $wrapper = String::checkPlain($settings['wrapper']);
+      $class = (!empty($settings['class'])) ? ' class="' . String::checkPlain($settings['class']) . '"' : '';
       $output = '<' . $wrapper . $class . '>' . $output . '</' . $wrapper . '>';
     }
 

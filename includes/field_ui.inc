@@ -236,7 +236,7 @@ function ds_field_ui_regions($form, $form_state) {
       if (isset($row['label'])) {
         if (isset($form_state['plugin_settings']) && isset($form_state['plugin_settings'][$name]['ft'])) {
           if (!empty($form_state['plugin_settings'][$name]['ft']['lb'])) {
-            $row['human_name']['#markup'] = check_plain($form_state['plugin_settings'][$name]['ft']['lb']) . ' ' . t('(Original: !orig)', array('!orig' => $row['human_name']['#markup']));
+            $row['human_name']['#markup'] = String::checkPlain($form_state['plugin_settings'][$name]['ft']['lb']) . ' ' . t('(Original: !orig)', array('!orig' => $row['human_name']['#markup']));
           }
         }
       }
@@ -1568,7 +1568,7 @@ function _ds_classes($name = 'regions') {
         $classes_splitted = explode("|", $value);
         $key = trim($classes_splitted[0]);
         $friendly_name = isset($classes_splitted[1]) ? trim($classes_splitted[1]) : $key;
-        $classes[$name][check_plain($key)] = $friendly_name;
+        $classes[$name][String::checkPlain($key)] = $friendly_name;
       }
     }
     $name_clone = $name; // Prevent the name from being changed.

@@ -7,6 +7,7 @@
 
 namespace Drupal\ds\Plugin\views\row;
 
+use Drupal\Component\Utility\String;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\ViewExecutable;
@@ -215,7 +216,7 @@ class DsEntityRow extends RowPluginBase {
   public function summaryTitle() {
     $options = $this->buildViewModeOptions();
     if (isset($options[$this->options['view_mode']])) {
-      return check_plain($options[$this->options['view_mode']]);
+      return String::checkPlain($options[$this->options['view_mode']]);
     }
     else {
       return t('No view mode selected');
