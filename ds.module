@@ -742,7 +742,7 @@ function ds_entity_variables(&$vars) {
 
     // Let other modules alter the ds array before creating the region variables.
     $context = array('entity' => isset($vars[$object]) ? $vars[$object] : (isset($vars['elements']['#' . $object]) ? $vars['elements']['#' . $object] : ''), 'entity_type' => $vars['elements']['#entity_type'], 'bundle' => $vars['elements']['#bundle'], 'view_mode' => $vars['elements']['#view_mode']);
-    drupal_alter('ds_pre_render', $layout_render_array, $context);
+    drupal_alter('ds_pre_render', $layout_render_array, $context, $vars);
     foreach ($layout_render_array as $region_name => $content) {
       // In case this is a panels layout, add the region to the $content variable.
       if (isset($layout['module']) && $layout['module'] == 'panels') {
