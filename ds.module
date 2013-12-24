@@ -717,7 +717,12 @@ function ds_entity_variables(&$vars) {
       $url = '';
       switch ($layout['settings']['layout_link_attribute']) {
         case 'content':
-          $uri = entity_uri($vars['elements']['#entity_type'], $vars[$object]);
+          if ($object == 'user') {
+            $uri = entity_uri($vars['elements']['#entity_type'], $vars['elements']['#account']);
+          }
+          else {
+            $uri = entity_uri($vars['elements']['#entity_type'], $vars[$object]);
+          }
           if (!empty($uri)) {
             $url = $uri['path'];
           }
