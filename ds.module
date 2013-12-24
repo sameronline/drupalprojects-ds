@@ -726,7 +726,7 @@ function ds_entity_variables(&$vars) {
           $url = $layout['settings']['layout_link_custom'];
           break;
         case 'tokens':
-          $url = token_replace($layout['settings']['layout_link_custom'], array($vars['elements']['#entity_type'] => $vars[$object]));
+          $url = token_replace($layout['settings']['layout_link_custom'], array($vars['elements']['#entity_type'] => $vars[$object]), array('clear' => TRUE));
           break;
       }
 
