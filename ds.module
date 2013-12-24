@@ -955,7 +955,6 @@ function ds_render_block_field($field) {
  * Render a field.
  */
 function ds_render_field($field) {
-
   $title_field = FALSE;
 
   $output = '';
@@ -982,14 +981,13 @@ function ds_render_field($field) {
 
   // Link.
   if ($settings['link']) {
-    if (isset($field['entity']->uri['path'])) {
-      $path = $field['entity']->uri['path'];
+    if (isset($field['entity']->uri)) {
+      $uri_info = $field['entity']->uri;
     }
     else {
       $uri_info = entity_uri($field['entity_type'], $field['entity']);
-      $path = $uri_info['path'];
     }
-    $output = l($output, $path);
+    $output = l($output, $uri_info['path'], $uri_info['options']);
     if ($title_field) {
       $output = ds_edit_support('title', $output, $field);
     }
