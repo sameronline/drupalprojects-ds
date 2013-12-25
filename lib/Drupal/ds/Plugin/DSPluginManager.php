@@ -31,7 +31,7 @@ class DsPluginManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler) {
-    parent::__construct('PLugin\DsField', $namespaces, 'Drupal\ds\Annotation\DsField');
+    parent::__construct('Plugin\DsField', $namespaces, 'Drupal\ds\Annotation\DsField');
 
     $this->alterInfo($module_handler, 'ds_fields_info');
     $this->setCacheBackend($cache_backend, $language_manager, 'ds_fields_info');
