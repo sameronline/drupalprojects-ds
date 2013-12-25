@@ -5,7 +5,9 @@
  * Contains \Drupal\ds\Plugin\DsField\Taxonomy\TaxonomyTermTitle.
  */
 
-namespace Drupal\ds\Plugin\DsField;
+namespace Drupal\ds\Plugin\DsField\Taxonomy;
+
+use Drupal\ds\Plugin\DsField\Title;
 
 /**
  * Plugin that renders the title of a term.
