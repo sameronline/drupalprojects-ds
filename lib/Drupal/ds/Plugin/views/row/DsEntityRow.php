@@ -17,7 +17,7 @@ use Drupal\views\Plugin\views\row\RowPluginBase;
 /**
  * Generic entity row plugin to provide a common base for all entity types.
  *
- * @Plugin(
+ * @ViewsRow(
  *   id = "ds_entity",
  *   derivative = "Drupal\ds\Plugin\Derivative\DsEntityRow"
  * )
@@ -145,7 +145,7 @@ class DsEntityRow extends RowPluginBase {
     // Alternating view modes.
     // @todo fix fieldset.
     $form['alternating_fieldset'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => t('Alternating view mode'),
       '#collapsible' => TRUE,
       '#collapsed' => !$this->options['alternating'],
