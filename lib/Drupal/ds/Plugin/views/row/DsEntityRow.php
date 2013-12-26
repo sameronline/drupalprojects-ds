@@ -143,7 +143,6 @@ class DsEntityRow extends RowPluginBase {
     );
 
     // Alternating view modes.
-    // @todo fix fieldset.
     $form['alternating_fieldset'] = array(
       '#type' => 'details',
       '#title' => t('Alternating view mode'),
@@ -210,8 +209,6 @@ class DsEntityRow extends RowPluginBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo add more info.
    */
   public function summaryTitle() {
     $options = $this->buildViewModeOptions();
@@ -266,8 +263,6 @@ class DsEntityRow extends RowPluginBase {
 
   /**
    * {@inheritdoc}
-   *
-   * // @todo this can probably go if we extend on entityRow.
    */
   public function render($row) {
     $entity_id = $row->{$this->field_alias};
