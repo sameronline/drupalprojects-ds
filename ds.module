@@ -821,7 +821,12 @@ function ds_render_ctools_field($field) {
           foreach ($field['entity']->{$key}[$language] as $tkey => $item) {
             if (isset($item['tid']) && !isset($item['taxonomy_term'])) {
               if (!isset($terms_loaded[$item['tid']])) {
-                $terms_loaded[$item['tid']] = taxonomy_term_load($item['tid']);
+                $term = taxonomy_term_load($item['tid']);
+                if (!is_object($term)) {
+                  // This term is missing in the database.
+                  continue;
+                }
+                $terms_loaded[$item['tid']];
               }
               $field['entity']->{$key}[$language][$tkey]['taxonomy_term'] = $terms_loaded[$item['tid']];
             }
@@ -1209,6 +1214,10 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
       }
       else {
         $term = taxonomy_term_load($item['tid']);
+        if (!is_object($term)) {
+          // This term is missing in the database.
+          continue;
+        }
         $settings = $display['settings'];
         if ($settings['use_content_language'] && !empty($GLOBALS['language_content']->language)) {
           $langcode = $GLOBALS['language_content']->language;
@@ -1237,6 +1246,10 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
       }
       else {
         $term = taxonomy_term_load($item['tid']);
+        if (!is_object($term)) {
+          // This term is missing in the database.
+          continue;
+        }
         if ($display['type'] == 'ds_taxonomy_separator_localized' && function_exists('i18n_taxonomy_term_name')) {
           $term->name = i18n_taxonomy_term_name($term, $language->language);
         }
