@@ -48,6 +48,9 @@ class NodeAuthor extends DsFieldBase {
         '#markup' => theme('username', array('account' => $user)),
       );
     }
+
+    // Otherwise return an empty array
+    return array();
   }
 
   /**

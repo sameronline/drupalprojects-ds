@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\ds\Plugin\DsField;
+
 use Drupal\Component\Utility\String;
 
 /**

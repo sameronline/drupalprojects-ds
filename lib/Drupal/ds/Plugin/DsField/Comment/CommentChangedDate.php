@@ -16,7 +16,7 @@ use Drupal\ds\Plugin\DsField\Date;
  *   id = "comment_changed_date",
  *   title = @Translation("Last modified"),
  *   entity_type = "comment",
- *   module = "ds"
+ *   provider = "comment"
  * )
  */
 class CommentChangedDate extends Date {

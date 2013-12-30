@@ -13,3 +13,8 @@ ds_ui.preprocess_field_add_local_action:
   title: 'Add a preprocess field'
   appears_on:
     - ds_ui.fields_list
+ds_ui.copy_field_add_local_action:
+  route_name: add_copy_field
+  title: 'Create a copy of a Display Suite field'
+  appears_on:
+    - ds_ui.fields_list

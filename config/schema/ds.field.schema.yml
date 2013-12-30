@@ -45,3 +45,10 @@ ds.field.properties.block:
   mapping:
     block:
       label: 'Block plugin ID'
+
+ds.field.properties.copy:
+  type: mapping
+  label: 'Display Suite copy field properties'
+  mapping:
+    ds_plugin:
+      label: 'Display Suite plugin ID'
