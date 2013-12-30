@@ -982,6 +982,11 @@ function ds_field_formatter_settings_form($field, $instance, $view_mode, $form, 
       '#options' => $options,
       '#default_value' => $settings['taxonomy_term_reference_view_mode'],
     );
+    $element['use_content_language'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use current content language'),
+      '#default_value' => $settings['use_content_language'],
+    );
     return $element;
   }
 
@@ -1027,7 +1032,8 @@ function ds_field_formatter_settings_summary($field, $instance, $view_mode) {
     $entity_info = entity_get_info('taxonomy_term');
     $modes = $entity_info['view modes'];
     $mode = $modes[$settings['taxonomy_term_reference_view_mode']]['label'];
-    $summary = t('View mode: %mode', array('%mode' => $mode));
+    $summary .= t('View mode: %mode', array('%mode' => $mode)) . '<br />';;
+    $summary .= !empty($settings['use_content_language']) ? t('Use current content language') : t('Use field language');
   }
 
   if ($display['type'] === 'ds_taxonomy_separator' || $display['type'] == 'ds_taxonomy_separator_localized') {
