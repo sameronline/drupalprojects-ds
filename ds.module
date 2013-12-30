@@ -1190,7 +1190,7 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
 }
 
 /**
- * Implements hook_field_formatter_settings_summary_alter.
+ * Implements hook_field_formatter_settings_summary_alter().
  */
 function ds_field_formatter_settings_summary_alter(&$summary, $context, $form_state) {
   if (Drupal::config('ds.settings')->get('field_template')) {
@@ -1207,3 +1207,18 @@ function ds_field_formatter_settings_summary_alter(&$summary, $context, $form_st
   return $summary;
 }
 
+/**
+ * Implements hook_hook_info().
+ */
+function ds_hook_info() {
+  $hooks['ds_views_row_render_entity'] = array(
+    'group' => 'ds',
+  );
+  $hooks['ds_views_row_render_entity_alter'] = array(
+    'group' => 'ds',
+  );
+  $hooks['ds_views_view_mode_alter'] = array(
+    'group' => 'ds',
+  );
+  return $hooks;
+}

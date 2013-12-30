@@ -250,31 +250,32 @@ function hook_ds_views_view_mode_alter(&$view_mode, $context) {
 }
 
 /**
- * Theme an entity coming from the views entity plugin.
+ * Theme an entity through an advanced function coming from the views entity plugin.
  *
  * @param $entity
- *   The complete entity.
+ *   The entity
  * @param $view_mode
  *   The name of the view mode.
  */
-function ds_views_row_ENTITY_NAME($entity, $view_mode) {
-  $nid = $vars['row']->{$vars['field_alias']};
-  $node = node_load($nid);
-  $element = node_view($node, $view_mode);
-  return drupal_render($element);
+function hook_ds_views_row_render_entity($entity, $view_mode) {
+  $entity = entity_load('node', 1);
+  return entity_view($entity, $view_mode);
 }
 
 /**
  * Theme an entity through an advanced function coming from the views entity plugin.
  *
- * @param $vars
- *   An array of variables from the views preprocess functions.
- * @param $view_mode
- *   The name of the view mode.
+ * @param $build
+ *   The builded entity
+ * @param $context
+ *   Collection of parameters (row, view and view_mode)
  */
-function ds_views_row_adv_VIEWS_NAME(&$vars, $view_mode) {
+function hook_ds_views_row_render_entity_alter(&$build, $context) {
   // You can do whatever you want to here.
-  $vars['object'] = 'This is what I want for christmas.';
+  $build['data'] = array(
+    '#markup' => 'Sample text',
+    '#weight' => 20,
+  );
 }
 
 /**
