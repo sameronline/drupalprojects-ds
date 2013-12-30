@@ -29,13 +29,6 @@ class BlockFieldForm extends FieldFormBase implements ContainerInjectionInterfac
     $form = parent::buildForm($form, $form_state, $field_key);
     $field = $this->field;
 
-    if (empty($field_key)) {
-      $form['#title'] = 'Add a block field';
-    }
-    else {
-      $form['#title'] = 'Edit a block field';
-    }
-
     $manager = \Drupal::service('plugin.manager.block');
 
     $blocks = array();

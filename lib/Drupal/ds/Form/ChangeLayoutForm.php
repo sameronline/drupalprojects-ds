@@ -45,8 +45,6 @@ class ChangeLayoutForm extends FormBase {
       $form['#new_layout_key'] = $new_layout_key;
       $form['#export_id'] = $entity_type . '|' . $bundle . '|' . $display_mode;
 
-      $form['#title'] = 'Change layout';
-
       $form['info'] = array(
         '#markup' => t('You are changing from %old to %new layout for !bundle in !view_mode view mode.', array('%old' => $old_layout['label'], '%new' => $new_layout['label'], '!bundle' => $bundle, '!view_mode' => $display_mode)),
         '#prefix' => "<div class='change-ds-layout-info'>",

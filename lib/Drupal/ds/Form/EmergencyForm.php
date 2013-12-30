@@ -66,8 +66,6 @@ class EmergencyForm extends FormBase {
    */
   public function buildForm(array $form, array &$form_state) {
 
-    $form['#title'] = 'Emergency settings';
-
     $form['ds_fields_error'] = array(
       '#type' => 'fieldset',
       '#title' => $this->t('Fields error'),

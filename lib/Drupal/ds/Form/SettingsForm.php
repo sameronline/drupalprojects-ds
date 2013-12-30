@@ -65,8 +65,6 @@ class SettingsForm extends ConfigFormBase {
   public function buildForm(array $form, array &$form_state) {
     $config = $this->configFactory->get('ds.settings');
 
-    $form['#title'] = 'Settings';
-
     $form['additional_settings'] = array(
       '#type' => 'vertical_tabs',
       '#attached' => array(

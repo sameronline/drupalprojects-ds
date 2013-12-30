@@ -28,13 +28,6 @@ class TokenFieldForm extends FieldFormBase {
     $form = parent::buildForm($form, $form_state, $field_key);
     $field = $this->field;
 
-    if (empty($field_key)) {
-      $form['#title'] = 'Add a token field';
-    }
-    else {
-      $form['#title'] = 'Edit a token field';
-    }
-
     $form['content'] = array(
       '#type' => 'text_format',
       '#title' => t('Field content'),

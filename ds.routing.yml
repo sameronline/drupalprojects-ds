@@ -14,18 +14,21 @@ ds.admin_settings:
   path: 'admin/structure/ds/settings'
   defaults:
     _form: '\Drupal\ds\Form\SettingsForm'
+    _title: 'Settings'
   requirements:
     _permission: 'admin display suite'
 ds.admin_emergency:
   path: 'admin/structure/ds/emergency'
   defaults:
     _form: '\Drupal\ds\Form\EmergencyForm'
+    _title: 'Emergency settings'
   requirements:
     _permission: 'admin display suite'
 ds.change_layout:
   path: 'admin/structure/ds/change-layout/{entity_type}/{bundle}/{display_mode}/{new_layout}'
   defaults:
     _form: '\Drupal\ds\Form\ChangeLayoutForm'
+    _title: 'Change layout'
   requirements:
     _permission: 'admin display suite'
 

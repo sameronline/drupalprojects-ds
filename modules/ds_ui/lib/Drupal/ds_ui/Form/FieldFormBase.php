@@ -97,7 +97,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
    */
   public function buildForm(array $form, array &$form_state, $field_key = '') {
 
-    // Initalize field.
+    // Initialize field.
     $field = array();
 
     // Fetch field if it already exists.
