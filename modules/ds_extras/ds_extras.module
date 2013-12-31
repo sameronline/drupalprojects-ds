@@ -348,27 +348,3 @@ function ds_extras_field_extra_fields() {
 
   return $extra;
 }
-
-/**
- * Helper function to check if this is a page view.
- *
- * The page title option adds the ability to hide or override the page title.
- * However, it can't happen that an entity bleeds its page title to say a view
- * or the frontpage.
- *
- * See http://drupal.org/node/1526732 and http://drupal.org/node/1446554.
- */
-function ds_extras_is_entity_page_view($build, $entity_type) {
-  switch ($entity_type) {
-    case 'node':
-      return node_is_page($build['#node']);
-    case 'user':
-      $page_account = menu_get_object('user');
-      return (!empty($page_account) ? $page_account->uid == $build['#account']->uid : FALSE);
-    case 'taxonomy_term':
-      $page_term = menu_get_object('taxonomy_term', 2);
-      return (!empty($page_term) ? $page_term->tid == $build['#term']->tid : FALSE);
-  }
-
-  return FALSE;
-}
