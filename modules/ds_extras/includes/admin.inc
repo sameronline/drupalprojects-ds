@@ -32,7 +32,7 @@ function ds_extras_settings_alter(&$form, &$form_state) {
     '#default_value' => implode("\n", $config->get('fields_extra_list')),
     '#states' => array(
       'visible' => array(
-        'input[name="additional_settings[fs2][fields_extra]"]' => array('checked' => TRUE),
+        'input[name="fs2[fields_extra]"]' => array('checked' => TRUE),
       ),
     ),
   );
