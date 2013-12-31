@@ -73,25 +73,11 @@ function ds_extras_permission() {
 }
 
 /**
- * Implements hook_admin_paths().
- */
-function ds_extras_admin_paths() {
-  $config = \Drupal::config('node.settings');
-  if ($config->get('use_admin_theme')) {
-    return array(
-      'node/*/display' => TRUE,
-      'user/*/display' => TRUE,
-      'taxonomy/term/*/display' => TRUE,
-    );
-  }
-}
-
-/**
  * Implements hook_module_implements_alter().
  */
 function ds_extras_module_implements_alter(&$implementations, $hook) {
   // Because it's possible to turn on/off features for DS extras,
-  // we'll unset hooks here if necessary which otherwhise do nothing at all.
+  // we'll unset hooks here if necessary which otherwise do nothing at all.
 
   // Region to block
   $region_hooks = array(
@@ -184,7 +170,7 @@ function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityDis
 }
 
 /**
- * Utility funtion to return the view mode for the current entity.
+ * Utility function to return the view mode for the current entity.
  *
  * The drupal_static is called in ds_extras_node_show to set
  * the current view mode. Through this technique, the hide page

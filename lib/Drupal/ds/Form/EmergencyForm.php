@@ -10,6 +10,7 @@ namespace Drupal\ds\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\KeyValueStore\State;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,6 +26,13 @@ class EmergencyForm extends FormBase {
   protected $configFactory;
 
   /**
+   * State object
+   *
+   * @var \Drupal\Core\KeyValueStore\State
+   */
+  protected $state;
+
+  /**
    * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
@@ -38,10 +46,13 @@ class EmergencyForm extends FormBase {
    *   The config factory.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface
    *   The module handler.
+   * @param \Drupal\Core\KeyValueStore\State
+   *   The state key value store
    */
-  public function __construct(ConfigFactory $config_factory, ModuleHandlerInterface $module_handler) {
+  public function __construct(ConfigFactory $config_factory, ModuleHandlerInterface $module_handler, State $state) {
     $this->configFactory = $config_factory;
     $this->moduleHandler = $module_handler;
+    $this->state = $state;
   }
 
   /**
@@ -50,7 +61,8 @@ class EmergencyForm extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('state')
     );
  }
 
@@ -75,7 +87,7 @@ class EmergencyForm extends FormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Disable attaching fields via Display Suite'),
       '#description' => $this->t('In case you get an error after configuring a layout printing a message like "Fatal error: Unsupported operand types", you can temporarily disable adding fields from DS by toggling this checkbox. You probably are trying to render an node inside a node, for instance through a view, which is simply not possible. See <a href="http://drupal.org/node/1264386">http://drupal.org/node/1264386</a>.'),
-      '#default_value' => $this->configFactory->get('ds.settings')->get('disable', FALSE),
+      '#default_value' => $this->state->get('ds.disabled', FALSE),
       '#weight' => 0,
     );
 
@@ -129,7 +141,7 @@ class EmergencyForm extends FormBase {
    * Submit callback for the fields error form.
    */
   public function submitFieldAttach(array &$form, array &$form_state) {
-    $this->configFactory->get('ds.settings')->set('disable', $form_state['values']['disable'])->save();
+    $this->state->set('ds.disabled', $form_state['values']['disable']);
     drupal_set_message(t('The configuration options have been saved.'));
   }
 

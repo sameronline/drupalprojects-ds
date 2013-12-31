@@ -26,7 +26,7 @@ Read more: http://drupal.org/node/1795282
 
 Project page: http://drupal.org/project/ds
 Documentation: http://drupal.org/node/644662
-Screencastst & articles: http://drupal.org/node/644706
+Screen casts & articles: http://drupal.org/node/644706
 Submit bug reports, feature suggestions: http://drupal.org/project/issues/ds
 
 -- MAINTAINERS --
