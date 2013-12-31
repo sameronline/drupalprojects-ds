@@ -329,7 +329,7 @@ function ds_extras_field_extra_fields() {
   $extra = array();
 
   if (\Drupal::config('ds.extras')->get('fields_extra')) {
-    $fields = explode("\n", Drupal::config('ds.extras')->get('fields_extra_list'));
+    $fields = Drupal::config('ds.extras')->get('fields_extra_list');
     if (empty($fields)) {
       return $extra;
     }

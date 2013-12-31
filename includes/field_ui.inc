@@ -1555,15 +1555,14 @@ function _ds_field_valid($key, $field, &$form_state, $view_mode = 'default') {
 /**
  * Utility function to return CSS classes.
  */
-function _ds_classes($name = 'regions') {
+function _ds_classes($name = 'region') {
   static $classes = array();
 
   if (!isset($classes[$name])) {
     $classes[$name] = array();
-    $custom_classes = trim(\Drupal::config('ds.classes')->get($name));
+    $custom_classes = \Drupal::config('ds.settings')->get('classes.' . $name);
     if (!empty($custom_classes)) {
       $classes[$name][''] = t('None');
-      $custom_classes = explode("\n", $custom_classes);
       foreach ($custom_classes as $value) {
         $classes_splitted = explode("|", $value);
         $key = trim($classes_splitted[0]);

@@ -19,7 +19,11 @@ ds.extras:
       type: boolean
       label: 'Add extra fields'
     fields_extra_list:
+      type: sequence
       label: 'List of extra fields'
+      sequence:
+        - type: string
+          label: 'Extra field'
     switch_view_mode:
       type: boolean
       label: 'Switch view mode on nodes'

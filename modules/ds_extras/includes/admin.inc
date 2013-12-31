@@ -29,7 +29,7 @@ function ds_extras_settings_alter(&$form, &$form_state) {
   $form['fs2']['fields_extra_list'] = array(
     '#type' => 'textarea',
     '#description' => t('Enter fields line by line, where each line is a combination of entity type, bundle and field name. E.g. node|article|tweetbutton. It might be possible that the actual content of the field depends on configuration of that field/module.'),
-    '#default_value' => $config->get('fields_extra_list'),
+    '#default_value' => implode("\n", $config->get('fields_extra_list')),
     '#states' => array(
       'visible' => array(
         'input[name="additional_settings[fs2][fields_extra]"]' => array('checked' => TRUE),
@@ -91,9 +91,14 @@ function ds_extras_settings_alter(&$form, &$form_state) {
 function ds_extras_settings_submit($form, &$form_state) {
   $values = $form_state['values'];
 
+  $extra_fields = array();
+  if (!empty($values['fs2']['fields_extra_list'])) {
+    $extra_fields = explode("\n", str_replace("\r", '', $values['fs2']['fields_extra_list']));
+  }
+
   $config = \Drupal::config('ds.extras')
     ->set('fields_extra', $values['fs2']['fields_extra'])
-    ->set('fields_extra_list', $values['fs2']['fields_extra_list'])
+    ->set('fields_extra_list', $extra_fields)
     ->set('switch_view_mode', $values['fs3']['switch_view_mode'])
     ->set('field_permissions', $values['fs3']['field_permissions'])
     ->set('switch_field', $values['fs3']['switch_field'])

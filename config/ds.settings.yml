@@ -2,3 +2,6 @@ disabled: false
 field_template: false
 ft-default: theme_field
 ft-kill-colon: false
+classes:
+  region: {  }
+  field: {  }
