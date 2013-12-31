@@ -23,6 +23,14 @@ ds.classes:
   label: 'Display Suite classes'
   mapping:
     regions:
+      type: sequence
       label: 'Region classes'
+      sequence:
+        - type: string
+          label: 'Region class'
     fields:
+      type: sequence
       label: 'Field classes'
+      sequence:
+        - type: string
+          label: 'Field class'
