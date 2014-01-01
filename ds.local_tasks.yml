@@ -1,37 +1,34 @@
 ds.display_task:
   route_name: ds.structure
   title: Displays
-  tab_root_id: ds.display_task
+  base_route: ds.display_task
   weight: 0
 ds.list_task:
   route_name: ds.list
   title: List
-  tab_root_id: ds.display_task
-  tab_parent_id: ds.display_task
+  parent_id: ds.display_task
 ds.settings_task:
   route_name: ds.admin_settings
   title: Settings
-  tab_root_id: ds.display_task
-  tab_parent_id: ds.display_task
+  parent_id: ds.display_task
   weight: 10
 ds.emergency_task:
   route_name: ds.admin_emergency
   title: Emergency
-  tab_root_id: ds.display_task
-  tab_parent_id: ds.display_task
+  parent_id: ds.display_task
   weight: 100
 ds.manage_node_display:
   route_name: ds.contextual_tab_node
-  tab_root_id: node.view
+  base_route: node.view
   title: 'Manage display'
   weight: 10
 ds.manage_taxonomy_term_display:
   route_name: ds.contextual_tab_taxonomy_term
-  tab_root_id: taxonomy.term_page
+  base_route: taxonomy.term_page
   title: 'Manage display'
   weight: 10
 ds.manage_user_display:
   route_name: ds.contextual_tab_user
-  tab_root_id: user.view
+  base_route: user.view
   title: 'Manage display'
   weight: 10
