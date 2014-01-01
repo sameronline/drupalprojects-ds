@@ -9,6 +9,7 @@ namespace Drupal\ds_extras\Controller;
 
 use Drupal\Core\Access\AccessInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -57,11 +58,15 @@ class DsExtrasController extends ControllerBase {
   }
 
   /**
-   * Renders the node
+   * Displays a node.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node we are displaying.
+   *
+   * @return array
+   *   An array suitable for drupal_render().
    */
-  public function nodeView($node, Request $request) {
-
-    $node = entity_load('node', $node);
+  public function nodeView(NodeInterface $node, Request $request) {
     $uri = $node->uri();
     // Set the node path as the canonical URL to prevent duplicate content.
     drupal_add_html_head_link(array('rel' => 'canonical', 'href' => url($uri['path'], $uri['options'])), TRUE);
