@@ -25,32 +25,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class DsEntityRow extends RowPluginBase {
 
   /**
-   * The table the entity is using for storage.
-   *
-   * @var string
-   */
-  public $base_table;
-
-  /**
-   * The actual field which is used for the entity id.
-   *
-   * @var string
-   */
-  public $base_field;
-
-  /**
    * Stores the entity type of the result entities.
    *
    * @var string
    */
   protected $entityType;
 
-  /**
-   * Contains the entity info of the entity type of this row plugin instance.
-   *
-   * @see entity_get_info
-   */
-  protected $entityInfo;
 
   /**
    * Contains an array of render arrays, one for each rendered entity.
@@ -78,9 +58,6 @@ class DsEntityRow extends RowPluginBase {
     parent::init($view, $display, $options);
 
     $this->entityType = $this->definition['entity_type'];
-    $this->entityInfo = $this->entityManager->getDefinition($this->entityType);
-    $this->base_table = $this->entityInfo['base_table'];
-    $this->base_field = $this->entityInfo['entity_keys']['id'];
   }
 
   /**
@@ -103,7 +80,6 @@ class DsEntityRow extends RowPluginBase {
         'allpages' => array('default' => FALSE, 'bool' => TRUE),
         'item' => array(
           'default' => array(),
-          'export' => 'dsItemExportOption',
         ),
       ),
     );
@@ -125,20 +101,6 @@ class DsEntityRow extends RowPluginBase {
       ),
     );
     return $options;
-  }
-
-  /**
-   * Custom export function for alternating_fieldset items.
-   */
-  function dsItemExportOption($indent, $prefix, $storage, $option, $definition, $parents) {
-    $output = '';
-    $definition = array('default' => 'teaser');
-    foreach ($storage as $key => $value) {
-      if (strstr($key, 'item_') !== FALSE) {
-        $output .= parent::export_option($indent, $prefix, $storage, $key, $definition, $parents);
-      }
-    }
-    return $output;
   }
 
   /**
@@ -246,7 +208,7 @@ class DsEntityRow extends RowPluginBase {
       $form['grouping_fieldset']['group_field_function'] = array(
         '#type' => 'textfield',
         '#title' => 'Heading function',
-        '#description' => check_plain(t('The value of the field can be in a very raw format (eg, date created). Enter a custom function which you can use to format that value. The value and the object will be passed into that function eg. custom_function($raw_value, $object);')),
+        '#description' => String::checkPlain(t('The value of the field can be in a very raw format (eg, date created). Enter a custom function which you can use to format that value. The value and the object will be passed into that function eg. custom_function($raw_value, $object);')),
         '#default_value' => isset($this->options['grouping_fieldset']['group_field_function']) ? $this->options['grouping_fieldset']['group_field_function'] : '',
       );
     }

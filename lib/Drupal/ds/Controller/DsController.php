@@ -27,7 +27,7 @@ class DsController extends ControllerBase {
     $build = array();
 
     // All entities.
-    $entity_info = $this->entityManager()->getDefinitions();;
+    $entity_info = $this->entityManager()->getDefinitions();
 
     // Move node to the top.
     if (isset($entity_info['node'])) {
@@ -51,7 +51,8 @@ class DsController extends ControllerBase {
     }
 
     foreach ($entity_info as $entity_type => $info) {
-      if (!empty($info['fieldable']) && !empty($info['base_table'])) {
+      $base_table = $info->getBaseTable();
+      if ($info->isFieldable() && !empty($base_table)) {
         $rows = array();
         $bundles = $this->entityManager()->getBundleInfo($entity_type);
         foreach ($bundles as $bundle_type => $bundle) {
@@ -95,7 +96,7 @@ class DsController extends ControllerBase {
         if (!empty($rows)) {
           $variables = array(
             'header' => array(
-              array('data' => $info['label']),
+              array('data' => $info->getLabel()),
               array(
                 'data' => $field_ui_enabled ? t('operations') : '',
                 'class' => 'ds-display-list-options')

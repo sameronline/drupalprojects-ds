@@ -634,20 +634,24 @@ function ds_contextual_links_view_alter(&$element, $items) {
   $def = \Drupal::service('entity.manager')->getDefinitions();
   $entity_type = array_keys($element['#contextual_links'])[0];
 
-  if (isset($def[$entity_type]) && $def[$entity_type]['fieldable']) {
+  if (isset($def[$entity_type]) && $def[$entity_type]->isFieldable()) {
     if (!empty($entity_type) && \Drupal::moduleHandler()->moduleExists('field_ui') && \Drupal::currentUser()->hasPermission('administer node display')) {
       list($bundle, $view_mode) = explode('-', array_keys($element['#contextual_links'][$entity_type]['metadata'])[0]);
       $route_name = "field_ui.display_overview_view_mode_$entity_type";
+      $type = $def[$entity_type]->getBundleEntityType();
 
-      $element['#links']['manage-display'] = array(
-        'title' => t('Manage display'),
-        'route_name' => $route_name,
-        'route_parameters' => array(
-          $def[$entity_type]['bundle_entity_type'] => $bundle,
-          'view_mode_name' => $view_mode,
-        ),
-        'query' => drupal_get_destination(),
-      );
+      // When there is no bundle defined, return
+      if (!empty($bundle)) {
+        $element['#links']['manage-display'] = array(
+          'title' => t('Manage display'),
+          'route_name' => $route_name,
+          'route_parameters' => array(
+            $type => $bundle,
+            'view_mode_name' => $view_mode,
+          ),
+          'query' => drupal_get_destination(),
+        );
+      }
     }
   }
 }

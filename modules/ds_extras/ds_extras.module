@@ -63,7 +63,7 @@ function ds_extras_permission() {
       $fields = ds_get_fields($entity_type);
       foreach ($fields as $key => $finfo) {
         $permissions['view ' . $key . ' on ' . $entity_type] = array(
-          'title' => t('View !field on !entity_type', array('!field' => $finfo['title'], '!entity_type' => $info['label'])),
+          'title' => t('View !field on !entity_type', array('!field' => $finfo['title'], '!entity_type' => $info->getLabel())),
         );
       }
     }

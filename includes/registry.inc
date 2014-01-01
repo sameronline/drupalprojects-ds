@@ -121,9 +121,9 @@ function _ds_entity_type_update($entity_type, $info, $action) {
 function _ds_theme_registry_alter(&$theme_registry) {
 
   // Inject ds_preprocess_ds_layout in all entity theming functions.
-  $entity_info = entity_get_info();
+  $entity_info = \Drupal::entityManager()->getDefinitions();
   foreach ($entity_info as $entity_type => $info) {
-    if (!empty($entity_info[$entity_type]['fieldable'])) {
+    if ($info->isFieldable()) {
       // Only add preprocess functions if entity exposes theme function.
       if (isset($theme_registry[$entity_type])) {
         $theme_registry[$entity_type]['preprocess functions'][] = 'ds_preprocess_ds_layout';

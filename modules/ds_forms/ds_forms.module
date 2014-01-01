@@ -24,7 +24,7 @@ function ds_forms_theme() {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_forms_form_field_ui_form_display_overview_form_alter(&$form, &$form_state) {
-  if (_ds_forms_is_entity_type_supported($form['#entity_type'])) {
+  if (\Drupal::entityManager()->getDefinition($form['#entity_type'])->isFieldable()) {
 
     // Add necessary variables for DS Field UI.
     $form['#mode'] = 'form';
@@ -181,14 +181,4 @@ function ds_forms_render_region(&$content, $region, $layout) {
     }
   }
   return $output;
-}
-
-/**
- * Determines if this entity type is supported by ds_forms.
- *
- * Currently supports all fieldable entity types.
- */
-function _ds_forms_is_entity_type_supported($entity_type) {
-  $info = \Drupal::entityManager()->getDefinition($entity_type);
-  return !empty($info['fieldable']);
 }
