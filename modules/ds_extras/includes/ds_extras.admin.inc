@@ -114,14 +114,12 @@ function ds_extras_settings($form) {
     '#default_value' => variable_get('ds_extras_field_permissions', FALSE),
   );
 
-  if (module_exists('block')) {
-    $form['additional_settings']['fs4']['ds_extras_region_to_block'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Region to block'),
-      '#description' => t('Create additional regions exposed as block. Note: this will not work on the default view mode.'),
-      '#default_value' => variable_get('ds_extras_region_to_block', FALSE),
-    );
-  }
+  $form['additional_settings']['fs4']['ds_extras_region_to_block'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Region to block'),
+    '#description' => t('Create additional regions exposed as block. Note: this will not work on the default view mode.'),
+    '#default_value' => variable_get('ds_extras_region_to_block', FALSE),
+  );
 
   if (module_exists('views')) {
     $form['additional_settings']['fs4']['ds_extras_vd'] = array(
@@ -504,10 +502,12 @@ function ds_extras_block_submit($form, &$form_state) {
     foreach ($remove as $key => $value) {
       if ($key === $value) {
         $variable_set = TRUE;
-        db_delete('block')
-          ->condition('delta', $key)
-          ->condition('module', 'ds_extras')
-          ->execute();
+        if (module_exists('block')) {
+          db_delete('block')
+            ->condition('delta', $key)
+            ->condition('module', 'ds_extras')
+            ->execute();
+        }
         unset($region_blocks[$key]);
       }
     }
