@@ -2477,9 +2477,7 @@ function _ds_field_ui_custom_fields($entity_type, $bundle, $view_mode, &$form, $
     'custom_field' => t('Add a code field'),
     'manage_ctools' => t('Add a dynamic field'),
   );
-  if (module_exists('block')) {
-    $field_types['manage_block'] = t('Add a block field');
-  }
+  $field_types['manage_block'] = t('Add a block field');
   $field_types['manage_preprocess'] = t('Add a preprocess field');
 
   foreach ($field_types as $field_key => $field_title) {
