@@ -351,6 +351,11 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
       '#size' => '10',
       '#description' => t('E.g. div, span, h2 etc.'),
       '#default_value' => isset($field_settings[$wrapper_key . '-el']) ? $field_settings[$wrapper_key . '-el'] : '',
+      '#states' => array(
+        'visible' => array(
+          ':input[name$="[ft][' . $wrapper_key . ']"]' => array('checked' => TRUE),
+        ),
+      ),
     );
     $form['ft'][$wrapper_key . '-cl'] = array(
       '#type' => 'textfield',
@@ -358,6 +363,11 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
       '#size' => '10',
       '#default_value' => isset($field_settings[$wrapper_key . '-cl']) ? $field_settings[$wrapper_key . '-cl'] : '',
       '#description' => t('E.g.') .' ' . implode(', ', $classes),
+      '#states' => array(
+        'visible' => array(
+          ':input[name$="[ft][' . $wrapper_key . ']"]' => array('checked' => TRUE),
+        ),
+      ),
     );
     $form['ft'][$wrapper_key . '-at'] = array(
       '#type' => 'textfield',
@@ -365,6 +375,11 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
       '#size' => '20',
       '#default_value' => isset($field_settings[$wrapper_key . '-at']) ? $field_settings[$wrapper_key . '-at'] : '',
       '#description' => t('E.g. name="anchor"'),
+      '#states' => array(
+        'visible' => array(
+          ':input[name$="[ft][' . $wrapper_key . ']"]' => array('checked' => TRUE),
+        ),
+      ),
     );
 
     // Hide colon.
@@ -383,6 +398,11 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
         '#type' => 'checkbox',
         '#title' => t('Add odd/even classes'),
         '#default_value' => isset($field_settings['fi-odd-even']) ? $field_settings['fi-odd-even'] : FALSE,
+        '#states' => array(
+          'visible' => array(
+            ':input[name$="[ft][' . $wrapper_key . ']"]' => array('checked' => TRUE),
+          ),
+        ),
       );
     }
     if ($wrapper_key != 'lbw') {
@@ -390,7 +410,12 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
         '#type' => 'checkbox',
         '#title' => t('Add default attributes'),
         '#default_value' => isset($field_settings[$wrapper_key . '-def-at']) ? $field_settings[$wrapper_key . '-def-at'] : FALSE,
-        '#suffix' => ($wrapper_key == 'ow') ? '' : '</div><div class="clearfix"></div>',
+        '#suffix' => ($wrapper_key == 'ow') ? '' : '</div>',
+        '#states' => array(
+          'visible' => array(
+            ':input[name$="[ft][' . $wrapper_key . ']"]' => array('checked' => TRUE),
+          ),
+        ),
       );
     }
     else {
@@ -405,7 +430,12 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
         '#type' => 'checkbox',
         '#title' => t('Add default classes'),
         '#default_value' => isset($field_settings[$wrapper_key . '-def-cl']) ? $field_settings[$wrapper_key . '-def-cl'] : FALSE,
-        '#suffix' => '</div><div class="clearfix"></div>',
+        '#suffix' => '</div>',
+        '#states' => array(
+          'visible' => array(
+            ':input[name$="[ft][' . $wrapper_key . ']"]' => array('checked' => TRUE),
+          ),
+        ),
       );
     }
   }
