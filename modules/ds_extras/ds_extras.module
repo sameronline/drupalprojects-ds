@@ -729,6 +729,11 @@ function theme_ds_field_expert($variables) {
 
   $config = $variables['ds-config'];
 
+  // Set prefix
+  if (!empty($config['prefix'])) {
+    $output .= $config['prefix'];
+  }
+
   // Render the label if it's not hidden.
   if (!$variables['label_hidden']) {
     $styled_label = $variables['label'];
@@ -815,6 +820,11 @@ function theme_ds_field_expert($variables) {
     $output = '<' . $config['ow-el'] . $class . $attributes . '>' . $output . '</' . $config['ow-el'] . '>';
   }
 
+  // Set suffix
+  if (!empty($config['suffix'])) {
+    $output .= $config['suffix'];
+  }
+
   return $output;
 }
 
@@ -894,6 +904,13 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
       if (!(empty($values['lbw-at'])) && $function == 'theme_ds_field_expert') {
        $field_settings[$key]['formatter_settings']['ft']['lbw-at'] = filter_xss($values['lbw-at']);
       }
+    }
+
+    if (!(empty($values['prefix']))) {
+      $field_settings[$key]['formatter_settings']['ft']['prefix'] = $values['prefix'];
+    }
+    if (!(empty($values['suffix']))) {
+      $field_settings[$key]['formatter_settings']['ft']['suffix'] = $values['suffix'];
     }
 
     // Custom field configuration.

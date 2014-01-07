@@ -325,6 +325,17 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
     );
   }
 
+  // Add prefix
+  $form['ft']['prefix'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Prefix'),
+    '#size' => '100',
+    '#description' => t('You can enter any html in here.'),
+    '#default_value' => isset($field_settings['prefix']) ? $field_settings['prefix'] : '',
+    '#prefix' => '<div class="field-prefix">',
+    '#suffix' => '</div>',
+  );
+
   // Wrappers and label.
   $wrappers = array(
     'lb' => array('title' => t('Label')),
@@ -439,6 +450,17 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
       );
     }
   }
+
+  // Add suffix
+  $form['ft']['suffix'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Suffix'),
+    '#size' => '100',
+    '#description' => t('You can enter any html in here.'),
+    '#default_value' => isset($field_settings['suffix']) ? $field_settings['suffix'] : '',
+    '#prefix' => '<div class="field-prefix">',
+    '#suffix' => '</div>',
+  );
 
   // Another label needs some other stuff.
   unset($form['ft']['lb']['#description']);

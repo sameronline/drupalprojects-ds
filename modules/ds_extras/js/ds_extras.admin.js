@@ -78,6 +78,9 @@ Drupal.behaviors.settingsToggle = {
         $('.ft-update', field).css({'margin-top': '-10px'});
         // Show wrappers.
         $('.lbw, .ow, .fis, .fi', field).show();
+        // Show prefix and suffix
+        $('.field-prefix', field).show();
+        $('.field-suffix', field).show();
       }
       else {
         // Hide second, third, fourth, fifth and sixth  label.
@@ -86,6 +89,9 @@ Drupal.behaviors.settingsToggle = {
         $('.ft-update', field).css({'margin-top': '10px'});
         // Hide wrappers.
         $('.lbw, .ow, .fis, .fi', field).hide();
+        // Hide prefix and suffix
+        $('.field-prefix', field).hide();
+        $('.field-suffix', field).hide();
       }
 
       // Colon.
