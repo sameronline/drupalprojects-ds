@@ -328,6 +328,7 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
   // Wrappers and label.
   $wrappers = array(
     'lb' => array('title' => t('Label')),
+    'lbw' => array('title' => t('Label wrapper')),
     'ow' => array('title' => t('Outer wrapper')),
     'fis' => array('title' => t('Field items')),
     'fi' => array('title' => t('Field item')),
@@ -384,12 +385,19 @@ function ds_extras_field_template_settings_form(array &$form, array &$form_state
         '#default_value' => isset($field_settings['fi-odd-even']) ? $field_settings['fi-odd-even'] : FALSE,
       );
     }
-    $form['ft'][$wrapper_key . '-def-at'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Add default attributes'),
-      '#default_value' => isset($field_settings[$wrapper_key . '-def-at']) ? $field_settings[$wrapper_key . '-def-at'] : FALSE,
-      '#suffix' => ($wrapper_key == 'ow') ? '' : '</div><div class="clearfix"></div>',
-    );
+    if ($wrapper_key != 'lbw') {
+      $form['ft'][$wrapper_key . '-def-at'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Add default attributes'),
+        '#default_value' => isset($field_settings[$wrapper_key . '-def-at']) ? $field_settings[$wrapper_key . '-def-at'] : FALSE,
+        '#suffix' => ($wrapper_key == 'ow') ? '' : '</div><div class="clearfix"></div>',
+      );
+    }
+    else {
+      $form['ft'][$wrapper_key . '-def-at'] = array(
+        '#markup' => '</div><div class="clearfix"></div>',
+      );
+    }
 
     // Default classes for outer wrapper.
     if ($wrapper_key == 'ow') {

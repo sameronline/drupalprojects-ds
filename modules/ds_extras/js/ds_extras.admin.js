@@ -77,7 +77,7 @@ Drupal.behaviors.settingsToggle = {
         // Remove margin from update button.
         $('.ft-update', field).css({'margin-top': '-10px'});
         // Show wrappers.
-        $('.ow, .fis, .fi', field).show();
+        $('.lbw, .ow, .fis, .fi', field).show();
       }
       else {
         // Hide second, third, fourth, fifth and sixth  label.
@@ -85,7 +85,7 @@ Drupal.behaviors.settingsToggle = {
         // Add margin on update button.
         $('.ft-update', field).css({'margin-top': '10px'});
         // Hide wrappers.
-        $('.ow, .fis, .fi', field).hide();
+        $('.lbw, .ow, .fis, .fi', field).hide();
       }
 
       // Colon.
