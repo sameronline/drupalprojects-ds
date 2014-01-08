@@ -162,8 +162,17 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
       $vars['layout_attributes'] = '';
     }
 
+    if (isset($layout['settings']['classes']['layout_class'])) {
+      foreach ($layout['settings']['classes']['layout_class'] as $layout_class) {
+        $vars['classes_array'][] = $layout_class;
+      }
+    }
+
     // Ensure there is a class
-    $vars['classes'] = 'ds-form';
+    $vars['classes_array'][] = 'ds-form';
+
+    // Merge the classes into a string
+    $vars['classes'] = implode(' ', $vars['classes_array']);
 
     // Add a layout wrapper
     $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
