@@ -2033,7 +2033,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
   foreach ($fields as $key => $field) {
 
     // Check on ui_limit.
-    if (isset($field['ui_limit'])) {
+    if (!empty($field['ui_limit'])) {
 
       $continue = TRUE;
       foreach ($field['ui_limit'] as $limitation) {
