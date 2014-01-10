@@ -1,6 +1,0 @@
-highlight_selector: view-mode-search_result
-search_node_limit: 10
-search_path: content
-search_type: node
-search_variables: none
-view_mode: search_result

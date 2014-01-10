@@ -1,5 +1,11 @@
+/**
+ * @file
+ * Provides highlight functionality for search results
+ */
 
 (function($, Drupal, drupalSettings) {
+
+"use strict";
 
 /**
  * Highlight words in search results with jQuery.
@@ -9,10 +15,10 @@ Drupal.behaviors.DSSearchHighlight = {
     var selector = drupalSettings.ds_search['selector'];
     var search = drupalSettings.ds_search['search'];
     var $selector = $(selector);
-    // Split word.
 
-    words = search.split(' ');
-    for (i = 0; i < words.length; i++) {
+    // Split word.
+    var words = search.split(' ');
+    for (var i = 0; i < words.length; i++) {
       // Match only valid words. Do not match special search operators or words less than three characters.
       if (words[i] != '' && words[i] != 'AND' && words[i] != 'OR' && words[i].length >= 3) {
         $selector.highlight(words[i]);
@@ -46,7 +52,6 @@ jQuery.fn.highlight = function(pat) {
     var spannode = document.createElement('span');
     spannode.className = 'ds-search-highlight';
     var middlebit = node.splitText(pos);
-    var endbit = middlebit.splitText(pat.length);
     var middleclone = middlebit.cloneNode(true);
     spannode.appendChild(middleclone);
     middlebit.parentNode.replaceChild(spannode, middlebit);

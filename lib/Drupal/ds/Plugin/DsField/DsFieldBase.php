@@ -64,13 +64,13 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
       $this->entity = $configuration['entity'];
     }
     if (isset($configuration['bundle'])) {
-      $this->entity = $configuration['bundle'];
+      $this->bundle = $configuration['bundle'];
     }
     if (isset($configuration['build'])) {
       $this->build = $configuration['build'];
     }
     if (isset($configuration['view_mode'])) {
-      $this->build = $configuration['view_mode'];
+      $this->view_mode = $configuration['view_mode'];
     }
     if (isset($configuration['field_name'])) {
       $this->field_name = $configuration['field_name'];
