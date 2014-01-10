@@ -7,7 +7,6 @@
 
 namespace Drupal\ds_search\Plugin\Search;
 
-use Drupal\Component\Utility\String;
 use Drupal\ds_search\DsSearch;
 use Drupal\node\Plugin\Search\NodeSearch;
 
