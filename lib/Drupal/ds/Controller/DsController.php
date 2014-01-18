@@ -10,6 +10,7 @@ namespace Drupal\ds\Controller;
 use Drupal\Component\Utility\String;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\field_ui\FieldUI;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -61,17 +62,20 @@ class DsController extends ControllerBase {
           $row[] = String::checkPlain($bundle['label']);
 
           if ($field_ui_enabled) {
-            $path = $this->entityManager()->getAdminPath($entity_type, $bundle_type);
+            // Get the manage display URI.
+            $route = FieldUI::getOverviewRouteInfo($entity_type, $bundle_type);
             $operations['manage_display'] = array(
               'title' => t('Manage display'),
-              'href' => $path . '/display',
+              'route_name' => 'field_ui.display_overview_' . $entity_type,
+              'route_parameters' => $route['route_parameters'],
             );
 
             // Add Manage Form link if Display Suite Forms is enabled.
             if ($this->moduleHandler()->moduleExists('ds_forms')) {
               $operations['manage_form'] = array(
                 'title' => t('Manage form'),
-                'href' => $path . '/fields',
+                'route_name' => 'field_ui.form_display_overview_' . $entity_type,
+                'route_parameters' => $route['route_parameters'],
               );
             }
           }
@@ -155,7 +159,7 @@ class DsController extends ControllerBase {
     $layout = ds_get_layout($entity_type, $entity->bundle(), $view_mode, FALSE);
 
     // Get the manage display URI.
-    $admin_path = $this->entityManager()->getAdminPath($entity_type, $entity->bundle());
+    $route = FieldUI::getOverviewRouteInfo($entity_type, $entity->bundle());
 
     // Check view mode settings.
     $overridden = FALSE;
@@ -164,12 +168,12 @@ class DsController extends ControllerBase {
       $overridden = $entity_display->status();
     }
 
-    if (empty($layout) && !$overridden) {
-      $admin_path .= '/display';
+    $route_parameters = $route['route_parameters'];
+    if (!empty($layout) || $overridden) {
+      $route_parameters['view_mode_name'] = $view_mode;
     }
-    else {
-      $admin_path .= '/display/' . $view_mode;
-    }
+
+    $admin_path = $this->url('field_ui.display_overview_view_mode_' . $entity_type, $route_parameters, $route['options']);
 
     return new RedirectResponse(url($admin_path, array('query' => array('destination' => $destination['path']))));
   }

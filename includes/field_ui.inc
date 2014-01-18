@@ -7,6 +7,7 @@
 
 use Drupal\Component\Utility\String;
 use Drupal\field\Field;
+use Drupal\field_ui\FieldUI;
 
 /**
  * Adds the Display Suite fields and layouts to the form.
@@ -1004,15 +1005,20 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
     }
 
     if (isset($form_state['values']['layout']) && (!isset($layout['layout']) || $form_state['values']['layout'] != $layout['layout'])) {
-
       // Get admin path.
-      $admin_path = \Drupal::entityManager()->getAdminPath($entity_type, $bundle);
+      $route = FieldUI::getOverviewRouteInfo($entity_type, $bundle);
+      $route_parameters = $route['route_parameters'];
+      $options = $route['options'];
+
       if ($view_mode != 'form') {
-        $admin_path .= '/display';
+        $route_name = 'field_ui.display_overview_' . $entity_type;
+
       }
       else {
-        $admin_path .= '/form-display';
+        $route_name = 'field_ui.form_display_overview_' . $entity_type;
       }
+
+      $admin_path = \Drupal::service('url_generator')->generateFromRoute($route_name, $route_parameters, $options);
 
       // If regions aren't set we don't have to move fields.
       if (isset($layout['regions'])) {
