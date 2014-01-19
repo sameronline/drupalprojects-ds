@@ -7,7 +7,7 @@
 
 use Drupal\Component\Utility\String;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\ds\Ds;
 use Drupal\entity\Entity\EntityDisplay;
 use Drupal\field\Field;
 
@@ -131,7 +131,7 @@ function ds_module_implements_alter(&$implementations, $hook) {
 function ds_library_info() {
   $libraries['ds.admin.js'] = array(
     'title' => 'Display Suite settings',
-    'version' => Drupal::VERSION,
+    'version' => \Drupal::VERSION,
     'js' => array(
       drupal_get_path('module', 'ds') . '/js/ds.admin.js' => array(),
     ),
@@ -143,207 +143,12 @@ function ds_library_info() {
   );
   $libraries['ds.admin.css'] = array(
     'title' => 'Display Suite administration CSS',
-    'version' => Drupal::VERSION,
+    'version' => \Drupal::VERSION,
     'css' => array(
       drupal_get_path('module', 'ds') . '/css/ds.admin.css' => array(),
     ),
   );
   return $libraries;
-}
-
-/**
- * Function to check if we go on with Display Suite.
- */
-function ds_kill_switch() {
-  if (Drupal::state()->get('ds.disabled', FALSE)) {
-    return TRUE;
-  }
-  return FALSE;
-}
-
-/**
- * Get Display Suite layouts.
- */
-function ds_get_layout_info() {
-  static $layouts = FALSE;
-
-  if (!$layouts) {
-    $errors = array();
-
-    $layouts = Drupal::moduleHandler()->invokeAll('ds_layout_info');
-
-    // Give modules a chance to alter the layouts information.
-    \Drupal::moduleHandler()->alter('ds_layout_info', $layouts);
-
-    // Check that there is no 'content' region, but ignore panel layouts.
-    // Because when entities are rendered, the field items are stored into a
-    // 'content' key so fields would be overwritten before they're all moved.
-    foreach ($layouts as $key => $info) {
-      if (isset($info['regions']['content'])) {
-        $errors[] = $key;
-      }
-    }
-    if (!empty($errors)) {
-      drupal_set_message(t('Following layouts have a "content" region key which is invalid: %layouts.', array('%layouts' => implode(', ', $errors))), 'error');
-    }
-  }
-
-  return $layouts;
-}
-
-/**
- * Get a layout for a given entity.
- *
- * @param $entity_type
- *   The name of the entity.
- * @param $bundle
- *   The name of the bundle.
- * @param $view_mode
- *   The name of the view mode.
- * @param $fallback
- *   Whether to fallback to default or not.
- *
- * @return $layout
- *   Array of layout variables for the regions.
- */
-function ds_get_layout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
-  static $layouts = array();
-
-  $layout_key = $entity_type . '_' . $bundle . '_' . $view_mode;
-  if (!isset($layouts[$layout_key])) {
-
-    $bundles = Drupal::entityManager()->getAllBundleInfo();
-
-    $overridden = TRUE;
-    if ($view_mode != 'form') {
-      $entity_display = entity_load('entity_display', $entity_type . '.' . $bundle . '.' . $view_mode);
-      if ($entity_display) {
-        $overridden = $entity_display->status();
-      }
-      else {
-        $overridden = FALSE;
-      }
-    }
-    // Check if a layout is configured.
-    if (isset($bundles[$entity_type][$bundle]['layouts'][$view_mode]) && ($overridden || $view_mode == 'default')) {
-      $layouts[$layout_key] = $bundles[$entity_type][$bundle]['layouts'][$view_mode];
-      $layouts[$layout_key]['view_mode'] = $view_mode;
-    }
-
-    // In case $view_mode is not found, check if we have a default layout,
-    // but only if the view mode settings aren't overridden for this view mode.
-    if ($view_mode != 'default' && !$overridden && $fallback && isset($bundles[$entity_type][$bundle]['layouts']['default'])) {
-      $layouts[$layout_key] = $bundles[$entity_type][$bundle]['layouts']['default'];
-      $layouts[$layout_key]['view_mode'] = 'default';
-    }
-
-    // Register the false return value as well.
-    if (!isset($layouts[$layout_key])) {
-      $layouts[$layout_key] = FALSE;
-    }
-  }
-
-  return $layouts[$layout_key];
-}
-
-/**
- * Get all fields.
- *
- * @param $entity_type
- *   The name of the entity.
- *
- * @return array
- *   Collection of fields.
- */
-function ds_get_fields($entity_type) {
-  static $static_fields;
-
-  if (!isset($static_fields[$entity_type])) {
-    foreach (\Drupal::service('plugin.manager.ds')->getDefinitions() as $plugin_id => $plugin) {
-      // Needed to get derivatives working
-      $plugin['plugin_id'] = $plugin_id;
-      $static_fields[$plugin['entity_type']][$plugin_id] = $plugin;
-    }
-  }
-
-  return isset($static_fields[$entity_type]) ? $static_fields[$entity_type] : array();
-}
-
-/**
- * Get the field settings.
- *
- * @param $entity_type
- *   The name of the entity.
- * @param $bundle
- *   The name of bundle (ie, page or story for node types, profile for users)
- * @param $view_mode
- *   The name of view mode.
- * @param bool $default
- *
- * @return array
- */
-function ds_get_field_settings($entity_type, $bundle, $view_mode, $default = TRUE) {
-  static $field_settings = NULL;
-
-  if (!isset($field_settings)) {
-    if ($cache = cache()->get('ds_field_settings')) {
-      $field_settings = $cache->data;
-    }
-    else {
-      $ds_field_settings = config_get_storage_names_with_prefix('ds.field_settings');
-      foreach ($ds_field_settings as $config) {
-        $field_setting = Drupal::config($config)->get();
-        if (!isset($field_setting['settings'])) {
-          continue;
-        }
-        foreach ($field_setting['settings'] as $field => $settings) {
-          $field_settings[$field_setting['entity_type']][$field_setting['bundle']][$field_setting['view_mode']][$field] = $settings;
-        }
-      }
-      cache()->set('ds_field_settings', $field_settings, CacheBackendInterface::CACHE_PERMANENT, array('ds_fields_info' => TRUE));
-    }
-  }
-
-  return (isset($field_settings[$entity_type][$bundle][$view_mode])) ? $field_settings[$entity_type][$bundle][$view_mode] : (isset($field_settings[$entity_type][$bundle]['default']) && $default ? $field_settings[$entity_type][$bundle]['default'] : array());
-}
-
-/**
- * Get the value for a Display Suite field.
- *
- * @param $key
- *   The key of the field.
- * @param $field
- *   The configuration of a DS field.
- * @param $entity
- *   The current entity.
- * @param $view_mode
- *   The name of the view mode.
- * @param $build
- *   The current built of the entity.
- * @return $markup
- *   The markup of the field used for output.
- */
-function ds_get_field_value($key, $field, $entity, $view_mode, $build = array()) {
-
-  $configuration = array(
-    'field' => $field,
-    'field_name' => $key,
-    'entity' => $entity,
-    'build' => $build,
-    'view_mode' => $view_mode,
-  );
-
-  // Load the plugin.
-  $field_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id'], $configuration);
-
-  // Special case preprocess fields as they don't need to be rendered
-  if ($field_instance InstanceOf PreprocessPluginBase) {
-    $entity->preprocess_fields[] = $key;
-  }
-
-  // Render the field.
-  return $field_instance->build();
-
 }
 
 /**
@@ -356,16 +161,10 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
 
   if (!$loaded) {
     $loaded = TRUE;
-    $field_permissions = Drupal::config('ds.extras')->get('field_permissions');
+    $field_permissions = \Drupal::config('ds.extras')->get('field_permissions');
   }
 
-  // Global kill switch. In some edge cases, a view might
-  // be inserted into the view of an entity, in which the
-  // same entity is available as well. This is simply not
-  // possible, so you can temporarily disable DS completely
-  // by setting this variable, either from code or via
-  // the UI through admin/structure/ds/
-  if (ds_kill_switch()) {
+  if (Ds::isDisabled()) {
     return;
   }
 
@@ -374,11 +173,11 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
   $view_mode = $display->mode;
 
   // If no layout is configured, stop as well.
-  if (!ds_get_layout($entity_type, $bundle, $view_mode)) {
+  if (!Ds::getLayout($entity_type, $bundle, $view_mode)) {
     return;
   }
 
-  $layout = ds_get_layout($entity_type, $bundle, $view_mode);
+  $layout = Ds::getLayout($entity_type, $bundle, $view_mode);
 
   // Put #entity_type, #bundle and #layout on the build so we can
   // access it in ds_entity_variables().
@@ -409,8 +208,9 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
   }
 
   // Add Display Suite fields.
-  $fields = ds_get_fields($entity_type);
-  $field_values = ds_get_field_settings($entity_type, $bundle, $view_mode);
+  $fields = Ds::getFields($entity_type);
+  $field_values = Ds::getFieldSettings($entity_type, $bundle, $view_mode);
+
   foreach ($field_values as $key => $field) {
 
     // Ignore if this field is not a DS field.
@@ -427,7 +227,7 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
       $field['plugin_settings'] = $field_values[$key]['plugin_settings'];
     }
 
-    $field_value = ds_get_field_value($key, $field, $entity, $view_mode, $build);
+    $field_value = Ds::getFieldValue($key, $field, $entity, $view_mode, $build);
 
     // Render the value
     $rendered_field_value =  drupal_render($field_value);
@@ -506,7 +306,7 @@ function ds_preprocess_ds_layout(&$vars) {
         foreach ($vars[$object]->preprocess_fields as $field) {
 
           // Process RDF if the module is enabled before moving preprocess fields.
-          if (Drupal::moduleHandler()->moduleExists('rdf')) {
+          if (\Drupal::moduleHandler()->moduleExists('rdf')) {
             $mapping = rdf_get_mapping($vars['entity_type'], $vars['bundle']);
             rdfa_attributes($mapping, $field);
             // Remove it so we can unset the field later on.
@@ -671,7 +471,7 @@ function ds_local_tasks_alter(&$local_tasks) {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) {
-  $theme_functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
+  $theme_functions = \Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
   $form['instance']['ds_field_template'] = array(
     '#type' => 'select',
     '#title' => t('Field Template'),
@@ -703,7 +503,7 @@ function theme_ds_field_reset($variables) {
   // Render the label.
   if (!$variables['label_hidden']) {
     $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
-    if (!Drupal::config('ds.settings')->get('ft-kill-colon')) {
+    if (!\Drupal::config('ds.settings')->get('ft-kill-colon')) {
       $output .= ':&nbsp;';
     }
     $output .= '</div>';
@@ -793,7 +593,7 @@ function theme_ds_field_expert($variables) {
       $class = !empty($class) ? ' class="'. implode(' ', $class)  .'"' : '';
       $attributes = array();
       if (!empty($config['fi-at'])) {
-        $attributes[] = token_replace($config['fi-at'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));
+        $attributes[] = \Drupal::service('token')->replace($config['fi-at'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));
       }
       if (!empty($config['fi-def-at'])) {
         $attributes[] = $variables['item_attributes'][$delta];
@@ -838,7 +638,7 @@ function theme_ds_field_expert($variables) {
 function ds_ds_field_settings_alter(&$field_settings, $form, &$form_state) {
 
   $fields = $form_state['values']['fields'];
-  $default_field_function = Drupal::config('ds.settings')->get('ft-default');
+  $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
 
   $wrappers = array(
     'ow' => t('Wrapper'),
@@ -930,7 +730,7 @@ function ds_ds_field_settings_alter(&$field_settings, $form, &$form_state) {
 function ds_preprocess_field(&$variables) {
 
   // We need to be sure this field is in a layout which is rendered by DS.
-  if (!ds_get_layout($variables['element']['#entity_type'], $variables['element']['#bundle'], $variables['element']['#view_mode'])) {
+  if (!Ds::getLayout($variables['element']['#entity_type'], $variables['element']['#bundle'], $variables['element']['#view_mode'])) {
     return;
   }
 
@@ -941,7 +741,7 @@ function ds_preprocess_field(&$variables) {
   $config = array();
   static $field_settings = array();
   if (!isset($field_settings[$entity_type][$bundle][$view_mode])) {
-    $field_settings[$entity_type][$bundle][$view_mode] = ds_get_field_settings($entity_type, $bundle, $view_mode);
+    $field_settings[$entity_type][$bundle][$view_mode] = Ds::getFieldSettings($entity_type, $bundle, $view_mode);
   }
 
   // Get the field name and field instance info - if available.
@@ -973,7 +773,7 @@ function ds_preprocess_field(&$variables) {
   }
   // Use Display Suite Extras Default theming function.
   elseif (!isset($config['func']) || empty($config['func'])) {
-    $field_theme_function = Drupal::config('ds.settings')->get('ft-default');
+    $field_theme_function = \Drupal::config('ds.settings')->get('ft-default');
     if ($field_theme_function != 'theme_field') {
       $variables['ds-config'] = $config;
     }
@@ -986,7 +786,7 @@ function ds_preprocess_field(&$variables) {
 function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
 
   // We need to be sure this field is in a layout which is rendered by DS.
-  if (!ds_get_layout($variables['element']['#entity_type'], $variables['element']['#bundle'], $variables['element']['#view_mode'])) {
+  if (!Ds::getLayout($variables['element']['#entity_type'], $variables['element']['#bundle'], $variables['element']['#view_mode'])) {
     return;
   }
 
@@ -996,7 +796,7 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
 
   static $field_settings = array();
   if (!isset($field_settings[$entity_type][$bundle][$view_mode])) {
-    $field_settings[$entity_type][$bundle][$view_mode] = ds_get_field_settings($entity_type, $bundle, $view_mode);
+    $field_settings[$entity_type][$bundle][$view_mode] = Ds::getFieldSettings($entity_type, $bundle, $view_mode);
   }
 
   // Get the field name and field instance info - if available.
@@ -1031,7 +831,7 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
   }
   // Use Display Suite Extras Default theming function.
   elseif (!isset($config['func']) || empty($config['func'])) {
-    $field_theme_function = Drupal::config('ds.settings')->get('ft-default');
+    $field_theme_function = \Drupal::config('ds.settings')->get('ft-default');
     if ($field_theme_function != 'theme_field') {
       $suggestions = array();
       // Either it uses the function.
@@ -1053,8 +853,8 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
  * Field template settings form
  */
 function ds_field_template_settings_form(array &$form, array &$form_state, array $context) {
-  $functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
-  $default_field_function = Drupal::config('ds.settings')->get('ft-default');
+  $functions = \Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
+  $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
   if (empty($default_field_function)) {
     $default_field_function = 'theme_field';
   }
@@ -1153,7 +953,7 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
       $form['ft']['lb-col'] = array(
         '#type' => 'checkbox',
         '#title' => t('Hide label colon'),
-        '#default_value' => isset($field_settings['lb-col']) ? $field_settings['lb-col'] : Drupal::config('ds.settings')->get('ft-kill-colon'),
+        '#default_value' => isset($field_settings['lb-col']) ? $field_settings['lb-col'] : \Drupal::config('ds.settings')->get('ft-kill-colon'),
         '#attributes' => array(
           'class' => array('colon-checkbox'),
         ),
@@ -1196,11 +996,11 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
  * Implements hook_field_formatter_settings_summary_alter().
  */
 function ds_field_formatter_settings_summary_alter(&$summary, $context, $form_state) {
-  if (Drupal::config('ds.settings')->get('field_template')) {
+  if (\Drupal::config('ds.settings')->get('field_template')) {
     // Field template summary
-    $functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
+    $functions = \Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
     $field = $context['field'];
-    $default_field_function = Drupal::config('ds.settings')->get('ft-default');
+    $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
 
     $field_function = isset($form_state['plugin_settings'][$field->getName()]['ft']['func']) ? $form_state['plugin_settings'][$field->getName()]['ft']['func'] : $default_field_function;
 

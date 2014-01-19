@@ -8,6 +8,7 @@
 namespace Drupal\ds\Form;
 
 use Drupal\Core\Form\FormBase;
+use Drupal\ds\Ds;
 
 /**
  * Provides a configuration form for configurable actions.
@@ -26,10 +27,10 @@ class ChangeLayoutForm extends FormBase {
    */
   public function buildForm(array $form, array &$form_state, $entity_type = '', $bundle = '', $display_mode = '', $new_layout = '') {
     $old_layout = NULL;
-    $all_layouts = ds_get_layout_info();
+    $all_layouts = Ds::getLayouts();
 
     if (!empty($entity_type) && !empty($bundle) && !empty($display_mode)) {
-      $old_layout = ds_get_layout($entity_type, $bundle, $display_mode, FALSE);
+      $old_layout = Ds::getLayout($entity_type, $bundle, $display_mode, FALSE);
     }
 
     if ($old_layout && isset($all_layouts[$new_layout])) {

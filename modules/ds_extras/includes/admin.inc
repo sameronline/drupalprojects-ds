@@ -58,7 +58,7 @@ function ds_extras_settings_alter(&$form, &$form_state) {
     '#default_value' => $config->get('field_permissions'),
   );
 
-  if (Drupal::moduleHandler()->moduleExists('block')) {
+  if (\Drupal::moduleHandler()->moduleExists('block')) {
     $form['fs3']['region_to_block'] = array(
       '#type' => 'checkbox',
       '#title' => t('Region to block'),
@@ -221,7 +221,7 @@ function ds_extras_block_submit($form, &$form_state) {
         $ids = \Drupal::entityQuery('block')
           ->condition('plugin', 'ds_region_block:' . $key)
           ->execute();
-        $block_storage = Drupal::entityManager()->getStorageController('block');
+        $block_storage = \Drupal::entityManager()->getStorageController('block');
         foreach ($block_storage->loadMultiple($ids) as $block) {
           $block->delete();
         }

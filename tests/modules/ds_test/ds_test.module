@@ -13,11 +13,11 @@ use Drupal\entity\Entity\EntityDisplay;
  */
 function ds_test_install() {
 
-  Drupal::config('ds.settings')
+  \Drupal::config('ds.settings')
     ->set('field_template', TRUE)
     ->save();
 
-  Drupal::config('ds.extras')
+  \Drupal::config('ds.extras')
     ->set('region_to_block', TRUE)
     ->set('switch_view_mode', TRUE)
     ->set('fields_extra', TRUE)

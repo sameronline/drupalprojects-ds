@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\String;
+use Drupal\ds\Ds;
 use Drupal\field\Field;
 use Drupal\field_ui\FieldUI;
 
@@ -329,7 +330,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
     // Move current visible fields into a default region, so
     // we keep their current settings.
-    $layouts = ds_get_layout_info();
+    $layouts = Ds::getLayouts();
     $sl = $layouts[$layout];
     $first_region = key($sl['regions']);
     $record['settings']['regions'] = array();
@@ -666,7 +667,7 @@ function _ds_field_group_field_ui_fix_notices($form, &$form_state) {
  */
 function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $form_state) {
 
-  $ds_layouts = ds_get_layout_info();
+  $ds_layouts = Ds::getLayouts();
   $layout_options = array('' => t('- None -'));
   $optgroup = '';
   foreach ($ds_layouts as $key => $layout) {
@@ -1096,7 +1097,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
   }
 
   // Get the fields and put them on the form.
-  $fields = ds_get_fields($entity_type);
+  $fields = Ds::getFields($entity_type);
 
   // Ultimate alter on Field UI fields, only used for edge cases.
   $context = array(
@@ -1108,7 +1109,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
   \Drupal::moduleHandler()->alter('ds_fields_ui', $fields, $context);
 
   // Get field settings.
-  $field_settings = ds_get_field_settings($entity_type, $bundle, $view_mode, FALSE);
+  $field_settings = Ds::getFieldSettings($entity_type, $bundle, $view_mode, FALSE);
   $form['#field_settings'] = $field_settings;
 
   $table = &$form['fields'];
@@ -1137,6 +1138,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
     );
 
     // Check if we can display this field here.
+    /** @var $plugin_instance \Drupal\ds\Plugin\DsField\DsFieldInterface */
     $plugin_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id'], $configuration);
 
     if (!$plugin_instance->isAllowed($bundle, $view_mode)) {

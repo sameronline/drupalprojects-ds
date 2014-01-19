@@ -10,6 +10,7 @@ namespace Drupal\ds\Controller;
 use Drupal\Component\Utility\String;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\ds\Ds;
 use Drupal\field_ui\FieldUI;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -156,7 +157,7 @@ class DsController extends ControllerBase {
     }
 
     // Check if we have a configured layout. Do not fallback to default.
-    $layout = ds_get_layout($entity_type, $entity->bundle(), $view_mode, FALSE);
+    $layout = Ds::getLayout($entity_type, $entity->bundle(), $view_mode, FALSE);
 
     // Get the manage display URI.
     $route = FieldUI::getOverviewRouteInfo($entity_type, $entity->bundle());

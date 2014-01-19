@@ -44,7 +44,7 @@ Drupal.fieldUIFieldOverview.ds.prototype = {
    *
    * This function is called when the row is moved to a different region, as a
    * result of either :
-   * - a drag-and-drop action 
+   * - a drag-and-drop action
    * - user input in one of the form elements watched by the
    *   Drupal.fieldUIOverview.onChange change listener.
    *
@@ -56,7 +56,7 @@ Drupal.fieldUIFieldOverview.ds.prototype = {
    *   Drupal.fieldOverview.AJAXRefreshRows().
    */
   regionChange: function (region, recurse) {
-	  	  	  
+
      // Replace dashes with underscores.
      region = region.replace('-', '_');
 
@@ -66,7 +66,7 @@ Drupal.fieldUIFieldOverview.ds.prototype = {
      // Prepare rows to be refreshed in the form.
      var refreshRows = {};
      refreshRows[this.name] = this.$regionSelect.get(0);
-     
+
      // If a row is handled by field_group module, loop through the children.
      if ($(this.row).hasClass('field-group') && $.isFunction(Drupal.fieldUIFieldOverview.group.prototype.regionChangeFields)) {
        Drupal.fieldUIFieldOverview.group.prototype.regionChangeFields(region, this, refreshRows);

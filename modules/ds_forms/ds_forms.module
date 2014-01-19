@@ -1,4 +1,5 @@
 <?php
+use Drupal\ds\Ds;
 
 /**
  * @file
@@ -41,7 +42,7 @@ function ds_forms_form_field_ui_form_display_overview_form_alter(&$form, &$form_
  */
 function ds_forms_form_alter(&$form, &$form_state, $form_id) {
   if ($ds_form = ds_build_load($form, $form_id)) {
-    if ($layout = ds_get_layout($ds_form->entity_type, $ds_form->bundle, 'form', FALSE)) {
+    if ($layout = Ds::getLayout($ds_form->entity_type, $ds_form->bundle, 'form', FALSE)) {
       // Add the theming function and add the layout as a class.
       $form['#theme'] = array('ds_forms_custom_form');
       $class = strtr($layout['layout'], '_', '-');
@@ -84,7 +85,7 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
   $entity_type = $form->entity_type;
   $bundle = $form->bundle;
 
-  if ($layout = ds_get_layout($entity_type, $bundle, 'form', FALSE)) {
+  if ($layout = Ds::getLayout($entity_type, $bundle, 'form', FALSE)) {
 
     // Theme hook suggestions.
     $vars['theme_hook_suggestions'][] = $layout['layout'];
@@ -182,3 +183,4 @@ function ds_forms_render_region(&$content, $region, $layout) {
   }
   return $output;
 }
+

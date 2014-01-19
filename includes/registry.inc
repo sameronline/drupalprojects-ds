@@ -1,9 +1,10 @@
 <?php
-
 /**
  * @file
  * Registry file for Display Suite.
  */
+
+use Drupal\ds\Ds;
 
 /**
  * Implements hook_theme().
@@ -12,7 +13,7 @@ function _ds_theme() {
   $theme_functions = array();
 
   // Layouts
-  $layouts = ds_get_layout_info();
+  $layouts = Ds::getLayouts();
   foreach ($layouts as $key => $layout) {
 
     $theme_functions[$key] = array(
@@ -23,8 +24,8 @@ function _ds_theme() {
   }
 
   // Field templates
-  if (Drupal::config('ds.settings')->get('field_template')) {
-    $field_functions = Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
+  if (\Drupal::config('ds.settings')->get('field_template')) {
+    $field_functions = \Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
     foreach ($field_functions as $key => $label) {
       $theme_functions[$key] = array(
         'render element' => 'element',
@@ -58,7 +59,7 @@ function _ds_module_implements_alter(&$implementations, $hook) {
     'form_ds_classes_form_alter',
     'form_field_ui_field_edit_form_alter',
   );
-  if (!Drupal::config('ds.settings')->get('field_template') && in_array($hook, $ft_hooks)) {
+  if (!\Drupal::config('ds.settings')->get('field_template') && in_array($hook, $ft_hooks)) {
     unset($implementations['ds']);
   }
 }
@@ -79,12 +80,12 @@ function _ds_entity_type_update($entity_type, $info, $action) {
   if ($action == 'delete') {
     $layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $info->type);
     foreach ($layout_settings as $config) {
-      Drupal::config($config)->delete();
+      \Drupal::config($config)->delete();
     }
 
     $field_settings = config_get_storage_names_with_prefix('ds.field_settings.' . $entity_type . '.' . $info->type);
     foreach ($field_settings as $config) {
-      Drupal::config($config)->delete();
+      \Drupal::config($config)->delete();
     }
   }
 
@@ -93,18 +94,18 @@ function _ds_entity_type_update($entity_type, $info, $action) {
     $layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $info->old_type);
     foreach ($layout_settings as $config) {
       $new_id = $entity_type . '|' . $info->type . '|' . $config['view_mode'];
-      if (Drupal::config($config)->rename($new_id)) {
-        $new_config = Drupal::config($new_id)->get();
-        Drupal::config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
+      if (\Drupal::config($config)->rename($new_id)) {
+        $new_config = \Drupal::config($new_id)->get();
+        \Drupal::config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
       }
     }
 
     $field_settings = config_get_storage_names_with_prefix('ds.field_settings.' . $entity_type . '.' . $info->old_type);
     foreach ($field_settings as $config) {
       $new_id = $entity_type . '|' . $info->type . '|' . $config['view_mode'];
-      if (Drupal::config($config)->rename($new_id)) {
+      if (\Drupal::config($config)->rename($new_id)) {
         $new_config = Drupal::config($new_id)->get();
-        Drupal::config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
+        \Drupal::config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
       }
     }
   }
@@ -137,7 +138,7 @@ function _ds_theme_registry_alter(&$theme_registry) {
   }
 
   // Remove ds_preprocess_field in case field templates is not enabled.
-  if (!Drupal::config('ds.settings')->get('field_template')) {
+  if (!\Drupal::config('ds.settings')->get('field_template')) {
     $key = array_search('ds_preprocess_field', $theme_registry['field']['preprocess functions']);
     if (!empty($key)) {
       unset($theme_registry['field']['preprocess functions'][$key]);
@@ -151,10 +152,10 @@ function _ds_theme_registry_alter(&$theme_registry) {
 function _ds_entity_bundle_info_alter(&$bundles) {
 
   // Add layout if configured to bundles.
-  $ds_layouts = ds_get_layout_info();
+  $ds_layouts = Ds::getLayouts();
   $ds_layout_settings = config_get_storage_names_with_prefix('ds.layout_settings');
   foreach ($ds_layout_settings as $config) {
-    $ds_layout_setting = Drupal::config($config)->get();
+    $ds_layout_setting = \Drupal::config($config)->get();
 
     // Don't store any configurations with layouts that don't exist anymore.
     if (!isset($ds_layouts[$ds_layout_setting['layout']])) {
@@ -370,7 +371,7 @@ function _ds_layouts_scan_theme($theme, &$layouts) {
  */
 function _ds_menu_alter(&$items) {
   // Do not conflict with the revisioning module.
-  if (Drupal::moduleHandler()->moduleExists('revisioning')) {
+  if (\Drupal::moduleHandler()->moduleExists('revisioning')) {
     $items['node/%node/revisions/%vid/view']['page callback'] = 'ds_revision_node_show';
     $items['node/%node/revisions/%vid/view']['file'] = 'includes/revision.inc';
     $items['node/%node/revisions/%vid/view']['file path'] = drupal_get_path('module', 'ds');
