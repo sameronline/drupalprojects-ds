@@ -273,78 +273,71 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
  *
  * This function is added in ds_theme_registry_alter().
  */
-function ds_preprocess_ds_layout(&$vars) {
-  if (isset($vars['elements']['#entity_type'])) {
+function ds_preprocess_ds_layout(&$variables) {
+  if (isset($variables['elements']['#entity_type'])) {
     // Move any preprocess fields to render container.
     // Inconsistency in taxonomy term naming.
-    $object = $vars['elements']['#entity_type'];
-    if ($vars['elements']['#entity_type'] == 'taxonomy_term') {
+    $object = $variables['elements']['#entity_type'];
+    if ($variables['elements']['#entity_type'] == 'taxonomy_term') {
       $object = 'term';
     }
 
     // Add extra metadata for contextual links.
-    if (!empty($vars['title_suffix']['contextual_links']['#id'])) {
-      if (!empty($vars['elements']['#' . $object])) {
-        $vars['title_suffix']['contextual_links']['#id'] .= $vars['elements']['#' . $object]->bundle() . '-' . $vars['view_mode'];
+    if (!empty($variables['title_suffix']['contextual_links']['#id'])) {
+      if (!empty($variables['elements']['#' . $object])) {
+        $variables['title_suffix']['contextual_links']['#id'] .= $variables['elements']['#' . $object]->bundle() . '-' . $variables['view_mode'];
       }
     }
 
-    if (isset($vars['elements']['#ds_layout'])) {
-      $layout = $vars['elements']['#ds_layout'];
+    if (isset($variables['elements']['#ds_layout'])) {
+      $layout = $variables['elements']['#ds_layout'];
 
 
       $render_container = 'content';
 
       // Move any preprocess fields to render container.
       // Inconsistency in taxonomy term naming.
-      $object = $vars['elements']['#entity_type'];
-      if ($vars['elements']['#entity_type'] == 'taxonomy_term') {
+      $object = $variables['elements']['#entity_type'];
+      if ($variables['elements']['#entity_type'] == 'taxonomy_term') {
         $object = 'term';
       }
 
-      if (isset($vars[$object]->preprocess_fields)) {
-        foreach ($vars[$object]->preprocess_fields as $field) {
+      if (isset($variables[$object]->preprocess_fields)) {
+        foreach ($variables[$object]->preprocess_fields as $field) {
 
           // Process RDF if the module is enabled before moving preprocess fields.
           if (\Drupal::moduleHandler()->moduleExists('rdf')) {
-            $mapping = rdf_get_mapping($vars['entity_type'], $vars['bundle']);
+            $mapping = rdf_get_mapping($variables['entity_type'], $variables['bundle']);
             rdfa_attributes($mapping, $field);
             // Remove it so we can unset the field later on.
-            unset($vars['rdf_template_variable_attributes_array'][$field]);
+            unset($variables['rdf_template_variable_attributes_array'][$field]);
           }
 
           // Move the field to content so it renders, remove it
           // because we don't need it anymore.
-          if (isset($vars[$field])) {
-            $vars[$render_container][$field] = array('#markup' => $vars[$field]);
-            if (!isset($vars['preprocess_keep'])) {
-              unset($vars[$field]);
+          if (isset($variables[$field])) {
+            $variables[$render_container][$field] = array('#markup' => $variables[$field]);
+            if (!isset($variables['preprocess_keep'])) {
+              unset($variables[$field]);
             }
           }
         }
       }
 
       // Template layout.
-      if (!isset($vars['attributes']['class'])) {
-        $vars['attributes']['class'] = array();
+      if (!isset($variables['attributes']['class'])) {
+        $variables['attributes']['class'] = array();
       }
 
       // Add view-mode-{name} to classes.
-      if (!in_array('view-mode-' . $vars['elements']['#view_mode'], $vars['attributes']['class'])) {
-        $vars['attributes']['class'][] = 'view-mode-' . $vars['elements']['#view_mode'];
+      if (!in_array('view-mode-' . $variables['elements']['#view_mode'], $variables['attributes']['class'])) {
+        $variables['attributes']['class'][] = 'view-mode-' . $variables['elements']['#view_mode'];
       }
-
-      $vars['theme_hook_suggestions'][] = $layout['layout'];
-      $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $vars['elements']['#entity_type'];
-      $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $vars['elements']['#entity_type'] . '_' . $vars['elements']['#view_mode'];
-      $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $vars['elements']['#entity_type'] . '_' . $vars['elements']['#bundle'];
-      $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $vars['elements']['#entity_type'] . '_' . $vars['elements']['#bundle'] . '_' . $vars['elements']['#view_mode'];
-
 
       // If the layout has wrapper class lets add it.
       if (isset($layout['settings']['classes']['layout_class'])) {
         foreach ($layout['settings']['classes']['layout_class'] as $layout_class) {
-          $vars['attributes']['class'][] = $layout_class;
+          $variables['attributes']['class'][] = $layout_class;
         }
       }
 
@@ -356,38 +349,38 @@ function ds_preprocess_ds_layout(&$vars) {
         if (isset($layout['settings']['regions'][$region_name])) {
           foreach ($layout['settings']['regions'][$region_name] as $key => $field) {
             // Make sure the field exists.
-            if (!isset($vars[$render_container][$field])) {
+            if (!isset($variables[$render_container][$field])) {
               continue;
             }
-            if (!isset($vars[$render_container][$field]['#weight'])) {
-              $vars[$render_container][$field]['#weight'] = $key;
+            if (!isset($variables[$render_container][$field]['#weight'])) {
+              $variables[$render_container][$field]['#weight'] = $key;
             }
-            $layout_render_array[$region_name][$key] = $vars[$render_container][$field];
+            $layout_render_array[$region_name][$key] = $variables[$render_container][$field];
           }
         }
 
         // Add extras classes to the region.
         if (empty($layout['flexible'])) {
-          $vars[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
+          $variables[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
         }
         // Add a wrapper to the region.
         if (empty($layout['flexible'])) {
-          $vars[$region_name . '_wrapper'] = isset($layout['settings']['wrappers'][$region_name]) ? $layout['settings']['wrappers'][$region_name] : 'div';
+          $variables[$region_name . '_wrapper'] = isset($layout['settings']['wrappers'][$region_name]) ? $layout['settings']['wrappers'][$region_name] : 'div';
         }
       }
 
       // Let other modules know we have rendered.
-      $vars['rendered_by_ds'] = TRUE;
+      $variables['rendered_by_ds'] = TRUE;
 
       // Add a layout wrapper.
-      $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
+      $variables['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
 
       // Add custom attributes if any.
       if (!empty($layout['settings']['layout_attributes'])) {
         $layout_attributes = explode(',', $layout['settings']['layout_attributes']);
         foreach ($layout_attributes as $layout_attribute) {
           list($key, $attribute_value) = explode('|', $layout_attribute);
-          $vars['attributes'][$key] = $attribute_value;
+          $variables['attributes'][$key] = $attribute_value;
         }
       }
 
@@ -397,10 +390,10 @@ function ds_preprocess_ds_layout(&$vars) {
         switch ($layout['settings']['layout_link_attribute']) {
           case 'content':
             if ($object == 'user') {
-              $uri = $vars['elements']['#account']->uri();
+              $uri = $variables['elements']['#account']->uri();
             }
             else {
-              $uri = $vars[$object]->uri();
+              $uri = $variables[$object]->uri();
             }
             $url = $uri['path'];
             break;
@@ -408,7 +401,7 @@ function ds_preprocess_ds_layout(&$vars) {
             $url = $layout['settings']['layout_link_custom'];
             break;
           case 'tokens':
-            $url = \Drupal::service('token')->replace($layout['settings']['layout_link_custom'], array($vars['elements']['#entity_type'] => $vars[$object]), array('clear' => TRUE));
+            $url = \Drupal::service('token')->replace($layout['settings']['layout_link_custom'], array($variables['elements']['#entity_type'] => $variables[$object]), array('clear' => TRUE));
             break;
         }
 
@@ -418,11 +411,31 @@ function ds_preprocess_ds_layout(&$vars) {
       }
 
       // Let other modules alter the ds array before creating the region variables.
-      $context = array('entity' => isset($vars[$object]) ? $vars[$object] : (isset($vars['elements']['#' . $object]) ? $vars['elements']['#' . $object] : ''), 'entity_type' => $vars['elements']['#entity_type'], 'bundle' => $vars['elements']['#bundle'], 'view_mode' => $vars['elements']['#view_mode']);
-      \Drupal::moduleHandler()->alter('ds_pre_render', $layout_render_array, $context, $vars);
+      $context = array('entity' => isset($variables[$object]) ? $variables[$object] : (isset($variables['elements']['#' . $object]) ? $variables['elements']['#' . $object] : ''), 'entity_type' => $variables['elements']['#entity_type'], 'bundle' => $variables['elements']['#bundle'], 'view_mode' => $variables['elements']['#view_mode']);
+      \Drupal::moduleHandler()->alter('ds_pre_render', $layout_render_array, $context, $variables);
       foreach ($layout_render_array as $region_name => $content) {
         $vars[$region_name] = drupal_render($content);
       }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_alter()
+ */
+function ds_theme_suggestions_alter(&$suggestions, $variables, $base_theme_hook) {
+  $entity_info = \Drupal::entityManager()->getDefinitions();
+  if (isset($entity_info[$base_theme_hook]) && $entity_info[$base_theme_hook]->isFieldable()) {
+    if (isset($variables['elements']['#ds_layout'])) {
+      /* This is not working yet due a bug? https://drupal.org/node/2179675
+        $layout = $variables['elements']['#ds_layout'];
+
+        $suggestions[] = $layout['layout'];
+        $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'];
+        $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#view_mode'];
+        $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
+        $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
+      */
     }
   }
 }
