@@ -121,20 +121,12 @@ function _ds_entity_type_update($entity_type, $info, $action) {
  */
 function _ds_theme_registry_alter(&$theme_registry) {
 
-  // Inject ds_preprocess_ds_layout in all entity theming functions.
-  $entity_info = \Drupal::entityManager()->getDefinitions();
-  foreach ($entity_info as $entity_type => $info) {
-    if ($info->isFieldable()) {
-      // Only add preprocess functions if entity exposes theme function.
-      if (isset($theme_registry[$entity_type])) {
-        $theme_registry[$entity_type]['preprocess functions'][] = 'ds_preprocess_ds_layout';
-      }
+  $layouts = DS::getLayouts();
+  foreach ($layouts as $key => $info) {
+    // Only add preprocess functions if entity exposes theme function.
+    if (isset($theme_registry[$key])) {
+      $theme_registry[$key]['preprocess functions'][] = 'ds_preprocess_ds_layout';
     }
-  }
-
-  // Support for File Entity.
-  if (isset($theme_registry['file_entity'])) {
-    $theme_registry['file_entity']['preprocess functions'][] = 'ds_preprocess_ds_layout';
   }
 
   // Remove ds_preprocess_field in case field templates is not enabled.

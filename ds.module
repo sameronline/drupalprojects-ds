@@ -285,44 +285,14 @@ function ds_preprocess_ds_layout(&$variables) {
     // Add extra metadata for contextual links.
     if (!empty($variables['title_suffix']['contextual_links']['#id'])) {
       if (!empty($variables['elements']['#' . $object])) {
-        $variables['title_suffix']['contextual_links']['#id'] .= $variables['elements']['#' . $object]->bundle() . '-' . $variables['view_mode'];
+        $variables['title_suffix']['contextual_links']['#id'] .= $variables['elements']['#' . $object]->bundle() . '-' . $variables['elements']['#view_mode'];
       }
     }
 
     if (isset($variables['elements']['#ds_layout'])) {
       $layout = $variables['elements']['#ds_layout'];
 
-
-      $render_container = 'content';
-
-      // Move any preprocess fields to render container.
-      // Inconsistency in taxonomy term naming.
-      $object = $variables['elements']['#entity_type'];
-      if ($variables['elements']['#entity_type'] == 'taxonomy_term') {
-        $object = 'term';
-      }
-
-      if (isset($variables[$object]->preprocess_fields)) {
-        foreach ($variables[$object]->preprocess_fields as $field) {
-
-          // Process RDF if the module is enabled before moving preprocess fields.
-          if (\Drupal::moduleHandler()->moduleExists('rdf')) {
-            $mapping = rdf_get_mapping($variables['entity_type'], $variables['bundle']);
-            rdfa_attributes($mapping, $field);
-            // Remove it so we can unset the field later on.
-            unset($variables['rdf_template_variable_attributes_array'][$field]);
-          }
-
-          // Move the field to content so it renders, remove it
-          // because we don't need it anymore.
-          if (isset($variables[$field])) {
-            $variables[$render_container][$field] = array('#markup' => $variables[$field]);
-            if (!isset($variables['preprocess_keep'])) {
-              unset($variables[$field]);
-            }
-          }
-        }
-      }
+      $render_container = 'elements';
 
       // Template layout.
       if (!isset($variables['attributes']['class'])) {
@@ -414,7 +384,7 @@ function ds_preprocess_ds_layout(&$variables) {
       $context = array('entity' => isset($variables[$object]) ? $variables[$object] : (isset($variables['elements']['#' . $object]) ? $variables['elements']['#' . $object] : ''), 'entity_type' => $variables['elements']['#entity_type'], 'bundle' => $variables['elements']['#bundle'], 'view_mode' => $variables['elements']['#view_mode']);
       \Drupal::moduleHandler()->alter('ds_pre_render', $layout_render_array, $context, $variables);
       foreach ($layout_render_array as $region_name => $content) {
-        $vars[$region_name] = drupal_render($content);
+        $variables[$region_name] = drupal_render($content);
       }
     }
   }
@@ -427,7 +397,6 @@ function ds_theme_suggestions_alter(&$suggestions, $variables, $base_theme_hook)
   $entity_info = \Drupal::entityManager()->getDefinitions();
   if (isset($entity_info[$base_theme_hook]) && $entity_info[$base_theme_hook]->isFieldable()) {
     if (isset($variables['elements']['#ds_layout'])) {
-      /* This is not working yet due a bug? https://drupal.org/node/2179675
         $layout = $variables['elements']['#ds_layout'];
 
         $suggestions[] = $layout['layout'];
@@ -435,7 +404,6 @@ function ds_theme_suggestions_alter(&$suggestions, $variables, $base_theme_hook)
         $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#view_mode'];
         $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
         $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
-      */
     }
   }
 }
