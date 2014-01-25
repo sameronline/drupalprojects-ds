@@ -121,7 +121,7 @@ function _ds_entity_type_update($entity_type, $info, $action) {
  */
 function _ds_theme_registry_alter(&$theme_registry) {
 
-  $layouts = DS::getLayouts();
+  $layouts = Ds::getLayouts();
   foreach ($layouts as $key => $info) {
     // Only add preprocess functions if entity exposes theme function.
     if (isset($theme_registry[$key])) {
