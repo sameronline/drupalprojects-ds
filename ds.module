@@ -397,13 +397,13 @@ function ds_theme_suggestions_alter(&$suggestions, $variables, $base_theme_hook)
   $entity_info = \Drupal::entityManager()->getDefinitions();
   if (isset($entity_info[$base_theme_hook]) && $entity_info[$base_theme_hook]->isFieldable()) {
     if (isset($variables['elements']['#ds_layout'])) {
-        $layout = $variables['elements']['#ds_layout'];
+      $layout = $variables['elements']['#ds_layout'];
 
-        $suggestions[] = $layout['layout'];
-        $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'];
-        $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#view_mode'];
-        $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
-        $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
+      $suggestions[] = $layout['layout'];
+      $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'];
+      $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#view_mode'];
+      $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
+      $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
     }
   }
 }

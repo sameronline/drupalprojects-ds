@@ -1,12 +1,12 @@
 <?php
-use Drupal\ds\Ds;
-
 /**
  * @file
  * Display Suite forms integration.
  *
  * @todo how to get around seven's hardcoded and extremely annoying node_form_alter.
  */
+
+use Drupal\ds\Ds;
 
 /**
  * Implements hook_theme().
@@ -77,7 +77,7 @@ function ds_build_load($form, $form_id) {
  */
 function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
 
-  $form = ds_build_load($vars['form'], $vars['form']['#form_id']);
+  $form = ds_build_load($vars['element'], $vars['element']['#form_id']);
   if (!$form) {
     return;
   }
@@ -92,7 +92,7 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
     $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $entity_type;
     $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $entity_type . '_' . $bundle;
 
-    $form = &$vars['form'];
+    $form = &$vars['element'];
 
     // Add path to css file.
     if (isset($layout['css'])) {
@@ -152,7 +152,43 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
     $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
 
     // Add the rest of the form elements
-    $vars['drupal_render_children'] = drupal_render_children($vars['form']);
+    $vars['drupal_render_children'] = drupal_render_children($vars['element']);
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_alter()
+ */
+function ds_forms_theme_suggestions_alter(&$suggestions, $variables, $base_theme_hook) {
+  if ($base_theme_hook == 'form') {
+    $form = ds_build_load($variables['element'], $variables['element']['#form_id']);
+    if (!$form) {
+      return;
+    }
+
+    $entity_type = $form->entity_type;
+    $bundle = $form->bundle;
+
+    if ($layout = Ds::getLayout($entity_type, $bundle, 'form', FALSE)) {
+
+      // Theme hook suggestions.
+      $suggestions[] = $layout['layout'];
+      $suggestions[] = $layout['layout'] . '__' . $entity_type;
+      $suggestions[] = $layout['layout'] . '__' . $entity_type . '_' . $bundle;
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function ds_forms_theme_registry_alter(&$theme_registry) {
+  $layouts = Ds::getLayouts();
+  foreach ($layouts as $key => $info) {
+    // Only add preprocess functions if entity exposes theme function.
+    if (isset($theme_registry[$key])) {
+      $theme_registry[$key]['preprocess functions'][] = 'ds_forms_preprocess_ds_forms_custom_form';
+    }
   }
 }
 
