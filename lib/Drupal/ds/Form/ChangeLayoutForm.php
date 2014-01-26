@@ -26,6 +26,7 @@ class ChangeLayoutForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state, $entity_type = '', $bundle = '', $display_mode = '', $new_layout = '') {
+
     $old_layout = NULL;
     $all_layouts = Ds::getLayouts();
 
@@ -39,7 +40,7 @@ class ChangeLayoutForm extends FormBase {
       $new_layout = $all_layouts[$new_layout];
 
       $form['#entity_type'] = $entity_type;
-      $form['#bundle'] = $bundle;
+      $form['#entity_bundle'] = $bundle;
       $form['#mode'] = $display_mode;
       $form['#old_layout'] = $old_layout;
       $form['#new_layout'] = $new_layout;
@@ -145,7 +146,7 @@ class ChangeLayoutForm extends FormBase {
     $old_layout = $form['#old_layout'];
     $new_layout_key = $form['#new_layout_key'];
     $entity_type = $form['#entity_type'];
-    $bundle = $form['#bundle'];
+    $bundle = $form['#entity_bundle'];
     $display_mode = $form['#mode'];
 
     // Create new record.
