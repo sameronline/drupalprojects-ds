@@ -55,8 +55,6 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
    *
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    *   The factory for configuration objects.
-   * @param \Drupal\Core\Config\Context\ContextInterface $context
-   *   The configuration context to use.
    * @param \Drupal\Core\Entity\EntityManager
    *   The entity manager.
    * @param \Drupal\Core\Cache\CacheBackendInterface
@@ -64,8 +62,8 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
    * @param \Drupal\Core\Extension\ModuleHandler
    *   The module handler.
    */
-  public function __construct(ConfigFactory $config_factory, ContextInterface $context, EntityManager $entity_manager, CacheBackendInterface $cache_backend, ModuleHandler $module_handler) {
-    parent::__construct($config_factory, $context);
+  public function __construct(ConfigFactory $config_factory, EntityManager $entity_manager, CacheBackendInterface $cache_backend, ModuleHandler $module_handler) {
+    parent::__construct($config_factory);
     $this->entityManager = $entity_manager;
     $this->cacheBackend = $cache_backend;
     $this->moduleHandler = $module_handler;
@@ -77,7 +75,6 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('config.context.free'),
       $container->get('entity.manager'),
       $container->get('cache.cache'),
       $container->get('module_handler')
@@ -189,7 +186,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
     \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
     // Redirect.
-    $form_state['redirect'] = 'admin/structure/ds/fields';
+    $form_state['redirect_route']['route_name'] = 'ds_ui.fields_list';
     drupal_set_message(t('The field %field has been saved.', array('%field' => $field['label'])));
   }
 
