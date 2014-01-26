@@ -76,83 +76,84 @@ function ds_build_load($form, $form_id) {
  * Implements hook_preprocess_ds_forms_custom_form().
  */
 function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
+  if (isset($vars['element']['#form_id'])) {
+    $form = ds_build_load($vars['element'], $vars['element']['#form_id']);
+    if (!$form) {
+      return;
+    }
 
-  $form = ds_build_load($vars['element'], $vars['element']['#form_id']);
-  if (!$form) {
-    return;
-  }
+    $entity_type = $form->entity_type;
+    $bundle = $form->bundle;
 
-  $entity_type = $form->entity_type;
-  $bundle = $form->bundle;
+    if ($layout = Ds::getLayout($entity_type, $bundle, 'form', FALSE)) {
 
-  if ($layout = Ds::getLayout($entity_type, $bundle, 'form', FALSE)) {
+      // Theme hook suggestions.
+      $vars['theme_hook_suggestions'][] = $layout['layout'];
+      $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $entity_type;
+      $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $entity_type . '_' . $bundle;
 
-    // Theme hook suggestions.
-    $vars['theme_hook_suggestions'][] = $layout['layout'];
-    $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $entity_type;
-    $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $entity_type . '_' . $bundle;
+      $form = &$vars['element'];
 
-    $form = &$vars['element'];
-
-    // Add path to css file.
-    if (isset($layout['css'])) {
-      $build['css'] = array(
-        '#attached' => array(
-          'css' => array(
-            $layout['path'] . '/' . $layout['layout'] . '.css',
+      // Add path to css file.
+      if (isset($layout['css'])) {
+        $build['css'] = array(
+          '#attached' => array(
+            'css' => array(
+              $layout['path'] . '/' . $layout['layout'] . '.css',
+            ),
           ),
-        ),
-      );
-      drupal_render($build);
+        );
+        drupal_render($build);
+      }
+
+      // Add the hidden region.
+      $layout['regions']['hidden'] = 'Hidden';
+
+      // If the layout has wrapper class lets add it.
+      if (isset($layout['settings']['classes']['layout_class'])) {
+        foreach ($layout['settings']['classes']['layout_class'] as $layout_class) {
+          $vars['attributes']['class'][] = $layout_class;
+        }
+      }
+
+      // Create region variables based on the layout settings.
+      foreach ($layout['regions'] as $region_name => $region) {
+
+        // Create the region content.
+        if ($region_name == 'hidden') {
+          ds_forms_render_region($form, $region_name, $layout);
+        }
+        else {
+          $vars[$region_name] = ds_forms_render_region($form, $region_name, $layout);
+        }
+
+        // Add extras classes to the region.
+        $vars[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
+
+        // Add a wrapper to the region.
+        if (empty($layout['flexible'])) {
+          $vars[$region_name . '_wrapper'] = isset($layout['settings']['wrappers'][$region_name]) ? $layout['settings']['wrappers'][$region_name] : 'div';
+        }
+      }
+
+      // Add custom attributes if any.
+      if (!empty($layout['settings']['layout_attributes'])) {
+        $layout_attributes = explode(',', $layout['settings']['layout_attributes']);
+        foreach ($layout_attributes as $layout_attribute) {
+          list($key, $attribute_value) = explode('|', $layout_attribute);
+          $vars['attributes'][$key] = $attribute_value;
+        }
+      }
+
+      // Ensure there is a class
+      $vars['attributes']['class'][] = 'ds-form';
+
+      // Add a layout wrapper
+      $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
+
+      // Add the rest of the form elements
+      $vars['drupal_render_children'] = drupal_render_children($vars['element']);
     }
-
-    // Add the hidden region.
-    $layout['regions']['hidden'] = 'Hidden';
-
-    // If the layout has wrapper class lets add it.
-    if (isset($layout['settings']['classes']['layout_class'])) {
-      foreach ($layout['settings']['classes']['layout_class'] as $layout_class) {
-        $vars['attributes']['class'][] = $layout_class;
-      }
-    }
-
-    // Create region variables based on the layout settings.
-    foreach ($layout['regions'] as $region_name => $region) {
-
-      // Create the region content.
-      if ($region_name == 'hidden') {
-        ds_forms_render_region($form, $region_name, $layout);
-      }
-      else {
-        $vars[$region_name] = ds_forms_render_region($form, $region_name, $layout);
-      }
-
-      // Add extras classes to the region.
-      $vars[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
-
-      // Add a wrapper to the region.
-      if (empty($layout['flexible'])) {
-        $vars[$region_name . '_wrapper'] = isset($layout['settings']['wrappers'][$region_name]) ? $layout['settings']['wrappers'][$region_name] : 'div';
-      }
-    }
-
-    // Add custom attributes if any.
-    if (!empty($layout['settings']['layout_attributes'])) {
-      $layout_attributes = explode(',', $layout['settings']['layout_attributes']);
-      foreach ($layout_attributes as $layout_attribute) {
-        list($key, $attribute_value) = explode('|', $layout_attribute);
-        $vars['attributes'][$key] = $attribute_value;
-      }
-    }
-
-    // Ensure there is a class
-    $vars['attributes']['class'][] = 'ds-form';
-
-    // Add a layout wrapper
-    $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
-
-    // Add the rest of the form elements
-    $vars['drupal_render_children'] = drupal_render_children($vars['element']);
   }
 }
 
