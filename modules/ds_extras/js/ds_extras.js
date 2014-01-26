@@ -33,11 +33,11 @@ Drupal.behaviors.DSExtrasSwitchViewmode = {
               Drupal.attachBehaviors();
             }
             else {
-              alert(data.errorMessage);
+              window.alert(data.errorMessage);
             }
           },
           error: function (xmlhttp) {
-            alert(Drupal.t('An HTTP error @status occurred.', {'@status': xmlhttp.status}));
+            window.alert(Drupal.t('An HTTP error @status occurred.', {'@status': xmlhttp.status}));
           }
         });
         return false;

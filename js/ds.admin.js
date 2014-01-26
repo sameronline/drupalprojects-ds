@@ -118,10 +118,10 @@ Drupal.behaviors.settingsToggle = {
 
     // Show / hide settings on field template form.
     function ds_show_expert_settings(element, open) {
-      field = element;
+      var field = element;
       var ft = $('.ds-extras-field-template', field).val();
 
-      if (ft == 'theme_ds_field_expert') {
+      if (ft === 'theme_ds_field_expert') {
         // Show second, third, fourth, fifth and sixth label.
         if ($('.lb .form-item:nth-child(1)', field).is(':visible')) {
           $('.lb .form-item:nth-child(2), .lb .form-item:nth-child(3), .lb .form-item:nth-child(4), .lb .form-item:nth-child(5), .lb .form-item:nth-child(6)', field).show();
@@ -141,7 +141,7 @@ Drupal.behaviors.settingsToggle = {
       }
 
       // Colon.
-      if (ft == 'theme_field' || ft == 'theme_ds_field_reset') {
+      if (ft === 'theme_field' || ft === 'theme_ds_field_reset') {
         $('.colon-checkbox', field).parent().hide();
       }
       else if ($('.lb .form-item:nth-child(1)', field).is(':visible')) {
@@ -149,7 +149,7 @@ Drupal.behaviors.settingsToggle = {
       }
 
       // CSS classes.
-      if (ft != 'theme_ds_field_expert' && ft != 'theme_ds_field_reset') {
+      if (ft !== 'theme_ds_field_expert' && ft !== 'theme_ds_field_reset') {
         $('.field-classes', field).show();
       }
       else {
@@ -161,7 +161,7 @@ Drupal.behaviors.settingsToggle = {
       var field = $(this).parents('tr');
       if ($('.field-template', field).length > 0) {
         var ft = $('.ds-extras-field-template', field).val();
-        if (ft == 'theme_field' || ft == 'theme_ds_field_reset') {
+        if (ft === 'theme_field' || ft === 'theme_ds_field_reset') {
           $('.colon-checkbox', field).parent().hide();
         }
       }

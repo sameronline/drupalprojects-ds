@@ -1,6 +1,8 @@
 
 (function($) {
 
+"use strict";
+
 /**
  * Attach behaviors.
  */
