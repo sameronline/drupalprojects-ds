@@ -1020,23 +1020,36 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       }
 
       $admin_path = \Drupal::service('url_generator')->generateFromRoute($route_name, $route_parameters, $options);
+      if ($view_mode != 'default' && $view_mode != 'form') {
+        $admin_path .= '/' . $view_mode;
+      }
+
+      $destination_url = '';
 
       // If regions aren't set we don't have to move fields.
       if (isset($layout['regions'])) {
-        $url = 'admin/structure/ds/change-layout/' . $entity_type . '/' . $bundle . '/' . $view_mode . '/' . $layout_string . '?destination=' . $admin_path;
+        $route_name = 'ds.change_layout';
+        $route_parameters = array(
+          'entity_type' => $entity_type,
+          'bundle' => $bundle,
+          'display_mode' => $view_mode,
+          'new_layout' => $layout_string,
+        );
+        $options = array();
+        $destination_url = $admin_path;
+
         $form['#validate'][] = 'ds_field_ui_change_layout_validate';
       }
-      else {
-        $url = $admin_path;
-      }
 
-      if ($view_mode != 'default' && $view_mode != 'form') {
-        $url .= '/' . $view_mode;
-      }
 
       $form['layout_changed_url'] = array(
         '#type' => 'value',
-        '#value' => $url,
+        '#value' => array(
+          'route_name' => $route_name,
+          'route_parameters' => $route_parameters,
+          'destination_url' => $destination_url,
+          'options' => $options,
+        ),
       );
 
       $form['#submit'][] = 'ds_field_ui_change_layout_submit';
@@ -1065,14 +1078,20 @@ function ds_field_ui_change_layout_validate(&$form, &$form_state) {
  * Form submission handler for _ds_field_ui_table_layouts_preview().
  */
 function ds_field_ui_change_layout_submit($form, &$form_state) {
-  global $base_url;
-
   // Remove original destination
   \Drupal::request()->query->remove('destination');
 
-  // Build new destination
-  $url = $base_url . '/' . $form_state['values']['layout_changed_url'];
-  $form_state['redirect'] = $url;
+  $destination = $form_state['values']['layout_changed_url'];
+
+  $form_state['redirect_route'] = array(
+    'route_name' => $destination['route_name'],
+    'route_parameters' => $destination['route_parameters'],
+    'options' => $destination['options'],
+  );
+
+  if (!empty($destination['destination_url'])) {
+    $form_state['redirect_route']['options']['query']['destination'] = $destination['destination_url'];
+  }
 }
 
 /**
