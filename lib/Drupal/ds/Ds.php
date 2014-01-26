@@ -6,7 +6,7 @@
 
 namespace Drupal\ds;
 
-use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Cache\Cache;
 use \Drupal\ds\Plugin\DsField\PreprocessBase;
 
 /**
@@ -107,7 +107,7 @@ class Ds {
             $field_settings[$field_setting['entity_type']][$field_setting['bundle']][$field_setting['view_mode']][$field] = $settings;
           }
         }
-        cache()->set('ds_field_settings', $field_settings, CacheBackendInterface::CACHE_PERMANENT, array('ds_fields_info' => TRUE));
+        cache()->set('ds_field_settings', $field_settings, Cache::PERMANENT, array('ds_fields_info' => TRUE));
       }
     }
 
