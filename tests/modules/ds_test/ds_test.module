@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Render\Element;
 use Drupal\entity\Entity\EntityDisplay;
 
 /**
@@ -21,7 +22,7 @@ function ds_test_install() {
     ->set('region_to_block', TRUE)
     ->set('switch_view_mode', TRUE)
     ->set('fields_extra', TRUE)
-    ->set('fields_extra_list', "node|article|ds_extras_extra_test_field\nnode|article|ds_extras_second_field")
+    ->set('fields_extra_list', array('node|article|ds_extras_extra_test_field', 'node|article|ds_extras_second_field'))
     ->save();
 
   module_set_weight('ds_test', 2);
@@ -140,7 +141,7 @@ function ds_test_ds_layout_info() {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_test_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
-  foreach (element_children($form['fields']) as $key) {
+  foreach (Element::children($form['fields']) as $key) {
     if (isset($form['fields'][$key]['settings_edit'])) {
       $settings = $form['fields'][$key]['settings_edit'];
       if (!empty($settings)) {

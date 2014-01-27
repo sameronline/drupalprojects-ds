@@ -23,7 +23,7 @@ class TestFieldNothing extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render($field) {
+  public function build() {
     return;
   }
 

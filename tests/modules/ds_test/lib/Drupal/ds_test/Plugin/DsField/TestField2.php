@@ -23,8 +23,8 @@ class TestField2 extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function render($field) {
-    return 'Test code field on node ' . $field['entity']->id();
+  public function build() {
+    return 'Test code field on node ' . $this->entity()->id();
   }
 
 }
