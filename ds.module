@@ -185,6 +185,12 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
   $build['#bundle'] = $bundle;
   $build['#ds_layout'] = $layout;
 
+  // Add extra metadata needed for contextual links
+  if (isset($build['#contextual_links'][$entity_type])) {
+    $build['#contextual_links'][$entity_type]['metadata']['bundle'] = $bundle;
+    $build['#contextual_links'][$entity_type]['metadata']['view_mode'] = $view_mode;
+  }
+
   // Check on field/delta limit.
   if (isset($layout['settings']['limit'])) {
     foreach ($layout['settings']['limit'] as $field => $limit) {
@@ -280,13 +286,6 @@ function ds_preprocess_ds_layout(&$variables) {
     $object = $variables['elements']['#entity_type'];
     if ($variables['elements']['#entity_type'] == 'taxonomy_term') {
       $object = 'term';
-    }
-
-    // Add extra metadata for contextual links.
-    if (!empty($variables['title_suffix']['contextual_links']['#id'])) {
-      if (!empty($variables['elements']['#' . $object])) {
-        $variables['title_suffix']['contextual_links']['#id'] .= $variables['elements']['#' . $object]->bundle() . '-' . $variables['elements']['#view_mode'];
-      }
     }
 
     if (isset($variables['elements']['#ds_layout'])) {
@@ -417,7 +416,8 @@ function ds_contextual_links_view_alter(&$element, $items) {
 
   if (isset($def[$entity_type]) && $def[$entity_type]->isFieldable()) {
     if (!empty($entity_type) && \Drupal::moduleHandler()->moduleExists('field_ui') && \Drupal::currentUser()->hasPermission('administer node display')) {
-      list($bundle, $view_mode) = explode('-', array_keys($element['#contextual_links'][$entity_type]['metadata'])[0]);
+      $bundle = $element['#contextual_links'][$entity_type]['metadata']['bundle'];
+      $view_mode = $element['#contextual_links'][$entity_type]['metadata']['view_mode'];
       $route_name = "field_ui.display_overview_view_mode_$entity_type";
       $type = $def[$entity_type]->getBundleEntityType();
 
