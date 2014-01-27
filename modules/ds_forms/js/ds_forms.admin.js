@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Javascript functionality for Display Suite's form integration.
+ */
 
 (function($) {
 

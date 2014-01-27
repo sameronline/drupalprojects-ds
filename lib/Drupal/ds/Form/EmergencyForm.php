@@ -21,7 +21,7 @@ class EmergencyForm extends FormBase {
   /**
    * The config factory.
    *
-   * @var \Drupal\Core\Extension\ConfigFactory
+   * @var \Drupal\Core\Config\ConfigFactory
    */
   protected $configFactory;
 

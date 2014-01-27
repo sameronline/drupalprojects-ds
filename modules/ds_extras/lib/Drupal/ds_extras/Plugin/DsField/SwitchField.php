@@ -99,7 +99,7 @@ class SwitchField extends DsFieldBase {
   }
 
   /**
-   * {@inhertidoc}
+   * {@inheritdoc}
    */
   public function settingsSummary($settings) {
     $entity_type = $this->entityType();

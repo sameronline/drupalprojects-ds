@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\String;
+use Drupal\Core\Render\Element;
 use Drupal\ds\Ds;
 use Drupal\field\Field;
 use Drupal\field_ui\FieldUI;
@@ -224,7 +225,7 @@ function ds_field_ui_regions($form, $form_state) {
     }
 
     // Update existing rows by changing rowHandler and adding regions.
-    foreach (element_children($table) as $name) {
+    foreach (Element::children($table) as $name) {
       $row = &$table[$name];
       $row['#js_settings'] = array('rowHandler' => 'ds');
       $row['#region_callback'] = 'ds_field_ui_row_region';
@@ -443,7 +444,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
  * Form validation handler for _ds_field_ui_fields().
  */
 function ds_field_ui_fields_validate($form, &$form_state) {
-  foreach (element_children($form['fields']) as $key) {
+  foreach (Element::children($form['fields']) as $key) {
     if (isset($form_state['values']['fields'][$key]['settings_edit_form']['settings']['ft'])) {
       $settings = $form_state['values']['fields'][$key]['settings_edit_form']['settings']['ft'];
       if (!empty($settings)) {
