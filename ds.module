@@ -159,22 +159,30 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
   static $field_permissions = FALSE;
   static $loaded = FALSE;
 
-  if (!$loaded) {
-    $loaded = TRUE;
-    $field_permissions = \Drupal::config('ds.extras')->get('field_permissions');
-  }
-
-  if (Ds::isDisabled()) {
-    return;
-  }
-
   $entity_type = $entity->entityType();
   $bundle = $entity->bundle();
   $view_mode = $display->mode;
 
+  // Add extra metadata needed for contextual links
+  if (isset($build['#contextual_links'][$entity_type])) {
+    $build['#contextual_links'][$entity_type]['metadata']['ds_bundle'] = $bundle;
+    $build['#contextual_links'][$entity_type]['metadata']['ds_view_mode'] = $view_mode;
+  }
+
+  // If Display Suite is disabled, stop here.
+  if (Ds::isDisabled()) {
+    return;
+  }
+
   // If no layout is configured, stop as well.
   if (!Ds::getLayout($entity_type, $bundle, $view_mode)) {
     return;
+  }
+
+  // Load field permissions only once
+  if (!$loaded) {
+    $loaded = TRUE;
+    $field_permissions = \Drupal::config('ds.extras')->get('field_permissions');
   }
 
   $layout = Ds::getLayout($entity_type, $bundle, $view_mode);
@@ -184,12 +192,6 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
   $build['#entity_type'] = $entity_type;
   $build['#bundle'] = $bundle;
   $build['#ds_layout'] = $layout;
-
-  // Add extra metadata needed for contextual links
-  if (isset($build['#contextual_links'][$entity_type])) {
-    $build['#contextual_links'][$entity_type]['metadata']['bundle'] = $bundle;
-    $build['#contextual_links'][$entity_type]['metadata']['view_mode'] = $view_mode;
-  }
 
   // Check on field/delta limit.
   if (isset($layout['settings']['limit'])) {
@@ -416,8 +418,8 @@ function ds_contextual_links_view_alter(&$element, $items) {
 
   if (isset($def[$entity_type]) && $def[$entity_type]->isFieldable()) {
     if (!empty($entity_type) && \Drupal::moduleHandler()->moduleExists('field_ui') && \Drupal::currentUser()->hasPermission('administer node display')) {
-      $bundle = $element['#contextual_links'][$entity_type]['metadata']['bundle'];
-      $view_mode = $element['#contextual_links'][$entity_type]['metadata']['view_mode'];
+      $bundle = $element['#contextual_links'][$entity_type]['metadata']['ds_bundle'];
+      $view_mode = $element['#contextual_links'][$entity_type]['metadata']['ds_view_mode'];
       $route_name = "field_ui.display_overview_view_mode_$entity_type";
       $type = $def[$entity_type]->getBundleEntityType();
 
