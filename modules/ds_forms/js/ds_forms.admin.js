@@ -3,7 +3,7 @@
  * Javascript functionality for Display Suite's form integration.
  */
 
-(function($) {
+(function ($) {
 
   "use strict";
 
@@ -12,7 +12,7 @@
    */
   Drupal.behaviors.fieldUIFieldsFormsOverview = {
     attach: function (context, settings) {
-      $('table#field-overview', context).once('field-field-overview', function() {
+      $('table#field-overview', context).once('field-field-overview', function () {
         Drupal.fieldUIOverview.attach(this, settings.fieldUIRowsData, Drupal.fieldUIFieldOverview);
       });
     }

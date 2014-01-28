@@ -12,7 +12,7 @@
     attach: function (context) {
 
       if ($('.switch-view-mode-field').length > 0) {
-        $('.switch-view-mode-field a').click(function() {
+        $('.switch-view-mode-field a').click(function () {
 
           // Create an object.
           var link = $(this);

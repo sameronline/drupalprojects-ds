@@ -3,7 +3,7 @@
  * Javascript functionality for Display Suite's administration UI.
  */
 
-(function($, Drupal) {
+(function ($, Drupal) {
 
   "use strict";
 
@@ -103,12 +103,12 @@
     attach: function (context) {
 
       // Bind on click.
-      $('.field-plugin-settings-edit-form', context).once('ds-ft', function() {
+      $('.field-plugin-settings-edit-form', context).once('ds-ft', function () {
 
         var fieldTemplate = $(this);
 
         // Bind on field template select button.
-        fieldTemplate.find('.ds-extras-field-template').change(function() {
+        fieldTemplate.find('.ds-extras-field-template').change(function () {
           ds_show_expert_settings(fieldTemplate);
         });
 
@@ -157,7 +157,7 @@
         }
       }
 
-      $('.label-change').change(function() {
+      $('.label-change').change(function () {
         var field = $(this).parents('tr');
         if ($('.field-template', field).length > 0) {
           var ft = $('.ds-extras-field-template', field).val();

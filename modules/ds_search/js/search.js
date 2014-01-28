@@ -3,7 +3,7 @@
  * Provides highlight functionality for search results
  */
 
-(function($, Drupal, drupalSettings) {
+(function ($, Drupal, drupalSettings) {
 
   "use strict";
 
@@ -43,7 +43,7 @@
 
   */
 
-  jQuery.fn.highlight = function(pat) {
+  jQuery.fn.highlight = function (pat) {
     function innerHighlight(node, pat) {
       var skip = 0;
       if (node.nodeType === 3) {
@@ -65,7 +65,7 @@
       }
       return skip;
     }
-    return this.each(function() {
+    return this.each(function () {
       innerHighlight(this, pat.toUpperCase());
     });
   };
