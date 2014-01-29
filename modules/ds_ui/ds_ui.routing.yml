@@ -37,20 +37,6 @@ ds_ui.add_token_field:
     _title: 'Add a token field'
   requirements:
     _permission: 'admin fields'
-ds_ui.manage_preprocess_field:
-  path: 'admin/structure/ds/fields/manage_preprocess/{field_key}'
-  defaults:
-    _form: '\Drupal\ds_ui\Form\PreprocessFieldForm'
-    _title: 'Edit a preprocess field'
-  requirements:
-    _permission: 'admin fields'
-ds_ui.add_preprocess_field:
-  path: 'admin/structure/ds/fields/manage_preprocess'
-  defaults:
-    _form: '\Drupal\ds_ui\Form\PreprocessFieldForm'
-    _title: 'Add a preprocess field'
-  requirements:
-    _permission: 'admin fields'
 ds_ui.manage_block_field:
   path: 'admin/structure/ds/fields/manage_block/{field_key}'
   defaults:

@@ -22,10 +22,6 @@ ds.field.*:
     properties:
       type: ds.field.properties.[%parent.type]
 
-ds.field.properties.preprocess:
-  type: views_display
-  label: 'Display Suite preprocess field properties'
-
 ds.field.properties.token:
   type: mapping
   label: 'Display Suite token field field properties'

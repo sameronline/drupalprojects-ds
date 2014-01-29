@@ -282,7 +282,6 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
  */
 function ds_preprocess_ds_layout(&$variables) {
   if (isset($variables['elements']['#entity_type'])) {
-    // Move any preprocess fields to render container.
     // Inconsistency in taxonomy term naming.
     $object = $variables['elements']['#entity_type'];
     if ($variables['elements']['#entity_type'] == 'taxonomy_term') {

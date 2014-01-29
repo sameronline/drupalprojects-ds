@@ -146,25 +146,4 @@ class BaseTest extends WebTestBase {
     $this->drupalPost($url, $edit, t('Save'));
     $this->assertText(t('The field ' . $edit['name'] . ' has been saved'), t('!name field has been saved', array('!name' => $edit['name'])));
   }
-
-  /**
-   * Create a block field.
-   *
-   * @param $edit
-   *   An optional array of field properties.
-   */
-  function dsCreatePreprocessField($edit = array(), $url = 'admin/structure/ds/fields/manage_preprocess', $first = TRUE) {
-
-    $edit += array(
-      'name' => 'Submitted',
-      'entities[node]' => '1',
-    );
-
-    if ($first) {
-      $edit += array('id' => 'submitted');
-    }
-
-    $this->drupalPost($url, $edit, t('Save'));
-    $this->assertText(t('The field ' . $edit['name'] . ' has been saved'), t('!name field has been saved', array('!name' => $edit['name'])));
-  }
 }

@@ -7,7 +7,6 @@
 namespace Drupal\ds;
 
 use Drupal\Core\Cache\Cache;
-use \Drupal\ds\Plugin\DsField\PreprocessBase;
 
 /**
  * Helper class that holds all the main Display Suite helper functions.
@@ -54,7 +53,6 @@ class Ds {
    *   The markup of the field used for output.
    */
   public static function getFieldValue($key, $field, $entity, $view_mode, $build = array()) {
-
     $configuration = array(
       'field' => $field,
       'field_name' => $key,
@@ -66,14 +64,8 @@ class Ds {
     // Load the plugin.
     $field_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id'], $configuration);
 
-    // Special case preprocess fields as they don't need to be rendered
-    if ($field_instance InstanceOf PreprocessBase) {
-      $entity->preprocess_fields[] = $key;
-    }
-
     // Render the field.
     return $field_instance->build();
-
   }
 
   /**

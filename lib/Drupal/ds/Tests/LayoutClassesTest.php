@@ -32,10 +32,9 @@ class LayoutClassesTest extends BaseTest {
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('ds_3col_stacked_equal_width', 'ds_3col_stacked_equal_width not available');
 
-    // Create code, preprocess block field.
+    // Create code and block field.
     $this->dsCreateCodeField();
     $this->dsCreateBlockField();
-    $this->dsCreatePreprocessField();
 
     $layout = array(
       'layout' => 'ds_2col_stacked',
@@ -58,7 +57,6 @@ class LayoutClassesTest extends BaseTest {
       'fields[node_comments][region]' => 'footer',
       'fields[dynamic_code_field:node-test_field][region]' => 'left',
       'fields[dynamic_block_field:node-test_block_field][region]' => 'left',
-      'fields[dynamic_preprocess_field:node-submitted][region]' => 'left',
       'fields[node_submitted_by][region]' => 'left',
       'fields[ds_extras_extra_test_field][region]' => 'header',
     );
@@ -86,7 +84,6 @@ class LayoutClassesTest extends BaseTest {
     $this->assertTrue(in_array('node_author', $data['regions']['left']), t('Author is in left'));
     $this->assertTrue(in_array('node_links', $data['regions']['left']), t('Links is in left'));
     $this->assertTrue(in_array('dynamic_block_field:node-test_block_field', $data['regions']['left']), t('Test block field is in left'));
-    $this->assertTrue(in_array('dynamic_preprocess_field:node-submitted', $data['regions']['left']), t('Submitted field is in left'));
     $this->assertTrue(in_array('body', $data['regions']['right']), t('Body is in right'));
     $this->assertTrue(in_array('node_comments', $data['regions']['footer']), t('Comments is in footer'));
     $this->assertTrue(in_array('class_name_1', $data['classes']['header']), t('Class name 1 is in header'));

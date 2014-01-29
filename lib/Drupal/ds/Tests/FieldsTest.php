@@ -18,7 +18,7 @@ class FieldsTest extends BaseTest {
   public static function getInfo() {
     return array(
       'name' => t('Fields'),
-      'description' => t('Tests for managing custom code, preprocess and block fields.'),
+      'description' => t('Tests for managing custom code, and block fields.'),
       'group' => t('Display Suite'),
     );
   }
@@ -132,42 +132,6 @@ class FieldsTest extends BaseTest {
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('fields[dynamic_block_field:node-test_block_field][weight]', t('Test block field not found on node article.'));
 
-    // Preprocess fields.
-    $edit = array(
-      'name' => 'Submitted',
-      'id' => 'submitted',
-      'entities[node]' => '1',
-    );
-
-    $this->dsCreatePreprocessField($edit);
-
-    // Create the same and assert it already exists.
-    $this->drupalPost('admin/structure/ds/fields/manage_code', $edit, t('Save'));
-    $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Submitted already exists.'));
-
     $this->dsSelectLayout();
-
-    // Assert it's found on the Field UI for article.
-    $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertRaw('fields[dynamic_preprocess_field:node-submitted][weight]', t('Submitted found on node article.'));
-
-    // Assert it's not found on the Field UI for users.
-    $this->drupalGet('admin/config/people/accounts/display');
-    $this->assertNoRaw('fields[dynamic_preprocess_field:node-submitted][weight]', t('Submitted not found on user.'));
-
-    // Update testing label
-    $edit = array(
-      'name' => 'Submitted by',
-    );
-    $this->drupalPost('admin/structure/ds/fields/manage_preprocess/submitted', $edit, t('Save'));
-    $this->assertText(t('The field Submitted by has been saved'), t('Submitted label updated'));
-
-    // Remove a field.
-    $this->drupalPost('admin/structure/ds/fields/delete/submitted', array(), t('Confirm'));
-    $this->assertText(t('The field Submitted by has been deleted'), t('Submitted removed'));
-
-    // Assert the field is gone at the manage display screen.
-    $this->drupalGet('admin/structure/types/manage/article/display');
-    $this->assertNoRaw('fields[dynamic_preprocess_field:node-submitted][weight]', t('Submitted field not found on node article.'));
   }
 }

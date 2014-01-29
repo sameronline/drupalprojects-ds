@@ -7,7 +7,6 @@
 
 define('DS_FIELD_TYPE_TOKEN', 'token');
 define('DS_FIELD_TYPE_BLOCK', 'block');
-define('DS_FIELD_TYPE_PREPROCESS', 'preprocess');
 define('DS_FIELD_TYPE_COPY', 'copy');
 
 /**
