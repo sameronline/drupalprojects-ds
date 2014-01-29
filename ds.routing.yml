@@ -2,12 +2,14 @@ ds.structure:
   path: 'admin/structure/ds'
   defaults:
     _content: '\Drupal\ds\Controller\DsController::listDisplays'
+    _title: 'Displays'
   requirements:
     _permission: 'admin display suite'
 ds.list:
   path: 'admin/structure/ds/list'
   defaults:
     _content: '\Drupal\ds\Controller\DsController::listDisplays'
+    _title: 'Displays'
   requirements:
     _permission: 'admin display suite'
 ds.admin_settings:
