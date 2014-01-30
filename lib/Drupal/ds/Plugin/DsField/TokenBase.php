@@ -20,7 +20,7 @@ abstract class TokenBase extends DsFieldBase {
     $format = $this->format();
 
     $value = check_markup($content, $format);
-    $value = \Drupal::service('token')->replace($value, array($this->entityType() => $this->entity()), array('clear' => TRUE));
+    $value = \Drupal::service('token')->replace($value, array($this->getEntityTypeId() => $this->entity()), array('clear' => TRUE));
 
     return array(
       '#markup' => $value,

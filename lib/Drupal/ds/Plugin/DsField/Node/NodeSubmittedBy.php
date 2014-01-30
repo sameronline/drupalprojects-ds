@@ -25,18 +25,18 @@ class NodeSubmittedBy extends Date {
    * {@inheritdoc}
    */
   public function build() {
-    $field = $this->getConfiguration();
-    $account = $this->entity->getAuthor();
+    $field = $this->getFieldConfiguration();
+    $account = $this->entity()->getAuthor();
     switch ($field['formatter']) {
       case 'ds_time_ago':
-        $interval = REQUEST_TIME - $this->entity->created->value;
+        $interval = REQUEST_TIME - $this->entity()->created->value;
         return array(
-          '#markup' => t('Submitted !interval ago by !user.', array('!interval' => format_interval($interval), '!user' => theme('username', array('account' => $account)))),
+          '#markup' => t('Submitted !interval ago by !user.', array('!interval' => \Drupal::service('date')->formatInterval($interval), '!user' => theme('username', array('account' => $account)))),
         );
       default:
         $date_format = str_replace('ds_post_date_', '', $field['formatter']);
         return array(
-          '#markup' => t('Submitted by !user on !date.', array('!user' => theme('username', array('account' => $account)), '!date' => format_date($this->entity->created->value, $date_format))),
+          '#markup' => t('Submitted by !user on !date.', array('!user' => theme('username', array('account' => $account)), '!date' => format_date($this->entity()->created->value, $date_format))),
         );
     }
   }

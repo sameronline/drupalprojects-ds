@@ -15,24 +15,24 @@ abstract class Link extends Field {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($settings) {
-    $default_settings = $this->defaultSettings();
+  public function settingsForm($form, &$form_state) {
+    $config = $this->getConfiguration();
 
     $form['link text'] = array(
       '#type' => 'textfield',
       '#title' => 'Link text',
-      '#default_value' => isset($settings['link text']) ? $settings['link text'] : $default_settings['link text'],
+      '#default_value' => $config['link text'],
     );
     $form['wrapper'] = array(
       '#type' => 'textfield',
       '#title' => 'Wrapper',
-      '#default_value' => isset($settings['wrapper']) ? $settings['wrapper'] : $default_settings['wrapper'],
+      '#default_value' => $config['wrapper'],
       '#description' => t('Eg: h1, h2, p')
     );
     $form['class'] = array(
       '#type' => 'textfield',
       '#title' => 'Class',
-      '#default_value' => isset($settings['class']) ? $settings['class'] : $default_settings['class'],
+      '#default_value' => $config['class'],
       '#description' => t('Put a class on the wrapper. Eg: block-title')
     );
 
@@ -43,20 +43,15 @@ abstract class Link extends Field {
    * {@inheritdoc}
    */
   public function settingsSummary($settings) {
-    $default_settings = $this->defaultSettings();
+    $config = $this->getConfiguration();
 
     $summary = array();
-    if (isset($settings['link text'])) {
-      $summary[] = 'Link text: ' . $settings['link text'];
+    $summary[] = 'Link text: ' . $config['link text'];
+    if (!empty($config['wrapper'])) {
+      $summary[] = 'Wrapper: ' . $config['wrapper'];
     }
-    else {
-      $summary[] = 'Link text: ' . $default_settings['link text'];
-    }
-    if (isset($settings['wrapper']) && !empty($settings['wrapper'])) {
-      $summary[] = 'Wrapper: ' . $settings['wrapper'];
-    }
-    if (isset($settings['class']) && !empty($settings['class'])) {
-      $summary[] = 'Class: ' . $settings['class'];
+    if (!empty($config['class'])) {
+      $summary[] = 'Class: ' . $config['class'];
     }
 
     return $summary;
@@ -65,16 +60,16 @@ abstract class Link extends Field {
   /**
    * {@inheritdoc}
    */
-  public function defaultSettings() {
+  public function defaultConfiguration() {
 
-    $settings = array(
+    $configuration = array(
       'link text' => 'Read more',
       'wrapper' => '',
       'class' => '',
       'link' => 1,
     );
 
-    return $settings;
+    return $configuration;
   }
 
 }

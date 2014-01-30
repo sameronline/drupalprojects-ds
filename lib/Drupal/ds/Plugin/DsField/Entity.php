@@ -15,7 +15,7 @@ abstract class Entity extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($settings) {
+  public function settingsForm($form, &$form_state) {
     $entity = $this->linkedEntity();
     $view_modes = entity_get_view_modes($entity);
 
@@ -24,10 +24,11 @@ abstract class Entity extends DsFieldBase {
       $options[$id] = $view_mode['label'];
     }
 
-    $form['view_mode'] = array(
+    $config = $this->getConfiguration();
+    $form['entity_view_mode'] = array(
       '#type' => 'select',
       '#title' => 'View mode',
-      '#default_value' => isset($settings['view_mode']) ? $settings['view_mode'] : '',
+      '#default_value' => $config['entity_view_mode'],
       '#options' => $options,
     );
 
@@ -47,12 +48,8 @@ abstract class Entity extends DsFieldBase {
     }
 
     // Print the chosen view mode or the default one
-    if (isset($settings['view_mode'])) {
-      $view_mode = $view_modes[$settings['view_mode']];
-    }
-    else {
-      $view_mode = reset($view_modes);
-    }
+    $config = $this->getConfiguration();
+    $view_mode = $config['view_mode'];
 
     $summary[] = 'View mode: ' . $view_mode['label'];
 
@@ -62,17 +59,17 @@ abstract class Entity extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function defaultSettings() {
+  public function defaultConfiguration() {
     $entity = $this->linkedEntity();
     $view_modes = entity_get_view_modes($entity);
     reset($view_modes);
     $default_view_mode = key($view_modes);
 
-    $settings = array(
+    $configuration = array(
       'view_mode' => $default_view_mode,
     );
 
-    return $settings;
+    return $configuration;
   }
 
   /**
@@ -85,9 +82,9 @@ abstract class Entity extends DsFieldBase {
   /**
    * Gets the view mode
    */
-  public function getViewMode() {
-    $settings = $this->getChosenSettings();
-    return $settings['view_mode'];
+  public function getEntityViewMode() {
+    $config = $this->getConfiguration();
+    return $config['entity_view_mode'];
   }
 
 }

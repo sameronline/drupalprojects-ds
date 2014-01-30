@@ -15,25 +15,24 @@ abstract class Title extends Field {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($settings) {
-
-    $default_settings = $this->defaultSettings();
+  public function settingsForm($form, &$form_state) {
+    $config = $this->getConfiguration();
 
     $settings['link'] = array(
       '#type' => 'checkbox',
       '#title' => 'Link',
-      '#default_value' => isset($settings['link']) ? $settings['link'] : $default_settings['link'],
+      '#default_value' => $config['link'],
     );
     $settings['wrapper'] = array(
       '#type' => 'textfield',
       '#title' => 'Wrapper',
-      '#default_value' => isset($settings['wrapper']) ? $settings['wrapper'] : $default_settings['wrapper'],
+      '#default_value' => $config['wrapper'],
       '#description' => t('Eg: h1, h2, p')
     );
     $settings['class'] = array(
       '#type' => 'textfield',
       '#title' => 'Class',
-      '#default_value' => isset($settings['class']) ? $settings['class'] : $default_settings['class'],
+      '#default_value' => $config['class'],
       '#description' => t('Put a class on the wrapper. Eg: block-title')
     );
 
@@ -44,23 +43,20 @@ abstract class Title extends Field {
    * {@inheritdoc}
    */
   public function settingsSummary($settings) {
-    $default_settings = $this->defaultSettings();
+    $config = $this->getConfiguration();
 
     $summary = array();
-    if (isset($settings['link']) && !empty($settings['link'])) {
+    if (!empty($config['link'])) {
       $summary[] = 'Link: yes';
     }
     else {
       $summary[] = 'Link: no';
     }
-    if (isset($settings['wrapper']) && !empty($settings['wrapper'])) {
-      $summary[] = 'Wrapper: ' . $settings['wrapper'];
-    }
-    else {
-      $summary[] = 'Wrapper: ' . $default_settings['wrapper'];
-    }
-    if (isset($settings['class']) && !empty($settings['class'])) {
-      $summary[] = 'Class: ' . $settings['class'];
+
+    $summary[] = 'Wrapper: ' . $config['wrapper'];
+
+    if (!empty($config['class'])) {
+      $summary[] = 'Class: ' . $config['class'];
     }
 
     return $summary;
@@ -69,15 +65,15 @@ abstract class Title extends Field {
   /**
    * {@inheritdoc}
    */
-  public function defaultSettings() {
+  public function defaultConfiguration() {
 
-    $settings = array(
+    $configuration = array(
       'link' => 0,
       'wrapper' => 'h2',
       'class' => ''
     );
 
-    return $settings;
+    return $configuration;
   }
 
   /**

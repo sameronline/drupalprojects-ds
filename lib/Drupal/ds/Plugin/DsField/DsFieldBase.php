@@ -15,71 +15,11 @@ use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
 abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterface {
 
   /**
-   * The entity we are working on.
-   *
-   * @var /Drupal/Core/Entity/EntityInterface
-   */
-  protected $entity = NULL;
-
-  /**
-   * The build of the current entity.
-   *
-   * @var array
-   */
-  protected $build = array();
-
-  /**
-   * The bundle of the current display.
-   *
-   * @var string
-   */
-  protected $bundle = '';
-
-  /**
-   * The view mode of the current display.
-   *
-   * @var string
-   */
-  protected $view_mode = '';
-
-  /**
-   * The name of the field
-   *
-   * @var string
-   */
-  protected $field_name = '';
-
-  /**
-   * The configuration of the field.
-   *
-   * @var array
-   */
-  protected $field_configuration = array();
-
-  /**
    * Constructs a Display Suite field plugin.
    */
   public function __construct($configuration, $plugin_id, $plugin_definition) {
-    if (isset($configuration['entity'])) {
-      $this->entity = $configuration['entity'];
-    }
-    if (isset($configuration['bundle'])) {
-      $this->bundle = $configuration['bundle'];
-    }
-    if (isset($configuration['build'])) {
-      $this->build = $configuration['build'];
-    }
-    if (isset($configuration['view_mode'])) {
-      $this->view_mode = $configuration['view_mode'];
-    }
-    if (isset($configuration['field_name'])) {
-      $this->field_name = $configuration['field_name'];
-    }
-    if (isset($configuration['field'])) {
-      $this->field_configuration = $configuration['field'];
-    }
-
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->configuration += $this->defaultConfiguration();
   }
 
   /**
@@ -92,7 +32,7 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($settings) {
+  public function settingsForm($form, &$form_state) {
     return array();
   }
 
@@ -104,12 +44,26 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
   }
 
   /**
+   *
    * {@inheritdoc}
    */
-  public function defaultSettings() {
-    return array();
+  public function defaultConfiguration() {
+   return array();
   }
 
+   /**
+   * {@inheritdoc}
+    */
+  public function getConfiguration() {
+    return $this->configuration;
+  }
+
+   /**
+   * {@inheritdoc}
+   */
+  public function setConfiguration(array $configuration) {
+    $this->configuration = $configuration + $this->configuration;
+  }
 
   /**
    * {@inheritdoc}
@@ -126,56 +80,45 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function getChosenSettings() {
-    $field_configuration = $this->getConfiguration();
-    $settings = isset($field_configuration['plugin_settings']) ? $field_configuration['plugin_settings'] : array();
-    $settings += $this->defaultSettings();
-
-    return $settings;
-  }
-
-  /**
    * Gets the current entity.
    */
   public function entity() {
-    return $this->entity;
+    return $this->configuration['entity'];
   }
 
   /**
    * Gets the current entity type.
    */
-  public function entityType() {
-    return $this->entity->entityType();
+  public function getEntityTypeId() {
+    return $this->entity()->getEntityTypeId();
   }
 
   /**
    * Gets the current bundle.
    */
   public function bundle() {
-    return $this->bundle;
+    return $this->configuration['bundle'];
   }
 
   /**
    * Gets the view mode
    */
   public function viewMode() {
-    return $this->view_mode;
+    return $this->configuration['view_mode'];
   }
 
   /**
    * Gets the field configuration
    */
-  public function getConfiguration() {
-    return $this->field_configuration;
+  public function getFieldConfiguration() {
+    return $this->configuration['field'];
   }
 
   /**
    * Gets the field name
    */
   public function getName() {
-    return $this->field_name;
+    return $this->configuration['field_name'];
   }
 
   /**

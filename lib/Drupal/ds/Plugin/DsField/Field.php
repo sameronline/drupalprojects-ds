@@ -18,7 +18,7 @@ abstract class Field extends DsFieldBase {
    * {@inheritdoc}
    */
   public function build() {
-    $settings = $this->getChosenSettings();
+    $config = $this->getConfiguration();
 
     // Initialize output
     $output = '';
@@ -26,15 +26,15 @@ abstract class Field extends DsFieldBase {
     // Basic string.
     $entity_render_key = $this->entityRenderKey();
 
-    if (isset($settings['link text'])) {
-      $output = t($settings['link text']);
+    if (isset($config['link text'])) {
+      $output = t($config['link text']);
     }
-    elseif (!empty($entity_render_key) && isset($this->entity->{$entity_render_key})) {
-      if ($this->entityType() == 'user' && $entity_render_key == 'name') {
-        $output = $this->entity->getUsername();
+    elseif (!empty($entity_render_key) && isset($this->entity()->{$entity_render_key})) {
+      if ($this->getEntityTypeId() == 'user' && $entity_render_key == 'name') {
+        $output = $this->entity()->getUsername();
       }
       else {
-        $output = $this->entity->{$entity_render_key}->value;
+        $output = $this->entity()->{$entity_render_key}->value;
       }
     }
 
@@ -43,8 +43,8 @@ abstract class Field extends DsFieldBase {
     }
 
     // Link.
-    if (!empty($settings['link'])) {
-      $uri_info = $this->entity->uri();
+    if (!empty($config['link'])) {
+      $uri_info = $this->entity()->uri();
       $output = l($output, $uri_info['path'], $uri_info['options']);
     }
     else {
@@ -52,9 +52,9 @@ abstract class Field extends DsFieldBase {
     }
 
     // Wrapper and class.
-    if (!empty($settings['wrapper'])) {
-      $wrapper = String::checkPlain($settings['wrapper']);
-      $class = (!empty($settings['class'])) ? ' class="' . String::checkPlain($settings['class']) . '"' : '';
+    if (!empty($config['wrapper'])) {
+      $wrapper = String::checkPlain($config['wrapper']);
+      $class = (!empty($config['class'])) ? ' class="' . String::checkPlain($config['class']) . '"' : '';
       $output = '<' . $wrapper . $class . '>' . $output . '</' . $wrapper . '>';
     }
 

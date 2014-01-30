@@ -33,7 +33,7 @@ class SwitchField extends DsFieldBase {
 
       $entity = $this->entity();
       $id = $entity->id();
-      $url = $this->entityType() . '-' . $this->viewMode(). '-' . $id . '-';
+      $url = $this->getEntityTypeId() . '-' . $this->viewMode(). '-' . $id . '-';
       $switch = array();
 
       foreach ($settings['vms'] as $key => $value) {
@@ -71,16 +71,17 @@ class SwitchField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($settings) {
-    $entity_type = $this->entityType();
+  public function settingsForm($form, &$form_state) {
+    $entity_type = $this->getEntityTypeId();
     $bundle = $this->bundle();
-    $settings = isset($settings['vms']) ? $settings['vms'] : array();
     $view_modes = entity_get_view_modes($entity_type);
 
     $form['info'] = array(
       '#markup' => t('Enter a label for the link for the view modes you want to switch to.<br />Leave empty to hide link. They will be localized.'),
     );
 
+    $config = $this->getConfiguration();
+    $config = isset($config['vms']) ? $config['vms'] : array();
     foreach ($view_modes as $key => $value) {
       $entity_display = entity_load('entity_display', $entity_type .  '.' . $bundle . '.' . $key);
       $visible = $entity_display->status();
@@ -88,7 +89,7 @@ class SwitchField extends DsFieldBase {
       if ($visible) {
         $form['vms'][$key] = array(
           '#type' => 'textfield',
-          '#default_value' => isset($settings[$key]) ? $settings[$key] : '',
+          '#default_value' => isset($config[$key]) ? $config[$key] : '',
           '#size' => 20,
           '#title' => String::checkPlain($value['label']),
         );
@@ -102,7 +103,7 @@ class SwitchField extends DsFieldBase {
    * {@inheritdoc}
    */
   public function settingsSummary($settings) {
-    $entity_type = $this->entityType();
+    $entity_type = $this->getEntityTypeId();
     $bundle = $this->bundle();
     $settings = isset($settings['vms']) ? $settings['vms'] : array();
     $view_modes = entity_get_view_modes($entity_type);

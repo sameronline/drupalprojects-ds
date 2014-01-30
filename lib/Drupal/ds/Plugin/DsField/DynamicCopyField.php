@@ -42,8 +42,8 @@ class DynamicCopyField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($settings) {
-    return $this->field_instance->settingsForm($settings);
+  public function settingsForm($form, &$form_state) {
+    return $this->field_instance->settingsForm($form, $form_state);
   }
 
   /**
@@ -56,8 +56,8 @@ class DynamicCopyField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function defaultSettings() {
-    return $this->field_instance->defaultSettings();
+  public function defaultConfiguration() {
+    return $this->field_instance->defaultConfiguration();
   }
 
 

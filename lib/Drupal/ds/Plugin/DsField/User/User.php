@@ -25,7 +25,7 @@ class User extends Entity {
    * {@inhertidoc}
    */
   public function build() {
-    $view_mode = $this->getViewMode();
+    $view_mode = $this->getEntityViewMode();
 
     $node = $this->entity();
     $uid = $node->getAuthorId();

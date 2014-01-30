@@ -124,21 +124,21 @@ class DsController extends ControllerBase {
    * Adds a contextual tabs to users
    */
   public function contextualUserTab(EntityInterface $user) {
-    return $this->contextualTab($user->entityType(), $user->id());
+    return $this->contextualTab($user->getEntityTypeId(), $user->id());
   }
 
   /**
    * Adds a contextual tabs to taxonomy terms
    */
   public function contextualTaxonomyTermTab(EntityInterface $taxonomy_term) {
-    return $this->contextualTab($taxonomy_term->entityType(), $taxonomy_term->id());
+    return $this->contextualTab($taxonomy_term->getEntityTypeId(), $taxonomy_term->id());
   }
 
   /**
    * Adds a contextual tabs to nodes
    */
   public function contextualNodeTab(EntityInterface $node) {
-    return $this->contextualTab($node->entityType(), $node->id());
+    return $this->contextualTab($node->getEntityTypeId(), $node->id());
   }
 
   /**

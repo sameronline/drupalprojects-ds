@@ -620,15 +620,15 @@ function ds_field_settings_summary($plugin_instance, $settings, $form_state) {
  *
  * @return mixed $form
  */
-function ds_field_settings_form($plugin_instance, $settings, &$form_state) {
+function ds_field_settings_form(\Drupal\ds\Plugin\DsField\DsFieldInterface $plugin_instance, &$form_state) {
   // Create the form
-  $form = $plugin_instance->settingsForm($settings);
+  $form = $plugin_instance->settingsForm(array(), $form_state);
 
   // Add field template settings to every field if enabled.
   if (\Drupal::config('ds.settings')->get('field_template')) {
     $context = array(
       'instance' => array(
-        'entity_type' => $plugin_instance->entityType(),
+        'entity_type' => $plugin_instance->getEntityTypeId(),
         'bundle' => $plugin_instance->bundle(),
         'field_name' => $plugin_instance->getName(),
       ),
@@ -1194,6 +1194,8 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       $form_state['plugin_settings'][$key] = $plugin_settings;
     }
 
+    $plugin_instance->setConfiguration($plugin_settings);
+
     if (!isset($field_settings[$key]['ft']) && isset($field_settings[$key]['ft'])) {
       $form_state['plugin_settings'][$key]['ft'] = $field_settings[$key]['ft'];
     }
@@ -1264,7 +1266,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
     if ($form_state['plugin_settings_edit'] == $key) {
       $table[$key]['settings_summary']['#attributes']['colspan'] = 2;
-      $settings_form = ds_field_settings_form($plugin_instance, $plugin_settings, $form_state);
+      $settings_form = ds_field_settings_form($plugin_instance, $form_state);
       ds_field_row_form_format_construct($table, $key, $settings_form, $form_state);
     }
     else {
@@ -1272,7 +1274,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
       // the element for the table cell.
       $summary = ds_field_settings_summary($plugin_instance, $plugin_settings, $form_state);
 
-      if (isset($summary)) {
+      if (!empty($summary)) {
         $table[$key]['settings_summary'] = $summary;
         ds_field_row_form_format_summary_construct($table, $key, $form_state);
       }

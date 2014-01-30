@@ -7,27 +7,18 @@
 
 namespace Drupal\ds\Plugin\DsField;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Core\Plugin\PluginFormInterface;
+
 /**
  * Interface for DS plugins.
  */
-interface DsFieldInterface {
+interface DsFieldInterface extends ConfigurablePluginInterface {
 
   /**
    * Renders a field.
    */
   public function build();
-
-  /**
-   * Returns the settings form for the field.
-   *
-   * @param $field
-   *   Contains all the general configuration of the field.
-   *   Contains the settings of the field.
-   *
-   * @return array
-   *   A render array containing the form.
-   */
-  public function settingsForm($settings);
 
   /**
    * Returns the summary of the chosen settings.
@@ -41,14 +32,6 @@ interface DsFieldInterface {
    *   A render array containing the summary.
    */
   public function settingsSummary($settings);
-
-  /**
-   * Returns the default settings.
-   *
-   * @return array
-   *   An array containing the default settings in a key value way.
-   */
-  public function defaultSettings();
 
   /**
    * Returns a list of possible formatters for this field.
