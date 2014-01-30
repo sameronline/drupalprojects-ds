@@ -6,8 +6,6 @@
 
 namespace Drupal\example_field\Plugin\DsField;
 
-use Drupal\Core\Annotation\Translation;
-use Drupal\ds\Annotation\DsField;
 use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
@@ -29,14 +27,14 @@ class ExampleField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function settings() {
+  public function settingsForm($form, &$form_state) {
     return array();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function defaultSettings() {
+  public function defaultConfiguration() {
     return array();
   }
 
