@@ -8,11 +8,7 @@
 namespace Drupal\ds\Plugin\views\row;
 
 use Drupal\Component\Utility\String;
-use Drupal\Core\Entity\EntityManager;
-use Drupal\views\Plugin\views\display\DisplayPluginBase;
-use Drupal\views\Plugin\views\row\RowPluginBase;
-use Drupal\views\ViewExecutable;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\views\Plugin\views\row\EntityRow;
 
 /**
  * Generic entity row plugin to provide a common base for all entity types.
@@ -22,15 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   derivative = "Drupal\ds\Plugin\Derivative\DsEntityRow"
  * )
  */
-class DsEntityRow extends RowPluginBase {
-
-  /**
-   * Stores the entity type of the result entities.
-   *
-   * @var string
-   */
-  protected $entityType;
-
+class DsEntityRow extends EntityRow {
 
   /**
    * Contains an array of render arrays, one for each rendered entity.
@@ -41,39 +29,10 @@ class DsEntityRow extends RowPluginBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @param \Drupal\Core\Entity\EntityManager $entity_manager
-   *   The entity manager.
-   */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityManager $entity_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->entityManager = $entity_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
-    parent::init($view, $display, $options);
-
-    $this->entityType = $this->definition['entity_type'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('entity.manager'));
-  }
-
-  /**
-   * {@inheritdoc}
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
 
-    $options['view_mode'] = array('default' => '');
     $options['alternating_fieldset'] = array(
       'contains' => array(
         'alternating' => array('default' => FALSE, 'bool' => TRUE),
@@ -108,15 +67,6 @@ class DsEntityRow extends RowPluginBase {
    */
   public function buildOptionsForm(&$form, &$form_state) {
     parent::buildOptionsForm($form, $form_state);
-
-    // Default view mode.
-    $view_mode_options = $this->buildViewModeOptions();
-    $form['view_mode'] = array(
-      '#type' => 'select',
-      '#options' => $view_mode_options,
-      '#title' => t('View mode'),
-      '#default_value' => $this->options['view_mode'],
-    );
 
     // Use view mode of display settings.
     if ($this->entityType == 'node' && \Drupal::config('ds.extras')->get('switch_view_mode')) {
@@ -169,7 +119,7 @@ class DsEntityRow extends RowPluginBase {
           '#title' => t('Item @nr', array('@nr' => $i)),
           '#type' => 'select',
           '#default_value' => (isset($this->options['alternating_fieldset']['item_' . $a])) ? $this->options['alternating_fieldset']['item_' . $a] : 'teaser',
-          '#options' => $view_mode_options,
+          '#options' => $this->buildViewModeOptions(),
         );
         $limit--;
         $a++;
@@ -237,32 +187,6 @@ class DsEntityRow extends RowPluginBase {
    */
   public function submitOptionsForm(&$form, &$form_state) {
     $form_state['values']['row_options']['alternating'] = $form_state['values']['row_options']['alternating_fieldset']['alternating'];
-  }
-
-  /**
-   * Return the main options, which are shown in the summary title.
-   */
-  protected function buildViewModeOptions() {
-    $options = array();
-    $view_modes = entity_get_view_modes($this->entityType);
-    foreach ($view_modes as $mode => $settings) {
-      $options[$mode] = $settings['label'];
-    }
-
-    return $options;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function summaryTitle() {
-    $options = $this->buildViewModeOptions();
-    if (isset($options[$this->options['view_mode']])) {
-      return String::checkPlain($options[$this->options['view_mode']]);
-    }
-    else {
-      return t('No view mode selected');
-    }
   }
 
   /**
@@ -389,13 +313,5 @@ class DsEntityRow extends RowPluginBase {
         }
       }
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function render($row) {
-    $entity_id = $row->{$this->field_alias};
-    return $this->build[$entity_id];
   }
 }
