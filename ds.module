@@ -397,6 +397,7 @@ function ds_contextual_links_view_alter(&$element, $items) {
       $view_mode = $element['#contextual_links'][$entity_type]['metadata']['ds_view_mode'];
       $route_name = "field_ui.display_overview_view_mode_$entity_type";
       $type = $def[$entity_type]->getBundleEntityType();
+      $destination = drupal_get_destination();
 
       // When there is no bundle defined, return
       if (!empty($bundle)) {
@@ -407,7 +408,7 @@ function ds_contextual_links_view_alter(&$element, $items) {
             $type => $bundle,
             'view_mode_name' => $view_mode,
           ),
-          'query' => drupal_get_destination(),
+          'query' => $destination['destination'],
         );
       }
     }
