@@ -147,7 +147,7 @@ class DsController extends ControllerBase {
   public function contextualTab($entity_type, $entity_id) {
     $entity = entity_load($entity_type, $entity_id);
 
-    $destination = $entity->uri();
+    $destination = $entity->getSystemPath();
 
     if (!empty($entity->ds_switch->value)) {
       $view_mode = $entity->ds_switch->value;
@@ -176,7 +176,7 @@ class DsController extends ControllerBase {
 
     $admin_path = $this->url('field_ui.display_overview_view_mode_' . $entity_type, $route_parameters, $route['options']);
 
-    return new RedirectResponse(url($admin_path, array('query' => array('destination' => $destination['path']))));
+    return new RedirectResponse(url($admin_path, array('query' => array('destination' => $destination))));
   }
 
 }

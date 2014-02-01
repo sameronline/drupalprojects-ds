@@ -341,13 +341,7 @@ function ds_preprocess_ds_layout(&$variables) {
         $url = '';
         switch ($layout['settings']['layout_link_attribute']) {
           case 'content':
-            if ($object == 'user') {
-              $uri = $variables['elements']['#account']->uri();
-            }
-            else {
-              $uri = $variables[$object]->uri();
-            }
-            $url = $uri['path'];
+            $url = $variables[$object]->getSystemPath();
             break;
           case 'custom':
             $url = $layout['settings']['layout_link_custom'];
