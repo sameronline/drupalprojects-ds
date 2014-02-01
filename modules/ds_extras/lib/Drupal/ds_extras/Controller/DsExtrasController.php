@@ -9,6 +9,7 @@ namespace Drupal\ds_extras\Controller;
 
 use Drupal\Core\Access\AccessInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\ds\Ds;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -88,6 +89,28 @@ class DsExtrasController extends ControllerBase {
 
     drupal_static('ds_extras_view_mode', $view_mode);
     return entity_view($node, $view_mode);
+  }
+
+  /**
+   * Displays a node revision.
+   *
+   * @param int $node_revision
+   *   The node revision ID.
+   *
+   * @return array
+   *   An array suitable for drupal_render().
+   */
+  public function revisionShow($node_revision) {
+    $node = $this->entityManager()->getStorageController('node')->loadRevision($node_revision);
+
+    // Determine view mode.
+    $view_mode = \Drupal::config('ds.extras')->get('override_node_revision_view_mode');
+    drupal_static('ds_view_mode', $view_mode);
+
+    $page =  node_view($node, $view_mode);
+    unset($page['nodes'][$node->id()]['#cache']);
+
+    return $page;
   }
 
 }

@@ -81,6 +81,31 @@ function ds_extras_settings_alter(&$form, &$form_state) {
     '#default_value' => $config->get('hidden_region'),
   );
 
+  $form['fs3']['override_node_revision'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Custom node revision view mode'),
+    '#description' => t('Override the node revision page view with a custom view mode'),
+    '#default_value' => $config->get('override_node_revision'),
+  );
+
+  $options = array();
+  $view_modes = entity_get_view_modes('node');
+  foreach ($view_modes as $key => $view_mode) {
+    $options[$key] = $view_mode['label'];
+  }
+
+  $form['fs3']['override_node_revision_view_mode'] = array(
+    '#type' => 'select',
+    '#description' => t('The revision view mode'),
+    '#default_value' => $config->get('override_node_revision_view_mode'),
+    '#options' => $options,
+    '#states' => array(
+      'visible' => array(
+        'input[name="fs3[override_node_revision]"]' => array('checked' => TRUE),
+      ),
+    ),
+  );
+
   $form['#submit'][] = 'ds_extras_settings_submit';
   $form['#attached']['library'][] = array('ds_extras', 'ds_extras.settings');
 }
@@ -102,11 +127,16 @@ function ds_extras_settings_submit($form, &$form_state) {
     ->set('switch_view_mode', $values['fs3']['switch_view_mode'])
     ->set('field_permissions', $values['fs3']['field_permissions'])
     ->set('switch_field', $values['fs3']['switch_field'])
-    ->set('hidden_region', $values['fs3']['hidden_region']);
+    ->set('hidden_region', $values['fs3']['hidden_region'])
+    ->set('override_node_revision', $values['fs3']['override_node_revision'])
+    ->set('override_node_revision_view_mode', $values['fs3']['override_node_revision_view_mode']);
   if (\Drupal::moduleHandler()->moduleExists('block')) {
     $config->set('region_to_block', $values['fs3']['region_to_block']);
   }
   $config->save();
+
+  // Mark the router items for rebuild
+  \Drupal::service('router.builder')->setRebuildNeeded();
 }
 
 /**

@@ -39,3 +39,8 @@ ds.extras:
     region_to_block:
       type: boolean
       label: 'Region to block'
+    override_node_revision:
+      type: boolean
+      label: 'Override node revision callback'
+    override_node_revision_view_mode:
+      label: 'The view mode of the node revision override'

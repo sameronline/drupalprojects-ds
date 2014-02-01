@@ -53,7 +53,6 @@ function _ds_module_implements_alter(&$implementations, $hook) {
 
   // Because it's possible to turn on/off field templates,
   // we'll unset hooks here so ds_preprocess_field() doesn't run.
-
   $ft_hooks = array(
     'ds_field_settings_alter',
     'form_ds_classes_form_alter',
@@ -164,20 +163,6 @@ function _ds_entity_bundle_info_alter(&$bundles) {
     $layout['settings'] = $ds_layout_setting['settings'];
     $bundles[$ds_layout_setting['entity_type']][$ds_layout_setting['bundle']]['layouts'][$ds_layout_setting['view_mode']] = $layout;
   }
-}
-
-/**
- * Implements hook_entity_view_mode_info_alter().
- */
-function _ds_entity_view_mode_info_alter(&$view_modes) {
-  // @todo fix me - and also convert revision callback to route.
-  return;
-  // Add the revision view mode.
-  $revision = array(
-    'label' => 'Revision',
-    'custom_settings' => FALSE,
-  );
-  $view_modes['node']['revision'] = $revision;
 }
 
 /**
@@ -355,22 +340,5 @@ function _ds_layouts_scan_theme($theme, &$layouts) {
     $function = 'ds_' . $values->name;
     $layouts[$values->name] = $function();
     $layouts[$values->name]['path'] = str_replace('/' . $values->filename, '', $file);
-  }
-}
-
-/**
- * Implements hook_menu_alter().
- */
-function _ds_menu_alter(&$items) {
-  // Do not conflict with the revisioning module.
-  if (\Drupal::moduleHandler()->moduleExists('revisioning')) {
-    $items['node/%node/revisions/%vid/view']['page callback'] = 'ds_revision_node_show';
-    $items['node/%node/revisions/%vid/view']['file'] = 'includes/revision.inc';
-    $items['node/%node/revisions/%vid/view']['file path'] = drupal_get_path('module', 'ds');
-  }
-  else {
-    $items['node/%node/revisions/%/view']['page callback'] = 'ds_revision_node_show';
-    $items['node/%node/revisions/%/view']['file'] = 'includes/revision.inc';
-    $items['node/%node/revisions/%/view']['file path'] = drupal_get_path('module', 'ds');
   }
 }

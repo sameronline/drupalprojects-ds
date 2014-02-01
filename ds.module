@@ -39,14 +39,6 @@ function ds_menu_link_defaults() {
 }
 
 /**
- * Implements hook_menu_alter().
- */
-function ds_menu_alter(&$items) {
-  module_load_include('inc', 'ds', 'includes/registry');
-  _ds_menu_alter($items);
-}
-
-/**
  * Implements hook_theme().
  */
 function ds_theme() {
@@ -94,14 +86,6 @@ function ds_theme_registry_alter(&$theme_registry) {
 function ds_entity_bundle_info_alter(&$bundles) {
   module_load_include('inc', 'ds', 'includes/registry');
   _ds_entity_bundle_info_alter($bundles);
-}
-
-/**
- * Implements hook_entity_view_mode_info_alter().
- */
-function ds_entity_view_mode_info_alter(&$view_modes) {
-  module_load_include('inc', 'ds', 'includes/registry');
-  _ds_entity_view_mode_info_alter($view_modes);
 }
 
 /**
@@ -249,7 +233,6 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $d
         '#label_display' => isset($field_values[$key]['label']) ? $field_values[$key]['label'] : 'inline',
         '#field_name' => $key,
         '#bundle' => $bundle,
-        '#language' => $entity->langcode,
         '#object' => $entity,
         '#entity_type' => $entity_type,
         '#view_mode' => $view_mode,
