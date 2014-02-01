@@ -341,18 +341,18 @@ function ds_preprocess_ds_layout(&$variables) {
         $url = '';
         switch ($layout['settings']['layout_link_attribute']) {
           case 'content':
-            $url = $variables[$object]->getSystemPath();
+            $url = $variables['elements']['#' . $object]->getSystemPath();
             break;
           case 'custom':
             $url = $layout['settings']['layout_link_custom'];
             break;
           case 'tokens':
-            $url = \Drupal::service('token')->replace($layout['settings']['layout_link_custom'], array($variables['elements']['#entity_type'] => $variables[$object]), array('clear' => TRUE));
+            $url = \Drupal::service('token')->replace($layout['settings']['layout_link_custom'], array($variables['elements']['#entity_type'] => $variables['elements']['#' . $object]), array('clear' => TRUE));
             break;
         }
 
         if (!empty($url)) {
-          $vars['attributes']['onclick'] = 'location.href=\'' . url($url) . '\'';
+          $variables['attributes']['onclick'] = 'location.href=\'' . url($url) . '\'';
         }
       }
 
