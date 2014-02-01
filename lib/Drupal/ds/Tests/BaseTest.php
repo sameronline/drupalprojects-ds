@@ -30,7 +30,7 @@ class BaseTest extends WebTestBase {
     \Drupal::moduleHandler()->disable(array('edit'));
 
     \Drupal::config('search.settings')->set('active_modules', array('node' => '', 'user' => 'user', 'ds_search' => 'ds_search'))->save();
-    menu_router_rebuild();
+    \Drupal::service('router.builder')->rebuildIfNeeded();
 
     $this->admin_user = $this->drupalCreateUser(array('admin classes', 'admin fields', 'admin display suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions', 'administer node fields', 'administer node display', 'administer node form display', 'administer user fields', 'administer user display', 'administer user form display', 'administer comment fields', 'administer comment display', 'administer comment form display', 'administer views'));
     $this->drupalLogin($this->admin_user);

@@ -128,8 +128,8 @@ class SettingsForm extends ConfigFormBase {
     entity_info_cache_clear();
     field_info_cache_clear();
     $this->moduleHandler->resetImplementations();
-    drupal_theme_rebuild();
-    menu_router_rebuild();
+    \Drupal::service('theme.registry')->reset();
+    \Drupal::service('router.builder')->rebuildIfNeeded();
   }
 
 }
