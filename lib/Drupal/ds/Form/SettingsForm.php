@@ -129,7 +129,7 @@ class SettingsForm extends ConfigFormBase {
     field_info_cache_clear();
     $this->moduleHandler->resetImplementations();
     \Drupal::service('theme.registry')->reset();
-    \Drupal::service('router.builder')->rebuildIfNeeded();
+    \Drupal::service('router.builder')->setRebuildNeeded();
   }
 
 }
