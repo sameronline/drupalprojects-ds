@@ -207,4 +207,21 @@ class Ds {
     return FALSE;
   }
 
+  /**
+   * Gets all Display Suite field layouts options.
+   *
+   * Mainly used by select fields.
+   *
+   * @return array
+   *   List of field layouts.
+   */
+  public static function getFieldLayoutOptions() {
+    $options = array();
+    foreach (\Drupal::service('plugin.manager.ds.field.layout')->getDefinitions() as $plugin_id => $plugin) {
+      $options[$plugin_id] = $plugin['title'];
+    }
+
+    return $options;
+  }
+
 }

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\ds\Annotation\DsField.
+ * Contains Drupal\ds\Annotation\DsFieldLayout.
  */
 
 namespace Drupal\ds\Annotation;
@@ -10,11 +10,11 @@ namespace Drupal\ds\Annotation;
 use Drupal\Component\Annotation\Plugin;
 
 /**
- * Defines a DsField annotation object.
+ * Defines a DsFieldLayout annotation object.
  *
  * @Annotation
  */
-class DsField extends Plugin {
+class DsFieldLayout extends Plugin {
 
   /**
    * The plugin ID.
@@ -24,7 +24,7 @@ class DsField extends Plugin {
   public $id;
 
   /**
-   * The human-readable name of the DS plugin.
+   * The human-readable name of the DS field layout plugin.
    *
    * @ingroup plugin_translatable
    *
@@ -33,10 +33,10 @@ class DsField extends Plugin {
   public $title;
 
   /**
-   * The entity type this plugin should work on.
+   * The theme function for this field layout.
    *
    * @var string
    */
-  public $entity_type;
+  public $theme;
 
 }
