@@ -36,7 +36,7 @@ class EntitiesTest extends BaseTest {
 
     // Create field CSS classes.
     $edit = array('fields' => "test_field_class\ntest_field_class_2|Field class 2");
-    $this->drupalPost('admin/structure/ds/classes', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/structure/ds/classes', $edit, t('Save configuration'));
 
     // Create a token and php field.
     $token_field = array(
@@ -81,7 +81,7 @@ class EntitiesTest extends BaseTest {
     foreach ($field_settings as $config) {
       \Drupal::config($config)->delete();
     }
-    cache()->deleteTags(array('ds_fields' => TRUE));
+    cache()->deleteTags(array('ds_fields_info' => TRUE));
     cache()->delete('ds_field_settings');
   }
 
@@ -145,7 +145,7 @@ class EntitiesTest extends BaseTest {
 
     // Switch view mode on full node page.
     $edit = array('ds_switch' => 'teaser');
-    $this->drupalPost('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertRaw('view-mode-teaser', 'Switched to teaser mode');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
@@ -153,7 +153,7 @@ class EntitiesTest extends BaseTest {
     $this->assertNoRaw('group-footer', 'Template found (no region footer)');
 
     $edit = array('ds_switch' => '');
-    $this->drupalPost('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertRaw('view-mode-full', 'Switched to full mode again');
 
     // Test all options of a block field.
@@ -194,7 +194,7 @@ class EntitiesTest extends BaseTest {
 
     // Test revisions. Enable the revision view mode
     $edit = array('view_modes_custom[revision]' => '1');
-    $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/types/manage/article/display', $edit, t('Save'));
 
     // Select layout and configure fields.
     $edit = array(
@@ -219,7 +219,7 @@ class EntitiesTest extends BaseTest {
       'revision' => TRUE,
       'log' => 'Test revision',
     );
-    $this->drupalPost('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertText('Revisions');
 
     // Assert revision is using 2 col template.
@@ -235,7 +235,7 @@ class EntitiesTest extends BaseTest {
       'ds_switch' => '',
       'field_tags[und]' => 'Tag 1, Tag 2'
     );
-    $this->drupalPost('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $edit = array(
       'fields[field_tags][region]' => 'right',
     );
@@ -259,7 +259,7 @@ class EntitiesTest extends BaseTest {
     $edit = array(
       'title' => 'Hi, I am an article <script>alert(\'with a javascript tag in the title\');</script>',
     );
-    $this->drupalPost('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('<h2>Hi, I am an article &lt;script&gt;alert(&#039;with a javascript tag in the title&#039;);&lt;/script&gt;</h2>');
   }
@@ -303,7 +303,7 @@ class EntitiesTest extends BaseTest {
     $edit = array(
       'fs1[ft-default]' => 'theme_ds_field_reset',
     );
-    $this->drupalPost('admin/structure/ds/list/extras', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/structure/ds/list/extras', $edit, t('Save configuration'));
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     <p>" . $body_field . "</p>");

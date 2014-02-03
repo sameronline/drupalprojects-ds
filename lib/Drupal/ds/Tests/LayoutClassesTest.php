@@ -133,7 +133,7 @@ class LayoutClassesTest extends BaseTest {
 
     // Let's create a block field, enable the full mode first.
     $edit = array('display_modes_custom[full]' => '1');
-    $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/types/manage/article/display', $edit, t('Save'));
 
     // Select layout.
     $layout = array(
@@ -153,7 +153,7 @@ class LayoutClassesTest extends BaseTest {
       'new_block_region' => 'Block region',
       'new_block_region_key' => 'block_region',
     );
-    $this->drupalPost('admin/structure/types/manage/article/display/full', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/types/manage/article/display/full', $edit, t('Save'));
     $this->assertRaw('<td colspan="8">' . t('Block region') . '</td>', 'Block region found');
 
     // Configure fields
@@ -173,7 +173,7 @@ class LayoutClassesTest extends BaseTest {
     $edit = array(
       'blocks[ds_extras_block_region][region]' => 'sidebar_first',
     );
-    $this->drupalPost('admin/structure/block', $edit, t('Save blocks'));
+    $this->drupalPostForm('admin/structure/block', $edit, t('Save blocks'));
 
     // Assert the block is on the node page.
     $this->drupalGet('node/' . $node->id());
@@ -193,7 +193,7 @@ class LayoutClassesTest extends BaseTest {
       'ds_right' => 'footer',
       'ds_block_region' => 'footer',
     );
-    $this->drupalPost('admin/structure/ds/change-layout/node/article/full/ds_2col_stacked', $edit, t('Save'), array('query' => array('destination' => 'admin/structure/types/manage/article/display/full')));
+    $this->drupalPostForm('admin/structure/ds/change-layout/node/article/full/ds_2col_stacked', $edit, t('Save'), array('query' => array('destination' => 'admin/structure/types/manage/article/display/full')));
 
     // Verify new regions.
     $this->assertRaw('<td colspan="8">' . t('Header') . '</td>', 'Header region found');
@@ -212,7 +212,7 @@ class LayoutClassesTest extends BaseTest {
       'layout' => '',
       'display_modes_custom[full]' => FALSE,
     );
-    $this->drupalPost('admin/structure/types/manage/article/display', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/types/manage/article/display', $edit, t('Save'));
     $this->drupalGet('node/' . $node->id());
     $this->assertNoText('Test code field on node 1', 'No ds field from full view mode layout');
   }

@@ -9,16 +9,26 @@ namespace Drupal\ds\Tests;
 
 use Drupal\simpletest\WebTestBase;
 
-class BaseTest extends WebTestBase {
+abstract class BaseTest extends WebTestBase {
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = array('field_ui', 'comment', 'block', 'ds', 'ds_extras', 'ds_code', 'search', 'ds_search', 'ds_forms', 'ds_ui', 'ds_test', 'views', 'views_ui');
+  public static $modules = array('field_ui', 'comment', 'block', 'ds', 'ds_extras', 'search', 'ds_search', 'ds_forms', 'ds_ui', 'ds_test', 'views', 'views_ui');
 
+  /**
+   * The chosen installation profile
+   *
+   * @var string
+   */
   protected $profile = 'standard';
+
+  /**
+   * The admin user with Display Suite configuration permissions enabled
+   */
+  protected $admin_user;
 
   /**
    * Implementation of setUp().
@@ -26,13 +36,7 @@ class BaseTest extends WebTestBase {
   function setUp() {
     parent::setUp();
 
-    // Disable edit for now
-    \Drupal::moduleHandler()->disable(array('edit'));
-
-    \Drupal::config('search.settings')->set('active_modules', array('node' => '', 'user' => 'user', 'ds_search' => 'ds_search'))->save();
-    \Drupal::service('router.builder')->setRebuildNeeded();
-
-    $this->admin_user = $this->drupalCreateUser(array('admin classes', 'admin fields', 'admin display suite', 'ds_switch article', 'use text format ds_code', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions', 'administer node fields', 'administer node display', 'administer node form display', 'administer user fields', 'administer user display', 'administer user form display', 'administer comment fields', 'administer comment display', 'administer comment form display', 'administer views'));
+    $this->admin_user = $this->drupalCreateUser(array('admin classes', 'admin fields', 'admin display suite', 'ds_switch article', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions', 'administer node fields', 'administer node display', 'administer node form display', 'administer user fields', 'administer user display', 'administer user form display', 'administer comment fields', 'administer comment display', 'administer comment form display', 'administer views'));
     $this->drupalLogin($this->admin_user);
   }
 
@@ -45,7 +49,7 @@ class BaseTest extends WebTestBase {
       'layout' => 'ds_2col_stacked',
     );
 
-    $this->drupalPost($url, $edit, t('Save'), $options);
+    $this->drupalPostForm($url, $edit, t('Save'), $options);
 
     $assert += array(
       'regions' => array(
@@ -70,7 +74,7 @@ class BaseTest extends WebTestBase {
       'regions' => "class_name_1\nclass_name_2|Friendly name"
     );
 
-    $this->drupalPost('admin/structure/ds/classes', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/structure/ds/classes', $edit, t('Save configuration'));
     $this->assertText(t('The configuration options have been saved.'), t('CSS classes configuration saved'));
     $this->assertRaw('class_name_1', 'Class name 1 found');
     $this->assertRaw('class_name_2', 'Class name 1 found');
@@ -86,23 +90,23 @@ class BaseTest extends WebTestBase {
       "footer[]" => 'class_name_2',
     );
 
-    $this->drupalPost($url, $edit, t('Save'));
+    $this->drupalPostForm($url, $edit, t('Save'));
   }
 
   /**
    * Configure Field UI.
    */
   function dsConfigureUI($edit, $url = 'admin/structure/types/manage/article/display') {
-    $this->drupalPost($url, $edit, t('Save'));
+    $this->drupalPostForm($url, $edit, t('Save'));
   }
 
   /**
    * Edit field formatter settings
    */
   function dsEditFormatterSettings($edit, $url = 'admin/structure/types/manage/article/display', $element_value = 'edit body') {
-    $this->drupalPost($url, array(), $element_value);
-    $this->drupalPost(NULL, $edit, t('Update'));
-    $this->drupalPost(NULL, array(), t('Save'));
+    $this->drupalPostForm($url, array(), $element_value);
+    $this->drupalPostForm(NULL, $edit, t('Update'));
+    $this->drupalPostForm(NULL, array(), t('Save'));
   }
 
   /**
@@ -121,7 +125,7 @@ class BaseTest extends WebTestBase {
       'use_token' => '0',
     );
 
-    $this->drupalPost($url, $edit, t('Save'));
+    $this->drupalPostForm($url, $edit, t('Save'));
     $this->assertText(t('The field ' . $edit['name'] . ' has been saved'), t('!name field has been saved', array('!name' => $edit['name'])));
   }
 
@@ -143,7 +147,7 @@ class BaseTest extends WebTestBase {
       $edit += array('id' => 'test_block_field');
     }
 
-    $this->drupalPost($url, $edit, t('Save'));
+    $this->drupalPostForm($url, $edit, t('Save'));
     $this->assertText(t('The field ' . $edit['name'] . ' has been saved'), t('!name field has been saved', array('!name' => $edit['name'])));
   }
 }

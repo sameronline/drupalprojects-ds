@@ -38,7 +38,7 @@ class SearchTest extends BaseTest {
     $edit = array(
       'default_module' => 'ds_search',
     );
-    $this->drupalPost('admin/config/search/settings', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/config/search/settings', $edit, t('Save configuration'));
 
     // Run cron.
     $this->cronRun();
@@ -71,7 +71,7 @@ class SearchTest extends BaseTest {
 
     // Configure ds search.
     $edit = array('user_override_search_page' => '1');
-    $this->drupalPost('admin/structure/ds/list/search', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/structure/ds/list/search', $edit, t('Save configuration'));
 
     // Let's search.
     $this->drupalGet('search/content/title1');
@@ -83,7 +83,7 @@ class SearchTest extends BaseTest {
 
 
     $edit = array('node_form_alter' => '1');
-    $this->drupalPost('admin/structure/ds/list/search', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/structure/ds/list/search', $edit, t('Save configuration'));
     $this->drupalGet('search/content/title1');
     $this->assertText(t('Advanced search'), 'Advanced search found');
 

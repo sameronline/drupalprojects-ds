@@ -50,7 +50,7 @@ class FieldPermissionsTest extends BaseTest {
       'authenticated[view node_author on node]' => 1,
       'authenticated[view test_field on node]' => 1,
     );
-    $this->drupalPost('admin/people/permissions', $edit, t('Save permissions'));
+    $this->drupalPostForm('admin/people/permissions', $edit, t('Save permissions'));
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertText('Test code field on node ' . $node->id(), 'Test code field found');

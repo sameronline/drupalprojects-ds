@@ -39,7 +39,7 @@ class FieldsTest extends BaseTest {
     $this->dsCreateCodeField($edit);
 
     // Create the same and assert it already exists.
-    $this->drupalPost('admin/structure/ds/fields/manage_code', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/ds/fields/manage_code', $edit, t('Save'));
     $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Field testing already exists.'));
 
     $this->dsSelectLayout();
@@ -56,7 +56,7 @@ class FieldsTest extends BaseTest {
     $edit = array(
       'name' => 'Test field 2',
     );
-    $this->drupalPost('admin/structure/ds/fields/manage_code/test_field', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/ds/fields/manage_code/test_field', $edit, t('Save'));
     $this->assertText(t('The field Test field 2 has been saved'), t('Test field label updated'));
 
     // Use the Field UI limit option.
@@ -65,7 +65,7 @@ class FieldsTest extends BaseTest {
     $edit = array(
       'ui_limit' => 'article|default',
     );
-    $this->drupalPost('admin/structure/ds/fields/manage_code/test_field', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/ds/fields/manage_code/test_field', $edit, t('Save'));
 
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[dynamic_code_field:node-test_field][weight]', t('Test field field found on node article, default.'));
@@ -77,7 +77,7 @@ class FieldsTest extends BaseTest {
     $edit = array(
       'ui_limit' => 'article|*',
     );
-    $this->drupalPost('admin/structure/ds/fields/manage_code/test_field', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/ds/fields/manage_code/test_field', $edit, t('Save'));
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[dynamic_code_field:node-test_field][weight]', t('Test field field found on node article, default.'));
     $this->drupalGet('admin/structure/types/manage/article/display/teaser');
@@ -86,7 +86,7 @@ class FieldsTest extends BaseTest {
 
 
     // Remove the field.
-    $this->drupalPost('admin/structure/ds/fields/delete/test_field', array(), t('Confirm'));
+    $this->drupalPostForm('admin/structure/ds/fields/delete/test_field', array(), t('Confirm'));
     $this->assertText(t('The field Test field 2 has been deleted'), t('Test field removed'));
 
     // Assert the field is gone at the manage display screen.
@@ -104,7 +104,7 @@ class FieldsTest extends BaseTest {
     $this->dsCreateBlockField($edit);
 
     // Create the same and assert it already exists.
-    $this->drupalPost('admin/structure/ds/fields/manage_block', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/ds/fields/manage_block', $edit, t('Save'));
     $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Block test field already exists.'));
 
     $this->dsSelectLayout();
@@ -121,11 +121,11 @@ class FieldsTest extends BaseTest {
     $edit = array(
       'name' => 'Test block field 2',
     );
-    $this->drupalPost('admin/structure/ds/fields/manage_block/test_block_field', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/ds/fields/manage_block/test_block_field', $edit, t('Save'));
     $this->assertText(t('The field Test block field 2 has been saved'), t('Test field label updated'));
 
     // Remove the block field.
-    $this->drupalPost('admin/structure/ds/fields/delete/test_block_field', array(), t('Confirm'));
+    $this->drupalPostForm('admin/structure/ds/fields/delete/test_block_field', array(), t('Confirm'));
     $this->assertText(t('The field Test block field 2 has been deleted'), t('Test field removed'));
 
     // Assert the block field is gone at the manage display screen.
