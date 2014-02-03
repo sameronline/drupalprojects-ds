@@ -10,7 +10,7 @@ namespace Drupal\ds\Plugin\DsFieldLayout;
 use Drupal\Component\Utility\String;
 
 /**
- * Plugin that renders the title of a node.
+ * Plugin for the minimal field template.
  *
  * @DsFieldLayout(
  *   id = "minimal",
@@ -23,7 +23,8 @@ class Minimal extends DsFieldLayoutBase {
   /**
    * {@inheritdoc}
    */
-  public function alterForm(&$form, &$form_state) {
+  public function alterForm(&$form) {
+    parent::alterForm($form);
 
     $config = $this->getConfiguration();
     $form['lb'] = array(
@@ -40,18 +41,18 @@ class Minimal extends DsFieldLayoutBase {
         'class' => array('colon-checkbox'),
       ),
     );
-
-    return $form;
   }
 
   /**
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array(
-      'lb' => '',
-      'lb-col' => \Drupal::config('ds.settings')->get('ft-kill-colon'),
-    );
+    $config = parent::defaultConfiguration();
+
+    $config['lb'] = '';
+    $config['lb-col'] = \Drupal::config('ds.settings')->get('ft-kill-colon');
+
+    return $config;
   }
 
 }

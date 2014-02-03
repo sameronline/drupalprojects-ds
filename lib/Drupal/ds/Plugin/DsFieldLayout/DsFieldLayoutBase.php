@@ -8,6 +8,7 @@
 namespace Drupal\ds\Plugin\DsFieldLayout;
 
 use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
+use Drupal\ds\Ds;
 
 /**
  * Base class for all the ds plugins.
@@ -25,8 +26,27 @@ abstract class DsFieldLayoutBase extends ComponentPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function alterForm(&$form, &$form_state) {
-    // Do nothing
+  public function alterForm(&$form) {
+    // Field classes.
+    $config = $this->getConfiguration();
+    $field_classes = Ds::getClasses('field');
+    if (!empty($field_classes)) {
+      $form['classes'] = array(
+        '#type' => 'select',
+        '#multiple' => TRUE,
+        '#options' => $field_classes,
+        '#title' => t('Choose additional CSS classes for the field'),
+        '#default_value' => $config['classes'],
+        '#prefix' => '<div class="field-classes">',
+        '#suffix' => '</div>',
+      );
+    }
+    else {
+      $form['classes'] = array(
+        '#type' => 'value',
+        '#value' => array(''),
+      );
+    }
   }
 
   /**
@@ -34,7 +54,9 @@ abstract class DsFieldLayoutBase extends ComponentPluginBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array();
+    return array(
+      'classes' => array(),
+    );
   }
 
   /**

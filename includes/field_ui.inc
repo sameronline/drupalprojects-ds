@@ -822,7 +822,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     );
 
     $classes_access = (\Drupal::currentUser()->hasPermission('admin_classes') && \Drupal::moduleHandler()->moduleExists('ds_ui'));
-    $classes = _ds_classes();
+    $classes = Ds::getClasses();
     if (!empty($classes)) {
 
       $form['ds_classes']['layout_class'] = array(
@@ -1580,31 +1580,6 @@ function _ds_field_valid($key, $field, &$form_state, $view_mode = 'default') {
   }
 
   return $continue;
-}
-
-/**
- * Utility function to return CSS classes.
- */
-function _ds_classes($name = 'region') {
-  static $classes = array();
-
-  if (!isset($classes[$name])) {
-    $classes[$name] = array();
-    $custom_classes = \Drupal::config('ds.settings')->get('classes.' . $name);
-    if (!empty($custom_classes)) {
-      $classes[$name][''] = t('None');
-      foreach ($custom_classes as $value) {
-        $classes_splitted = explode("|", $value);
-        $key = trim($classes_splitted[0]);
-        $friendly_name = isset($classes_splitted[1]) ? trim($classes_splitted[1]) : $key;
-        $classes[$name][String::checkPlain($key)] = $friendly_name;
-      }
-    }
-    $name_clone = $name; // Prevent the name from being changed.
-    \Drupal::moduleHandler()->alter('ds_classes', $classes[$name], $name_clone);
-  }
-
-  return $classes[$name];
 }
 
 /**

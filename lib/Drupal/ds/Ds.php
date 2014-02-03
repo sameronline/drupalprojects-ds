@@ -224,4 +224,29 @@ class Ds {
     return $options;
   }
 
+  /**
+   * Utility function to return CSS classes.
+   */
+  public static function getClasses($name = 'region') {
+    static $classes = array();
+
+    if (!isset($classes[$name])) {
+      $classes[$name] = array();
+      $custom_classes = \Drupal::config('ds.settings')->get('classes.' . $name);
+      if (!empty($custom_classes)) {
+        $classes[$name][''] = t('None');
+        foreach ($custom_classes as $value) {
+          $classes_splitted = explode("|", $value);
+          $key = trim($classes_splitted[0]);
+          $friendly_name = isset($classes_splitted[1]) ? trim($classes_splitted[1]) : $key;
+          $classes[$name][String::checkPlain($key)] = $friendly_name;
+        }
+      }
+      $name_clone = $name; // Prevent the name from being changed.
+      \Drupal::moduleHandler()->alter('ds_classes', $classes[$name], $name_clone);
+    }
+
+    return $classes[$name];
+  }
+
 }
