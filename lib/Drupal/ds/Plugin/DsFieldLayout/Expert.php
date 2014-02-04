@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\ds\Plugin\DsFieldLayout;
+use Drupal\Component\Utility\String;
 
 /**
  * Plugin for the expert field template.
@@ -13,7 +14,8 @@ namespace Drupal\ds\Plugin\DsFieldLayout;
  * @DsFieldLayout(
  *   id = "expert",
  *   title = @Translation("Expert"),
- *   theme = "theme_ds_field_expert"
+ *   theme = "theme_ds_field_expert",
+ *   path = "includes/theme.inc"
  * )
  */
 class Expert extends DsFieldLayoutBase {
@@ -22,8 +24,6 @@ class Expert extends DsFieldLayoutBase {
    * {@inheritdoc}
    */
   public function alterForm(&$form) {
-    parent::alterForm($form);
-
     $config = $this->getConfiguration();
 
     $wrappers = array(
@@ -73,13 +73,6 @@ class Expert extends DsFieldLayoutBase {
           ),
         );
       }
-      if ($wrapper_key == 'fi') {
-        $form['fi-odd-even'] = array(
-          '#type' => 'checkbox',
-          '#title' => t('Add odd/even classes'),
-          '#default_value' => $config['fi-odd-even'],
-        );
-      }
       $form[$wrapper_key . '-def-at'] = array(
         '#type' => 'checkbox',
         '#title' => t('Add default attributes'),
@@ -103,7 +96,7 @@ class Expert extends DsFieldLayoutBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    $config = parent::defaultConfiguration();
+    $config = array();
     $config['lb'] = '';
     $config['lb-col'] = \Drupal::config('ds.settings')->get('ft-kill-colon');
     $config['fi-odd-even'] = FALSE;
@@ -127,4 +120,53 @@ class Expert extends DsFieldLayoutBase {
     return $config;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function massageOut(&$field_settings, $values) {
+    $wrappers = array(
+      'ow' => t('Wrapper'),
+      'fis' => t('Field items'),
+      'fi' => t('Field item')
+    );
+
+    // Label.
+    if (!empty($values['lb'])) {
+      $field_settings['lb'] = $values['lb'];
+    }
+    if (!(empty($values['lb-el']))) {
+      $field_settings['lb-el'] = String::checkPlain($values['lb-el']);
+    }
+    if (!(empty($values['lb-cl']))) {
+      $field_settings['lb-cl'] = String::checkPlain($values['lb-cl']);
+    }
+    if (!(empty($values['lb-at']))) {
+      $field_settings['lb-at'] = filter_xss($values['lb-at']);
+    }
+    if (!(empty($values['lb-def-at']))) {
+      $field_settings['lb-def-at'] = TRUE;
+    }
+    if (!(empty($values['lb-col']))) {
+      $field_settings['lb-col'] = TRUE;
+    }
+
+    foreach ($wrappers as $wrapper_key => $title) {
+      if (!empty($values[$wrapper_key])) {
+        // Enable.
+        $field_settings[$wrapper_key] = TRUE;
+        // Element.
+        $field_settings[$wrapper_key . '-el'] = !(empty($values[$wrapper_key . '-el'])) ? String::checkPlain($values[$wrapper_key . '-el']) : 'div';
+        // Classes.
+        $field_settings[$wrapper_key . '-cl'] = !(empty($values[$wrapper_key . '-cl'])) ? String::checkPlain($values[$wrapper_key . '-cl']) : '';
+        // Default Classes.
+        if (in_array($wrapper_key, array('ow', 'lb'))) {
+          $field_settings[$wrapper_key . '-def-cl'] = !(empty($values[$wrapper_key . '-def-cl'])) ? TRUE : FALSE;
+        }
+        // Attributes.
+        $field_settings[$wrapper_key . '-at'] = !(empty($values[$wrapper_key . '-at'])) ? filter_xss($values[$wrapper_key . '-at']) : '';
+        // Default attributes.
+        $field_settings[$wrapper_key . '-def-at'] = !(empty($values[$wrapper_key . '-def-at'])) ? TRUE : FALSE;
+      }
+    }
+  }
 }

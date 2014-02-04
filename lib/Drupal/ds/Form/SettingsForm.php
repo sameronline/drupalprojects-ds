@@ -10,6 +10,7 @@ namespace Drupal\ds\Form;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\ds\Ds;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -83,7 +84,7 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('field_template'),
     );
 
-    $theme_functions = $this->moduleHandler->invokeAll('ds_field_theme_functions_info');
+    $theme_functions = Ds::getFieldLayoutOptions();
     $form['fs1']['ft-default'] = array(
       '#type' => 'select',
       '#title' => t('Default Field Template'),

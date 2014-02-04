@@ -492,8 +492,30 @@ function ds_field_ui_fields_save($form, &$form_state) {
     $field_settings[$field] = $settings;
   }
 
-  // Allow other modules to modify the field settings before they get saved.
-  \Drupal::moduleHandler()->alter('ds_field_settings', $field_settings, $form, $form_state);
+  // Add field layout settings to every field
+  foreach ($form_state['values']['fields'] as $field => $field_values) {
+    // Make sure we need to save anything for this field.
+    if (_ds_field_valid($field, $field_values, $form_state)) {
+      continue;
+    }
+
+    // Add plugin settings if provided
+    $values = isset($form_state['plugin_settings'][$field]['ft']) ? $form_state['plugin_settings'][$field]['ft'] : array();
+
+    if (!empty($values)) {
+      $field_settings[$field]['plugin_settings']['ft'] = array();
+
+      $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
+      $function = isset($values['func']) ? $values['func'] : $default_field_function;
+      $field_settings[$field]['plugin_settings']['ft']['func'] = $function;
+
+      // Create field layout plugin instance.
+      $field_layout_instance = \Drupal::service('plugin.manager.ds.field.layout')->createInstance($function);
+
+      // Add field layout specific settings for the field
+      $field_layout_instance->massageOut($field_settings[$field]['plugin_settings']['ft']['layout'], $values['layout'], $form_state);
+    }
+  }
 
   // Save the record.
   if (!empty($field_settings)) {
@@ -1196,7 +1218,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, &$form_s
 
     $plugin_instance->setConfiguration($plugin_settings);
 
-    if (!isset($field_settings[$key]['ft']) && isset($field_settings[$key]['ft'])) {
+    if (!isset($form_state['plugin_settings'][$key]['ft']) && isset($field_settings[$key]['ft'])) {
       $form_state['plugin_settings'][$key]['ft'] = $field_settings[$key]['ft'];
     }
 

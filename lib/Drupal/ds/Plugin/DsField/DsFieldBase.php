@@ -90,7 +90,15 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
    * Gets the current entity type.
    */
   public function getEntityTypeId() {
-    return $this->entity()->getEntityTypeId();
+    if (isset($this->configuration['entity_type'])) {
+      return $this->configuration['entity_type'];
+    }
+    elseif ($entity = $this->entity()) {
+      return $entity->getEntityTypeId();
+    }
+    else {
+      return '';
+    }
   }
 
   /**

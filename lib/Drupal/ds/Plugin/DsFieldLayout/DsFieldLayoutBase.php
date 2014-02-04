@@ -27,26 +27,21 @@ abstract class DsFieldLayoutBase extends ComponentPluginBase {
    * {@inheritdoc}
    */
   public function alterForm(&$form) {
-    // Field classes.
-    $config = $this->getConfiguration();
-    $field_classes = Ds::getClasses('field');
-    if (!empty($field_classes)) {
-      $form['classes'] = array(
-        '#type' => 'select',
-        '#multiple' => TRUE,
-        '#options' => $field_classes,
-        '#title' => t('Choose additional CSS classes for the field'),
-        '#default_value' => $config['classes'],
-        '#prefix' => '<div class="field-classes">',
-        '#suffix' => '</div>',
-      );
-    }
-    else {
-      $form['classes'] = array(
-        '#type' => 'value',
-        '#value' => array(''),
-      );
-    }
+    // Do nothing
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function massageOut(&$field_settings, $values) {
+    // Save nothing
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getThemeFunction() {
+    return $this->pluginDefinition['theme'];
   }
 
   /**
@@ -54,9 +49,7 @@ abstract class DsFieldLayoutBase extends ComponentPluginBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array(
-      'classes' => array(),
-    );
+    return array();
   }
 
   /**

@@ -430,7 +430,7 @@ function ds_local_tasks_alter(&$local_tasks) {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) {
-  $theme_functions = \Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
+  $theme_functions = Ds::getFieldLayoutOptions();
   $form['instance']['ds_field_template'] = array(
     '#type' => 'select',
     '#title' => t('Field Template'),
@@ -439,156 +439,6 @@ function ds_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) 
     '#description' => t('Choose the default HTML for this field.'),
     '#empty_option' => t('Use sitewide default'),
   );
-}
-
-/**
- * Implements hook_ds_field_theme_functions_info().
- */
-function ds_ds_field_theme_functions_info() {
-  return array(
-    'theme_field' => t('Drupal default'),
-    'theme_ds_field_reset' => t('Full Reset'),
-    'theme_ds_field_minimal' => t('Minimal'),
-    'theme_ds_field_expert' => t('Expert'),
-  );
-}
-
-/**
- * Reset all HTML for the field.
- */
-function theme_ds_field_reset($variables) {
-  $output = '';
-
-  // Render the label.
-  if (!$variables['label_hidden']) {
-    $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
-    if (!\Drupal::config('ds.settings')->get('ft-kill-colon')) {
-      $output .= ':&nbsp;';
-    }
-    $output .= '</div>';
-  }
-
-  // Render the items.
-  foreach ($variables['items'] as $item) {
-    $output .= drupal_render($item);
-  }
-
-  return $output;
-}
-
-/**
- * Provide minimal HTML for the field.
- */
-function theme_ds_field_minimal($variables) {
-  $output = '';
-  $config = $variables['ds-config'];
-  $classes = isset($config['classes']) ? ' ' . $config['classes'] : '';
-
-  // Add a simple wrapper.
-  $output .= '<div class="field field-name-' . strtr($variables['element']['#field_name'], '_', '-') . $classes . '">';
-
-  // Render the label.
-  if (!$variables['label_hidden']) {
-    $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
-    if (!isset($config['lb-col'])) {
-      $output .= ':&nbsp;';
-    }
-    $output .= '</div>';
-  }
-
-  // Render the items.
-  foreach ($variables['items'] as $item) {
-    $output .= drupal_render($item);
-  }
-  $output .="</div>";
-
-  return $output;
-}
-
-/**
- * Custom output all HTML for the field.
- */
-function theme_ds_field_expert($variables) {
-  $output = '';
-
-  $config = $variables['ds-config'];
-
-  // Render the label if it's not hidden.
-  if (!$variables['label_hidden']) {
-    $label_wrapper = isset($config['lb-el']) ? $config['lb-el'] : 'div';
-    $class = array('label-' . $variables['element']['#label_display']);
-    if (!empty($config['lb-cl'])) $class[] = $config['lb-cl'];
-    $class = !empty($class) ? ' class="' . implode(' ', $class) . '"' : '';
-    $attributes = array();
-    if (!empty($config['lb-at'])) $attributes[] = $config['lb-at'];
-    if (!empty($config['lb-def-at'])) $attributes[] = $variables['title_attributes'];
-    $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
-    $output .= '<' . $label_wrapper . $class . $attributes . '>' . $variables['label'];
-    if (empty($config['lb-col'])) $output .= ':&nbsp;';
-    $output .= '</' . $label_wrapper . '>';
-  }
-
-  // Field items wrapper
-  if (!empty($config['fis'])) {
-    $class = (!empty($config['fis-cl'])) ? ' class="' . $config['fis-cl'] . '"' : '';
-    $attributes = array();
-    if (!empty($config['fis-at'])) $attributes[] = $config['fis-at'];
-    if (!empty($config['fis-def-at'])) $attributes[] = $variables['content_attributes'];
-    $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
-    $output .= '<' . $config['fis-el'] . $class . $attributes . '>';
-  }
-
-  // Render items.
-  foreach ($variables['items'] as $delta => $item) {
-    // Field item wrapper.
-    if (!empty($config['fi'])) {
-      $class = array();
-      if (!empty($config['fi-odd-even'])) {
-        $class[] = $delta % 2 ? 'odd' : 'even';
-      }
-      if (!empty($config['fi-cl'])) {
-        $class[] = $config['fi-cl'];
-      }
-      $class = !empty($class) ? ' class="'. implode(' ', $class)  .'"' : '';
-      $attributes = array();
-      if (!empty($config['fi-at'])) {
-        $attributes[] = \Drupal::service('token')->replace($config['fi-at'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));
-      }
-      if (!empty($config['fi-def-at'])) {
-        $attributes[] = $variables['item_attributes'][$delta];
-      }
-      $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
-      $output .= '<' . $config['fi-el'] . $class . $attributes .'>';
-    }
-
-    // Render field content.
-    $output .= drupal_render($item);
-
-    // Closing field item wrapper.
-    if (!empty($config['fi'])) {
-      $output .= '</' . $config['fi-el'] . '>';
-    }
-  }
-
-  // Closing field items wrapper.
-  if (!empty($config['fis'])) {
-    $output .= '</' . $config['fis-el'] . '>';
-  }
-
-  // Outer wrapper.
-  if (isset($config['ow'])) {
-    $class = array();
-    if (!empty($config['ow-cl'])) $class[] = $config['ow-cl'];
-    if (!empty($config['ow-def-cl'])) $class[] = $variables['attributes']['class'];
-    $class = (!empty($class)) ? ' class="' . implode(' ', $class) . '"' : '';
-    $attributes = array();
-    if (!empty($config['ow-at'])) $attributes[] = $config['ow-at'];
-    if (!empty($config['ow-def-at'])) $attributes[] = $variables['attributes'];
-    $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
-    $output = '<' . $config['ow-el'] . $class . $attributes . '>' . $output . '</' . $config['ow-el'] . '>';
-  }
-
-  return $output;
 }
 
 /**
@@ -680,32 +530,26 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
   $suggestion = '';
 
   // Determine the field template. In case it's something different
-  // than theme_field, we'll add that function as a suggestion.
-  if (isset($config['func']) && $config['func'] != 'theme_field') {
-    $suggestions = array();
+  if (isset($config['func']) && $config['func'] != 'default') {
+    $layout_instance = \Drupal::service('plugin.manager.ds.field.layout')->createInstance($config['func']);
+
     // Either it uses the function.
-    $suggestions[] = $config['func'];
+    $suggestions = array();
+    $suggestions[] = $layout_instance->getThemeFunction();
+
     // Or the template file(s).
-    $suggestion = 'field__' . str_replace('theme_ds_field_', '', $config['func']);
+    $suggestion = 'field__' . $config['func'];
   }
   // Check if we have a default field template on instance level.
   elseif (isset($field_instance_info['ds_extras_field_template']) && !empty($field_instance_info['ds_extras_field_template']) && $field_instance_info['ds_extras_field_template'] != 'theme_field') {
-    $suggestions = array();
+    // @todo I think this is broken
+
     // Either it uses the function.
+    $suggestions = array();
     $suggestions[] = $field_instance_info['ds_extras_field_template'];
+
     // Or the template file(s).
     $suggestion = 'field__' . str_replace('theme_ds_field_', '', $field_instance_info['ds_extras_field_template']);
-  }
-  // Use Display Suite Extras Default theming function.
-  elseif (!isset($config['func']) || empty($config['func'])) {
-    $field_theme_function = \Drupal::config('ds.settings')->get('ft-default');
-    if ($field_theme_function != 'theme_field') {
-      $suggestions = array();
-      // Either it uses the function.
-      $suggestions[] = $field_theme_function;
-      // Or the template file(s).
-      $suggestion = 'field__' . str_replace('theme_ds_field_', '', $field_theme_function);
-    }
   }
 
   if (!empty($suggestion)) {
@@ -761,7 +605,8 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
   );
 
   // Create field layout plugin instance.
-  $field_layout_instance = \Drupal::service('plugin.manager.ds.field.layout')->createInstance($field_function);
+  $config = isset($field_settings['layout']) ? $field_settings['layout'] : array();
+  $field_layout_instance = \Drupal::service('plugin.manager.ds.field.layout')->createInstance($field_function, $config);
 
   // Alter the form to add specific field layout settings
   $form['ft']['layout'] = array(
@@ -788,112 +633,18 @@ function ds_field_ui_display_overview_multistep_submit($form, &$form_state) {
 }
 
 /**
- * Implements hook_ds_field_settings_alter().
- */
-function ds_ds_field_settings_alter(&$field_settings, $form, &$form_state) {
-
-  $fields = $form_state['values']['fields'];
-  $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
-
-  $wrappers = array(
-    'ow' => t('Wrapper'),
-    'fis' => t('Field items'),
-    'fi' => t('Field item')
-  );
-
-  foreach ($fields as $key => $field) {
-
-    // Make sure we need to save anything for this field.
-    if (_ds_field_valid($key, $field, $form_state)) {
-      continue;
-    }
-
-    // Get the values.
-    $values = isset($form_state['plugin_settings'][$key]['ft']) ? $form_state['plugin_settings'][$key]['ft'] : array();
-    if (empty($values)) {
-      continue;
-    }
-    $field_settings[$key]['plugin_settings']['ft'] = array();
-
-    // Theme output function.
-    $function = isset($values['func']) ? $values['func'] : $default_field_function;
-    if ($function != $default_field_function) {
-      $field_settings[$key]['plugin_settings']['ft']['func'] = $function;
-    }
-
-    // Field classes.
-    if ($function != 'theme_ds_field_expert' && $function != 'theme_ds_field_reset' && isset($values['classes'])) {
-      $classes = is_array($values['classes']) ? implode(' ', $values['classes']) : $values['classes'];
-      if (!empty($classes)) {
-        $field_settings[$key]['plugin_settings']['ft']['classes'] = $classes;
-      }
-    }
-
-    // Label.
-    if (isset($form_state['values']['fields'][$key]['label'])) {
-      if (!empty($values['lb'])) {
-        $field_settings[$key]['plugin_settings']['ft']['lb'] = $values['lb'];
-      }
-      if (!(empty($values['lb-el'])) && $function == 'theme_ds_field_expert') {
-        $field_settings[$key]['plugin_settings']['ft']['lb-el'] = String::checkPlain($values['lb-el']);
-      }
-      if (!(empty($values['lb-cl'])) && $function == 'theme_ds_field_expert') {
-        $field_settings[$key]['plugin_settings']['ft']['lb-cl'] = String::checkPlain($values['lb-cl']);
-      }
-      if (!(empty($values['lb-at'])) && $function == 'theme_ds_field_expert') {
-        $field_settings[$key]['plugin_settings']['ft']['lb-at'] = filter_xss($values['lb-at']);
-      }
-      if (!(empty($values['lb-def-at'])) && $function == 'theme_ds_field_expert') {
-        $field_settings[$key]['plugin_settings']['ft']['lb-def-at'] = TRUE;
-      }
-      if (!(empty($values['lb-col']))) {
-        $field_settings[$key]['plugin_settings']['ft']['lb-col'] = TRUE;
-      }
-    }
-
-    // Custom field configuration.
-    if ($function == 'theme_ds_field_expert') {
-      foreach ($wrappers as $wrapper_key => $title) {
-        if (!empty($values[$wrapper_key])) {
-          // Enable.
-          $field_settings[$key]['plugin_settings']['ft'][$wrapper_key] = TRUE;
-          // Element.
-          $field_settings[$key]['plugin_settings']['ft'][$wrapper_key . '-el'] = !(empty($values[$wrapper_key . '-el'])) ? String::checkPlain($values[$wrapper_key . '-el']) : 'div';
-          // Classes.
-          $field_settings[$key]['plugin_settings']['ft'][$wrapper_key . '-cl'] = !(empty($values[$wrapper_key . '-cl'])) ? String::checkPlain($values[$wrapper_key . '-cl']) : '';
-          // Default Classes.
-          if (in_array($wrapper_key, array('ow', 'lb'))) {
-            $field_settings[$key]['plugin_settings']['ft'][$wrapper_key . '-def-cl'] = !(empty($values[$wrapper_key . '-def-cl'])) ? TRUE : FALSE;
-          }
-          // Attributes.
-          $field_settings[$key]['plugin_settings']['ft'][$wrapper_key . '-at'] = !(empty($values[$wrapper_key . '-at'])) ? filter_xss($values[$wrapper_key . '-at']) : '';
-          // Default attributes.
-          $field_settings[$key]['plugin_settings']['ft'][$wrapper_key . '-def-at'] = !(empty($values[$wrapper_key . '-def-at'])) ? TRUE : FALSE;
-          // Odd even class.
-          if ($wrapper_key == 'fi') {
-            $field_settings[$key]['plugin_settings']['ft'][$wrapper_key . '-odd-even'] = !(empty($values[$wrapper_key . '-odd-even'])) ? TRUE : FALSE;
-          }
-        }
-      }
-    }
-  }
-}
-
-
-/**
  * Implements hook_field_formatter_settings_summary_alter().
  */
 function ds_field_formatter_settings_summary_alter(&$summary, $context, $form_state) {
   if (\Drupal::config('ds.settings')->get('field_template')) {
     // Field template summary
-    $functions = \Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
-    $field = $context['field_definition'];
-    $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
+    $functions = Ds::getFieldLayoutOptions();
 
     // @todo this is broken for the moment!!
-
-    $field_function = isset($form_state['plugin_settings'][$field->getName()]['ft']['func']) ? $form_state['plugin_settings'][$field->getName()]['ft']['func'] : $default_field_function;
-    $summary[] = 'Field template: ' . String::checkPlain($functions[$field_function]);
+    //$field = $context['field_definition'];
+    //$default_field_function = \Drupal::config('ds.settings')->get('ft-default');
+    //$field_function = isset($form_state['plugin_settings'][$field->getName()]['ft']['func']) ? $form_state['plugin_settings'][$field->getName()]['ft']['func'] : $default_field_function;
+    //$summary[] = 'Field template: ' . String::checkPlain($functions[$field_function]);
   }
 
   return $summary;

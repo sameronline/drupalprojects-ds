@@ -13,7 +13,8 @@ namespace Drupal\ds\Plugin\DsFieldLayout;
  * @DsFieldLayout(
  *   id = "reset",
  *   title = @Translation("Full reset"),
- *   theme = "theme_ds_field_reset"
+ *   theme = "theme_ds_field_reset",
+ *   path = "includes/theme.inc"
  * )
  */
 class Reset extends DsFieldLayoutBase {

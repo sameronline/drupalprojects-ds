@@ -15,7 +15,6 @@ function _ds_theme() {
   // Layouts
   $layouts = Ds::getLayouts();
   foreach ($layouts as $key => $layout) {
-
     $theme_functions[$key] = array(
       'render element' => 'elements',
       'template' => strtr($key, '_', '-'),
@@ -25,13 +24,19 @@ function _ds_theme() {
 
   // Field templates
   if (\Drupal::config('ds.settings')->get('field_template')) {
-    $field_functions = \Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
-    foreach ($field_functions as $key => $label) {
-      $theme_functions[$key] = array(
-        'render element' => 'element',
-        'function' => $key,
-        'base hook' => 'field',
-      );
+    $field_layouts = \Drupal::service('plugin.manager.ds.field.layout')->getDefinitions();
+    foreach ($field_layouts as $key => $plugin) {
+      if ($key != 'default') {
+        $theme_functions[$plugin['theme']] = array(
+          'render element' => 'element',
+          'function' => $plugin['theme'],
+          'base hook' => 'field',
+        );
+
+        if (!empty($plugin['path'])) {
+          $theme_functions[$plugin['theme']]['file'] = $plugin['path'];
+        }
+      }
     }
   }
 
@@ -119,7 +124,6 @@ function _ds_entity_type_update($entity_type, $info, $action) {
  * Implements hook_theme_registry_alter().
  */
 function _ds_theme_registry_alter(&$theme_registry) {
-
   $layouts = Ds::getLayouts();
   foreach ($layouts as $key => $info) {
     // Only add preprocess functions if entity exposes theme function.

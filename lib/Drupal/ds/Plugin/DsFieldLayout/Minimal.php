@@ -15,7 +15,8 @@ use Drupal\Component\Utility\String;
  * @DsFieldLayout(
  *   id = "minimal",
  *   title = @Translation("Minimal"),
- *   theme = "theme_ds_field_minimal"
+ *   theme = "theme_ds_field_minimal",
+ *   path = "includes/theme.inc"
  * )
  */
 class Minimal extends DsFieldLayoutBase {
@@ -24,9 +25,26 @@ class Minimal extends DsFieldLayoutBase {
    * {@inheritdoc}
    */
   public function alterForm(&$form) {
-    parent::alterForm($form);
-
+    // Field classes.
     $config = $this->getConfiguration();
+    $field_classes = Ds::getClasses('field');
+    if (!empty($field_classes)) {
+      $form['classes'] = array(
+        '#type' => 'select',
+        '#multiple' => TRUE,
+        '#options' => $field_classes,
+        '#title' => t('Choose additional CSS classes for the field'),
+        '#default_value' => $config['classes'],
+        '#prefix' => '<div class="field-classes">',
+        '#suffix' => '</div>',
+      );
+    }
+    else {
+      $form['classes'] = array(
+        '#type' => 'value',
+        '#value' => array(''),
+      );
+    }
     $form['lb'] = array(
       '#type' => 'textfield',
       '#title' => t('Label'),
@@ -49,10 +67,29 @@ class Minimal extends DsFieldLayoutBase {
   public function defaultConfiguration() {
     $config = parent::defaultConfiguration();
 
+    $config['classes'] = array();
     $config['lb'] = '';
     $config['lb-col'] = \Drupal::config('ds.settings')->get('ft-kill-colon');
 
     return $config;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function massageOut(&$field_settings, $values) {
+    if (isset($values['classes'])) {
+      $classes = is_array($values['classes']) ? implode(' ', $values['classes']) : $values['classes'];
+      if (!empty($classes)) {
+        $field_settings['classes'] = $classes;
+      }
+    }
+    if (!empty($values['lb'])) {
+      $field_settings['lb'] = $values['lb'];
+    }
+    if (!(empty($values['lb-col']))) {
+      $field_settings['lb-col'] = TRUE;
+    }
   }
 
 }
