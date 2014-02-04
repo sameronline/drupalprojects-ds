@@ -77,7 +77,7 @@ class Minimal extends DsFieldLayoutBase {
   /**
    * {@inheritdoc}
    */
-  public function massageOut(&$field_settings, $values) {
+  public function massageFormValues(&$field_settings, $values) {
     if (isset($values['classes'])) {
       $classes = is_array($values['classes']) ? implode(' ', $values['classes']) : $values['classes'];
       if (!empty($classes)) {

@@ -513,7 +513,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
       $field_layout_instance = \Drupal::service('plugin.manager.ds.field.layout')->createInstance($function);
 
       // Add field layout specific settings for the field
-      $field_layout_instance->massageOut($field_settings[$field]['plugin_settings']['ft']['layout'], $values['layout'], $form_state);
+      $field_layout_instance->massageFormValues($field_settings[$field]['plugin_settings']['ft']['layout'], $values['layout'], $form_state);
     }
   }
 
