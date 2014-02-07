@@ -310,8 +310,6 @@ function ds_field_ui_layouts_validate($form, &$form_state) {
  * Save the layout settings from the 'Manage display' screen.
  */
 function ds_field_ui_layouts_save($form, &$form_state) {
-  $weight = 0;
-
   // Get default values.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
@@ -364,7 +362,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
       // Can either be form or display.
       if ((isset($field['type']) && $field['type'] != 'hidden') || $record['view_mode'] == 'form') {
-        $record['settings']['regions'][$first_region][$weight++] = $field_key;
+        $record['settings']['regions'][$first_region][] = $field_key;
       }
     }
     // In case this is the full node view mode and if the comment module
@@ -391,7 +389,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       if (!isset($record['settings']['regions'][$field['region']])) {
         $record['settings']['regions'][$field['region']] = array();
       }
-      $record['settings']['regions'][$field['region']][$weight++] = $key;
+      $record['settings']['regions'][$field['region']][] = $key;
 
       // Save limit.
       $limit = isset($field['plugin']['limit']) ? trim($field['plugin']['limit']) : '';
