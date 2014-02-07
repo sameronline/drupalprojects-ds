@@ -137,8 +137,19 @@ function ds_field_ui_regions($form, $form_state) {
   // Check layout.
   $layout = isset($form['#ds_layout']) ? $form['#ds_layout'] : FALSE;
 
+  // Build an array which keys are the field names and
+  // values are the region they are rendered in.
+  $field_regions = array();
+
   // Change UI to add Region column if we have a layout.
   if ($layout) {
+
+    foreach ($layout['settings']['regions'] as $region_name => $field_names) {
+      foreach ($field_names as $field_name) {
+        $field_regions[$field_name] = $region_name;
+      }
+    }
+
     $table = &$form['fields'];
 
     if ($view_mode != 'form') {
@@ -265,7 +276,7 @@ function ds_field_ui_regions($form, $form_state) {
       }
       $second = array_splice($row, $split);
       $row['region'] = $region;
-      $row['region']['#default_value'] = (isset($layout['settings']['fields'][$name]) && isset($region_options[$layout['settings']['fields'][$name]])) ? $layout['settings']['fields'][$name] : 'hidden';
+      $row['region']['#default_value'] = (isset($field_regions[$name]) && isset($region_options[$field_regions[$name]])) ? $field_regions[$name] : 'hidden';
       $row = array_merge($row, $second);
     }
   }
@@ -354,14 +365,12 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       // Can either be form or display.
       if ((isset($field['type']) && $field['type'] != 'hidden') || $record['view_mode'] == 'form') {
         $record['settings']['regions'][$first_region][$weight++] = $field_key;
-        $record['settings']['fields'][$field_key] = $first_region;
       }
     }
     // In case this is the full node view mode and if the comment module
     // is enabled for this content type, add it as well.
     if ($record['entity_type'] == 'node' && $record['view_mode'] == 'full' && \Drupal::moduleHandler()->moduleExists('comment')) {
       $record['settings']['regions'][$first_region][] = 'comments';
-      $record['settings']['fields']['comments'] = $first_region;
     }
 
     // Save the configuration.
@@ -383,7 +392,6 @@ function ds_field_ui_layouts_save($form, &$form_state) {
         $record['settings']['regions'][$field['region']] = array();
       }
       $record['settings']['regions'][$field['region']][$weight++] = $key;
-      $record['settings']['fields'][$key] = $field['region'];
 
       // Save limit.
       $limit = isset($field['plugin']['limit']) ? trim($field['plugin']['limit']) : '';

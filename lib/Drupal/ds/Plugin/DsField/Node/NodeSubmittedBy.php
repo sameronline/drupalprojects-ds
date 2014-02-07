@@ -26,7 +26,7 @@ class NodeSubmittedBy extends Date {
    */
   public function build() {
     $field = $this->getFieldConfiguration();
-    $account = $this->entity()->getAuthor();
+    $account = $this->entity()->getOwner();
     switch ($field['formatter']) {
       case 'ds_time_ago':
         $interval = REQUEST_TIME - $this->entity()->created->value;

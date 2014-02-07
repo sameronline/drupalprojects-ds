@@ -26,7 +26,7 @@ class NodeAuthor extends DsFieldBase {
    * {@inheritdoc}
    */
   public function build() {
-    $user = $this->entity()->getAuthor();
+    $user = $this->entity()->getOwner();
 
     // Users without a user name are anonymous users. These are never linked.
     if (empty($user->name)) {
@@ -36,7 +36,7 @@ class NodeAuthor extends DsFieldBase {
       );
     }
 
-    $field = $this->getConfiguration();
+    $field = $this->getFieldConfiguration();
     if ($field['formatter'] == 'author') {
       return array(
         '#markup' => $user->getUsername(),
