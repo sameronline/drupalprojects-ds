@@ -22,7 +22,7 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   $bundle = $form['#bundle'];
   $view_mode = $form['#mode'];
 
-  $form['#export_id'] = $entity_type . '|' . $bundle . '|' . $view_mode;
+  $form['#export_id'] = $entity_type . '.' . $bundle . '.' . $view_mode;
 
   // Create vertical tabs.
   ds_field_ui_create_vertical_tabs($form);
@@ -524,7 +524,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
 function ds_field_ui_layout_clone($form, &$form_state) {
 
   $clone = $form_state['values']['clone'];
-  list($ce, $cb, $cv) = explode('|', $clone);
+  list($ce, $cb, $cv) = explode('.', $clone);
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form['#mode'];
@@ -711,7 +711,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     '#weight' => -100,
   );
 
-  list($ce, $cb, $cv) = explode('|', $form['#export_id']);
+  list($ce, $cb, $cv) = explode('.', $form['#export_id']);
   $layout = \Drupal::config('ds.layout_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
 
   if (!empty($layout) && isset($layout['layout']) && isset($ds_layouts[$layout['layout']])) {

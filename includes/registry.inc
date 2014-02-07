@@ -92,7 +92,7 @@ function _ds_entity_type_update($entity_type, $info, $action) {
   if ($action == 'update') {
     $layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $info->old_type);
     foreach ($layout_settings as $config) {
-      $new_id = $entity_type . '|' . $info->type . '|' . $config['view_mode'];
+      $new_id = $entity_type . '.' . $info->type . '.' . $config['view_mode'];
       if (\Drupal::config($config)->rename($new_id)) {
         $new_config = \Drupal::config($new_id)->get();
         \Drupal::config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
@@ -101,7 +101,7 @@ function _ds_entity_type_update($entity_type, $info, $action) {
 
     $field_settings = config_get_storage_names_with_prefix('ds.field_settings.' . $entity_type . '.' . $info->old_type);
     foreach ($field_settings as $config) {
-      $new_id = $entity_type . '|' . $info->type . '|' . $config['view_mode'];
+      $new_id = $entity_type . '.' . $info->type . '.' . $config['view_mode'];
       if (\Drupal::config($config)->rename($new_id)) {
         $new_config = Drupal::config($new_id)->get();
         \Drupal::config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
