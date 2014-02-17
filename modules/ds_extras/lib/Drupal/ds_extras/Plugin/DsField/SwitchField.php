@@ -83,7 +83,7 @@ class SwitchField extends DsFieldBase {
     $config = $this->getConfiguration();
     $config = isset($config['vms']) ? $config['vms'] : array();
     foreach ($view_modes as $key => $value) {
-      $entity_display = entity_load('entity_display', $entity_type .  '.' . $bundle . '.' . $key);
+      $entity_display = entity_load('entity_view_display', $entity_type .  '.' . $bundle . '.' . $key);
       $visible = $entity_display->status();
 
       if ($visible) {
@@ -111,7 +111,7 @@ class SwitchField extends DsFieldBase {
     $summary[] = 'View mode labels';
 
     foreach ($view_modes as $key => $value) {
-      $entity_display = entity_load('entity_display', $entity_type .  '.' . $bundle . '.' . $key);
+      $entity_display = entity_load('entity_view_display', $entity_type .  '.' . $bundle . '.' . $key);
       $visible = $entity_display->status();
 
       if ($visible) {

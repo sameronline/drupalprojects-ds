@@ -161,7 +161,7 @@ class Ds {
 
       $overridden = TRUE;
       if ($view_mode != 'form') {
-        $entity_display = entity_load('entity_display', $entity_type . '.' . $bundle . '.' . $view_mode);
+        $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $view_mode);
         if ($entity_display) {
           $overridden = $entity_display->status();
         }

@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldDefinition;
 use Drupal\Core\Render\Element;
 use Drupal\ds\Ds;
-use Drupal\entity\Entity\EntityDisplay;
+use Drupal\entity\Entity\EntityViewDisplay;
 
 /**
  * Implements hook_library_info().
@@ -133,7 +133,7 @@ function ds_extras_ds_field_access($field, $entity_type) {
 /**
  * Implements hook_entity_view_alter().
  */
-function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityDisplay $display) {
+function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityViewDisplay $display) {
 
   $entity_type = $entity->getEntityTypeId();
   $bundle = $entity->bundle();
@@ -197,7 +197,7 @@ function ds_extras_form_alter(&$form, &$form_state) {
       $options = array('' => t('Default'));
       foreach ($ds_vm as $key => $item) {
         $overridden = FALSE;
-        $entity_display = entity_load('entity_display', 'node.' . $node->bundle() . '.' . $key);
+        $entity_display = entity_load('entity_view_display', 'node.' . $node->bundle() . '.' . $key);
         if ($entity_display) {
           $overridden = $entity_display->status();
         }

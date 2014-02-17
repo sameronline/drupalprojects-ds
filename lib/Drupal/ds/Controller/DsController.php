@@ -164,7 +164,7 @@ class DsController extends ControllerBase {
 
     // Check view mode settings.
     $overridden = FALSE;
-    $entity_display = entity_load('entity_display', $entity_type . '.' . $entity->bundle() . '.' . $view_mode);
+    $entity_display = entity_load('entity_view_display', $entity_type . '.' . $entity->bundle() . '.' . $view_mode);
     if ($entity_display) {
       $overridden = $entity_display->status();
     }
