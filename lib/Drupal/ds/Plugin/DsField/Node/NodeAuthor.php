@@ -45,7 +45,8 @@ class NodeAuthor extends DsFieldBase {
 
     if ($field['formatter'] == 'author_linked') {
       return array(
-        '#markup' => theme('username', array('account' => $user)),
+        '#theme' => 'username',
+        '#account' => $user,
       );
     }
 

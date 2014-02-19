@@ -99,17 +99,17 @@ class DsController extends ControllerBase {
         }
 
         if (!empty($rows)) {
-          $variables = array(
-            'header' => array(
-              array('data' => $info->getLabel()),
-              array(
-                'data' => $field_ui_enabled ? t('operations') : '',
-                'class' => 'ds-display-list-options')
-              ),
-            'rows' => $rows,
+          $header = array(
+            array('data' => $info->getLabel()),
+            array(
+              'data' => $field_ui_enabled ? t('operations') : '',
+              'class' => 'ds-display-list-options'
+            ),
           );
           $build['list_' . $entity_type] = array(
-            '#markup' => theme('table', $variables)
+            '#theme' => 'table',
+            '#header' => $header,
+            '#rows' => $rows,
           );
         }
       }
