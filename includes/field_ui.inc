@@ -513,7 +513,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   }
 
   // Clear the ds_fields cache.
-  cache()->invalidateTags(array('ds_fields_info' => TRUE));
+  \Drupal::cache()->invalidateTags(array('ds_fields_info' => TRUE));
 }
 
 /**

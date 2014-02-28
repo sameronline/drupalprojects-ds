@@ -85,7 +85,7 @@ class Ds {
     static $field_settings = NULL;
 
     if (!isset($field_settings)) {
-      if ($cache = cache()->get('ds_field_settings')) {
+      if ($cache = \Drupal::cache()->get('ds_field_settings')) {
         $field_settings = $cache->data;
       }
       else {
@@ -99,7 +99,7 @@ class Ds {
             $field_settings[$field_setting['entity_type']][$field_setting['bundle']][$field_setting['view_mode']][$field] = $settings;
           }
         }
-        cache()->set('ds_field_settings', $field_settings, Cache::PERMANENT, array('ds_fields_info' => TRUE));
+        \Drupal::cache()->set('ds_field_settings', $field_settings, Cache::PERMANENT, array('ds_fields_info' => TRUE));
       }
     }
 
