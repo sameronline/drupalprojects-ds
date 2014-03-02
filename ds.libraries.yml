@@ -1,0 +1,13 @@
+ds.admin.js:
+  version: VERSION
+  js:
+    ds.admin.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupal.form
+ds.admin.css:
+  version: VERSION
+  css:
+    theme:
+      css/ds.admin.css: {}
