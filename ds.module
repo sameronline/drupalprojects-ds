@@ -929,12 +929,15 @@ function ds_field_formatter_settings_summary_alter(&$summary, $context, $form_st
   if (\Drupal::config('ds.settings')->get('field_template')) {
     // Field template summary
     $functions = \Drupal::moduleHandler()->invokeAll('ds_field_theme_functions_info');
+    /*
     $field = $context['field'];
     $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
 
-    $field_function = isset($form_state['plugin_settings'][$field->getName()]['ft']['func']) ? $form_state['plugin_settings'][$field->getName()]['ft']['func'] : $default_field_function;
+    $field_function = isset($form_state['plugin_settings'][$field->getFieldName()]['ft']['func']) ? $form_state['plugin_settings'][$field->getName()]['ft']['func'] : $default_field_function;
 
     $summary[] = 'Field template: ' . String::checkPlain($functions[$field_function]);
+    */
+    $summary[] = 'Field template: SUMMARY IS BROKEN';
   }
 
   return $summary;
