@@ -19,7 +19,7 @@ abstract class DynamicField extends DerivativeBase {
    */
   public function getDerivativeDefinitions(array $base_plugin_definition) {
 
-    $custom_fields = config_get_storage_names_with_prefix('ds.field.');
+    $custom_fields = \Drupal::configFactory()->listAll('ds.field.');
 
     foreach ($custom_fields as $config) {
       $field = \Drupal::config($config)->get();

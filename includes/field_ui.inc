@@ -866,7 +866,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     if ($view_mode != 'form') {
       // See if we can clone from another view mode.
       $options = array();
-      $ds_layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $bundle);
+      $ds_layout_settings = \Drupal::configFactory()->listAll('ds.layout_settings.' . $entity_type . '.' . $bundle);
       foreach ($ds_layout_settings as $config) {
         $row = \Drupal::config($config)->get();
         // Do not clone from form layouts.

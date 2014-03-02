@@ -89,7 +89,7 @@ class Ds {
         $field_settings = $cache->data;
       }
       else {
-        $ds_field_settings = config_get_storage_names_with_prefix('ds.field_settings');
+        $ds_field_settings = \Drupal::configFactory()->listAll('ds.field_settings');
         foreach ($ds_field_settings as $config) {
           $field_setting = \Drupal::config($config)->get();
           if (!isset($field_setting['settings'])) {

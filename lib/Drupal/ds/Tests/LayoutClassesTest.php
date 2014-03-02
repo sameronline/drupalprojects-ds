@@ -73,7 +73,7 @@ class LayoutClassesTest extends BaseTest {
     $this->assertRaw('ds_extras_second_field');
 
     // Assert we have configuration.
-    $count = count(config_get_storage_names_with_prefix('ds.layout_settings.node.article.default'));
+    $count = count(\Drupal::configFactory()->listAll('ds.layout_settings.node.article.default'));
     $this->assertEqual($count, 1, t('Configuration file found for layout settings for node article'));
 
     // Lookup settings and verify.
