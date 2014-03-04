@@ -130,7 +130,7 @@ trait DsSearch {
     $build['search_results'] = array();
 
     // Pager.
-    $build['search_pager'] = array('#markup' => theme('pager'));
+    $build['search_pager'] = array('#theme' => 'pager');
 
     // CSS and JS.
     if ($configuration['highlight']) {

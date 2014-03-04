@@ -99,17 +99,17 @@ class DsController extends ControllerBase {
         }
 
         if (!empty($rows)) {
-          $variables = array(
-            'header' => array(
-              array('data' => $info->getLabel()),
-              array(
-                'data' => $field_ui_enabled ? t('operations') : '',
-                'class' => 'ds-display-list-options')
-              ),
-            'rows' => $rows,
+          $header = array(
+            array('data' => $info->getLabel()),
+            array(
+              'data' => $field_ui_enabled ? t('operations') : '',
+              'class' => 'ds-display-list-options'
+            ),
           );
           $build['list_' . $entity_type] = array(
-            '#markup' => theme('table', $variables)
+            '#theme' => 'table',
+            '#header' => $header,
+            '#rows' => $rows,
           );
         }
       }
@@ -164,7 +164,7 @@ class DsController extends ControllerBase {
 
     // Check view mode settings.
     $overridden = FALSE;
-    $entity_display = entity_load('entity_display', $entity_type . '.' . $entity->bundle() . '.' . $view_mode);
+    $entity_display = entity_load('entity_view_display', $entity_type . '.' . $entity->bundle() . '.' . $view_mode);
     if ($entity_display) {
       $overridden = $entity_display->status();
     }

@@ -22,7 +22,7 @@ function ds_field_ui_fields_layouts(&$form, &$form_state) {
   $bundle = $form['#bundle'];
   $view_mode = $form['#mode'];
 
-  $form['#export_id'] = $entity_type . '|' . $bundle . '|' . $view_mode;
+  $form['#export_id'] = $entity_type . '.' . $bundle . '.' . $view_mode;
 
   // Create vertical tabs.
   ds_field_ui_create_vertical_tabs($form);
@@ -137,8 +137,19 @@ function ds_field_ui_regions($form, $form_state) {
   // Check layout.
   $layout = isset($form['#ds_layout']) ? $form['#ds_layout'] : FALSE;
 
+  // Build an array which keys are the field names and
+  // values are the region they are rendered in.
+  $field_regions = array();
+
   // Change UI to add Region column if we have a layout.
   if ($layout) {
+
+    foreach ($layout['settings']['regions'] as $region_name => $field_names) {
+      foreach ($field_names as $field_name) {
+        $field_regions[$field_name] = $region_name;
+      }
+    }
+
     $table = &$form['fields'];
 
     if ($view_mode != 'form') {
@@ -265,7 +276,7 @@ function ds_field_ui_regions($form, $form_state) {
       }
       $second = array_splice($row, $split);
       $row['region'] = $region;
-      $row['region']['#default_value'] = (isset($layout['settings']['fields'][$name]) && isset($region_options[$layout['settings']['fields'][$name]])) ? $layout['settings']['fields'][$name] : 'hidden';
+      $row['region']['#default_value'] = (isset($field_regions[$name]) && isset($region_options[$field_regions[$name]])) ? $field_regions[$name] : 'hidden';
       $row = array_merge($row, $second);
     }
   }
@@ -299,8 +310,6 @@ function ds_field_ui_layouts_validate($form, &$form_state) {
  * Save the layout settings from the 'Manage display' screen.
  */
 function ds_field_ui_layouts_save($form, &$form_state) {
-  $weight = 0;
-
   // Get default values.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
@@ -353,15 +362,13 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
       // Can either be form or display.
       if ((isset($field['type']) && $field['type'] != 'hidden') || $record['view_mode'] == 'form') {
-        $record['settings']['regions'][$first_region][$weight++] = $field_key;
-        $record['settings']['fields'][$field_key] = $first_region;
+        $record['settings']['regions'][$first_region][] = $field_key;
       }
     }
     // In case this is the full node view mode and if the comment module
     // is enabled for this content type, add it as well.
     if ($record['entity_type'] == 'node' && $record['view_mode'] == 'full' && \Drupal::moduleHandler()->moduleExists('comment')) {
       $record['settings']['regions'][$first_region][] = 'comments';
-      $record['settings']['fields']['comments'] = $first_region;
     }
 
     // Save the configuration.
@@ -382,8 +389,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
       if (!isset($record['settings']['regions'][$field['region']])) {
         $record['settings']['regions'][$field['region']] = array();
       }
-      $record['settings']['regions'][$field['region']][$weight++] = $key;
-      $record['settings']['fields'][$key] = $field['region'];
+      $record['settings']['regions'][$field['region']][] = $key;
 
       // Save limit.
       $limit = isset($field['plugin']['limit']) ? trim($field['plugin']['limit']) : '';
@@ -529,7 +535,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
   }
 
   // Clear the ds_fields cache.
-  cache()->invalidateTags(array('ds_fields_info' => TRUE));
+  \Drupal::cache()->invalidateTags(array('ds_fields_info' => TRUE));
 }
 
 /**
@@ -538,7 +544,7 @@ function ds_field_ui_fields_save($form, &$form_state) {
 function ds_field_ui_layout_clone($form, &$form_state) {
 
   $clone = $form_state['values']['clone'];
-  list($ce, $cb, $cv) = explode('|', $clone);
+  list($ce, $cb, $cv) = explode('.', $clone);
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form['#mode'];
@@ -725,7 +731,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     '#weight' => -100,
   );
 
-  list($ce, $cb, $cv) = explode('|', $form['#export_id']);
+  list($ce, $cb, $cv) = explode('.', $form['#export_id']);
   $layout = \Drupal::config('ds.layout_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
 
   if (!empty($layout) && isset($layout['layout']) && isset($ds_layouts[$layout['layout']])) {
@@ -882,7 +888,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
     if ($view_mode != 'form') {
       // See if we can clone from another view mode.
       $options = array();
-      $ds_layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $bundle);
+      $ds_layout_settings = \Drupal::configFactory()->listAll('ds.layout_settings.' . $entity_type . '.' . $bundle);
       foreach ($ds_layout_settings as $config) {
         $row = \Drupal::config($config)->get();
         // Do not clone from form layouts.

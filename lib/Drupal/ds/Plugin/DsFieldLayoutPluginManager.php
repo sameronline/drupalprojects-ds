@@ -31,9 +31,9 @@ class DsFieldLayoutPluginManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, LanguageManager $language_manager, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/DsFieldLayout', $namespaces, 'Drupal\ds\Annotation\DsFieldLayout');
+    parent::__construct('Plugin/DsFieldLayout', $namespaces, $module_handler, 'Drupal\ds\Annotation\DsFieldLayout');
 
-    $this->alterInfo($module_handler, 'ds_field_layouts_info');
+    $this->alterInfo('ds_field_layouts_info');
     $this->setCacheBackend($cache_backend, $language_manager, 'ds_field_layouts_info');
   }
 

@@ -82,12 +82,12 @@ function _ds_entity_type_update($entity_type, $info, $action) {
 
   // Delete settings.
   if ($action == 'delete') {
-    $layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $info->type);
+    $layout_settings = \Drupal::configFactory()->listAll('ds.layout_settings.' . $entity_type . '.' . $info->type);
     foreach ($layout_settings as $config) {
       \Drupal::config($config)->delete();
     }
 
-    $field_settings = config_get_storage_names_with_prefix('ds.field_settings.' . $entity_type . '.' . $info->type);
+    $field_settings = \Drupal::configFactory()->listAll('ds.field_settings.' . $entity_type . '.' . $info->type);
     foreach ($field_settings as $config) {
       \Drupal::config($config)->delete();
     }
@@ -95,18 +95,18 @@ function _ds_entity_type_update($entity_type, $info, $action) {
 
   // Update settings.
   if ($action == 'update') {
-    $layout_settings = config_get_storage_names_with_prefix('ds.layout_settings.' . $entity_type . '.' . $info->old_type);
+    $layout_settings = \Drupal::configFactory()->listAll('ds.layout_settings.' . $entity_type . '.' . $info->old_type);
     foreach ($layout_settings as $config) {
-      $new_id = $entity_type . '|' . $info->type . '|' . $config['view_mode'];
+      $new_id = $entity_type . '.' . $info->type . '.' . $config['view_mode'];
       if (\Drupal::config($config)->rename($new_id)) {
         $new_config = \Drupal::config($new_id)->get();
         \Drupal::config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
       }
     }
 
-    $field_settings = config_get_storage_names_with_prefix('ds.field_settings.' . $entity_type . '.' . $info->old_type);
+    $field_settings = \Drupal::configFactory()->listAll('ds.field_settings.' . $entity_type . '.' . $info->old_type);
     foreach ($field_settings as $config) {
-      $new_id = $entity_type . '|' . $info->type . '|' . $config['view_mode'];
+      $new_id = $entity_type . '.' . $info->type . '.' . $config['view_mode'];
       if (\Drupal::config($config)->rename($new_id)) {
         $new_config = Drupal::config($new_id)->get();
         \Drupal::config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
@@ -115,8 +115,8 @@ function _ds_entity_type_update($entity_type, $info, $action) {
   }
 
   // Clear cache.
-  cache()->invalidateTags(array('ds_fields_info' => TRUE));
-  cache()->invalidateTags(array('ds_field_settings' => TRUE));
+  \Drupal::cache()->invalidateTags(array('ds_fields_info' => TRUE));
+  \Drupal::cache()->invalidateTags(array('ds_field_settings' => TRUE));
   field_info_cache_clear();
 }
 
@@ -148,7 +148,7 @@ function _ds_entity_bundle_info_alter(&$bundles) {
 
   // Add layout if configured to bundles.
   $ds_layouts = Ds::getLayouts();
-  $ds_layout_settings = config_get_storage_names_with_prefix('ds.layout_settings');
+  $ds_layout_settings = \Drupal::configFactory()->listAll('ds.layout_settings');
   foreach ($ds_layout_settings as $config) {
     $ds_layout_setting = \Drupal::config($config)->get();
 

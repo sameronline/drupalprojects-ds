@@ -27,7 +27,11 @@ class SearchInfo extends DsFieldBase {
     $node = $this->entity();
 
     if (!empty($node->search_extra)) {
-      $info['user'] = theme('username', array('account' => $node->getAuthor()));
+      $user_name = array(
+        '#theme' => 'username',
+        '#account' => $node->getAuthor(),
+      );
+      $info['user'] = drupal_render($user_name);
       $info['date'] = format_date($node->changed->value, 'short');
       if (isset($node->search_extra) && is_array($node->search_extra)) {
         $info = array_merge($info, $node->search_extra);

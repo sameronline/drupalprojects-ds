@@ -77,12 +77,12 @@ class EntitiesTest extends BaseTest {
    * Utility function to clear field settings.
    */
   function entitiesClearFieldSettings() {
-    $field_settings = config_get_storage_names_with_prefix('ds_field_settings');
+    $field_settings = \Drupal::configFactory()->listAll('ds_field_settings');
     foreach ($field_settings as $config) {
       \Drupal::config($config)->delete();
     }
-    cache()->deleteTags(array('ds_fields_info' => TRUE));
-    cache()->delete('ds_field_settings');
+    \Drupal::cache()->deleteTags(array('ds_fields_info' => TRUE));
+    \Drupal::cache()->delete('ds_field_settings');
   }
 
   /**

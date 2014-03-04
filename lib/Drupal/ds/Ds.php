@@ -85,11 +85,11 @@ class Ds {
     static $field_settings = NULL;
 
     if (!isset($field_settings)) {
-      if ($cache = cache()->get('ds_field_settings')) {
+      if ($cache = \Drupal::cache()->get('ds_field_settings')) {
         $field_settings = $cache->data;
       }
       else {
-        $ds_field_settings = config_get_storage_names_with_prefix('ds.field_settings');
+        $ds_field_settings = \Drupal::configFactory()->listAll('ds.field_settings');
         foreach ($ds_field_settings as $config) {
           $field_setting = \Drupal::config($config)->get();
           if (!isset($field_setting['settings'])) {
@@ -99,7 +99,7 @@ class Ds {
             $field_settings[$field_setting['entity_type']][$field_setting['bundle']][$field_setting['view_mode']][$field] = $settings;
           }
         }
-        cache()->set('ds_field_settings', $field_settings, Cache::PERMANENT, array('ds_fields_info' => TRUE));
+        \Drupal::cache()->set('ds_field_settings', $field_settings, Cache::PERMANENT, array('ds_fields_info' => TRUE));
       }
     }
 
@@ -161,7 +161,7 @@ class Ds {
 
       $overridden = TRUE;
       if ($view_mode != 'form') {
-        $entity_display = entity_load('entity_display', $entity_type . '.' . $bundle . '.' . $view_mode);
+        $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $view_mode);
         if ($entity_display) {
           $overridden = $entity_display->status();
         }
