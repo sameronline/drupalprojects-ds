@@ -86,12 +86,6 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
     $bundle = $form->bundle;
 
     if ($layout = Ds::getLayout($entity_type, $bundle, 'form', FALSE)) {
-
-      // Theme hook suggestions.
-      $vars['theme_hook_suggestions'][] = $layout['layout'];
-      $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $entity_type;
-      $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $entity_type . '_' . $bundle;
-
       $form = &$vars['element'];
 
       // Add path to css file.
@@ -171,7 +165,6 @@ function ds_forms_theme_suggestions_alter(&$suggestions, $variables, $base_theme
     $bundle = $form->bundle;
 
     if ($layout = Ds::getLayout($entity_type, $bundle, 'form', FALSE)) {
-
       // Theme hook suggestions.
       $suggestions[] = $layout['layout'];
       $suggestions[] = $layout['layout'] . '__' . $entity_type;
