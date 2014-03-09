@@ -6,6 +6,7 @@
 
 use Drupal\Component\Utility\String;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldDefinition;
 use Drupal\Core\Render\Element;
 use Drupal\ds\Ds;
@@ -165,7 +166,6 @@ function ds_extras_get_view_mode() {
  * Implements hook_form_alter().
  */
 function ds_extras_form_alter(&$form, &$form_state) {
-
   if (isset($form['#entity_type']) && $form['#entity_type'] == 'node' && isset($form_state['controller'])) {
     // Switch full view mode.
     $node = $form_state['controller']->getEntity($form_state);
@@ -198,9 +198,8 @@ function ds_extras_form_alter(&$form, &$form_state) {
           $form['ds_extras'] = array(
             '#type' => 'details',
             '#title' => t('Display settings'),
-            '#collapsed' => TRUE,
-            '#group' => 'advanced',
             '#weight' => 100,
+            '#group' => 'advanced',
           );
         }
 
@@ -245,12 +244,12 @@ function ds_extras_switch_view_mode_preview_callback($form, $form_state) {
 }
 
 /**
- * Implements hook_entity_field_info_alter()
+ * Implements hook_entity_base_field_info_alter()
  */
-function ds_extras_entity_field_info_alter(&$info, $entity_type) {
-  if ($entity_type == 'node') {
+function ds_extras_entity_base_field_info_alter(&$base_field_definitions, EntityTypeInterface $entity_type) {
+  if ($entity_type->id() == 'node') {
     // Set the ds field as proper field
-    $info['definitions']['ds_switch'] = FieldDefinition::create('string')
+    $base_field_definitions['ds_switch'] = FieldDefinition::create('string')
       ->setLabel(t('DS switch'))
       ->setName('ds_switch')
       ->setDescription(t('Holds the DS view mode of the node.'))
