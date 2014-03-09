@@ -6,8 +6,3 @@ ds.admin.js:
     - core/jquery
     - core/drupal
     - core/drupal.form
-ds.admin.css:
-  version: VERSION
-  css:
-    theme:
-      css/ds.admin.css: {}
