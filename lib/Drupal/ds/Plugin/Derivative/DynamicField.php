@@ -17,7 +17,7 @@ abstract class DynamicField extends DerivativeBase {
   /**
    * {@inheritdoc}
    */
-  public function getDerivativeDefinitions(array $base_plugin_definition) {
+  public function getDerivativeDefinitions($base_plugin_definition) {
 
     $custom_fields = \Drupal::configFactory()->listAll('ds.field.');
 
