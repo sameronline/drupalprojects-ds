@@ -596,6 +596,21 @@ function hook_ds_classes_alter(&$classes, $name) {
   }
 }
 
+/**
+ * Alter the field template settings form
+ *
+ * @param array $form
+ *   The form containing the field settings
+ * @param array $field_settings
+ *   The settings of the field
+ */
+function hook_ds_field_theme_functions_settings_alter(&$form, $field_settings) {
+  $form['something'] = array(
+    '#type' => 'textfield',
+    '#title' => 'test',
+  );
+}
+
 /*
  * @} End of "addtogroup hooks".
  */
