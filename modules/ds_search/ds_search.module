@@ -704,6 +704,10 @@ function ds_search_process_results($results) {
 
       $load = entity_load($result['fields']['entity_type'], array($result['fields']['entity_id']));
       $entity = reset($load);
+      if (!$entity) {
+        watchdog('ds_search', "Empty entity loaded from results, possibly corrupt solr index? (@entity_type, @id)", array('@entity_type' => $result['fields']['entity_type'], '@id' => $result['fields']['entity_id']), WATCHDOG_DEBUG);
+        continue;
+      }
 
       // Add the snippet, url and extra info on the object.
       $entity->search_snippet = $result['snippet'];
