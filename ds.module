@@ -161,7 +161,6 @@ function ds_block($op = 'list', $delta = 0, $edit = array()) {
  *  An optional default value
  */
 function ds_variable_get($var_name, $default = '') {
-  $value = $default;
 
   if (ds_static_variables($var_name)) {
     $value = ds_static_variables($var_name);
@@ -171,7 +170,7 @@ function ds_variable_get($var_name, $default = '') {
     $value = variable_get_value($var_name, array('default' => $default, 'language' => $language));
   }
   else {
-    $value = variable_get($variable_name, $default);
+    $value = variable_get($var_name, $default);
   }
   return $value;
 }
