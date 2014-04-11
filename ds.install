@@ -6,7 +6,7 @@
  */
 
 /**
- * Implementation of hook_schema().
+ * Implements hook_schema().
  */
 function ds_schema() {
   $schema = array();
@@ -19,21 +19,21 @@ function ds_schema() {
         'type' => 'varchar',
         'length' => 32,
         'not null' => TRUE,
-        'default' => ''
+        'default' => '',
       ),
       'type' => array(
         'description' => 'The name of the type',
         'type' => 'varchar',
         'length' => 64,
         'not null' => TRUE,
-        'default' => ''
+        'default' => '',
       ),
       'build_mode' => array(
         'description' => 'The name of the build mode',
         'type' => 'varchar',
         'length' => 64,
         'not null' => TRUE,
-        'default' => ''
+        'default' => '',
       ),
       'settings' => array(
         'description' => 'The settings of for this record.',
@@ -61,14 +61,14 @@ function ds_schema() {
 }
 
 /**
- * Implementation of hook_install().
+ * Implements hook_install().
  */
 function ds_install() {
   drupal_install_schema('ds');
 }
 
 /**
- * Implementation of hook_uninstall().
+ * Implements hook_uninstall().
  */
 function ds_uninstall() {
   drupal_uninstall_schema('ds');
@@ -77,7 +77,7 @@ function ds_uninstall() {
 }
 
 /**
- * Implementation of hook_update_N().
+ * Implements hook_update_N().
  *
  * We simply return an array here. We want the people to
  * run update.php because new theming functions got introduced.
@@ -87,7 +87,7 @@ function ds_update_1() {
 }
 
 /**
- * Implementation of hook_update_N().
+ * Implements hook_update_N().
  */
 function ds_update_2() {
   // Enable the UI module, not everyone knows that the module UI
@@ -97,7 +97,7 @@ function ds_update_2() {
 }
 
 /**
- * Implementation of hook_update_N().
+ * Implements hook_update_N().
  */
 function ds_update_3() {
   // Needs menu rebuild.
@@ -105,7 +105,7 @@ function ds_update_3() {
 }
 
 /**
- * Implementation of hook_update_N().
+ * Implements hook_update_N().
  */
 function ds_update_4() {
   $ret = array();
@@ -125,20 +125,18 @@ function ds_update_4() {
   foreach (module_implements('ds_api') as $module) {
     $api_info = ds_api_info($module);
     $module = $api_info['module'];
-    $title = $api_info['title'];
 
     // Get all types.
-    foreach ($api_info['types']() as $tkey => $type) {
+    foreach ($api_info['types']() as $type) {
 
       // Get the display settings.
-      $settings = array();
-      $display_settings = variable_get($module .'_display_settings_'. $type->type, array());
+      $display_settings = variable_get($module . '_display_settings_' . $type->type, array());
 
       if (!empty($display_settings)) {
 
         // Iterate over known build modes and save them.
         $build_modes = $all_build_modes[$module];
-        foreach ($build_modes as $build_mode => $value) {
+        foreach (array_keys($build_modes) as $build_mode) {
 
           if (isset($display_settings[$build_mode])) {
 
@@ -163,18 +161,20 @@ function ds_update_4() {
       }
 
       // Delete variable.
-      variable_del($module .'_display_settings_'. $type->type);
+      variable_del($module . '_display_settings_' . $type->type);
     }
 
     // Remove the fields cached.
     variable_del('ds_fields_cached');
   }
 
-
   return $ret;
 }
 
-function ds_update_6201(){
+/**
+ * Update the settings table.
+ */
+function ds_update_6201() {
   $ret = array();
   db_change_field($ret, 'ds_settings', 'settings', 'settings', array(
       'description' => 'The settings for this record.',
@@ -195,6 +195,9 @@ function ds_update_6201(){
   return $ret;
 }
 
+/**
+ * Update the settings table.
+ */
 function ds_update_6202() {
   $ret = array();
   db_drop_index($ret, 'ds_settings', 'type');
@@ -218,6 +221,6 @@ function ds_update_6202() {
     )
   );
   db_add_index($ret, 'ds_settings', 'build_mode', array('build_mode'));
-  
+
   return $ret;
 }
