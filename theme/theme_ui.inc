@@ -95,7 +95,7 @@ function template_preprocess_ds_display_overview_form(&$vars) {
         $row->{$child}->format = drupal_render($element[$child]['format']);
         if (!empty($element[$child]['subgroup_format'])) {
           $row->{$child}->subgroup_format = drupal_render($element[$child]['subgroup_format']);
-        } 
+        }
         else {
           $row->{$child}->subgroup_format = NULL;
         }
@@ -329,7 +329,7 @@ function theme_ds_buildmodes_matrix_form($form) {
     $table .= drupal_render($form['exclude']['submit']);
 
     $fieldset = array(
-      '#title' => t('Disable Display Suite rendering by type/build mode'),
+      '#title' => t('Disable Display Suite rendering by type/build mode (exclude)'),
       '#description' => t('Toggle which build modes you want to exclude from rendering. The "All" checkbox will exclude/include all build modes at once for that type.'),
       '#children' => $table,
       '#attributes' => array(),
