@@ -264,8 +264,8 @@ function ds_make($key, $module, &$object, &$vars, $build_mode = NULL) {
   );
   drupal_alter('ds_render', $data);
 
-  $pre_render = ds_build_fields_and_regions($data['object'], $module);
-  $render = ds_render($data['object'], $module, $data['vars']);
+  ds_build_fields_and_regions($data['object'], $module);
+  $render = ds_render($key, $data['object'], $module, $data['vars']);
 
   return $render;
 }
