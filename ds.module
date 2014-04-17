@@ -24,21 +24,6 @@ function ds_permission() {
 }
 
 /**
- * Implements hook_menu_link_defaults().
- */
-function ds_menu_link_defaults() {
-  $links = array();
-  $links['ds.structure'] = array(
-    'link_title' => 'Display Suite',
-    'description' => 'Manage layouts for entities and configure fields etc.',
-    'route_name' => 'ds.structure',
-    'parent' => 'system.admin.structure',
-  );
-
-  return $links;
-}
-
-/**
  * Implements hook_theme().
  */
 function ds_theme() {
