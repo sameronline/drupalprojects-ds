@@ -762,9 +762,9 @@ function theme_ds_field_expert($variables) {
 
   // Field items wrapper
   if (isset($config['fis'])) {
-    $class = (!empty($config['fis-cl'])) ? ' class="' . $config['fis-cl'] . '"' : '';
+    $class = (!empty($config['fis-cl'])) ? ' class="' . token_replace($config['fis-cl'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE)) . '"' : '';
     $attributes = array();
-    if (!empty($config['fis-at'])) $attributes[] = $config['fis-at'];
+    if (!empty($config['fis-at'])) $attributes[] = token_replace($config['fis-at'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));;
     if (!empty($config['fis-def-at'])) $attributes[] = $variables['content_attributes'];
     $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
     $output .= '<' . $config['fis-el'] . $class . $attributes . '>';
@@ -781,7 +781,7 @@ function theme_ds_field_expert($variables) {
       if (!empty($config['fi-cl'])) {
         $class[] = $config['fi-cl'];
       }
-      $class = !empty($class) ? ' class="'. implode(' ', $class)  .'"' : '';
+      $class = !empty($class) ? ' class="'. token_replace(implode(' ', $class), array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE)) .'"' : '';
       $attributes = array();
       if (!empty($config['fi-at'])) {
         $attributes[] = token_replace($config['fi-at'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));
@@ -810,11 +810,11 @@ function theme_ds_field_expert($variables) {
   // Outer wrapper.
   if (isset($config['ow'])) {
     $class = array();
-    if (!empty($config['ow-cl'])) $class[] = $config['ow-cl'];
+    if (!empty($config['ow-cl'])) $class[] = token_replace($config['ow-cl'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));
     if (!empty($config['ow-def-cl'])) $class[] = $variables['classes'];
     $class = (!empty($class)) ? ' class="' . implode(' ', $class) . '"' : '';
     $attributes = array();
-    if (!empty($config['ow-at'])) $attributes[] = $config['ow-at'];
+    if (!empty($config['ow-at'])) $attributes[] = token_replace($config['ow-at'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));;
     if (!empty($config['ow-def-at'])) $attributes[] = $variables['attributes'];
     $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
     $output = '<' . $config['ow-el'] . $class . $attributes . '>' . $output . '</' . $config['ow-el'] . '>';
