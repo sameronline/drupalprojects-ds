@@ -89,7 +89,7 @@ function ds_extras_settings_alter(&$form, &$form_state) {
   );
 
   $options = array();
-  $view_modes = \Drupal::entityManager()->getAllViewModes('node');
+  $view_modes = \Drupal::entityManager()->getViewModes('node');
   foreach ($view_modes as $key => $view_mode) {
     $options[$key] = $view_mode['label'];
   }
