@@ -496,7 +496,7 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
       // Render the node.
       $rendered = drupal_render($build);
       // Attach extra information to the rendered output.
-      $rendered .= ' ' . $node->search_extra;
+      $rendered .= ' ' . implode('', $node->search_extra);
       // Generate the snippet based on rendered content.
       $node->snippet = search_excerpt($keys, $rendered);
     }
