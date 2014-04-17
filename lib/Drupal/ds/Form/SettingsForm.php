@@ -65,7 +65,7 @@ class SettingsForm extends ConfigFormBase {
     $form['additional_settings'] = array(
       '#type' => 'vertical_tabs',
       '#attached' => array(
-        'library' => array(array('ds', 'ds.admin.js')),
+        'library' => array('ds/ds.admin'),
       ),
     );
 

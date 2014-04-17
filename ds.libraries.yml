@@ -1,4 +1,4 @@
-ds.admin.js:
+ds.admin:
   version: VERSION
   js:
     js/ds.admin.js: {}

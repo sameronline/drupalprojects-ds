@@ -107,7 +107,7 @@ function ds_extras_settings_alter(&$form, &$form_state) {
   );
 
   $form['#submit'][] = 'ds_extras_settings_submit';
-  $form['#attached']['library'][] = 'ds_extras/ds_extras.settings';
+  $form['#attached']['library'][] = 'ds_extras/ds_extras.admin';
 }
 
 /**
