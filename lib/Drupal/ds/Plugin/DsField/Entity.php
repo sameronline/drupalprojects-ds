@@ -17,7 +17,7 @@ abstract class Entity extends DsFieldBase {
    */
   public function settingsForm($form, &$form_state) {
     $entity = $this->linkedEntity();
-    $view_modes = entity_get_view_modes($entity);
+    $view_modes = \Drupal::entityManager()->getAllViewModes($entity);
 
     $options = array();
     foreach ($view_modes as $id => $view_mode) {
@@ -40,7 +40,7 @@ abstract class Entity extends DsFieldBase {
    */
   public function settingsSummary($settings) {
     $entity = $this->linkedEntity();
-    $view_modes = entity_get_view_modes($entity);
+    $view_modes = \Drupal::entityManager()->getAllViewModes($entity);
 
     // When no view modes are found no summary is displayed
     if (empty($view_modes)) {
@@ -61,7 +61,7 @@ abstract class Entity extends DsFieldBase {
    */
   public function defaultConfiguration() {
     $entity = $this->linkedEntity();
-    $view_modes = entity_get_view_modes($entity);
+    $view_modes = \Drupal::entityManager()->getAllViewModes($entity);
     reset($view_modes);
     $default_view_mode = key($view_modes);
 

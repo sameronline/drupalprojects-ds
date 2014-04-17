@@ -162,7 +162,7 @@ class EmergencyForm extends FormBase {
             $ids = \Drupal::entityQuery('block')
               ->condition('plugin', 'ds_region_block:' . $key)
               ->execute();
-            $block_storage = \Drupal::entityManager()->getStorageController('block');
+            $block_storage = \Drupal::entityManager()->getStorage('block');
             foreach ($block_storage->loadMultiple($ids) as $block) {
               $block->delete();
             }

@@ -28,7 +28,7 @@ class DsDevelController {
 
     $links = array();
     $links[] = l('Default', 'node/' . $node->id() . '/devel/markup/');
-    $view_modes = entity_get_view_modes('node');
+    $view_modes = \Drupal::entityManager()->getAllViewModes('node');
     foreach ($view_modes as $id => $info) {
       if (!empty($info['status'])) {
         $links[] = l($info['label'], 'node/' . $node->id() . '/devel/markup/' . $id);

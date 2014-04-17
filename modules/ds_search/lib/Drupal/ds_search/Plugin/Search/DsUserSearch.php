@@ -143,7 +143,7 @@ class DsUserSearch extends ConfigurableSearchPluginBase implements AccessibleInt
     $uids = $query
       ->execute()
       ->fetchCol();
-    $accounts = $this->entityManager->getStorageController('user')->loadMultiple($uids);
+    $accounts = $this->entityManager->getStorage('user')->loadMultiple($uids);
 
     foreach ($accounts as $account) {
       $result = array(

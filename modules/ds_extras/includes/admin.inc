@@ -89,7 +89,7 @@ function ds_extras_settings_alter(&$form, &$form_state) {
   );
 
   $options = array();
-  $view_modes = entity_get_view_modes('node');
+  $view_modes = \Drupal::entityManager()->getAllViewModes('node');
   foreach ($view_modes as $key => $view_mode) {
     $options[$key] = $view_mode['label'];
   }
@@ -251,7 +251,7 @@ function ds_extras_block_submit($form, &$form_state) {
         $ids = \Drupal::entityQuery('block')
           ->condition('plugin', 'ds_region_block:' . $key)
           ->execute();
-        $block_storage = \Drupal::entityManager()->getStorageController('block');
+        $block_storage = \Drupal::entityManager()->getStorage('block');
         foreach ($block_storage->loadMultiple($ids) as $block) {
           $block->delete();
         }

@@ -101,7 +101,7 @@ class DsExtrasController extends ControllerBase {
    *   An array suitable for drupal_render().
    */
   public function revisionShow($node_revision) {
-    $node = $this->entityManager()->getStorageController('node')->loadRevision($node_revision);
+    $node = $this->entityManager()->getStorage('node')->loadRevision($node_revision);
 
     // Determine view mode.
     $view_mode = \Drupal::config('ds.extras')->get('override_node_revision_view_mode');

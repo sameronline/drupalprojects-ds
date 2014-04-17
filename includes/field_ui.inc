@@ -5,6 +5,7 @@
  * Field UI functions for Display Suite.
  */
 
+use Drupal\Component\Utility\Settings;
 use Drupal\Component\Utility\String;
 use Drupal\Core\Render\Element;
 use Drupal\ds\Ds;
@@ -349,7 +350,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     $record['settings']['wrappers'] = array();
     $record['settings']['layout_wrapper'] = 'div';
     $record['settings']['layout_attributes'] = '';
-    $record['settings']['layout_attributes_merge'] = settings()->get('ds_layout_attributes_merge', TRUE);
+    $record['settings']['layout_attributes_merge'] = Settings::get('ds_layout_attributes_merge', TRUE);
     $record['settings']['layout_link_attribute'] = FALSE;
     $record['settings']['layout_link_custom'] = '';
     $fields = _ds_sort_fields($form_state['values']['fields'], 'weight');
@@ -789,7 +790,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       '#type' => 'checkbox',
       '#title' => t('Merge other layout attributes'),
       '#description' => 'Certain modules might provide additional attributes for the template wrapper, e.g. RDFa. Disable this option if you prefer to specify these attributes above.',
-      '#default_value' => isset($layout['settings']['layout_attributes_merge']) ? $layout['settings']['layout_attributes_merge'] : settings()->get('ds_layout_attributes_merge', TRUE),
+      '#default_value' => isset($layout['settings']['layout_attributes_merge']) ? $layout['settings']['layout_attributes_merge'] : Settings::get('ds_layout_attributes_merge', TRUE),
       '#weight' => 12,
     );
 

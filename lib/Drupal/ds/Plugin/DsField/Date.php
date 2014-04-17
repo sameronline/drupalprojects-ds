@@ -30,7 +30,7 @@ abstract class Date extends DsFieldBase {
    */
   public function formatters() {
     $date_types = \Drupal::entityManager()
-      ->getStorageController('date_format')
+      ->getStorage('date_format')
       ->loadMultiple();
 
     $date_formatters = array();

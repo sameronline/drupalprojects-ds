@@ -172,7 +172,7 @@ function ds_extras_form_alter(&$form, &$form_state) {
 
     if (\Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
       // Get the view modes.
-      $ds_vm = entity_get_view_modes('node');
+      $ds_vm = \Drupal::entityManager()->getAllViewModes('node');
       $layouts = array();
       $options = array('' => t('Default'));
       foreach ($ds_vm as $key => $item) {

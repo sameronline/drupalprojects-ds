@@ -27,7 +27,7 @@ trait DsSearch {
    */
   public function generalConfigurationForm(array $form, array &$form_state, $configuration, $entity_type) {
     // Load global form elements for both DsNodeSearch and DsUserSearch
-    $view_modes = entity_get_view_modes($entity_type);
+    $view_modes = \Drupal::entityManager()->getAllViewModes($entity_type);
 
     $options = array();
     foreach ($view_modes as $id => $view_mode) {

@@ -96,7 +96,7 @@ class DsNodeSearch extends NodeSearch {
     // Load results.
     $find = $query->execute();
 
-    $node_storage = $this->entityManager->getStorageController('node');
+    $node_storage = $this->entityManager->getStorage('node');
     $node_render = $this->entityManager->getViewBuilder('node');
 
     foreach ($find as $item) {
