@@ -10,7 +10,7 @@ namespace Drupal\ds\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\KeyValueStore\State;
+use Drupal\Core\State\State;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -28,7 +28,7 @@ class EmergencyForm extends FormBase {
   /**
    * State object
    *
-   * @var \Drupal\Core\KeyValueStore\State
+   * @var \Drupal\Core\State\State
    */
   protected $state;
 
@@ -46,7 +46,7 @@ class EmergencyForm extends FormBase {
    *   The config factory.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface
    *   The module handler.
-   * @param \Drupal\Core\KeyValueStore\State
+   * @param \Drupal\Core\State\State
    *   The state key value store
    */
   public function __construct(ConfigFactory $config_factory, ModuleHandlerInterface $module_handler, State $state) {
