@@ -5,9 +5,9 @@
  * Field UI functions for Display Suite.
  */
 
-use Drupal\Component\Utility\Settings;
 use Drupal\Component\Utility\String;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Site\Settings;
 use Drupal\ds\Ds;
 use Drupal\field\Field;
 use Drupal\field_ui\FieldUI;
