@@ -101,18 +101,6 @@ function ds_field_ui_create_vertical_tabs(&$form) {
       $form['modes']['view_modes_custom']['#description'] = l(t('Manage view modes'), 'admin/structure/ds/view_modes');
     }
   }
-  else {
-    if ($view_mode_admin_access) {
-      $form['modes'] = array(
-        '#type' => 'details',
-        '#title' => t('Custom display settings'),
-        '#group' => 'additional_settings',
-      );
-      $form['modes']['view_modes_custom'] = array(
-       '#markup' => l(t('Manage view modes'), 'admin/structure/ds/view_modes'),
-      );
-    }
-  }
 }
 
 /**
