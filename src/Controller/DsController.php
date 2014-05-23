@@ -68,7 +68,7 @@ class DsController extends ControllerBase {
             $operations['manage_display'] = array(
               'title' => t('Manage display'),
               'route_name' => 'field_ui.display_overview_' . $entity_type,
-              'route_parameters' => $route['route_parameters'],
+              'route_parameters' => $route->getRouteParameters(),
             );
 
             // Add Manage Form link if Display Suite Forms is enabled.
@@ -76,7 +76,7 @@ class DsController extends ControllerBase {
               $operations['manage_form'] = array(
                 'title' => t('Manage form'),
                 'route_name' => 'field_ui.form_display_overview_' . $entity_type,
-                'route_parameters' => $route['route_parameters'],
+                'route_parameters' => $route->getRouteParameters(),
               );
             }
           }

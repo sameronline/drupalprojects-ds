@@ -1038,15 +1038,16 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
     if (isset($form_state['values']['layout']) && (!isset($layout['layout']) || $form_state['values']['layout'] != $layout['layout'])) {
       // Get admin path.
       $route = FieldUI::getOverviewRouteInfo($entity_type, $bundle);
-      $route_parameters = $route['route_parameters'];
+      $route_parameters = $route->getRouteParameters();
+      $route_parameters['view_mode_name'] = $view_mode;
       $options = $route['options'];
 
       if ($view_mode != 'form') {
-        $route_name = 'field_ui.display_overview_' . $entity_type;
+        $route_name = 'field_ui.display_overview_view_mode_' . $entity_type;
 
       }
       else {
-        $route_name = 'field_ui.form_display_overview_' . $entity_type;
+        $route_name = 'field_ui.form_display_overview_form_mode_' . $entity_type;
       }
 
       $admin_path = \Drupal::service('url_generator')->generateFromRoute($route_name, $route_parameters, $options);
