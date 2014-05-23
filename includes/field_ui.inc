@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\Xss;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Site\Settings;
 use Drupal\ds\Ds;
@@ -429,7 +430,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
 
     // Layout wrapper
     $record['settings']['layout_wrapper'] = $form_state['values']['region_wrapper']['layout_wrapper'];
-    $record['settings']['layout_attributes'] = filter_xss_admin($form_state['values']['region_wrapper']['layout_attributes']);
+    $record['settings']['layout_attributes'] = Xss::filter($form_state['values']['region_wrapper']['layout_attributes']);
     $record['settings']['layout_attributes_merge'] = $form_state['values']['region_wrapper']['layout_attributes_merge'];
 
     // Link attribute.

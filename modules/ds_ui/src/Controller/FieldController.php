@@ -90,7 +90,19 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
         'rows' => $rows,
       );
 
-      $output = theme('table', $table);
+      $build = array(
+        '#theme' => 'table',
+        '#header' => array(
+          'Label',
+          'Type',
+          'Machine name',
+          'Entities',
+          'Operations',
+        ),
+        '#rows' => $rows,
+      );
+
+      $output = drupal_render($build);
     }
     else {
       $output = $this->t('No custom fields have been defined.');

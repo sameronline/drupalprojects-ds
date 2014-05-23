@@ -60,7 +60,7 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    $config = $this->configFactory->get('ds.settings');
+    $config = $this->configFactory()->get('ds.settings');
 
     $form['additional_settings'] = array(
       '#type' => 'vertical_tabs',
@@ -120,7 +120,7 @@ class SettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, array &$form_state) {
     parent::submitForm($form, $form_state);
 
-    $this->configFactory->get('ds.settings')
+    $this->configFactory()->get('ds.settings')
       ->set('field_template', $form_state['values']['fs1']['field_template'])
       ->set('ft-default', $form_state['values']['fs1']['ft-default'])
       ->set('ft-kill-colon', $form_state['values']['fs1']['ft-kill-colon'])

@@ -25,7 +25,7 @@ class ClassesForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, array &$form_state) {
-    $config = $this->configFactory->get('ds.settings');
+    $config = $this->configFactory()->get('ds.settings');
 
     $form['regions'] = array(
       '#type' => 'textarea',
@@ -62,7 +62,7 @@ class ClassesForm extends ConfigFormBase {
       $field_classes = explode("\n", str_replace("\r", '', $form_state['values']['fields']));
     }
 
-    $config = $this->configFactory->get('ds.settings');
+    $config = $this->configFactory()->get('ds.settings');
     $config->set('classes.region', $region_classes)
       ->set('classes.field', $field_classes)
       ->save();

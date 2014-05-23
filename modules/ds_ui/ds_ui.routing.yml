@@ -2,6 +2,7 @@ ds_ui.classes:
   path: 'admin/structure/ds/classes'
   defaults:
     _form: '\Drupal\ds_ui\Form\ClassesForm'
+    _title: 'Classes'
   requirements:
     _permission: 'admin classes'
 ds_ui.fields_list:

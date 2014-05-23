@@ -76,7 +76,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
     return new static(
       $container->get('config.factory'),
       $container->get('entity.manager'),
-      $container->get('cache.cache'),
+      $container->get('cache.default'),
       $container->get('module_handler')
     );
   }
@@ -99,7 +99,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
 
     // Fetch field if it already exists.
     if (!empty($field_key)) {
-      $field = $this->configFactory->get('ds.field.' . $field_key)->get();
+      $field = $this->configFactory()->get('ds.field.' . $field_key)->get();
     }
 
     // Save the field for future reuse.
@@ -179,7 +179,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
     $field['entities'] = $entities;
 
     // Save field and clear ds_fields_info cache.
-    $this->configFactory->get('ds.field.' . $field['id'])->setData($field)->save();
+    $this->configFactory()->get('ds.field.' . $field['id'])->setData($field)->save();
     $this->cacheBackend->deleteTags(array('ds_fields_info' => TRUE));
 
     // Also clear the ds plugin cache
@@ -217,7 +217,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
    */
   public function uniqueFieldName($name) {
     $value = strtr($name, array('-' => '_'));
-    $config = $this->configFactory->get('ds.field.' . $value);
+    $config = $this->configFactory()->get('ds.field.' . $value);
     if ($config->get()) {
       return TRUE;
     }

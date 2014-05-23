@@ -6,6 +6,7 @@
 
 namespace Drupal\ds;
 
+use Drupal\Component\Utility\String;
 use Drupal\Core\Cache\Cache;
 
 /**
