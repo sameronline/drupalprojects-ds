@@ -49,9 +49,8 @@ abstract class Entity extends DsFieldBase {
 
     // Print the chosen view mode or the default one
     $config = $this->getConfiguration();
-    $view_mode = $config['view_mode'];
-
-    $summary[] = 'View mode: ' . $view_mode['label'];
+    $entity_view_mode = $config['entity_view_mode'];
+    $summary[] = 'View mode: ' . $view_modes[$entity_view_mode]['label'];
 
     return $summary;
   }
@@ -66,7 +65,7 @@ abstract class Entity extends DsFieldBase {
     $default_view_mode = key($view_modes);
 
     $configuration = array(
-      'view_mode' => $default_view_mode,
+      'entity_view_mode' => $default_view_mode,
     );
 
     return $configuration;

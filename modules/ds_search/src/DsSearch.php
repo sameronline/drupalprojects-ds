@@ -115,6 +115,8 @@ trait DsSearch {
    *   The build array.
    */
   public function buildSharedPageVariables(&$build, $configuration) {
+    $current_path = current_path();
+    $args = explode('/', $current_path);
 
     // Search results title.
     if ($configuration['show_title']) {
@@ -123,7 +125,7 @@ trait DsSearch {
 
     // Extra variables.
     if ($configuration['search_variables'] != 'none') {
-      $build['search_extra'] = array('#markup' => '<div class="ds-search-extra">' . $this->fetchExtraVariables(arg(2), $configuration) . '</div>');
+      $build['search_extra'] = array('#markup' => '<div class="ds-search-extra">' . $this->fetchExtraVariables($args[2], $configuration) . '</div>');
     }
 
     // Search results.
@@ -145,7 +147,7 @@ trait DsSearch {
             'data' => array(
               'ds_search' => array(
                 'selector' => String::checkPlain($configuration['highlight_selector']),
-                'search' => String::checkPlain(arg(2)),
+                'search' => String::checkPlain($args[2]),
               ),
             ),
           ),

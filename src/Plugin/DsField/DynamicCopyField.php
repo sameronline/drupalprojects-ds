@@ -19,6 +19,8 @@ class DynamicCopyField extends DsFieldBase {
 
   /**
    * The loaded instance.
+   *
+   * @var \Drupal\ds\Plugin\DsField\DsFieldInterface;
    */
   private $field_instance;
 
@@ -57,6 +59,8 @@ class DynamicCopyField extends DsFieldBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
+    return array();
+    // @todo fix this
     return $this->field_instance->defaultConfiguration();
   }
 

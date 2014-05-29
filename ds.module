@@ -9,7 +9,7 @@ use Drupal\Component\Utility\String;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\ds\Ds;
 use Drupal\entity\Entity\EntityViewDisplay;
-use Drupal\field\Field;
+use Drupal\field\Entity\FieldInstanceConfig;
 
 /**
  * Implements hook_permission().
@@ -474,7 +474,7 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
 
   // Get the field name and field instance info - if available.
   $field_name = $variables['element']['#field_name'];
-  $field_instance_info = Field::fieldInfo()->getInstance($entity_type, $field_name, $bundle);
+  $field_instance_info = FieldInstanceConfig::loadByName($entity_type, $field_name, $bundle);
 
   // Check if this field has custom output settings.
   $config = array();

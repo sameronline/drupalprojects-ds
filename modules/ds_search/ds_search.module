@@ -47,7 +47,6 @@ function theme_ds_search_page($build) {
       unset($build['build']['search_extra']);
     }
 
-    $build['build']['search_empty'] = array('#markup' => search_help('search#noresults', drupal_help_arg()));
   }
 
   $build['build']['search_results']['#sorted'] = TRUE;
