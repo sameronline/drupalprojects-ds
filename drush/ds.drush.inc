@@ -167,7 +167,6 @@ function ds_prepare_regions_html($region_names) {
 
   foreach ($region_names as $name) {
     $machine_name = ds_prepare_machine_name($name);
-    $html_class = drupal_html_class($name);
 
     $output[] = <<<END
     <{{ \${$machine_name}_wrapper }} class="group-left{{ \${$machine_name}_classes }}">
@@ -221,7 +220,6 @@ function ds_prepare_regions_css($region_names) {
   $output = array();
 
   foreach ($region_names as $name) {
-    $machine_name = ds_prepare_machine_name($name);
     $html_class = drupal_html_class($name);
 
     $output[] = <<<END
@@ -255,7 +253,7 @@ function drush_ds_field($name = NULL) {
   $module_name = end($parts);
 
   // Class path
-  $class_path = $current_path . "/lib/Drupal/$module_name/plugin/DsField/";
+  $class_path = $current_path . "/src/plugin/DsField/";
   drush_mkdir($class_path);
 
   // Determine the path to our example layout templates.
