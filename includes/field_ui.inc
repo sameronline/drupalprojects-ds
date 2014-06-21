@@ -432,8 +432,8 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     // Save the configuration.
     \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
 
-    // Clear entity info cache.
-    entity_info_cache_clear();
+    // Clear entity info caches
+    Drupal::entityManager()->clearCachedDefinitions();
   }
 }
 
@@ -565,8 +565,8 @@ function ds_field_ui_layout_clone($form, &$form_state) {
     // Copy the view mode settings.
     _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $cv, $field_settings, $form['#export_id']);
 
-    // Clear entity info cache.
-    entity_info_cache_clear();
+    // Clear entity info caches.
+    Drupal::entityManager()->clearCachedDefinitions();
 
     // Show message.
     drupal_set_message(t('The layout has been cloned.'));
@@ -1354,10 +1354,14 @@ function _ds_field_ui_core_fields(&$form, &$form_state) {
       }
 
       $settings = $entity_display->getComponent($key);
+      if (empty($settings)) {
+        continue;
+      }
+
       if (isset($form_state['plugin_settings'][$key])) {
         $settings = array_merge($settings, $form_state['plugin_settings'][$key]);
       }
-      $settings += \Drupal::service('plugin.manager.field.formatter')->getDefaultSettings($formatter_type);
+      $settings = $settings + \Drupal::service('plugin.manager.field.formatter')->getDefaultSettings($formatter_type);
 
       // Import field settings and merge with Field API settings.
       if (!isset($form_state['plugin_settings'][$key]) && !empty($form['#field_settings'][$key]['plugin_settings']['ft'])) {

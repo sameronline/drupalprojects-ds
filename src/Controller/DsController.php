@@ -169,13 +169,13 @@ class DsController extends ControllerBase {
       $overridden = $entity_display->status();
     }
 
-    $route_parameters = $route['route_parameters'];
+    $route_parameters = $route->getRouteParameters();
     if (!empty($layout) || $overridden) {
       $route_parameters['view_mode_name'] = $view_mode;
-      $admin_path = $this->url('field_ui.display_overview_view_mode_' . $entity_type, $route_parameters, $route['options']);
+      $admin_path = $this->url('field_ui.display_overview_view_mode_' . $entity_type, $route_parameters, $route->getOptions());
     }
     else {
-      $admin_path = $this->url('field_ui.display_overview_' . $entity->getEntityTypeId(), $route_parameters, $route['options']);
+      $admin_path = $this->url('field_ui.display_overview_' . $entity->getEntityTypeId(), $route_parameters, $route->getOptions());
     }
 
     return new RedirectResponse(url($admin_path, array('query' => array('destination' => $destination))));
