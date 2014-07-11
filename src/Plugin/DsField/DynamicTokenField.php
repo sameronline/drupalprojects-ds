@@ -14,7 +14,7 @@ use Drupal\ds\Plugin\DsField\DsFieldBase;
  *
  * @DsField(
  *   id = "dynamic_token_field",
- *   derivative = "Drupal\ds\Plugin\Derivative\DynamicTokenField"
+ *   deriver = "Drupal\ds\Plugin\Derivative\DynamicTokenField"
  * )
  */
 class DynamicTokenField extends TokenBase {

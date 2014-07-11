@@ -7,12 +7,12 @@
 
 namespace Drupal\ds\Plugin\Derivative;
 
-use Drupal\Component\Plugin\Derivative\DerivativeBase;
+use Drupal\Component\Plugin\Derivative\DeriverBase;
 
 /**
  * Retrieves dynamic field plugin definitions.
  */
-abstract class DynamicField extends DerivativeBase {
+abstract class DynamicField extends DeriverBase {
 
   /**
    * {@inheritdoc}

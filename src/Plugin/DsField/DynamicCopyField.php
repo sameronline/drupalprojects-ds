@@ -12,7 +12,7 @@ namespace Drupal\ds\Plugin\DsField;
  *
  * @DsField(
  *   id = "dynamic_copy_field",
- *   derivative = "Drupal\ds\Plugin\Derivative\DynamicCopyField",
+ *   deriver = "Drupal\ds\Plugin\Derivative\DynamicCopyField",
  * )
  */
 class DynamicCopyField extends DsFieldBase {
