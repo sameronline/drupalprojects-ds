@@ -121,7 +121,7 @@ class EntitiesTest extends BaseTest {
     $this->assertRaw('group-footer', 'Template found (region footer)');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
-    $this->assertPattern('/<div[^>]*>Submitted[^<]*<a[^>]+href="\/user\/' . $node_author->uid . '"[^>]*>' . String::checkPlain($node_author->name) . '<\/a>.<\/div>/', t('Submitted by line found'));
+    $this->assertPattern('/<div[^>]*>Submitted[^<]*<a[^>]+href="' . preg_quote(base_path(), '/') . 'user\/' . $node_author->uid . '"[^>]*>' . check_plain($node_author->name) . '<\/a>.<\/div>/', t('Submitted by line found'));
 
     // Configure teaser layout.
     $teaser = array(
