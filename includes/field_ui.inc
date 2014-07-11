@@ -737,7 +737,16 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
   if (!empty($layout) && isset($layout['regions'])) {
 
     // Add wrappers
-    $wrapper_options = array('div' => 'Div', 'span' => 'Span', 'section' => 'Section', 'article' => 'Article', 'header' => 'Header', 'footer' => 'Footer', 'aside' => 'Aside');
+    $wrapper_options = array(
+      'div' => 'Div',
+      'span' => 'Span',
+      'section' => 'Section',
+      'article' => 'Article',
+      'header' => 'Header',
+      'footer' => 'Footer',
+      'aside' => 'Aside',
+      'figure' => 'Figure'
+    );
     $form['region_wrapper'] = array(
       '#group' => 'additional_settings',
       '#type' => 'details',
