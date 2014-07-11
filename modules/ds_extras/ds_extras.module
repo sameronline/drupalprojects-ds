@@ -247,6 +247,7 @@ function ds_extras_switch_view_mode_preview_callback($form, $form_state) {
  * Implements hook_entity_base_field_info_alter()
  */
 function ds_extras_entity_base_field_info_alter(&$base_field_definitions, EntityTypeInterface $entity_type) {
+  /*
   if ($entity_type->id() == 'node') {
     // Set the ds field as proper field
     $base_field_definitions['ds_switch'] = FieldDefinition::create('string')
@@ -256,6 +257,7 @@ function ds_extras_entity_base_field_info_alter(&$base_field_definitions, Entity
       ->setSetting('default_value', '')
       ->setPropertyConstraints('value', array('Length' => array('max' => 255)));
   }
+  */
 }
 
 /**
