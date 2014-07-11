@@ -1108,9 +1108,8 @@ function ds_render_user_picture($field) {
   $picture = ds_return_picture($field['entity']);
 
   if (!empty($picture)) {
-    $vars = array();
     $filepath = (isset($picture->uri)) ? $picture->uri : $picture;
-    $name = !empty($field['entity']->name) ? $field['entity']->name : variable_get('anonymous', t('Anonymous'));
+    $name = format_username($field['entity']);
     $alt = t("@user's picture", array('@user' => $name));
     $vars = array('path' => $filepath, 'alt' => $alt, 'title' => $alt);
 
