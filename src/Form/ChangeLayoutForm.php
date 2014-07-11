@@ -178,7 +178,7 @@ class ChangeLayoutForm extends FormBase {
     \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $display_mode)->setData($record)->save();
 
     // Clear entity info cache.
-    entity_info_cache_clear();
+    \Drupal::entityManager()->clearCachedFieldDefinitions();
 
     // Show message.
     drupal_set_message(t('The layout change has been saved.'));

@@ -126,8 +126,7 @@ class SettingsForm extends ConfigFormBase {
       ->set('ft-kill-colon', $form_state['values']['fs1']['ft-kill-colon'])
       ->save();
 
-    entity_info_cache_clear();
-    field_info_cache_clear();
+    \Drupal::entityManager()->clearCachedFieldDefinitions();
     $this->moduleHandler->resetImplementations();
     \Drupal::service('theme.registry')->reset();
     \Drupal::service('router.builder')->setRebuildNeeded();
