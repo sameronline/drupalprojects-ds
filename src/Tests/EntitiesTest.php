@@ -7,20 +7,12 @@
 
 namespace Drupal\ds\Tests;
 
-use Drupal\Component\Utility\String;
-
+/**
+ * Tests for display of nodes and fields.
+ *
+ * @group display_suite
+ */
 class EntitiesTest extends BaseTest {
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => t('Node display'),
-      'description' => t('Tests for display of nodes and fields.'),
-      'group' => t('Display Suite'),
-    );
-  }
 
   /**
    * Utility function to setup for all kinds of tests.

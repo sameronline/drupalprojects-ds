@@ -7,18 +7,12 @@
 
 namespace Drupal\ds\Tests;
 
+/**
+ * Tests for exportables in Display Suite.
+ *
+ * @group display_suite
+ */
 class ExportablesTest extends BaseTest {
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => t('Exportables'),
-      'description' => t('Tests for exportables in Display Suite.'),
-      'group' => t('Display Suite'),
-    );
-  }
 
   /**
    * Enables the exportables module.

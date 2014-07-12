@@ -8,20 +8,11 @@
 namespace Drupal\ds\Tests;
 
 /**
- * Test managing of custom fields.
+ * Tests for managing custom code, and block fields.
+ *
+ * @group display_suite
  */
 class FieldsTest extends BaseTest {
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => t('Fields'),
-      'description' => t('Tests for managing custom code, and block fields.'),
-      'group' => t('Display Suite'),
-    );
-  }
 
   /**
    * Test Display fields.

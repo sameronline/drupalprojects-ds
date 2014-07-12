@@ -7,18 +7,12 @@
 
 namespace Drupal\ds\Tests;
 
-class ViewsTestS extends BaseTest {
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => t('Views'),
-      'description' => t('Tests for Display Suite Views integration.'),
-      'group' => t('Display Suite'),
-    );
-  }
+/**
+ * Tests for Display Suite Views integration.
+ *
+ * @group display_suite
+ */
+class ViewsTest extends BaseTest {
 
   /**
    * Test views integration.

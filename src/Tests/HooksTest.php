@@ -8,20 +8,11 @@
 namespace Drupal\ds\Tests;
 
 /**
- * Tests for Display Suite hooks.
+ * Tests for hooks: ds_fields, ds_fields_alter, ds_layouts.
+ *
+ * @group display_suite
  */
 class HooksTest extends BaseTest {
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => t('Hooks'),
-      'description' => t('Tests for hooks: ds_fields, ds_fields_alter, ds_layouts.'),
-      'group' => t('Display Suite'),
-    );
-  }
 
   /**
    * Test fields hooks.

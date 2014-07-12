@@ -7,20 +7,12 @@
 
 namespace Drupal\ds\Tests;
 
-use Drupal\simpletest\WebTestBase;
-
+/**
+ * Tests for managing layouts on forms.
+ *
+ * @group display_suite
+ */
 class FormsTest extends BaseTest {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'name' => t('Forms'),
-      'description' => t('Tests for managing layouts on forms.'),
-      'group' => t('Display Suite'),
-    );
-  }
 
   /**
    * Forms tests.

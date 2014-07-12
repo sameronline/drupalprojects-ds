@@ -7,18 +7,12 @@
 
 namespace Drupal\ds\Tests;
 
+/**
+ * Tests for display of search results for nodes and users.
+ *
+ * @group display_suite
+ */
 class SearchTest extends BaseTest {
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => t('Search'),
-      'description' => t('Tests for display of search results for nodes and users.'),
-      'group' => t('Display Suite'),
-    );
-  }
 
   function testDSSearch() {
 

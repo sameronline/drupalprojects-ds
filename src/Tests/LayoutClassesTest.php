@@ -8,20 +8,11 @@
 namespace Drupal\ds\Tests;
 
 /**
- * Test managing of layouts and CSS classes
+ * Tests for managing layouts and classes on Field UI screen.
+ *
+ * @group display_suite
  */
 class LayoutClassesTest extends BaseTest {
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => t('Layouts'),
-      'description' => t('Tests for managing layouts and classes on Field UI screen.'),
-      'group' => t('Display Suite'),
-    );
-  }
 
   /**
    * Test selecting layouts, classes, region to block and fields.

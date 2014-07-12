@@ -7,23 +7,12 @@
 
 namespace Drupal\ds\Tests;
 
-use Drupal\Core\Extension\ModuleHandler;
-
 /**
- * Tests for Display Suite field permissions.
+ * Tests for testing field permissions.
+ *
+ * @group display_suite
  */
 class FieldPermissionsTest extends BaseTest {
-
-  /**
-   * Implements getInfo().
-   */
-  public static function getInfo() {
-    return array(
-      'name' => t('Field permissions'),
-      'description' => t('Tests for testing field permissions.'),
-      'group' => t('Display Suite'),
-    );
-  }
 
   function testFieldPermissions() {
 
