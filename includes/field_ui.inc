@@ -1039,7 +1039,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       $route = FieldUI::getOverviewRouteInfo($entity_type, $bundle);
       $route_parameters = $route->getRouteParameters();
       $route_parameters['view_mode_name'] = $view_mode;
-      $options = $route['options'];
+      $options = $route->getOptions();
 
       if ($view_mode != 'form') {
         $route_name = 'field_ui.display_overview_view_mode_' . $entity_type;
@@ -1050,10 +1050,6 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
       }
 
       $admin_path = \Drupal::service('url_generator')->generateFromRoute($route_name, $route_parameters, $options);
-      if ($view_mode != 'default' && $view_mode != 'form') {
-        $admin_path .= '/' . $view_mode;
-      }
-
       $destination_url = '';
 
       // If regions aren't set we don't have to move fields.
