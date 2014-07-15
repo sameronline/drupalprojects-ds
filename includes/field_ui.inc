@@ -433,7 +433,7 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
 
     // Clear entity info caches
-    Drupal::entityManager()->clearCachedDefinitions();
+    \Drupal::entityManager()->clearCachedFieldDefinitions();
   }
 }
 
@@ -566,7 +566,7 @@ function ds_field_ui_layout_clone($form, &$form_state) {
     _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $cv, $field_settings, $form['#export_id']);
 
     // Clear entity info caches.
-    Drupal::entityManager()->clearCachedDefinitions();
+    \Drupal::entityManager()->clearCachedFieldDefinitions();
 
     // Show message.
     drupal_set_message(t('The layout has been cloned.'));
