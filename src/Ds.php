@@ -170,6 +170,7 @@ class Ds {
           $overridden = FALSE;
         }
       }
+
       // Check if a layout is configured.
       if (isset($bundles[$entity_type][$bundle]['layouts'][$view_mode]) && ($overridden || $view_mode == 'default')) {
         $layouts[$layout_key] = $bundles[$entity_type][$bundle]['layouts'][$view_mode];

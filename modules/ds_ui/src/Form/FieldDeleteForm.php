@@ -72,7 +72,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
   /**
    * {@inheritdoc}
    */
-  public function getCancelRoute() {
+  public function getCancelUrl() {
     return new Url('ds_ui.fields_list');
   }
 
@@ -112,7 +112,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
     \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
     // Redirect.
-    $form_state['redirect_route']['route_name'] = 'ds_ui.fields_list';
+    $form_state['redirect_route'] = new Url('ds_ui.fields_list');
     drupal_set_message(t('The field %field has been deleted.', array('%field' => $field['label'])));
   }
 

@@ -9,8 +9,9 @@ use Drupal\Component\Utility\String;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Site\Settings;
+use Drupal\Core\Url;
 use Drupal\ds\Ds;
-use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\FieldInstanceConfigInterface;
 use Drupal\field_ui\FieldUI;
 
@@ -247,7 +248,7 @@ function ds_field_ui_regions($form, $form_state) {
       }
 
       // Limit items.
-      $field_info = FieldConfig::loadByName($entity_type, $name);
+      $field_info = FieldStorageConfig::loadByName($entity_type, $name);
       if (!empty($field_info) && $field_info->getCardinality() != 1 && $view_mode != 'form') {
         $row['plugin']['type']['#prefix'] = '<div class="limit-float">';
         $row['plugin']['type']['#suffix'] = '</div>';
@@ -1109,14 +1110,14 @@ function ds_field_ui_change_layout_submit($form, &$form_state) {
 
   $destination = $form_state['values']['layout_changed_url'];
 
-  $form_state['redirect_route'] = array(
-    'route_name' => $destination['route_name'],
-    'route_parameters' => $destination['route_parameters'],
-    'options' => $destination['options'],
+  $form_state['redirect_route'] = new Url(
+    $destination['route_name'],
+    $destination['route_parameters'],
+    $destination['options']
   );
 
   if (!empty($destination['destination_url'])) {
-    $form_state['redirect_route']['options']['query']['destination'] = $destination['destination_url'];
+    $form_state['redirect_route']->setOption('query', array('destination' => $destination['destination_url']));
   }
 }
 
@@ -1345,7 +1346,7 @@ function _ds_field_ui_core_fields(&$form, &$form_state) {
         continue;
       }
 
-      $field = FieldConfig::loadByName($entity_type, $instance->getName());
+      $field = FieldStorageConfig::loadByName($entity_type, $instance->getName());
       $display = entity_get_display($entity_type, $bundle, $view_mode);
       $component = $display->getComponent($key);
 

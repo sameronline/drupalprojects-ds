@@ -15,6 +15,7 @@ use Drupal\Core\Config\Context\ContextInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandler;
 
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -186,7 +187,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
     \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
     // Redirect.
-    $form_state['redirect_route']['route_name'] = 'ds_ui.fields_list';
+    $form_state['redirect_route'] = new Url('ds_ui.fields_list');
     drupal_set_message(t('The field %field has been saved.', array('%field' => $field['label'])));
   }
 
