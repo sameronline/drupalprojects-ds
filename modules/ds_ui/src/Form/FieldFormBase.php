@@ -11,10 +11,10 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Config\ConfigFactory;
-use Drupal\Core\Config\Context\ContextInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandler;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -93,7 +93,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state, $field_key = '') {
+  public function buildForm(array $form, FormStateInterface $form_state, $field_key = '') {
 
     // Initialize field.
     $field = array();
@@ -162,7 +162,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $field = array();
     $field['id'] = $form_state['values']['id'];
     $field['label'] = $form_state['values']['name'];

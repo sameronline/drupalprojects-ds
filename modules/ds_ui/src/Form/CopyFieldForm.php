@@ -7,6 +7,7 @@
 
 namespace Drupal\ds_ui\Form;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds_ui\Form\FieldFormBase;
 
 /**
@@ -24,7 +25,7 @@ class CopyFieldForm extends FieldFormBase{
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state, $field_key = '') {
+  public function buildForm(array $form, FormStateInterface $form_state, $field_key = '') {
     $form = parent::buildForm($form, $form_state, $field_key);
     $field = $this->field;
 

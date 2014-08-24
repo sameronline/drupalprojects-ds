@@ -10,6 +10,7 @@ namespace Drupal\ds\Form;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds\Ds;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -59,7 +60,7 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->configFactory()->get('ds.settings');
 
     $form['additional_settings'] = array(
@@ -117,7 +118,7 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
     $this->configFactory()->get('ds.settings')

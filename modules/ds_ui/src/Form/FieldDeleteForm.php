@@ -11,6 +11,7 @@ use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -86,7 +87,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state, Request $request = NULL, $field = '') {
+  public function buildForm(array $form, FormStateInterface $form_state, Request $request = NULL, $field = '') {
     $config = $this->configFactory->get('ds.field.' . $field);
     $this->field = $config->get();
 
@@ -101,7 +102,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $field = $this->field;
 
     // Remove field and clear caches.

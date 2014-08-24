@@ -7,6 +7,7 @@
 
 namespace Drupal\ds_search\Plugin\Search;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds_search\DsSearch;
 use Drupal\node\Plugin\Search\NodeSearch;
 
@@ -161,7 +162,7 @@ class DsNodeSearch extends NodeSearch {
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, array &$form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     // Fetch form from node search
     $form = parent::buildConfigurationForm($form, $form_state);
 
@@ -186,7 +187,7 @@ class DsNodeSearch extends NodeSearch {
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, array &$form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
 
     // Submits general settings
@@ -199,7 +200,7 @@ class DsNodeSearch extends NodeSearch {
   /**
    * {@inheritdoc}
    */
-  public function searchFormAlter(array &$form, array &$form_state) {
+  public function searchFormAlter(array &$form, FormStateInterface $form_state) {
     if ($this->configuration['advanced_search']) {
       return parent::searchFormAlter($form, $form_state);
     }

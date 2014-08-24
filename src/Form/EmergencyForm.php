@@ -10,6 +10,7 @@ namespace Drupal\ds\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\State\State;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -76,7 +77,7 @@ class EmergencyForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
 
     $form['ds_fields_error'] = array(
       '#type' => 'fieldset',
@@ -94,7 +95,7 @@ class EmergencyForm extends FormBase {
     $form['ds_fields_error']['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Disable/enable field attach'),
-      '#submit' => array(array($this, 'submitFieldAttach')),
+      '#submit' => array('::submitFieldAttach'),
       '#weight' => 1,
     );
 
@@ -121,7 +122,7 @@ class EmergencyForm extends FormBase {
         $form['region_to_block']['submit'] = array(
           '#type' => 'submit',
           '#value' => $this->t('Remove block regions'),
-          '#submit' => array(array($this, 'submitRegionToBlock')),
+          '#submit' => array('::submitRegionToBlock'),
           '#weight' => 1,
         );
       }
@@ -133,14 +134,14 @@ class EmergencyForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     // empty
   }
 
   /**
    * Submit callback for the fields error form.
    */
-  public function submitFieldAttach(array &$form, array &$form_state) {
+  public function submitFieldAttach(array &$form, FormStateInterface $form_state) {
     $this->state->set('ds.disabled', $form_state['values']['disable']);
     drupal_set_message(t('The configuration options have been saved.'));
   }
@@ -148,7 +149,7 @@ class EmergencyForm extends FormBase {
   /**
    * Submit callback for the region to block form
    */
-  public function submitRegionToBlock(array &$form, array &$form_state) {
+  public function submitRegionToBlock(array &$form, FormStateInterface $form_state) {
     if (isset($form_state['values']['remove_block_region'])) {
       $save = FALSE;
       $region_blocks = $this->configFactory->get('ds.extras')->get('region_blocks');

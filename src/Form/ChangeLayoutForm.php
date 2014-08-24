@@ -8,6 +8,7 @@
 namespace Drupal\ds\Form;
 
 use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds\Ds;
 
 /**
@@ -25,7 +26,7 @@ class ChangeLayoutForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state, $entity_type = '', $bundle = '', $display_mode = '', $new_layout = '') {
+  public function buildForm(array $form, FormStateInterface $form_state, $entity_type = '', $bundle = '', $display_mode = '', $new_layout = '') {
 
     $old_layout = NULL;
     $all_layouts = Ds::getLayouts();
@@ -141,7 +142,7 @@ class ChangeLayoutForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     // Prepare some variables.
     $old_layout = $form['#old_layout'];
     $new_layout_key = $form['#new_layout_key'];
