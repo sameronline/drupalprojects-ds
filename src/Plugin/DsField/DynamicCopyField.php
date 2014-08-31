@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\ds\Plugin\DsField;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Defines a generic dynamic field that holds a copy of an exisitng ds field.
@@ -44,7 +45,7 @@ class DynamicCopyField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($form, &$form_state) {
+  public function settingsForm($form, FormStateInterface $form_state) {
     return $this->field_instance->settingsForm($form, $form_state);
   }
 

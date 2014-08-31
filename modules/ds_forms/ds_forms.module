@@ -6,6 +6,7 @@
  * @todo how to get around seven's hardcoded and extremely annoying node_form_alter.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds\Ds;
 
 /**
@@ -24,7 +25,7 @@ function ds_forms_theme() {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function ds_forms_form_field_ui_form_display_overview_form_alter(&$form, &$form_state) {
+function ds_forms_form_field_ui_form_display_overview_form_alter(&$form, FormStateInterface $form_state) {
   if (\Drupal::entityManager()->getDefinition($form['#entity_type'])->isFieldable()) {
 
     // Add necessary variables for DS Field UI.
@@ -32,7 +33,7 @@ function ds_forms_form_field_ui_form_display_overview_form_alter(&$form, &$form_
     $form_state['no_view_mode_suggestions'] = TRUE;
 
     // Load Display Suite.
-    form_load_include($form_state, 'inc', 'ds', 'includes/field_ui');
+    $form_state->loadInclude('ds', 'inc', 'includes/field_ui');
     ds_field_ui_fields_layouts($form, $form_state);
   }
 }

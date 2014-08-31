@@ -4,6 +4,7 @@
  * @file
  * Display Suite drush integration.
  */
+use Drupal\Component\Utility\Html;
 
 /**
  * Implements hook_drush_command().
@@ -220,7 +221,7 @@ function ds_prepare_regions_css($region_names) {
   $output = array();
 
   foreach ($region_names as $name) {
-    $html_class = drupal_html_class($name);
+    $html_class = Html::getClass($name);
 
     $output[] = <<<END
 .ds-$html_class {

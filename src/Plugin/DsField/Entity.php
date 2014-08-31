@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\ds\Plugin\DsField;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Renders an entity by a given view mode.
@@ -15,7 +16,7 @@ abstract class Entity extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($form, &$form_state) {
+  public function settingsForm($form, FormStateInterface $form_state) {
     $entity = $this->linkedEntity();
     $view_modes = \Drupal::entityManager()->getViewModes($entity);
 

@@ -8,6 +8,7 @@
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Base class for all the ds plugins.
@@ -32,7 +33,7 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($form, &$form_state) {
+  public function settingsForm($form, FormStateInterface $form_state) {
     return array();
   }
 

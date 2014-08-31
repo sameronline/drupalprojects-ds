@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\ds\Plugin\DsField;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Plugin that renders a title.
@@ -15,7 +16,7 @@ abstract class Title extends Field {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($form, &$form_state) {
+  public function settingsForm($form, FormStateInterface $form_state) {
     $config = $this->getConfiguration();
 
     $settings['link'] = array(

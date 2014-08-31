@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\ds\Plugin\DsField;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Plugin that renders a link.
@@ -15,7 +16,7 @@ abstract class Link extends Field {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($form, &$form_state) {
+  public function settingsForm($form, FormStateInterface $form_state) {
     $config = $this->getConfiguration();
 
     $form['link text'] = array(
