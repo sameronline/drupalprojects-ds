@@ -1,0 +1,6 @@
+'admin fields':
+  'title': 'Administer fields'
+  'description': 'Manage fields for every entity.'
+'admin classes':
+  title: 'Administer classes'
+  description: 'Manage classes.'

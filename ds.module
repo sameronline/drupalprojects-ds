@@ -14,18 +14,6 @@ use Drupal\entity\Entity\EntityViewDisplay;
 use Drupal\field\Entity\FieldInstanceConfig;
 
 /**
- * Implements hook_permission().
- */
-function ds_permission() {
-  return array(
-    'admin display suite' => array(
-      'title' => t('Administer Display Suite'),
-      'description' => t('General permission for Display Suite settings pages.')
-    ),
-  );
-}
-
-/**
  * Implements hook_theme().
  */
 function ds_theme() {
