@@ -308,6 +308,7 @@ function ds_field_ui_layouts_validate($form, FormStateInterface $form_state) {
  * Save the layout settings from the 'Manage display' screen.
  */
 function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
+  $save_display = FALSE;
 
   // Get default values.
   $entity_type = $form['#entity_type'];
@@ -335,6 +336,8 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   }
 
   if ($new_layout && !empty($layout)) {
+    $save_display = TRUE;
+
     // Let other modules alter the layout settings.
     \Drupal::moduleHandler()->alter('ds_layout_settings', $record, $form_state);
 
@@ -379,6 +382,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   }
   // Update existing layout.
   elseif (!empty($layout)) {
+    $save_display = TRUE;
 
     $fields = _ds_sort_fields($form_state->getValue('fields'), 'weight');
 
@@ -443,14 +447,15 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
     // Let other modules alter the layout settings.
     \Drupal::moduleHandler()->alter('ds_layout_settings', $record, $form_state);
+  }
 
-    // Save the configuration.
+  // Save the configuration.
+  if ($save_display) {
     foreach (array_keys($record) as $key) {
       $display->setThirdPartySetting('ds', $key, $record[$key]);
     }
     $display->save();
   }
-
 }
 
 /**
