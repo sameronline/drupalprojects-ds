@@ -163,7 +163,7 @@ class ChangeLayoutForm extends FormBase {
 
     // map old regions to new ones
     foreach ($old_layout['regions'] as $region => $region_title) {
-      $new_region = $form_state['values']['ds_' . $region];
+      $new_region = $form_state->getValue('ds_' . $region);
       if ($new_region != '' && isset($old_layout['settings']['regions'][$region])) {
         foreach ($old_layout['settings']['regions'][$region] as $field) {
           if (!isset($record['settings']['regions'][$new_region])) {
