@@ -55,14 +55,6 @@ function ds_theme_registry_alter(&$theme_registry) {
 }
 
 /**
- * Implements ds_entity_bundle_info_alter().
- */
-function ds_entity_bundle_info_alter(&$bundles) {
-  module_load_include('inc', 'ds', 'includes/registry');
-  _ds_entity_bundle_info_alter($bundles);
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_form_field_ui_display_overview_form_alter(&$form, FormStateInterface $form_state) {
@@ -87,8 +79,14 @@ function ds_module_implements_alter(&$implementations, $hook) {
  */
 function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInterface $display) {
   static $loaded_css = array();
+  static $ds_layouts = array();
   static $field_permissions = FALSE;
   static $loaded = FALSE;
+
+  // If no layout is configured, stop executing.
+  if (!$display->getThirdPartySetting('ds', 'layout')) {
+    return;
+  }
 
   $entity_type = $entity->getEntityTypeId();
   $bundle = $entity->bundle();
@@ -105,22 +103,18 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
     return;
   }
 
-  // If no layout is configured, stop as well.
-  if (!Ds::getLayout($entity_type, $bundle, $view_mode)) {
-    return;
-  }
-
-  // Load field permissions only once
+  // Load field permissions and layouts only once.
   if (!$loaded) {
     $loaded = TRUE;
+    $ds_layouts = Ds::getLayouts();
     $field_permissions = \Drupal::config('ds.extras')->get('field_permissions');
   }
 
-  $layout = Ds::getLayout($entity_type, $bundle, $view_mode);
-
   // Get layout.
   // @todo convert when https://www.drupal.org/node/2345879 is in
+  $layout = $ds_layouts[$display->getThirdPartySetting('ds', 'layout')];
   $layout['layout'] = $display->getThirdPartySetting('ds', 'layout');
+  $layout['settings'] = $display->getThirdPartySetting('ds', 'settings');
 
   // Put #entity_type, #bundle and #layout on the build so we can
   // access it in ds_entity_variables().

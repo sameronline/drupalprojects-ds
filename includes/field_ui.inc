@@ -324,15 +324,12 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
   // Save layout and add regions if necessary.
   $record = array();
-  $record['id'] = $form['#export_id'];
-  $record['entity_type'] = $entity_type;
-  $record['bundle'] = $bundle;
-  $record['view_mode'] = $view_mode;
   $record['layout'] = $layout;
   $record['settings'] = array();
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
+    // TODO remove all third party settings.
     \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
   }
 
@@ -446,7 +443,9 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     // Save the configuration.
     \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
 
-    $display->setThirdPartySetting('ds', 'layout', $layout)->save();
+    foreach (array_keys($record) as $key) {
+      $display->setThirdPartySetting('ds', $key, $record[$key])->save();
+    }
 
     // Clear entity info caches
     \Drupal::entityManager()->clearCachedFieldDefinitions();
@@ -1374,7 +1373,7 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
 
   // Field rows.
   foreach ($instances as $key => $instance) {
-    if ($instance instanceof FieldInstanceConfigInterface) {
+    if ($instance instanceof FieldConfigInterface) {
       // Don't show summary or cogwheel in hidden region.
       if (_ds_field_ui_check_hidden_region($key, $form_state, $field_regions)) {
         $table[$key]['settings_summary']['#markup'] = '';
