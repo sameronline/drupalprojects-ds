@@ -1414,7 +1414,7 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
       $instance->display[$view_mode]['settings'] = $settings;
 
       // Base button element for the various formatter settings actions.
-      $build_info = $form_state->get('build_info');
+      $build_info = $form_state->getBuildInfo();
       $base_button = array(
         '#submit' => array(
           array($build_info['callback_object'], 'multistepSubmit'),
@@ -1545,7 +1545,7 @@ function _ds_field_ui_check_hidden_region($key, FormStateInterface $form_state, 
  * Helper function for building the formatter settings.
  */
 function ds_field_row_form_format_construct(&$table, $key, $settings_form, FormStateInterface $form_state) {
-  $build_info = $form_state->get('build_info');
+  $build_info = $form_state->getBuildInfo();
   $base_button = array(
     '#submit' => array(
       array($build_info['callback_object'], 'multistepSubmit'),
@@ -1593,7 +1593,8 @@ function ds_field_row_form_format_construct(&$table, $key, $settings_form, FormS
  * Helper function for formatter summary settings.
  */
 function ds_field_row_form_format_summary_construct(&$table, $key, FormStateInterface $form_state) {
-  $build_info = $form_state->get('build_info');
+  $build_info = $form_state->getBuildInfo();
+
   $base_button = array(
     '#submit' => array(
       array($build_info['callback_object'], 'multistepSubmit'),

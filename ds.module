@@ -510,7 +510,7 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
 /**
  * Field template settings form
  */
-function ds_field_template_settings_form(array &$form, array &$form_state, array $context) {
+function ds_field_template_settings_form(array &$form, FormStateInterface &$form_state, array $context) {
   $functions = Ds::getFieldLayoutOptions();
   $default_field_function = 'default';
   if (empty($default_field_function)) {
@@ -525,11 +525,13 @@ function ds_field_template_settings_form(array &$form, array &$form_state, array
     $key = $context['instance']->getName();
   }
 
-  $field_settings = isset($form_state['plugin_settings'][$key]) ? $form_state['plugin_settings'][$key]['ft'] : array();
+  $plugin_settings = $form_state->get('plugin_settings');
+  $field_settings = isset($plugin_settings[$key]) ? $plugin_settings[$key]['ft'] : array();
 
   // In case with an ajax refresh we fetch the function from a different place
-  if (isset($form_state['values']['fields'][$key]['settings_edit_form']['settings']['ft']['func'])) {
-    $field_function = $form_state['values']['fields'][$key]['settings_edit_form']['settings']['ft']['func'];
+  $values = $form_state->getValues();
+  if (isset($values['fields'][$key]['settings_edit_form']['settings']['ft']['func'])) {
+    $field_function = $values['fields'][$key]['settings_edit_form']['settings']['ft']['func'];
   }
   else {
     $field_function = isset($field_settings['func']) ? $field_settings['func'] : $default_field_function;
