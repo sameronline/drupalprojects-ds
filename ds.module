@@ -106,6 +106,7 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
   // Load field permissions and layouts only once.
   if (!$loaded) {
     $loaded = TRUE;
+    // @TODO store layout info in third party setting.
     $ds_layouts = Ds::getLayouts();
     $field_permissions = \Drupal::config('ds.extras')->get('field_permissions');
   }

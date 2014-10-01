@@ -329,8 +329,9 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
-    // TODO remove all third party settings.
-    \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
+    $display->unsetThirdPartySetting('ds', 'layout');
+    $display->unsetThirdPartySetting('ds', 'settings');
+    $display->save();
   }
 
   if ($new_layout && !empty($layout)) {
@@ -442,8 +443,9 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
     // Save the configuration.
     foreach (array_keys($record) as $key) {
-      $display->setThirdPartySetting('ds', $key, $record[$key])->save();
+      $display->setThirdPartySetting('ds', $key, $record[$key]);
     }
+    $display->save();
 
     // Clear entity info caches
     \Drupal::entityManager()->clearCachedFieldDefinitions();
