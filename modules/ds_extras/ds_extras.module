@@ -166,10 +166,10 @@ function ds_extras_get_view_mode() {
 /**
  * Implements hook_form_alter().
  */
-function ds_extras_form_alter(&$form, &$form_state) {
-  if (isset($form['#entity_type']) && $form['#entity_type'] == 'node' && isset($form_state['controller'])) {
+function ds_extras_form_alter(&$form, FormStateInterface &$form_state) {
+  if (isset($form['#entity_type']) && $form['#entity_type'] == 'node' && $form_state->has('controller')) {
     // Switch full view mode.
-    $node = $form_state['controller']->getEntity($form_state);
+    $node = $form_state->get('controller')->getEntity($form_state);
 
     if (\Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
       // Get the view modes.
@@ -223,7 +223,8 @@ function ds_extras_form_alter(&$form, &$form_state) {
           '#suffix' => '</div>',
         );
 
-        $mode = isset($form_state['input']['ds_switch']) ? $form_state['input']['ds_switch'] : $node->get('ds_switch')->value;
+        $input = $form_state->get('input');
+        $mode = isset($input['ds_switch']) ? $input['ds_switch'] : $node->get('ds_switch')->value;
         $chosen_layout = $layouts[$mode];
 
         $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';

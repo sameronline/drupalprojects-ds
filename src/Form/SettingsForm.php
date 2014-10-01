@@ -11,6 +11,7 @@ use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\ds\Ds;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -86,12 +87,13 @@ class SettingsForm extends ConfigFormBase {
     );
 
     $theme_functions = Ds::getFieldLayoutOptions();
+    $url = new Url('ds_ui.classes');
     $form['fs1']['ft-default'] = array(
       '#type' => 'select',
       '#title' => t('Default Field Template'),
       '#options' => $theme_functions,
       '#default_value' => $config->get('ft-default'),
-      '#description' => t('Default will output the field as defined in Drupal Core.<br />Reset will strip all HTML.<br />Minimal adds a simple wrapper around the field.<br/>There is also an Expert Field Template that gives full control over the HTML, but can only be set per field.<br /><br />You can override this setting per field on the "Manage display" screens or when creating fields on the instance level.<br /><br /><strong>Template suggestions</strong><br />You can create .html.twig files as well for these field theme functions, e.g. field--reset.html.twig, field--minimal.html.twig<br /><br /><label>CSS classes</label>You can add custom CSS classes on the <a href="!url">classes form</a>. These classes can be added to fields using the Default Field Template.<br /><br /><label>Advanced</label>You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.', array('!url' => url('admin/structure/ds/classes'))),
+      '#description' => t('Default will output the field as defined in Drupal Core.<br />Reset will strip all HTML.<br />Minimal adds a simple wrapper around the field.<br/>There is also an Expert Field Template that gives full control over the HTML, but can only be set per field.<br /><br />You can override this setting per field on the "Manage display" screens or when creating fields on the instance level.<br /><br /><strong>Template suggestions</strong><br />You can create .html.twig files as well for these field theme functions, e.g. field--reset.html.twig, field--minimal.html.twig<br /><br /><label>CSS classes</label>You can add custom CSS classes on the <a href="!url">classes form</a>. These classes can be added to fields using the Default Field Template.<br /><br /><label>Advanced</label>You can create your own custom field templates which need to be defined with hook_ds_field_theme_functions_info(). See ds.api.php for an example.', array('!url' => $url->toString())),
       '#states' => array(
         'visible' => array(
           'input[name="fs1[field_template]"]' => array('checked' => TRUE),
@@ -121,10 +123,11 @@ class SettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
+    $values = $form_state->getValues();
     $this->configFactory()->get('ds.settings')
-      ->set('field_template', $form_state['values']['fs1']['field_template'])
-      ->set('ft-default', $form_state['values']['fs1']['ft-default'])
-      ->set('ft-kill-colon', $form_state['values']['fs1']['ft-kill-colon'])
+      ->set('field_template', $values['fs1']['field_template'])
+      ->set('ft-default', $values['fs1']['ft-default'])
+      ->set('ft-kill-colon', $values['fs1']['ft-kill-colon'])
       ->save();
 
     \Drupal::entityManager()->clearCachedFieldDefinitions();

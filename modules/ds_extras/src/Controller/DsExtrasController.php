@@ -7,7 +7,6 @@
 
 namespace Drupal\ds_extras\Controller;
 
-use Drupal\Core\Access\AccessInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\ds\Ds;
 use Drupal\node\NodeInterface;
@@ -68,12 +67,6 @@ class DsExtrasController extends ControllerBase {
    *   An array suitable for drupal_render().
    */
   public function nodeView(NodeInterface $node, Request $request) {
-    $uri = $node->uri();
-    // Set the node path as the canonical URL to prevent duplicate content.
-    drupal_add_html_head_link(array('rel' => 'canonical', 'href' => url($node->getSystemPath(), $uri['options'])), TRUE);
-    // Set the non-aliased path as a default shortlink.
-    drupal_add_html_head_link(array('rel' => 'shortlink', 'href' => url($node->getSystemPath(), array_merge($uri['options'], array('alias' => TRUE)))), TRUE);
-
     // Update the history table, stating that this user viewed this node.
     if ($this->moduleHandler()->moduleExists('history')) {
       history_write($node->id());

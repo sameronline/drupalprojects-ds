@@ -101,7 +101,8 @@ function ds_field_ui_create_vertical_tabs(&$form) {
     $form['modes']['#group'] = 'additional_settings';
     $form['modes']['#weight'] = -10;
     if ($view_mode_admin_access) {
-      $form['modes']['view_modes_custom']['#description'] = l(t('Manage view modes'), 'admin/structure/ds/view_modes');
+      $url = \Drupal\Core\Url::fromRoute('field_ui.display_mode');
+      $form['modes']['view_modes_custom']['#description'] = \Drupal::l(t('Manage display modes'), $url);
     }
   }
 }
@@ -540,7 +541,7 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
   }
 
   // Clear the ds_fields cache.
-  \Drupal::cache()->invalidateTags(array('ds_fields_info' => TRUE));
+  \Drupal::cache()->invalidateTags(array('ds_fields_info'));
 }
 
 /**
@@ -887,7 +888,9 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
         );
       }
       if ($classes_access) {
-        $form['ds_classes']['info'] = array('#markup' => l(t('Manage region  and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())));
+        $url = \Drupal\Core\Url::fromRoute('ds_ui.classes');
+        $url->setOption('query', array('destination' => drupal_get_destination()));
+        $form['ds_classes']['info'] = array('#markup' => Drupal::l(t('Manage region  and field CSS classes'), $url));
       }
     }
     else {

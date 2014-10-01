@@ -115,8 +115,8 @@ function _ds_entity_type_update($entity_type, $info, $action) {
   }
 
   // Clear cache.
-  \Drupal::cache()->invalidateTags(array('ds_fields_info' => TRUE));
-  \Drupal::cache()->invalidateTags(array('ds_field_settings' => TRUE));
+  \Drupal::cache()->invalidateTags(array('ds_fields_info'));
+  \Drupal::cache()->invalidateTags(array('ds_field_settings'));
   \Drupal::entityManager()->clearCachedFieldDefinitions();
 }
 

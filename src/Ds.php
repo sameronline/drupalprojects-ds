@@ -100,7 +100,7 @@ class Ds {
             $field_settings[$field_setting['entity_type']][$field_setting['bundle']][$field_setting['view_mode']][$field] = $settings;
           }
         }
-        \Drupal::cache()->set('ds_field_settings', $field_settings, Cache::PERMANENT, array('ds_fields_info' => TRUE));
+        \Drupal::cache()->set('ds_field_settings', $field_settings, Cache::PERMANENT, array('ds_fields_info'));
       }
     }
 
@@ -222,7 +222,6 @@ class Ds {
     foreach (\Drupal::service('plugin.manager.ds.field.layout')->getDefinitions() as $plugin_id => $plugin) {
       $options[$plugin_id] = $plugin['title'];
     }
-
     return $options;
   }
 

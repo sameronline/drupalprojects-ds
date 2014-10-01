@@ -13,7 +13,7 @@ use Drupal\ds\Ds;
 /**
  * Base class for all the ds plugins.
  */
-abstract class DsFieldLayoutBase extends ComponentPluginBase {
+abstract class DsFieldLayoutBase extends ComponentPluginBase implements DsFieldLayoutInterface {
 
   /**
    * Constructs a Display Suite field plugin.

@@ -1,14 +1,15 @@
 <?php
-
 /**
  * @file
  * Display Suite Extras administrative functions.
  */
 
+use Drupal\Core\Form\FormStateInterface;
+
 /**
  * Alters the Display Suite settings screen.
  */
-function ds_extras_settings_alter(&$form, &$form_state) {
+function ds_extras_settings_alter(&$form, FormStateInterface &$form_state) {
 
   $config = \Drupal::config('ds.extras');
 
@@ -113,8 +114,8 @@ function ds_extras_settings_alter(&$form, &$form_state) {
 /**
  * Submit callback: Extras settings screen.
  */
-function ds_extras_settings_submit($form, &$form_state) {
-  $values = $form_state['values'];
+function ds_extras_settings_submit($form, FormStateInterface &$form_state) {
+  $values = $form_state->getValues();
 
   $extra_fields = array();
   if (!empty($values['fs2']['fields_extra_list'])) {
@@ -142,7 +143,7 @@ function ds_extras_settings_submit($form, &$form_state) {
 /**
  * Alter Manage display screen.
  */
-function ds_extras_field_ui_alter(&$form, &$form_state) {
+function ds_extras_field_ui_alter(&$form, FormStateInterface &$form_state) {
   // Region to block only fires if there is a layout and we're working on the
   // a view mode which is not equal to default.
   if (isset($form['#ds_layout']) && $form['#mode'] != 'default' && \Drupal::config('ds.extras')->get('region_to_block')) {
@@ -205,18 +206,18 @@ function ds_extras_field_ui_alter(&$form, &$form_state) {
 /**
  * Submit callback after Field UI submission of a views display.
  */
-function ds_extras_vd_field_ui_submit($form, &$form_state) {
+function ds_extras_vd_field_ui_submit($form, FormStateInterface &$form_state) {
   // Add the 'type' key to the extra title key so we can ditch the notice.
-  $form_state['values']['fields']['title']['type'] = 'hidden';
+  $form_state->setValue('fields', array('title' => array('type' => 'hidden')));
 }
 
 /**
  * Submit callback: manage block regions.
  */
-function ds_extras_block_submit($form, &$form_state) {
+function ds_extras_block_submit($form, FormStateInterface &$form_state) {
 
   // Create new region.
-  if (!empty($form_state['values']['new_block_region'])) {
+  if ($new_block_region = $form_state->getValue('new_block_region')) {
 
     // Get the entity_type, bundle and view mode.
     $entity_type = $form['#entity_type'];
@@ -224,11 +225,11 @@ function ds_extras_block_submit($form, &$form_state) {
     $view_mode = $form['#mode'];
 
     $block = array(
-      'title' => $form_state['values']['new_block_region'],
+      'title' => $new_block_region,
       'info' => "{$entity_type}_{$bundle}_{$view_mode}",
     );
 
-    $block_key = $form_state['values']['new_block_region_key'];
+    $block_key = $form_state->getValue('new_block_region_key');
     $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
     if (empty($region_blocks)) {
       $region_blocks = array();
@@ -238,9 +239,9 @@ function ds_extras_block_submit($form, &$form_state) {
   }
 
   // Remove a region.
-  if (isset($form_state['values']['remove_block_region'])) {
+  if ($form_state->hasValue('remove_block_region')) {
     $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
-    $remove = $form_state['values']['remove_block_region'];
+    $remove = $form_state->hasValue('remove_block_region');
     foreach ($remove as $key => $value) {
       if ($key === $value) {
         unset($region_blocks[$key]);

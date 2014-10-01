@@ -181,7 +181,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
 
     // Save field and clear ds_fields_info cache.
     $this->configFactory()->get('ds.field.' . $field['id'])->setData($field)->save();
-    $this->cacheBackend->deleteTags(array('ds_fields_info' => TRUE));
+    $this->cacheBackend->deleteTags(array('ds_fields_info'));
 
     // Also clear the ds plugin cache
     \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();

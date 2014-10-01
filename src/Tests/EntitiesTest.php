@@ -73,7 +73,7 @@ class EntitiesTest extends BaseTest {
     foreach ($field_settings as $config) {
       \Drupal::config($config)->delete();
     }
-    \Drupal::cache()->deleteTags(array('ds_fields_info' => TRUE));
+    \Drupal::cache()->deleteTags(array('ds_fields_info'));
     \Drupal::cache()->delete('ds_field_settings');
   }
 

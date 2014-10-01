@@ -107,7 +107,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
 
     // Remove field and clear caches.
     $this->configFactory->get('ds.field.' . $field['id'])->delete();
-    $this->cacheBackend->deleteTags(array('ds_fields_info' => TRUE));
+    $this->cacheBackend->deleteTags(array('ds_fields_info'));
 
     // Also clear the ds plugin cache
     \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
