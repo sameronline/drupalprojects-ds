@@ -13,7 +13,7 @@ use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\ds\Ds;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\field\FieldInstanceConfigInterface;
+use Drupal\field\FieldConfigInterface;
 use Drupal\field_ui\FieldUI;
 
 /**
@@ -308,10 +308,14 @@ function ds_field_ui_layouts_validate($form, FormStateInterface $form_state) {
  * Save the layout settings from the 'Manage display' screen.
  */
 function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
+
   // Get default values.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form['#mode'];
+
+  // Get the entity display.
+  $display = entity_get_display($entity_type, $bundle, $view_mode);
 
   // Determine layout variables.
   $layout = $form_state->getValue('layout');
@@ -441,6 +445,8 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
     // Save the configuration.
     \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
+
+    $display->setThirdPartySetting('ds', 'layout', $layout)->save();
 
     // Clear entity info caches
     \Drupal::entityManager()->clearCachedFieldDefinitions();

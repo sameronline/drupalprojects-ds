@@ -7,11 +7,10 @@
 
 use Drupal\Component\Utility\String;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds\Ds;
-use Drupal\entity\Entity\EntityViewDisplay;
-use Drupal\field\Entity\FieldInstanceConfig;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\Core\Entity\Display\EntityDisplayInterface;
 
 /**
  * Implements hook_theme().
@@ -86,7 +85,7 @@ function ds_module_implements_alter(&$implementations, $hook) {
 /**
  * Implements hook_entity_view_alter().
  */
-function ds_entity_view_alter(&$build, EntityInterface $entity, EntityViewDisplay $display) {
+function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInterface $display) {
   static $loaded_css = array();
   static $field_permissions = FALSE;
   static $loaded = FALSE;
@@ -118,6 +117,10 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityViewDispla
   }
 
   $layout = Ds::getLayout($entity_type, $bundle, $view_mode);
+
+  // Get layout.
+  // @todo convert when https://www.drupal.org/node/2345879 is in
+  $layout['layout'] = $display->getThirdPartySetting('ds', 'layout');
 
   // Put #entity_type, #bundle and #layout on the build so we can
   // access it in ds_entity_variables().
@@ -465,7 +468,7 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
 
   // Get the field name and field instance info - if available.
   $field_name = $variables['element']['#field_name'];
-  $field_instance_info = FieldInstanceConfig::loadByName($entity_type, $field_name, $bundle);
+  $field_instance_info = FieldConfig::loadByName($entity_type, $field_name, $bundle);
 
   // Check if this field has custom output settings.
   $config = array();
