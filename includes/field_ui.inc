@@ -441,8 +441,6 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     \Drupal::moduleHandler()->alter('ds_layout_settings', $record, $form_state);
 
     // Save the configuration.
-    \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
-
     foreach (array_keys($record) as $key) {
       $display->setThirdPartySetting('ds', $key, $record[$key])->save();
     }
