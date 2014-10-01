@@ -367,12 +367,15 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     }
     // In case this is the full node view mode and if the comment module
     // is enabled for this content type, add it as well.
-    if ($record['entity_type'] == 'node' && $record['view_mode'] == 'full' && \Drupal::moduleHandler()->moduleExists('comment')) {
+    if ($entity_type == 'node' && $view_mode == 'full' && \Drupal::moduleHandler()->moduleExists('comment')) {
       $record['settings']['regions'][$first_region][] = 'comments';
     }
 
     // Save the configuration.
-    \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($record)->save();
+    foreach (array_keys($record) as $key) {
+      $display->setThirdPartySetting('ds', $key, $record[$key]);
+    }
+    $display->save();
   }
   // Update existing layout.
   elseif (!empty($layout)) {
@@ -446,10 +449,8 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
       $display->setThirdPartySetting('ds', $key, $record[$key]);
     }
     $display->save();
-
-    // Clear entity info caches
-    \Drupal::entityManager()->clearCachedFieldDefinitions();
   }
+
 }
 
 /**
@@ -744,8 +745,17 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
     '#weight' => -100,
   );
 
+  // @todo remove export id
   list($ce, $cb, $cv) = explode('.', $form['#export_id']);
-  $layout = \Drupal::config('ds.layout_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
+
+  $layout = array();
+  $display = entity_get_display($entity_type, $bundle, $view_mode);
+  // @todo convert when https://www.drupal.org/node/2345879 is in
+  if ($display->getThirdPartySetting('ds', 'layout')) {
+    $layout = $ds_layouts[$display->getThirdPartySetting('ds', 'layout')];
+    $layout['layout'] = $display->getThirdPartySetting('ds', 'layout');
+    $layout['settings'] = $display->getThirdPartySetting('ds', 'settings');
+  }
 
   if (!empty($layout) && isset($layout['layout']) && isset($ds_layouts[$layout['layout']])) {
     $layout['regions'] = $ds_layouts[$layout['layout']]['regions'];
@@ -909,6 +919,8 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
   }
   else {
 
+    // @todo this is broken now, needs to get the entity displays.
+    /*
     if ($view_mode != 'form') {
       // See if we can clone from another view mode.
       $options = array();
@@ -947,7 +959,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
           '#weight' => 21,
         );
       }
-    }
+    }*/
   }
 
   $form['ds_layouts']['id'] = array(
