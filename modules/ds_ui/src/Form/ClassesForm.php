@@ -53,14 +53,16 @@ class ClassesForm extends ConfigFormBase {
 
     // Prepare region classes
     $region_classes = array();
-    if (!empty($form_state['values']['regions'])) {
-      $region_classes = explode("\n", str_replace("\r", '', $form_state['values']['regions']));
+    $regions = $form_state->getValue('regions');
+    if (!empty($regions)) {
+      $region_classes = explode("\n", str_replace("\r", '', $form_state->getValue('regions')));
     }
 
     // Prepare field classes
     $field_classes = array();
-    if (!empty($form_state['values']['fields'])) {
-      $field_classes = explode("\n", str_replace("\r", '', $form_state['values']['fields']));
+    $fields = $form_state->getValue('fields');
+    if (!empty($fields)) {
+      $field_classes = explode("\n", str_replace("\r", '', $form_state->getValue('fields')));
     }
 
     $config = $this->configFactory()->get('ds.settings');

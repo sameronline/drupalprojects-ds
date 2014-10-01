@@ -57,7 +57,7 @@ class CopyFieldForm extends FieldFormBase{
    */
   public function getProperties($form_state) {
     return array(
-      'ds_plugin' => $form_state['values']['ds_plugin'],
+      'ds_plugin' => $form_state->getValue('ds_plugin'),
     );
   }
 

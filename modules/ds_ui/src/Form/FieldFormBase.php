@@ -164,14 +164,14 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $field = array();
-    $field['id'] = $form_state['values']['id'];
-    $field['label'] = $form_state['values']['name'];
-    $field['ui_limit'] = $form_state['values']['ui_limit'];
+    $field['id'] = $form_state->getValue('id');
+    $field['label'] = $form_state->getValue('name');
+    $field['ui_limit'] = $form_state->getValue('ui_limit');
     $field['properties'] = $this->getProperties($form_state);
     $field['type'] = $this->getType();
     $field['type_label'] = $this->getTypeLabel();
 
-    $entities = $form_state['values']['entities'];
+    $entities = $form_state->getValue('entities');
     foreach ($entities as $key => $value) {
       if ($key !== $value) {
         unset($entities[$key]);
@@ -187,7 +187,8 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
     \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
     // Redirect.
-    $form_state['redirect_route'] = new Url('ds_ui.fields_list');
+    $url = new Url('ds_ui.fields_list');
+    $form_state->setRedirectUrl($url);
     drupal_set_message(t('The field %field has been saved.', array('%field' => $field['label'])));
   }
 

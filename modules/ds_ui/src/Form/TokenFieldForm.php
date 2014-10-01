@@ -65,7 +65,7 @@ class TokenFieldForm extends FieldFormBase {
    */
   public function getProperties($form_state) {
     return array(
-      'content' => $form_state['values']['content'],
+      'content' => $form_state->getValue('content'),
     );
   }
 
