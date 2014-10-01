@@ -131,7 +131,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
     $entity_options = array();
     $entities = $this->entityManager->getDefinitions();
     foreach ($entities as $entity_type => $entity_info) {
-      if ($entity_info->isFieldable() || $entity_type == 'ds_views') {
+      if ($entity_info->get('field_ui_base_route') || $entity_type == 'ds_views') {
         $entity_options[$entity_type] = drupal_ucfirst(str_replace('_', ' ', $entity_type));
       }
     }

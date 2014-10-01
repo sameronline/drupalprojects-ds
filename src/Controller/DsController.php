@@ -54,7 +54,7 @@ class DsController extends ControllerBase {
 
     foreach ($entity_info as $entity_type => $info) {
       $base_table = $info->getBaseTable();
-      if ($info->isFieldable() && !empty($base_table)) {
+      if ($info->get('field_ui_base_route') && !empty($base_table)) {
         $rows = array();
         $bundles = $this->entityManager()->getBundleInfo($entity_type);
         foreach ($bundles as $bundle_type => $bundle) {

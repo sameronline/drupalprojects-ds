@@ -26,7 +26,7 @@ function ds_forms_theme() {
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_forms_form_field_ui_form_display_overview_form_alter(&$form, FormStateInterface $form_state) {
-  if (\Drupal::entityManager()->getDefinition($form['#entity_type'])->isFieldable()) {
+  if (\Drupal::entityManager()->getDefinition($form['#entity_type'])->get('field_ui_base_route')) {
 
     // Add necessary variables for DS Field UI.
     $form['#mode'] = 'form';

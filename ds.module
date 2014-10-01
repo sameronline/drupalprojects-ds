@@ -318,7 +318,7 @@ function ds_preprocess_ds_layout(&$variables) {
  */
 function ds_theme_suggestions_alter(&$suggestions, $variables, $base_theme_hook) {
   $entity_info = \Drupal::entityManager()->getDefinitions();
-  if (isset($entity_info[$base_theme_hook]) && $entity_info[$base_theme_hook]->isFieldable()) {
+  if (isset($entity_info[$base_theme_hook]) && $entity_info[$base_theme_hook]->get('field_ui_base_route')) {
     if (isset($variables['elements']['#ds_layout'])) {
       $layout = $variables['elements']['#ds_layout'];
 
@@ -338,7 +338,7 @@ function ds_contextual_links_view_alter(&$element, $items) {
   $def = \Drupal::service('entity.manager')->getDefinitions();
   $entity_type = array_keys($element['#contextual_links'])[0];
 
-  if (isset($def[$entity_type]) && $def[$entity_type]->isFieldable()) {
+  if (isset($def[$entity_type]) && $def[$entity_type]->get('field_ui_base_route')) {
     if (!empty($entity_type) && \Drupal::moduleHandler()->moduleExists('field_ui') && \Drupal::currentUser()->hasPermission('administer node display')) {
       $bundle = $element['#contextual_links'][$entity_type]['metadata']['ds_bundle'];
       $view_mode = $element['#contextual_links'][$entity_type]['metadata']['ds_view_mode'];
