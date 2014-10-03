@@ -301,10 +301,11 @@ function _ds_ds_layout_info() {
     $base_theme[] = $themes[$ancestor];
   }
 
-  foreach (array_reverse($base_theme) as $base) {
+  // @todo what happened here ?
+  /*foreach (array_reverse($base_theme) as $base) {
     _ds_layouts_scan_theme($base->name, $layouts);
   }
-  _ds_layouts_scan_theme($theme, $layouts);
+  _ds_layouts_scan_theme($theme, $layouts);*/
 
   return $layouts;
 }

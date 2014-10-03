@@ -561,35 +561,37 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
 function ds_field_ui_layout_clone($form, FormStateInterface $form_state) {
 
   $clone = $form_state->getValue('clone');
+  // @todo clean this up.
   list($ce, $cb, $cv) = explode('.', $clone);
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form['#mode'];
 
-  $layout = \Drupal::config('ds.layout_settings.' . $ce  . '.' . $cb . '.' . $cv)->get();
-  $field_settings = \Drupal::config('ds.field_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
+  $display = entity_get_display($entity_type, $bundle, $cv);
+  $old_display = entity_get_display($entity_type, $bundle, $view_mode);
+  $old_display->delete();
+  $clone_display = $display->createCopy($view_mode);
+  $clone_display->save();
 
-  // Delete previous layout configuration
-  \Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
+  // @todo remove when field settings are moved out.
+  $field_settings = \Drupal::config('ds.field_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
 
   // Delete previous field configuration
   \Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
 
   // Save new layout record for ds.
-  if ($layout) {
+  if ($display) {
     $layout['id'] = $form['#export_id'];
     $layout['entity_type'] = $entity_type;
     $layout['bundle'] = $bundle;
     $layout['view_mode'] = $view_mode;
 
     // Let other modules alter the layout settings.
+    // @todo remove this hook ?
     \Drupal::moduleHandler()->alter('ds_layout_settings', $record, $form_state);
 
-    // Save layout record.
-    \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($layout)->save();
-
     // Copy the view mode settings.
-    _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $cv, $field_settings, $form['#export_id']);
+    //_ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $cv, $field_settings, $form['#export_id']);
 
     // Clear entity info caches.
     \Drupal::entityManager()->clearCachedFieldDefinitions();
@@ -924,20 +926,17 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
   }
   else {
 
-    // @todo this is broken now, needs to get the entity displays.
-    /*
     if ($view_mode != 'form') {
       // See if we can clone from another view mode.
       $options = array();
-      $ds_layout_settings = \Drupal::configFactory()->listAll('ds.layout_settings.' . $entity_type . '.' . $bundle);
-      foreach ($ds_layout_settings as $config) {
-        $row = \Drupal::config($config)->get();
-        // Do not clone from form layouts.
-        if ($row['view_mode'] == 'form') {
+      $entity_displays = \Drupal::configFactory()->listAll('core.entity_view_display.' . $entity_type . '.' . $bundle);
+      foreach ($entity_displays as $name) {
+        $row = \Drupal::config($name)->get();
+        if ($row['mode'] == $view_mode) {
           continue;
         }
-        if ($row['entity_type'] == $entity_type && $row['bundle'] == $bundle) {
-          $options[$row['id']] = drupal_ucfirst(str_replace('_', ' ', $row['entity_type'])) . ' > ' . drupal_ucfirst(str_replace('_', ' ', $row['bundle'])) . ' > ' . drupal_ucfirst(str_replace('_', ' ', $row['view_mode']));
+        if ($row['targetEntityType'] == $entity_type && $row['bundle'] == $bundle) {
+          $options[$row['id']] = drupal_ucfirst(str_replace('_', ' ', $row['targetEntityType'])) . ' > ' . drupal_ucfirst(str_replace('_', ' ', $row['bundle'])) . ' > ' . drupal_ucfirst(str_replace('_', ' ', $row['mode']));
         }
       }
 
@@ -964,7 +963,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
           '#weight' => 21,
         );
       }
-    }*/
+    }
   }
 
   $form['ds_layouts']['id'] = array(
