@@ -93,19 +93,18 @@ class EntitiesTest extends BaseTest {
    */
   function testDSNodeEntity() {
 
+    /** @var \Drupal\node\NodeInterface $node */
     $node = $this->entitiesTestSetup();
-    $node_author = user_load($node->uid->value);
 
     // Look at node and verify token and block field.
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('view-mode-full', 'Template file found (in full view mode)');
-    $this->assertRaw('<div class="token-class">' . $node->title->value . '</span>', t('Token field found'));
-    $this->assertRaw('I am a PHP field', t('PHP field found'));
+    $this->assertRaw('<div class="token-class">' . $node->getTitle(). '</span>', t('Token field found'));
     $this->assertRaw('group-header', 'Template found (region header)');
     $this->assertRaw('group-footer', 'Template found (region footer)');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
-    $this->assertPattern('/<div[^>]*>Submitted[^<]*<a[^>]+href="' . preg_quote(base_path(), '/') . 'user\/' . $node->uid->value . '"[^>]*>' . String::checkPlain($node_author->getUsername()) . '<\/a>.<\/div>/', t('Submitted by line found'));
+    $this->assertPattern('/<div[^>]*>Submitted[^<]*<a[^>]+href="' . preg_quote(base_path(), '/') . 'user\/' . $node->getOwnerId() . '"[^>]*>' . String::checkPlain($node->getOwner()->getUsername()) . '<\/a>.<\/div>/', t('Submitted by line found'));
 
     // Configure teaser layout.
     $teaser = array(
@@ -120,8 +119,8 @@ class EntitiesTest extends BaseTest {
     $this->dsSelectLayout($teaser, $teaser_assert, 'admin/structure/types/manage/article/display/teaser');
 
     $fields = array(
-      'fields[dynamic_code_field:node-token_field][region]' => 'left',
-      'fields[dynamic_code_field:node-php_field][region]' => 'left',
+      //'fields[dynamic_code_field:node-token_field][region]' => 'left',
+      //'fields[dynamic_code_field:node-php_field][region]' => 'left',
       'fields[body][region]' => 'right',
       'fields[node_links][region]' => 'right',
     );
@@ -237,11 +236,11 @@ class EntitiesTest extends BaseTest {
 
     // Test \Drupal\Component\Utility\String::checkPlain() on ds_render_field() with the title field.
     $edit = array(
-      'fields[title][region]' => 'right',
+      'fields[node_title][region]' => 'right',
     );
     $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display');
     $edit = array(
-      'title' => 'Hi, I am an article <script>alert(\'with a javascript tag in the title\');</script>',
+      'title[0][value]' => 'Hi, I am an article <script>alert(\'with a javascript tag in the title\');</script>',
     );
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->drupalGet('node/' . $node->id());

@@ -58,33 +58,6 @@ class DsExtrasController extends ControllerBase {
   }
 
   /**
-   * Displays a node.
-   *
-   * @param \Drupal\node\NodeInterface $node
-   *   The node we are displaying.
-   *
-   * @return array
-   *   An array suitable for drupal_render().
-   */
-  public function nodeView(NodeInterface $node, Request $request) {
-    // Update the history table, stating that this user viewed this node.
-    if ($this->moduleHandler()->moduleExists('history')) {
-      history_write($node->id());
-    }
-
-    $view_mode = (!empty($node->get('ds_switch')->value)) ? $node->get('ds_switch')->value : 'full';
-
-    // It's also possible to use a query argument named 'v' to switch view modes.
-    $query_view_mode = $request->query->get('v');
-    if (!empty($query_view_mode)) {
-      $view_mode = $query_view_mode;
-    }
-
-    drupal_static('ds_extras_view_mode', $view_mode);
-    return entity_view($node, $view_mode);
-  }
-
-  /**
    * Displays a node revision.
    *
    * @param int $node_revision

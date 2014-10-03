@@ -154,6 +154,7 @@ class Ds {
    */
   public static function getLayout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
     static $layouts = array();
+    // @todo remove this
 
     $layout_key = $entity_type . '_' . $bundle . '_' . $view_mode;
     if (!isset($layouts[$layout_key])) {

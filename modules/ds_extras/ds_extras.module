@@ -7,7 +7,7 @@
 use Drupal\Component\Utility\String;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Field\FieldDefinition;
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\ds\Ds;
@@ -22,36 +22,6 @@ function ds_extras_ds_layout_info_alter(&$layouts) {
       $layouts[$key]['regions']['ds_hidden'] = t('Hidden');
     }
   }
-}
-
-/**
- * Implements hook_permission().
- */
-function ds_extras_permission() {
-  $permissions = array();
-
-  // Extra check to make sure this doesn't get fired on install.
-  if (\Drupal::config('ds.extras')->get('switch_view_mode')) {
-    foreach (node_type_get_names() as $key => $name) {
-      $permissions['ds_switch ' . $key] = array(
-        'title' => t('Switch view modes on :type', array(':type' => $name))
-      );
-    }
-  }
-
-  if (\Drupal::config('ds.extras')->get('field_permissions')) {
-    $entities = \Drupal::entityManager()->getDefinitions();
-    foreach ($entities as $entity_type => $info) {
-      $fields = Ds::getFields($entity_type);
-      foreach ($fields as $key => $finfo) {
-        $permissions['view ' . $key . ' on ' . $entity_type] = array(
-          'title' => t('View !field on !entity_type', array('!field' => $finfo['title'], '!entity_type' => $info->getLabel())),
-        );
-      }
-    }
-  }
-
-  return $permissions;
 }
 
 /**
@@ -160,80 +130,93 @@ function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityDis
  * if another one is chosen for the full page of the node.
  */
 function ds_extras_get_view_mode() {
+  // @todo remove this
   return drupal_static('ds_extras_view_mode');
 }
 
 /**
- * Implements hook_form_alter().
+ * Implements hook_entity_view_mode_alter().
  */
-function ds_extras_form_alter(&$form, FormStateInterface &$form_state) {
-  if (isset($form['#entity_type']) && $form['#entity_type'] == 'node' && $form_state->has('controller')) {
-    // Switch full view mode.
-    $node = $form_state->get('controller')->getEntity($form_state);
+function ds_extras_entity_view_mode_alter(&$view_mode, Drupal\Core\Entity\EntityInterface $entity, $context) {
+  // For nodes, change the view mode when it is teaser.
+  // @todo why is the value not loaded ?
+  if ($entity->getEntityTypeId() == 'node' && node_is_page($entity) && !empty($entity->ds_switch->value)) {
+    $view_mode = $entity->ds_switch->value;
+  }
+}
 
-    if (\Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
-      // Get the view modes.
-      $ds_vm = \Drupal::entityManager()->getViewModes('node');
-      $layouts = array();
-      $options = array('' => t('Default'));
-      foreach ($ds_vm as $key => $item) {
-        $overridden = FALSE;
-        $entity_display = entity_load('entity_view_display', 'node.' . $node->bundle() . '.' . $key);
-        if ($entity_display) {
-          $overridden = $entity_display->status();
-        }
-        if ($overridden) {
-          $layout = Ds::getLayout('node', $node->bundle(), $key, FALSE);
-          $layouts[$key] = $layout;
-          $options[$key] = $item['label'];
-        }
+/**
+ * Implements hook_form_BASE_FORM_ID_alter() for node_form.
+ *
+ * Adds the switch view mode form element.
+ */
+function ds_extras_form_node_form_alter(&$form, FormStateInterface $form_state) {
+  // Switch full view mode.
+  $node = $form_state->getFormObject()->getEntity();
+
+  if (\Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
+    // Get the view modes.
+    $ds_vm = \Drupal::entityManager()->getViewModes('node');
+    $layouts = array();
+    $options = array('' => t('Default'));
+    foreach ($ds_vm as $key => $item) {
+      $overridden = FALSE;
+      $entity_display = entity_load('entity_view_display', 'node.' . $node->bundle() . '.' . $key);
+      if ($entity_display) {
+        $overridden = $entity_display->status();
+      }
+      if ($overridden) {
+        // @todo entity bundle info does not store layout info anymore
+        $layout = Ds::getLayout('node', $node->bundle(), $key, FALSE);
+        $layouts[$key] = $layout;
+        $options[$key] = $item['label'];
+      }
+    }
+
+    // Add default layout settings
+    $layouts[''] = Ds::getLayout('node', $node->bundle(), 'default', FALSE);
+
+    // Only fire if we have more than 1 option.
+    if (count($options) > 1) {
+
+      if (!isset($form['ds_extras'])) {
+        $form['ds_extras'] = array(
+          '#type' => 'details',
+          '#title' => t('Display settings'),
+          '#weight' => 100,
+          '#group' => 'advanced',
+        );
       }
 
-      // Add default layout settings
-      $layouts[''] = Ds::getLayout('node', $node->bundle(), 'default', FALSE);
+      $form['ds_extras']['ds_switch'] = array(
+        '#type' => 'select',
+        '#title' => t('View mode'),
+        '#options' => $options,
+        '#default_value' => $node->ds_switch->value,
+        '#description' => t('Switch to a different view mode to display the full page view of this node.'),
+        '#weight' => -1,
+        '#ajax' => array(
+          'callback' => 'ds_extras_switch_view_mode_preview_callback',
+          'wrapper' => 'ds_switch_preview_wrapper',
+        ),
+      );
 
-      // Only fire if we have more than 1 option.
-      if (count($options) > 1) {
+      $form['ds_extras']['preview'] = array(
+        '#type' => 'container',
+        '#prefix' => '<div id="ds_switch_preview_wrapper">',
+        '#suffix' => '</div>',
+      );
 
-        if (!isset($form['ds_extras'])) {
-          $form['ds_extras'] = array(
-            '#type' => 'details',
-            '#title' => t('Display settings'),
-            '#weight' => 100,
-            '#group' => 'advanced',
-          );
-        }
+      $input = $form_state->get('input');
+      $mode = isset($input['ds_switch']) ? $input['ds_switch'] : $node->get('ds_switch')->value;
+      $chosen_layout = $layouts[$mode];
 
-        $form['ds_extras']['ds_switch'] = array(
-          '#type' => 'select',
-          '#title' => t('View mode'),
-          '#options' => $options,
-          '#default_value' => $node->get('ds_switch')->value,
-          '#description' => t('Switch to a different view mode to display the full page view of this node.'),
-          '#weight' => -1,
-          '#ajax' => array(
-            'callback' => 'ds_extras_switch_view_mode_preview_callback',
-            'wrapper' => 'ds_switch_preview_wrapper',
-          ),
-        );
+      $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
+      $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $chosen_layout['layout'] . '.png' : $fallback_image;
 
-        $form['ds_extras']['preview'] = array(
-          '#type' => 'container',
-          '#prefix' => '<div id="ds_switch_preview_wrapper">',
-          '#suffix' => '</div>',
-        );
-
-        $input = $form_state->get('input');
-        $mode = isset($input['ds_switch']) ? $input['ds_switch'] : $node->get('ds_switch')->value;
-        $chosen_layout = $layouts[$mode];
-
-        $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
-        $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $chosen_layout['layout'] . '.png' : $fallback_image;
-
-        $form['ds_extras']['preview']['image'] = array(
-          '#markup' => '<div class="ds-layout-preview-image"><img src="' . base_path() . $image . '"/></div>',
-        );
-      }
+      $form['ds_extras']['preview']['image'] = array(
+        '#markup' => '<div class="ds-layout-preview-image"><img src="' . base_path() . $image . '"/></div>',
+      );
     }
   }
 }
@@ -246,20 +229,20 @@ function ds_extras_switch_view_mode_preview_callback($form, $form_state) {
 }
 
 /**
- * Implements hook_entity_base_field_info_alter()
+ * Implements hook_entity_base_field_info().
  */
-function ds_extras_entity_base_field_info_alter(&$base_field_definitions, EntityTypeInterface $entity_type) {
-  /*
+function ds_extras_entity_base_field_info(EntityTypeInterface $entity_type) {
   if ($entity_type->id() == 'node') {
-    // Set the ds field as proper field
-    $base_field_definitions['ds_switch'] = FieldDefinition::create('string')
+    // Add the switch field as a base field.
+    $fields = array();
+    $fields['ds_switch'] = BaseFieldDefinition::create('string')
       ->setLabel(t('DS switch'))
       ->setName('ds_switch')
       ->setDescription(t('Holds the DS view mode of the node.'))
       ->setSetting('default_value', '')
-      ->setPropertyConstraints('value', array('Length' => array('max' => 255)));
+      ->setPropertyConstraints('value', array('Length' => array('max' => 60)));
+    return $fields;
   }
-  */
 }
 
 /**
