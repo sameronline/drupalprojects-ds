@@ -8,6 +8,7 @@
 namespace Drupal\ds_extras\Plugin\DsField;
 
 use Drupal\Component\Utility\String;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
@@ -71,7 +72,7 @@ class SwitchField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($form, &$form_state) {
+  public function settingsForm($form, FormStateInterface $form_state) {
     $entity_type = $this->getEntityTypeId();
     $bundle = $this->bundle();
     $view_modes = \Drupal::entityManager()->getViewModes($entity_type);

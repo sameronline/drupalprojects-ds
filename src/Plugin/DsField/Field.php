@@ -45,7 +45,8 @@ abstract class Field extends DsFieldBase {
     // Link.
     if (!empty($config['link'])) {
       $uri_info = $this->entity()->urlInfo();
-      $output = l($output, $this->entity()->getSystemPath(), $uri_info['options']);
+      // @todo fixme
+      //$output = _l($output, $this->entity()->getSystemPath(), $uri_info['options']);
     }
     else {
       $output = String::checkPlain($output);

@@ -5,6 +5,7 @@
  * Display Suite test module.
  */
 
+use Drupal\Core\Entity\Display\EntityDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\Element;
 use Drupal\entity\Entity\EntityViewDisplay;
@@ -62,7 +63,7 @@ function ds_test_field_extra_fields() {
 /**
  * Implements hook_node_view().
  */
-function ds_test_node_view(EntityInterface $node, EntityViewDisplay $display, $view_mode, $langcode) {
+/*function ds_test_node_view(EntityInterface $node, EntityDisplayInterface $display, $view_mode, $langcode) {
   $node->content['ds_extras_extra_test_field'] = array(
     '#markup' => 'This is an extra field made available through "Extra fields" functionality.',
     '#weight' => 10,
@@ -78,7 +79,7 @@ function ds_test_node_view(EntityInterface $node, EntityViewDisplay $display, $v
       );
     }
   }
-}
+}*/
 
 /**
  * Implements hook_ds_layout_info_alter().

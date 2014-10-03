@@ -33,7 +33,7 @@ class TokenFieldForm extends FieldFormBase {
       '#type' => 'text_format',
       '#title' => t('Field content'),
       '#default_value' => isset($field['properties']['content']['value']) ? $field['properties']['content']['value'] : '',
-      '#format' => isset($field['properties']['content']['format']) ? $field['properties']['content']['format'] : 'ds_token',
+      '#format' => isset($field['properties']['content']['format']) ? $field['properties']['content']['format'] : 'plain_text',
       '#base_type' => 'textarea',
       '#required' => TRUE,
     );

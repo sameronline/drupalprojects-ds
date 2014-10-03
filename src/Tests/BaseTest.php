@@ -36,7 +36,8 @@ abstract class BaseTest extends WebTestBase {
   function setUp() {
     parent::setUp();
 
-    $this->admin_user = $this->drupalCreateUser(array('admin classes', 'admin fields', 'admin display suite', 'ds_switch article', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions', 'administer node fields', 'administer node display', 'administer node form display', 'administer user fields', 'administer user display', 'administer user form display', 'administer comment fields', 'administer comment display', 'administer comment form display', 'administer views'));
+    //$this->admin_user = $this->drupalCreateUser(array('admin classes', 'admin fields', 'admin display suite', 'ds_switch article', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions', 'administer node fields', 'administer node display', 'administer node form display', 'administer user fields', 'administer user display', 'administer user form display', 'administer comment fields', 'administer comment display', 'administer comment form display', 'administer views'));
+    $this->admin_user = $this->drupalCreateUser(array('admin classes', 'admin fields', 'admin display suite', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions', 'administer node fields', 'administer node display', 'administer node form display', 'administer user fields', 'administer user display', 'administer user form display', 'administer comment fields', 'administer comment display', 'administer comment form display', 'administer views'));
     $this->drupalLogin($this->admin_user);
   }
 
@@ -110,19 +111,20 @@ abstract class BaseTest extends WebTestBase {
   }
 
   /**
-   * Create a code field.
+   * Create a token field.
    *
-   * @param $edit
+   * @param array $edit
    *   An optional array of field properties.
+   * @param string $url
+   *   The url to post to.
    */
-  function dsCreateCodeField($edit = array(), $url = 'admin/structure/ds/fields/manage_code') {
+  function dsCreateTokenField($edit = array(), $url = 'admin/structure/ds/fields/manage_token') {
 
     $edit += array(
       'name' => 'Test field',
       'id' => 'test_field',
       'entities[node]' => '1',
-      'code[value]' => 'Test field',
-      'use_token' => '0',
+      'content[value]' => 'Test field',
     );
 
     $this->drupalPostForm($url, $edit, t('Save'));

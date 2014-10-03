@@ -27,7 +27,7 @@ class FieldsTest extends BaseTest {
       'use_token' => '0',
     );
 
-    $this->dsCreateCodeField($edit);
+    $this->dsCreateTokenField($edit);
 
     // Create the same and assert it already exists.
     $this->drupalPostForm('admin/structure/ds/fields/manage_code', $edit, t('Save'));

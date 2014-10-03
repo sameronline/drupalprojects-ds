@@ -364,7 +364,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
       }
 
       // Can either be form or display.
-      if ((isset($field['type']) && $field['type'] != 'hidden') || $record['view_mode'] == 'form') {
+      if ((isset($field['type']) && $field['type'] != 'hidden') || $view_mode == 'form') {
         $record['settings']['regions'][$first_region][] = $field_key;
       }
     }
@@ -917,7 +917,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
     }
     else {
       if ($classes_access) {
-        $form['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any CSS classes which can be used on regions.') . '</p><p>' . l(t('Manage region and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())) . '</p>');
+        $form['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any CSS classes which can be used on regions.') . '</p><p>' . _l(t('Manage region and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())) . '</p>');
       }
       else {
         $form['ds_classes']['#access'] = FALSE;

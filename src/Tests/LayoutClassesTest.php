@@ -24,7 +24,7 @@ class LayoutClassesTest extends BaseTest {
     $this->assertNoRaw('ds_3col_stacked_equal_width', 'ds_3col_stacked_equal_width not available');
 
     // Create code and block field.
-    $this->dsCreateCodeField();
+    $this->dsCreateTokenField();
     $this->dsCreateBlockField();
 
     $layout = array(
