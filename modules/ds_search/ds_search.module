@@ -6,19 +6,6 @@
  */
 
 /**
- * Implements hook_help().
- */
-function ds_search_help($path, $arg) {
-  switch ($path) {
-    case 'admin/structure/ds/list/search':
-      $output = '<dl>';
-      $output .= '<dt>' . t('Display Suite defines its own search type for search. You need to enable it at !url when you are going to use Drupal core search. You do not have to enable and use it when using the Apachesolr module. Search results will be themed on the default Apachesolr pages.', array('!url' => l('search settings', 'admin/config/search/settings'))) . '</dt>';
-      $output .= '</dl>';
-      return $output;
-  }
-}
-
-/**
  * Implements hook_theme().
  */
 function ds_search_theme() {
@@ -35,6 +22,9 @@ function ds_search_theme() {
  */
 function theme_ds_search_page($build) {
 
+  // @todo this is not called ... but it's not the right way anymore
+  // we'll have to check whether we need to take over SearchController.
+
   // This is probably because we don't declare anything in ds_search_theme().
   unset($build['theme_hook_original']);
 
@@ -49,7 +39,7 @@ function theme_ds_search_page($build) {
 
   }
 
-  $build['build']['search_results']['#sorted'] = TRUE;
+  //$build['build']['search_results']['#sorted'] = TRUE;
 
   return drupal_render($build);
 }

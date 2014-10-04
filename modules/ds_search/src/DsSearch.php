@@ -7,6 +7,7 @@
 namespace Drupal\ds_search;
 
 use Drupal\Component\Utility\String;
+use Drupal\Core\Form\FormStateInterface;
 
 trait DsSearch {
 
@@ -25,7 +26,7 @@ trait DsSearch {
   /**
    * Generates a reusable settings form
    */
-  public function generalConfigurationForm(array $form, array &$form_state, $configuration, $entity_type) {
+  public function generalConfigurationForm(array $form, FormStateInterface $form_state, $configuration, $entity_type) {
     // Load global form elements for both DsNodeSearch and DsUserSearch
     $view_modes = \Drupal::entityManager()->getViewModes($entity_type);
 
@@ -94,17 +95,18 @@ trait DsSearch {
   /**
    * Submits the general settings.
    */
-  public function generalSubmitConfigurationForm(&$configuration, &$form_state, $save_view_mode = FALSE) {
-    $configuration['view_mode'] = $form_state['values']['view_mode'];
-    $configuration['search_variables'] = $form_state['values']['search_variables'];
-    $configuration['show_title'] = $form_state['values']['show_title'];
-    $configuration['highlight'] = $form_state['values']['highlight'];
-    $configuration['highlight_selector'] = $form_state['values']['highlight_selector'];
-    $configuration['limit'] = $form_state['values']['limit'];
+  public function generalSubmitConfigurationForm(&$configuration, FormStateInterface $form_state, $save_view_mode = FALSE) {
+    $values = $form_state->getValues();
+    $configuration['view_mode'] = $values['view_mode'];
+    $configuration['search_variables'] = $values['search_variables'];
+    $configuration['show_title'] = $values['show_title'];
+    $configuration['highlight'] = $values['highlight'];
+    $configuration['highlight_selector'] = $values['highlight_selector'];
+    $configuration['limit'] = $values['limit'];
 
     if ($save_view_mode) {
       // Also save the view_mode in config, it's used by the Display Suite fields.
-      \Drupal::config('ds_search.settings')->set('view_mode', $form_state['values']['view_mode'])->save();
+      \Drupal::config('ds_search.settings')->set('view_mode', $values['view_mode'])->save();
     }
   }
 
@@ -113,10 +115,10 @@ trait DsSearch {
    *
    * @param $build
    *   The build array.
+   * @param $configuration
+   *   The configuration for this search page.
    */
   public function buildSharedPageVariables(&$build, $configuration) {
-    $current_path = current_path();
-    $args = explode('/', $current_path);
 
     // Search results title.
     if ($configuration['show_title']) {
@@ -125,7 +127,7 @@ trait DsSearch {
 
     // Extra variables.
     if ($configuration['search_variables'] != 'none') {
-      $build['search_extra'] = array('#markup' => '<div class="ds-search-extra">' . $this->fetchExtraVariables($args[2], $configuration) . '</div>');
+      $build['search_extra'] = array('#markup' => '<div class="ds-search-extra">' . $this->fetchExtraVariables(parent::getKeyWords(), $configuration) . '</div>');
     }
 
     // Search results.
@@ -147,7 +149,7 @@ trait DsSearch {
             'data' => array(
               'ds_search' => array(
                 'selector' => String::checkPlain($configuration['highlight_selector']),
-                'search' => String::checkPlain($args[2]),
+                'search' => String::checkPlain(parent::getKeyWords()),
               ),
             ),
           ),

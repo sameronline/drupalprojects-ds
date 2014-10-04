@@ -63,7 +63,7 @@ class TokenFieldForm extends FieldFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getProperties(FormStateInterface &$form_state) {
+  public function getProperties(FormStateInterface $form_state) {
     return array(
       'content' => $form_state->getValue('content'),
     );

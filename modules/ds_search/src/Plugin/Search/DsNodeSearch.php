@@ -10,6 +10,7 @@ namespace Drupal\ds_search\Plugin\Search;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds_search\DsSearch;
 use Drupal\node\Plugin\Search\NodeSearch;
+use Drupal\search\SearchQuery;
 
 /**
  * Handles searching for node entities using the Search module index.
@@ -35,7 +36,7 @@ class DsNodeSearch extends NodeSearch {
 
     // Build matching conditions.
     $query = $this->database
-      ->select('search_index', 'i', array('target' => 'slave'))
+      ->select('search_index', 'i', array('target' => 'replica'))
       ->extend('Drupal\search\SearchQuery')
       ->extend('Drupal\Core\Database\Query\PagerSelectExtender');
     $query->join('node_field_data', 'n', 'n.nid = i.sid');
@@ -48,7 +49,8 @@ class DsNodeSearch extends NodeSearch {
     // the URL: ?f[]=type:page&f[]=term:27&f[]=term:13&f[]=langcode:en
     // So $parameters['f'] looks like:
     // array('type:page', 'term:27', 'term:13', 'langcode:en');
-    // We need to parse this out into query conditions.
+    // We need to parse this out into query conditions, some of which go into
+    // the keywords string, and some of which are separate conditions.
     $parameters = $this->getParameters();
     if (!empty($parameters['f']) && is_array($parameters['f'])) {
       $filters = array();
@@ -61,6 +63,7 @@ class DsNodeSearch extends NodeSearch {
           $filters[$m[1]][$m[2]] = $m[2];
         }
       }
+
       // Now turn these into query conditions. This assumes that everything in
       // $filters is a known type of advanced search.
       foreach ($filters as $option => $matched) {
@@ -77,25 +80,36 @@ class DsNodeSearch extends NodeSearch {
         }
       }
     }
-    // Only continue if the first pass query matches.
-    if (!$query->executeFirstPass()) {
-      return array();
-    }
 
     // Add the ranking expressions.
     $this->addNodeRankings($query);
 
-    // Add the language code of the indexed item to the result of the query,
-    // since the node will be rendered using the respective language.
-    $query = $query->fields('i', array('langcode'));
+    // Run the query and load results.
+    $find = $query
+      // Add the language code of the indexed item to the result of the query,
+      // since the node will be rendered using the respective language.
+      ->fields('i', array('langcode'))
+      // And since SearchQuery makes these into GROUP BY queries, if we add
+      // a field, for PostgreSQL we also need to make it an aggregate or a
+      // GROUP BY. In this case, we want GROUP BY.
+      ->groupBy('i.langcode')
+      ->limit(10)
+      ->execute();
 
-    // Add limit
-    if (!empty($this->configuration['limit'])) {
-      $query->limit($this->configuration['limit']);
+    // Check query status and set messages if needed.
+    $status = $query->getStatus();
+
+    if ($status & SearchQuery::EXPRESSIONS_IGNORED) {
+      drupal_set_message($this->t('Your search used too many AND/OR expressions. Only the first @count terms were included in this search.', array('@count' => $this->searchSettings->get('and_or_limit'))), 'warning');
     }
 
-    // Load results.
-    $find = $query->execute();
+    if ($status & SearchQuery::LOWER_CASE_OR) {
+      drupal_set_message($this->t('Search for either of the two terms with uppercase <strong>OR</strong>. For example, <strong>cats OR dogs</strong>.'), 'warning');
+    }
+
+    if ($status & SearchQuery::NO_POSITIVE_KEYWORDS) {
+      drupal_set_message(\Drupal::translation()->formatPlural($this->searchSettings->get('index.minimum_word_size'), 'You must include at least one positive keyword with 1 character or more.', 'You must include at least one positive keyword with @count characters or more.'), 'warning');
+    }
 
     $node_storage = $this->entityManager->getStorage('node');
     $node_render = $this->entityManager->getViewBuilder('node');
@@ -113,10 +127,9 @@ class DsNodeSearch extends NodeSearch {
       $node->search_extra = $this->moduleHandler->invokeAll('node_search_result', array($node, $item->langcode));
       $node->snippet = search_excerpt($keys, $node->rendered, $item->langcode);
 
-      $results[] = array(
-        'node' => $node,
-      );
+      $results[] = $node;
     }
+
     return $results;
   }
 
@@ -127,12 +140,12 @@ class DsNodeSearch extends NodeSearch {
     $results = $this->execute();
 
     // Build shared variables.
-    $build = array('#type' => 'node');
+    $build = array();
     $this->buildSharedPageVariables($build, $this->configuration);
 
     $i = 0;
     foreach ($results as $result) {
-      $data = entity_view($result['node'], $this->configuration['view_mode']);
+      $data = entity_view($result, $this->configuration['view_mode']);
       $build['search_results'][$i] = $data;
       $i++;
     }
@@ -147,13 +160,13 @@ class DsNodeSearch extends NodeSearch {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    // Fetch default for nodes
+    // Fetch default for nodes.
     $configuration = parent::defaultConfiguration();
 
-    // Set general defaults
+    // Set general defaults.
     $this->generalDefaultSettings($configuration);
 
-    // Add node specific Display Suite settings
+    // Add node specific Display Suite settings.
     $configuration['advanced_search'] = FALSE;
 
     return $configuration;
@@ -163,7 +176,7 @@ class DsNodeSearch extends NodeSearch {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    // Fetch form from node search
+    // Fetch form from node search.
     $form = parent::buildConfigurationForm($form, $form_state);
 
     // Add general settings
@@ -190,11 +203,11 @@ class DsNodeSearch extends NodeSearch {
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
 
-    // Submits general settings
+    // Submits general settings.
     $this->generalSubmitConfigurationForm($this->configuration, $form_state, TRUE);
 
-    // Submits node specific settings
-    $this->configuration['advanced_search'] = $form_state['values']['advanced_search'];
+    // Submits node specific settings.
+    $this->configuration['advanced_search'] = $form_state->getValue('advanced_search');
   }
 
   /**
@@ -202,7 +215,7 @@ class DsNodeSearch extends NodeSearch {
    */
   public function searchFormAlter(array &$form, FormStateInterface $form_state) {
     if ($this->configuration['advanced_search']) {
-      return parent::searchFormAlter($form, $form_state);
+      parent::searchFormAlter($form, $form_state);
     }
   }
 }

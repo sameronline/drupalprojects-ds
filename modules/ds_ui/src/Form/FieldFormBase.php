@@ -194,7 +194,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
   /**
    * Returns the properties for the custom field
    */
-  public function getProperties($form_state) {
+  public function getProperties(FormStateInterface $form_state) {
     return array();
   }
 
