@@ -16,7 +16,7 @@ use Drupal\views\Plugin\views\row\EntityRow;
  *
  * @ViewsRow(
  *   id = "ds_entity",
- *   derivative = "Drupal\ds\Plugin\Derivative\DsEntityRow"
+ *   deriver = "Drupal\ds\Plugin\Derivative\DsEntityRow"
  * )
  */
 class DsEntityRow extends EntityRow {
