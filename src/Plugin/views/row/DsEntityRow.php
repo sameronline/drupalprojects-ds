@@ -8,6 +8,7 @@
 namespace Drupal\ds\Plugin\views\row;
 
 use Drupal\Component\Utility\String;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\row\EntityRow;
 
 /**
@@ -65,7 +66,7 @@ class DsEntityRow extends EntityRow {
   /**
    * {@inheritdoc}
    */
-  public function buildOptionsForm(&$form, &$form_state) {
+  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
 
     // Use view mode of display settings.
@@ -185,7 +186,7 @@ class DsEntityRow extends EntityRow {
   /**
    * {@inheritdoc}
    */
-  public function submitOptionsForm(&$form, &$form_state) {
+  public function submitOptionsForm(&$form, FormStateInterface $form_state) {
     $form_state['values']['row_options']['alternating'] = $form_state['values']['row_options']['alternating_fieldset']['alternating'];
   }
 
