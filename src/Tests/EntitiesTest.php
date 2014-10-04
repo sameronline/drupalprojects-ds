@@ -51,6 +51,7 @@ class EntitiesTest extends BaseTest {
       'fields[node_link][region]' => 'footer',
       'fields[body][label]' => $label,
       'fields[node_submitted_by][region]' => 'header',
+      'fields[comment][region]' => 'hidden',
     );
     $this->dsConfigureUI($fields);
 
@@ -260,13 +261,17 @@ class EntitiesTest extends BaseTest {
     // Default theming function.
     // -------------------------
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"field field-name-body field-type-text-with-summary field-label-hidden\"><div class=\"field-items\"><div class=\"field-item even\" property=\"content:encoded\"><p>" . $body_field . "</p>
-</div></div></div>");
+    $this->assertRaw("<div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-hidden\" data-quickedit-field-id=\"node/1/body/en/full\">
+    <div class=\"field-items\">
+          <div class=\"field-item\" property=\"schema:text\">" . $body_field . "</div>
+      </div>");
 
     $this->entitiesSetLabelClass('above');
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"field field-name-body field-type-text-with-summary field-label-above\"><div class=\"field-label\">Body:&nbsp;</div><div class=\"field-items\"><div class=\"field-item even\" property=\"content:encoded\"><p>" . $body_field . "</p>
-</div></div></div>");
+    $this->assertRaw("<div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-above\" data-quickedit-field-id=\"node/1/body/en/full\">
+      <div class=\"field-label\">Body:&nbsp;</div>
+    <div class=\"field-items\">
+          <div class=\"field-item\" property=\"schema:text\">" . $body_field . "</div>");
 
     $this->entitiesSetLabelClass('above', 'My body');
     $this->drupalGet('node/' . $node->id());
@@ -284,12 +289,12 @@ class EntitiesTest extends BaseTest {
     // Reset theming function.
     // -----------------------
     $edit = array(
-      'fs1[ft-default]' => 'theme_ds_field_reset',
+      'fs1[ft-default]' => 'reset',
     );
     $this->drupalPostForm('admin/structure/ds/list/extras', $edit, t('Save configuration'));
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <p>" . $body_field . "</p>");
+    " . $body_field);
 
     $this->entitiesSetLabelClass('above');
     $this->drupalGet('node/' . $node->id());

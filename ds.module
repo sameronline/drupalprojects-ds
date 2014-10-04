@@ -448,6 +448,7 @@ function ds_preprocess_field(&$variables) {
 function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
 
   // We need to be sure this field is in a layout which is rendered by DS.
+  // @todo allow field templates always?
   if (!Ds::getLayout($variables['element']['#entity_type'], $variables['element']['#bundle'], $variables['element']['#view_mode'])) {
     return;
   }

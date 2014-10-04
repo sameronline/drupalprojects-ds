@@ -5,10 +5,7 @@
  * Display Suite test module.
  */
 
-use Drupal\Core\Entity\Display\EntityDisplayInterface;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\Element;
-use Drupal\entity\Entity\EntityViewDisplay;
 
 /**
  * Implements hook_install().
