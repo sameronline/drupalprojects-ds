@@ -152,6 +152,7 @@ function ds_extras_form_node_form_alter(&$form, FormStateInterface $form_state) 
   // Switch full view mode.
   $node = $form_state->getFormObject()->getEntity();
 
+  // @todo check the setting
   if (\Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
     // Get the view modes.
     $ds_vm = \Drupal::entityManager()->getViewModes('node');
@@ -207,6 +208,7 @@ function ds_extras_form_node_form_alter(&$form, FormStateInterface $form_state) 
 
       $input = $form_state->get('input');
       $mode = isset($input['ds_switch']) ? $input['ds_switch'] : $node->get('ds_switch')->value;
+      // @todo there's not always a layout, hence an image
       $chosen_layout = $layouts[$mode];
 
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';

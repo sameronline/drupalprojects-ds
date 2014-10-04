@@ -216,7 +216,7 @@ class EntitiesTest extends BaseTest {
     // Test formatter limit on article with tags.
     $edit = array(
       'ds_switch' => '',
-      'field_tags[und]' => 'Tag 1, Tag 2'
+      'field_tags' => 'Tag 1, Tag 2'
     );
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $edit = array(
@@ -250,11 +250,11 @@ class EntitiesTest extends BaseTest {
   /**
    * Tests on field templates.
    */
-  function _testDSFieldTemplate() {
+  function testDSFieldTemplate() {
 
     // Get a node.
     $node = $this->entitiesTestSetup('hidden');
-    $body_field = $node->body[$node->langcode][0]['value'];
+    $body_field = $node->body->value;
 
     // -------------------------
     // Default theming function.
