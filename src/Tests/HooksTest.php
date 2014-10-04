@@ -67,6 +67,7 @@ class HooksTest extends BaseTest {
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
 
+    // @todo float seems broken too.
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
     $this->assertText('Test code field on node ' . $node->id(), 'Test code field found');
