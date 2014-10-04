@@ -52,7 +52,7 @@ class BlockFieldForm extends FieldFormBase implements ContainerInjectionInterfac
   /**
    * {@inheritdoc}
    */
-  public function getProperties($form_state) {
+  public function getProperties(FormStateInterface $form_state) {
     return array(
       'block' => $form_state->getValue('block'),
     );

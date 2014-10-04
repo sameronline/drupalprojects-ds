@@ -8,6 +8,7 @@
 namespace Drupal\ds_devel\Controller;
 
 use Drupal\Component\Utility\String;
+use Drupal\node\Entity\Node;
 
 /**
  * Returns responses for Views UI routes.
@@ -21,7 +22,7 @@ class DsDevelController {
    *   The Views fields report page.
    */
   public function nodeMarkup($node, $key = 'default') {
-    $node = node_load($node);
+    $node = Node::load($node);
 
     $build = entity_view($node, $key);
     $markup = drupal_render($build);

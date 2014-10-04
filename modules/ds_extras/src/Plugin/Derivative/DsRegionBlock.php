@@ -7,14 +7,14 @@
 
 namespace Drupal\ds_extras\Plugin\Derivative;
 
-use Drupal\Component\Plugin\Derivative\DerivativeBase;
+use Drupal\Component\Plugin\Derivative\DeriverBase;
 
 /**
  * Provides block region definitions for ds blocks
  *
  * @see \Drupal\ds_extras\Plugin\block\block\DsRegionBlock
  */
-class DsRegionBlock extends DerivativeBase {
+class DsRegionBlock extends DeriverBase {
 
   /**
    * Implements \Drupal\Component\Plugin\Derivative\DerivativeInterface::getDerivativeDefinitions().

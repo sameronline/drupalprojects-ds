@@ -29,7 +29,7 @@ class SwitchField extends DsFieldBase {
     $output = '';
     static $added = FALSE;
 
-    $settings = $this->getChosenSettings();
+    $settings = $this->getConfiguration();
     if (!empty($settings)) {
 
       $entity = $this->entity();

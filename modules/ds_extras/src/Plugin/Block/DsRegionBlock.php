@@ -7,7 +7,7 @@
 
 namespace Drupal\ds_extras\Plugin\Block;
 
-use Drupal\block\BlockBase;
+use Drupal\Core\Block\BlockBase;
 
 /**
  * Provides the region block plugin.
@@ -25,7 +25,7 @@ class DsRegionBlock extends BlockBase {
    * {@inheritdoc}
    */
   public function build() {
-    $id = $this->getBasePluginId();
+    $id = $this->getBaseId();
     $data = drupal_static('ds_block_region');
 
     if (!empty($data[$id])) {

@@ -9,6 +9,7 @@ namespace Drupal\ds\Controller;
 
 use Drupal\Component\Utility\String;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityDisplayBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\ds\Ds;
 use Drupal\field_ui\FieldUI;
@@ -147,6 +148,7 @@ class DsController extends ControllerBase {
    * Adds a contextual tab to entities.
    */
   public function contextualTab($entity_type, $entity_id) {
+    /** @var $entity EntityInterface */
     $entity = entity_load($entity_type, $entity_id);
 
     $destination = $entity->getSystemPath();
@@ -166,6 +168,7 @@ class DsController extends ControllerBase {
 
     // Check view mode settings.
     $overridden = FALSE;
+    /** @var $entity_display EntityDisplayBase */
     $entity_display = entity_load('entity_view_display', $entity_type . '.' . $entity->bundle() . '.' . $view_mode);
     if ($entity_display) {
       $overridden = $entity_display->status();

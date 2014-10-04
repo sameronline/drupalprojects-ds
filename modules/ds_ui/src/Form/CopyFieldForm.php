@@ -55,7 +55,7 @@ class CopyFieldForm extends FieldFormBase{
   /**
    * {@inheritdoc}
    */
-  public function getProperties($form_state) {
+  public function getProperties(FormStateInterface $form_state) {
     return array(
       'ds_plugin' => $form_state->getValue('ds_plugin'),
     );
