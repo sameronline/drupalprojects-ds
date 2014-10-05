@@ -291,7 +291,7 @@ class EntitiesTest extends BaseTest {
     $edit = array(
       'fs1[ft-default]' => 'reset',
     );
-    $this->drupalPostForm('admin/structure/ds/list/extras', $edit, t('Save configuration'));
+    $this->drupalPostForm('admin/structure/ds/settings', $edit, t('Save configuration'));
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
     " . $body_field);
@@ -333,7 +333,7 @@ class EntitiesTest extends BaseTest {
 
     // With outer wrapper.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][func]' => 'theme_ds_field_expert',
+      'fields[body][settings_edit_form][settings][ft][func]' => 'expert',
       'fields[body][settings_edit_form][settings][ft][ow]' => '1',
       'fields[body][settings_edit_form][settings][ft][ow-el]' => 'div',
     );
@@ -373,7 +373,7 @@ class EntitiesTest extends BaseTest {
 
     // With outer wrapper and field items wrapper.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][func]' => 'theme_ds_field_expert',
+      'fields[body][settings_edit_form][settings][ft][func]' => 'expert',
       'fields[body][settings_edit_form][settings][ft][ow]' => '1',
       'fields[body][settings_edit_form][settings][ft][ow-el]' => 'div',
       'fields[body][settings_edit_form][settings][ft][fis]' => '1',
@@ -388,7 +388,6 @@ class EntitiesTest extends BaseTest {
     // With outer wrapper and field items div wrapper with class.
     $edit = array(
       'fields[body][settings_edit_form][settings][ft][ow]' => '1',
-      'fields[body][settings_edit_form][settings][ft][ow-el]' => 'div',
       'fields[body][settings_edit_form][settings][ft][ow-el]' => 'div',
       'fields[body][settings_edit_form][settings][ft][fis]' => '1',
       'fields[body][settings_edit_form][settings][ft][fis-el]' => 'div',
@@ -449,7 +448,7 @@ class EntitiesTest extends BaseTest {
 
     // With field item div wrapper.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][func]' => 'theme_ds_field_expert',
+      'fields[body][settings_edit_form][settings][ft][func]' => 'expert',
       'fields[body][settings_edit_form][settings][ft][fi]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
