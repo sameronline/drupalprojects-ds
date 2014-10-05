@@ -18,7 +18,7 @@ class RendererBase extends ViewsRendererbase {
   /**
    * {@inheritdoc}
    */
-  public function preRender($result, $translation = FALSE) {
+  public function preRender(array $result) {
     parent::preRender($result);
     $this->dsPreRender($result);
   }
@@ -26,7 +26,7 @@ class RendererBase extends ViewsRendererbase {
   /**
    * Pre renders all the Display Suite rows
    */
-  protected function dsPreRender($result, $translation = FALSE) {
+  protected function dsPreRender(array $result, $translation = FALSE) {
     if ($result) {
       // Get all entities which will be used to render in rows.
       $view_builder = $this->view->rowPlugin->entityManager->getViewBuilder($this->entityType->id());
@@ -55,7 +55,7 @@ class RendererBase extends ViewsRendererbase {
         }
 
         // Change the view mode per row.
-        if ($this->view->rowPlugin->options['alternating']) {
+        if ($this->view->rowPlugin->options['alternating_fieldset']['alternating']) {
           // Check for paging to determine the view mode.
           $page = \Drupal::request()->get('page');
           if (!empty($page) && isset($this->view->rowPlugin->options['alternating_fieldset']['allpages']) && !$this->view->rowPlugin->options['alternating_fieldset']['allpages']) {
