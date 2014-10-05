@@ -525,7 +525,7 @@ function ds_field_template_settings_form(array &$form, FormStateInterface &$form
   }
 
   $plugin_settings = $form_state->get('plugin_settings');
-  $field_settings = isset($plugin_settings[$key]) ? $plugin_settings[$key]['ft'] : array();
+  $field_settings = isset($plugin_settings[$key]['settings']) ? $plugin_settings[$key]['settings']['ft'] : array();
 
   // In case with an ajax refresh we fetch the function from a different place
   $values = $form_state->getValues();

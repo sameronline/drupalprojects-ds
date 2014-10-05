@@ -1252,7 +1252,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
     $form['#ds_fields'][] = $key;
 
     // Fetch saved plugin settings
-    $form_state_plugin_settings = $form_state->get('plugin_settings', array());
+    $form_state_plugin_settings = $form_state->get('plugin_settings');
 
     // Check on formatter settings.
     $plugin_settings = array();
