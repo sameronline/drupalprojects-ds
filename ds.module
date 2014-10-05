@@ -83,11 +83,6 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
   static $field_permissions = FALSE;
   static $loaded = FALSE;
 
-  // If no layout is configured, stop executing.
-  if (!$display->getThirdPartySetting('ds', 'layout')) {
-    return;
-  }
-
   $entity_type = $entity->getEntityTypeId();
   $bundle = $entity->bundle();
   $view_mode = $display->mode;
@@ -96,6 +91,11 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
   if (isset($build['#contextual_links'][$entity_type])) {
     $build['#contextual_links'][$entity_type]['metadata']['ds_bundle'] = $bundle;
     $build['#contextual_links'][$entity_type]['metadata']['ds_view_mode'] = $view_mode;
+  }
+
+  // If no layout is configured, stop executing.
+  if (!$display->getThirdPartySetting('ds', 'layout')) {
+    return;
   }
 
   // If Display Suite is disabled, stop here.
