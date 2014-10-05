@@ -2,14 +2,15 @@
 
 /**
  * @file
- * Contains \Drupal\ds\Plugin\views\row\DsEntityRow.
+ * Contains \Drupal\ds\Plugin\views\row\EntityRow.
  */
 
 namespace Drupal\ds\Plugin\views\row;
 
 use Drupal\Component\Utility\String;
+use Drupal\Core\DependencyInjection\Container;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\views\Plugin\views\row\EntityRow;
+use Drupal\views\Plugin\views\row\EntityRow as ViewsEntityRow;
 
 /**
  * Generic entity row plugin to provide a common base for all entity types.
@@ -19,7 +20,7 @@ use Drupal\views\Plugin\views\row\EntityRow;
  *   deriver = "Drupal\ds\Plugin\Derivative\DsEntityRow"
  * )
  */
-class DsEntityRow extends EntityRow {
+class EntityRow extends ViewsEntityRow {
 
   /**
    * Contains an array of render arrays, one for each rendered entity.
@@ -103,8 +104,9 @@ class DsEntityRow extends EntityRow {
       '#default_value' => (isset($this->options['alternating_fieldset']['allpages'])) ? $this->options['alternating_fieldset']['allpages'] : FALSE,
     );
 
+
     $pager = $this->view->display_handler->getPlugin('pager');
-    $limit = (isset($pager->options['items_per_page'])) ? $pager->options['items_per_page'] : 0;
+    $limit = $pager->getItemsPerPage();
     if ($limit == 0 || $limit > 20) {
       $form['alternating_fieldset']['disabled'] = array(
         '#markup' => t('This option is disabled because you have unlimited items or listing more than 20 items.'),
@@ -116,12 +118,12 @@ class DsEntityRow extends EntityRow {
       $i = 1;
       $a = 0;
       while ($limit != 0) {
-        $form['alternating_fieldset']['item_' . $a] = array(
+        $form['alternating_fieldset']['item_' . $a] = [
           '#title' => t('Item @nr', array('@nr' => $i)),
           '#type' => 'select',
           '#default_value' => (isset($this->options['alternating_fieldset']['item_' . $a])) ? $this->options['alternating_fieldset']['item_' . $a] : 'teaser',
-          '#options' => $this->buildViewModeOptions(),
-        );
+          '#options' => \Drupal::entityManager()->getViewModeOptions($this->entityTypeId),
+        ];
         $limit--;
         $a++;
         $i++;
@@ -193,126 +195,12 @@ class DsEntityRow extends EntityRow {
   /**
    * {@inheritdoc}
    */
-  public function preRender($result) {
-    parent::preRender($result);
-
-    if ($result) {
-      // Get all entities which will be used to render in rows.
-      $i = 0;
-      $grouping = array();
-      $rendered = FALSE;
-
-      foreach ($result as $row) {
-        $group_value_content = '';
-        $entity = $row->_entity;
-        $entity_id = $entity->id();
-
-        // Default view mode.
-        $view_mode = $this->options['view_mode'];
-
-        // Display settings view mode.
-        if ($this->options['switch_fieldset']['switch']) {
-          if (!empty($entity->ds_switch->value)) {
-            $view_mode = $entity->ds_switch->value;
-          }
-        }
-
-        // Change the view mode per row.
-        if ($this->options['alternating']) {
-          // Check for paging to determine the view mode.
-          $page = \Drupal::request()->get('page');
-          if (!empty($page) && isset($this->options['alternating_fieldset']['allpages']) && !$this->options['alternating_fieldset']['allpages']) {
-            $view_mode = $this->options['view_mode'];
-          }
-          else {
-            $view_mode = isset($this->options['alternating_fieldset']['item_' . $i]) ? $this->options['alternating_fieldset']['item_' . $i] : $this->options['view_mode'];
-          }
-          $i++;
-        }
-
-        // The advanced selector invokes hook_ds_views_row_render_entity.
-        if ($this->options['advanced_fieldset']['advanced']) {
-          $modules = \Drupal::moduleHandler()->getImplementations('ds_views_row_render_entity');
-          foreach ($modules as $module) {
-            if ($content =  \Drupal::moduleHandler()->invoke($module, 'ds_views_row_render_entity', array($entity, $view_mode))) {
-              $this->build[$entity_id] = $content;
-              $rendered = TRUE;
-            }
-          }
-        }
-
-        // Give modules a chance to alter the $view_mode. Use $view_mode by ref.
-        $view_name = $this->view->storage->id();
-        $context = array(
-          'entity' => $entity,
-          'view_name' => $view_name,
-          'display' => $this->view->getDisplay(),
-        );
-        \Drupal::moduleHandler()->alter('ds_views_view_mode', $view_mode, $context);
-
-        if (!$rendered) {
-          if (!empty($view_mode)) {
-            $this->build[$entity_id] = entity_view($entity, $view_mode);
-          }
-          else {
-            $this->build[$entity_id] = entity_view($entity, 'full');
-          }
-        }
-
-        $context = array(
-          'row' => $row,
-          'view' => &$this->view,
-          'view_mode' => $view_mode,
-        );
-        \Drupal::moduleHandler()->alter('ds_views_row_render_entity', $this->build[$entity_id], $context);
-
-        // Keep a static grouping for this view.
-        if ($this->options['grouping_fieldset']['group']) {
-
-          $group_field = $this->options['grouping_fieldset']['group_field'];
-
-          // New way of creating the alias.
-          if (strpos($group_field, '|') !== FALSE) {
-            list(, $ffield) = explode('|', $group_field);
-            $group_field = $this->view->sort[$ffield]->tableAlias . '_' . $this->view->sort[$ffield]->realField;
-          }
-
-          // Note, the keys in the $row object are cut of at 60 chars.
-          // see views_plugin_query_default.inc.
-          if (drupal_strlen($group_field) > 60) {
-            $group_field = drupal_substr($group_field, 0, 60);
-          }
-
-          $raw_group_value = isset($row->{$group_field}) ? $row->{$group_field} : '';
-          $group_value = $raw_group_value;
-
-          // Special function to format the heading value.
-          if (!empty($this->options['grouping_fieldset']['group_field_function'])) {
-            $function = $this->options['grouping_fieldset']['group_field_function'];
-            if (function_exists($function)) {
-              $group_value = $function($raw_group_value, $row->{$this->field_alias});
-            }
-          }
-
-          if (!isset($grouping[$group_value])) {
-            $group_value_content = array(
-              '#markup' => '<h2 class="grouping-title">' . $group_value . '</h2>',
-              '#weight' => -5,
-            );
-            $grouping[$group_value] = $group_value;
-          }
-        }
-
-        // Grouping.
-        if (!empty($grouping)) {
-          if (!empty($group_value_content)) {
-            $this->build[$entity_id] = array(
-              'title' => $group_value_content,
-              'content' => $this->build[$entity_id],
-            );
-          }
-        }
-      }
+  protected function getRenderer() {
+    if (!isset($this->renderer)) {
+      $class = '\Drupal\ds\Plugin\views\Entity\Render\\' . Container::camelize($this->options['rendering_language']);
+      $this->renderer = new $class($this->view, $this->entityType);
     }
+    return $this->renderer;
   }
+
 }

@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @ingroup views_row_plugins
  *
- * @see \Drupal\ds\Plugin\views\row\DsEntityRow
+ * @see \Drupal\ds\Plugin\views\row\EntityRow
  */
 class DsEntityRow implements ContainerDeriverInterface {
 
@@ -99,7 +99,7 @@ class DsEntityRow implements ContainerDeriverInterface {
           'provider' => 'ds',
           'title' => 'Display Suite: ' . $entity_type->getLabel(),
           'help' => t('Display the @label', array('@label' => $entity_type->getLabel())),
-          'base' => array($entity_type->getBaseTable()),
+          'base' => array($base_table),
           'entity_type' => $entity_type_id,
           'display_types' => array('normal'),
           'class' => $base_plugin_definition['class'],
