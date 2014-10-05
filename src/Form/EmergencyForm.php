@@ -142,7 +142,7 @@ class EmergencyForm extends FormBase {
    * Submit callback for the fields error form.
    */
   public function submitFieldAttach(array &$form, FormStateInterface $form_state) {
-    $this->state->set('ds.disabled', $form_state['values']['disable']);
+    $this->state->set('ds.disabled', $form_state->getValue('disable'));
     drupal_set_message(t('The configuration options have been saved.'));
   }
 
@@ -150,10 +150,10 @@ class EmergencyForm extends FormBase {
    * Submit callback for the region to block form
    */
   public function submitRegionToBlock(array &$form, FormStateInterface $form_state) {
-    if (isset($form_state['values']['remove_block_region'])) {
+    if ($form_state->getValue('remove_block_region')) {
       $save = FALSE;
       $region_blocks = $this->configFactory->get('ds.extras')->get('region_blocks');
-      $remove = $form_state['values']['remove_block_region'];
+      $remove = $form_state->getValue('remove_block_region');
       foreach ($remove as $key => $value) {
         if ($key === $value) {
           $save = TRUE;

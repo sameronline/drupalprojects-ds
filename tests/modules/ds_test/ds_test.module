@@ -5,6 +5,7 @@
  * Display Suite test module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 
 /**
@@ -138,7 +139,7 @@ function ds_test_ds_layout_info() {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function ds_test_form_field_ui_display_overview_form_alter(&$form, &$form_state) {
+function ds_test_form_field_ui_display_overview_form_alter(&$form, FormStateInterface $form_state) {
   foreach (Element::children($form['fields']) as $key) {
     if (isset($form['fields'][$key]['settings_edit'])) {
       $settings = $form['fields'][$key]['settings_edit'];

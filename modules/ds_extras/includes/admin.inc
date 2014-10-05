@@ -9,7 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Alters the Display Suite settings screen.
  */
-function ds_extras_settings_alter(&$form, FormStateInterface &$form_state) {
+function ds_extras_settings_alter(&$form, FormStateInterface $form_state) {
 
   $config = \Drupal::config('ds.extras');
 
@@ -114,7 +114,7 @@ function ds_extras_settings_alter(&$form, FormStateInterface &$form_state) {
 /**
  * Submit callback: Extras settings screen.
  */
-function ds_extras_settings_submit($form, FormStateInterface &$form_state) {
+function ds_extras_settings_submit($form, FormStateInterface $form_state) {
   $values = $form_state->getValues();
 
   $extra_fields = array();
@@ -143,7 +143,7 @@ function ds_extras_settings_submit($form, FormStateInterface &$form_state) {
 /**
  * Alter Manage display screen.
  */
-function ds_extras_field_ui_alter(&$form, FormStateInterface &$form_state) {
+function ds_extras_field_ui_alter(&$form, FormStateInterface $form_state) {
   // Region to block only fires if there is a layout and we're working on the
   // a view mode which is not equal to default.
   if (isset($form['#ds_layout']) && $form['#mode'] != 'default' && \Drupal::config('ds.extras')->get('region_to_block')) {
@@ -206,7 +206,7 @@ function ds_extras_field_ui_alter(&$form, FormStateInterface &$form_state) {
 /**
  * Submit callback after Field UI submission of a views display.
  */
-function ds_extras_vd_field_ui_submit($form, FormStateInterface &$form_state) {
+function ds_extras_vd_field_ui_submit($form, FormStateInterface $form_state) {
   // Add the 'type' key to the extra title key so we can ditch the notice.
   $form_state->setValue('fields', array('title' => array('type' => 'hidden')));
 }
@@ -214,7 +214,7 @@ function ds_extras_vd_field_ui_submit($form, FormStateInterface &$form_state) {
 /**
  * Submit callback: manage block regions.
  */
-function ds_extras_block_submit($form, FormStateInterface &$form_state) {
+function ds_extras_block_submit($form, FormStateInterface $form_state) {
 
   // Create new region.
   if ($new_block_region = $form_state->getValue('new_block_region')) {

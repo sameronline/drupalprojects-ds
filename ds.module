@@ -583,7 +583,7 @@ function ds_field_ui_display_overview_multistep_submit($form, &$form_state) {
 /**
  * Implements hook_field_formatter_settings_summary_alter().
  */
-function ds_field_formatter_settings_summary_alter(&$summary, $context, $form_state) {
+function ds_field_formatter_settings_summary_alter(&$summary, $context) {
   if (\Drupal::config('ds.settings')->get('field_template')) {
     // Field template summary
     $functions = Ds::getFieldLayoutOptions();

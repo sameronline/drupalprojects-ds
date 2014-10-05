@@ -113,7 +113,8 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
     \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
     // Redirect.
-    $form_state['redirect_route'] = new Url('ds_ui.fields_list');
+    $url = new Url('ds_ui.fields_list');
+    $form_state->setRedirectUrl($url);
     drupal_set_message(t('The field %field has been deleted.', array('%field' => $field['label'])));
   }
 

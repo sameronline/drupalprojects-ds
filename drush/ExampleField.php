@@ -6,6 +6,7 @@
 
 namespace Drupal\example_field\Plugin\DsField;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
@@ -27,7 +28,7 @@ class ExampleField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm($form, &$form_state) {
+  public function settingsForm($form, FormStateInterface $form_state) {
     return array();
   }
 

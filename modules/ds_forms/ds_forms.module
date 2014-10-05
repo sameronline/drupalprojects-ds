@@ -30,7 +30,7 @@ function ds_forms_form_field_ui_form_display_overview_form_alter(&$form, FormSta
 
     // Add necessary variables for DS Field UI.
     $form['#mode'] = 'form';
-    $form_state['no_view_mode_suggestions'] = TRUE;
+    $form_state->set('no_view_mode_suggestions', TRUE);
 
     // Load Display Suite.
     $form_state->loadInclude('ds', 'inc', 'includes/field_ui');
@@ -41,7 +41,7 @@ function ds_forms_form_field_ui_form_display_overview_form_alter(&$form, FormSta
 /**
  * Implements hook_form_alter().
  */
-function ds_forms_form_alter(&$form, &$form_state, $form_id) {
+function ds_forms_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($ds_form = ds_build_load($form, $form_id)) {
     if ($layout = Ds::getLayout($ds_form->entity_type, $ds_form->bundle, 'form', FALSE)) {
       // Add the theming function and add the layout as a class.

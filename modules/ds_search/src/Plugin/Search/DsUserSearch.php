@@ -7,6 +7,7 @@
 
 namespace Drupal\ds_search\Plugin\Search;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds_search\DsSearch;
 use Drupal\Core\Access\AccessibleInterface;
 use Drupal\Core\Database\Connection;
@@ -59,7 +60,7 @@ class DsUserSearch extends ConfigurableSearchPluginBase implements AccessibleInt
   /**
    * {@inheritdoc}
    */
-  static public function create(ContainerInterface $container, array $configuration, $plugin_id, array $plugin_definition) {
+  static public function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $container->get('database'),
       $container->get('entity.manager'),
@@ -100,7 +101,7 @@ class DsUserSearch extends ConfigurableSearchPluginBase implements AccessibleInt
   /**
    * {@inheritdoc}
    */
-  public function access($operation = 'view', AccountInterface $account = NULL) {
+  public function access($operation = 'view', AccountInterface $account = NULL, $return_as_object = FALSE) {
     return !empty($account) && $account->hasPermission('access user profiles');
   }
 
@@ -199,7 +200,7 @@ class DsUserSearch extends ConfigurableSearchPluginBase implements AccessibleInt
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, array &$form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     // Add general settings
     $form = $this->generalConfigurationForm($form, $form_state, $this->configuration, 'user');
 
@@ -209,7 +210,7 @@ class DsUserSearch extends ConfigurableSearchPluginBase implements AccessibleInt
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, array &$form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     // Submits general settings
     $this->generalSubmitConfigurationForm($this->configuration, $form_state);
   }
