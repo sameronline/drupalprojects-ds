@@ -188,13 +188,6 @@ class EntityRow extends ViewsEntityRow {
   /**
    * {@inheritdoc}
    */
-  public function submitOptionsForm(&$form, FormStateInterface $form_state) {
-    $form_state['values']['row_options']['alternating'] = $form_state['values']['row_options']['alternating_fieldset']['alternating'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function getRenderer() {
     if (!isset($this->renderer)) {
       $class = '\Drupal\ds\Plugin\views\Entity\Render\\' . Container::camelize($this->options['rendering_language']);
