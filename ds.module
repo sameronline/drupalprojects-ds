@@ -136,9 +136,13 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
           }
         }
         else {
-          $count = count($build[$field]['#items']);
+          $count = $build[$field]['#items']->count();
           if ($count > $limit) {
-            $build[$field]['#items'] = array_slice($build[$field]['#items'], 0, $limit);
+            // @todo doesn't work, figure out why
+            $fields = $build[$field]['#items']->getValue();
+            $fields = array_slice($fields, 0, $limit);
+            $build[$field]['#items']->setValue($fields);
+            $build[$field]['#items']->update();
           }
         }
       }
