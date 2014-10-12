@@ -8,6 +8,7 @@
 use Drupal\Component\Utility\String;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\ds\Ds;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\Core\Entity\Display\EntityDisplayInterface;
@@ -346,18 +347,19 @@ function ds_contextual_links_view_alter(&$element, $items) {
       $view_mode = $element['#contextual_links'][$entity_type]['metadata']['ds_view_mode'];
       $route_name = "field_ui.display_overview_view_mode_$entity_type";
       $type = $def[$entity_type]->getBundleEntityType();
-      $destination = drupal_get_destination();
+      $route_params = array(
+        $type => $bundle,
+        'view_mode_name' => $view_mode,
+      );
+
+      $url = new Url($route_name, $route_params);
+      $url->setOption('query', drupal_get_destination());
 
       // When there is no bundle defined, return
       if (!empty($bundle)) {
         $element['#links']['manage-display'] = array(
           'title' => t('Manage display'),
-          'route_name' => $route_name,
-          'route_parameters' => array(
-            $type => $bundle,
-            'view_mode_name' => $view_mode,
-          ),
-          'query' => $destination['destination'],
+          'url' => $url,
         );
       }
     }

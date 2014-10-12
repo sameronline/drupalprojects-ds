@@ -11,6 +11,7 @@ use Drupal\Component\Utility\String;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityDisplayBase;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Url;
 use Drupal\ds\Ds;
 use Drupal\field_ui\FieldUI;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -69,16 +70,14 @@ class DsController extends ControllerBase {
             if ($route) {
               $operations['manage_display'] = array(
                 'title' => t('Manage display'),
-                'route_name' => 'field_ui.display_overview_' . $entity_type,
-                'route_parameters' => $route->getRouteParameters(),
+                'url' => new Url('field_ui.display_overview_' . $entity_type, $route->getRouteParameters()),
               );
 
               // Add Manage Form link if Display Suite Forms is enabled.
               if ($this->moduleHandler()->moduleExists('ds_forms')) {
                 $operations['manage_form'] = array(
                   'title' => t('Manage form'),
-                  'route_name' => 'field_ui.form_display_overview_' . $entity_type,
-                  'route_parameters' => $route->getRouteParameters(),
+                  'url' => new Url('field_ui.form_display_overview_' . $entity_type, $route->getRouteParameters()),
                 );
               }
             }
