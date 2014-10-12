@@ -8,6 +8,7 @@ namespace Drupal\ds;
 
 use Drupal\Component\Utility\String;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\Display\EntityDisplayInterface;
 
 /**
  * Helper class that holds all the main Display Suite helper functions.
@@ -153,45 +154,46 @@ class Ds {
    *   Array of layout variables for the regions.
    */
   public static function getLayout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
-    static $layouts = array();
-    // @todo remove this
-
-    $layout_key = $entity_type . '_' . $bundle . '_' . $view_mode;
-    if (!isset($layouts[$layout_key])) {
-
-      $bundles = \Drupal::entityManager()->getAllBundleInfo();
-
-      $overridden = TRUE;
-      if ($view_mode != 'form') {
-        $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $view_mode);
-        if ($entity_display) {
-          $overridden = $entity_display->status();
-        }
-        else {
-          $overridden = FALSE;
-        }
+    $overridden = TRUE;
+    /** @var $entity_display EntityDisplayInterface */
+    if ($view_mode != 'form') {
+      $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $view_mode);
+      if ($entity_display) {
+        $overridden = $entity_display->status();
       }
-
-      // Check if a layout is configured.
-      if (isset($bundles[$entity_type][$bundle]['layouts'][$view_mode]) && ($overridden || $view_mode == 'default')) {
-        $layouts[$layout_key] = $bundles[$entity_type][$bundle]['layouts'][$view_mode];
-        $layouts[$layout_key]['view_mode'] = $view_mode;
+      else {
+        $overridden = FALSE;
       }
+    }
+    else {
+      $entity_display = entity_load('entity_form_display', $entity_type . '.' . $bundle . '.' . $view_mode);
+    }
 
-      // In case $view_mode is not found, check if we have a default layout,
-      // but only if the view mode settings aren't overridden for this view mode.
-      if ($view_mode != 'default' && !$overridden && $fallback && isset($bundles[$entity_type][$bundle]['layouts']['default'])) {
-        $layouts[$layout_key] = $bundles[$entity_type][$bundle]['layouts']['default'];
-        $layouts[$layout_key]['view_mode'] = 'default';
-      }
+    $layout = array(
+      'layout' => $entity_display->getThirdPartySetting('ds', 'layout'),
+      'settings' => $entity_display->getThirdPartySetting('ds', 'settings'),
+    );
+    if (!empty($layout) && ($overridden || $view_mode == 'default')) {
+      $layout['view_mode'] = $view_mode;
+      return $layout;
+    }
 
-      // Register the false return value as well.
-      if (!isset($layouts[$layout_key])) {
-        $layouts[$layout_key] = FALSE;
+    // In case $view_mode is not found, check if we have a default layout,
+    // but only if the view mode settings aren't overridden for this view mode.
+    if ($view_mode != 'default' && !$overridden && $fallback) {
+      /** @var $entity_default_display EntityDisplayInterface */
+      $entity_default_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.default');
+      if ($entity_default_display) {
+        $default_layout = array(
+          'layout' => $entity_default_display->getThirdPartySetting('ds', 'layout'),
+          'settings' => $entity_default_display->getThirdPartySetting('ds', 'settings'),
+        );
+        $default_layout['view_mode'] = 'default';
+        return $default_layout;
       }
     }
 
-    return $layouts[$layout_key];
+    return FALSE;
   }
 
   /**

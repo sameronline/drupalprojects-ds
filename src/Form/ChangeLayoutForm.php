@@ -7,6 +7,7 @@
 
 namespace Drupal\ds\Form;
 
+use Drupal\Core\Entity\Display\EntityDisplayInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds\Ds;
@@ -39,24 +40,26 @@ class ChangeLayoutForm extends FormBase {
 
       $new_layout_key = $new_layout;
       $new_layout = $all_layouts[$new_layout];
+      $old_layout_info = $all_layouts[$old_layout['layout']];
 
       $form['#entity_type'] = $entity_type;
       $form['#entity_bundle'] = $bundle;
       $form['#mode'] = $display_mode;
       $form['#old_layout'] = $old_layout;
+      $form['#old_layout_info'] = $old_layout_info;
       $form['#new_layout'] = $new_layout;
       $form['#new_layout_key'] = $new_layout_key;
       $form['#export_id'] = $entity_type . '.' . $bundle . '.' . $display_mode;
 
       $form['info'] = array(
-        '#markup' => t('You are changing from %old to %new layout for !bundle in !view_mode view mode.', array('%old' => $old_layout['label'], '%new' => $new_layout['label'], '!bundle' => $bundle, '!view_mode' => $display_mode)),
+        '#markup' => t('You are changing from %old to %new layout for !bundle in !view_mode view mode.', array('%old' => $old_layout_info['label'], '%new' => $new_layout['label'], '!bundle' => $bundle, '!view_mode' => $display_mode)),
         '#prefix' => "<div class='change-ds-layout-info'>",
         '#suffix' => "</div>",
       );
 
       // Old region options.
       $regions = array();
-      foreach ($old_layout['regions'] as $key => $title) {
+      foreach ($old_layout_info['regions'] as $key => $title) {
         $regions[$key] = $title;
       }
 
@@ -72,7 +75,7 @@ class ChangeLayoutForm extends FormBase {
       );
       \Drupal::moduleHandler()->alter('ds_layout_region', $context, $region_info);
       $regions = $region_info['region_options'];
-      $form['#old_layout']['regions'] = $regions;
+      $form['#old_layout_info']['regions'] = $regions;
 
       // For new regions.
       $region_info = array(
@@ -108,7 +111,7 @@ class ChangeLayoutForm extends FormBase {
       );
 
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
-      $old_image = (isset($old_layout['image']) &&  !empty($old_layout['image'])) ? $old_layout['path'] . '/' . $old_layout['layout'] . '.png' : $fallback_image;
+      $old_image = (isset($old_layout_info['image']) &&  !empty($old_layout_info['image'])) ? $old_layout_info['path'] . '/' . $old_layout['layout'] . '.png' : $fallback_image;
       $new_image = (isset($new_layout['image']) &&  !empty($new_layout['image'])) ? $new_layout['path'] . '/' . $new_layout_key . '.png' : $fallback_image;
       $arrow = drupal_get_path('module', 'ds') . '/images/arrow.png';
 
@@ -145,38 +148,37 @@ class ChangeLayoutForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Prepare some variables.
     $old_layout = $form['#old_layout'];
+    $old_layout_info = $form['#old_layout_info'];
     $new_layout_key = $form['#new_layout_key'];
     $entity_type = $form['#entity_type'];
     $bundle = $form['#entity_bundle'];
     $display_mode = $form['#mode'];
 
-    // Create new record.
-    $record = array();
-    $record['id'] = $form['#export_id'];
-    $record['entity_type'] = $entity_type;
-    $record['bundle'] = $bundle;
-    $record['view_mode'] = $display_mode;
-    $record['layout'] = $new_layout_key;
-    $record['settings'] = $old_layout['settings'];
-    unset($record['settings']['regions']);
-    unset($record['settings']['fields']);
+    // Create new third party settings
+    $third_party_settings['settings'] = $old_layout['settings'];
+    unset($third_party_settings['settings']['regions']);
+    unset($third_party_settings['settings']['fields']);
 
     // map old regions to new ones
-    foreach ($old_layout['regions'] as $region => $region_title) {
+    foreach ($old_layout_info['regions'] as $region => $region_title) {
       $new_region = $form_state->getValue('ds_' . $region);
       if ($new_region != '' && isset($old_layout['settings']['regions'][$region])) {
         foreach ($old_layout['settings']['regions'][$region] as $field) {
-          if (!isset($record['settings']['regions'][$new_region])) {
-            $record['settings']['regions'][$new_region] = array();
+          if (!isset($third_party_settings['settings']['regions'][$new_region])) {
+            $third_party_settings['settings']['regions'][$new_region] = array();
           }
-          $record['settings']['regions'][$new_region][] = $field;
-          $record['settings']['fields'][$field] = $new_region;
+          $third_party_settings['settings']['regions'][$new_region][] = $field;
+          $third_party_settings['settings']['fields'][$field] = $new_region;
         }
       }
     }
 
     // Save configuration.
-    \Drupal::config('ds.layout_settings.' . $entity_type . '.' . $bundle . '.' . $display_mode)->setData($record)->save();
+    /** @var $entity_display EntityDisplayInterface*/
+    $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $display_mode);
+    $entity_display->setThirdPartySetting('ds', 'layout', $new_layout_key);
+    $entity_display->setThirdPartySetting('ds', 'settings', $third_party_settings['settings']);
+    $entity_display->save();
 
     // Clear entity info cache.
     \Drupal::entityManager()->clearCachedFieldDefinitions();
