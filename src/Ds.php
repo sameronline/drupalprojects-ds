@@ -169,13 +169,15 @@ class Ds {
       $entity_display = entity_load('entity_form_display', $entity_type . '.' . $bundle . '.' . $view_mode);
     }
 
-    $layout = array(
-      'layout' => $entity_display->getThirdPartySetting('ds', 'layout'),
-      'settings' => $entity_display->getThirdPartySetting('ds', 'settings'),
-    );
-    if (!empty($layout) && ($overridden || $view_mode == 'default')) {
-      $layout['view_mode'] = $view_mode;
-      return $layout;
+    if ($entity_display) {
+      $layout = array(
+        'layout' => $entity_display->getThirdPartySetting('ds', 'layout'),
+        'settings' => $entity_display->getThirdPartySetting('ds', 'settings'),
+      );
+      if (!empty($layout) && ($overridden || $view_mode == 'default')) {
+        $layout['view_mode'] = $view_mode;
+        return $layout;
+      }
     }
 
     // In case $view_mode is not found, check if we have a default layout,
