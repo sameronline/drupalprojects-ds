@@ -776,7 +776,7 @@ function theme_ds_field_expert($variables) {
     if (isset($config['fi'])) {
       $class = array();
       if (!empty($config['fi-odd-even'])) {
-        $class[] = $delta % 2 ? 'odd' : 'even';
+        $class[] = $delta % 2 ? 'even' : 'odd';
       }
       if (!empty($config['fi-cl'])) {
         $class[] = $config['fi-cl'];
