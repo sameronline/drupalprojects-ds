@@ -7,6 +7,7 @@
 
 namespace Drupal\ds\Plugin\views\Entity\Render;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\views\Entity\Render\RendererBase as ViewsRendererbase;
 
@@ -126,8 +127,8 @@ class RendererBase extends ViewsRendererbase {
 
           // Note, the keys in the $row object are cut of at 60 chars.
           // see views_plugin_query_default.inc.
-          if (drupal_strlen($group_field) > 60) {
-            $group_field = drupal_substr($group_field, 0, 60);
+          if (Unicode::strlen($group_field) > 60) {
+            $group_field = Unicode::substr($group_field, 0, 60);
           }
 
           $raw_group_value = isset($row->{$group_field}) ? $row->{$group_field} : '';
@@ -137,7 +138,7 @@ class RendererBase extends ViewsRendererbase {
           if (!empty($this->view->rowPlugin->options['grouping_fieldset']['group_field_function'])) {
             $function = $this->view->rowPlugin->options['grouping_fieldset']['group_field_function'];
             if (function_exists($function)) {
-              $group_value = $function($raw_group_value, $row->{$this->field_alias});
+              $group_value = $function($raw_group_value, $row->_entity);
             }
           }
 
