@@ -171,7 +171,7 @@ class EntityRow extends ViewsEntityRow {
     $form['advanced_fieldset'] = array(
       '#type' => 'details',
       '#title' => t('Advanced view mode'),
-      '#copen' => $this->options['advanced_fieldset']['advanced'],
+      '#open' => $this->options['advanced_fieldset']['advanced'],
     );
     $form['advanced_fieldset']['advanced'] = array(
       '#type' => 'checkbox',

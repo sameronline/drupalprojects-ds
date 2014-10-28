@@ -73,7 +73,12 @@ class RendererBase extends ViewsRendererbase {
           $modules = \Drupal::moduleHandler()->getImplementations('ds_views_row_render_entity');
           foreach ($modules as $module) {
             if ($content =  \Drupal::moduleHandler()->invoke($module, 'ds_views_row_render_entity', array($entity, $view_mode))) {
-              $this->build[$entity_id] = $content;
+              if (!$translation) {
+                $this->build[$entity_id] = $content;
+              }
+              else {
+                $this->build[$entity_id][$langcode] = $content;
+              }
               $rendered = TRUE;
             }
           }

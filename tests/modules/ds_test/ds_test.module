@@ -38,7 +38,7 @@ function ds_test_get_tag_name($raw_value, $object) {
 /**
  * Helper function to return advanced view mode.
  */
-function ds_views_row_adv_ds_testing($entity, $view_mode, $load_comments) {
+function ds_test_ds_views_row_render_entity($entity, $view_mode) {
   return 'Advanced display for id ' . $entity->id();
 }
 
