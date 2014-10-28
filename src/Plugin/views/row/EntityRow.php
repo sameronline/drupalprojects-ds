@@ -75,8 +75,7 @@ class EntityRow extends ViewsEntityRow {
       $form['switch_fieldset'] = array(
         '#type' => 'details',
         '#title' => t('Use view mode of display settings'),
-        '#collapsible' => TRUE,
-        '#collapsed' => !$this->options['switch_fieldset']['switch'],
+        '#open' => $this->options['switch_fieldset']['switch'],
         );
       $form['switch_fieldset']['switch'] = array(
         '#type' => 'checkbox',
@@ -90,8 +89,7 @@ class EntityRow extends ViewsEntityRow {
     $form['alternating_fieldset'] = array(
       '#type' => 'details',
       '#title' => t('Alternating view mode'),
-      '#collapsible' => TRUE,
-      '#collapsed' => !$this->options['alternating_fieldset']['alternating'],
+      '#open' => $this->options['alternating_fieldset']['alternating'],
     );
     $form['alternating_fieldset']['alternating'] = array(
       '#type' => 'checkbox',
@@ -137,8 +135,7 @@ class EntityRow extends ViewsEntityRow {
     $form['grouping_fieldset'] = array(
       '#type' => 'details',
       '#title' => t('Group data'),
-      '#collapsible' => TRUE,
-      '#collapsed' => !$groupable,
+      '#open' => $groupable,
     );
     $form['grouping_fieldset']['group'] = array(
       '#type' => 'checkbox',
@@ -174,8 +171,7 @@ class EntityRow extends ViewsEntityRow {
     $form['advanced_fieldset'] = array(
       '#type' => 'details',
       '#title' => t('Advanced view mode'),
-      '#collapsible' => TRUE,
-      '#collapsed' => !$this->options['advanced_fieldset']['advanced'],
+      '#copen' => $this->options['advanced_fieldset']['advanced'],
     );
     $form['advanced_fieldset']['advanced'] = array(
       '#type' => 'checkbox',
