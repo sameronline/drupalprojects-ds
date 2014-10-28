@@ -21,16 +21,14 @@ class FieldsTest extends BaseTest {
 
     $edit = array(
       'name' => 'Test field',
-      'id' => 'test_field',
       'entities[node]' => '1',
-      'code[value]' => 'Test field',
-      'use_token' => '0',
+      'content[value]' => 'Test field',
     );
 
     $this->dsCreateTokenField($edit);
 
     // Create the same and assert it already exists.
-    $this->drupalPostForm('admin/structure/ds/fields/manage_code', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/ds/fields/manage_token', $edit, t('Save'));
     $this->assertText(t('The machine-readable name is already in use. It must be unique.'), t('Field testing already exists.'));
 
     $this->dsSelectLayout();
@@ -47,7 +45,7 @@ class FieldsTest extends BaseTest {
     $edit = array(
       'name' => 'Test field 2',
     );
-    $this->drupalPostForm('admin/structure/ds/fields/manage_code/test_field', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/ds/fields/manage_token/test_field', $edit, t('Save'));
     $this->assertText(t('The field Test field 2 has been saved'), t('Test field label updated'));
 
     // Use the Field UI limit option.
@@ -56,7 +54,7 @@ class FieldsTest extends BaseTest {
     $edit = array(
       'ui_limit' => 'article|default',
     );
-    $this->drupalPostForm('admin/structure/ds/fields/manage_code/test_field', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/ds/fields/manage_token/test_field', $edit, t('Save'));
 
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[dynamic_token_field:node-test_field][weight]', t('Test field field found on node article, default.'));
@@ -68,7 +66,7 @@ class FieldsTest extends BaseTest {
     $edit = array(
       'ui_limit' => 'article|*',
     );
-    $this->drupalPostForm('admin/structure/ds/fields/manage_code/test_field', $edit, t('Save'));
+    $this->drupalPostForm('admin/structure/ds/fields/manage_token/test_field', $edit, t('Save'));
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('fields[dynamic_token_field:node-test_field][weight]', t('Test field field found on node article, default.'));
     $this->drupalGet('admin/structure/types/manage/article/display/teaser');
@@ -87,9 +85,8 @@ class FieldsTest extends BaseTest {
     // Block fields.
     $edit = array(
       'name' => 'Test block field',
-      'id' => 'test_block_field',
       'entities[node]' => '1',
-      'block' => 'node_recent_block',
+      'block' => 'views_block:content_recent-block_1',
     );
 
     $this->dsCreateBlockField($edit);

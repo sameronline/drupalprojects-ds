@@ -11,6 +11,7 @@ use Drupal\Component\Utility\String;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -116,7 +117,8 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
       $redirect = 'admin/structure/ds/fields';
     }
 
-    return new RedirectResponse(url($redirect));
+    $url = Url::fromUri('base://' . $redirect);
+    return new RedirectResponse($url->toString());
   }
 
 }

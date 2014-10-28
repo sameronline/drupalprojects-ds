@@ -134,7 +134,6 @@ abstract class BaseTest extends WebTestBase {
 
     $edit += array(
       'name' => 'Test field',
-      'id' => 'test_field',
       'entities[node]' => '1',
       'content[value]' => 'Test field',
     );
@@ -149,17 +148,13 @@ abstract class BaseTest extends WebTestBase {
    * @param $edit
    *   An optional array of field properties.
    */
-  function dsCreateBlockField($edit = array(), $url = 'admin/structure/ds/fields/manage_block', $first = TRUE) {
+  function dsCreateBlockField($edit = array(), $url = 'admin/structure/ds/fields/manage_block') {
 
     $edit += array(
       'name' => 'Test block field',
       'entities[node]' => '1',
       'block' => 'views_block:content_recent-block_1',
     );
-
-    if ($first) {
-      $edit += array('id' => 'test_block_field');
-    }
 
     $this->drupalPostForm($url, $edit, t('Save'));
     $this->assertText(t('The field ' . $edit['name'] . ' has been saved'), t('!name field has been saved', array('!name' => $edit['name'])));
