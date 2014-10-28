@@ -79,17 +79,6 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
         $rows[] = $row;
       }
 
-      $table = array(
-        'header' => array(
-          'Label',
-          'Type',
-          'Machine name',
-          'Entities',
-          'Operations',
-        ),
-        'rows' => $rows,
-      );
-
       $build = array(
         '#theme' => 'table',
         '#header' => array(
@@ -102,13 +91,14 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
         '#rows' => $rows,
       );
 
-      $output = drupal_render($build);
     }
     else {
-      $output = $this->t('No custom fields have been defined.');
+      $build = array(
+        '#markup' => $this->t('No custom fields have been defined.'),
+      );
     }
 
-    return $output;
+    return $build;
   }
 
   /**

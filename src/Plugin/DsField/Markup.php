@@ -21,7 +21,11 @@ abstract class Markup extends DsFieldBase {
       $format = $this->format();
 
       return array(
-        '#markup' => check_markup($this->entity()->{$key}->value, $format, '', TRUE),
+        '#type' => 'processed_text',
+        '#text' => $this->entity()->{$key}->value,
+        '#format' => $format,
+        '#filter_types_to_skip' => array(),
+        '#langcode' => '',
       );
     }
   }

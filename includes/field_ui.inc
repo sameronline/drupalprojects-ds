@@ -420,11 +420,15 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
       // Additional classes on regions.
       if ($form_state->hasValue($region)) {
-        // Do not save empty string.
-        $region = $form_state->getValue($region);
-        $classes = is_array($region) ? implode(' ', $region) : array();
+        // Do not save empty classes.
+        $classes = $form_state->getValue($region);
+        foreach ($classes as $class) {
+          if (empty($class)) {
+            unset($classes[$class]);
+          }
+        }
         if (!empty($classes)) {
-          $record['settings']['classes'][$region] = $region;
+          $record['settings']['classes'][$region] = $classes;
         }
       }
 

@@ -154,7 +154,7 @@ abstract class BaseTest extends WebTestBase {
     $edit += array(
       'name' => 'Test block field',
       'entities[node]' => '1',
-      'block' => 'node_recent_block',
+      'block' => 'views_block:content_recent-block_1',
     );
 
     if ($first) {

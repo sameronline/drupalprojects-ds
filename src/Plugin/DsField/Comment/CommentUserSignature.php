@@ -33,7 +33,11 @@ class CommentUserSignature extends UserSignature {
     if (isset($user->{$key}->value)) {
       $format = $this->format();
       return array(
-        '#markup' => check_markup($user->{$key}->value, $user->{$format}->value, '', TRUE),
+        '#type' => 'processed_text',
+        '#text' => $user->{$key}->value,
+        '#format' => $user->{$format}->value,
+        '#filter_types_to_skip' => array(),
+        '#langcode' => '',
       );
     }
   }

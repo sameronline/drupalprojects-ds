@@ -18,12 +18,14 @@ abstract class TokenBase extends DsFieldBase {
   public function build() {
     $content = $this->content();
     $format = $this->format();
-
-    $value = check_markup($content, $format);
-    $value = \Drupal::service('token')->replace($value, array($this->getEntityTypeId() => $this->entity()), array('clear' => TRUE));
+    $value = \Drupal::service('token')->replace($content, array($this->getEntityTypeId() => $this->entity()), array('clear' => TRUE));
 
     return array(
-      '#markup' => $value,
+      '#type' => 'processed_text',
+      '#text' => $value,
+      '#format' => $format,
+      '#filter_types_to_skip' => array(),
+      '#langcode' => '',
     );
   }
 

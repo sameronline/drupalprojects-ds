@@ -150,34 +150,5 @@ class ViewsTest extends BaseTest {
     $this->assertRaw('Advanced display for id 1');
     $this->assertRaw('Advanced display for id 2');
     $this->assertRaw('Advanced display for id 3');
-
-    // Test views templates overrides.
-    $this->drupalGet('admin/structure/ds/vd/manage/ds_testing-page_5/display');
-    $this->assertText('No view found to layout.');
-    $edit = array(
-      'vd' => 'ds_testing-page_5',
-    );
-    $this->drupalPostForm('admin/structure/ds/vd', $edit, t('Add'));
-    $this->dsSelectLayout(array(), array(), 'admin/structure/ds/vd/manage/ds_testing-page_5/display');
-    $edit = array(
-      'fields[pager][region]' => 'header',
-      'fields[footer][region]' => 'header',
-      'fields[rows][region]' => 'left',
-      'fields[exposed][region]' => 'right',
-      'fields[header][region]' => 'footer',
-    );
-    $this->dsConfigureUI($edit, 'admin/structure/ds/vd/manage/ds_testing-page_5/display');
-
-    // Test on the views page itself.
-    $this->drupalGet('ds-testing-6');
-    $this->assertRaw('<div class="group-header">
-    <p>Footer text</p>
-  </div>');
-    $this->assertRaw('<div class="group-left">
-      <div class="views-row views-row-1 views-row-odd views-row-first">');
-    $this->assertRaw('<div class="group-right">
-    <form action="ds-testing-6"');
-    $this->assertRaw('<div class="group-footer">
-    <p>Header text</p>');
   }
 }
