@@ -684,6 +684,11 @@ function ds_entity_variables(&$vars) {
       // Add extras classes to the region.
       if (empty($layout['flexible'])) {
         $vars[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
+
+        // Token support for region classes.
+        if (module_exists('token')) {
+          $vars[$region_name . '_classes'] = token_replace($vars[$region_name . '_classes'], array($object => $vars[$object]), array('clear' => TRUE, 'sanitize' => TRUE));
+        }
       }
       // Add a wrapper to the region.
       if (empty($layout['flexible'])) {
@@ -710,6 +715,13 @@ function ds_entity_variables(&$vars) {
         unset($vars['attributes_array']['class']);
       }
       $vars['layout_attributes'] .= ' ' . drupal_attributes($vars['attributes_array']);
+    }
+
+    // Token support for layout classes.
+    if (module_exists('token')) {
+      foreach ($vars['classes_array'] as &$class) {
+        $class = token_replace($class, array($object => $vars[$object]), array('clear' => TRUE, 'sanitize' => TRUE));
+      }
     }
 
     // Add an onclick attribute on the wrapper.
