@@ -157,7 +157,7 @@ display:
           id: created
           table: node_field_data
           field: created
-          order: DESC
+          order: ASC
           relationship: none
           group_type: group
           admin_label: ''
