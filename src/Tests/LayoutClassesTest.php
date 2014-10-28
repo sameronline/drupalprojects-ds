@@ -49,7 +49,7 @@ class LayoutClassesTest extends BaseTest {
       'fields[dynamic_token_field:node-test_field][region]' => 'left',
       'fields[dynamic_block_field:node-test_block_field][region]' => 'left',
       'fields[node_submitted_by][region]' => 'left',
-      //'fields[ds_extras_extra_test_field][region]' => 'header',
+      'fields[ds_extras_extra_test_field][region]' => 'header',
     );
 
     // Setup first layout.
@@ -59,16 +59,16 @@ class LayoutClassesTest extends BaseTest {
     $this->dsConfigureUI($fields);
 
     // Assert the two extra fields are found.
-    //$this->drupalGet('admin/structure/types/manage/article/display');
-    //$this->assertRaw('ds_extras_extra_test_field');
-    //$this->assertRaw('ds_extras_second_field');
+    $this->drupalGet('admin/structure/types/manage/article/display');
+    $this->assertRaw('ds_extras_extra_test_field');
+    $this->assertRaw('ds_extras_second_field');
 
     // Assert we have configuration.
     $entity_display = entity_load('entity_view_display', 'node.article.default');
     $data = $entity_display->getThirdPartySetting('ds', 'settings');
 
     $this->assertTrue(!empty($data), t('Configuration found for layout settings for node article'));
-    //$this->assertTrue(in_array('ds_extras_extra_test_field', $data['regions']['header']), t('Extra field is in header'));
+    $this->assertTrue(in_array('ds_extras_extra_test_field', $data['regions']['header']), t('Extra field is in header'));
     $this->assertTrue(in_array('node_post_date', $data['regions']['header']), t('Post date is in header'));
     $this->assertTrue(in_array('dynamic_token_field:node-test_field', $data['regions']['left']), t('Test field is in left'));
     $this->assertTrue(in_array('node_author', $data['regions']['left']), t('Author is in left'));
@@ -102,8 +102,7 @@ class LayoutClassesTest extends BaseTest {
     // @todo title isn't set, cause we are dealing with the block itself not the instance
     //$this->assertRaw('Recent content</h2>', t('Custom block field found'));
     $this->assertRaw('Submitted by', t('Submitted field found'));
-    // @todo fix extra field functionality
-    //$this->assertText('This is an extra field made available through "Extra fields" functionality.');
+    $this->assertText('This is an extra field made available through "Extra fields" functionality.');
 
     // Test HTML5 wrappers
     $this->assertNoRaw('<header class="group-header', 'Header not found.');
