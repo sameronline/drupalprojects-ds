@@ -175,8 +175,8 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
     // Render the value
     $rendered_field_value =  drupal_render($field_value);
 
-    if (!empty($field_value)) {
-
+    // Only allow non empty fields
+    if (!empty($field_value) && $rendered_field_value !== '') {
       $build[$key] = array(
         '#theme' => 'field',
         '#field_type' => 'ds',
