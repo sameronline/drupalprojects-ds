@@ -134,6 +134,7 @@ abstract class BaseTest extends WebTestBase {
 
     $edit += array(
       'name' => 'Test field',
+      'id' => 'test_field',
       'entities[node]' => '1',
       'content[value]' => 'Test field',
     );
@@ -152,6 +153,7 @@ abstract class BaseTest extends WebTestBase {
 
     $edit += array(
       'name' => 'Test block field',
+      'id' => 'test_block_field',
       'entities[node]' => '1',
       'block' => 'views_block:content_recent-block_1',
     );

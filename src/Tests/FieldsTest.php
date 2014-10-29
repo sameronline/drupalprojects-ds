@@ -21,6 +21,7 @@ class FieldsTest extends BaseTest {
 
     $edit = array(
       'name' => 'Test field',
+      'id' => 'test_field',
       'entities[node]' => '1',
       'content[value]' => 'Test field',
     );
@@ -85,6 +86,7 @@ class FieldsTest extends BaseTest {
     // Block fields.
     $edit = array(
       'name' => 'Test block field',
+      'id' => 'test_block_field',
       'entities[node]' => '1',
       'block' => 'views_block:content_recent-block_1',
     );
