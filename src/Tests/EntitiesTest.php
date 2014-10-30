@@ -46,7 +46,7 @@ class EntitiesTest extends BaseTest {
 
     // Configure fields.
     $fields = array(
-      //'fields[dynamic_code_field:node-token_field][region]' => 'header',
+      'fields[dynamic_token_field:node-token_field][region]' => 'header',
       'fields[body][region]' => 'right',
       'fields[node_link][region]' => 'footer',
       'fields[body][label]' => $label,
@@ -120,8 +120,7 @@ class EntitiesTest extends BaseTest {
     $this->dsSelectLayout($teaser, $teaser_assert, 'admin/structure/types/manage/article/display/teaser');
 
     $fields = array(
-      //'fields[dynamic_code_field:node-token_field][region]' => 'left',
-      //'fields[dynamic_code_field:node-php_field][region]' => 'left',
+      'fields[dynamic_token_field:node-token_field][region]' => 'left',
       'fields[body][region]' => 'right',
       'fields[node_links][region]' => 'right',
     );
