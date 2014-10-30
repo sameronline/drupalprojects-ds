@@ -8,6 +8,7 @@
 namespace Drupal\ds_devel\Controller;
 
 use Drupal\Component\Utility\String;
+use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 
 /**
@@ -24,21 +25,35 @@ class DsDevelController {
   public function nodeMarkup($node, $key = 'default') {
     $node = Node::load($node);
 
-    $build = entity_view($node, $key);
-    $markup = drupal_render($build);
+    $builded_entity = entity_view($node, $key);
+    $markup = drupal_render($builded_entity);
 
     $links = array();
-    $links[] = l('Default', 'node/' . $node->id() . '/devel/markup/');
+    $links['default'] = array(
+      'title' => 'Default',
+      'url' => Url::fromRoute('ds_devel.markup', array('node' => $node->id())),
+    );
     $view_modes = \Drupal::entityManager()->getViewModes('node');
     foreach ($view_modes as $id => $info) {
       if (!empty($info['status'])) {
-        $links[] = l($info['label'], 'node/' . $node->id() . '/devel/markup/' . $id);
+        $links[] = array(
+          'title' => $info['label'],
+          'url' => Url::fromRoute('ds_devel.markup_view_mode', array('node' => $node->id(), 'key' => $id)),
+        );
       }
     }
 
-    return array(
-      '#markup' => '<div>' . implode(' - ', $links) . '</div><hr/><code><pre>' . String::checkPlain($markup) . '</pre></code>'
+    $build['links'] = array(
+      '#theme' => 'links',
+      '#links' => $links,
+      '#prefix' => '<div>',
+      '#suffix' => '</div><hr />',
     );
+    $build['markup'] = array(
+      '#markup' => '<code><pre>' . String::checkPlain($markup) . '</pre></code>',
+    );
+
+    return $build;
   }
 
 }

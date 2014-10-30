@@ -3,6 +3,8 @@ ds_devel.markup:
   defaults:
     _content: '\Drupal\ds_devel\Controller\DsDevelController::nodeMarkup'
     _title: 'Devel markup'
+  options:
+    _admin_route: TRUE
   requirements:
     _permission: 'access devel information'
 ds_devel.markup_view_mode:
@@ -10,5 +12,7 @@ ds_devel.markup_view_mode:
   defaults:
     _content: '\Drupal\ds_devel\Controller\DsDevelController::nodeMarkup'
     _title: 'Devel markup'
+  options:
+    _admin_route: TRUE
   requirements:
     _permission: 'access devel information'
