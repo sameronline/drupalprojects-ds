@@ -594,15 +594,11 @@ function ds_field_formatter_settings_summary_alter(&$summary, $context) {
     // Field template summary
     $functions = Ds::getFieldLayoutOptions();
 
-    // @todo this is broken for the moment!!
-    //$field = $context['field_definition'];
-    //$default_field_function = \Drupal::config('ds.settings')->get('ft-default');
-    //$field_function = isset($form_state['plugin_settings'][$field->getName()]['ft']['func']) ? $form_state['plugin_settings'][$field->getName()]['ft']['func'] : $default_field_function;
-    //$summary[] = 'Field template: ' . String::checkPlain($functions[$field_function]);
-    $summary[] = 'Field template: BROKEN FOR THE MOMENT';
+    $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
+    $field = $context['field_definition'];
+    $field_function = isset($form_state['plugin_settings'][$field->getName()]['ft']['func']) ? $form_state['plugin_settings'][$field->getName()]['ft']['func'] : $default_field_function;
+    $summary[] = 'Field template: ' . String::checkPlain($functions[$field_function]);
   }
-
-  return $summary;
 }
 
 /**

@@ -1,6 +1,6 @@
 disabled: false
 field_template: false
-ft-default: theme_field
+ft-default: default
 ft-kill-colon: false
 classes:
   region: {  }

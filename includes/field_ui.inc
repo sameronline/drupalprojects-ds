@@ -649,7 +649,7 @@ function ds_field_settings_summary($plugin_instance, $settings, FormStateInterfa
   $summary = $plugin_instance->settingsSummary($settings);
 
   // Add field template summary
-  ds_field_formatter_settings_summary_alter($summary, array('field' => $plugin_instance, 'form_state' => $form_state));
+  ds_field_formatter_settings_summary_alter($summary, array('field_definition' => $plugin_instance, 'form_state' => $form_state));
 
   if (empty($summary)) {
     return array();
