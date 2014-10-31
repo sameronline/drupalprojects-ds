@@ -819,7 +819,12 @@ function ds_render_ctools_field($field) {
     // 3) embed a view with the 2 taxonomies as fields.
     if (isset($field['formatter_settings']['load_terms']) && $field['formatter_settings']['load_terms']) {
       static $terms_loaded = array();
-      $language = $field['entity']->language;
+      if (isset($field['entity']->language)) {
+        $language = $field['entity']->language;
+      }
+      else {
+        $language = LANGUAGE_NONE;
+      }
       $instances = field_info_instances($field['entity_type'], $field['bundle']);
       foreach ($instances as $key => $instance) {
         $info = field_info_field($key);
