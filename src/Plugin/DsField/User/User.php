@@ -28,7 +28,7 @@ class User extends Entity {
     $view_mode = $this->getEntityViewMode();
 
     $node = $this->entity();
-    $uid = $node->getAuthorId();
+    $uid = $node->getOwnerId();
 
     $user = entity_load('user', $uid);
     $build = entity_view($user, $view_mode);
