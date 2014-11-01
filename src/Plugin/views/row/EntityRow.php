@@ -8,6 +8,7 @@
 namespace Drupal\ds\Plugin\views\row;
 
 use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\DependencyInjection\Container;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\row\EntityRow as ViewsEntityRow;
@@ -146,7 +147,7 @@ class EntityRow extends ViewsEntityRow {
     if (!empty($sorts)) {
       $sort_options = array();
       foreach ($sorts as $sort) {
-        $sort_name = drupal_ucfirst($sort['field']);
+        $sort_name = Unicode::ucfirst($sort['field']);
         $sort_options[$sort['table'] . '|' . $sort['field']] = $sort_name;
       }
 

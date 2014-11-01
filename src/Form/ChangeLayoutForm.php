@@ -106,7 +106,7 @@ class ChangeLayoutForm extends FormBase {
       // Show previews from old and new layouts
       $form['preview'] = array(
         '#type' => 'container',
-        '#prefix' => '<div class="ds-layout-preview"/>',
+        '#prefix' => '<div class="ds-layout-preview">',
         '#suffix' => '</div>',
       );
 

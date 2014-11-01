@@ -61,8 +61,6 @@ class DynamicCopyField extends DsFieldBase {
    */
   public function defaultConfiguration() {
     return array();
-    // @todo fix this
-    return $this->field_instance->defaultConfiguration();
   }
 
 

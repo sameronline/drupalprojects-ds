@@ -7,6 +7,7 @@
 
 namespace Drupal\ds\Plugin\DsFieldLayout;
 use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\Xss;
 
 /**
  * Plugin for the expert field template.
@@ -141,7 +142,7 @@ class Expert extends DsFieldLayoutBase {
       $field_settings['lb-cl'] = String::checkPlain($values['lb-cl']);
     }
     if (!(empty($values['lb-at']))) {
-      $field_settings['lb-at'] = filter_xss($values['lb-at']);
+      $field_settings['lb-at'] = Xss::filter($values['lb-at']);
     }
     if (!(empty($values['lb-def-at']))) {
       $field_settings['lb-def-at'] = TRUE;
@@ -163,7 +164,7 @@ class Expert extends DsFieldLayoutBase {
           $field_settings[$wrapper_key . '-def-cl'] = !(empty($values[$wrapper_key . '-def-cl'])) ? TRUE : FALSE;
         }
         // Attributes.
-        $field_settings[$wrapper_key . '-at'] = !(empty($values[$wrapper_key . '-at'])) ? filter_xss($values[$wrapper_key . '-at']) : '';
+        $field_settings[$wrapper_key . '-at'] = !(empty($values[$wrapper_key . '-at'])) ? Xss::filter($values[$wrapper_key . '-at']) : '';
         // Default attributes.
         $field_settings[$wrapper_key . '-def-at'] = !(empty($values[$wrapper_key . '-def-at'])) ? TRUE : FALSE;
       }

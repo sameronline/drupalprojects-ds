@@ -7,6 +7,7 @@
 
 namespace Drupal\ds_ui\Form;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManager;
@@ -131,7 +132,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
     $entities = $this->entityManager->getDefinitions();
     foreach ($entities as $entity_type => $entity_info) {
       if ($entity_info->get('field_ui_base_route') || $entity_type == 'ds_views') {
-        $entity_options[$entity_type] = drupal_ucfirst(str_replace('_', ' ', $entity_type));
+        $entity_options[$entity_type] = Unicode::ucfirst(str_replace('_', ' ', $entity_type));
       }
     }
     $form['entities'] = array(

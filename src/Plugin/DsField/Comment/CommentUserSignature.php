@@ -40,6 +40,8 @@ class CommentUserSignature extends UserSignature {
         '#langcode' => '',
       );
     }
+
+    return array();
   }
 
 }

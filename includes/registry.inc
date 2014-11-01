@@ -291,7 +291,7 @@ function _ds_ds_layout_info() {
   );
 
   // Get layouts defined in the active theme and base theme (if applicable).
-  $themes = list_themes();
+  $themes = \Drupal::service('theme_handler')->listInfo();
   $theme = \Drupal::config('system.theme')->get('default');
 
   $base_theme = array();

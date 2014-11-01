@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
@@ -729,7 +730,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
 
     // Create new layout option group.
     if (!empty($layout['module'])) {
-      $optgroup = drupal_ucfirst($layout['module']);
+      $optgroup = Unicode::ucfirst($layout['module']);
     }
 
     if (!isset($layout_options[$optgroup])) {
@@ -940,7 +941,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
           continue;
         }
         if ($row['targetEntityType'] == $entity_type && $row['bundle'] == $bundle) {
-          $options[$row['id']] = drupal_ucfirst(str_replace('_', ' ', $row['targetEntityType'])) . ' > ' . drupal_ucfirst(str_replace('_', ' ', $row['bundle'])) . ' > ' . drupal_ucfirst(str_replace('_', ' ', $row['mode']));
+          $options[$row['id']] = Unicode::ucfirst(str_replace('_', ' ', $row['targetEntityType'])) . ' > ' . Unicode::ucfirst(str_replace('_', ' ', $row['bundle'])) . ' > ' . Unicode::ucfirst(str_replace('_', ' ', $row['mode']));
         }
       }
 

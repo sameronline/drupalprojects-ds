@@ -28,6 +28,8 @@ abstract class Markup extends DsFieldBase {
         '#langcode' => '',
       );
     }
+
+    return array();
   }
 
   /**

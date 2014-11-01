@@ -18,7 +18,7 @@ class ExportablesTest extends BaseTest {
    * Enables the exportables module.
    */
   function dsExportablesSetup() {
-    module_enable(array('ds_exportables_test'));
+    \Drupal::moduleHandler()->install(array('ds_exportables_test'));
     drupal_flush_all_caches();
   }
 

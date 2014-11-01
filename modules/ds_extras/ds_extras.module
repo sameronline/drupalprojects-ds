@@ -5,6 +5,7 @@
  */
 
 use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -232,9 +233,10 @@ function ds_extras_switch_view_mode_preview_callback($form, $form_state) {
  * Implements hook_entity_base_field_info().
  */
 function ds_extras_entity_base_field_info(EntityTypeInterface $entity_type) {
+  // Add the switch field as a base field.
+  $fields = array();
+
   if ($entity_type->id() == 'node') {
-    // Add the switch field as a base field.
-    $fields = array();
     $fields['ds_switch'] = BaseFieldDefinition::create('string')
       ->setLabel(t('DS switch'))
       ->setName('ds_switch')
@@ -242,8 +244,9 @@ function ds_extras_entity_base_field_info(EntityTypeInterface $entity_type) {
       ->setDescription(t('Holds the DS view mode of the node.'))
       ->setSetting('default_value', '')
       ->setPropertyConstraints('value', array('Length' => array('max' => 60)));
-    return $fields;
   }
+
+  return $fields;
 }
 
 /**
@@ -291,8 +294,8 @@ function ds_extras_entity_extra_field_info() {
       if (!empty($field)) {
         list($entity, $bundle, $field_name) = explode('|', $field);
         $extra[String::checkPlain($entity)][String::checkPlain($bundle)]['display'][$field_name] = array(
-          'label' => drupal_ucfirst(str_replace('_', ' ', String::checkPlain($field_name))),
-          'description' => drupal_ucfirst(str_replace('_', ' ', String::checkPlain($field_name))),
+          'label' => Unicode::ucfirst(str_replace('_', ' ', String::checkPlain($field_name))),
+          'description' => Unicode::ucfirst(str_replace('_', ' ', String::checkPlain($field_name))),
           'weight' => 0,
         );
       }

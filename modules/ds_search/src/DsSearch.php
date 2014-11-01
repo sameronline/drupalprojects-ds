@@ -198,5 +198,7 @@ trait DsSearch {
           array('@start' => $start, '@end' => $end));
         break;
     }
+
+    return '';
   }
 }

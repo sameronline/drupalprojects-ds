@@ -242,29 +242,31 @@ function ds_extras_block_submit($form, FormStateInterface $form_state) {
   if ($form_state->hasValue('remove_block_region')) {
     $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
     $remove = $form_state->hasValue('remove_block_region');
-    foreach ($remove as $key => $value) {
-      if ($key === $value) {
-        unset($region_blocks[$key]);
-      }
+    if ($remove) {
+      foreach ($region_blocks as $key => $value) {
+        if ($key === $value) {
+          unset($region_blocks[$key]);
+        }
 
-      // Make sure there is no active block instance for this ds block region.
-      if (\Drupal::moduleHandler()->moduleExists('block')) {
-        $ids = \Drupal::entityQuery('block')
-          ->condition('plugin', 'ds_region_block:' . $key)
-          ->execute();
-        $block_storage = \Drupal::entityManager()->getStorage('block');
-        foreach ($block_storage->loadMultiple($ids) as $block) {
-          $block->delete();
+        // Make sure there is no active block instance for this ds block region.
+        if (\Drupal::moduleHandler()->moduleExists('block')) {
+          $ids = \Drupal::entityQuery('block')
+            ->condition('plugin', 'ds_region_block:' . $key)
+            ->execute();
+          $block_storage = \Drupal::entityManager()->getStorage('block');
+          foreach ($block_storage->loadMultiple($ids) as $block) {
+            $block->delete();
+          }
         }
       }
+
+      // Clear cached block and ds plugin defintions
+      \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
+      \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
+
+      // Remove the region from ds settings
+      \Drupal::config('ds.extras')->set('region_blocks', $region_blocks)->save();
     }
-
-    // Clear cached block and ds plugin defintions
-    \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
-    \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
-
-    // Remove the region from ds settings
-    \Drupal::config('ds.extras')->set('region_blocks', $region_blocks)->save();
   }
 }
 
