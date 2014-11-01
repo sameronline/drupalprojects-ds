@@ -63,11 +63,11 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
         $operations = array();
         $operations['edit'] = array(
           'title' => $this->t('Edit'),
-          'url' => new url('ds_ui.manage_field', array('field_key' => $field_value['id'])),
+          'url' => new Url('ds_ui.manage_field', array('field_key' => $field_value['id'])),
         );
         $operations['delete'] = array(
           'title' => $this->t('Delete'),
-          'url' => new url('ds_ui.delete_field', array('field' => $field_value['id'])),
+          'url' => new Url('ds_ui.delete_field', array('field' => $field_value['id'])),
         );
         $row[] = array(
           'data' => array(
@@ -108,7 +108,7 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
   public function manageRedirect($field_key) {
     $config = $this->config('ds.field.' . $field_key);
     if ($field = $config->get()) {
-      $url = new url('ds_ui.manage_' . $field['type'] . '_field', array('field_key' => $field_key));
+      $url = new Url('ds_ui.manage_' . $field['type'] . '_field', array('field_key' => $field_key));
       if ($url->toString()) {
         return new RedirectResponse($url->toString());
       }

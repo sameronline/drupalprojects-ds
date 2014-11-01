@@ -291,7 +291,7 @@ function ds_preprocess_ds_layout(&$variables) {
         $url = '';
         switch ($layout['settings']['layout_link_attribute']) {
           case 'content':
-            $url = $variables['elements']['#' . $object]->getSystemPath();
+            $url = $variables['elements']['#' . $object]->urlInfo()->getInternalPath();
             break;
           case 'custom':
             $url = $layout['settings']['layout_link_custom'];
@@ -302,7 +302,9 @@ function ds_preprocess_ds_layout(&$variables) {
         }
 
         if (!empty($url)) {
-          $variables['attributes']['onclick'] = 'location.href=\'' . url($url) . '\'';
+          $url = Url::fromUri('base://' . $url);
+          $variables['attributes']['onclick'] = 'location.href=\'' . $url->toString() . '\'';
+
         }
       }
 

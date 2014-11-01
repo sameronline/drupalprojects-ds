@@ -150,7 +150,7 @@ class DsUserSearch extends ConfigurableSearchPluginBase implements AccessibleInt
       $result = array(
         'user' => $account,
         'title' => $account->getUsername(),
-        'link' => url('user/' . $account->id(), array('absolute' => TRUE)),
+        'link' => _url('user/' . $account->id(), array('absolute' => TRUE)),
       );
       if ($this->currentUser->hasPermission('administer users')) {
         $result['title'] .= ' (' . $account->getEmail() . ')';
