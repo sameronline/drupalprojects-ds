@@ -16,7 +16,7 @@ use Drupal\Core\Block\BlockBase;
  *   id = "ds_region_block",
  *   admin_label = @Translation("Ds region block"),
  *   category = @Translation("Display Suite"),
- *   derivative = "Drupal\ds_extras\Plugin\Derivative\DsRegionBlock"
+ *   deriver = "Drupal\ds_extras\Plugin\Derivative\DsRegionBlock"
  * )
  */
 class DsRegionBlock extends BlockBase {
@@ -25,7 +25,7 @@ class DsRegionBlock extends BlockBase {
    * {@inheritdoc}
    */
   public function build() {
-    $id = $this->getBaseId();
+    $id = $this->getDerivativeId();
     $data = drupal_static('ds_block_region');
 
     if (!empty($data[$id])) {
