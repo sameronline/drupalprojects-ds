@@ -17,6 +17,11 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 class BlockFieldForm extends FieldFormBase implements ContainerInjectionInterface {
 
   /**
+   * The type of the dynamic ds field
+   */
+  const TYPE = 'block';
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -62,7 +67,7 @@ class BlockFieldForm extends FieldFormBase implements ContainerInjectionInterfac
    * {@inheritdoc}
    */
   public function getType() {
-    return DS_FIELD_TYPE_BLOCK;
+    return BlockFieldForm::TYPE;
   }
 
   /**

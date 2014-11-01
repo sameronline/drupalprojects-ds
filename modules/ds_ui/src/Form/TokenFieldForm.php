@@ -16,6 +16,11 @@ use Drupal\ds_ui\Form\FieldFormBase;
 class TokenFieldForm extends FieldFormBase {
 
   /**
+   * The type of the dynamic ds field
+   */
+  const TYPE = 'token';
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -73,7 +78,7 @@ class TokenFieldForm extends FieldFormBase {
    * {@inheritdoc}
    */
   public function getType() {
-    return DS_FIELD_TYPE_TOKEN;
+    return TokenFieldForm::TYPE;
   }
 
   /**

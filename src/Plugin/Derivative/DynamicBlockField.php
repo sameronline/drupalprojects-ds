@@ -7,6 +7,8 @@
 
 namespace Drupal\ds\Plugin\Derivative;
 
+use Drupal\ds_ui\Form\BlockFieldForm;
+
 /**
  * Retrieves dynamic block field plugin definitions.
  */
@@ -16,7 +18,7 @@ class DynamicBlockField extends DynamicField {
    * {@inheritdoc}
    */
   protected function getType() {
-    return DS_FIELD_TYPE_BLOCK;
+    return BlockFieldForm::TYPE;
   }
 
 }

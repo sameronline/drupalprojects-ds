@@ -16,6 +16,11 @@ use Drupal\ds_ui\Form\FieldFormBase;
 class CopyFieldForm extends FieldFormBase{
 
   /**
+   * The type of the dynamic ds field
+   */
+  const TYPE = 'copy';
+
+  /**
    * {@inheritdoc}
    */
   public function getFormID() {
@@ -65,7 +70,7 @@ class CopyFieldForm extends FieldFormBase{
    * {@inheritdoc}
    */
   public function getType() {
-    return DS_FIELD_TYPE_COPY;
+    return CopyFieldForm::TYPE;
   }
 
   /**
