@@ -493,7 +493,7 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
 
   // Fetch values from form_state.
   $all_field_values = $form_state->getValue('fields');
-  $all_plugin_settings = $form_state->getValue('plugin_settings');
+  $all_plugin_settings = $form_state->get('plugin_settings');
 
   // Save settings for each field.
   $fields = $form['#ds_fields'];

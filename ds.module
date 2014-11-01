@@ -598,7 +598,15 @@ function ds_field_formatter_settings_summary_alter(&$summary, $context) {
 
     $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
     $field = $context['field_definition'];
-    $field_function = isset($form_state['plugin_settings'][$field->getName()]['ft']['func']) ? $form_state['plugin_settings'][$field->getName()]['ft']['func'] : $default_field_function;
+
+    $plugin_settings = array();
+    if (isset($context['form_state'])) {
+      /** @var $form_state FormStateInterface */
+      $form_state = $context['form_state'];
+      $plugin_settings = $form_state->get('plugin_settings');
+    }
+
+    $field_function = isset($plugin_settings[$field->getName()]['settings']['ft']['func']) ? $plugin_settings[$field->getName()]['settings']['ft']['func'] : $default_field_function;
     $summary[] = 'Field template: ' . String::checkPlain($functions[$field_function]);
   }
 }
