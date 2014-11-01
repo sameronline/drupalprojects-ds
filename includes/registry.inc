@@ -28,7 +28,7 @@ function _ds_theme() {
     foreach ($field_layouts as $key => $plugin) {
       if ($key != 'default') {
         $theme_functions[$plugin['theme']] = array(
-          'render element' => 'element',
+          'render element' => 'elements',
           'function' => $plugin['theme'],
           'base hook' => 'field',
         );

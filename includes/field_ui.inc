@@ -472,9 +472,11 @@ function ds_field_ui_fields_validate($form, FormStateInterface $form_state) {
     if (isset($fields[$key]['settings_edit_form']['settings']['ft'])) {
       $settings = $fields[$key]['settings_edit_form']['settings']['ft'];
       if (!empty($settings)) {
-        $plugin_settings = $form_state->getValue('plugin_settings');
+        $plugin_settings = $form_state->get('plugin_settings');
         $merge = isset($plugin_settings[$key]['ft']) ? $plugin_settings[$key]['ft'] : array();
         $plugin_settings[$key]['ft'] = array_merge($merge, $settings);
+
+        $form_state->set('plugin_settings', $plugin_settings);
       }
     }
   }

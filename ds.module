@@ -454,7 +454,6 @@ function ds_preprocess_field(&$variables) {
  * Implements hook_theme_suggestions_HOOK_alter() for field templates.
  */
 function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
-
   // We need to be sure this field is in a layout which is rendered by DS.
   // @todo allow field templates always?
   if (!Ds::getLayout($variables['element']['#entity_type'], $variables['element']['#bundle'], $variables['element']['#view_mode'])) {
@@ -469,6 +468,7 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
   if (!isset($field_settings[$entity_type][$bundle][$view_mode])) {
     $field_settings[$entity_type][$bundle][$view_mode] = Ds::getFieldSettings($entity_type, $bundle, $view_mode);
   }
+
 
   // Get the field name and field instance info - if available.
   $field_name = $variables['element']['#field_name'];
@@ -533,7 +533,7 @@ function ds_field_template_settings_form(array &$form, FormStateInterface &$form
   }
 
   $plugin_settings = $form_state->get('plugin_settings');
-  $field_settings = isset($plugin_settings[$key]['settings']) ? $plugin_settings[$key]['settings']['ft'] : array();
+  $field_settings = isset($plugin_settings[$key]) ? $plugin_settings[$key]['ft'] : array();
 
   // In case with an ajax refresh we fetch the function from a different place
   $values = $form_state->getValues();
@@ -606,7 +606,7 @@ function ds_field_formatter_settings_summary_alter(&$summary, $context) {
       $plugin_settings = $form_state->get('plugin_settings');
     }
 
-    $field_function = isset($plugin_settings[$field->getName()]['settings']['ft']['func']) ? $plugin_settings[$field->getName()]['settings']['ft']['func'] : $default_field_function;
+    $field_function = isset($plugin_settings[$field->getName()]['ft']['func']) ? $plugin_settings[$field->getName()]['ft']['func'] : $default_field_function;
     $summary[] = 'Field template: ' . String::checkPlain($functions[$field_function]);
   }
 }

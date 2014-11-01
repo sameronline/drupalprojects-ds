@@ -21,7 +21,7 @@ function theme_ds_field_reset($variables) {
 
   // Render the items.
   foreach ($variables['items'] as $item) {
-    $output .= drupal_render($item);
+    $output .= drupal_render($item['content']);
   }
 
   return $output;
@@ -49,7 +49,7 @@ function theme_ds_field_minimal($variables) {
 
   // Render the items.
   foreach ($variables['items'] as $item) {
-    $output .= drupal_render($item);
+    $output .= drupal_render($item['content']);
   }
   $output .="</div>";
 
@@ -110,7 +110,7 @@ function theme_ds_field_expert($variables) {
     }
 
     // Render field content.
-    $output .= drupal_render($item);
+    $output .= drupal_render($item['content']);
 
     // Closing field item wrapper.
     if (!empty($config['fi'])) {
