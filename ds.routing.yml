@@ -34,21 +34,21 @@ ds.change_layout:
   requirements:
     _permission: 'admin display suite'
 
-ds.contextual_tab_node:
+entity.node.contextual_tab:
   path: '/node/{node}/display'
   defaults:
     _controller: '\Drupal\ds\Controller\DsController::contextualNodeTab'
   requirements:
     _permission: 'administer content'
     _access_ds_contextual_tab: 'TRUE'
-ds.contextual_tab_user:
+entity.user.contextual_tab:
   path: '/user/{user}/display'
   defaults:
     _controller: '\Drupal\ds\Controller\DsController::contextualUserTab'
   requirements:
     _permission: 'administer users'
     _access_ds_contextual_tab: 'TRUE'
-ds.contextual_tab_taxonomy_term:
+entity.taxonomy_term.contextual_tab:
   path: '/taxonomy/term/{taxonomy_term}/display'
   defaults:
     _controller: '\Drupal\ds\Controller\DsController::contextualTaxonomyTermTab'

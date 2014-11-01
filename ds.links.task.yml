@@ -13,18 +13,18 @@ ds.emergency_task:
   title: Emergency
   parent_id: ds.display_task
   weight: 100
-ds.manage_node_display:
-  route_name: ds.contextual_tab_node
-  base_route: node.view
+entity.node.contextual_tab:
+  route_name: entity.node.contextual_tab
+  base_route: entity.node.canonical
   title: 'Manage display'
   weight: 10
-ds.manage_taxonomy_term_display:
-  route_name: ds.contextual_tab_taxonomy_term
-  base_route: taxonomy.term_page
+entity.taxonomy_term.contextual_tab:
+  route_name: entity.taxonomy_term.contextual_tab
+  base_route: entity.taxonomy_term.canonical
   title: 'Manage display'
   weight: 10
-ds.manage_user_display:
-  route_name: ds.contextual_tab_user
-  base_route: user.view
+entity.user.contextual_tab:
+  route_name: entity.user.contextual_tab
+  base_route: entity.user.canonical
   title: 'Manage display'
   weight: 10

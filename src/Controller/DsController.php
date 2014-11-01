@@ -9,6 +9,7 @@ namespace Drupal\ds\Controller;
 
 use Drupal\Component\Utility\String;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\Entity;
 use Drupal\Core\Entity\EntityDisplayBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
@@ -149,8 +150,7 @@ class DsController extends ControllerBase {
   public function contextualTab($entity_type, $entity_id) {
     /** @var $entity EntityInterface */
     $entity = entity_load($entity_type, $entity_id);
-
-    $destination = $entity->getSystemPath();
+    $destination = $entity->urlInfo();
 
     if (!empty($entity->ds_switch->value)) {
       $view_mode = $entity->ds_switch->value;
@@ -176,13 +176,17 @@ class DsController extends ControllerBase {
     $route_parameters = $route->getRouteParameters();
     if (!empty($layout) || $overridden) {
       $route_parameters['view_mode_name'] = $view_mode;
-      $admin_path = $this->url('field_ui.display_overview_view_mode_' . $entity_type, $route_parameters, $route->getOptions());
+      $admin_route_name = 'field_ui.display_overview_view_mode_' . $entity_type;
     }
     else {
-      $admin_path = $this->url('field_ui.display_overview_' . $entity->getEntityTypeId(), $route_parameters, $route->getOptions());
+      $admin_route_name = 'field_ui.display_overview_' . $entity->getEntityTypeId();
     }
 
-    return new RedirectResponse(url($admin_path, array('query' => array('destination' => $destination))));
+    $options = $route->getOptions();
+    $options['query'] = array('destination' => $destination->toString());
+    $url = new Url($admin_route_name, $route_parameters, $options);
+
+    return new RedirectResponse($url->toString());
   }
 
 }
