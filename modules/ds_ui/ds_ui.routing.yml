@@ -52,14 +52,14 @@ ds_ui.add_block_field:
     _title: 'Add a block field'
   requirements:
     _permission: 'admin fields'
-manage_copy_field:
+ds_ui.manage_copy_field:
   path: 'admin/structure/ds/fields/manage_copy/{field_key}'
   defaults:
     _form: '\Drupal\ds_ui\Form\CopyFieldForm'
     _title: 'Edit a copy of a Display Suite field'
   requirements:
     _permission: 'admin fields'
-add_copy_field:
+ds_ui.add_copy_field:
   path: 'admin/structure/ds/fields/manage_copy'
   defaults:
     _form: '\Drupal\ds_ui\Form\CopyFieldForm'

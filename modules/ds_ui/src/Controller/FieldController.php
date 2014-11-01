@@ -63,11 +63,11 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
         $operations = array();
         $operations['edit'] = array(
           'title' => $this->t('Edit'),
-          'href' => 'admin/structure/ds/fields/manage/' . $field_value['id'],
+          'url' => new url('ds_ui.manage_field', array('field_key' => $field_value['id'])),
         );
         $operations['delete'] = array(
           'title' => $this->t('Delete'),
-          'href' => 'admin/structure/ds/fields/delete/' . $field_value['id'],
+          'url' => new url('ds_ui.delete_field', array('field' => $field_value['id'])),
         );
         $row[] = array(
           'data' => array(
@@ -106,18 +106,16 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
    * Redirect to the correct manage callback.
    */
   public function manageRedirect($field_key) {
-    $redirect = '';
     $config = $this->config('ds.field.' . $field_key);
     if ($field = $config->get()) {
-      $redirect = 'admin/structure/ds/fields/manage_' . $field['type'] . '/' . $field_key;
+      $url = new url('ds_ui.manage_' . $field['type'] . '_field', array('field_key' => $field_key));
+      if ($url->toString()) {
+        return new RedirectResponse($url->toString());
+      }
     }
 
-    if (!$redirect) {
-      drupal_set_message($this->t('Field not found'));
-      $redirect = 'admin/structure/ds/fields';
-    }
-
-    $url = Url::fromUri('base://' . $redirect);
+    drupal_set_message($this->t('Field not found'));
+    $url = new Url('ds_ui.fields_list');
     return new RedirectResponse($url->toString());
   }
 
