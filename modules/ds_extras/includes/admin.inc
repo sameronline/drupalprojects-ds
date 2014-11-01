@@ -241,12 +241,11 @@ function ds_extras_block_submit($form, FormStateInterface $form_state) {
   // Remove a region.
   if ($form_state->hasValue('remove_block_region')) {
     $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
-    $remove = $form_state->hasValue('remove_block_region');
-    if ($remove) {
-      foreach ($region_blocks as $key => $value) {
-        if ($key === $value) {
-          unset($region_blocks[$key]);
-        }
+    $region_removal_status = $form_state->getValue('remove_block_region');
+
+    foreach ($region_removal_status as $key => $value) {
+      if ($key === $value) {
+        unset($region_blocks[$key]);
 
         // Make sure there is no active block instance for this ds block region.
         if (\Drupal::moduleHandler()->moduleExists('block')) {
@@ -259,14 +258,14 @@ function ds_extras_block_submit($form, FormStateInterface $form_state) {
           }
         }
       }
-
-      // Clear cached block and ds plugin defintions
-      \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
-      \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
-
-      // Remove the region from ds settings
-      \Drupal::config('ds.extras')->set('region_blocks', $region_blocks)->save();
     }
+
+    // Clear cached block and ds plugin defintions
+    \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
+    \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
+
+    // Remove the region from ds settings
+    \Drupal::config('ds.extras')->set('region_blocks', $region_blocks)->save();
   }
 }
 
