@@ -23,7 +23,7 @@ use Drupal\node\NodeInterface;
 class User extends Entity {
 
   /**
-   * {@inhertidoc}
+   * {@inheritdoc}
    */
   public function build() {
     $view_mode = $this->getEntityViewMode();
@@ -39,7 +39,7 @@ class User extends Entity {
   }
 
   /**
-   * {@inhertidoc}
+   * {@inheritdoc}
    */
   public function linkedEntity() {
     return 'user';
