@@ -659,7 +659,9 @@ function ds_field_settings_summary($plugin_instance, $settings, FormStateInterfa
   }
 
   return array(
-    '#markup' => '<div class="field-plugin-summary">' . implode('<br />', $summary) . '</div>',
+    '#type' => 'inline_template',
+    '#template' => '<div class="field-plugin-summary">{{ summary|safe_join("<br />") }}</div>',
+    '#context' => array('summary' => $summary),
     '#cell_attributes' => array('class' => array('field-plugin-summary-cell')),
   );
 }
@@ -1017,8 +1019,6 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
     '#title' => t('Select a layout'),
     '#options' => $layout['layout_options'],
     '#default_value' => isset($layout['layout']) ? $layout['layout'] : '',
-    '#prefix' => '<div class="ds-select-layout">',
-    '#suffix' => '</div>',
     '#weight' => -1,
     '#ajax' => array(
       'callback' => 'ds_field_ui_table_layouts_preview_callback',
@@ -1069,14 +1069,17 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
       $current_layout = $form_state->hasValue('layout') && (!isset($layout->layout) || $form_state->getValue('layout') != $layout->layout) ? t('Current layout (after save)') : t('Current layout');
       $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $layout_string . '.png' : $fallback_image;
 
-      $form['ds_layouts']['preview'] ['title'] = array(
+      $form['ds_layouts']['preview']['title'] = array(
         '#markup' => '<div class="ds-layout-preview-title">' . $current_layout . '</div>',
       );
-      $form['ds_layouts']['preview'] ['image'] = array(
+      $form['ds_layouts']['preview']['image'] = array(
         '#markup' => '<div class="ds-layout-preview-image"><img src="' . base_path() . $image . '"/></div>',
       );
-      $form['ds_layouts']['preview'] ['suggestions'] = array(
+      $form['ds_layouts']['preview']['suggestions'] = array(
         '#markup' => '<div class="ds-layout-preview-suggestion"><p>' . $selected . '</p><p>' . t('!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p></div>',
+      );
+      $form['ds_layouts']['preview']['clear'] = array(
+        '#markup' => '<div class="ds-after-suggestion"></div>',
       );
     }
 
@@ -1624,9 +1627,7 @@ function ds_field_row_form_format_summary_construct(&$table, $key, FormStateInte
   $build_info = $form_state->getBuildInfo();
 
   $base_button = array(
-    '#submit' => array(
-      array($build_info['callback_object'], 'multistepSubmit'),
-    ),
+    '#submit' => array(array($build_info['callback_object'], 'multistepSubmit')),
     '#ajax' => array(
       'callback' => array($build_info['callback_object'], 'multistepAjax'),
       'wrapper' => 'field-display-overview-wrapper',
@@ -1642,8 +1643,9 @@ function ds_field_row_form_format_summary_construct(&$table, $key, FormStateInte
     '#src' => 'core/misc/configure-dark.png',
     '#attributes' => array('class' => array('field-plugin-settings-edit'), 'alt' => t('Edit')),
     '#op' => 'edit',
-    // Do not check errors for the 'Edit' button.
-    '#limit_validation_errors' => array(),
+    // Do not check errors for the 'Edit' button, but make sure we get
+    // the value of the 'plugin type' select.
+    '#limit_validation_errors' => array(array('fields', $key, 'type')),
     '#prefix' => '<div class="field-plugin-settings-edit-wrapper">',
     '#suffix' => '</div>',
   );
