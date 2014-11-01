@@ -8,6 +8,7 @@
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -95,6 +96,7 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
       return $this->configuration['entity_type'];
     }
     elseif ($entity = $this->entity()) {
+      /** @var $entity EntityInterface */
       return $entity->getEntityTypeId();
     }
     else {
@@ -143,7 +145,6 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
    *   The view mode you're performing the check for.
    */
   public static function dynamicFieldIsAllowed(array $definition, $bundle, $view_mode) {
-
     if (!isset($definition['ui_limit'])) {
       return TRUE;
     }

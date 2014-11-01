@@ -8,7 +8,6 @@
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
-use Drupal\Core\Plugin\PluginFormInterface;
 
 /**
  * Interface for DS plugins.

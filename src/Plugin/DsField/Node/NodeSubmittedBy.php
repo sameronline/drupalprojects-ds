@@ -8,6 +8,8 @@
 namespace Drupal\ds\Plugin\DsField\Node;
 
 use Drupal\ds\Plugin\DsField\Date;
+use Drupal\node\NodeInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Plugin that renders the submitted by field.
@@ -26,7 +28,13 @@ class NodeSubmittedBy extends Date {
    */
   public function build() {
     $field = $this->getFieldConfiguration();
-    $account = $this->entity()->getOwner();
+
+    /** @var $node NodeInterface */
+    $node = $this->entity();
+
+    /** @var $account UserInterface */
+    $account = $node->getOwner();
+
     switch ($field['formatter']) {
       case 'ds_time_ago':
         $interval = REQUEST_TIME - $this->entity()->created->value;

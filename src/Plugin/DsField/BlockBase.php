@@ -7,6 +7,8 @@
 
 namespace Drupal\ds\Plugin\DsField;
 
+use Drupal\Core\Block\BlockPluginInterface;
+
 /**
  * The base plugin to create DS block fields.
  */
@@ -20,6 +22,7 @@ abstract class BlockBase extends DsFieldBase {
 
     // Create the wanted block class
     $id = $this->blockPluginId();
+    /** @var $block BlockPluginInterface */
     $block = $manager->createInstance($id);
 
     // Get render array.

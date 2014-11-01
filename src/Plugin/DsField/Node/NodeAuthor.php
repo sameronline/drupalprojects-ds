@@ -9,6 +9,8 @@ namespace Drupal\ds\Plugin\DsField\Node;
 
 use Drupal\Component\Utility\String;
 use Drupal\ds\Plugin\DsField\DsFieldBase;
+use Drupal\node\NodeInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Plugin that renders the author of a node.
@@ -26,7 +28,11 @@ class NodeAuthor extends DsFieldBase {
    * {@inheritdoc}
    */
   public function build() {
-    $user = $this->entity()->getOwner();
+    /** @var $node NodeInterface */
+    $node = $this->entity();
+
+    /** @var $user UserInterface */
+    $user = $node->getOwner();
 
     // Users without a user name are anonymous users. These are never linked.
     if (empty($user->name)) {

@@ -100,7 +100,7 @@ class EntitiesTest extends BaseTest {
     // Look at node and verify token and block field.
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('view-mode-full', 'Template file found (in full view mode)');
-    $this->assertRaw('<div class="token-class">' . $node->getTitle(). '</span>', t('Token field found'));
+    $this->assertRaw('<div class="token-class">' . $node->getTitle() . '</span>', t('Token field found'));
     $this->assertRaw('group-header', 'Template found (region header)');
     $this->assertRaw('group-footer', 'Template found (region footer)');
     $this->assertRaw('group-left', 'Template found (region left)');

@@ -8,6 +8,7 @@
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Component\Utility\String;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * The base plugin to create DS fields.
@@ -44,9 +45,10 @@ abstract class Field extends DsFieldBase {
 
     // Link.
     if (!empty($config['link'])) {
-      $uri_info = $this->entity()->urlInfo();
-      // @todo fixme
-      //$output = _l($output, $this->entity()->getSystemPath(), $uri_info['options']);
+      /** @var $entity EntityInterface */
+      $entity = $this->entity();
+      $url_info = $entity->urlInfo();
+      $output = \Drupal::l($output, $url_info);
     }
     else {
       $output = String::checkPlain($output);
