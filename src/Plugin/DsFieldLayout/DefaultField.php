@@ -53,4 +53,16 @@ class DefaultField extends DsFieldLayoutBase {
     return $config;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function massageFormValues(&$field_settings, $values) {
+    if (!empty($values['lb'])) {
+      $field_settings['lb'] = $values['lb'];
+    }
+    if (!(empty($values['lb-col']))) {
+      $field_settings['lb-col'] = TRUE;
+    }
+  }
+
 }
