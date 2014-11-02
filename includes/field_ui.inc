@@ -1337,7 +1337,7 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
 
   // Get all persisted values for fields and plugin settings
   $form_state_field_values = $form_state->getValue('fields', array());
-  $form_state_plugin_settings = $form_state->getValue('plugin_settings', array());
+  $form_state_plugin_settings = $form_state->get('plugin_settings', array());
 
   // Field rows.
   foreach ($instances as $key => $instance) {
@@ -1376,7 +1376,7 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
       if (!isset($form_state_plugin_settings[$key]) && !empty($form['#field_settings'][$key]['plugin_settings']['ft'])) {
         $form_state_plugin_settings[$key] = $settings;
         $form_state_plugin_settings[$key]['ft'] = $form['#field_settings'][$key]['plugin_settings']['ft'];
-        $form_state->setValue('plugin_settings', $form_state_plugin_settings);
+        $form_state->set('plugin_settings', $form_state_plugin_settings);
       }
 
       // Change default value or Field API format, so we can change the right
@@ -1391,6 +1391,9 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
       $base_button = array(
         '#submit' => array(
           array($build_info['callback_object'], 'multistepSubmit'),
+        ),
+        '#validate' => array(
+          'ds_field_ui_fields_validate',
         ),
         '#ajax' => array(
           'callback' => array($build_info['callback_object'], 'multistepAjax'),
