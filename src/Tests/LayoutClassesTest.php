@@ -65,7 +65,7 @@ class LayoutClassesTest extends BaseTest {
 
     // Assert we have configuration.
     $entity_display = entity_load('entity_view_display', 'node.article.default');
-    $data = $entity_display->getThirdPartySetting('ds', 'settings');
+    $data = $entity_display->getThirdPartySettings('ds');
 
     $this->assertTrue(!empty($data), t('Configuration found for layout settings for node article'));
     $this->assertTrue(in_array('ds_extras_extra_test_field', $data['regions']['header']), t('Extra field is in header'));
@@ -76,10 +76,10 @@ class LayoutClassesTest extends BaseTest {
     $this->assertTrue(in_array('dynamic_block_field:node-test_block_field', $data['regions']['left']), t('Test block field is in left'));
     $this->assertTrue(in_array('body', $data['regions']['right']), t('Body is in right'));
     $this->assertTrue(in_array('comment', $data['regions']['footer']), t('Comments is in footer'));
-    $this->assertTrue(in_array('class_name_1', $data['classes']['header']), t('Class name 1 is in header'));
-    $this->assertTrue(empty($data['classes']['left']), t('Left has no classes'));
-    $this->assertTrue(empty($data['classes']['right']), t('Right has classes'));
-    $this->assertTrue(in_array('class_name_2', $data['classes']['footer']), t('Class name 2 is in header'));
+    $this->assertTrue(in_array('class_name_1', $data['settings']['classes']['header']), t('Class name 1 is in header'));
+    $this->assertTrue(empty($data['settings']['classes']['left']), t('Left has no classes'));
+    $this->assertTrue(empty($data['settings']['classes']['right']), t('Right has classes'));
+    $this->assertTrue(in_array('class_name_2', $data['settings']['classes']['footer']), t('Class name 2 is in header'));
 
     // Create a article node and verify settings.
     $settings = array(
@@ -191,7 +191,7 @@ class LayoutClassesTest extends BaseTest {
 
     // Verify settings.
     $entity_display = entity_load('entity_view_display', 'node.article.full', TRUE);
-    $data = $entity_display->getThirdPartySetting('ds', 'settings');
+    $data = $entity_display->getThirdPartySettings('ds');
     $this->assertTrue(in_array('node_author', $data['regions']['header']), t('Author is in header'));
     $this->assertTrue(in_array('node_links', $data['regions']['header']), t('Links field is in header'));
     $this->assertTrue(in_array('body', $data['regions']['footer']), t('Body field is in footer'));

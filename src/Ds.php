@@ -71,44 +71,6 @@ class Ds {
   }
 
   /**
-   * Gets the field settings.
-   *
-   * @param $entity_type
-   *   The name of the entity.
-   * @param $bundle
-   *   The name of bundle (ie, page or story for node types, profile for users)
-   * @param $view_mode
-   *   The name of view mode.
-   * @param bool $default
-   *
-   * @return array
-   */
-  public static function getFieldSettings($entity_type, $bundle, $view_mode, $default = TRUE) {
-    static $field_settings = NULL;
-
-    if (!isset($field_settings)) {
-      if ($cache = \Drupal::cache()->get('ds_field_settings')) {
-        $field_settings = $cache->data;
-      }
-      else {
-        $ds_field_settings = \Drupal::configFactory()->listAll('ds.field_settings');
-        foreach ($ds_field_settings as $config) {
-          $field_setting = \Drupal::config($config)->get();
-          if (!isset($field_setting['settings'])) {
-            continue;
-          }
-          foreach ($field_setting['settings'] as $field => $settings) {
-            $field_settings[$field_setting['entity_type']][$field_setting['bundle']][$field_setting['view_mode']][$field] = $settings;
-          }
-        }
-        \Drupal::cache()->set('ds_field_settings', $field_settings, Cache::PERMANENT, array('ds_fields_info'));
-      }
-    }
-
-    return (isset($field_settings[$entity_type][$bundle][$view_mode])) ? $field_settings[$entity_type][$bundle][$view_mode] : (isset($field_settings[$entity_type][$bundle]['default']) && $default ? $field_settings[$entity_type][$bundle]['default'] : array());
-  }
-
-  /**
    * Gets Display Suite layouts.
    */
   public static function getLayouts() {

@@ -138,8 +138,7 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
 
   // Change UI to add Region column if we have a layout.
   if ($layout) {
-
-    foreach ($layout['settings']['regions'] as $region_name => $field_names) {
+    foreach ($layout['region_configuration'] as $region_name => $field_names) {
       foreach ($field_names as $field_name) {
         $field_regions[$field_name] = $region_name;
       }
@@ -324,15 +323,22 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   $old_layout = $form_state->getValue('old_layout');
   $new_layout = ($layout != $old_layout) || empty($old_layout);
 
+  $ds_layouts = Ds::getLayouts();
+
   // Save layout and add regions if necessary.
   $record = array();
   $record['layout'] = $layout;
+  $record['path'] = isset($ds_layouts[$layout]['path']) ? $ds_layouts[$layout]['path'] : '';
+  $record['css'] = isset($ds_layouts[$layout]['css']) ?: FALSE;
   $record['settings'] = array();
+  $record['regions'] = array();
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
+    $display->unsetThirdPartySetting('ds', 'css');
     $display->unsetThirdPartySetting('ds', 'layout');
     $display->unsetThirdPartySetting('ds', 'settings');
+    $display->unsetThirdPartySetting('ds', 'regions');
     $display->save();
   }
 
@@ -347,7 +353,6 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     $layouts = Ds::getLayouts();
     $sl = $layouts[$layout];
     $first_region = key($sl['regions']);
-    $record['settings']['regions'] = array();
     $record['settings']['fields'] = array();
     $record['settings']['classes'] = array();
     $record['settings']['wrappers'] = array();
@@ -366,13 +371,13 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
       // Can either be form or display.
       if ((isset($field['type']) && $field['type'] != 'hidden') || $view_mode == 'form') {
-        $record['settings']['regions'][$first_region][] = $field_key;
+        $record['regions'][$first_region][] = $field_key;
       }
     }
     // In case this is the full node view mode and if the comment module
     // is enabled for this content type, add it as well.
     if ($entity_type == 'node' && $view_mode == 'full' && \Drupal::moduleHandler()->moduleExists('comment')) {
-      $record['settings']['regions'][$first_region][] = 'comments';
+      $record['regions'][$first_region][] = 'comments';
     }
 
     // Save the configuration.
@@ -394,10 +399,10 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
         continue;
       }
 
-      if (!isset($record['settings']['regions'][$field['region']])) {
-        $record['settings']['regions'][$field['region']] = array();
+      if (!isset($record['regions'][$field['region']])) {
+        $record['regions'][$field['region']] = array();
       }
-      $record['settings']['regions'][$field['region']][] = $key;
+      $record['regions'][$field['region']][] = $key;
 
       // Save limit.
       $limit = isset($field['plugin']['limit']) ? trim($field['plugin']['limit']) : '';
@@ -456,6 +461,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
   // Save the configuration.
   if ($save_display) {
+
     foreach (array_keys($record) as $key) {
       $display->setThirdPartySetting('ds', $key, $record[$key]);
     }
@@ -490,6 +496,9 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form['#mode'];
+
+  // Get the entity display.
+  $display = entity_get_display($entity_type, $bundle, $view_mode);
 
   $field_settings = array();
 
@@ -548,15 +557,11 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
   }
 
   // Save the record.
+  $display->unsetThirdPartySetting('ds', 'fields');
   if (!empty($field_settings)) {
-    $config = array();
-    $config['id'] = $form['#export_id'];
-    $config['entity_type'] = $entity_type;
-    $config['bundle'] = $bundle;
-    $config['view_mode'] = $view_mode;
-    $config['settings'] = $field_settings;
-    \Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($config)->save();
+    $display->setThirdPartySetting('ds', 'fields', $field_settings);
   }
+  $display->save();
 
   // Clear the ds_fields cache.
   \Drupal::cache()->invalidateTags(array('ds_fields_info'));
@@ -580,62 +585,8 @@ function ds_field_ui_layout_clone($form, FormStateInterface $form_state) {
   $clone_display = $display->createCopy($view_mode);
   $clone_display->save();
 
-  // @todo remove when field settings are moved out.
-  $field_settings = \Drupal::config('ds.field_settings.' . $ce . '.' . $cb . '.' . $cv)->get();
-
-  // Delete previous field configuration
-  \Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->delete();
-
-  // Save new layout record for ds.
-  if ($display) {
-    $layout['id'] = $form['#export_id'];
-    $layout['entity_type'] = $entity_type;
-    $layout['bundle'] = $bundle;
-    $layout['view_mode'] = $view_mode;
-
-    // Let other modules alter the layout settings.
-    // @todo remove this hook ?
-    \Drupal::moduleHandler()->alter('ds_layout_settings', $record, $form_state);
-
-    // Copy the view mode settings.
-    //_ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $cv, $field_settings, $form['#export_id']);
-
-    // Clear entity info caches.
-    \Drupal::entityManager()->clearCachedFieldDefinitions();
-
-    // Show message.
-    drupal_set_message(t('The layout has been cloned.'));
-
-  }
-  else {
-    drupal_set_message(t('No layout was cloned.'));
-  }
-}
-
-/**
- * Populates display settings for a new view mode from the another view mode.
- *
- * This is almost a straight copy from Field UI, but with the addition
- * that we can pass the view mode from which we want to clone from.
- */
-function _ds_field_ui_clone_view_mode_settings($entity_type, $bundle, $view_mode, $copy_view_mode, $field_settings, $id) {
-  // @todo fix this
-  // $copy_display = entity_get_display($entity_type, $bundle, $view_mode)->createCopy($copy_view_mode);
-  // $copy_display->save();
-
-  // Update display settings for 'extra fields'.
-  foreach (array_keys($field_settings['settings']['extra_fields']['display']) as $name) {
-    if (isset($field_settings['settings']['extra_fields']['display'][$name][$copy_view_mode])) {
-      $field_settings['settings']['extra_fields']['display'][$name][$view_mode] = $field_settings['extra_fields']['display'][$name][$copy_view_mode];
-    }
-  }
-
-  $field_settings['id'] = $id;
-  $field_settings['entity_type'] = $entity_type;
-  $field_settings['bundle'] = $bundle;
-  $field_settings['view_mode'] = $view_mode;
-
-  \Drupal::config('ds.field_settings.' . $entity_type . '.' . $bundle . '.' . $view_mode)->setData($field_settings)->save();
+  // Show message.
+  drupal_set_message(t('The layout has been cloned.'));
 }
 
 /**
@@ -767,10 +718,13 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
   $layout = array();
   $display = entity_get_display($entity_type, $bundle, $view_mode);
   // @todo convert when https://www.drupal.org/node/2345879 is in
+  // note that the keys are a bit hacky now, clean those up to
   if ($display->getThirdPartySetting('ds', 'layout')) {
     $layout = $ds_layouts[$display->getThirdPartySetting('ds', 'layout')];
     $layout['layout'] = $display->getThirdPartySetting('ds', 'layout');
     $layout['settings'] = $display->getThirdPartySetting('ds', 'settings');
+    $layout['region_configuration'] = $display->getThirdPartySetting('ds', 'regions');
+    $layout['fields'] = $display->getThirdPartySetting('ds', 'fields');
   }
 
   if (!empty($layout) && isset($layout['layout']) && isset($ds_layouts[$layout['layout']])) {
@@ -1206,7 +1160,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
   \Drupal::moduleHandler()->alter('ds_fields_ui', $fields, $context);
 
   // Get field settings.
-  $field_settings = Ds::getFieldSettings($entity_type, $bundle, $view_mode, FALSE);
+  $field_settings = $form['#ds_layout']['fields'];
   $form['#field_settings'] = $field_settings;
 
   $table = &$form['fields'];

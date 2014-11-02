@@ -69,58 +69,6 @@ function _ds_module_implements_alter(&$implementations, $hook) {
 }
 
 /**
- * Remove or rename layout & field settings on entity machine name update.
- *
- * @param $entity_type
- *   The name of the entity type.
- * @param $info
- *   The entity info.
- * @param $action
- *   The action, either update or delete.
- */
-function _ds_entity_type_update($entity_type, $info, $action) {
-
-  // Delete settings.
-  if ($action == 'delete') {
-    $layout_settings = \Drupal::configFactory()->listAll('ds.layout_settings.' . $entity_type . '.' . $info->type);
-    foreach ($layout_settings as $config) {
-      \Drupal::config($config)->delete();
-    }
-
-    $field_settings = \Drupal::configFactory()->listAll('ds.field_settings.' . $entity_type . '.' . $info->type);
-    foreach ($field_settings as $config) {
-      \Drupal::config($config)->delete();
-    }
-  }
-
-  // Update settings.
-  if ($action == 'update') {
-    $layout_settings = \Drupal::configFactory()->listAll('ds.layout_settings.' . $entity_type . '.' . $info->old_type);
-    foreach ($layout_settings as $config) {
-      $new_id = $entity_type . '.' . $info->type . '.' . $config['view_mode'];
-      if (\Drupal::config($config)->rename($new_id)) {
-        $new_config = \Drupal::config($new_id)->get();
-        \Drupal::config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
-      }
-    }
-
-    $field_settings = \Drupal::configFactory()->listAll('ds.field_settings.' . $entity_type . '.' . $info->old_type);
-    foreach ($field_settings as $config) {
-      $new_id = $entity_type . '.' . $info->type . '.' . $config['view_mode'];
-      if (\Drupal::config($config)->rename($new_id)) {
-        $new_config = Drupal::config($new_id)->get();
-        \Drupal::config($new_config)->set('id', $new_id)->set('bundle', $info->type)->save();
-      }
-    }
-  }
-
-  // Clear cache.
-  \Drupal::cache()->invalidateTags(array('ds_fields_info'));
-  \Drupal::cache()->invalidateTags(array('ds_field_settings'));
-  \Drupal::entityManager()->clearCachedFieldDefinitions();
-}
-
-/**
  * Implements hook_theme_registry_alter().
  */
 function _ds_theme_registry_alter(&$theme_registry) {

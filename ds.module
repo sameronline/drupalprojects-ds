@@ -7,6 +7,7 @@
 
 use Drupal\Component\Utility\String;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\ds\Ds;
@@ -27,24 +28,6 @@ function ds_theme() {
 function ds_ds_layout_info() {
   module_load_include('inc', 'ds', 'includes/registry');
   return _ds_ds_layout_info();
-}
-
-/**
- * Implements hook_node_type_update().
- */
-function ds_node_type_update($info) {
-  if (!empty($info->old_type) && $info->old_type != $info->type) {
-    module_load_include('inc', 'ds', 'includes/registry');
-    _ds_entity_type_update('node', $info, 'update');
-  }
-}
-
-/**
- * Implements hook_node_type_delete().
- */
-function ds_node_type_delete($info) {
-  module_load_include('inc', 'ds', 'includes/registry');
-  _ds_entity_type_update('node', $info, 'delete');
 }
 
 /**
@@ -80,7 +63,6 @@ function ds_module_implements_alter(&$implementations, $hook) {
  */
 function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInterface $display) {
   static $loaded_css = array();
-  static $ds_layouts = array();
   static $field_permissions = FALSE;
   static $loaded = FALSE;
 
@@ -107,16 +89,12 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
   // Load field permissions and layouts only once.
   if (!$loaded) {
     $loaded = TRUE;
-    // @TODO store layout info in third party setting.
-    $ds_layouts = Ds::getLayouts();
     $field_permissions = \Drupal::config('ds.extras')->get('field_permissions');
   }
 
   // Get layout.
-  // @todo convert when https://www.drupal.org/node/2345879 is in
-  $layout = $ds_layouts[$display->getThirdPartySetting('ds', 'layout')];
-  $layout['layout'] = $display->getThirdPartySetting('ds', 'layout');
-  $layout['settings'] = $display->getThirdPartySetting('ds', 'settings');
+  // @todo better name for $layout var.
+  $layout = $display->getThirdPartySettings('ds');
 
   // Put #entity_type, #bundle and #layout on the build so we can
   // access it in ds_entity_variables().
@@ -152,7 +130,7 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
 
   // Add Display Suite fields.
   $fields = Ds::getFields($entity_type);
-  $field_values = Ds::getFieldSettings($entity_type, $bundle, $view_mode);
+  $field_values = !empty($layout['fields']) ? $layout['fields'] : array();
 
   foreach ($field_values as $key => $field) {
 
@@ -173,7 +151,7 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
     $field_value = Ds::getFieldValue($key, $field, $entity, $view_mode, $build);
 
     // Render the value
-    $rendered_field_value =  drupal_render($field_value);
+    $rendered_field_value = drupal_render($field_value);
 
     // Only allow non empty fields
     if (!empty($field_value) && $rendered_field_value !== '') {
@@ -244,12 +222,14 @@ function ds_preprocess_ds_layout(&$variables) {
       }
 
       // Create region variables based on the layout settings.
-      foreach ($layout['regions'] as $region_name => $region) {
+      foreach ($layout['settings']['wrappers'] as $region_name => $wrapper) {
+
+        $layout_render_array[$region_name] = array();
 
         // Create the region content.
-        $layout_render_array[$region_name] = array();
-        if (isset($layout['settings']['regions'][$region_name])) {
-          foreach ($layout['settings']['regions'][$region_name] as $key => $field) {
+        // @todo store all region info instead of looking at wrappers ?
+        if (!empty($layout['regions'][$region_name])) {
+          foreach ($layout['regions'][$region_name] as $key => $field) {
             // Make sure the field exists.
             if (!isset($variables[$render_container][$field])) {
               continue;
@@ -261,6 +241,7 @@ function ds_preprocess_ds_layout(&$variables) {
           }
         }
 
+        // @todo flexible still valid ?
         // Add extras classes to the region.
         if (empty($layout['flexible'])) {
           $variables[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
@@ -322,11 +303,11 @@ function ds_preprocess_ds_layout(&$variables) {
  * Implements hook_theme_suggestions_alter()
  */
 function ds_theme_suggestions_alter(&$suggestions, $variables, $base_theme_hook) {
+  // @todo the entity info check can probably go ?
   $entity_info = \Drupal::entityManager()->getDefinitions();
   if (isset($entity_info[$base_theme_hook]) && $entity_info[$base_theme_hook]->get('field_ui_base_route')) {
     if (isset($variables['elements']['#ds_layout'])) {
       $layout = $variables['elements']['#ds_layout'];
-
       $suggestions[] = $layout['layout'];
       $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'];
       $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#view_mode'];
@@ -384,10 +365,11 @@ function ds_local_tasks_alter(&$local_tasks) {
  */
 function ds_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) {
   $theme_functions = Ds::getFieldLayoutOptions();
-  $form['instance']['ds_field_template'] = array(
+  $field = $form_state->get('field');
+  $form['field']['third_party_settings']['ds']['ds_field_template'] = array(
     '#type' => 'select',
     '#title' => t('Field Template'),
-    '#default_value' => isset($form['#instance']['ds_field_template']) ? $form['#instance']['ds_field_template'] : '',
+    '#default_value' => $field->getThirdPartySetting('ds', 'ds_field_template', ''),
     '#options' => $theme_functions,
     '#description' => t('Choose the default HTML for this field.'),
     '#empty_option' => t('Use sitewide default'),
@@ -399,19 +381,25 @@ function ds_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) 
  */
 function ds_preprocess_field(&$variables) {
 
-  // We need to be sure this field is in a layout which is rendered by DS.
-  if (!Ds::getLayout($variables['element']['#entity_type'], $variables['element']['#bundle'], $variables['element']['#view_mode'])) {
-    return;
-  }
-
   $entity_type = $variables['element']['#entity_type'];
   $bundle = $variables['element']['#bundle'];
   $view_mode = $variables['element']['#view_mode'];
+  $entity_display = entity_get_display($entity_type, $bundle, $view_mode);
+
+  // @todo better way to check default ? or pass entity display object on field level?
+  // We need to be sure this field is in a layout which is rendered by DS.
+  if (!$entity_display->getThirdPartySetting('ds', 'layout')) {
+    // Check default.
+    $entity_display = entity_get_display($entity_type, $bundle, 'default');
+    if (!$entity_display->getThirdPartySetting('ds', 'layout')) {
+      return;
+    }
+  }
 
   $config = array();
   static $field_settings = array();
   if (!isset($field_settings[$entity_type][$bundle][$view_mode])) {
-    $field_settings[$entity_type][$bundle][$view_mode] = Ds::getFieldSettings($entity_type, $bundle, $view_mode);
+    $field_settings[$entity_type][$bundle][$view_mode] = $entity_display->getThirdPartySetting('ds', 'fields');
   }
 
   // Get the field name and field instance info - if available.
@@ -421,6 +409,7 @@ function ds_preprocess_field(&$variables) {
   $variables['ds-config'] = array();
   if (isset($field_settings[$entity_type][$bundle][$view_mode][$field_name]['plugin_settings']['ft'])) {
     $config = $field_settings[$entity_type][$bundle][$view_mode][$field_name]['plugin_settings']['ft'];
+    // @todo we insert here, but override later (@see l 443) ?
     $variables['ds-config'] = $config;
   }
 
@@ -442,37 +431,48 @@ function ds_preprocess_field(&$variables) {
     $variables['ds-config'] = $config;
   }
   // Use Display Suite Extras Default theming function.
+  // @todo is this the right place now ?
   elseif (!isset($config['func']) || empty($config['func'])) {
     $field_theme_function = \Drupal::config('ds.settings')->get('ft-default');
     if ($field_theme_function != 'theme_field') {
       $variables['ds-config'] = $config;
     }
   }
+
+  // @todo what the bloody - why is this key needed again in the theme functions ?
+  $variables['ds-config']['layout'] = 'WAAAT?';
 }
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter() for field templates.
  */
 function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
-  // We need to be sure this field is in a layout which is rendered by DS.
-  // @todo allow field templates always?
-  if (!Ds::getLayout($variables['element']['#entity_type'], $variables['element']['#bundle'], $variables['element']['#view_mode'])) {
-    return;
-  }
 
   $entity_type = $variables['element']['#entity_type'];
   $bundle = $variables['element']['#bundle'];
   $view_mode = $variables['element']['#view_mode'];
+  $field_theme_function = \Drupal::config('ds.settings')->get('ft-default');
+
+  // @todo better way to check default ? or pass entity display object on field level?
+  $entity_display = entity_get_display($entity_type, $bundle, $view_mode);
+
+  // We need to be sure this field is in a layout which is rendered by DS.
+  if (!$entity_display->getThirdPartySetting('ds', 'layout')) {
+    // Check default.
+    $entity_display = entity_get_display($entity_type, $bundle, 'default');
+    if (!$entity_display->getThirdPartySetting('ds', 'layout')) {
+      return;
+    }
+  }
 
   static $field_settings = array();
   if (!isset($field_settings[$entity_type][$bundle][$view_mode])) {
-    $field_settings[$entity_type][$bundle][$view_mode] = Ds::getFieldSettings($entity_type, $bundle, $view_mode);
+    $field_settings[$entity_type][$bundle][$view_mode] = $entity_display->getThirdPartySetting('ds', 'fields');
   }
-
 
   // Get the field name and field instance info - if available.
   $field_name = $variables['element']['#field_name'];
-  $field_instance_info = FieldConfig::loadByName($entity_type, $field_name, $bundle);
+  $field = FieldConfig::loadByName($entity_type, $bundle, $field_name);
 
   // Check if this field has custom output settings.
   $config = array();
@@ -494,16 +494,21 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
     // Or the template file(s).
     $suggestion = 'field__' . $config['func'];
   }
-  // Check if we have a default field template on instance level.
-  elseif (isset($field_instance_info['ds_extras_field_template']) && !empty($field_instance_info['ds_extras_field_template']) && $field_instance_info['ds_extras_field_template'] != 'theme_field') {
-    // @todo I think this is broken
-
+  // Check if we have a default field template on field level.
+  elseif ($field instanceof FieldDefinitionInterface && ($theme_function = $field->getThirdPartySetting('ds', 'ds_field_template', '')) && !empty($theme_function)) {
     // Either it uses the function.
     $suggestions = array();
-    $suggestions[] = $field_instance_info['ds_extras_field_template'];
+    $suggestions[] = 'theme_ds_field_' . $theme_function;
 
     // Or the template file(s).
-    $suggestion = 'field__' . str_replace('theme_ds_field_', '', $field_instance_info['ds_extras_field_template']);
+    $suggestion = 'field__' . $theme_function;
+  }
+  elseif (!empty($field_theme_function)) {
+    $suggestions = array();
+    $suggestions[] = 'theme_ds_field_' . $field_theme_function;
+
+    // Or the template file(s).
+    $suggestion = 'field__' . $field_theme_function;
   }
 
   if (!empty($suggestion)) {
