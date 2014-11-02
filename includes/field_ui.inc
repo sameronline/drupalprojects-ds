@@ -28,8 +28,6 @@ function ds_field_ui_fields_layouts(&$form, FormStateInterface $form_state) {
   $bundle = $form['#bundle'];
   $view_mode = $form['#mode'];
 
-  $form['#export_id'] = $entity_type . '.' . $bundle . '.' . $view_mode;
-
   // Create vertical tabs.
   ds_field_ui_create_vertical_tabs($form);
 
@@ -710,9 +708,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
     '#weight' => -100,
   );
 
-  // @todo remove export id
-  list($ce, $cb, $cv) = explode('.', $form['#export_id']);
-
   $layout = array();
   $display = entity_get_display($entity_type, $bundle, $view_mode);
   // @todo convert when https://www.drupal.org/node/2345879 is in
@@ -926,11 +921,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
       }
     }
   }
-
-  $form['ds_layouts']['id'] = array(
-    '#type' => 'value',
-    '#value' => isset($layout['id']) ? $layout['id'] : $form['#export_id'],
-  );
 
   $form['ds_layouts']['old_layout'] = array(
     '#type' => 'value',
