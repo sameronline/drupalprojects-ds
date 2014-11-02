@@ -262,7 +262,7 @@ class EntitiesTest extends BaseTest {
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-hidden\" data-quickedit-field-id=\"node/1/body/en/full\">
     <div class=\"field-items\">
-          <div class=\"field-item\" property=\"schema:text\">" . $body_field . "</div>
+          <div property=\"schema:text\" class=\"field-item\">" . $body_field . "</div>
       </div>");
 
     $this->entitiesSetLabelClass('above');
@@ -270,7 +270,7 @@ class EntitiesTest extends BaseTest {
     $this->assertRaw("<div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-above\" data-quickedit-field-id=\"node/1/body/en/full\">
       <div class=\"field-label\">Body:&nbsp;</div>
     <div class=\"field-items\">
-          <div class=\"field-item\" property=\"schema:text\">" . $body_field . "</div>");
+          <div property=\"schema:text\" class=\"field-item\">" . $body_field . "</div>");
 
     $this->entitiesSetLabelClass('above', 'My body');
     $this->drupalGet('node/' . $node->id());
