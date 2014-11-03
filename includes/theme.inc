@@ -32,7 +32,7 @@ function theme_ds_field_reset($variables) {
  */
 function theme_ds_field_minimal($variables) {
   $output = '';
-  $config = $variables['ds-config']['layout'];
+  $config = $variables['ds-config'];
   $classes = isset($config['classes']) ? ' ' . $config['classes'] : '';
 
   // Add a simple wrapper.
@@ -62,7 +62,7 @@ function theme_ds_field_minimal($variables) {
 function theme_ds_field_expert($variables) {
   $output = '';
 
-  $config = $variables['ds-config']['layout'];
+  $config = $variables['ds-config'];
 
   // Render the label if it's not hidden.
   if (!$variables['label_hidden']) {
