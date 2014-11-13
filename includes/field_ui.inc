@@ -354,11 +354,10 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     $record['layout']['settings']['fields'] = array();
     $record['layout']['settings']['classes'] = array();
     $record['layout']['settings']['wrappers'] = array();
-    $record['layout']['settings']['layout_wrapper'] = 'div';
-    $record['layout']['settings']['layout_attributes'] = '';
-    $record['layout']['settings']['layout_attributes_merge'] = Settings::get('ds_layout_attributes_merge', TRUE);
-    $record['layout']['settings']['layout_link_attribute'] = FALSE;
-    $record['layout']['settings']['layout_link_custom'] = '';
+    $record['layout']['settings']['outer_wrapper'] = 'div';
+    $record['layout']['settings']['attributes'] = '';
+    $record['layout']['settings']['link_attribute'] = FALSE;
+    $record['layout']['settings']['link_custom'] = '';
     $fields = _ds_sort_fields($form_state->getValue('fields'), 'weight');
     foreach ($fields as $field_key => $field) {
 
@@ -445,13 +444,12 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
     // Layout wrapper
     $region_wrapper = $form_state->getValue(('region_wrapper'));
-    $record['layout']['settings']['layout_wrapper'] = $region_wrapper['layout_wrapper'];
-    $record['layout']['settings']['layout_attributes'] = Xss::filter($region_wrapper['layout_attributes']);
-    $record['layout']['settings']['layout_attributes_merge'] = $region_wrapper['layout_attributes_merge'];
+    $record['layout']['settings']['outer_wrapper'] = $region_wrapper['outer_wrapper'];
+    $record['layout']['settings']['attributes'] = Xss::filter($region_wrapper['attributes']);
 
     // Link attribute.
-    $record['layout']['settings']['layout_link_attribute'] = $region_wrapper['layout_link_attribute'];
-    $record['layout']['settings']['layout_link_custom'] = $region_wrapper['layout_link_custom'];
+    $record['layout']['settings']['link_attribute'] = $region_wrapper['link_attribute'];
+    $record['layout']['settings']['link_custom'] = $region_wrapper['link_custom'];
 
     // Let other modules alter the layout settings.
     \Drupal::moduleHandler()->alter('ds_layout_settings', $record, $form_state);
@@ -756,31 +754,23 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
       );
     }
 
-    $form['region_wrapper']['layout_wrapper'] = array(
+    $form['region_wrapper']['outer_wrapper'] = array(
       '#type' => 'select',
       '#options' => $wrapper_options,
       '#title' => t('Layout wrapper'),
-      '#default_value' => isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div',
+      '#default_value' => isset($layout['settings']['outer_wrapper']) ? $layout['settings']['outer_wrapper'] : 'div',
       '#weight' => 10,
     );
 
-    $form['region_wrapper']['layout_attributes'] = array(
+    $form['region_wrapper']['attributes'] = array(
       '#type' => 'textfield',
       '#title' => t('Layout attributes'),
       '#description' => 'E.g. role|navigation,data-something|some value',
-      '#default_value' => isset($layout['settings']['layout_attributes']) ? $layout['settings']['layout_attributes'] : '',
+      '#default_value' => isset($layout['settings']['attributes']) ? $layout['settings']['attributes'] : '',
       '#weight' => 11,
     );
 
-    $form['region_wrapper']['layout_attributes_merge'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Merge other layout attributes'),
-      '#description' => 'Certain modules might provide additional attributes for the template wrapper, e.g. RDFa. Disable this option if you prefer to specify these attributes above.',
-      '#default_value' => isset($layout['settings']['layout_attributes_merge']) ? $layout['settings']['layout_attributes_merge'] : Settings::get('ds_layout_attributes_merge', TRUE),
-      '#weight' => 12,
-    );
-
-    $form['region_wrapper']['layout_link_attribute'] = array(
+    $form['region_wrapper']['link_attribute'] = array(
       '#type' => 'select',
       '#options' => array(
         '' => t('No link'),
@@ -790,15 +780,15 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
       ),
       '#title' => t('Add link'),
       '#description' => t('This will add an onclick attribute on the layout wrapper.'),
-      '#default_value' => isset($layout['settings']['layout_link_attribute']) ? $layout['settings']['layout_link_attribute'] : FALSE,
+      '#default_value' => isset($layout['settings']['link_attribute']) ? $layout['settings']['link_attribute'] : FALSE,
       '#weight' => 12,
     );
 
-    $form['region_wrapper']['layout_link_custom'] = array(
+    $form['region_wrapper']['link_custom'] = array(
       '#type' => 'textfield',
       '#title' => t('Custom link'),
       '#description' => t('You may use tokens for this link if you selected tokens.'),
-      '#default_value' => isset($layout['settings']['layout_link_custom']) ? $layout['settings']['layout_link_custom'] : FALSE,
+      '#default_value' => isset($layout['settings']['link_custom']) ? $layout['settings']['link_custom'] : FALSE,
       '#weight' => 13,
       '#states' => array(
         'visible' => array(array(

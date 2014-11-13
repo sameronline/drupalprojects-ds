@@ -21,7 +21,7 @@
   {% set layout_classes = attributes.class %}
 {% endif %}
 
-<{{ layout_wrapper }} class="ds-2col-fluid {{ layout_classes }} clearfix" {{ attributes }}>
+<{{ outer_wrapper }} class="ds-2col-fluid {{ layout_classes }} clearfix" {{ attributes }}>
 
 {% if title_suffix.contextual_links is not null %}
 {{ title_suffix.contextual_links }}

@@ -132,8 +132,8 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
       }
 
       // Add custom attributes if any.
-      if (!empty($layout['settings']['layout_attributes'])) {
-        $layout_attributes = explode(',', $layout['settings']['layout_attributes']);
+      if (!empty($layout['settings']['attributes'])) {
+        $layout_attributes = explode(',', $layout['settings']['attributes']);
         foreach ($layout_attributes as $layout_attribute) {
           list($key, $attribute_value) = explode('|', $layout_attribute);
           $vars['attributes'][$key] = $attribute_value;
@@ -144,7 +144,7 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
       $vars['attributes']['class'][] = 'ds-form';
 
       // Add a layout wrapper
-      $vars['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
+      $vars['outer_wrapper'] = isset($layout['settings']['outer_wrapper']) ? $layout['settings']['outer_wrapper'] : 'div';
 
       // Add the rest of the form elements
       $vars['drupal_render_children'] = drupal_render_children($vars['element']);
