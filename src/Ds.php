@@ -9,6 +9,7 @@ namespace Drupal\ds;
 use Drupal\Component\Utility\String;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Helper class that holds all the main Display Suite helper functions.
@@ -54,7 +55,7 @@ class Ds {
    * @return $markup
    *   The markup of the field used for output.
    */
-  public static function getFieldValue($key, $field, $entity, $view_mode, $build = array()) {
+  public static function getFieldValue($key, $field, EntityInterface $entity, $view_mode, $display, $build = array()) {
     $configuration = array(
       'field' => $field,
       'field_name' => $key,
@@ -65,6 +66,15 @@ class Ds {
 
     // Load the plugin.
     $field_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id'], $configuration);
+
+    // Load settings
+    if ($field_settings = $display->getThirdPartySetting('ds', 'fields')) {
+      $settings = $field_settings[$key]['settings'];
+      // unset field template settings
+      unset($settings['ft']);
+
+      $field_instance->setConfiguration($settings);
+    }
 
     // Render the field.
     return $field_instance->build();

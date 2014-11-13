@@ -147,7 +147,7 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
       $field['settings'] = $field_values[$key]['settings'];
     }
 
-    $field_value = Ds::getFieldValue($key, $field, $entity, $view_mode, $build);
+    $field_value = Ds::getFieldValue($key, $field, $entity, $view_mode, $display, $build);
 
     // Render the value
     $rendered_field_value = drupal_render($field_value);
