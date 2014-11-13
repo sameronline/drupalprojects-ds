@@ -92,19 +92,18 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
     $field_permissions = \Drupal::config('ds.extras')->get('field_permissions');
   }
 
-  // Get layout.
-  // @todo better name for $layout var.
-  $layout = $display->getThirdPartySettings('ds');
+  // Get configuration.
+  $configuration = $display->getThirdPartySettings('ds');
 
   // Put #entity_type, #bundle and #layout on the build so we can
   // access it in ds_entity_variables().
   $build['#entity_type'] = $entity_type;
   $build['#bundle'] = $bundle;
-  $build['#ds_layout'] = $layout;
+  $build['#ds_configuration'] = $configuration;
 
   // Check on field/delta limit.
-  if (isset($layout['settings']['limit'])) {
-    foreach ($layout['settings']['limit'] as $field => $limit) {
+  if (isset($configuration['layout']['settings']['limit'])) {
+    foreach ($configuration['layout']['settings']['limit'] as $field => $limit) {
       if (isset($build[$field])) {
         if ($limit === 'delta' && isset($entity->ds_delta) && isset($entity->ds_delta[$field])) {
           $delta = $entity->ds_delta[$field];
@@ -181,11 +180,11 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
   }
 
   //Add css file for this layout.
-  if (!empty($layout['css']) && !isset($loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'])) {
+  if (!empty($configuration['layout']['css']) && !isset($loaded_css[$configuration['layout']['path'] . '/' . $configuration['layout']['id'] . '.css'])) {
     // Register.
-    $loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'] = TRUE;
+    $loaded_css[$configuration['layout']['path'] . '/' . $configuration['layout']['id'] . '.css'] = TRUE;
     // Add to #attached.
-    $build['#attached']['css'][] = $layout['path'] . '/' . $layout['layout'] . '.css';
+    $build['#attached']['css'][] = $configuration['layout']['path'] . '/' . $configuration['layout']['id'] . '.css';
   }
 
 }
@@ -200,9 +199,8 @@ function ds_preprocess_ds_layout(&$variables) {
     // Fetch the object
     $object = $variables['elements']['#entity_type'];
 
-    if (isset($variables['elements']['#ds_layout'])) {
-      $layout = $variables['elements']['#ds_layout'];
-
+    if (isset($variables['elements']['#ds_configuration'])) {
+      $configuration = $variables['elements']['#ds_configuration'];
       $render_container = 'elements';
 
       // Template layout.
@@ -216,21 +214,20 @@ function ds_preprocess_ds_layout(&$variables) {
       }
 
       // If the layout has wrapper class lets add it.
-      if (isset($layout['settings']['classes']['layout_class'])) {
-        foreach ($layout['settings']['classes']['layout_class'] as $layout_class) {
+      if (isset($configuration['layout']['settings']['classes']['layout_class'])) {
+        foreach ($configuration['layout']['settings']['classes']['layout_class'] as $layout_class) {
           $variables['attributes']['class'][] = $layout_class;
         }
       }
 
       // Create region variables based on the layout settings.
-      foreach ($layout['settings']['wrappers'] as $region_name => $wrapper) {
+      foreach ($configuration['layout']['settings']['wrappers'] as $region_name => $wrapper) {
 
         $layout_render_array[$region_name] = array();
 
         // Create the region content.
-        // @todo store all region info instead of looking at wrappers ?
-        if (!empty($layout['regions'][$region_name])) {
-          foreach ($layout['regions'][$region_name] as $key => $field) {
+        if (!empty($configuration['regions'][$region_name])) {
+          foreach ($configuration['regions'][$region_name] as $key => $field) {
             // Make sure the field exists.
             if (!isset($variables[$render_container][$field])) {
               continue;
@@ -242,26 +239,19 @@ function ds_preprocess_ds_layout(&$variables) {
           }
         }
 
-        // @todo flexible still valid ?
-        // Add extras classes to the region.
-        if (empty($layout['flexible'])) {
-          $variables[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
-        }
-        // Add a wrapper to the region.
-        if (empty($layout['flexible'])) {
-          $variables[$region_name . '_wrapper'] = isset($layout['settings']['wrappers'][$region_name]) ? $layout['settings']['wrappers'][$region_name] : 'div';
-        }
+        $variables[$region_name . '_classes'] = !empty($configuration['layout']['settings']['classes'][$region_name]) ? ' ' . implode(' ', $configuration['layout']['settings']['classes'][$region_name]) : '';
+        $variables[$region_name . '_wrapper'] = isset($configuration['layout']['settings']['wrappers'][$region_name]) ? $configuration['layout']['settings']['wrappers'][$region_name] : 'div';
       }
 
       // Let other modules know we have rendered.
       $variables['rendered_by_ds'] = TRUE;
 
       // Add a layout wrapper.
-      $variables['layout_wrapper'] = isset($layout['settings']['layout_wrapper']) ? $layout['settings']['layout_wrapper'] : 'div';
+      $variables['layout_wrapper'] = isset($configuration['layout']['settings']['layout_wrapper']) ? $configuration['layout']['settings']['layout_wrapper'] : 'div';
 
       // Add custom attributes if any.
-      if (!empty($layout['settings']['layout_attributes'])) {
-        $layout_attributes = explode(',', $layout['settings']['layout_attributes']);
+      if (!empty($configuration['layout']['settings']['layout_attributes'])) {
+        $layout_attributes = explode(',', $configuration['layout']['settings']['layout_attributes']);
         foreach ($layout_attributes as $layout_attribute) {
           list($key, $attribute_value) = explode('|', $layout_attribute);
           $variables['attributes'][$key] = $attribute_value;
@@ -269,17 +259,17 @@ function ds_preprocess_ds_layout(&$variables) {
       }
 
       // Add an onclick attribute on the wrapper.
-      if (!empty($layout['settings']['layout_link_attribute'])) {
+      if (!empty($configuration['layout']['settings']['layout_link_attribute'])) {
         $url = '';
-        switch ($layout['settings']['layout_link_attribute']) {
+        switch ($configuration['layout']['settings']['layout_link_attribute']) {
           case 'content':
             $url = $variables['elements']['#' . $object]->urlInfo()->getInternalPath();
             break;
           case 'custom':
-            $url = $layout['settings']['layout_link_custom'];
+            $url = $configuration['layout']['settings']['layout_link_custom'];
             break;
           case 'tokens':
-            $url = \Drupal::service('token')->replace($layout['settings']['layout_link_custom'], array($variables['elements']['#entity_type'] => $variables['elements']['#' . $object]), array('clear' => TRUE));
+            $url = \Drupal::service('token')->replace($configuration['layout']['settings']['layout_link_custom'], array($variables['elements']['#entity_type'] => $variables['elements']['#' . $object]), array('clear' => TRUE));
             break;
         }
 
@@ -304,17 +294,13 @@ function ds_preprocess_ds_layout(&$variables) {
  * Implements hook_theme_suggestions_alter()
  */
 function ds_theme_suggestions_alter(&$suggestions, $variables, $base_theme_hook) {
-  // @todo the entity info check can probably go ?
-  $entity_info = \Drupal::entityManager()->getDefinitions();
-  if (isset($entity_info[$base_theme_hook]) && $entity_info[$base_theme_hook]->get('field_ui_base_route')) {
-    if (isset($variables['elements']['#ds_layout'])) {
-      $layout = $variables['elements']['#ds_layout'];
-      $suggestions[] = $layout['layout'];
-      $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'];
-      $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#view_mode'];
-      $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
-      $suggestions[] = $layout['layout'] . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
-    }
+  if (isset($variables['elements']['#ds_configuration'])) {
+    $layout_id = $variables['elements']['#ds_configuration']['layout']['id'];
+    $suggestions[] = $layout_id;
+    $suggestions[] = $layout_id . '__' . $variables['elements']['#entity_type'];
+    $suggestions[] = $layout_id . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#view_mode'];
+    $suggestions[] = $layout_id . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
+    $suggestions[] = $layout_id . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
   }
 }
 

@@ -136,7 +136,7 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
 
   // Change UI to add Region column if we have a layout.
   if ($layout) {
-    foreach ($layout['region_configuration'] as $region_name => $field_names) {
+    foreach ($layout['regions'] as $region_name => $field_names) {
       foreach ($field_names as $field_name) {
         $field_regions[$field_name] = $region_name;
       }
@@ -174,7 +174,7 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
 
     $table['#regions'] = array();
     $region_options = array();
-    foreach ($layout['regions'] as $region_key => $region_title) {
+    foreach ($layout['region_names'] as $region_key => $region_title) {
       $region_options[$region_key] = $region_title;
       $table['#regions'][$region_key] = array(
         'title' => $region_title,
@@ -325,18 +325,18 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
   // Save layout and add regions if necessary.
   $record = array();
-  $record['layout'] = $layout;
-  $record['path'] = isset($ds_layouts[$layout]['path']) ? $ds_layouts[$layout]['path'] : '';
-  $record['css'] = isset($ds_layouts[$layout]['css']) ?: FALSE;
-  $record['settings'] = array();
+  $record['layout'] = array(
+    'id' => $layout,
+    'path' => isset($ds_layouts[$layout]['path']) ? $ds_layouts[$layout]['path'] : '',
+    'css' => isset($ds_layouts[$layout]['css']) ? $ds_layouts[$layout]['css'] : FALSE,
+  );
   $record['regions'] = array();
 
   // Remove old layout if necessary.
   if ($new_layout && !empty($old_layout)) {
-    $display->unsetThirdPartySetting('ds', 'css');
     $display->unsetThirdPartySetting('ds', 'layout');
-    $display->unsetThirdPartySetting('ds', 'settings');
     $display->unsetThirdPartySetting('ds', 'regions');
+    $display->unsetThirdPartySetting('ds', 'fields');
     $display->save();
   }
 
@@ -351,14 +351,14 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     $layouts = Ds::getLayouts();
     $sl = $layouts[$layout];
     $first_region = key($sl['regions']);
-    $record['settings']['fields'] = array();
-    $record['settings']['classes'] = array();
-    $record['settings']['wrappers'] = array();
-    $record['settings']['layout_wrapper'] = 'div';
-    $record['settings']['layout_attributes'] = '';
-    $record['settings']['layout_attributes_merge'] = Settings::get('ds_layout_attributes_merge', TRUE);
-    $record['settings']['layout_link_attribute'] = FALSE;
-    $record['settings']['layout_link_custom'] = '';
+    $record['layout']['settings']['fields'] = array();
+    $record['layout']['settings']['classes'] = array();
+    $record['layout']['settings']['wrappers'] = array();
+    $record['layout']['settings']['layout_wrapper'] = 'div';
+    $record['layout']['settings']['layout_attributes'] = '';
+    $record['layout']['settings']['layout_attributes_merge'] = Settings::get('ds_layout_attributes_merge', TRUE);
+    $record['layout']['settings']['layout_link_attribute'] = FALSE;
+    $record['layout']['settings']['layout_link_custom'] = '';
     $fields = _ds_sort_fields($form_state->getValue('fields'), 'weight');
     foreach ($fields as $field_key => $field) {
 
@@ -410,7 +410,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     }
 
     // Save the region classes.
-    $record['settings']['classes'] = array();
+    $record['layout']['settings']['classes'] = array();
     foreach (array_keys($form['fields']['#regions']) as $region) {
 
       // Ignore hidden region.
@@ -419,7 +419,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
       }
 
       if ($form_state->hasValue('layout_class')) {
-        $record['settings']['classes']['layout_class'] = $form_state->getValue('layout_class');
+        $record['layout']['settings']['classes']['layout_class'] = $form_state->getValue('layout_class');
       }
 
       // Additional classes on regions.
@@ -432,26 +432,26 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
           }
         }
         if (!empty($classes)) {
-          $record['settings']['classes'][$region] = $classes;
+          $record['layout']['settings']['classes'][$region] = $classes;
         }
       }
 
       // Additional wrappers on regions.
       $region_wrapper = $form_state->getValue(('region_wrapper'));
       if (isset($region_wrapper[$region])) {
-        $record['settings']['wrappers'][$region] = $region_wrapper[$region];
+        $record['layout']['settings']['wrappers'][$region] = $region_wrapper[$region];
       }
     }
 
     // Layout wrapper
     $region_wrapper = $form_state->getValue(('region_wrapper'));
-    $record['settings']['layout_wrapper'] = $region_wrapper['layout_wrapper'];
-    $record['settings']['layout_attributes'] = Xss::filter($region_wrapper['layout_attributes']);
-    $record['settings']['layout_attributes_merge'] = $region_wrapper['layout_attributes_merge'];
+    $record['layout']['settings']['layout_wrapper'] = $region_wrapper['layout_wrapper'];
+    $record['layout']['settings']['layout_attributes'] = Xss::filter($region_wrapper['layout_attributes']);
+    $record['layout']['settings']['layout_attributes_merge'] = $region_wrapper['layout_attributes_merge'];
 
     // Link attribute.
-    $record['settings']['layout_link_attribute'] = $region_wrapper['layout_link_attribute'];
-    $record['settings']['layout_link_custom'] = $region_wrapper['layout_link_custom'];
+    $record['layout']['settings']['layout_link_attribute'] = $region_wrapper['layout_link_attribute'];
+    $record['layout']['settings']['layout_link_custom'] = $region_wrapper['layout_link_custom'];
 
     // Let other modules alter the layout settings.
     \Drupal::moduleHandler()->alter('ds_layout_settings', $record, $form_state);
@@ -563,7 +563,6 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
 function ds_field_ui_layout_clone($form, FormStateInterface $form_state) {
 
   $clone = $form_state->getValue('clone');
-  // @todo clean this up.
   list($ce, $cb, $cv) = explode('.', $clone);
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
@@ -704,18 +703,17 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
 
   $layout = array();
   $display = entity_get_display($entity_type, $bundle, $view_mode);
-  // @todo convert when https://www.drupal.org/node/2345879 is in
-  // note that the keys are a bit hacky now, clean those up to
   if ($display->getThirdPartySetting('ds', 'layout')) {
-    $layout = $ds_layouts[$display->getThirdPartySetting('ds', 'layout')];
-    $layout['layout'] = $display->getThirdPartySetting('ds', 'layout');
-    $layout['settings'] = $display->getThirdPartySetting('ds', 'settings');
-    $layout['region_configuration'] = $display->getThirdPartySetting('ds', 'regions');
+    $layout_configuration = $display->getThirdPartySetting('ds', 'layout');
+    $layout = $ds_layouts[$layout_configuration['id']];
+    $layout['layout'] = $layout_configuration['id'];
+    $layout['settings'] = $layout_configuration['settings'];
+    $layout['regions'] = $display->getThirdPartySetting('ds', 'regions');
     $layout['fields'] = $display->getThirdPartySetting('ds', 'fields');
   }
 
   if (!empty($layout) && isset($layout['layout']) && isset($ds_layouts[$layout['layout']])) {
-    $layout['regions'] = $ds_layouts[$layout['layout']]['regions'];
+    $layout['region_names'] = $ds_layouts[$layout['layout']]['regions'];
     $form['#ds_layout'] = $layout;
   }
 
@@ -749,11 +747,11 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
       $form['region_wrapper']['#access'] = FALSE;
     }
 
-    foreach (array_keys($layout['regions']) as $region) {
+    foreach (array_keys($layout['region_names']) as $region) {
       $form['region_wrapper'][$region] = array(
         '#type' => 'select',
         '#options' => $wrapper_options,
-        '#title' => t('Wrapper for @region', array('@region' => $layout['regions'][$region])),
+        '#title' => t('Wrapper for @region', array('@region' => $layout['region_names'][$region])),
         '#default_value' => isset($layout['settings']['wrappers'], $layout['settings']['wrappers'][$region]) ? $layout['settings']['wrappers'][$region] : 'div',
       );
     }
@@ -1579,7 +1577,7 @@ function ds_field_row_form_format_summary_construct(&$table, $key, FormStateInte
   $table[$key]['settings_edit'] = $base_button + array(
     '#type' => 'image_button',
     '#name' => $key . '_plugin_settings_edit',
-    '#src' => 'core/misc/configure-dark.png',
+    '#src' => 'core/misc/icons/787878/cog.svg',
     '#attributes' => array('class' => array('field-plugin-settings-edit'), 'alt' => t('Edit')),
     '#op' => 'edit',
     // Do not check errors for the 'Edit' button, but make sure we get
