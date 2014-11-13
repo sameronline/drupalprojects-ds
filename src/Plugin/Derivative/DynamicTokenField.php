@@ -7,7 +7,7 @@
 
 namespace Drupal\ds\Plugin\Derivative;
 
-use Drupal\ds_ui\Form\TokenFieldForm;
+use Drupal\ds\Form\TokenFieldForm;
 
 /**
  * Retrieves dynamic code field plugin definitions.

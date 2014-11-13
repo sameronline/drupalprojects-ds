@@ -95,7 +95,8 @@ function ds_field_ui_create_vertical_tabs(&$form) {
     );
   }
 
-  $view_mode_admin_access = \Drupal::currentUser()->hasPermission('admin_view_modes') && \Drupal::moduleHandler()->moduleExists('ds_ui');
+  // @todo needs core permission
+  $view_mode_admin_access = \Drupal::currentUser()->hasPermission('admin_view_modes');
   if (isset($form['modes'])) {
     $form['modes']['#group'] = 'additional_settings';
     $form['modes']['#weight'] = -10;
@@ -822,7 +823,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
       '#access' => empty($chosen_layout['flexible']),
     );
 
-    $classes_access = (\Drupal::currentUser()->hasPermission('admin_classes') && \Drupal::moduleHandler()->moduleExists('ds_ui'));
+    $classes_access = (\Drupal::currentUser()->hasPermission('admin_classes'));
     $classes = Ds::getClasses();
     if (!empty($classes)) {
 
@@ -844,7 +845,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
         );
       }
       if ($classes_access) {
-        $url = \Drupal\Core\Url::fromRoute('ds_ui.classes');
+        $url = \Drupal\Core\Url::fromRoute('ds.classes');
         $url->setOption('query', array('destination' => drupal_get_destination()));
         $form['ds_classes']['info'] = array('#markup' => Drupal::l(t('Manage region  and field CSS classes'), $url));
       }

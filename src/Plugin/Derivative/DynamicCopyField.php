@@ -7,7 +7,7 @@
 
 namespace Drupal\ds\Plugin\Derivative;
 
-use Drupal\ds_ui\Form\CopyFieldForm;
+use Drupal\ds\Form\CopyFieldForm;
 
 /**
  * Retrieves dynamic ds field plugin definitions.

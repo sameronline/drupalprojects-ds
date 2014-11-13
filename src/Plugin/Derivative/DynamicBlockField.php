@@ -7,7 +7,7 @@
 
 namespace Drupal\ds\Plugin\Derivative;
 
-use Drupal\ds_ui\Form\BlockFieldForm;
+use Drupal\ds\Form\BlockFieldForm;
 
 /**
  * Retrieves dynamic block field plugin definitions.
