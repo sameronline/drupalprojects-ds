@@ -501,9 +501,9 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
   $all_field_values = $form_state->getValue('fields');
   $all_plugin_settings = $form_state->get('plugin_settings');
 
-  // Save settings for each field.
-  $fields = $form['#ds_fields'];
-  foreach ($fields as $field) {
+  // Save settings for each Display Suite field.
+  $ds_fields = $form['#ds_fields'];
+  foreach ($ds_fields as $field) {
 
     $field_values = $all_field_values[$field];
 
@@ -524,11 +524,8 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
     }
 
     $field_settings[$field] = $settings;
-  }
 
-  // Add field layout settings to every field
-  foreach ($all_field_values as $field => $field_values) {
-    // Add plugin settings if provided
+    // Add field template plugin settings if provided.
     $values = isset($all_plugin_settings[$field]['ft']) ? $all_plugin_settings[$field]['ft'] : array();
 
     if (!empty($values)) {
