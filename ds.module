@@ -386,31 +386,31 @@ function ds_preprocess_field(&$variables) {
 
     // Check if this field has custom output settings.
     $variables['ds-config'] = array();
-    if (isset($field_settings[$entity_type][$bundle][$view_mode][$field_name]['settings']['ft']['layout'])) {
-      $config = $field_settings[$entity_type][$bundle][$view_mode][$field_name]['settings']['ft']['layout'];
+    if (isset($field_settings[$entity_type][$bundle][$view_mode][$field_name]['settings']['ft'])) {
+      $config = $field_settings[$entity_type][$bundle][$view_mode][$field_name]['settings']['ft'];
       $variables['ds-config'] = $config;
     }
 
     // CSS classes
-    if (isset($config['classes'])) {
-      $variables['classes_array'][] = $config['classes'];
+    if (isset($config['settings']['classes'])) {
+      $variables['classes_array'][] = $config['settings']['classes'];
     }
 
     // Alter the label if configured.
     if (!$variables['label_hidden']) {
-      if (isset($config['lb'])) {
-        $variables['label'] = t(String::checkPlain($config['lb']));
+      if (isset($config['settings']['lb'])) {
+        $variables['label'] = t(String::checkPlain($config['settings']['lb']));
       }
     }
 
     // Determine the field template. In case it's something different
     // than theme_field, we'll add that function as a suggestion.
-    if (isset($config['func']) && $config['func'] != 'theme_field') {
+    if (isset($config['id']) && $config['id'] != 'theme_field') {
       $variables['ds-config'] = $config;
     }
     // Use Display Suite Extras Default theming function.
     // @todo is this the right place now ?
-    elseif (!isset($config['func']) || empty($config['func'])) {
+    elseif (!isset($config['id']) || empty($config['id'])) {
       $field_theme_function = \Drupal::config('ds.settings')->get('ft-default');
       if ($field_theme_function != 'theme_field') {
         $variables['ds-config'] = $config;
@@ -452,15 +452,15 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
     $suggestion = '';
 
     // Determine the field template. In case it's something different
-    if (isset($config['func']) && $config['func'] != 'default') {
-      $layout_instance = \Drupal::service('plugin.manager.ds.field.layout')->createInstance($config['func']);
+    if (isset($config['id']) && $config['id'] != 'default') {
+      $layout_instance = \Drupal::service('plugin.manager.ds.field.layout')->createInstance($config['id']);
 
       // Either it uses the function.
       $suggestions = array();
       $suggestions[] = $layout_instance->getThemeFunction();
 
       // Or the template file(s).
-      $suggestion = 'field__' . $config['func'];
+      $suggestion = 'field__' . $config['id'];
     }
     // Check if we have a default field template on field level.
     elseif ($field instanceof FieldDefinitionInterface && ($theme_function = $field->getThirdPartySetting('ds', 'ds_field_template', '')) && !empty($theme_function)) {
@@ -511,18 +511,18 @@ function ds_field_template_settings_form(array &$form, FormStateInterface &$form
 
   // In case with an ajax refresh we fetch the function from a different place
   $values = $form_state->getValues();
-  if (isset($values['fields'][$key]['settings_edit_form']['settings']['ft']['func'])) {
-    $field_function = $values['fields'][$key]['settings_edit_form']['settings']['ft']['func'];
+  if (isset($values['fields'][$key]['settings_edit_form']['settings']['ft']['id'])) {
+    $field_function = $values['fields'][$key]['settings_edit_form']['settings']['ft']['id'];
   }
   else {
-    $field_function = isset($field_settings['func']) ? $field_settings['func'] : $default_field_function;
+    $field_function = isset($field_settings['id']) ? $field_settings['id'] : $default_field_function;
   }
 
   $form['ft'] = array(
     '#weight' => 20,
   );
 
-  $form['ft']['func'] = array(
+  $form['ft']['id'] = array(
     '#title' => t('Choose a Field Template'),
     '#type' => 'select',
     '#options' => $functions,
@@ -535,17 +535,17 @@ function ds_field_template_settings_form(array &$form, FormStateInterface &$form
   );
 
   // Create field layout plugin instance.
-  $config = isset($field_settings['layout']) ? $field_settings['layout'] : array();
+  $config = isset($field_settings['settings']) ? $field_settings['settings'] : array();
   $field_layout_instance = \Drupal::service('plugin.manager.ds.field.layout')->createInstance($field_function, $config);
 
   // Alter the form to add specific field layout settings
-  $form['ft']['layout'] = array(
+  $form['ft']['settings'] = array(
     '#type' => 'container',
     '#attributes' => array(
       'class' => array('ft-settings')
     ),
   );
-  $field_layout_instance->alterForm($form['ft']['layout']);
+  $field_layout_instance->alterForm($form['ft']['settings']);
 }
 
 /**
@@ -580,7 +580,7 @@ function ds_field_formatter_settings_summary_alter(&$summary, $context) {
       $plugin_settings = $form_state->get('plugin_settings');
     }
 
-    $field_function = isset($plugin_settings[$field->getName()]['ft']['func']) ? $plugin_settings[$field->getName()]['ft']['func'] : $default_field_function;
+    $field_function = isset($plugin_settings[$field->getName()]['ft']['id']) ? $plugin_settings[$field->getName()]['ft']['id'] : $default_field_function;
     $summary[] = 'Field template: ' . String::checkPlain($functions[$field_function]);
   }
 }

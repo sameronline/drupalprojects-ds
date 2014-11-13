@@ -534,8 +534,8 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
       $field_settings[$field]['settings']['ft'] = $values;
 
       $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
-      $function = isset($values['func']) ? $values['func'] : $default_field_function;
-      $field_settings[$field]['settings']['ft']['func'] = $function;
+      $function = isset($values['id']) ? $values['id'] : $default_field_function;
+      $field_settings[$field]['settings']['ft']['id'] = $function;
     }
   }
 
@@ -694,6 +694,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
     '#weight' => -100,
   );
 
+  // @todo cleanup
   $layout = array();
   $display = entity_get_display($entity_type, $bundle, $view_mode);
   if ($display->getThirdPartySetting('ds', 'layout')) {

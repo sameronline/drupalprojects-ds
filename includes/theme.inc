@@ -32,8 +32,8 @@ function theme_ds_field_reset($variables) {
  */
 function theme_ds_field_minimal($variables) {
   $output = '';
-  $config = $variables['ds-config'];
-  $classes = isset($config['classes']) ? ' ' . $config['classes'] : '';
+  $config = isset($variables['ds-config']['settings']) ? $variables['ds-config']['settings'] : array();
+  $classes = isset($config['classes']) ? ' ' . implode(' ', $config['classes']) : '';
 
   // Add a simple wrapper.
   $output .= '<div class="field field-name-' . strtr($variables['element']['#field_name'], '_', '-') . $classes . '">';
@@ -61,8 +61,7 @@ function theme_ds_field_minimal($variables) {
  */
 function theme_ds_field_expert($variables) {
   $output = '';
-
-  $config = $variables['ds-config'];
+  $config = isset($variables['ds-config']['settings']) ? $variables['ds-config']['settings'] : array();
 
   // Render the label if it's not hidden.
   if (!$variables['label_hidden']) {
@@ -124,7 +123,7 @@ function theme_ds_field_expert($variables) {
   }
 
   // Outer wrapper.
-  if (isset($config['ow'])) {
+  if (!empty($config['ow'])) {
     $class = array();
     if (!empty($config['ow-cl'])) $class[] = $config['ow-cl'];
     if (!empty($config['ow-def-cl'])) $class[] = $variables['attributes']['class'];

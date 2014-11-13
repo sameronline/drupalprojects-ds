@@ -42,7 +42,7 @@ class ChangeLayoutForm extends FormBase {
 
       $new_layout_key = $new_layout;
       $new_layout = $all_layouts[$new_layout];
-      $old_layout_info = $all_layouts[$old_layout['layout']];
+      $old_layout_info = $all_layouts[$old_layout['layout']['id']];
 
       $form['#entity_type'] = $entity_type;
       $form['#entity_bundle'] = $bundle;
@@ -76,7 +76,7 @@ class ChangeLayoutForm extends FormBase {
       );
       \Drupal::moduleHandler()->alter('ds_layout_region', $context, $region_info);
       $regions = $region_info['region_options'];
-      $form['#old_layout_info']['regions'] = $regions;
+      $form['#old_layout_info']['layout']['regions'] = $regions;
 
       // For new regions.
       $region_info = array(
@@ -112,7 +112,7 @@ class ChangeLayoutForm extends FormBase {
       );
 
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
-      $old_image = (isset($old_layout_info['image']) &&  !empty($old_layout_info['image'])) ? $old_layout_info['path'] . '/' . $old_layout['layout'] . '.png' : $fallback_image;
+      $old_image = (isset($old_layout_info['image']) &&  !empty($old_layout_info['image'])) ? $old_layout_info['path'] . '/' . $old_layout['layout']['id'] . '.png' : $fallback_image;
       $new_image = (isset($new_layout['image']) &&  !empty($new_layout['image'])) ? $new_layout['path'] . '/' . $new_layout_key . '.png' : $fallback_image;
       $arrow = drupal_get_path('module', 'ds') . '/images/arrow.png';
 
@@ -149,6 +149,7 @@ class ChangeLayoutForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Prepare some variables.
     $old_layout = $form['#old_layout'];
+    $new_layout = $form['#new_layout'];
     $old_layout_info = $form['#old_layout_info'];
     $new_layout_key = $form['#new_layout_key'];
     $entity_type = $form['#entity_type'];
@@ -157,13 +158,15 @@ class ChangeLayoutForm extends FormBase {
 
     // Create new third party settings
     $third_party_settings = $old_layout;
-    $third_party_settings['css'] = $old_layout['css'];
-    $third_party_settings['path'] = $old_layout['path'];
-    //unset($third_party_settings['regions']);
-    //unset($third_party_settings['settings']['fields']);
+    $third_party_settings['layout']['id'] = $new_layout_key;
+    if (!empty($new_layout['css'])) {
+      $third_party_settings['layout']['css'] = $new_layout['css'];
+    }
+    $third_party_settings['layout']['path'] = $new_layout['path'];
+    unset($third_party_settings['regions']);
 
     // map old regions to new ones
-    foreach ($old_layout_info['regions'] as $region => $region_title) {
+    foreach ($old_layout_info['layout']['regions'] as $region => $region_title) {
       $new_region = $form_state->getValue('ds_' . $region);
       if ($new_region != '' && isset($old_layout['regions'][$region])) {
         foreach ($old_layout['regions'][$region] as $field) {
@@ -171,7 +174,6 @@ class ChangeLayoutForm extends FormBase {
             $third_party_settings['regions'][$new_region] = array();
           }
           $third_party_settings['regions'][$new_region][] = $field;
-          //$third_party_settings['settings']['fields'][$field] = $new_region;
         }
       }
     }
@@ -179,10 +181,15 @@ class ChangeLayoutForm extends FormBase {
     // Save configuration.
     /** @var $entity_display EntityDisplayInterface*/
     $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $display_mode);
-    $entity_display->setThirdPartySetting('ds', 'layout', $new_layout_key);
-    $entity_display->setThirdPartySetting('ds', 'fields', $third_party_settings['fields']);
-    $entity_display->setThirdPartySetting('ds', 'settings', $third_party_settings['settings']);
-    $entity_display->setThirdPartySetting('ds', 'regions', $third_party_settings['regions']);
+    if ($third_party_settings['layout']) {
+      $entity_display->setThirdPartySetting('ds', 'layout', $third_party_settings['layout']);
+    }
+    if ($third_party_settings['regions']) {
+      $entity_display->setThirdPartySetting('ds', 'regions', $third_party_settings['regions']);
+    }
+    if ($third_party_settings['fields']) {
+      $entity_display->setThirdPartySetting('ds', 'fields', $third_party_settings['fields']);
+    }
     $entity_display->save();
 
     // Clear entity info cache.
