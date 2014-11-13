@@ -527,11 +527,6 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
 
   // Add field layout settings to every field
   foreach ($all_field_values as $field => $field_values) {
-    // Make sure we need to save anything for this field.
-    if (_ds_field_valid($field, $field_values, $form_state)) {
-      continue;
-    }
-
     // Add plugin settings if provided
     $values = isset($all_plugin_settings[$field]['ft']) ? $all_plugin_settings[$field]['ft'] : array();
 
@@ -1355,9 +1350,9 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
       $settings = $settings + \Drupal::service('plugin.manager.field.formatter')->getDefaultSettings($formatter_type);
 
       // Import field settings and merge with Field API settings.
-      if (!isset($form_state_plugin_settings[$key]) && !empty($form['#field_settings'][$key]['plugin_settings']['ft'])) {
+      if (!isset($form_state_plugin_settings[$key]) && !empty($form['#field_settings'][$key]['settings']['ft'])) {
         $form_state_plugin_settings[$key] = $settings;
-        $form_state_plugin_settings[$key]['ft'] = $form['#field_settings'][$key]['plugin_settings']['ft'];
+        $form_state_plugin_settings[$key]['ft'] = $form['#field_settings'][$key]['settings']['ft'];
         $form_state->set('plugin_settings', $form_state_plugin_settings);
       }
 
