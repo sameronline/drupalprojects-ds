@@ -129,7 +129,7 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
 
   // Add Display Suite fields.
   $fields = Ds::getFields($entity_type);
-  $field_values = !empty($layout['fields']) ? $layout['fields'] : array();
+  $field_values = !empty($configuration['fields']) ? $configuration['fields'] : array();
 
   foreach ($field_values as $key => $field) {
 
@@ -143,8 +143,8 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
       $field['formatter'] = $field_values[$key]['formatter'];
     }
 
-    if (isset($field_values[$key]['plugin_settings'])) {
-      $field['plugin_settings'] = $field_values[$key]['plugin_settings'];
+    if (isset($field_values[$key]['settings'])) {
+      $field['settings'] = $field_values[$key]['settings'];
     }
 
     $field_value = Ds::getFieldValue($key, $field, $entity, $view_mode, $build);
@@ -372,51 +372,49 @@ function ds_preprocess_field(&$variables) {
   $view_mode = $variables['element']['#view_mode'];
 
   /** @var $entity_display EntityDisplayInterface */
-  // @todo see what to get back from this function.
   $entity_display = Ds::getDisplay($entity_type, $bundle, $view_mode);
-  if (!$entity_display->getThirdPartySetting('ds', 'layout')) {
-    return;
-  }
+  if ($entity_display && $entity_display->getThirdPartySetting('ds', 'layout')) {
 
-  $config = array();
-  static $field_settings = array();
-  if (!isset($field_settings[$entity_type][$bundle][$view_mode])) {
-    $field_settings[$entity_type][$bundle][$view_mode] = $entity_display->getThirdPartySetting('ds', 'fields');
-  }
-
-  // Get the field name and field instance info - if available.
-  $field_name = $variables['element']['#field_name'];
-
-  // Check if this field has custom output settings.
-  $variables['ds-config'] = array();
-  if (isset($field_settings[$entity_type][$bundle][$view_mode][$field_name]['plugin_settings']['ft']['layout'])) {
-    $config = $field_settings[$entity_type][$bundle][$view_mode][$field_name]['plugin_settings']['ft']['layout'];
-    $variables['ds-config'] = $config;
-  }
-
-  // CSS classes
-  if (isset($config['classes'])) {
-    $variables['classes_array'][] = $config['classes'];
-  }
-
-  // Alter the label if configured.
-  if (!$variables['label_hidden']) {
-    if (isset($config['lb'])) {
-      $variables['label'] = t(String::checkPlain($config['lb']));
+    $config = array();
+    static $field_settings = array();
+    if (!isset($field_settings[$entity_type][$bundle][$view_mode])) {
+      $field_settings[$entity_type][$bundle][$view_mode] = $entity_display->getThirdPartySetting('ds', 'fields');
     }
-  }
 
-  // Determine the field template. In case it's something different
-  // than theme_field, we'll add that function as a suggestion.
-  if (isset($config['func']) && $config['func'] != 'theme_field') {
-    $variables['ds-config'] = $config;
-  }
-  // Use Display Suite Extras Default theming function.
-  // @todo is this the right place now ?
-  elseif (!isset($config['func']) || empty($config['func'])) {
-    $field_theme_function = \Drupal::config('ds.settings')->get('ft-default');
-    if ($field_theme_function != 'theme_field') {
+    // Get the field name and field instance info - if available.
+    $field_name = $variables['element']['#field_name'];
+
+    // Check if this field has custom output settings.
+    $variables['ds-config'] = array();
+    if (isset($field_settings[$entity_type][$bundle][$view_mode][$field_name]['plugin_settings']['ft']['layout'])) {
+      $config = $field_settings[$entity_type][$bundle][$view_mode][$field_name]['plugin_settings']['ft']['layout'];
       $variables['ds-config'] = $config;
+    }
+
+    // CSS classes
+    if (isset($config['classes'])) {
+      $variables['classes_array'][] = $config['classes'];
+    }
+
+    // Alter the label if configured.
+    if (!$variables['label_hidden']) {
+      if (isset($config['lb'])) {
+        $variables['label'] = t(String::checkPlain($config['lb']));
+      }
+    }
+
+    // Determine the field template. In case it's something different
+    // than theme_field, we'll add that function as a suggestion.
+    if (isset($config['func']) && $config['func'] != 'theme_field') {
+      $variables['ds-config'] = $config;
+    }
+    // Use Display Suite Extras Default theming function.
+    // @todo is this the right place now ?
+    elseif (!isset($config['func']) || empty($config['func'])) {
+      $field_theme_function = \Drupal::config('ds.settings')->get('ft-default');
+      if ($field_theme_function != 'theme_field') {
+        $variables['ds-config'] = $config;
+      }
     }
   }
 }
@@ -432,62 +430,61 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
 
   /** @var $entity_display EntityDisplayInterface */
   $entity_display = Ds::getDisplay($entity_type, $bundle, $view_mode);
-  if (!$entity_display->getThirdPartySetting('ds', 'layout')) {
-    return;
-  }
+  if ($entity_display && $entity_display->getThirdPartySetting('ds', 'layout')) {
 
-  $field_theme_function = \Drupal::config('ds.settings')->get('ft-default');
-  static $field_settings = array();
-  if (!isset($field_settings[$entity_type][$bundle][$view_mode])) {
-    $field_settings[$entity_type][$bundle][$view_mode] = $entity_display->getThirdPartySetting('ds', 'fields');
-  }
+    $field_theme_function = \Drupal::config('ds.settings')->get('ft-default');
+    static $field_settings = array();
+    if (!isset($field_settings[$entity_type][$bundle][$view_mode])) {
+      $field_settings[$entity_type][$bundle][$view_mode] = $entity_display->getThirdPartySetting('ds', 'fields');
+    }
 
-  // Get the field name and field instance info - if available.
-  $field_name = $variables['element']['#field_name'];
-  $field = FieldConfig::loadByName($entity_type, $bundle, $field_name);
+    // Get the field name and field instance info - if available.
+    $field_name = $variables['element']['#field_name'];
+    $field = FieldConfig::loadByName($entity_type, $bundle, $field_name);
 
-  // Check if this field has custom output settings.
-  $config = array();
-  if (isset($field_settings[$entity_type][$bundle][$view_mode][$field_name]['plugin_settings']['ft'])) {
-    $config = $field_settings[$entity_type][$bundle][$view_mode][$field_name]['plugin_settings']['ft'];
-  }
+    // Check if this field has custom output settings.
+    $config = array();
+    if (isset($field_settings[$entity_type][$bundle][$view_mode][$field_name]['settings']['ft'])) {
+      $config = $field_settings[$entity_type][$bundle][$view_mode][$field_name]['settings']['ft'];
+    }
 
-  // Initialize suggestion name
-  $suggestion = '';
+    // Initialize suggestion name
+    $suggestion = '';
 
-  // Determine the field template. In case it's something different
-  if (isset($config['func']) && $config['func'] != 'default') {
-    $layout_instance = \Drupal::service('plugin.manager.ds.field.layout')->createInstance($config['func']);
+    // Determine the field template. In case it's something different
+    if (isset($config['func']) && $config['func'] != 'default') {
+      $layout_instance = \Drupal::service('plugin.manager.ds.field.layout')->createInstance($config['func']);
 
-    // Either it uses the function.
-    $suggestions = array();
-    $suggestions[] = $layout_instance->getThemeFunction();
+      // Either it uses the function.
+      $suggestions = array();
+      $suggestions[] = $layout_instance->getThemeFunction();
 
-    // Or the template file(s).
-    $suggestion = 'field__' . $config['func'];
-  }
-  // Check if we have a default field template on field level.
-  elseif ($field instanceof FieldDefinitionInterface && ($theme_function = $field->getThirdPartySetting('ds', 'ds_field_template', '')) && !empty($theme_function)) {
-    // Either it uses the function.
-    $suggestions = array();
-    $suggestions[] = 'theme_ds_field_' . $theme_function;
+      // Or the template file(s).
+      $suggestion = 'field__' . $config['func'];
+    }
+    // Check if we have a default field template on field level.
+    elseif ($field instanceof FieldDefinitionInterface && ($theme_function = $field->getThirdPartySetting('ds', 'ds_field_template', '')) && !empty($theme_function)) {
+      // Either it uses the function.
+      $suggestions = array();
+      $suggestions[] = 'theme_ds_field_' . $theme_function;
 
-    // Or the template file(s).
-    $suggestion = 'field__' . $theme_function;
-  }
-  elseif (!empty($field_theme_function)) {
-    $suggestions = array();
-    $suggestions[] = 'theme_ds_field_' . $field_theme_function;
+      // Or the template file(s).
+      $suggestion = 'field__' . $theme_function;
+    }
+    elseif (!empty($field_theme_function)) {
+      $suggestions = array();
+      $suggestions[] = 'theme_ds_field_' . $field_theme_function;
 
-    // Or the template file(s).
-    $suggestion = 'field__' . $field_theme_function;
-  }
+      // Or the template file(s).
+      $suggestion = 'field__' . $field_theme_function;
+    }
 
-  if (!empty($suggestion)) {
-    $suggestions[] = $suggestion;
-    $suggestions[] = $suggestion . '__' . $field_name;
-    $suggestions[] = $suggestion . '__' . $variables['element']['#bundle'];
-    $suggestions[] = $suggestion . '__' . $field_name . '__' . $variables['element']['#bundle'];
+    if (!empty($suggestion)) {
+      $suggestions[] = $suggestion;
+      $suggestions[] = $suggestion . '__' . $field_name;
+      $suggestions[] = $suggestion . '__' . $variables['element']['#bundle'];
+      $suggestions[] = $suggestion . '__' . $field_name . '__' . $variables['element']['#bundle'];
+    }
   }
 }
 

@@ -116,6 +116,9 @@ class Ds {
    */
   public static function getDisplay($entity_type, $bundle, $view_mode, $fallback = TRUE) {
     $overridden = TRUE;
+
+    // @todo revise
+
     /** @var $entity_display EntityDisplayInterface */
     if ($view_mode != 'form') {
       $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $view_mode);
@@ -131,14 +134,7 @@ class Ds {
     }
 
     if ($entity_display) {
-      $layout = array(
-        'layout' => $entity_display->getThirdPartySetting('ds', 'layout'),
-        'settings' => $entity_display->getThirdPartySetting('ds', 'settings'),
-      );
-      if (!empty($layout) && ($overridden || $view_mode == 'default')) {
-        $layout['view_mode'] = $view_mode;
-        return $layout;
-      }
+      return $entity_display;
     }
 
     // In case $view_mode is not found, check if we have a default layout,
@@ -147,12 +143,7 @@ class Ds {
       /** @var $entity_default_display EntityDisplayInterface */
       $entity_default_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.default');
       if ($entity_default_display) {
-        $default_layout = array(
-          'layout' => $entity_default_display->getThirdPartySetting('ds', 'layout'),
-          'settings' => $entity_default_display->getThirdPartySetting('ds', 'settings'),
-        );
-        $default_layout['view_mode'] = 'default';
-        return $default_layout;
+        return $entity_default_display;
       }
     }
 

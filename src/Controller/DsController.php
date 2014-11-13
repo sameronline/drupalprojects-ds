@@ -159,22 +159,14 @@ class DsController extends ControllerBase {
       $view_mode = 'full';
     }
 
-    // Check if we have a configured layout. Do not fallback to default.
-    $layout = Ds::getDisplay($entity_type, $entity->bundle(), $view_mode, FALSE);
-
     // Get the manage display URI.
     $route = FieldUI::getOverviewRouteInfo($entity_type, $entity->bundle());
 
-    // Check view mode settings.
-    $overridden = FALSE;
     /** @var $entity_display EntityDisplayBase */
-    $entity_display = entity_load('entity_view_display', $entity_type . '.' . $entity->bundle() . '.' . $view_mode);
-    if ($entity_display) {
-      $overridden = $entity_display->status();
-    }
+    $entity_display = entity_get_display($entity_type, $entity->bundle(), $view_mode);
 
     $route_parameters = $route->getRouteParameters();
-    if (!empty($layout) || $overridden) {
+    if ($entity_display->getThirdPartySetting('ds', 'layout')) {
       $route_parameters['view_mode_name'] = $view_mode;
       $admin_route_name = 'field_ui.display_overview_view_mode_' . $entity_type;
     }
