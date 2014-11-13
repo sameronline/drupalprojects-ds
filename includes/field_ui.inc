@@ -520,8 +520,8 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
     $settings['formatter'] = $field_values['plugin']['type'];
 
     // Any formatter settings.
-    if (isset($all_plugin_settings[$field])) {
-      $settings['plugin_settings'] = $all_plugin_settings[$field];
+    if (isset($all_plugin_settings[$field]['settings'])) {
+      $settings['settings'] = $all_plugin_settings[$field]['settings'];
     }
 
     $field_settings[$field] = $settings;
@@ -538,17 +538,11 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
     $values = isset($all_plugin_settings[$field]['ft']) ? $all_plugin_settings[$field]['ft'] : array();
 
     if (!empty($values)) {
-      $field_settings[$field]['plugin_settings']['ft'] = array();
+      $field_settings[$field]['settings']['ft'] = $values;
 
       $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
       $function = isset($values['func']) ? $values['func'] : $default_field_function;
-      $field_settings[$field]['plugin_settings']['ft']['func'] = $function;
-
-      // Create field layout plugin instance.
-      $field_layout_instance = \Drupal::service('plugin.manager.ds.field.layout')->createInstance($function);
-
-      // Add field layout specific settings for the field
-      $field_layout_instance->massageFormValues($field_settings[$field]['plugin_settings']['ft']['layout'], $values['layout'], $form_state);
+      $field_settings[$field]['settings']['ft']['func'] = $function;
     }
   }
 
@@ -1211,8 +1205,8 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
     if (isset($form_state_plugin_settings[$key])) {
       $plugin_settings = $form_state_plugin_settings[$key];
     }
-    elseif (isset($field_settings[$key]['plugin_settings'])) {
-      $plugin_settings = $field_settings[$key]['plugin_settings'];
+    elseif (isset($field_settings[$key]['settings'])) {
+      $plugin_settings = $field_settings[$key]['settings'];
       $form_state_plugin_settings[$key] = $plugin_settings;
     }
 
