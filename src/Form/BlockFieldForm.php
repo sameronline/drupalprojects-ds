@@ -2,13 +2,13 @@
 
 /**
  * @file
- * Contains \Drupal\ds_ui\Form\BlockFieldForm.
+ * Contains \Drupal\ds\Form\BlockFieldForm.
  */
 
-namespace Drupal\ds_ui\Form;
+namespace Drupal\ds\Form;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\ds_ui\Form\FieldFormBase;
+use Drupal\ds\Form\FieldFormBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 
 /**

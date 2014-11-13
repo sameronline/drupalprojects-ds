@@ -87,7 +87,7 @@ class SettingsForm extends ConfigFormBase {
     );
 
     $theme_functions = Ds::getFieldLayoutOptions();
-    $url = new Url('ds_ui.classes');
+    $url = new Url('ds.classes');
     $form['fs1']['ft-default'] = array(
       '#type' => 'select',
       '#title' => t('Default Field Template'),

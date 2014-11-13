@@ -13,6 +13,16 @@ ds.emergency_task:
   title: Emergency
   parent_id: ds.display_task
   weight: 100
+ds.classes_task:
+  route_name: ds.classes
+  title: Classes
+  base_route: ds.display_task
+  weight: 1
+ds.fields_task:
+  route_name: ds.fields_list
+  title: Fields
+  base_route: ds.display_task
+  weight: 2
 entity.node.contextual_tab:
   route_name: entity.node.contextual_tab
   base_route: entity.node.canonical

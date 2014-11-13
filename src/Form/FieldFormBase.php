@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds_ui\Form\FieldFormBase.
+ * Contains \Drupal\ds\Form\FieldFormBase.
  */
 
-namespace Drupal\ds_ui\Form;
+namespace Drupal\ds\Form;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\ConfigFormBase;
@@ -187,7 +187,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
     \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
     // Redirect.
-    $url = new Url('ds_ui.fields_list');
+    $url = new Url('ds.fields_list');
     $form_state->setRedirectUrl($url);
     drupal_set_message(t('The field %field has been saved.', array('%field' => $field['label'])));
   }

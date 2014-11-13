@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds_ui\Form\FieldDeleteForm.
+ * Contains \Drupal\ds\Form\FieldDeleteForm.
  */
 
-namespace Drupal\ds_ui\Form;
+namespace Drupal\ds\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -74,7 +74,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('ds_ui.fields_list');
+    return new Url('ds.fields_list');
   }
 
   /**
@@ -113,7 +113,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
     \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
     // Redirect.
-    $url = new Url('ds_ui.fields_list');
+    $url = new Url('ds.fields_list');
     $form_state->setRedirectUrl($url);
     drupal_set_message(t('The field %field has been deleted.', array('%field' => $field['label'])));
   }

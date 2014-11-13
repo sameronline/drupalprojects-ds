@@ -2,13 +2,13 @@
 
 /**
  * @file
- * Contains \Drupal\ds_ui\Form\TokenFieldForm.
+ * Contains \Drupal\ds\Form\TokenFieldForm.
  */
 
-namespace Drupal\ds_ui\Form;
+namespace Drupal\ds\Form;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\ds_ui\Form\FieldFormBase;
+use Drupal\ds\Form\FieldFormBase;
 
 /**
  * Configures token fields.

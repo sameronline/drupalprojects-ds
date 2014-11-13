@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds_ui\Controller\FieldController.
+ * Contains \Drupal\ds\Controller\FieldController.
  */
 
-namespace Drupal\ds_ui\Controller;
+namespace Drupal\ds\Controller;
 
 use Drupal\Component\Utility\String;
 use Drupal\Core\Config\StorageInterface;
@@ -28,7 +28,7 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
   protected $storage;
 
   /**
-   * Constructs a \Drupal\ds_ui\Routing\FieldController object.
+   * Constructs a \Drupal\ds\Routing\FieldController object.
    *
    * @param \Drupal\Core\Config\StorageInterface $storage
    *   The configuration storage.
@@ -63,11 +63,11 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
         $operations = array();
         $operations['edit'] = array(
           'title' => $this->t('Edit'),
-          'url' => new Url('ds_ui.manage_field', array('field_key' => $field_value['id'])),
+          'url' => new Url('ds.manage_field', array('field_key' => $field_value['id'])),
         );
         $operations['delete'] = array(
           'title' => $this->t('Delete'),
-          'url' => new Url('ds_ui.delete_field', array('field' => $field_value['id'])),
+          'url' => new Url('ds.delete_field', array('field' => $field_value['id'])),
         );
         $row[] = array(
           'data' => array(
@@ -108,14 +108,14 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
   public function manageRedirect($field_key) {
     $config = $this->config('ds.field.' . $field_key);
     if ($field = $config->get()) {
-      $url = new Url('ds_ui.manage_' . $field['type'] . '_field', array('field_key' => $field_key));
+      $url = new Url('ds.manage_' . $field['type'] . '_field', array('field_key' => $field_key));
       if ($url->toString()) {
         return new RedirectResponse($url->toString());
       }
     }
 
     drupal_set_message($this->t('Field not found'));
-    $url = new Url('ds_ui.fields_list');
+    $url = new Url('ds.fields_list');
     return new RedirectResponse($url->toString());
   }
 

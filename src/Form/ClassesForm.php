@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds_ui\Form\ClassesForm.
+ * Contains \Drupal\ds\Form\ClassesForm.
  */
 
-namespace Drupal\ds_ui\Form;
+namespace Drupal\ds\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;

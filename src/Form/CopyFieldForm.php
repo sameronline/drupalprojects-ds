@@ -2,13 +2,13 @@
 
 /**
  * @file
- * Contains \Drupal\ds_ui\Form\CopyFieldForm.
+ * Contains \Drupal\ds\Form\CopyFieldForm.
  */
 
-namespace Drupal\ds_ui\Form;
+namespace Drupal\ds\Form;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\ds_ui\Form\FieldFormBase;
+use Drupal\ds\Form\FieldFormBase;
 
 /**
  * Configure block fields.
