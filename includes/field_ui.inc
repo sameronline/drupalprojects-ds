@@ -472,8 +472,22 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 function ds_field_ui_fields_validate($form, FormStateInterface $form_state) {
   foreach (Element::children($form['fields']) as $key) {
     $fields = $form_state->getValue('fields');
+
+    // Welcome to the most freaky code. We need to move field template
+    // settings in the form state depending on where the key is
+    // found, for either core or display suite fields.
+
     if (isset($fields[$key]['settings_edit_form']['settings']['ft'])) {
       $settings = $fields[$key]['settings_edit_form']['settings'];
+      if (!empty($settings)) {
+        $plugin_settings = $form_state->get('plugin_settings');
+        $plugin_settings[$key] = $settings;
+        $form_state->set('plugin_settings', $plugin_settings);
+      }
+    }
+
+    if (isset($fields[$key]['settings_edit_form']['third_party_settings']['ds']['ft'])) {
+      $settings = $fields[$key]['settings_edit_form']['third_party_settings']['ds'];
       if (!empty($settings)) {
         $plugin_settings = $form_state->get('plugin_settings');
         $plugin_settings[$key] = $settings;
