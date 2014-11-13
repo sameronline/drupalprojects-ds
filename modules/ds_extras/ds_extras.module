@@ -153,6 +153,8 @@ function ds_extras_form_node_form_alter(&$form, FormStateInterface $form_state) 
   // Switch full view mode.
   $node = $form_state->getFormObject()->getEntity();
 
+  return;
+
   // @todo check the setting
   if (\Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
     // Get the view modes.
