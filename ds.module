@@ -394,7 +394,10 @@ function ds_preprocess_field(&$variables) {
       }
 
       // Get third party settings for Display Suite fields.
-      $f += $entity_display->getThirdPartySetting('ds', 'fields');
+      $ds_fields_third_party_settings = $entity_display->getThirdPartySetting('ds', 'fields');
+      if ($ds_fields_third_party_settings) {
+        $f += $entity_display->getThirdPartySetting('ds', 'fields');
+      }
 
       $field_settings[$entity_type][$bundle][$view_mode] = $f;
     }
@@ -464,7 +467,10 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
       }
 
       // Get third party settings for Display Suite fields.
-      $f += $entity_display->getThirdPartySetting('ds', 'fields');
+      $ds_fields_third_party_settings = $entity_display->getThirdPartySetting('ds', 'fields');
+      if ($ds_fields_third_party_settings) {
+        $f += $entity_display->getThirdPartySetting('ds', 'fields');
+      }
 
       $field_settings[$entity_type][$bundle][$view_mode] = $f;
     }
