@@ -493,7 +493,8 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
  */
 function ds_field_template_settings_form(array &$form, FormStateInterface &$form_state, array $context) {
   $functions = Ds::getFieldLayoutOptions();
-  $default_field_function = 'default';
+
+  $default_field_function = \Drupal::config('ds.settings')->get('ft-default');;
   if (empty($default_field_function)) {
     $default_field_function = 'default';
   }
