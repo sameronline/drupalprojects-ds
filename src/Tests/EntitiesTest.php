@@ -62,12 +62,27 @@ class EntitiesTest extends BaseTest {
    * Utility function to clear field settings.
    */
   function entitiesClearFieldSettings() {
-    $field_settings = \Drupal::configFactory()->listAll('ds_field_settings');
-    foreach ($field_settings as $config) {
-      \Drupal::config($config)->delete();
+    $display = entity_get_display('node', 'article', 'default');
+
+    // Remove all third party settings from components.
+    foreach ($display->getComponents() as $key => $info) {
+      $info['third_party_settings'] = array();
+      $display->setComponent($key, $info);
     }
+
+    // Remove entity display third party settings.
+    $tps = $display->getThirdPartySettings('ds');
+    if (!empty($tps)) {
+      foreach (array_keys($tps) as $key) {
+        $display->unsetThirdPartySetting('ds', $key);
+      }
+    }
+
+    // Save.
+    $display->save();
+
+    // @todo can we remove this?
     \Drupal::cache()->deleteTags(array('ds_fields_info'));
-    \Drupal::cache()->delete('ds_field_settings');
   }
 
   /**
@@ -354,8 +369,6 @@ class EntitiesTest extends BaseTest {
     $this->assertRaw("<div class=\"group-right\">
           <div class=\"ow-class\">" . $body_field . "</div>");
 
-    return;
-
     // With outer span wrapper and class.
     $edit = array(
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
@@ -365,19 +378,18 @@ class EntitiesTest extends BaseTest {
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <span class=\"ow-class-2\"><p>" . $body_field . "</p>
-</span>  </div>");
+          <span class=\"ow-class-2\">" . $body_field . "</span>");
 
     // Clear field settings.
     $this->entitiesClearFieldSettings();
 
     // With outer wrapper and field items wrapper.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][id]' => 'expert',
-      'fields[body][settings_edit_form][settings][ft][settings][ow]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][fis]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-el]' => 'div'
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][id]' => 'expert',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-el]' => 'div'
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
@@ -387,11 +399,11 @@ class EntitiesTest extends BaseTest {
 
     // With outer wrapper and field items div wrapper with class.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][settings][ow]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][fis]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-cl]' => 'fi-class'
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-cl]' => 'fi-class'
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
@@ -401,11 +413,11 @@ class EntitiesTest extends BaseTest {
 
     // With outer wrapper and field items span wrapper and class.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][settings][ow]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][fis]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-el]' => 'span',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-cl]' => 'fi-class'
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-el]' => 'span',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-cl]' => 'fi-class'
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
@@ -415,12 +427,12 @@ class EntitiesTest extends BaseTest {
 
     // With outer wrapper class and field items span wrapper and class.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][settings][ow]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-cl]' => 'ow-class',
-      'fields[body][settings_edit_form][settings][ft][settings][fis]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-el]' => 'span',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-cl]' => 'fi-class'
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-cl]' => 'ow-class',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-el]' => 'span',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-cl]' => 'fi-class'
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
@@ -430,12 +442,12 @@ class EntitiesTest extends BaseTest {
 
     // With outer wrapper span class and field items span wrapper and class.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][settings][ow]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-el]' => 'span',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-cl]' => 'ow-class',
-      'fields[body][settings_edit_form][settings][ft][settings][fis]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-el]' => 'span',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-cl]' => 'fi-class-2'
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-el]' => 'span',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-cl]' => 'ow-class',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-el]' => 'span',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-cl]' => 'fi-class-2'
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
@@ -448,8 +460,8 @@ class EntitiesTest extends BaseTest {
 
     // With field item div wrapper.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][id]' => 'expert',
-      'fields[body][settings_edit_form][settings][ft][settings][fi]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][id]' => 'expert',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
@@ -459,8 +471,8 @@ class EntitiesTest extends BaseTest {
 
     // With field item span wrapper.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][settings][fi]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-el]' => 'span',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-el]' => 'span',
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
@@ -470,10 +482,10 @@ class EntitiesTest extends BaseTest {
 
     // With field item span wrapper and class and odd even.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][settings][fi]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-el]' => 'span',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-cl]' => 'fi-class',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-odd-even]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-el]' => 'span',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-cl]' => 'fi-class',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-odd-even]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
@@ -483,13 +495,13 @@ class EntitiesTest extends BaseTest {
 
     // With fis and fi.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][settings][fis]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-cl]' => 'fi-class-2',
-      'fields[body][settings_edit_form][settings][ft][settings][fi]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-cl]' => 'fi-class',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-odd-even]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-cl]' => 'fi-class-2',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-cl]' => 'fi-class',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-odd-even]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
@@ -498,16 +510,16 @@ class EntitiesTest extends BaseTest {
 </div></div>  </div>");
     // With all wrappers.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][settings][ow]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-cl]' => 'ow-class',
-      'fields[body][settings_edit_form][settings][ft][settings][fis]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-cl]' => 'fi-class-2',
-      'fields[body][settings_edit_form][settings][ft][settings][fi]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-el]' => 'span',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-cl]' => 'fi-class',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-odd-even]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-cl]' => 'ow-class',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-cl]' => 'fi-class-2',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-el]' => 'span',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-cl]' => 'fi-class',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-odd-even]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
@@ -517,18 +529,18 @@ class EntitiesTest extends BaseTest {
 
     // With all wrappers and attributes.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][settings][ow]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-cl]' => 'ow-class',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-at]' => 'name="ow-att"',
-      'fields[body][settings_edit_form][settings][ft][settings][fis]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-cl]' => 'fi-class-2',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-at]' => 'name="fis-att"',
-      'fields[body][settings_edit_form][settings][ft][settings][fi]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-el]' => 'span',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-cl]' => 'fi-class',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-at]' => 'name="fi-at"',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-cl]' => 'ow-class',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-at]' => 'name="ow-att"',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-cl]' => 'fi-class-2',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-at]' => 'name="fis-att"',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-el]' => 'span',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-cl]' => 'fi-class',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-at]' => 'name="fi-at"',
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
@@ -538,18 +550,18 @@ class EntitiesTest extends BaseTest {
 
     // Remove attributes.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][settings][ow]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-cl]' => 'ow-class',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-at]' => '',
-      'fields[body][settings_edit_form][settings][ft][settings][fis]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-cl]' => 'fi-class-2',
-      'fields[body][settings_edit_form][settings][ft][settings][fis-at]' => '',
-      'fields[body][settings_edit_form][settings][ft][settings][fi]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-el]' => 'span',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-cl]' => 'fi-class',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-at]' => '',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-cl]' => 'ow-class',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-at]' => '',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-cl]' => 'fi-class-2',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-at]' => '',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-el]' => 'span',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-cl]' => 'fi-class',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-at]' => '',
     );
     $this->dsEditFormatterSettings($edit);
 
@@ -592,10 +604,10 @@ class EntitiesTest extends BaseTest {
 
     // Test default classes on outer wrapper.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][settings][ow]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-cl]' => 'ow-class',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-def-cl]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-cl]' => 'ow-class',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-def-cl]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
@@ -605,11 +617,11 @@ class EntitiesTest extends BaseTest {
 
     // Test default attributes on field item.
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][settings][ow]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-el]' => 'div',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-cl]' => 'ow-class',
-      'fields[body][settings_edit_form][settings][ft][settings][ow-def-cl]' => '1',
-      'fields[body][settings_edit_form][settings][ft][settings][fi-def-at]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-el]' => 'div',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-cl]' => 'ow-class',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-def-cl]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-def-at]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
@@ -620,7 +632,7 @@ class EntitiesTest extends BaseTest {
     // Use the test field theming function to test that this function is
     // registered in the theme registry through ds_extras_theme().
     $edit = array(
-      'fields[body][settings_edit_form][settings][ft][id]' => 'ds_test_theming_function',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][id]' => 'ds_test_theming_function',
     );
 
     $this->dsEditFormatterSettings($edit);

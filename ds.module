@@ -7,6 +7,7 @@
 
 use Drupal\Component\Utility\String;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\FieldConfigInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FormatterInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -376,14 +377,27 @@ function ds_preprocess_field(&$variables) {
   $entity_display = Ds::getDisplay($entity_type, $bundle, $view_mode);
   if ($entity_display && $entity_display->getThirdPartySetting('ds', 'layout')) {
 
+    // Get the field name and field instance info - if available.
+    $field_name = $variables['element']['#field_name'];
+
     $config = array();
     static $field_settings = array();
     if (!isset($field_settings[$entity_type][$bundle][$view_mode])) {
-      $field_settings[$entity_type][$bundle][$view_mode] = $entity_display->getThirdPartySetting('ds', 'fields');
-    }
 
-    // Get the field name and field instance info - if available.
-    $field_name = $variables['element']['#field_name'];
+      $f = array();
+
+      // Get third party settings for Core fields.
+      foreach ($entity_display->getComponents() as $key => $info) {
+        if (!empty($info['third_party_settings']['ds']['ft'])) {
+          $f[$key]['settings']['ft'] = $info['third_party_settings']['ds']['ft'];
+        }
+      }
+
+      // Get third party settings for Display Suite fields.
+      $f += $entity_display->getThirdPartySetting('ds', 'fields');
+
+      $field_settings[$entity_type][$bundle][$view_mode] = $f;
+    }
 
     // Check if this field has custom output settings.
     $variables['ds-config'] = array();
@@ -433,14 +447,28 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
   $entity_display = Ds::getDisplay($entity_type, $bundle, $view_mode);
   if ($entity_display && $entity_display->getThirdPartySetting('ds', 'layout')) {
 
+    // Get the field name and field instance info - if available.
+    $field_name = $variables['element']['#field_name'];
+
     $field_theme_function = \Drupal::config('ds.settings')->get('ft-default');
     static $field_settings = array();
     if (!isset($field_settings[$entity_type][$bundle][$view_mode])) {
-      $field_settings[$entity_type][$bundle][$view_mode] = $entity_display->getThirdPartySetting('ds', 'fields');
+
+      $f = array();
+
+      // Get third party settings for Core fields.
+      foreach ($entity_display->getComponents() as $key => $info) {
+        if (!empty($info['third_party_settings']['ds']['ft'])) {
+          $f[$key]['settings']['ft'] = $info['third_party_settings']['ds']['ft'];
+        }
+      }
+
+      // Get third party settings for Display Suite fields.
+      $f += $entity_display->getThirdPartySetting('ds', 'fields');
+
+      $field_settings[$entity_type][$bundle][$view_mode] = $f;
     }
 
-    // Get the field name and field instance info - if available.
-    $field_name = $variables['element']['#field_name'];
     $field = FieldConfig::loadByName($entity_type, $bundle, $field_name);
 
     // Check if this field has custom output settings.
@@ -464,7 +492,7 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
       $suggestion = 'field__' . $config['id'];
     }
     // Check if we have a default field template on field level.
-    elseif ($field instanceof FieldDefinitionInterface && ($theme_function = $field->getThirdPartySetting('ds', 'ds_field_template', '')) && !empty($theme_function)) {
+    elseif ($field instanceof FieldConfigInterface && ($theme_function = $field->getThirdPartySetting('ds', 'ds_field_template', '')) && !empty($theme_function)) {
       // Either it uses the function.
       $suggestions = array();
       $suggestions[] = 'theme_ds_field_' . $theme_function;

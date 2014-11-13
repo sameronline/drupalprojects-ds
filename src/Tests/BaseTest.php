@@ -120,8 +120,6 @@ abstract class BaseTest extends WebTestBase {
     $element_value = 'edit ' . $field_name;
     $this->drupalPostForm($url, array(), $element_value);
 
-    // fields[body][settings_edit_form][settings][ft][id]
-    // fields[body][settings_edit_form][third_party_settings][ds][ft][id]
     if (isset($edit['fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ft][id]'])) {
       $this->drupalPostForm(NULL, array('fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ft][id]' => $edit['fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ft][id]']), t('Update'));
       $this->drupalPostForm(NULL, array(), $element_value);
