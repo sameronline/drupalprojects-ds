@@ -20,7 +20,7 @@ use Drupal\field_ui\FieldUI;
 /**
  * Adds the Display Suite fields and layouts to the form.
  */
-function ds_field_ui_fields_layouts(&$form, FormStateInterface $form_state) {
+function  ds_field_ui_fields_layouts(&$form, FormStateInterface $form_state) {
   global $base_root, $base_path;
 
   // Get the entity_type, bundle and view mode.
@@ -1352,9 +1352,8 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
       $settings = $settings + \Drupal::service('plugin.manager.field.formatter')->getDefaultSettings($formatter_type);
 
       // Import field settings and merge with Field API settings.
-      if (!isset($form_state_plugin_settings[$key]) && !empty($form['#field_settings'][$key]['settings']['ft'])) {
-        $form_state_plugin_settings[$key] = $settings;
-        $form_state_plugin_settings[$key]['ft'] = $form['#field_settings'][$key]['settings']['ft'];
+      if (!isset($form_state_plugin_settings[$key])) {
+        $form_state_plugin_settings[$key] = isset($settings['third_party_settings']['ds']) ? $settings['third_party_settings']['ds'] : array();
         $form_state->set('plugin_settings', $form_state_plugin_settings);
       }
 
@@ -1410,14 +1409,14 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
         }
 
         // Add the field templates form when needed
-        if (\Drupal::config('ds.settings')->get('field_template')) {
+        /*if (\Drupal::config('ds.settings')->get('field_template')) {
           $context = array(
             'instance' => $instance,
             'view_mode' => $view_mode,
           );
 
           ds_field_template_settings_form($settings_form, $form_state, $context);
-        }
+        }*/
 
         // Allow other modules to alter the formatter settings form.
         // @todo check whether we can't make this cleaner, because we're

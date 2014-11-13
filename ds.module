@@ -8,6 +8,7 @@
 use Drupal\Component\Utility\String;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FormatterInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\ds\Ds;
@@ -499,7 +500,7 @@ function ds_field_template_settings_form(array &$form, FormStateInterface &$form
     $default_field_function = 'default';
   }
 
-  // @todo fix me
+  // @todo fix me - and rename 'instance' to field :)
   if (is_array($context['instance'])) {
     $key = $context['instance']['field_name'];
   }
@@ -507,13 +508,17 @@ function ds_field_template_settings_form(array &$form, FormStateInterface &$form
     $key = $context['instance']->getName();
   }
 
+  // Plugin settings.
   $plugin_settings = $form_state->get('plugin_settings');
-  $field_settings = isset($plugin_settings[$key]) ? $plugin_settings[$key]['ft'] : array();
+  $field_settings = isset($plugin_settings[$key]['ft']) ? $plugin_settings[$key]['ft'] : array();
 
   // In case with an ajax refresh we fetch the function from a different place
   $values = $form_state->getValues();
   if (isset($values['fields'][$key]['settings_edit_form']['settings']['ft']['id'])) {
     $field_function = $values['fields'][$key]['settings_edit_form']['settings']['ft']['id'];
+  }
+  elseif (isset($values['fields'][$key]['settings_edit_form']['third_party_settings']['ds']['ft']['id'])) {
+    $field_function = $values['fields'][$key]['settings_edit_form']['third_party_settings']['ds']['ft']['id'];
   }
   else {
     $field_function = isset($field_settings['id']) ? $field_settings['id'] : $default_field_function;
@@ -546,6 +551,7 @@ function ds_field_template_settings_form(array &$form, FormStateInterface &$form
       'class' => array('ft-settings')
     ),
   );
+
   $field_layout_instance->alterForm($form['ft']['settings']);
 }
 
@@ -564,24 +570,46 @@ function ds_field_ui_display_overview_multistep_submit($form, &$form_state) {
 }
 
 /**
+ * Implements hook_field_formatter_third_party_settings_form().
+ */
+function ds_field_formatter_third_party_settings_form(FormatterInterface $plugin, FieldDefinitionInterface $field_definition, $view_mode, $form, FormStateInterface $form_state) {
+  $element = array();
+
+  if (\Drupal::config('ds.settings')->get('field_template')) {
+
+    $context = array(
+      'instance' => $field_definition,
+      'formatter' => $plugin,
+    );
+    ds_field_template_settings_form($element, $form_state, $context);
+
+  }
+
+  return $element;
+}
+
+/**
  * Implements hook_field_formatter_settings_summary_alter().
  */
 function ds_field_formatter_settings_summary_alter(&$summary, $context) {
   if (\Drupal::config('ds.settings')->get('field_template')) {
-    // Field template summary
+    // Field template summary.
     $functions = Ds::getFieldLayoutOptions();
 
     $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
     $field = $context['field_definition'];
 
-    $plugin_settings = array();
     if (isset($context['form_state'])) {
       /** @var $form_state FormStateInterface */
       $form_state = $context['form_state'];
       $plugin_settings = $form_state->get('plugin_settings');
+      $field_function = isset($plugin_settings[$field->getName()]['ft']['id']) ? $plugin_settings[$field->getName()]['ft']['id'] : $default_field_function;
+    }
+    else {
+      $plugin_settings = $context['formatter']->getThirdPartySetting('ds', 'ft');
+      $field_function = isset($plugin_settings['id']) ? $plugin_settings['id'] : $default_field_function;
     }
 
-    $field_function = isset($plugin_settings[$field->getName()]['ft']['id']) ? $plugin_settings[$field->getName()]['ft']['id'] : $default_field_function;
     $summary[] = 'Field template: ' . String::checkPlain($functions[$field_function]);
   }
 }

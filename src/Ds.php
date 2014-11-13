@@ -7,7 +7,6 @@
 namespace Drupal\ds;
 
 use Drupal\Component\Utility\String;
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 
@@ -67,11 +66,13 @@ class Ds {
     // Load the plugin.
     $field_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id'], $configuration);
 
-    // Load settings
+    /** @var $display EntityDisplayInterface */
     if ($field_settings = $display->getThirdPartySetting('ds', 'fields')) {
-      $settings = $field_settings[$key]['settings'];
-      // unset field template settings
-      unset($settings['ft']);
+      $settings = isset($field_settings[$key]['settings']) ? $field_settings[$key]['settings'] : array();
+      // Unset field template settings.
+      if (isset($settings['ft'])) {
+        unset($settings['ft']);
+      }
 
       $field_instance->setConfiguration($settings);
     }

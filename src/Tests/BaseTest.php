@@ -114,10 +114,20 @@ abstract class BaseTest extends WebTestBase {
   }
 
   /**
-   * Edit field formatter settings
+   * Edit field formatter settings.
    */
-  function dsEditFormatterSettings($edit, $url = 'admin/structure/types/manage/article/display', $element_value = 'edit body') {
+  function dsEditFormatterSettings($edit, $field_name = 'body', $url = 'admin/structure/types/manage/article/display') {
+    $element_value = 'edit ' . $field_name;
     $this->drupalPostForm($url, array(), $element_value);
+
+    // fields[body][settings_edit_form][settings][ft][id]
+    // fields[body][settings_edit_form][third_party_settings][ds][ft][id]
+    if (isset($edit['fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ft][id]'])) {
+      $this->drupalPostForm(NULL, array('fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ft][id]' => $edit['fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ft][id]']), t('Update'));
+      $this->drupalPostForm(NULL, array(), $element_value);
+      unset($edit['fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ft][id]']);
+    }
+
     $this->drupalPostForm(NULL, $edit, t('Update'));
     $this->drupalPostForm(NULL, array(), t('Save'));
   }
