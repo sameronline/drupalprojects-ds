@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Display Suite forms integration.
@@ -101,9 +102,6 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
         drupal_render($build);
       }
 
-      // Add the hidden region.
-      $layout['regions']['hidden'] = 'Hidden';
-
       // If the layout has wrapper class lets add it.
       if (isset($layout['settings']['classes']['layout_class'])) {
         foreach ($layout['settings']['classes']['layout_class'] as $layout_class) {
@@ -114,13 +112,7 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
       // Create region variables based on the layout settings.
       foreach ($layout['regions'] as $region_name => $region) {
 
-        // Create the region content.
-        if ($region_name == 'hidden') {
-          ds_forms_render_region($form, $region_name, $layout);
-        }
-        else {
-          $vars[$region_name] = ds_forms_render_region($form, $region_name, $layout);
-        }
+        $vars[$region_name] = ds_forms_render_region($form, $region_name, $layout);
 
         // Add extras classes to the region.
         $vars[$region_name . '_classes'] = !empty($layout['settings']['classes'][$region_name]) ? ' ' . implode(' ', $layout['settings']['classes'][$region_name]) : '';
@@ -204,14 +196,10 @@ function ds_forms_render_region(&$content, $region, $layout) {
 
   if (isset($layout['settings']['regions'][$region])) {
     foreach ($layout['settings']['regions'][$region] as $field) {
-      if ($region == 'hidden') {
-        $content[$field]['#access'] = FALSE;
-      }
-      else {
-        $output .= drupal_render($content[$field]);
-      }
+      $output .= drupal_render($content[$field]);
     }
   }
+
   return $output;
 }
 
