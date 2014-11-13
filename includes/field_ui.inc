@@ -1431,7 +1431,21 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
         );
         \Drupal::moduleHandler()->alter('field_formatter_settings_form', $settings_form, $form_state, $context);
 
-        if ($settings_form) {
+        // Generate the settings form and allow other modules to alter it.
+        $third_party_settings_form = array();
+        // Invoke hook_field_formatter_third_party_settings_form(), keying resulting
+        // subforms by module name.
+        foreach (\Drupal::moduleHandler()->getImplementations('field_formatter_third_party_settings_form') as $module) {
+          $third_party_settings_form[$module] = \Drupal::moduleHandler()->invoke($module, 'field_formatter_third_party_settings_form', array(
+            $formatter,
+            $instance,
+            $view_mode,
+            $form,
+            $form_state,
+          ));
+        }
+
+        if ($settings_form || $third_party_settings_form) {
           $table[$key]['plugin']['#cell_attributes'] = array('colspan' => 3);
           $table[$key]['plugin']['settings_edit_form'] = array(
             '#type' => 'container',
@@ -1441,10 +1455,12 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
               '#markup' => t('Format settings:'), //. ' <span class="formatter-name">' . $settings['label'] . '</span>',
             ),
             'settings' => $settings_form,
+            'third_party_settings' => $third_party_settings_form,
             'actions' => array(
               '#type' => 'actions',
               'save_settings' => $base_button + array(
                 '#type' => 'submit',
+                '#button_type' => 'primary',
                 '#name' => $key . '_plugin_settings_update',
                 '#value' => t('Update'),
                 '#op' => 'update',
