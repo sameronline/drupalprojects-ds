@@ -105,7 +105,7 @@ function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityDis
   }
   $properties['#view_mode'] = $view_mode;
 
-  if ($layout = Ds::getLayout($entity_type, $bundle, $view_mode)) {
+  if ($layout = Ds::getDisplay($entity_type, $bundle, $view_mode)) {
     foreach ($region_blocks as $block_key => $block) {
       if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}" && isset($layout['settings']['regions'][$block_key]) && !empty($layout['settings']['regions'][$block_key])) {
         foreach ($layout['settings']['regions'][$block_key] as $field) {
@@ -167,14 +167,14 @@ function ds_extras_form_node_form_alter(&$form, FormStateInterface $form_state) 
       }
       if ($overridden) {
         // @todo entity bundle info does not store layout info anymore
-        $layout = Ds::getLayout('node', $node->bundle(), $key, FALSE);
+        $layout = Ds::getDisplay('node', $node->bundle(), $key, FALSE);
         $layouts[$key] = $layout;
         $options[$key] = $item['label'];
       }
     }
 
     // Add default layout settings
-    $layouts[''] = Ds::getLayout('node', $node->bundle(), 'default', FALSE);
+    $layouts[''] = Ds::getDisplay('node', $node->bundle(), 'default', FALSE);
 
     // Only fire if we have more than 1 option.
     if (count($options) > 1) {

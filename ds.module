@@ -165,7 +165,6 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
         '#object' => $entity,
         '#entity_type' => $entity_type,
         '#view_mode' => $view_mode,
-        '#entity_display' => $display,
         '#access' => ($field_permissions && function_exists('ds_extras_ds_field_access')) ? ds_extras_ds_field_access($key, $entity_type) : TRUE,
         '#items' => array(
           0 => array(
@@ -367,17 +366,14 @@ function ds_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) 
  * Implements hook_preprocess_field().
  */
 function ds_preprocess_field(&$variables) {
-  if (!isset($variables['element']['#entity_display'])) {
-    return;
-  }
+
+  $entity_type = $variables['element']['#entity_type'];
+  $bundle = $variables['element']['#bundle'];
+  $view_mode = $variables['element']['#view_mode'];
 
   /** @var $entity_display EntityDisplayInterface */
-  $entity_display = $variables['element']['#entity_display'];
-
-  $entity_type = $entity_display->getEntityTypeId();
-  $bundle = $entity_display->bundle();
-  $view_mode = $entity_display->mode;
-
+  // @todo see what to get back from this function.
+  $entity_display = Ds::getDisplay($entity_type, $bundle, $view_mode);
   if (!$entity_display->getThirdPartySetting('ds', 'layout')) {
     return;
   }
@@ -429,23 +425,18 @@ function ds_preprocess_field(&$variables) {
  * Implements hook_theme_suggestions_HOOK_alter() for field templates.
  */
 function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
-  if (!isset($variables['element']['#entity_display'])) {
-    return;
-  }
+
+  $entity_type = $variables['element']['#entity_type'];
+  $bundle = $variables['element']['#bundle'];
+  $view_mode = $variables['element']['#view_mode'];
 
   /** @var $entity_display EntityDisplayInterface */
-  $entity_display = $variables['element']['#entity_display'];
-
-  $entity_type = $entity_display->getEntityTypeId();
-  $bundle = $entity_display->bundle();
-  $view_mode = $entity_display->mode;
-  $field_theme_function = \Drupal::config('ds.settings')->get('ft-default');
-
-
+  $entity_display = Ds::getDisplay($entity_type, $bundle, $view_mode);
   if (!$entity_display->getThirdPartySetting('ds', 'layout')) {
     return;
   }
 
+  $field_theme_function = \Drupal::config('ds.settings')->get('ft-default');
   static $field_settings = array();
   if (!isset($field_settings[$entity_type][$bundle][$view_mode])) {
     $field_settings[$entity_type][$bundle][$view_mode] = $entity_display->getThirdPartySetting('ds', 'fields');

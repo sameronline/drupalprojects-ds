@@ -101,7 +101,7 @@ class Ds {
   }
 
   /**
-   * Gets a layout for a given entity.
+   * Gets a display for a given entity.
    *
    * @param $entity_type
    *   The name of the entity.
@@ -109,13 +109,12 @@ class Ds {
    *   The name of the bundle.
    * @param $view_mode
    *   The name of the view mode.
-   * @param $fallback
+   * @param bool $fallback
    *   Whether to fallback to default or not.
    *
-   * @return $layout
-   *   Array of layout variables for the regions.
+   * @return array|bool $layout
    */
-  public static function getLayout($entity_type, $bundle, $view_mode, $fallback = TRUE) {
+  public static function getDisplay($entity_type, $bundle, $view_mode, $fallback = TRUE) {
     $overridden = TRUE;
     /** @var $entity_display EntityDisplayInterface */
     if ($view_mode != 'form') {
