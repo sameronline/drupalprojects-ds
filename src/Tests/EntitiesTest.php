@@ -81,6 +81,9 @@ class EntitiesTest extends BaseTest {
     // Save.
     $display->save();
 
+    // Clear entity info cache.
+    \Drupal::entityManager()->clearCachedFieldDefinitions();
+
     // @todo can we remove this?
     \Drupal::cache()->deleteTags(array('ds_fields_info'));
   }
@@ -381,7 +384,18 @@ class EntitiesTest extends BaseTest {
           <span class=\"ow-class-2\">" . $body_field . "</span>");
 
     // Clear field settings.
-    $this->entitiesClearFieldSettings();
+    // $this->entitiesClearFieldSettings();
+
+  }
+
+  /**
+   * Tests on field templates.
+   */
+  function testDSFieldTemplate2() {
+
+    // Get a node.
+    $node = $this->entitiesTestSetup('hidden');
+    $body_field = $node->body->value;
 
     // With outer wrapper and field items wrapper.
     $edit = array(
@@ -394,8 +408,7 @@ class EntitiesTest extends BaseTest {
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div><div><p>" . $body_field . "</p>
-</div></div>  </div>");
+          <div><div>" . $body_field . "</div></div>");
 
     // With outer wrapper and field items div wrapper with class.
     $edit = array(
@@ -408,8 +421,7 @@ class EntitiesTest extends BaseTest {
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div><div class=\"fi-class\"><p>" . $body_field . "</p>
-</div></div>  </div>");
+          <div><div class=\"fi-class\">" . $body_field . "</div></div>");
 
     // With outer wrapper and field items span wrapper and class.
     $edit = array(
@@ -422,8 +434,7 @@ class EntitiesTest extends BaseTest {
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div><span class=\"fi-class\"><p>" . $body_field . "</p>
-</span></div>  </div>");
+          <div><span class=\"fi-class\">" . $body_field . "</span></div>");
 
     // With outer wrapper class and field items span wrapper and class.
     $edit = array(
@@ -437,8 +448,7 @@ class EntitiesTest extends BaseTest {
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div class=\"ow-class\"><span class=\"fi-class\"><p>" . $body_field . "</p>
-</span></div>  </div>");
+          <div class=\"ow-class\"><span class=\"fi-class\">" . $body_field . "</span></div>");
 
     // With outer wrapper span class and field items span wrapper and class.
     $edit = array(
@@ -452,11 +462,19 @@ class EntitiesTest extends BaseTest {
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <span class=\"ow-class\"><span class=\"fi-class-2\"><p>" . $body_field . "</p>
-</span></span>  </div>");
+          <span class=\"ow-class\"><span class=\"fi-class-2\">" . $body_field . "</span></span>");
 
     // Clear field settings.
-    $this->entitiesClearFieldSettings();
+    // $this->entitiesClearFieldSettings();
+  }
+
+  /**
+   * Tests on field templates.
+   */
+  function testDSFieldTemplate3() {
+    // Get a node.
+    $node = $this->entitiesTestSetup('hidden');
+    $body_field = $node->body->value;
 
     // With field item div wrapper.
     $edit = array(
@@ -477,21 +495,18 @@ class EntitiesTest extends BaseTest {
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <span><p>" . $body_field . "</p>
-</span>  </div>");
+          <span>" . $body_field . "</span>");
 
-    // With field item span wrapper and class and odd even.
+    // With field item span wrapper and class.
     $edit = array(
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi]' => '1',
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-el]' => 'span',
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-cl]' => 'fi-class',
-      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-odd-even]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <span class=\"even fi-class\"><p>" . $body_field . "</p>
-</span>  </div>");
+          <span class=\"fi-class\">" . $body_field . "</span>");
 
     // With fis and fi.
     $edit = array(
@@ -501,13 +516,11 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi]' => '1',
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-el]' => 'div',
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-cl]' => 'fi-class',
-      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-odd-even]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div class=\"fi-class-2\"><div class=\"even fi-class\"><p>" . $body_field . "</p>
-</div></div>  </div>");
+          <div class=\"fi-class-2\"><div class=\"fi-class\">" . $body_field . "</div></div>");
     // With all wrappers.
     $edit = array(
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
@@ -519,13 +532,11 @@ class EntitiesTest extends BaseTest {
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi]' => '1',
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-el]' => 'span',
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-cl]' => 'fi-class',
-      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-odd-even]' => '1',
     );
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div class=\"ow-class\"><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
-</span></div></div>  </div>");
+          <div class=\"ow-class\"><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
     // With all wrappers and attributes.
     $edit = array(
@@ -545,8 +556,7 @@ class EntitiesTest extends BaseTest {
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div class=\"ow-class\" name=\"ow-att\"><div class=\"fi-class-2\" name=\"fis-att\"><span class=\"even fi-class\" name=\"fi-at\"><p>" . $body_field . "</p>
-</span></div></div>  </div>");
+          <div class=\"ow-class\" name=\"ow-att\"><div class=\"fi-class-2\" name=\"fis-att\"><span class=\"fi-class\" name=\"fi-at\">" . $body_field . "</span></div></div>");
 
     // Remove attributes.
     $edit = array(
