@@ -76,10 +76,10 @@ class LayoutClassesTest extends BaseTest {
     $this->assertTrue(in_array('dynamic_block_field:node-test_block_field', $data['regions']['left']), t('Test block field is in left'));
     $this->assertTrue(in_array('body', $data['regions']['right']), t('Body is in right'));
     $this->assertTrue(in_array('comment', $data['regions']['footer']), t('Comments is in footer'));
-    $this->assertTrue(in_array('class_name_1', $data['settings']['classes']['header']), t('Class name 1 is in header'));
-    $this->assertTrue(empty($data['settings']['classes']['left']), t('Left has no classes'));
-    $this->assertTrue(empty($data['settings']['classes']['right']), t('Right has classes'));
-    $this->assertTrue(in_array('class_name_2', $data['settings']['classes']['footer']), t('Class name 2 is in header'));
+    $this->assertTrue(in_array('class_name_1', $data['layout']['settings']['classes']['header']), t('Class name 1 is in header'));
+    $this->assertTrue(empty($data['layout']['settings']['classes']['left']), t('Left has no classes'));
+    $this->assertTrue(empty($data['layout']['settings']['classes']['right']), t('Right has classes'));
+    $this->assertTrue(in_array('class_name_2', $data['layout']['settings']['classes']['footer']), t('Class name 2 is in header'));
 
     // Create a article node and verify settings.
     $settings = array(
@@ -111,7 +111,7 @@ class LayoutClassesTest extends BaseTest {
     $wrappers = array(
       'region_wrapper[header]' => 'header',
       'region_wrapper[right]' => 'footer',
-      'region_wrapper[layout_wrapper]' => 'article',
+      'region_wrapper[outer_wrapper]' => 'article',
     );
     $this->dsConfigureUI($wrappers);
     $this->drupalGet('node/' . $node->id());
