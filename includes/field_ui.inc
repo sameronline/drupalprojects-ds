@@ -765,7 +765,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
     $form['region_wrapper']['outer_wrapper'] = array(
       '#type' => 'select',
       '#options' => $wrapper_options,
-      '#title' => t('Layout wrapper'),
+      '#title' => t('Outer wrapper'),
       '#default_value' => isset($layout['settings']['outer_wrapper']) ? $layout['settings']['outer_wrapper'] : 'div',
       '#weight' => 10,
     );
@@ -846,7 +846,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
         '#default_value' => isset($layout['settings']['classes']['layout_class']) ? $layout['settings']['classes']['layout_class'] : '',
       );
 
-      foreach (array_keys($layout['regions']) as $region) {
+      foreach (array_keys($layout['region_names']) as $region) {
         $form['ds_classes'][$region] = array(
           '#type' => 'select',
           '#multiple' => TRUE,
