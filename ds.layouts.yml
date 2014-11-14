@@ -1,5 +1,23 @@
+ds_1col:
+  label: One column layout
+  category: Display Suite
+  type: partial
+  theme: ds_1col
+  image: images/ds-1col.png
+  regions:
+    ds_content:
+      label: Content
+ds_1col_wrapper:
+  label: One column layout + wrapper
+  category: Display Suite
+  type: partial
+  theme: ds_1col_wrapper
+  image: images/ds-1col-wrapper.png
+  regions:
+    ds_content:
+      label: Content
 ds_2col:
-  label: 2 column layout
+  label: Two column layout
   category: Display Suite
   type: partial
   theme: ds_2col
@@ -10,15 +28,154 @@ ds_2col:
       label: Left region
     right:
       label: Right region
+ds_2col_fluid:
+  label: Fluid two column layout
+  category: Display Suite
+  type: partial
+  theme: ds_2col_fluid
+  css: css/ds-2col-fluid.css
+  image: images/ds-2col-fluid.png
+  regions:
+    left:
+      label: Left region
+    right:
+      label: Right region
 ds_2col_stacked:
-  label: 2 column stacked layout
+  label: Two column stacked layout
   category: Display Suite
   type: partial
   theme: ds_2col_stacked
   css: css/ds-2col-stacked.css
   image: images/ds-2col-stacked.png
   regions:
+    header:
+      label: Header region
     left:
       label: Left region
     right:
       label: Right region
+    footer:
+      label: Footer region
+ds_2col_stacked_fluid:
+  label: Fluid two column stacked layout
+  category: Display Suite
+  type: partial
+  theme: ds_2col_stacked_fluid
+  css: css/ds-2col-stacked-fluid.css
+  image: images/ds-2col-stacked-fluid.png
+  regions:
+    header:
+      label: Header region
+    left:
+      label: Left region
+    right:
+      label: Right region
+    footer:
+      label: Footer region
+ds_3col:
+  label: Three column - 25/50/25
+  category: Display Suite
+  type: partial
+  theme: ds_3col
+  css: css/ds-3col.css
+  image: images/ds-3col.png
+  regions:
+    left:
+      label: Left region
+    middle:
+      label: Middle region
+    right:
+      label: Right region
+ds_3col_equal_width:
+  label: Three column - equal width
+  category: Display Suite
+  type: partial
+  theme: ds_3col_equal_width
+  css: css/ds-3col-equal-width.css
+  image: images/ds-3col-equal-width.png
+  regions:
+    left:
+      label: Left region
+    middle:
+      label: Middle region
+    right:
+      label: Right region
+ds_3col_stacked:
+  label: Three column stacked - 25/50/25
+  category: Display Suite
+  type: partial
+  theme: ds_3col_stacked
+  css: css/ds-3col-stacked.css
+  image: images/ds-3col-stacked.png
+  regions:
+    header:
+      label: Header region
+    left:
+      label: Left region
+    middle:
+      label: Middle region
+    right:
+      label: Right region
+    footer:
+      label: Footer region
+ds_3col_stacked_fluid:
+  label: Fluid three column stacked - 25/50/25
+  category: Display Suite
+  type: partial
+  theme: ds_3col_stacked_fluid
+  css: css/ds-3col-stacked-fluid.css
+  image: images/ds-3col-stacked-fluid.png
+  regions:
+    header:
+      label: Header region
+    left:
+      label: Left region
+    middle:
+      label: Middle region
+    right:
+      label: Right region
+    footer:
+      label: Footer region
+ds_3col_stacked_equal_width:
+  label: Three column stacked - equal width
+  category: Display Suite
+  type: partial
+  theme: ds_3col_stacked_equal_width
+  css: css/ds-3col-stacked-equal-width.css
+  image: images/ds-3col-stacked-equal-width.png
+  regions:
+    header:
+      label: Header region
+    left:
+      label: Left region
+    middle:
+      label: Middle region
+    right:
+      label: Right region
+    footer:
+      label: Footer region
+ds_4col:
+  label: Four column - equal width
+  category: Display Suite
+  type: partial
+  theme: ds_4col
+  css: css/ds-4col.css
+  image: images/ds-4col-stacked.png
+  regions:
+    first:
+      label: First region
+    second:
+      label: Second region
+    third:
+      label: Third region
+    fourth:
+      label: Fourth region
+ds_reset:
+  label: Reset layout
+  category: Display Suite
+  type: partial
+  theme: ds_reset
+  image: images/ds-reset.png
+  regions:
+    ds_content:
+      label: Content
