@@ -20,7 +20,7 @@ interface DsFieldLayoutInterface {
   /**
    * TODO
    */
-  public function massageFormValues(&$field_settings, $values);
+  public function massageRenderValues(&$field_settings, $values);
   /**
    * TODO
    */

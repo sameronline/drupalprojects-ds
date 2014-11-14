@@ -41,7 +41,7 @@ function theme_ds_field_minimal($variables) {
   // Render the label.
   if (!$variables['label_hidden']) {
     $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
-    if (!isset($config['lb-col'])) {
+    if (!empty($config['lb-col'])) {
       $output .= ':&nbsp;';
     }
     $output .= '</div>';
@@ -65,16 +65,16 @@ function theme_ds_field_expert($variables) {
 
   // Render the label if it's not hidden.
   if (!$variables['label_hidden']) {
-    $label_wrapper = isset($config['lb-el']) ? $config['lb-el'] : 'div';
+    $label_wrapper = isset($config['lbw-el']) ? $config['lbw-el'] : 'div';
     $class = array('label-' . $variables['element']['#label_display']);
-    if (!empty($config['lb-cl'])) $class[] = $config['lb-cl'];
+    if (!empty($config['lbw-cl'])) $class[] = $config['lbw-cl'];
     $class = !empty($class) ? ' class="' . implode(' ', $class) . '"' : '';
     $attributes = array();
-    if (!empty($config['lb-at'])) $attributes[] = $config['lb-at'];
-    if (!empty($config['lb-def-at'])) $attributes[] = $variables['title_attributes'];
+    if (!empty($config['lbw-at'])) $attributes[] = $config['lbw-at'];
+    if (!empty($config['lbw-def-at'])) $attributes[] = $variables['title_attributes'];
     $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
     $output .= '<' . $label_wrapper . $class . $attributes . '>' . $variables['label'];
-    if (empty($config['lb-col'])) $output .= ':&nbsp;';
+    if (!empty($config['lb-col'])) $output .= ':';
     $output .= '</' . $label_wrapper . '>';
   }
 

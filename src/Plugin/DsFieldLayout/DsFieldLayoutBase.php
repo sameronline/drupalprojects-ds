@@ -8,6 +8,7 @@
 namespace Drupal\ds\Plugin\DsFieldLayout;
 
 use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
+use Drupal\Component\Utility\String;
 use Drupal\ds\Ds;
 
 /**
@@ -27,14 +28,34 @@ abstract class DsFieldLayoutBase extends ComponentPluginBase implements DsFieldL
    * {@inheritdoc}
    */
   public function alterForm(&$form) {
-    // Do nothing
+    $config = $this->getConfiguration();
+
+    $form['lb'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Label'),
+      '#size' => '10',
+      '#default_value' => String::checkPlain($config['lb']),
+    );
+    $form['lb-col'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Show label colon'),
+      '#default_value' => $config['lb-col'],
+      '#attributes' => array(
+        'class' => array('colon-checkbox'),
+      ),
+    );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function massageFormValues(&$field_settings, $values) {
-    // Save nothing
+  public function massageRenderValues(&$field_settings, $values) {
+    if (!empty($values['lb'])) {
+      $field_settings['lb'] = $values['lb'];
+    }
+    if (!(empty($values['lb-col']))) {
+      $field_settings['lb-col'] = TRUE;
+    }
   }
 
   /**
@@ -49,7 +70,11 @@ abstract class DsFieldLayoutBase extends ComponentPluginBase implements DsFieldL
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array();
+    $config = array();
+    $config['lb'] = '';
+    $config['lb-col'] = \Drupal::config('ds.settings')->get('ft-kill-colon');
+
+    return $config;
   }
 
   /**
