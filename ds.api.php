@@ -107,31 +107,6 @@ function hook_ds_field_settings_alter(&$field_settings, $form, $form_state) {
 }
 
 /**
- * Define layouts from code.
- *
- * @return $layouts
- *   A collection of layouts.
- */
-function hook_ds_layout_info() {
-  $path = drupal_get_path('module', 'foo');
-
-  $layouts = array(
-    'foo_1col' => array(
-      'label' => t('Foo one column'),
-      'path' => $path . '/layouts/foo_1col',
-      'regions' => array(
-        'foo_content' => t('Content'),
-      ),
-      'css' => TRUE,
-      // optional, form only applies to node form at this point.
-      'form' => TRUE,
-    ),
-  );
-
-  return $layouts;
-}
-
-/**
  * Alter the layout render array.
  *
  * @param $layout_render_array
@@ -148,17 +123,6 @@ function hook_ds_layout_info() {
 function hook_ds_pre_render_alter(&$layout_render_array, $context, &$vars) {
   $layout_render_array['left'][] = array('#markup' => 'cool!', '#weight' => 20);
   $vars['attributes']['class'][] = 'custom';
-}
-
-/**
- * Alter layouts found by Display Suite.
- *
- * @param $layouts
- *   A array of layouts which keys are the layout and which values are
- *   properties of that layout (label, path, regions and css).
- */
-function hook_ds_layout_info_alter(&$layouts) {
-  unset($layouts['ds_2col']);
 }
 
 /**
@@ -193,42 +157,6 @@ function hook_ds_layout_region_alter($context, &$region_info) {
  */
 function hook_ds_label_options_alter(&$field_label_options) {
   $field_label_options['label_after'] = t('Label after field');
-}
-
-/**
- * Themes can also define extra layouts.
- *
- * Create a ds_layouts folder and then a folder name that will
- * be used as key for the layout. The folder should at least have 2 files:
- *
- * - key.inc
- * - key.html.twig
- *
- * The css file is optional.
- * - key.css
- *
- * e.g.
- * bartik/ds_layouts/bartik_ds/bartik_ds.inc
- *                            /bartik-ds.html.tiwg
- *                            /bartik_ds.css
- *
- * bartik_ds.inc must look like this:
- *
- * Fuction name is ds_LAYOUT_KEY
- */
-function ds_bartik_ds() {
-  return array(
-    'label' => t('Bartik DS'),
-    'regions' => array(
-      // The key of this region name is also the variable used in
-      // the template to print the content of that region.
-      'bartik' => t('Bartik DS'),
-    ),
-    // Add this if there is a default css file.
-    'css' => TRUE,
-    // Add this if there is a default preview image
-    'image' => TRUE,
-  );
 }
 
 /**

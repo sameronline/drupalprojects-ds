@@ -4,3 +4,5 @@ description: 'Extend the display options for every entity type.'
 core: 8.x
 package: 'Display Suite'
 configure: admin/structure/ds
+dependencies:
+  - layout_plugin

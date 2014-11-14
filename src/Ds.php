@@ -88,23 +88,13 @@ class Ds {
     static $layouts = FALSE;
 
     if (!$layouts) {
-      $errors = array();
-
-      $layouts = \Drupal::moduleHandler()->invokeAll('ds_layout_info');
-
-      // Give modules a chance to alter the layouts information.
-      \Drupal::moduleHandler()->alter('ds_layout_info', $layouts);
-
-      // Check that there is no 'content' region, but ignore panel layouts.
-      // Because when entities are rendered, the field items are stored into a
-      // 'content' key so fields would be overwritten before they're all moved.
-      foreach ($layouts as $key => $info) {
-        if (isset($info['regions']['content'])) {
-          $errors[] = $key;
+      $layouts = array();
+      $layoutManager = \Drupal::service('plugin.manager.layout_plugin');
+      $all_layouts = $layoutManager->getDefinitions();
+      foreach ($all_layouts as $key => $info) {
+        if ($info['category'] == 'Display Suite') {
+          $layouts[$key] = $info;
         }
-      }
-      if (!empty($errors)) {
-        drupal_set_message(t('Following layouts have a "content" region key which is invalid: %layouts.', array('%layouts' => implode(', ', $errors))), 'error');
       }
     }
 

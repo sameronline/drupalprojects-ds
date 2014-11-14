@@ -16,7 +16,7 @@ abstract class BaseTest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('field_ui', 'comment', 'block', 'ds', 'ds_extras', 'search', 'ds_search', 'ds_forms', 'ds_test', 'views', 'views_ui');
+  public static $modules = array('field_ui', 'comment', 'block', 'ds', 'ds_extras', 'search', 'ds_search', 'ds_forms', 'ds_test', 'views', 'views_ui', 'layout_plugin');
 
   /**
    * The chosen installation profile

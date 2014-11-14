@@ -1,0 +1,24 @@
+ds_2col:
+  label: 2 column layout
+  category: Display Suite
+  type: partial
+  theme: ds_2col
+  css: css/ds-2col.css
+  image: images/ds-2col-stacked.png
+  regions:
+    left:
+      label: Left region
+    right:
+      label: Right region
+ds_2col_stacked:
+  label: 2 column stacked layout
+  category: Display Suite
+  type: partial
+  theme: ds_2col_stacked
+  css: css/ds-2col-stacked.css
+  image: images/ds-2col-stacked.png
+  regions:
+    left:
+      label: Left region
+    right:
+      label: Right region

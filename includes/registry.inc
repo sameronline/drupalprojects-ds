@@ -18,7 +18,7 @@ function _ds_theme() {
     $theme_functions[$key] = array(
       'render element' => 'elements',
       'template' => strtr($key, '_', '-'),
-      'path' => $layout['path'],
+      'path' => drupal_get_path('module', $layout['provider']) . '/templates',
     );
   }
 
@@ -48,11 +48,11 @@ function _ds_theme() {
  */
 function _ds_module_implements_alter(&$implementations, $hook) {
 
-  // node_entity_display_alter() disables all labels on all fields
+  // node_entity_view_display_alter() disables all labels on all fields
   // when the view mode is 'search_index'. If you set display modes for
   // this view mode by hand, then the hook isn't needed. Since this
   // may be called dozens of times on some pages, it's worth disabling it.
-  if ($hook == 'entity_display_alter') {
+  if ($hook == 'entity_view_display_alter') {
     unset($implementations['node']);
   }
 
@@ -111,34 +111,12 @@ function _ds_ds_layout_info() {
       ),
       'image' => TRUE,
     ),
-    'ds_2col' => array(
-      'label' => t('Two column'),
-      'path' => $path . '/layouts/ds_2col',
-      'regions' => array(
-        'left' => t('Left'),
-        'right' => t('Right')
-      ),
-      'css' => TRUE,
-      'image' => TRUE,
-    ),
     'ds_2col_fluid' => array(
       'label' => t('Fluid two column'),
       'path' => $path . '/layouts/ds_2col_fluid',
       'regions' => array(
         'left' => t('Left'),
         'right' => t('Right')
-      ),
-      'css' => TRUE,
-      'image' => TRUE,
-    ),
-    'ds_2col_stacked' => array(
-      'label' => t('Two column stacked'),
-      'path' => $path . '/layouts/ds_2col_stacked',
-      'regions' => array(
-        'header' => t('Header'),
-        'left' => t('Left'),
-        'right' => t('Right'),
-        'footer' => t('Footer'),
       ),
       'css' => TRUE,
       'image' => TRUE,
@@ -238,32 +216,6 @@ function _ds_ds_layout_info() {
     ),
   );
 
-  // Get layouts defined in the active theme and base theme (if applicable).
-  $themes = \Drupal::service('theme_handler')->listInfo();
-  $theme = \Drupal::config('system.theme')->get('default');
-
-  $base_theme = array();
-  $ancestor = $theme;
-  while ($ancestor && isset($themes[$ancestor]->base_theme)) {
-    $ancestor = $themes[$ancestor]->base_theme;
-    $base_theme[] = $themes[$ancestor];
-  }
-
-  // @todo what happened here ?
-  /*foreach (array_reverse($base_theme) as $base) {
-    _ds_layouts_scan_theme($base->name, $layouts);
-  }
-  _ds_layouts_scan_theme($theme, $layouts);*/
-
   return $layouts;
 }
 
-function _ds_layouts_scan_theme($theme, &$layouts) {
-  $theme_layouts = file_scan_directory(drupal_get_path('theme', $theme) . '/ds_layouts', '/inc$/');
-  foreach ($theme_layouts as $file => $values) {
-    include_once(DRUPAL_ROOT . '/' . $file);
-    $function = 'ds_' . $values->name;
-    $layouts[$values->name] = $function();
-    $layouts[$values->name]['path'] = str_replace('/' . $values->filename, '', $file);
-  }
-}

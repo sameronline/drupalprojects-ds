@@ -181,11 +181,11 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
   }
 
   //Add css file for this layout.
-  if (!empty($configuration['layout']['css']) && !isset($loaded_css[$configuration['layout']['path'] . '/' . $configuration['layout']['id'] . '.css'])) {
+  if (!empty($configuration['layout']['css']) && !isset($loaded_css[$configuration['layout']['path'] . '/' . $configuration['layout']['id']])) {
     // Register.
-    $loaded_css[$configuration['layout']['path'] . '/' . $configuration['layout']['id'] . '.css'] = TRUE;
+    $loaded_css[$configuration['layout']['path'] . '/' . $configuration['layout']['id']] = TRUE;
     // Add to #attached.
-    $build['#attached']['css'][] = $configuration['layout']['path'] . '/' . $configuration['layout']['id'] . '.css';
+    $build['#attached']['css'][] = $configuration['layout']['path'] . '/' . $configuration['layout']['css'];
   }
 
 }

@@ -175,10 +175,10 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
 
     $table['#regions'] = array();
     $region_options = array();
-    foreach ($layout['region_names'] as $region_key => $region_title) {
-      $region_options[$region_key] = $region_title;
+    foreach ($layout['region_names'] as $region_key => $region_info) {
+      $region_options[$region_key] = $region_info['label'];
       $table['#regions'][$region_key] = array(
-        'title' => $region_title,
+        'title' => $region_info['label'],
         'message' => t('No fields are displayed in this region'),
       );
     }
@@ -328,7 +328,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   $record = array();
   $record['layout'] = array(
     'id' => $layout,
-    'path' => isset($ds_layouts[$layout]['path']) ? $ds_layouts[$layout]['path'] : '',
+    'path' =>  drupal_get_path('module', $ds_layouts[$layout]['provider']),
     'css' => isset($ds_layouts[$layout]['css']) ? $ds_layouts[$layout]['css'] : FALSE,
   );
   $record['regions'] = array();
@@ -757,7 +757,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
       $form['region_wrapper'][$region] = array(
         '#type' => 'select',
         '#options' => $wrapper_options,
-        '#title' => t('Wrapper for @region', array('@region' => $layout['region_names'][$region])),
+        '#title' => t('Wrapper for @region', array('@region' => $layout['region_names'][$region]['label'])),
         '#default_value' => isset($layout['settings']['wrappers'], $layout['settings']['wrappers'][$region]) ? $layout['settings']['wrappers'][$region] : 'div',
       );
     }
@@ -975,31 +975,24 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
 
   if (!empty($layout_string)) {
     $chosen_layout = $ds_layouts[$layout_string];
-    if (empty($chosen_layout['flexible'])) {
-
-      $selected = '<strong>' . $chosen_layout['label'] . '</strong>';
-      $selected .= '<br/>' . t('The default template can be found in %path', array('%path' => $chosen_layout['path']));
-      $suggestions_array = array();
-      $suggestions_array[0] = $layout_string . '--' . $entity_type;
-      $suggestions_array[2] = $layout_string . '--' . $entity_type . '-' . $bundle;
-      if ($form_state->has('no_view_mode_suggestions') && $view_mode != 'default') {
-        $suggestions_array[1] = $layout_string . '--' . $entity_type . '-' . $view_mode;
-        $suggestions_array[3] = $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode;
-      }
-
-      ksort($suggestions_array);
-      $suggestions = t('Template suggestions') . ':<ul>';
-      $suggestions .= '<ul><li>' . implode('.html.twig</li><li>', $suggestions_array) . '.html.twig</li></ul>';
+    $selected = '<strong>' . $chosen_layout['label'] . '</strong>';
+    $selected .= '<br/>' . t('The default template can be found in %path', array('%path' => drupal_get_path('module', $chosen_layout['provider']) . '/templates'));
+    $suggestions_array = array();
+    $suggestions_array[0] = $layout_string . '--' . $entity_type;
+    $suggestions_array[2] = $layout_string . '--' . $entity_type . '-' . $bundle;
+    if ($form_state->has('no_view_mode_suggestions') && $view_mode != 'default') {
+      $suggestions_array[1] = $layout_string . '--' . $entity_type . '-' . $view_mode;
+      $suggestions_array[3] = $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode;
     }
-    else {
-      $suggestions = '';
-      $selected = t('You have selected the flexible %layout_label layout.', array('%layout_label' => $chosen_layout['label'], '%path' => $chosen_layout['path']));
-    }
+
+    ksort($suggestions_array);
+    $suggestions = t('Template suggestions') . ':<ul>';
+    $suggestions .= '<ul><li>' . implode('.html.twig</li><li>', $suggestions_array) . '.html.twig</li></ul>';
 
     if ($form_state->hasValue('layout') || (!empty($layout) && isset($layout['regions']))) {
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
       $current_layout = $form_state->hasValue('layout') && (!isset($layout->layout) || $form_state->getValue('layout') != $layout->layout) ? t('Current layout (after save)') : t('Current layout');
-      $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $layout_string . '.png' : $fallback_image;
+      $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? drupal_get_path('module', $chosen_layout['provider']) . '/' . $layout['image'] : $fallback_image;
 
       $form['ds_layouts']['preview']['title'] = array(
         '#markup' => '<div class="ds-layout-preview-title">' . $current_layout . '</div>',
