@@ -102,7 +102,9 @@ function theme_ds_field_expert($variables) {
         $attributes[] = \Drupal::service('token')->replace($config['fi-at'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));
       }
       if (!empty($config['fi-def-at'])) {
-        $attributes[] = $variables['item_attributes'][$delta];
+        if (!empty($variables['content_attributes'][$delta])) {
+          $attributes[] = $variables['content_attributes'][$delta];
+        }
       }
       $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
       $output .= '<' . $config['fi-el'] . $class . $attributes .'>';
@@ -126,11 +128,18 @@ function theme_ds_field_expert($variables) {
   if (!empty($config['ow'])) {
     $class = array();
     if (!empty($config['ow-cl'])) $class[] = $config['ow-cl'];
-    if (!empty($config['ow-def-cl'])) $class[] = $variables['attributes']['class'];
+    if (!empty($config['ow-def-cl'])) $class += $variables['attributes']['class'];
+
     $class = (!empty($class)) ? ' class="' . implode(' ', $class) . '"' : '';
     $attributes = array();
     if (!empty($config['ow-at'])) $attributes[] = $config['ow-at'];
-    if (!empty($config['ow-def-at'])) $attributes[] = $variables['attributes'];
+    if (!empty($config['ow-def-at'])) {
+      foreach ($variables['attributes'] as $key => $info) {
+        if ($key != 'class') {
+          $attributes[$key] = $key . '="' . $variables['attributes'][$key] . '"';
+        }
+      }
+    }
     $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
     $output = '<' . $config['ow-el'] . $class . $attributes . '>' . $output . '</' . $config['ow-el'] . '>';
   }

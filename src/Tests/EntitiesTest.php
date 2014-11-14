@@ -484,8 +484,7 @@ class EntitiesTest extends BaseTest {
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div>" . $body_field . "
-</div>  </div>");
+          <div>" . $body_field . "</div>");
 
     // With field item span wrapper.
     $edit = array(
@@ -609,8 +608,7 @@ class EntitiesTest extends BaseTest {
     $this->entitiesSetLabelClass('hidden', 'body');
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div class=\"ow-class\"><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
-</span></div></div>  </div>");
+          <div class=\"ow-class\"><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
     // Test default classes on outer wrapper.
     $edit = array(
