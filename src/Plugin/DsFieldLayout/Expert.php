@@ -27,8 +27,13 @@ class Expert extends DsFieldLayoutBase {
   public function alterForm(&$form) {
     $config = $this->getConfiguration();
 
+    parent::alterForm($form);
+
+    // We are going to move this to a different spot
+    unset($form['lb-col']);
+
     $wrappers = array(
-      'lb' => array('title' => t('Label')),
+      'lbw' => array('title' => t('Label')),
       'ow' => array('title' => t('Outer wrapper')),
       'fis' => array('title' => t('Field items')),
       'fi' => array('title' => t('Field item')),
@@ -64,10 +69,10 @@ class Expert extends DsFieldLayoutBase {
       );
 
       // Hide colon.
-      if ($wrapper_key == 'lb') {
+      if ($wrapper_key == 'lbw') {
         $form['lb-col'] = array(
           '#type' => 'checkbox',
-          '#title' => t('Hide label colon'),
+          '#title' => t('show label colon'),
           '#default_value' => $config['lb-col'],
           '#attributes' => array(
             'class' => array('colon-checkbox'),
@@ -97,13 +102,10 @@ class Expert extends DsFieldLayoutBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    $config = array();
-    $config['lb'] = '';
-    $config['lb-col'] = \Drupal::config('ds.settings')->get('ft-kill-colon');
-    $config['fi-odd-even'] = FALSE;
+    $config = parent::defaultConfiguration();
 
     $wrappers = array(
-      'lb' => array('title' => t('Label')),
+      'lbw' => array('title' => t('Label')),
       'ow' => array('title' => t('Outer wrapper')),
       'fis' => array('title' => t('Field items')),
       'fi' => array('title' => t('Field item')),
@@ -125,31 +127,14 @@ class Expert extends DsFieldLayoutBase {
    * {@inheritdoc}
    */
   public function massageRenderValues(&$field_settings, $values) {
+    parent::massageRenderValues($field_settings, $values);
+
     $wrappers = array(
+      'lbw' => t('Label wrapper'),
       'ow' => t('Wrapper'),
       'fis' => t('Field items'),
       'fi' => t('Field item')
     );
-
-    // Label.
-    if (!empty($values['lb'])) {
-      $field_settings['lb'] = $values['lb'];
-    }
-    if (!(empty($values['lb-el']))) {
-      $field_settings['lb-el'] = String::checkPlain($values['lb-el']);
-    }
-    if (!(empty($values['lb-cl']))) {
-      $field_settings['lb-cl'] = String::checkPlain($values['lb-cl']);
-    }
-    if (!(empty($values['lb-at']))) {
-      $field_settings['lb-at'] = Xss::filter($values['lb-at']);
-    }
-    if (!(empty($values['lb-def-at']))) {
-      $field_settings['lb-def-at'] = TRUE;
-    }
-    if (!(empty($values['lb-col']))) {
-      $field_settings['lb-col'] = TRUE;
-    }
 
     foreach ($wrappers as $wrapper_key => $title) {
       if (!empty($values[$wrapper_key])) {

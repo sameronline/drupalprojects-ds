@@ -46,20 +46,7 @@ class Minimal extends DsFieldLayoutBase {
         '#value' => array(''),
       );
     }
-    $form['lb'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Label'),
-      '#size' => '10',
-      '#default_value' => String::checkPlain($config['lb']),
-    );
-    $form['lb-col'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Hide label colon'),
-      '#default_value' => $config['lb-col'],
-      '#attributes' => array(
-        'class' => array('colon-checkbox'),
-      ),
-    );
+    parent::alterForm($form);
   }
 
   /**
@@ -67,11 +54,7 @@ class Minimal extends DsFieldLayoutBase {
    */
   public function defaultConfiguration() {
     $config = parent::defaultConfiguration();
-
     $config['classes'] = array();
-    $config['lb'] = '';
-    $config['lb-col'] = \Drupal::config('ds.settings')->get('ft-kill-colon');
-
     return $config;
   }
 
@@ -85,12 +68,7 @@ class Minimal extends DsFieldLayoutBase {
         $field_settings['classes'] = $classes;
       }
     }
-    if (!empty($values['lb'])) {
-      $field_settings['lb'] = $values['lb'];
-    }
-    if (!(empty($values['lb-col']))) {
-      $field_settings['lb-col'] = TRUE;
-    }
+    parent::massageRenderValues($field_settings, $values);
   }
 
 }
