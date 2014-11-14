@@ -80,9 +80,9 @@ function ds_entity_view(array &$build, \Drupal\Core\Entity\EntityInterface $enti
 }
 
 /**
- * Implements hook_ds_layout_info_alter().
+ * Implements hook_layout_alter().
  */
-function ds_test_ds_layout_info_alter(&$layouts) {
+function ds_test_layout_alter(&$layouts) {
   unset($layouts['ds_3col_stacked_equal_width']);
 }
 

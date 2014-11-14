@@ -328,7 +328,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   $record = array();
   $record['layout'] = array(
     'id' => $layout,
-    'path' =>  drupal_get_path('module', $ds_layouts[$layout]['provider']),
+    'path' =>  !empty($layout) ? drupal_get_path('module', $ds_layouts[$layout]['provider']) : '',
     'css' => isset($ds_layouts[$layout]['css']) ? $ds_layouts[$layout]['css'] : FALSE,
   );
   $record['regions'] = array();

@@ -25,9 +25,9 @@ ds_2col:
   image: images/ds-2col-stacked.png
   regions:
     left:
-      label: Left region
+      label: Left
     right:
-      label: Right region
+      label: Right
 ds_2col_fluid:
   label: Fluid two column layout
   category: Display Suite
@@ -37,9 +37,9 @@ ds_2col_fluid:
   image: images/ds-2col-fluid.png
   regions:
     left:
-      label: Left region
+      label: Left
     right:
-      label: Right region
+      label: Right
 ds_2col_stacked:
   label: Two column stacked layout
   category: Display Suite
@@ -49,13 +49,13 @@ ds_2col_stacked:
   image: images/ds-2col-stacked.png
   regions:
     header:
-      label: Header region
+      label: Header
     left:
-      label: Left region
+      label: Left
     right:
-      label: Right region
+      label: Right
     footer:
-      label: Footer region
+      label: Footer
 ds_2col_stacked_fluid:
   label: Fluid two column stacked layout
   category: Display Suite
@@ -65,13 +65,13 @@ ds_2col_stacked_fluid:
   image: images/ds-2col-stacked-fluid.png
   regions:
     header:
-      label: Header region
+      label: Header
     left:
-      label: Left region
+      label: Left
     right:
-      label: Right region
+      label: Right
     footer:
-      label: Footer region
+      label: Footer
 ds_3col:
   label: Three column - 25/50/25
   category: Display Suite
@@ -81,11 +81,11 @@ ds_3col:
   image: images/ds-3col.png
   regions:
     left:
-      label: Left region
+      label: Left
     middle:
-      label: Middle region
+      label: Middle
     right:
-      label: Right region
+      label: Right
 ds_3col_equal_width:
   label: Three column - equal width
   category: Display Suite
@@ -95,11 +95,11 @@ ds_3col_equal_width:
   image: images/ds-3col-equal-width.png
   regions:
     left:
-      label: Left region
+      label: Left
     middle:
-      label: Middle region
+      label: Middle
     right:
-      label: Right region
+      label: Right
 ds_3col_stacked:
   label: Three column stacked - 25/50/25
   category: Display Suite
@@ -109,15 +109,15 @@ ds_3col_stacked:
   image: images/ds-3col-stacked.png
   regions:
     header:
-      label: Header region
+      label: Header
     left:
-      label: Left region
+      label: Left
     middle:
-      label: Middle region
+      label: Middle
     right:
-      label: Right region
+      label: Right
     footer:
-      label: Footer region
+      label: Footer
 ds_3col_stacked_fluid:
   label: Fluid three column stacked - 25/50/25
   category: Display Suite
@@ -127,15 +127,15 @@ ds_3col_stacked_fluid:
   image: images/ds-3col-stacked-fluid.png
   regions:
     header:
-      label: Header region
+      label: Header
     left:
-      label: Left region
+      label: Left
     middle:
-      label: Middle region
+      label: Middle
     right:
-      label: Right region
+      label: Right
     footer:
-      label: Footer region
+      label: Footer
 ds_3col_stacked_equal_width:
   label: Three column stacked - equal width
   category: Display Suite
@@ -145,15 +145,15 @@ ds_3col_stacked_equal_width:
   image: images/ds-3col-stacked-equal-width.png
   regions:
     header:
-      label: Header region
+      label: Header
     left:
-      label: Left region
+      label: Left
     middle:
-      label: Middle region
+      label: Middle
     right:
-      label: Right region
+      label: Right
     footer:
-      label: Footer region
+      label: Footer
 ds_4col:
   label: Four column - equal width
   category: Display Suite
@@ -163,13 +163,13 @@ ds_4col:
   image: images/ds-4col-stacked.png
   regions:
     first:
-      label: First region
+      label: First
     second:
-      label: Second region
+      label: Second
     third:
-      label: Third region
+      label: Third
     fourth:
-      label: Fourth region
+      label: Fourth
 ds_reset:
   label: Reset layout
   category: Display Suite

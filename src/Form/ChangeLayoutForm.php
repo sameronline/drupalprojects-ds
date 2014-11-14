@@ -60,8 +60,8 @@ class ChangeLayoutForm extends FormBase {
 
       // Old region options.
       $regions = array();
-      foreach ($old_layout_info['regions'] as $key => $title) {
-        $regions[$key] = $title;
+      foreach ($old_layout_info['regions'] as $key => $info) {
+        $regions[$key] = $info['label'];
       }
 
       // Let other modules alter the regions.
@@ -79,8 +79,12 @@ class ChangeLayoutForm extends FormBase {
       $form['#old_layout_info']['layout']['regions'] = $regions;
 
       // For new regions.
+      $new_regions = array();
+      foreach ($new_layout['regions'] as $key => $info) {
+        $new_regions[$key] = $info['label'];
+      }
       $region_info = array(
-        'region_options' => $new_layout['regions'],
+        'region_options' => $new_regions,
       );
       \Drupal::moduleHandler()->alter('ds_layout_region', $context, $region_info);
       $new_layout['regions'] = $region_info['region_options'];
@@ -112,8 +116,8 @@ class ChangeLayoutForm extends FormBase {
       );
 
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
-      $old_image = (isset($old_layout_info['image']) &&  !empty($old_layout_info['image'])) ? $old_layout_info['path'] . '/' . $old_layout['layout']['id'] . '.png' : $fallback_image;
-      $new_image = (isset($new_layout['image']) &&  !empty($new_layout['image'])) ? $new_layout['path'] . '/' . $new_layout_key . '.png' : $fallback_image;
+      $old_image = (isset($old_layout_info['image']) &&  !empty($old_layout_info['image'])) ? drupal_get_path('module', $old_layout_info['provider']) . '/' . $old_layout_info['image'] : $fallback_image;
+      $new_image = (isset($new_layout['image']) &&  !empty($new_layout['image'])) ? drupal_get_path('module', $new_layout['provider']) . '/' . $new_layout['image'] : $fallback_image;
       $arrow = drupal_get_path('module', 'ds') . '/images/arrow.png';
 
       $form['preview']['old_layout'] = array(
@@ -162,7 +166,7 @@ class ChangeLayoutForm extends FormBase {
     if (!empty($new_layout['css'])) {
       $third_party_settings['layout']['css'] = $new_layout['css'];
     }
-    $third_party_settings['layout']['path'] = $new_layout['path'];
+    $third_party_settings['layout']['path'] = drupal_get_path('module', $new_layout['provider']);
     unset($third_party_settings['regions']);
 
     // map old regions to new ones
