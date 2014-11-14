@@ -417,6 +417,7 @@ function ds_preprocess_field(&$variables) {
     // Alter the label if configured.
     if (!$variables['label_hidden']) {
       if (isset($config['settings']['lb'])) {
+        // @todo test this with config translation
         $variables['label'] = t(String::checkPlain($config['settings']['lb']));
       }
     }
