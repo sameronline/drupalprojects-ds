@@ -124,7 +124,7 @@ class Expert extends DsFieldLayoutBase {
   /**
    * {@inheritdoc}
    */
-  public function massageFormValues(&$field_settings, $values) {
+  public function massageRenderValues(&$field_settings, $values) {
     $wrappers = array(
       'ow' => t('Wrapper'),
       'fis' => t('Field items'),

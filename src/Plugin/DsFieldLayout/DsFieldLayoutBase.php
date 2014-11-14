@@ -33,7 +33,7 @@ abstract class DsFieldLayoutBase extends ComponentPluginBase implements DsFieldL
   /**
    * {@inheritdoc}
    */
-  public function massageFormValues(&$field_settings, $values) {
+  public function massageRenderValues(&$field_settings, $values) {
     // Save nothing
   }
 
