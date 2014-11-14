@@ -620,8 +620,7 @@ class EntitiesTest extends BaseTest {
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div class=\"ow-class field field-name-body field-type-text-with-summary field-label-hidden\"><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
-</span></div></div>  </div>");
+          <div class=\"ow-class field-node--body field-name-body field-type-text-with-summary field-label-hidden\"><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
     // Test default attributes on field item.
     $edit = array(
@@ -634,8 +633,7 @@ class EntitiesTest extends BaseTest {
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div class=\"ow-class field field-name-body field-type-text-with-summary field-label-hidden\"><div class=\"fi-class-2\"><span class=\"even fi-class\"  property=\"content:encoded\"><p>" . $body_field . "</p>
-</span></div></div>  </div>");
+          <div class=\"ow-class field-node--body field-name-body field-type-text-with-summary field-label-hidden\"><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
     // Use the test field theming function to test that this function is
     // registered in the theme registry through ds_extras_theme().
@@ -646,6 +644,7 @@ class EntitiesTest extends BaseTest {
     $this->dsEditFormatterSettings($edit);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    Testing field output through custom function  </div>");
+          Testing field output through custom function
+      </div>");
   }
 }

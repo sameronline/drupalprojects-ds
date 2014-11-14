@@ -87,13 +87,6 @@ function ds_test_ds_layout_info_alter(&$layouts) {
 }
 
 /**
- * Implements hook_ds_field_theme_functions_info().
- */
-function ds_test_ds_field_theme_functions_info() {
-  return array('ds_test_theming_function' => t('Field test function'));
-}
-
-/**
  * Theme field test function.
  */
 function ds_test_theming_function($variables) {
