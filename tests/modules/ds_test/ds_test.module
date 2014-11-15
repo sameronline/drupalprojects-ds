@@ -103,33 +103,6 @@ function ds_test_ds_fields_info_alter(&$definitions) {
 }
 
 /**
- * Implements hook_ds_layouts_info().
- */
-function ds_test_ds_layout_info() {
-  $path = drupal_get_path('module', 'ds_test');
-  $layouts = array(
-    'dstest_1col' => array(
-      'label' => t('Test One column'),
-      'path' => $path . '/dstest_1col',
-      'regions' => array(
-        'ds_content' => t('Content'),
-      ),
-    ),
-    'dstest_2col' => array(
-      'label' => t('Test Two column'),
-      'path' => $path . '/dstest_2col',
-      'regions' => array(
-        'left' => t('Left'),
-        'right' => t('Right')
-      ),
-      'css' => TRUE,
-    ),
-  );
-
-  return $layouts;
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  */
 function ds_test_form_field_ui_display_overview_form_alter(&$form, FormStateInterface $form_state) {

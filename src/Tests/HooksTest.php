@@ -118,7 +118,7 @@ class HooksTest extends BaseTest {
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
-    $this->assertRaw('dstest_2col.css', 'Css file included');
+    $this->assertRaw('dstest-2col.css', 'Css file included');
 
     // Alter a region
     $settings = array(
