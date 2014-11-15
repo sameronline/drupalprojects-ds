@@ -536,6 +536,11 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
     if (isset($all_plugin_settings[$field]['settings'])) {
       $settings['settings'] = $all_plugin_settings[$field]['settings'];
     }
+    elseif (isset($all_plugin_settings[$field])) {
+      // When the settings for that fields aren't changed the structure is different.
+      // @todo figure out how we can fix this
+      $settings['settings'] = $all_plugin_settings[$field];
+    }
 
     $field_settings[$field] = $settings;
 
