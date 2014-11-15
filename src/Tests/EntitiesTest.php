@@ -604,27 +604,27 @@ class EntitiesTest extends BaseTest {
     $this->entitiesSetLabelClass('above', 'body');
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-          <div class=\"ow-class\"><div class=\"label-above\">Body</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
+          <div class=\"ow-class\"><div class=\"field-label-above\">Body</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
     $this->entitiesSetLabelClass('inline', 'body');
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-          <div class=\"ow-class\"><div class=\"label-inline\">Body</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
+          <div class=\"ow-class\"><div class=\"field-label-inline\">Body</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
     $this->entitiesSetLabelClass('above', 'body', 'My body');
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-          <div class=\"ow-class\"><div class=\"label-above\">My body</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
+          <div class=\"ow-class\"><div class=\"field-label-above\">My body</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
     $this->entitiesSetLabelClass('inline', 'body', 'My body');
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-          <div class=\"ow-class\"><div class=\"label-inline\">My body</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
+          <div class=\"ow-class\"><div class=\"field-label-inline\">My body</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
     $this->entitiesSetLabelClass('inline', 'body', 'My body', '', TRUE);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-          <div class=\"ow-class\"><div class=\"label-inline\">My body:</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
+          <div class=\"ow-class\"><div class=\"field-label-inline\">My body:</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
     $this->entitiesSetLabelClass('hidden', 'body');
     $this->drupalGet('node/' . $node->id());
