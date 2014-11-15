@@ -27,10 +27,12 @@ class Expert extends DsFieldLayoutBase {
   public function alterForm(&$form) {
     $config = $this->getConfiguration();
 
-    parent::alterForm($form);
-
-    // We are going to move this to a different spot
-    unset($form['lb-col']);
+    $form['lb'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Label'),
+      '#size' => '10',
+      '#default_value' => String::checkPlain($config['lb']),
+    );
 
     $wrappers = array(
       'lbw' => array('title' => t('Label wrapper')),
@@ -102,7 +104,9 @@ class Expert extends DsFieldLayoutBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    $config = parent::defaultConfiguration();
+    $config = array();
+    $config['lb'] = '';
+    $config['lb-col'] = \Drupal::config('ds.settings')->get('ft-show-colon');
 
     $wrappers = array(
       'lbw' => array('title' => t('Label')),
@@ -127,7 +131,12 @@ class Expert extends DsFieldLayoutBase {
    * {@inheritdoc}
    */
   public function massageRenderValues(&$field_settings, $values) {
-    parent::massageRenderValues($field_settings, $values);
+    if (!empty($values['lb'])) {
+      $field_settings['lb'] = $values['lb'];
+    }
+    if (!(empty($values['lb-col']))) {
+      $field_settings['lb-col'] = TRUE;
+    }
 
     $wrappers = array(
       'lbw' => t('Label wrapper'),

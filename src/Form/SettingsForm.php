@@ -101,14 +101,14 @@ class SettingsForm extends ConfigFormBase {
       ),
     );
 
-    $form['fs1']['ft-kill-colon'] = array(
+    $form['fs1']['ft-show-colon'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Hide colon'),
-      '#default_value' => $config->get('ft-kill-colon'),
-      '#description' => t('Hide the colon on the reset field template.'),
+      '#title' => t('Show colon'),
+      '#default_value' => $config->get('ft-show-colon'),
+      '#description' => t('Show the colon on the reset field template.'),
       '#states' => array(
         'visible' => array(
-          'select[name="fs1[ft-default]"]' => array('value' => 'theme_ds_field_reset'),
+          'select[name="fs1[ft-default]"]' => array('value' => 'reset'),
           'input[name="fs1[field_template]"]' => array('checked' => TRUE),
         ),
       ),
@@ -127,7 +127,7 @@ class SettingsForm extends ConfigFormBase {
     $this->configFactory()->get('ds.settings')
       ->set('field_template', $values['fs1']['field_template'])
       ->set('ft-default', $values['fs1']['ft-default'])
-      ->set('ft-kill-colon', $values['fs1']['ft-kill-colon'])
+      ->set('ft-show-colon', $values['fs1']['ft-show-colon'])
       ->save();
 
     \Drupal::entityManager()->clearCachedFieldDefinitions();

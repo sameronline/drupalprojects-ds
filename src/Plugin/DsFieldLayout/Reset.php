@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\ds\Plugin\DsFieldLayout;
+use Drupal\Component\Utility\String;
 
 /**
  * Plugin for the reset field template.
@@ -18,5 +19,38 @@ namespace Drupal\ds\Plugin\DsFieldLayout;
  * )
  */
 class Reset extends DsFieldLayoutBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function alterForm(&$form) {
+    $config = $this->getConfiguration();
+
+    $form['lb'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Label'),
+      '#size' => '10',
+      '#default_value' => String::checkPlain($config['lb']),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultConfiguration() {
+    $config = array();
+    $config['lb'] = '';
+
+    return $config;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function massageRenderValues(&$field_settings, $values) {
+    if (!empty($values['lb'])) {
+      $field_settings['lb'] = $values['lb'];
+    }
+  }
 
 }

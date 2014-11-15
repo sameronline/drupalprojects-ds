@@ -44,6 +44,25 @@ abstract class DsFieldLayoutBase extends ComponentPluginBase implements DsFieldL
         'class' => array('colon-checkbox'),
       ),
     );
+    $field_classes = Ds::getClasses('field');
+
+    if (!empty($field_classes)) {
+      $form['classes'] = array(
+        '#type' => 'select',
+        '#multiple' => TRUE,
+        '#options' => $field_classes,
+        '#title' => t('Choose additional CSS classes for the field'),
+        '#default_value' => $config['classes'],
+        '#prefix' => '<div class="field-classes">',
+        '#suffix' => '</div>',
+      );
+    }
+    else {
+      $form['classes'] = array(
+        '#type' => 'value',
+        '#value' => array(''),
+      );
+    }
   }
 
   /**
@@ -56,6 +75,12 @@ abstract class DsFieldLayoutBase extends ComponentPluginBase implements DsFieldL
     if (!(empty($values['lb-col']))) {
       $field_settings['lb-col'] = TRUE;
     }
+    if (isset($values['classes'])) {
+      $classes = is_array($values['classes']) ? implode(' ', $values['classes']) : $values['classes'];
+      if (!empty($classes)) {
+        $field_settings['classes'] = $classes;
+      }
+    }
   }
 
   /**
@@ -66,13 +91,13 @@ abstract class DsFieldLayoutBase extends ComponentPluginBase implements DsFieldL
   }
 
   /**
-   *
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
     $config = array();
     $config['lb'] = '';
-    $config['lb-col'] = \Drupal::config('ds.settings')->get('ft-kill-colon');
+    $config['lb-col'] = \Drupal::config('ds.settings')->get('ft-show-colon');
+    $config['classes'] = array();
 
     return $config;
   }

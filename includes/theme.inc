@@ -12,8 +12,8 @@ function theme_ds_field_reset($variables) {
 
   // Render the label.
   if (!$variables['label_hidden']) {
-    $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
-    if (!\Drupal::config('ds.settings')->get('ft-kill-colon')) {
+    $output .= '<div class="field-label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
+    if (\Drupal::config('ds.settings')->get('ft-show-colon')) {
       $output .= ':';
     }
     $output .= '</div>';
@@ -40,7 +40,7 @@ function theme_ds_field_minimal($variables) {
 
   // Render the label.
   if (!$variables['label_hidden']) {
-    $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
+    $output .= '<div class="field-label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
     if (!empty($config['lb-col'])) {
       $output .= ':';
     }
@@ -66,7 +66,7 @@ function theme_ds_field_expert($variables) {
   // Render the label if it's not hidden.
   if (!$variables['label_hidden']) {
     $label_wrapper = !empty($config['lbw-el']) ? $config['lbw-el'] : 'div';
-    $class = array('label-' . $variables['element']['#label_display']);
+    $class = array('field-label-' . $variables['element']['#label_display']);
     if (!empty($config['lbw-cl'])) $class[] = $config['lbw-cl'];
     $class = !empty($class) ? ' class="' . implode(' ', $class) . '"' : '';
     $attributes = array();

@@ -12,7 +12,7 @@ ds.settings:
       label: 'Uses field templates'
     ft-default:
       label: 'The default template'
-    ft-kill-colon:
+    ft-show-colon:
       type: boolean
       label: 'Kill the label colon'
     classes:

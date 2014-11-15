@@ -8,6 +8,7 @@
 namespace Drupal\ds\Tests;
 
 use Drupal\Component\Utility\String;
+use Drupal\Core\Cache\Cache;
 
 /**
  * Tests for display of nodes and fields.
@@ -269,81 +270,106 @@ class EntitiesTest extends BaseTest {
    * Tests on field templates.
    */
   function testDSFieldTemplate() {
-
     // Get a node.
     $node = $this->entitiesTestSetup('hidden');
     $body_field = $node->body->value;
 
-//    // -------------------------
-//    // Default theming function.
-//    // -------------------------
-//    $this->drupalGet('node/' . $node->id());
-//    $this->assertRaw("<div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-hidden\" data-quickedit-field-id=\"node/1/body/en/full\">
-//    <div class=\"field-items\">
-//          <div property=\"schema:text\" class=\"field-item\">" . $body_field . "</div>
-//      </div>");
-//
-//    $this->entitiesSetLabelClass('above', 'body');
-//    $this->drupalGet('node/' . $node->id());
-//    $this->assertRaw("<div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-above\" data-quickedit-field-id=\"node/1/body/en/full\">
-//      <div class=\"field-label\">Body</div>
-//    <div class=\"field-items\">
-//          <div property=\"schema:text\" class=\"field-item\">" . $body_field . "</div>");
-//
-//    $this->entitiesSetLabelClass('above', 'body', 'My body');
-//    $this->drupalGet('node/' . $node->id());
-//    $this->assertRaw("<div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-above\"><div class=\"field-label\">My body</div><div class=\"field-items\"><div class=\"field-item even\" property=\"content:encoded\"><p>" . $body_field . "</p>
-//</div></div></div>");
-//
-//    $this->entitiesSetLabelClass('hidden', 'body', '', 'test_field_class');
-//    $this->drupalGet('node/' . $node->id());
-//    $this->assertRaw("<div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-hidden test_field_class\"><div class=\"field-items\"><div class=\"field-item even\" property=\"content:encoded\"><p>" . $body_field . "</p>
-//</div></div></div>");
-//
-//    $this->entitiesClearFieldSettings();
-//
-//    // -----------------------
-//    // Reset theming function.
-//    // -----------------------
-//    $edit = array(
-//      'fs1[ft-default]' => 'reset',
-//    );
-//    $this->drupalPostForm('admin/structure/ds/settings', $edit, t('Save configuration'));
-//    $this->drupalGet('node/' . $node->id());
-//    $this->assertRaw("<div class=\"group-right\">
-//    " . $body_field);
-//
-//    $this->entitiesSetLabelClass('above', 'body');
-//    $this->drupalGet('node/' . $node->id());
-//    $this->assertRaw("<div class=\"group-right\">
-//    <div class=\"label-above\">Body</div><p>" . $body_field . "</p>");
-//
-//    $this->entitiesSetLabelClass('inline', 'body');
-//    $this->drupalGet('node/' . $node->id());
-//    $this->assertRaw("<div class=\"group-right\">
-//    <div class=\"label-inline\">Body</div><p>" . $body_field . "</p>");
-//
-//    $this->entitiesSetLabelClass('above', 'body', 'My body');
-//    $this->drupalGet('node/' . $node->id());
-//    $this->assertRaw("<div class=\"group-right\">
-//    <div class=\"label-above\">My body</div><p>" . $body_field . "</p>");
-//
-//    $this->entitiesSetLabelClass('inline','body', 'My body');
-//    $this->drupalGet('node/' . $node->id());
-//    $this->assertRaw("<div class=\"group-right\">
-//    <div class=\"label-inline\">My body</div><p>" . $body_field . "</p>");
-//
-//    \Drupal::config('ds.extras')->set('ft-kill-colon', TRUE)->save();
-//    $this->drupalGet('node/' . $node->id());
-//    $this->assertRaw("<div class=\"group-right\">
-//    <div class=\"label-inline\">My body</div>" . $body_field);
-//
-//    $this->entitiesSetLabelClass('hidden', 'body');
-//    $this->drupalGet('node/' . $node->id());
-//    $this->assertRaw("<div class=\"group-right\">
-//          " . $body_field . "
-//      </div>");
-//    $this->entitiesClearFieldSettings();
+    // -------------------------
+    // Default theming function.
+    // -------------------------
+    $this->drupalGet('node/' . $node->id());
+    $this->assertRaw("<div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-hidden\" data-quickedit-field-id=\"node/1/body/en/full\">
+    <div class=\"field-items\">
+          <div property=\"schema:text\" class=\"field-item\">" . $body_field . "</div>
+      </div>");
+
+    $this->entitiesSetLabelClass('above', 'body');
+    $this->drupalGet('node/' . $node->id());
+    $this->assertRaw("<div class=\"group-right\">
+          <div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-above\" data-quickedit-field-id=\"node/1/body/en/full\">
+      <div class=\"field-label\">Body</div>
+    <div class=\"field-items\">
+          <div property=\"schema:text\" class=\"field-item\">" . $body_field . "</div>");
+
+    $this->entitiesSetLabelClass('above', 'body', 'My body');
+    $this->drupalGet('node/' . $node->id());
+    $this->assertRaw("<div class=\"group-right\">
+          <div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-above\" data-quickedit-field-id=\"node/1/body/en/full\">
+      <div class=\"field-label\">My body</div>
+    <div class=\"field-items\">
+          <div property=\"schema:text\" class=\"field-item\">" . $body_field . "</div>");
+
+    $this->entitiesSetLabelClass('hidden', 'body', '', 'test_field_class');
+    $this->drupalGet('node/' . $node->id());
+    $this->assertRaw("<div class=\"group-right\">
+          <div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-hidden\" data-quickedit-field-id=\"node/1/body/en/full\">
+    <div class=\"field-items\">
+          <div property=\"schema:text\" class=\"field-item\">" . $body_field . "</div>");
+  }
+
+  /**
+   * Tests on field templates.
+   */
+  function testDSFieldTemplate2() {
+    // Get a node.
+    $node = $this->entitiesTestSetup('hidden');
+    $body_field = $node->body->value;
+
+    // -----------------------
+    // Reset theming function.
+    // -----------------------
+    $edit = array(
+      'fs1[ft-default]' => 'reset',
+    );
+    $this->drupalPostForm('admin/structure/ds/settings', $edit, t('Save configuration'));
+    $this->drupalGet('node/' . $node->id());
+    $this->assertRaw("<div class=\"group-right\">
+          " . $body_field);
+
+    $this->entitiesSetLabelClass('above', 'body');
+    $this->drupalGet('node/' . $node->id());
+    $this->assertRaw("<div class=\"group-right\">
+          <div class=\"field-label-above\">Body</div>" . $body_field);
+
+    $this->entitiesSetLabelClass('inline', 'body');
+    $this->drupalGet('node/' . $node->id());
+    $this->assertRaw("<div class=\"group-right\">
+          <div class=\"field-label-inline\">Body</div>" . $body_field);
+
+    $this->entitiesSetLabelClass('above', 'body', 'My body');
+    $this->drupalGet('node/' . $node->id());
+    $this->assertRaw("<div class=\"group-right\">
+          <div class=\"field-label-above\">My body</div>" . $body_field);
+
+    $this->entitiesSetLabelClass('inline', 'body', 'My body');
+    $this->drupalGet('node/' . $node->id());
+    $this->assertRaw("<div class=\"group-right\">
+          <div class=\"field-label-inline\">My body</div>" . $body_field);
+
+    $edit = array(
+      'fs1[ft-show-colon]' => 'reset',
+    );
+    $this->drupalPostForm('admin/structure/ds/settings', $edit, t('Save configuration'));
+    $tags = $node->getCacheTags();
+    Cache::invalidateTags($tags);
+
+    $this->drupalGet('node/' . $node->id());
+    $this->assertRaw("<div class=\"group-right\">
+          <div class=\"field-label-inline\">My body:</div>" . $body_field);
+
+    $this->entitiesSetLabelClass('hidden', 'body');
+    $this->drupalGet('node/' . $node->id());
+    $this->assertRaw("<div class=\"group-right\">
+          " . $body_field);
+  }
+
+  /**
+   * Tests on field templates.
+   */
+  function testDSFieldTemplate3() {
+    // Get a node.
+    $node = $this->entitiesTestSetup('hidden');
+    $body_field = $node->body->value;
 
     // ----------------------
     // Custom field function.
@@ -391,7 +417,7 @@ class EntitiesTest extends BaseTest {
   /**
    * Tests on field templates.
    */
-  function testDSFieldTemplate2() {
+  function testDSFieldTemplate4() {
 
     // Get a node.
     $node = $this->entitiesTestSetup('hidden');
@@ -471,7 +497,7 @@ class EntitiesTest extends BaseTest {
   /**
    * Tests on field templates.
    */
-  function testDSFieldTemplate3() {
+  function testDSFieldTemplate5() {
     // Get a node.
     $node = $this->entitiesTestSetup('hidden');
     $body_field = $node->body->value;

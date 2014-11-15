@@ -1,7 +1,7 @@
 disabled: false
 field_template: false
 ft-default: default
-ft-kill-colon: false
+ft-show-colon: false
 classes:
   region: {  }
   field: {  }
