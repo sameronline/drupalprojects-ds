@@ -91,18 +91,18 @@ class EntitiesTest extends BaseTest {
   /**
    * Set the label.
    */
-  function entitiesSetLabelClass($label, $field_name, $text = '', $class = '', $hide_colon = FALSE) {
+  function entitiesSetLabelClass($label, $field_name, $text = '', $class = '', $show_colon = FALSE) {
     $edit = array(
       'fields[' . $field_name . '][label]' => $label,
     );
     if (!empty($text)) {
-      $edit['fields[' . $field_name . '][settings_edit_form][settings][ft][settings][lb]'] = $text;
+      $edit['fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ft][settings][lb]'] = $text;
     }
     if (!empty($class)) {
-      $edit['fields[' . $field_name . '][settings_edit_form][settings][ft][settings][classes][]'] = $class;
+      $edit['fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ft][settings][classes][]'] = $class;
     }
-    if ($hide_colon) {
-      $edit['fields[' . $field_name . '][settings_edit_form][settings][ft][settings][lb-col]'] = '1';
+    if ($show_colon) {
+      $edit['fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ft][settings][lb-col]'] = '1';
     }
     $this->dsEditFormatterSettings($edit);
   }
@@ -578,32 +578,27 @@ class EntitiesTest extends BaseTest {
     $this->entitiesSetLabelClass('above', 'body');
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div class=\"ow-class\"><div class=\"label-above\">Body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
-</span></div></div>  </div>");
+          <div class=\"ow-class\"><div class=\"label-above\">Body</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
     $this->entitiesSetLabelClass('inline', 'body');
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div class=\"ow-class\"><div class=\"label-inline\">Body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
-</span></div></div>  </div>");
+          <div class=\"ow-class\"><div class=\"label-inline\">Body</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
-    $this->entitiesSetLabelClass('above', 'My body');
+    $this->entitiesSetLabelClass('above', 'body', 'My body');
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div class=\"ow-class\"><div class=\"label-above\">My body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
-</span></div></div>  </div>");
+          <div class=\"ow-class\"><div class=\"label-above\">My body</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
-    $this->entitiesSetLabelClass('inline', 'My body');
+    $this->entitiesSetLabelClass('inline', 'body', 'My body');
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div class=\"ow-class\"><div class=\"label-inline\">My body:&nbsp;</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
-</span></div></div>  </div>");
+          <div class=\"ow-class\"><div class=\"label-inline\">My body</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
-    $this->entitiesSetLabelClass('inline', 'My body', '', TRUE);
+    $this->entitiesSetLabelClass('inline', 'body', 'My body', '', TRUE);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-    <div class=\"ow-class\"><div class=\"label-inline\">My body</div><div class=\"fi-class-2\"><span class=\"even fi-class\"><p>" . $body_field . "</p>
-</span></div></div>  </div>");
+          <div class=\"ow-class\"><div class=\"label-inline\">My body:</div><div class=\"fi-class-2\"><span class=\"fi-class\">" . $body_field . "</span></div></div>");
 
     $this->entitiesSetLabelClass('hidden', 'body');
     $this->drupalGet('node/' . $node->id());

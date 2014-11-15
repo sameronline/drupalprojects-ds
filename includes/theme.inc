@@ -14,7 +14,7 @@ function theme_ds_field_reset($variables) {
   if (!$variables['label_hidden']) {
     $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
     if (!\Drupal::config('ds.settings')->get('ft-kill-colon')) {
-      $output .= ':&nbsp;';
+      $output .= ':';
     }
     $output .= '</div>';
   }

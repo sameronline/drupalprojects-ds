@@ -33,7 +33,7 @@ class Expert extends DsFieldLayoutBase {
     unset($form['lb-col']);
 
     $wrappers = array(
-      'lbw' => array('title' => t('Label')),
+      'lbw' => array('title' => t('Label wrapper')),
       'ow' => array('title' => t('Outer wrapper')),
       'fis' => array('title' => t('Field items')),
       'fi' => array('title' => t('Field item')),
