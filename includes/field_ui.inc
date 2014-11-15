@@ -243,8 +243,8 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
       if (isset($row['label'])) {
         if ($form_state->has('plugin_settings')) {
           $plugin_settings = $form_state->get('plugin_settings');
-          if (isset($plugin_settings[$name]['ft']) && !empty($plugin_settings[$name]['ft']['lb'])) {
-            $row['human_name']['#markup'] = String::checkPlain($plugin_settings[$name]['ft']['lb']) . ' ' . t('(Original: !orig)', array('!orig' => $row['human_name']['#markup']));
+          if (isset($plugin_settings[$name]['ft']['settings']) && !empty($plugin_settings[$name]['ft']['settings']['lb'])) {
+            $row['human_name']['#markup'] = String::checkPlain($plugin_settings[$name]['ft']['settings']['lb']) . ' ' . t('(Original: !orig)', array('!orig' => $row['human_name']['#markup']));
           }
         }
       }
