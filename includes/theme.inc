@@ -42,7 +42,7 @@ function theme_ds_field_minimal($variables) {
   if (!$variables['label_hidden']) {
     $output .= '<div class="label-' . $variables['element']['#label_display'] . '">' . $variables['label'];
     if (!empty($config['lb-col'])) {
-      $output .= ':&nbsp;';
+      $output .= ':';
     }
     $output .= '</div>';
   }
@@ -65,7 +65,7 @@ function theme_ds_field_expert($variables) {
 
   // Render the label if it's not hidden.
   if (!$variables['label_hidden']) {
-    $label_wrapper = isset($config['lbw-el']) ? $config['lbw-el'] : 'div';
+    $label_wrapper = !empty($config['lbw-el']) ? $config['lbw-el'] : 'div';
     $class = array('label-' . $variables['element']['#label_display']);
     if (!empty($config['lbw-cl'])) $class[] = $config['lbw-cl'];
     $class = !empty($class) ? ' class="' . implode(' ', $class) . '"' : '';

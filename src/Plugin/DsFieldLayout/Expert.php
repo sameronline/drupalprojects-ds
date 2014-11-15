@@ -72,7 +72,7 @@ class Expert extends DsFieldLayoutBase {
       if ($wrapper_key == 'lbw') {
         $form['lb-col'] = array(
           '#type' => 'checkbox',
-          '#title' => t('show label colon'),
+          '#title' => t('Show label colon'),
           '#default_value' => $config['lb-col'],
           '#attributes' => array(
             'class' => array('colon-checkbox'),
