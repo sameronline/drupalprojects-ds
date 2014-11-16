@@ -1,0 +1,101 @@
+uuid: 7eccd8bd-b597-42fc-ad4d-77e1d8d58c0c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.article.body
+    - field.field.node.article.comment
+    - field.field.node.article.field_image
+    - field.field.node.article.field_tags
+    - node.type.article
+  module:
+    - ds
+    - text
+    - user
+id: node.article.default
+label: null
+targetEntityType: node
+bundle: article
+mode: default
+content:
+  body:
+    type: text_summary_or_trimmed
+    weight: 2
+    settings:
+      trim_length: 600
+    third_party_settings:
+      ds:
+        ft:
+          id: default
+          settings:
+            lb: ''
+            lb-col: 0
+            classes: {  }
+    label: hidden
+hidden:
+  comment: true
+  field_image: true
+  field_tags: true
+  langcode: true
+  links: true
+third_party_settings:
+  ds:
+    path: modules/ds/layouts/ds_1col
+    css: false
+    settings:
+      classes: {  }
+      wrappers:
+        ds_content: div
+      layout_wrapper: div
+      layout_attributes: ''
+      layout_attributes_merge: 1
+      layout_link_attribute: ''
+      layout_link_custom: ''
+    layout:
+      id: ds_2col
+      path: modules/ds
+      css: css/ds-2col.css
+      settings:
+        classes: {  }
+        wrappers:
+          left: div
+          right: div
+        outer_wrapper: div
+        attributes: ''
+        link_attribute: ''
+        link_custom: ''
+    regions:
+      left:
+        - node_title
+        - node_link
+      right:
+        - body
+    fields:
+      node_link:
+        weight: '1'
+        label: hidden
+        formatter: default
+        settings:
+          'link text': 'Read more'
+          wrapper: ''
+          class: ''
+          ft:
+            id: default
+            settings:
+              lb: ''
+              lb-col: 0
+              classes: {  }
+      node_title:
+        weight: '0'
+        label: hidden
+        formatter: default
+        settings:
+          link: 0
+          wrapper: h3
+          class: ''
+          ft:
+            id: default
+            settings:
+              lb: ''
+              lb-col: 0
+              classes: {  }

@@ -38,8 +38,8 @@ class ExportablesTest extends BaseTest {
     $this->assertRaw('group-right', 'Right region found');
     $this->assertNoRaw('group-header', 'No header region found');
     $this->assertNoRaw('group-footer', 'No footer region found');
-    $this->assertRaw('<h3><a href="'. url('node/1') . '" class="active">Exportable</a></h3>', t('Default title with h3 found'));
-    $this->assertRaw('<a href="' . url('node/1') . '" class="active">Read more</a>', t('Default read more found'));
+    $this->assertRaw('<h3><a href="'. _url('node/1') . '" class="active">Exportable</a></h3>', t('Default title with h3 found'));
+    $this->assertRaw('<a href="' . _url('node/1') . '" class="active">Read more</a>', t('Default read more found'));
 
     // Override default layout.
     $layout = array(
@@ -58,9 +58,9 @@ class ExportablesTest extends BaseTest {
     $fields = array(
       'fields[node_post_date][region]' => 'header',
       'fields[node_author][region]' => 'left',
-      'fields[node_links][region]' => 'left',
+      'fields[node_link][region]' => 'left',
       'fields[body][region]' => 'right',
-      'fields[node_comments][region]' => 'footer',
+      'fields[comment][region]' => 'footer',
     );
 
     $this->dsSelectLayout($layout, $assert);
@@ -68,9 +68,9 @@ class ExportablesTest extends BaseTest {
 
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('group-left', 'Left region found');
-    $this->assertRaw('group-right', 'Left region found');
-    $this->assertRaw('group-header', 'Left region found');
-    $this->assertRaw('group-footer', 'Left region found');
+    $this->assertRaw('group-right', 'Right region found');
+    $this->assertRaw('group-header', 'Header region found');
+    $this->assertRaw('group-footer', 'Footer region found');
   }
 
   // Test custom field config.
