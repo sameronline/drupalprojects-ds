@@ -38,7 +38,7 @@ class EntitiesTest extends BaseTest {
       'name' => 'Token field',
       'id' => 'token_field',
       'entities[node]' => '1',
-      'content[value]' => '<div class="token-class">[node:title]</span>',
+      'content[value]' => '[node:title]',
     );
     $this->dsCreateTokenField($token_field);
 
@@ -111,7 +111,7 @@ class EntitiesTest extends BaseTest {
   /**
    * Test basic node display fields.
    */
-  function _testDSNodeEntity() {
+  function testDSNodeEntity() {
 
     /** @var \Drupal\node\NodeInterface $node */
     $node = $this->entitiesTestSetup();
@@ -119,12 +119,12 @@ class EntitiesTest extends BaseTest {
     // Look at node and verify token and block field.
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('view-mode-full', 'Template file found (in full view mode)');
-    $this->assertRaw('<div class="token-class">' . $node->getTitle() . '</span>', t('Token field found'));
+    $this->assertRaw('<div class="field-item">' . $node->getTitle() . '</div>', t('Token field found'));
     $this->assertRaw('group-header', 'Template found (region header)');
     $this->assertRaw('group-footer', 'Template found (region footer)');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
-    $this->assertPattern('/<div[^>]*>Submitted[^<]*<a[^>]+href="' . preg_quote(base_path(), '/') . 'user\/' . $node->getOwnerId() . '"[^>]*>' . String::checkPlain($node->getOwner()->getUsername()) . '<\/a>.<\/div>/', t('Submitted by line found'));
+    $this->assertPattern('/<div[^>]*>Submitted[^<]*<a[^>]+href="' . preg_quote(base_path(), '/') . 'user\/' . $node->getOwnerId() . '"[^>]*>' . String::checkPlain($node->getOwner()->getUsername()) . '<\/a>.*<\/div>/', t('Submitted by line found'));
 
     // Configure teaser layout.
     $teaser = array(

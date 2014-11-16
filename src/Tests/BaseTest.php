@@ -145,6 +145,7 @@ abstract class BaseTest extends WebTestBase {
       'id' => 'test_field',
       'entities[node]' => '1',
       'content[value]' => 'Test field',
+      'content[format]' => 'basic_html',
     );
 
     $this->drupalPostForm($url, $edit, t('Save'));
