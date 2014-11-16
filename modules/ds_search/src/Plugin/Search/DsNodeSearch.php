@@ -85,16 +85,21 @@ class DsNodeSearch extends NodeSearch {
     $this->addNodeRankings($query);
 
     // Run the query and load results.
-    $find = $query
+    $query
       // Add the language code of the indexed item to the result of the query,
       // since the node will be rendered using the respective language.
       ->fields('i', array('langcode'))
       // And since SearchQuery makes these into GROUP BY queries, if we add
       // a field, for PostgreSQL we also need to make it an aggregate or a
       // GROUP BY. In this case, we want GROUP BY.
-      ->groupBy('i.langcode')
-      ->limit(10)
-      ->execute();
+      ->groupBy('i.langcode');
+
+    // Add limit
+    if (!empty($this->configuration['limit'])) {
+      $query->limit($this->configuration['limit']);
+    }
+
+    $find = $query->execute();
 
     // Check query status and set messages if needed.
     $status = $query->getStatus();

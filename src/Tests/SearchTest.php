@@ -96,7 +96,7 @@ class SearchTest extends BaseTest {
     );
     $this->dsConfigureUI($fields, 'admin/config/people/accounts/display');
 
-    $this->drupalGet('search/users/' . $this->admin_user->getUsername());
+    $this->drupalGet('search/users', array('query' => array('keys' => $this->admin_user->getUsername())));
     $this->assertRaw('view-mode-search-result', 'Search view mode found');
     $this->assertRaw('group-left', 'Search template found');
     $this->assertRaw('group-right', 'Search template found');

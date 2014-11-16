@@ -115,26 +115,33 @@ class DsUserSearch extends ConfigurableSearchPluginBase implements AccessibleInt
     if (!$this->isSearchExecutable()) {
       return $results;
     }
+
+    // Process the keywords.
     $keys = $this->keywords;
+    // Escape for LIKE matching.
+    $keys = $this->database->escapeLike($keys);
     // Replace wildcards with MySQL/PostgreSQL wildcards.
     $keys = preg_replace('!\*+!', '%', $keys);
+
+    // Run the query to find matching users.
     $query = $this->database
-      ->select('users')
+      ->select('users_field_data', 'users')
       ->extend('Drupal\Core\Database\Query\PagerSelectExtender');
     $query->fields('users', array('uid'));
+    $query->condition('default_langcode', 1);
     if ($this->currentUser->hasPermission('administer users')) {
-      // Administrators can also search in the otherwise private email field, and
-      // they don't need to be restricted to only active users.
+      // Administrators can also search in the otherwise private email field,
+      // and they don't need to be restricted to only active users.
       $query->fields('users', array('mail'));
       $query->condition($query->orConditionGroup()
-          ->condition('name', '%' . $this->database->escapeLike($keys) . '%', 'LIKE')
-          ->condition('mail', '%' . $this->database->escapeLike($keys) . '%', 'LIKE')
+          ->condition('name', '%' . $keys . '%', 'LIKE')
+          ->condition('mail', '%' . $keys . '%', 'LIKE')
       );
     }
     else {
       // Regular users can only search via usernames, and we do not show them
       // blocked accounts.
-      $query->condition('name', '%' . $this->database->escapeLike($keys) . '%', 'LIKE')
+      $query->condition('name', '%' . $keys . '%', 'LIKE')
         ->condition('status', 1);
     }
 
