@@ -195,7 +195,7 @@ class EntitiesTest extends BaseTest {
     $this->assertNoRaw('Recent content');*/
 
     // Test revisions. Enable the revision view mode
-    /*$edit = array('view_modes_custom[revision]' => '1');
+    $edit = array('display_modes_custom[revision]' => '1');
     $this->drupalPostForm('admin/structure/types/manage/article/display', $edit, t('Save'));
 
     // Select layout and configure fields.
@@ -211,7 +211,7 @@ class EntitiesTest extends BaseTest {
     $this->dsSelectLayout($edit, $assert, 'admin/structure/types/manage/article/display/revision');
     $edit = array(
       'fields[body][region]' => 'left',
-      'fields[node_links][region]' => 'right',
+      'fields[node_link][region]' => 'right',
       'fields[node_author][region]' => 'right',
     );
     $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display/revision');
@@ -219,18 +219,18 @@ class EntitiesTest extends BaseTest {
     // Create revision of the node.
     $edit = array(
       'revision' => TRUE,
-      'log' => 'Test revision',
+      'revision_log[0][value]' => 'Test revision',
     );
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertText('Revisions');
 
     // Assert revision is using 2 col template.
     $this->drupalGet('node/' . $node->id() . '/revisions/1/view');
-    $this->assertText('Body:', 'Body label');
+    $this->assertText('Body', 'Body label');
 
     // Assert full view is using stacked template.
     $this->drupalGet('node/' . $node->id());
-    $this->assertNoText('Body:', 'Body label');*/
+    $this->assertNoText('Body', 'No Body label');
 
     // Test formatter limit on article with tags.
     $edit = array(
