@@ -185,13 +185,13 @@ class ChangeLayoutForm extends FormBase {
     // Save configuration.
     /** @var $entity_display EntityDisplayInterface*/
     $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $display_mode);
-    if ($third_party_settings['layout']) {
+    if (!empty($third_party_settings['layout'])) {
       $entity_display->setThirdPartySetting('ds', 'layout', $third_party_settings['layout']);
     }
-    if ($third_party_settings['regions']) {
+    if (!empty($third_party_settings['regions'])) {
       $entity_display->setThirdPartySetting('ds', 'regions', $third_party_settings['regions']);
     }
-    if ($third_party_settings['fields']) {
+    if (!empty($third_party_settings['fields'])) {
       $entity_display->setThirdPartySetting('ds', 'fields', $third_party_settings['fields']);
     }
     $entity_display->save();
