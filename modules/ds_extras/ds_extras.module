@@ -123,19 +123,6 @@ function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityDis
 }
 
 /**
- * Utility function to return the view mode for the current entity.
- *
- * The drupal_static is called in ds_extras_node_show to set
- * the current view mode. Through this technique, the hide page
- * title functionality can also work across other view modes
- * if another one is chosen for the full page of the node.
- */
-function ds_extras_get_view_mode() {
-  // @todo remove this?
-  return drupal_static('ds_extras_view_mode');
-}
-
-/**
  * Implements hook_entity_view_mode_alter().
  */
 function ds_extras_entity_view_mode_alter(&$view_mode, Drupal\Core\Entity\EntityInterface $entity, $context) {
