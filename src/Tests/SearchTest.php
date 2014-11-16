@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\ds\Tests;
+use Drupal\user\UserInterface;
 
 /**
  * Tests for display of search results for nodes and users.
@@ -75,10 +76,9 @@ class SearchTest extends BaseTest {
     $this->assertText(t('Advanced search'), 'Advanced search found');
 
     // Search on user.
-    //$edit = array('user_override_search_page' => '1');
-    //$this->drupalPostForm('admin/structure/ds/list/search', $edit, t('Save configuration'));
+
     // Configure user. We'll just do default.
-    /*$layout = array(
+    $layout = array(
       'layout' => 'ds_2col_stacked',
     );
     $assert = array(
@@ -91,14 +91,14 @@ class SearchTest extends BaseTest {
     );
     $this->dsSelectLayout($layout, $assert, 'admin/config/people/accounts/display');
     $fields = array(
-      'fields[name][region]' => 'left',
+      'fields[username][region]' => 'left',
       'fields[member_for][region]' => 'right',
     );
     $this->dsConfigureUI($fields, 'admin/config/people/accounts/display');
 
-    $this->drupalGet('search/user/' . $this->admin_user->name);
+    $this->drupalGet('search/users/' . $this->admin_user->getUsername());
     $this->assertRaw('view-mode-search-result', 'Search view mode found');
     $this->assertRaw('group-left', 'Search template found');
-    $this->assertRaw('group-right', 'Search template found');*/
+    $this->assertRaw('group-right', 'Search template found');
   }
 }

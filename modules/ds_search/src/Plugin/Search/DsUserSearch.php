@@ -7,6 +7,7 @@
 
 namespace Drupal\ds_search\Plugin\Search;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds_search\DsSearch;
 use Drupal\Core\Access\AccessibleInterface;
@@ -102,7 +103,8 @@ class DsUserSearch extends ConfigurableSearchPluginBase implements AccessibleInt
    * {@inheritdoc}
    */
   public function access($operation = 'view', AccountInterface $account = NULL, $return_as_object = FALSE) {
-    return !empty($account) && $account->hasPermission('access user profiles');
+    $result = AccessResult::allowedIf(!empty($account) && $account->hasPermission('access user profiles'))->cachePerRole();
+    return $return_as_object ? $result : $result->isAllowed();
   }
 
   /**

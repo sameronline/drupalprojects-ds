@@ -1,16 +1,20 @@
-id: ds_node_search
-label: Content (Display Suite)
-status: true
+uuid: 591d077c-3c52-4059-9c09-9cc65ed460c6
 langcode: en
+status: true
+dependencies:
+  module:
+    - ds_search
+id: ds_node_search
+label: 'Content (Display Suite)'
 path: content
 weight: -5
 plugin: ds_node_search
 configuration:
   rankings: {  }
   view_mode: search_result
-  advanced_search: false
-  limit: 10
   search_variables: none
   show_title: true
   highlight: true
   highlight_selector: .view-mode-search_result
+  limit: 10
+  advanced_search: false

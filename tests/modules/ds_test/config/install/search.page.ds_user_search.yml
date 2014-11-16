@@ -1,0 +1,18 @@
+uuid: 35db7e05-33a6-4d12-8913-197966676855
+langcode: en
+status: true
+dependencies:
+  module:
+    - ds_search
+id: ds_user_search
+label: 'Users (Display Suite)'
+path: users
+weight: 0
+plugin: ds_user_search
+configuration:
+  view_mode: compact
+  search_variables: none
+  show_title: false
+  highlight: false
+  highlight_selector: .view-mode-search_result
+  limit: 10

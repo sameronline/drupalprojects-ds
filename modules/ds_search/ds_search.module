@@ -11,35 +11,8 @@
 function ds_search_theme() {
   return array(
     'ds_search_page' => array(
-      'render element' => 'element',
-      'variables' => array('build' => NULL)
+      'variables' => array('build' => NULL),
+      'file' => 'ds_search.pages.inc',
     ),
   );
-}
-
-/**
- * Search page theming.
- */
-function theme_ds_search_page($build) {
-
-  // @todo this is not called ... but it's not the right way anymore
-  // we'll have to check whether we need to take over SearchController.
-
-  // This is probably because we don't declare anything in ds_search_theme().
-  unset($build['theme_hook_original']);
-
-  // Check on empty search results.
-  if (empty($build['build']['search_results'])) {
-
-    // Alter the title and extra variables.
-    if (!empty($build['build']['search_title'])) {
-      $build['build']['search_title']['#markup'] = '<h2>' . t('Your search yielded no results') . '</h2>';
-      unset($build['build']['search_extra']);
-    }
-
-  }
-
-  //$build['build']['search_results']['#sorted'] = TRUE;
-
-  return drupal_render($build);
 }
