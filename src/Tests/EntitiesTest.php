@@ -159,25 +159,21 @@ class EntitiesTest extends BaseTest {
     $this->assertRaw('view-mode-full', 'Switched to full mode again');
 
     // Test all options of a block field.
-    /*$block = array(
+    $block = array(
       'name' => 'Test block field',
-      'field' => 'test_block_field',
-      'entities[node]' => '1',
-      'block' => 'node|recent',
-      'block_render' => DS_BLOCK_TEMPLATE,
     );
     $this->dsCreateBlockField($block);
     $fields = array(
       'fields[dynamic_block_field:node-test_block_field][region]' => 'left',
-      'fields[dynamic_code_field:node-token_field][region]' => 'hidden',
-      'fields[dynamic_code_field:node-php_field][region]' => 'hidden',
+      'fields[dynamic_token_field:node-token_field][region]' => 'hidden',
       'fields[body][region]' => 'hidden',
-      'fields[links][region]' => 'hidden',
+      'fields[node_links][region]' => 'hidden',
     );
     $this->dsConfigureUI($fields);
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw('Recent content</h2>');
+    $this->assertRaw('Recent content');
 
+    /*
     $block = array(
       'block_render' => DS_BLOCK_TITLE_CONTENT,
     );
@@ -192,11 +188,21 @@ class EntitiesTest extends BaseTest {
     $this->dsCreateBlockField($block, 'admin/structure/ds/fields/manage_block/test_block_field', FALSE);
     $this->drupalGet('node/' . $node->id());
     $this->assertNoRaw('<h2>Recent content</h2>');
-    $this->assertNoRaw('Recent content');*/
+    $this->assertNoRaw('Recent content');
+    */
 
     // Test revisions. Enable the revision view mode
-    $edit = array('display_modes_custom[revision]' => '1');
+    $edit = array(
+      'display_modes_custom[revision]' => '1'
+    );
     $this->drupalPostForm('admin/structure/types/manage/article/display', $edit, t('Save'));
+
+    // Enable the override revision mode and configure it
+    $edit = array(
+      'fs3[override_node_revision]' => TRUE,
+      'fs3[override_node_revision_view_mode]' => 'revision'
+    );
+    $this->drupalPostForm('admin/structure/ds/settings', $edit, t('Save configuration'));
 
     // Select layout and configure fields.
     $edit = array(
