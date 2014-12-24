@@ -1,14 +1,14 @@
 ds.structure:
   path: 'admin/structure/ds'
   defaults:
-    _content: '\Drupal\ds\Controller\DsController::listDisplays'
+    _controller: '\Drupal\ds\Controller\DsController::listDisplays'
     _title: 'Displays'
   requirements:
     _permission: 'admin display suite'
 ds.list:
   path: 'admin/structure/ds/list'
   defaults:
-    _content: '\Drupal\ds\Controller\DsController::listDisplays'
+    _controller: '\Drupal\ds\Controller\DsController::listDisplays'
     _title: 'Displays'
   requirements:
     _permission: 'admin display suite'
@@ -43,14 +43,14 @@ ds.classes:
 ds.fields_list:
   path: 'admin/structure/ds/fields'
   defaults:
-    _content: 'Drupal\ds\Controller\FieldController::fieldList'
+    _controller: 'Drupal\ds\Controller\FieldController::fieldList'
     _title: 'Fields'
   requirements:
     _permission: 'admin fields'
 ds.manage_field:
   path: 'admin/structure/ds/fields/manage/{field_key}'
   defaults:
-    _content: 'Drupal\ds\Controller\FieldController::manageRedirect'
+    _controller: 'Drupal\ds\Controller\FieldController::manageRedirect'
   requirements:
     _permission: 'admin fields'
 ds.delete_field:

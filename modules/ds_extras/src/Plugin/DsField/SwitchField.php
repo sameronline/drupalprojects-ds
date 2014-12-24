@@ -55,8 +55,8 @@ class SwitchField extends DsFieldBase {
         if (!$added) {
           $added = TRUE;
           $output['#attached'] = array(
-            'js' => array(
-              drupal_get_path('module', 'ds_extras') . '/js/ds_extras.js',
+            'library' => array(
+              'ds_extras/ds_extras.switch_view_mode'
             ),
           );
         }

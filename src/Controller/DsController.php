@@ -118,7 +118,7 @@ class DsController extends ControllerBase {
       }
     }
 
-    $build['#attached']['css'][] = drupal_get_path('module', 'ds') . '/css/ds.admin.css';
+    $build['#attached']['library'][] = 'ds/ds.admin';
 
     return $build;
   }

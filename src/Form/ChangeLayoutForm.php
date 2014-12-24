@@ -129,7 +129,7 @@ class ChangeLayoutForm extends FormBase {
       $form['preview']['new_layout'] = array(
         '#markup' => '<div class="ds-layout-preview-image"><img src="' . base_path() . $new_image . '"/></div>',
       );
-      $form['#attached']['css'][] = drupal_get_path('module', 'ds') . '/css/ds.admin.css';
+      $form['#attached']['library'][] = 'ds/ds.admin';
 
       // Submit button
       $form['actions'] = array('#type' => 'actions');

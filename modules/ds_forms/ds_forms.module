@@ -91,6 +91,8 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
       $form = &$vars['element'];
 
       // Add path to css file.
+      /*
+       * @todo fix this
       if (isset($layout['css'])) {
         $build['css'] = array(
           '#attached' => array(
@@ -101,6 +103,7 @@ function ds_forms_preprocess_ds_forms_custom_form(&$vars) {
         );
         drupal_render($build);
       }
+      */
 
       // If the layout has wrapper class lets add it.
       if (isset($layout['settings']['classes']['layout_class'])) {

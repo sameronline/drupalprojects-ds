@@ -2,6 +2,9 @@ ds.admin:
   version: VERSION
   js:
     js/ds.admin.js: {}
+  css:
+    theme:
+      css/ds.admin.css: {}
   dependencies:
     - core/jquery
     - core/drupal
