@@ -56,7 +56,7 @@ class SwitchField extends DsFieldBase {
           $added = TRUE;
           $output['#attached'] = array(
             'library' => array(
-              'ds_extras/ds_extras.switch_view_mode'
+              'ds_extras/switch_view_mode'
             ),
           );
         }

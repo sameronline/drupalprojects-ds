@@ -47,7 +47,7 @@ function  ds_field_ui_fields_layouts(&$form, FormStateInterface $form_state) {
   }
 
   // Attach js.
-  $form['#attached']['library'][] = 'ds/ds.admin';
+  $form['#attached']['library'][] = 'ds/admin';
 
   // Add process function to add the regions.
   $form['#process'][] = 'ds_field_ui_regions';

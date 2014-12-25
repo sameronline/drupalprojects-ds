@@ -138,22 +138,11 @@ trait DsSearch {
 
     // CSS and JS.
     if ($configuration['highlight']) {
-      $build['#attached'] = array(
-        'css' => array(
-          drupal_get_path('module', 'ds_search') . '/css/search.theme.css',
-        ),
-        'js' => array(
-          drupal_get_path('module', 'ds_search') . '/js/search.js',
-          array(
-            'type' => 'setting',
-            'data' => array(
-              'ds_search' => array(
-                'selector' => String::checkPlain($configuration['highlight_selector']),
-                'search' => String::checkPlain(parent::getKeyWords()),
-              ),
-            ),
-          ),
-        ),
+      $build['#attached']['library'][] = 'ds_search/highlight';
+
+      $build['#attached']['drupalSettings']['ds_search'] = array(
+        'selector' => String::checkPlain($configuration['highlight_selector']),
+        'search' => String::checkPlain(parent::getKeyWords()),
       );
     }
   }

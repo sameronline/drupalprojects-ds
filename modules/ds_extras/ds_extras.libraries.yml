@@ -1,4 +1,4 @@
-ds_extras.admin:
+admin:
   version: VERSION
   js:
     js/ds_extras.admin.js: {}
@@ -6,11 +6,10 @@ ds_extras.admin:
     - core/jquery
     - core/drupal
     - core/drupal.form
-ds_extras.switch_view_mode:
+switch_view_mode:
   version: VERSION
   js:
     js/ds_extras.js: {}
   dependencies:
     - core/jquery
     - core/drupal
-    - core/drupal.form

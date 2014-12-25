@@ -1,11 +1,11 @@
-admin:
+highlight:
   version: VERSION
   js:
-    js/ds.admin.js: {}
+    js/search.js: {}
   css:
     theme:
-      css/ds.admin.css: {}
+      css/search.theme.css: {}
   dependencies:
     - core/jquery
     - core/drupal
-    - core/drupal.form
+    - core/drupalSettings
