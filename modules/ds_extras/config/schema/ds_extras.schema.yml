@@ -43,4 +43,5 @@ ds.extras:
       type: boolean
       label: 'Override node revision callback'
     override_node_revision_view_mode:
+      type: string
       label: 'The view mode of the node revision override'

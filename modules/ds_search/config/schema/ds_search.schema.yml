@@ -3,6 +3,7 @@ ds_search.settings:
   label: 'Display Suite search settings'
   mapping:
     view_mode:
+      type: string
       label: 'View mode'
 
 # Plugin \Drupal\node\Plugin\Search\NodeSearch
@@ -17,6 +18,7 @@ search.plugin.ds_node_search:
         - type: integer
           label: 'Influence'
     view_mode:
+      type: string
       label: 'View Mode'
     advanced_search:
       type: boolean
@@ -25,6 +27,7 @@ search.plugin.ds_node_search:
       type: integer
       label: 'Number of nodes per page'
     search_variables:
+      type: string
       label: 'Extra information inserted into the search results'
     show_title:
       type: boolean
@@ -33,6 +36,7 @@ search.plugin.ds_node_search:
       type: boolean
       label: 'Highlight words in search results'
     highlight_selector:
+      type: string
       label: 'The selector of the region wherein a keyword should be highlighted'
 
 # Plugin \Drupal\user\Plugin\Search\UserSearch
@@ -47,11 +51,13 @@ search.plugin.ds_user_search:
         - type: integer
           label: 'Influence'
     view_mode:
+      type: string
       label: 'View Mode'
     limit:
       type: integer
       label: 'Number of nodes per page'
     search_variables:
+      type: string
       label: 'Extra information inserted into the search results'
     show_title:
       type: boolean
@@ -60,4 +66,5 @@ search.plugin.ds_user_search:
       type: boolean
       label: 'Highlight words in search results'
     highlight_selector:
+      type: string
       label: 'The selector of the region wherein a keyword should be highlighted'

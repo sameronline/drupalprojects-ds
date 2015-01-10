@@ -11,6 +11,7 @@ ds.settings:
       type: boolean
       label: 'Uses field templates'
     ft-default:
+      type: string
       label: 'The default template'
     ft-show-colon:
       type: boolean
