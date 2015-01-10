@@ -8,6 +8,7 @@
 use Drupal\Component\Utility\String;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Utility\Xss;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
@@ -560,7 +561,7 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
   $display->save();
 
   // Clear the ds_fields cache.
-  \Drupal::cache()->invalidateTags(array('ds_fields_info'));
+  Cache::invalidateTags(array('ds_fields_info'));
 }
 
 /**
