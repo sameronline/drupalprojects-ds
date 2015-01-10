@@ -843,7 +843,7 @@ function ds_render_ctools_field($field) {
                   // This term is missing in the database.
                   continue;
                 }
-                $terms_loaded[$item['tid']];
+                $terms_loaded[$item['tid']] = $term;
               }
               $field['entity']->{$key}[$language][$tkey]['taxonomy_term'] = $terms_loaded[$item['tid']];
             }
