@@ -172,7 +172,7 @@ trait DsSearch {
     // Send the right extra variable.
     switch ($configuration['search_variables']) {
       case 'search_totals':
-        return \Drupal::translation()->formatPlural($total, 'One result', 'Total results: @total.', array('@total' => $total));
+        return \Drupal::translation()->formatPlural($total, 'One result', '@total results', array('@total' => $total));
         break;
 
       case 'search_totals_plus_keywords':
