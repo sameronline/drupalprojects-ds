@@ -1232,6 +1232,9 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
       }
       else {
         $term = taxonomy_term_load($item['tid']);
+        if (module_exists('i18n_taxonomy')) {
+          $term = i18n_taxonomy_localize_terms($term);
+        }
         if (!is_object($term)) {
           // This term is missing in the database.
           continue;
@@ -1264,6 +1267,9 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
       }
       else {
         $term = taxonomy_term_load($item['tid']);
+        if (module_exists('i18n_taxonomy')) {
+          $term = i18n_taxonomy_localize_terms($term);
+        }
         if (!is_object($term)) {
           // This term is missing in the database.
           continue;
