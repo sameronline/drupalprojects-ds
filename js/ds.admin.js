@@ -7,14 +7,10 @@
 
   "use strict";
 
-  Drupal.DisplaySuite = Drupal.DisplaySuite || {};
-  Drupal.DisplaySuite.fieldopened = '';
-  Drupal.DisplaySuite.layout_original = '';
-
   Drupal.behaviors.DSSummaries = {
     attach: function (context) {
-
-      $(context).find('#edit-fs1').drupalSetSummary(function (context) {
+      var $context = $(context);
+      $context.find('#edit-fs1').drupalSetSummary(function (context) {
         var fieldtemplates = $('#edit-fs1-field-template', context);
 
         if (fieldtemplates.is(':checked')) {

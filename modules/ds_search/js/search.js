@@ -71,4 +71,3 @@
   };
 
 })(jQuery, Drupal, drupalSettings);
-
