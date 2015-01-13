@@ -57,6 +57,10 @@ class DsController extends ControllerBase {
 
     foreach ($entity_info as $entity_type => $info) {
       $base_table = $info->getBaseTable();
+      $bundle_entity_type = $info->getBundleEntityType();
+      if ($bundle_entity_type == 'bundle') {
+        $bundle_entity_type = $entity_type;
+      }
       if ($info->get('field_ui_base_route') && !empty($base_table)) {
         $rows = array();
         $bundles = $this->entityManager()->getBundleInfo($entity_type);
@@ -71,17 +75,18 @@ class DsController extends ControllerBase {
             if ($route) {
               $operations['manage_display'] = array(
                 'title' => t('Manage display'),
-                'url' => new Url('field_ui.display_overview_' . $entity_type, $route->getRouteParameters()),
+                'url' => new Url("entity.$bundle_entity_type.field_ui_display", $route->getRouteParameters()),
               );
 
               // Add Manage Form link if Display Suite Forms is enabled.
               if ($this->moduleHandler()->moduleExists('ds_forms')) {
                 $operations['manage_form'] = array(
                   'title' => t('Manage form'),
-                  'url' => new Url('field_ui.form_display_overview_' . $entity_type, $route->getRouteParameters()),
+                  'url' => new Url("entity.$bundle_entity_type.field_ui_form_display", $route->getRouteParameters()),
                 );
               }
             }
+
           }
 
           // Add operation links.
