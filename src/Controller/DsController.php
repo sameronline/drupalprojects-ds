@@ -118,7 +118,7 @@ class DsController extends ControllerBase {
       }
     }
 
-    $build['#attached']['library'][] = 'ds/ds.admin';
+    $build['#attached']['library'][] = 'ds/admin';
 
     return $build;
   }

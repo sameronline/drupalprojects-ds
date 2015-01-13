@@ -129,7 +129,7 @@ class ChangeLayoutForm extends FormBase {
       $form['preview']['new_layout'] = array(
         '#markup' => '<div class="ds-layout-preview-image"><img src="' . base_path() . $new_image . '"/></div>',
       );
-      $form['#attached']['library'][] = 'ds/ds.admin';
+      $form['#attached']['library'][] = 'ds/admin';
 
       // Submit button
       $form['actions'] = array('#type' => 'actions');
