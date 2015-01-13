@@ -334,7 +334,6 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   if ($new_layout && !empty($old_layout)) {
     $display->unsetThirdPartySetting('ds', 'layout');
     $display->unsetThirdPartySetting('ds', 'regions');
-    $display->unsetThirdPartySetting('ds', 'fields');
     $display->save();
   }
 
@@ -349,7 +348,6 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     $layouts = Ds::getLayouts();
     $sl = $layouts[$layout];
     $first_region = key($sl['regions']);
-    $record['layout']['settings']['fields'] = array();
     $record['layout']['settings']['classes'] = array();
     $record['layout']['settings']['wrappers'] = array();
     $record['layout']['settings']['outer_wrapper'] = 'div';
