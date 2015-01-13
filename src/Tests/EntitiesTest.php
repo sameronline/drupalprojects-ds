@@ -86,7 +86,7 @@ class EntitiesTest extends BaseTest {
     \Drupal::entityManager()->clearCachedFieldDefinitions();
 
     // @todo can we remove this?
-    \Drupal::cache()->deleteTags(array('ds_fields_info'));
+    Cache::invalidateTags(array('ds_fields_info'));
   }
 
   /**

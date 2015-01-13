@@ -7,10 +7,10 @@
 
 namespace Drupal\ds\Form;
 
+use Drupal\Core\Cache\CacheTagsInvalidator;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Config\ConfigFactory;
-use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -30,11 +30,11 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
   protected $configFactory;
 
   /**
-   * Holds the cache backend
+   * Holds the cache invalidator
    *
-  * @var \Drupal\Core\Cache\CacheBackendInterface
+  * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
 */
-  protected $cacheBackend;
+  protected $cacheInvalidator;
 
   /**
    * The field being deleted
@@ -46,13 +46,13 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
   /**
    * Constructs a FieldDeleteForm object.
    *
-   * @param \Drupal\Core\Cache\CacheBackendInterface
-   *   The cache backend.
+   * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface
+   *   The cache invalidator.
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    *   The factory for configuration objects.
    */
-  public function __construct(CacheBackendInterface $cache_backend, ConfigFactory $config_factory) {
-    $this->cacheBackend = $cache_backend;
+  public function __construct(CacheTagsInvalidator $cache_invalidator, ConfigFactory $config_factory) {
+    $this->cacheInvalidator = $cache_invalidator;
     $this->configFactory = $config_factory;
   }
 
@@ -60,7 +60,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('cache.default'), $container->get('config.factory'));
+    return new static($container->get('cache_tags.invalidator'), $container->get('config.factory'));
   }
 
   /**
@@ -107,7 +107,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
 
     // Remove field and clear caches.
     $this->configFactory->get('ds.field.' . $field['id'])->delete();
-    $this->cacheBackend->deleteTags(array('ds_fields_info'));
+    $this->cacheInvalidator->invalidateTags(array('ds_fields_info'));
 
     // Also clear the ds plugin cache
     \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();

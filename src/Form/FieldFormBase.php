@@ -8,6 +8,7 @@
 namespace Drupal\ds\Form;
 
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManager;
@@ -31,11 +32,11 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
   protected $entityManager;
 
   /**
-   * Holds the cache backend
+   * Holds the cache invalidator
    *
-   * @var \Drupal\Core\Cache\CacheBackendInterface
+   * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
-  protected $cacheBackend;
+  protected $cacheInvalidator;
 
   /**
    * Drupal module handler
@@ -58,15 +59,15 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
    *   The factory for configuration objects.
    * @param \Drupal\Core\Entity\EntityManager
    *   The entity manager.
-   * @param \Drupal\Core\Cache\CacheBackendInterface
-   *   The cache backend.
+   * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface
+   *   The cache invalidator.
    * @param \Drupal\Core\Extension\ModuleHandler
    *   The module handler.
    */
-  public function __construct(ConfigFactory $config_factory, EntityManager $entity_manager, CacheBackendInterface $cache_backend, ModuleHandler $module_handler) {
+  public function __construct(ConfigFactory $config_factory, EntityManager $entity_manager, CacheTagsInvalidatorInterface $cache_invalidator, ModuleHandler $module_handler) {
     parent::__construct($config_factory);
     $this->entityManager = $entity_manager;
-    $this->cacheBackend = $cache_backend;
+    $this->cacheInvalidator = $cache_invalidator;
     $this->moduleHandler = $module_handler;
   }
 
@@ -77,7 +78,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
     return new static(
       $container->get('config.factory'),
       $container->get('entity.manager'),
-      $container->get('cache.default'),
+      $container->get('cache_tags.invalidator'),
       $container->get('module_handler')
     );
   }
@@ -181,7 +182,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
 
     // Save field and clear ds_fields_info cache.
     $this->configFactory()->get('ds.field.' . $field['id'])->setData($field)->save();
-    $this->cacheBackend->deleteTags(array('ds_fields_info'));
+    $this->cacheInvalidator->invalidateTags(array('ds_fields_info'));
 
     // Also clear the ds plugin cache
     \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
