@@ -42,7 +42,7 @@ ds.field_template.expert:
     lbw-at:
       type: string
       label: 'The label wrapper attribute'
-    lbc:
+    lb-col:
       type: boolean
       label: 'Enable the label colon'
     lbw-def-at:
