@@ -523,6 +523,7 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
 
     // Build settings.
     $settings = array();
+    $settings['plugin_id'] = $field;
     $settings['weight'] = $field_values['weight'];
     $settings['label'] = $field_values['label'];
     $settings['formatter'] = $field_values['plugin']['type'];
@@ -539,15 +540,24 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
 
     $field_settings[$field] = $settings;
 
+    // Always unset the field template settings from the regular settings array
+    // @todo needs serious review
+    unset($field_settings[$field]['settings']['ft']);
+
     // Add field template plugin settings if provided.
     $values = isset($all_plugin_settings[$field]['ft']) ? $all_plugin_settings[$field]['ft'] : array();
 
     if (!empty($values)) {
-      $field_settings[$field]['settings']['ft'] = $values;
+      $field_settings[$field]['ft'] = $values;
 
       $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
       $function = isset($values['id']) ? $values['id'] : $default_field_function;
-      $field_settings[$field]['settings']['ft']['id'] = $function;
+      $field_settings[$field]['ft']['id'] = $function;
+    }
+
+    // Last but not least unset the settings if they are empty after moving the field template settings
+    if (empty($field_settings[$field]['settings'])) {
+      unset($field_settings[$field]['settings']);
     }
   }
 
@@ -1196,14 +1206,13 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
     }
     elseif (isset($field_settings[$key]['settings'])) {
       $plugin_settings = $field_settings[$key]['settings'];
+      if (isset($field_settings[$key]['ft'])) {
+        $plugin_settings['ft'] = $field_settings[$key]['ft'];
+      }
       $form_state_plugin_settings[$key] = $plugin_settings;
     }
 
     $plugin_instance->setConfiguration($plugin_settings);
-
-    if (!isset($form_state_plugin_settings[$key]['ft']) && isset($field_settings[$key]['ft'])) {
-      $form_state_plugin_settings[$key]['ft'] = $field_settings[$key]['ft'];
-    }
 
     // Save fetched plugin settings
     $form_state->set('plugin_settings', $form_state_plugin_settings);

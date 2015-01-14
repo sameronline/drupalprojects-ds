@@ -59,10 +59,23 @@ class DynamicCopyField extends DsFieldBase {
   /**
    * {@inheritdoc}
    */
+  public function getConfiguration() {
+    return $this->field_instance->getConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setConfiguration(array $configuration) {
+    return $this->field_instance->setConfiguration($configuration);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function defaultConfiguration() {
     return array();
   }
-
 
   /**
    * {@inheritdoc}
