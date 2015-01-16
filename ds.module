@@ -256,8 +256,10 @@ function ds_preprocess_ds_layout(&$variables) {
       if (!empty($configuration['layout']['settings']['attributes'])) {
         $layout_attributes = explode(',', $configuration['layout']['settings']['attributes']);
         foreach ($layout_attributes as $layout_attribute) {
-          list($key, $attribute_value) = explode('|', $layout_attribute);
-          $variables['attributes'][$key] = $attribute_value;
+          if (strpos($layout_attribute, '|') !== FALSE) {
+            list($key, $attribute_value) = explode('|', $layout_attribute);
+            $variables['attributes'][$key] = $attribute_value;
+          }
         }
       }
 
