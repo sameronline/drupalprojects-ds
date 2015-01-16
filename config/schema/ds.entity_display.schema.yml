@@ -23,8 +23,8 @@ entity_view_display.third_party.ds:
               type: 'sequence'
               label: 'The layout classes'
               sequence:
-                - type: string
-                  label: 'Field class'
+                - type: ds.classes.[%key]
+                  label: 'Classes array'
             wrappers:
               type: 'sequence'
               label: 'The layout wrappers'
@@ -92,3 +92,10 @@ ds.field_template.settings:
       label: 'The ID of the template'
     settings:
       type: ds.field_template.[%parent.id]
+
+ds.classes.*:
+  type: sequence
+  label: 'A list of classes'
+  sequence:
+    - type: string
+      label: 'Class name'
