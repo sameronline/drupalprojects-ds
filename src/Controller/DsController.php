@@ -170,13 +170,19 @@ class DsController extends ControllerBase {
     /** @var $entity_display EntityDisplayBase */
     $entity_display = entity_get_display($entity_type, $entity->bundle(), $view_mode);
 
+    $entity_info = \Drupal::entityManager()->getDefinitions();
+    $bundle_entity_type = $entity_info[$entity_type]->getBundleEntityType();
+    if ($bundle_entity_type == 'bundle') {
+      $bundle_entity_type = $entity_type;
+    }
+
     $route_parameters = $route->getRouteParameters();
     if ($entity_display->getThirdPartySetting('ds', 'layout')) {
       $route_parameters['view_mode_name'] = $view_mode;
-      $admin_route_name = 'field_ui.display_overview_view_mode_' . $entity_type;
+      $admin_route_name = 'field_ui.display_overview_view_mode_' . $bundle_entity_type;
     }
     else {
-      $admin_route_name = 'field_ui.display_overview_' . $entity->getEntityTypeId();
+      $admin_route_name = "entity.$bundle_entity_type.field_ui_display";
     }
 
     $options = $route->getOptions();
