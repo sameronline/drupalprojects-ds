@@ -11,7 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
  */
 function ds_extras_settings_alter(&$form, FormStateInterface $form_state) {
 
-  $config = \Drupal::config('ds.extras');
+  $config = \Drupal::configFactory()->getEditable('ds.extras');
 
   $form['fs2'] = array(
     '#type' => 'details',
@@ -122,7 +122,7 @@ function ds_extras_settings_submit($form, FormStateInterface $form_state) {
     $extra_fields = explode("\n", str_replace("\r", '', $values['fs2']['fields_extra_list']));
   }
 
-  $config = \Drupal::config('ds.extras')
+  $config = \Drupal::configFactory()->getEditable('ds.extras')
     ->set('fields_extra', $values['fs2']['fields_extra'])
     ->set('fields_extra_list', $extra_fields)
     ->set('switch_view_mode', $values['fs3']['switch_view_mode'])

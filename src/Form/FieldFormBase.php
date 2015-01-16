@@ -53,6 +53,13 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
   protected $field;
 
   /**
+   * The field key.
+   *
+   * @var string
+   */
+  protected $fieldKey;
+
+  /**
    * Constructs a \Drupal\system\CustomFieldFormBase object.
    *
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
@@ -101,11 +108,14 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
 
     // Fetch field if it already exists.
     if (!empty($field_key)) {
-      $field = $this->configFactory()->get('ds.field.' . $field_key)->get();
+      $field = $this->config('ds.field.' . $field_key)->get();
     }
 
     // Save the field for future reuse.
     $this->field = $field;
+
+    // Save the field_key
+    $this->fieldKey = $field_key;
 
     $form['name'] = array(
       '#title' => t('Label'),
@@ -191,6 +201,15 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
     $url = new Url('ds.fields_list');
     $form_state->setRedirectUrl($url);
     drupal_set_message(t('The field %field has been saved.', array('%field' => $field['label'])));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getEditableConfigNames() {
+    return array(
+      'ds.field.' . $this->fieldKey,
+    );
   }
 
   /**

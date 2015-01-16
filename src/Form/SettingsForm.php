@@ -62,7 +62,7 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->configFactory()->get('ds.settings');
+    $config = $this->config('ds.settings');
 
     $form['additional_settings'] = array(
       '#type' => 'vertical_tabs',
@@ -124,7 +124,7 @@ class SettingsForm extends ConfigFormBase {
     parent::submitForm($form, $form_state);
 
     $values = $form_state->getValues();
-    $this->configFactory()->get('ds.settings')
+    $this->config('ds.settings')
       ->set('field_template', $values['fs1']['field_template'])
       ->set('ft-default', $values['fs1']['ft-default'])
       ->set('ft-show-colon', $values['fs1']['ft-show-colon'])
@@ -134,6 +134,15 @@ class SettingsForm extends ConfigFormBase {
     $this->moduleHandler->resetImplementations();
     \Drupal::service('theme.registry')->reset();
     \Drupal::service('router.builder')->setRebuildNeeded();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getEditableConfigNames() {
+    return array(
+      'ds.settings'
+    );
   }
 
 }
