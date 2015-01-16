@@ -53,13 +53,6 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
   protected $field;
 
   /**
-   * The field key.
-   *
-   * @var string
-   */
-  protected $fieldKey;
-
-  /**
    * Constructs a \Drupal\system\CustomFieldFormBase object.
    *
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
@@ -113,9 +106,6 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
 
     // Save the field for future reuse.
     $this->field = $field;
-
-    // Save the field_key
-    $this->fieldKey = $field_key;
 
     $form['name'] = array(
       '#title' => t('Label'),
@@ -190,8 +180,11 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
     }
     $field['entities'] = $entities;
 
+    // Save field to property
+    $this->field = $field;
+
     // Save field and clear ds_fields_info cache.
-    $this->configFactory()->get('ds.field.' . $field['id'])->setData($field)->save();
+    $this->config('ds.field.' . $field['id'])->setData($field)->save();
     $this->cacheInvalidator->invalidateTags(array('ds_fields_info'));
 
     // Also clear the ds plugin cache
@@ -208,7 +201,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
    */
   protected function getEditableConfigNames() {
     return array(
-      'ds.field.' . $this->fieldKey,
+      'ds.field.' . $this->field['id'],
     );
   }
 
