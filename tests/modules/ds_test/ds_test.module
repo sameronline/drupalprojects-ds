@@ -13,11 +13,11 @@ use Drupal\Core\Render\Element;
  */
 function ds_test_install() {
 
-  \Drupal::config('ds.settings')
+  \Drupal::configFactory()->getEditable('ds.settings')
     ->set('field_template', TRUE)
     ->save();
 
-  \Drupal::config('ds.extras')
+  \Drupal::configFactory()->getEditable('ds.extras')
     ->set('region_to_block', TRUE)
     ->set('switch_view_mode', TRUE)
     ->set('fields_extra', TRUE)

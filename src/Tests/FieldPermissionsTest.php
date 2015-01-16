@@ -21,7 +21,7 @@ class FieldPermissionsTest extends BaseTest {
       'fields[test_field][region]' => 'left',
     );
 
-    \Drupal::config('ds.extras')->set('field_permissions', TRUE)->save();
+    $this->config('ds.extras')->set('field_permissions', TRUE)->save();
     \Drupal::moduleHandler()->resetImplementations();
 
     $this->dsSelectLayout();
