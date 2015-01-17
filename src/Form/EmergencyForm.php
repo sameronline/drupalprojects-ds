@@ -7,7 +7,7 @@
 
 namespace Drupal\ds\Form;
 
-use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -17,14 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Emergency form for DS.
  */
-class EmergencyForm extends FormBase {
-
-  /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected $configFactory;
+class EmergencyForm extends ConfigFormBase {
 
   /**
    * State object
@@ -51,7 +44,7 @@ class EmergencyForm extends FormBase {
    *   The state key value store
    */
   public function __construct(ConfigFactory $config_factory, ModuleHandlerInterface $module_handler, State $state) {
-    $this->configFactory = $config_factory;
+    parent::__construct($config_factory);
     $this->moduleHandler = $module_handler;
     $this->state = $state;
   }
@@ -100,7 +93,7 @@ class EmergencyForm extends FormBase {
     );
 
     if ($this->moduleHandler->moduleExists('ds_extras')) {
-      $region_blocks = $this->configFactory->get('ds.extras')->get('region_blocks');
+      $region_blocks = $this->config('ds.extras')->get('region_blocks');
       if (!empty($region_blocks)) {
 
         $region_blocks_options = array();
@@ -152,7 +145,7 @@ class EmergencyForm extends FormBase {
   public function submitRegionToBlock(array &$form, FormStateInterface $form_state) {
     if ($form_state->getValue('remove_block_region')) {
       $save = FALSE;
-      $region_blocks = $this->configFactory->get('ds.extras')->get('region_blocks');
+      $region_blocks = $this->config('ds.extras')->get('region_blocks');
       $remove = $form_state->getValue('remove_block_region');
       foreach ($remove as $key => $value) {
         if ($key === $value) {
@@ -180,12 +173,21 @@ class EmergencyForm extends FormBase {
         \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
         \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
-        $this->configFactory->get('ds.extras')->set('region_blocks', $region_blocks)->save();
+        $this->config('ds.extras')->set('region_blocks', $region_blocks)->save();
       }
     }
     else {
       drupal_set_message($this->t('No block regions were removed.'));
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getEditableConfigNames() {
+    return array(
+      'ds.extras'
+    );
   }
 
 }
