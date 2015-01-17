@@ -106,7 +106,7 @@ trait DsSearch {
 
     if ($save_view_mode) {
       // Also save the view_mode in config, it's used by the Display Suite fields.
-      \Drupal::config('ds_search.settings')->set('view_mode', $values['view_mode'])->save();
+      \Drupal::configFactory()->getEditable('ds_search.settings')->set('view_mode', $values['view_mode'])->save();
     }
   }
 

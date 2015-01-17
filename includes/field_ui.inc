@@ -553,6 +553,11 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
       $default_field_function = \Drupal::config('ds.settings')->get('ft-default');
       $function = isset($values['id']) ? $values['id'] : $default_field_function;
       $field_settings[$field]['ft']['id'] = $function;
+
+      // It's important for schema validation to never save empty arrays
+      if (empty($field_settings[$field]['ft']['settings'])) {
+        unset($field_settings[$field]['ft']['settings']);
+      }
     }
 
     // Last but not least unset the settings if they are empty after moving the field template settings

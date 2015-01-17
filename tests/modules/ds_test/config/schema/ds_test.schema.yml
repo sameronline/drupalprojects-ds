@@ -1,0 +1,7 @@
+ds.field_template.ds_test_theming_function:
+  type: mapping
+  label: 'The settings of the ds_test_theming_function field template'
+  mapping:
+    lb:
+      type: string
+      label: 'The label of the field'
