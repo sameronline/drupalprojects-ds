@@ -5,3 +5,12 @@ ds.field_template.ds_test_theming_function:
     lb:
       type: string
       label: 'The label of the field'
+    lb-col:
+      type: boolean
+      label: 'Enable the label colon'
+    classes:
+      type: sequence
+      label: 'Classes for the template'
+      sequence:
+        - type: string
+          label: 'Class name'
