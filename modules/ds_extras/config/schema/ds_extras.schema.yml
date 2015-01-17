@@ -12,8 +12,10 @@ ds.extras:
           label: Region block
           mapping:
             title:
+              type: string
               label: Title
             info:
+              type: string
               label: Info
     fields_extra:
       type: boolean

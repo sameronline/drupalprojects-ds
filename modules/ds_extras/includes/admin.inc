@@ -235,7 +235,7 @@ function ds_extras_block_submit($form, FormStateInterface $form_state) {
       $region_blocks = array();
     }
     $region_blocks[$block_key] = $block;
-    \Drupal::config('ds.extras')->set('region_blocks', $region_blocks)->save();
+    \Drupal::configFactory()->getEditable('ds.extras')->set('region_blocks', $region_blocks)->save();
   }
 
   // Remove a region.
@@ -265,7 +265,7 @@ function ds_extras_block_submit($form, FormStateInterface $form_state) {
     \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
     // Remove the region from ds settings
-    \Drupal::config('ds.extras')->set('region_blocks', $region_blocks)->save();
+    \Drupal::configFactory()->getEditable('ds.extras')->set('region_blocks', $region_blocks)->save();
   }
 }
 

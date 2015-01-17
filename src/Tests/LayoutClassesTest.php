@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\ds\Tests;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 
 /**
  * Tests for managing layouts and classes on Field UI screen.
@@ -97,8 +98,8 @@ class LayoutClassesTest extends BaseTest {
     $this->assertRaw('group-footer class_name_2', 'Class found (class_name_2)');
 
     // Assert custom fields.
-    $this->assertRaw('field-name-dynamic-token-field:node-test-field', t('Custom field found'));
-    $this->assertRaw('field-name-dynamic-block-field:node-test-block-field', t('Custom block field found'));
+    $this->assertRaw('field-name-dynamic-token-fieldnode-test-field', t('Custom field found'));
+    $this->assertRaw('field-name-dynamic-block-fieldnode-test-block-field', t('Custom block field found'));
     // @todo title isn't set, cause we are dealing with the block itself not the instance
     //$this->assertRaw('Recent content</h2>', t('Custom block field found'));
     $this->assertRaw('Submitted by', t('Submitted field found'));
@@ -190,7 +191,7 @@ class LayoutClassesTest extends BaseTest {
     $this->assertRaw('<td colspan="8">' . t('Block region') . '</td>', 'Block region found');
 
     // Verify settings.
-    $entity_display = entity_load('entity_view_display', 'node.article.full', TRUE);
+    $entity_display = EntityViewDisplay::load('node.article.full', TRUE);
     $data = $entity_display->getThirdPartySettings('ds');
     $this->assertTrue(in_array('node_author', $data['regions']['header']), t('Author is in header'));
     $this->assertTrue(in_array('node_links', $data['regions']['header']), t('Links field is in header'));

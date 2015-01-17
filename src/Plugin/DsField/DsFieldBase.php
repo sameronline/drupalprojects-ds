@@ -151,10 +151,12 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
 
     $limits = $definition['ui_limit'];
     foreach ($limits as $limit) {
-      list($bundle_limit, $view_mode_limit) = explode('|', $limit);
+      if (strpos($limit, '|') !== FALSE) {
+        list($bundle_limit, $view_mode_limit) = explode('|', $limit);
 
-      if (($bundle_limit == $bundle || $bundle_limit == '*') && ($view_mode_limit == $view_mode || $view_mode_limit == '*')) {
-        return TRUE;
+        if (($bundle_limit == $bundle || $bundle_limit == '*') && ($view_mode_limit == $view_mode || $view_mode_limit == '*')) {
+          return TRUE;
+        }
       }
     }
 
