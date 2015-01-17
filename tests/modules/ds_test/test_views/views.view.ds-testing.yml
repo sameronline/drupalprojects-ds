@@ -2,8 +2,13 @@ uuid: c4f2aac2-e037-48bd-b80d-1383dc0e42a9
 langcode: en
 status: true
 dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - node.type.article
   module:
+    - ds
     - node
+    - user
 id: ds_testing
 label: ds-testing
 module: views
@@ -190,6 +195,7 @@ display:
       arguments: {  }
       field_langcode: '***LANGUAGE_language_content***'
       field_langcode_add_to_query: null
+      display_extenders: {  }
   page:
     display_plugin: page
     id: page
@@ -200,6 +206,7 @@ display:
       field_langcode: '***LANGUAGE_language_content***'
       field_langcode_add_to_query: null
       path: ds-testing
+      display_extenders: {  }
   page_1:
     display_plugin: page
     id: page_1
@@ -243,6 +250,7 @@ display:
           advanced_fieldset:
             advanced: 0
         provider: ds
+      display_extenders: {  }
   page_2:
     display_plugin: page
     id: page_2
@@ -285,6 +293,7 @@ display:
           advanced_fieldset:
             advanced: 0
         provider: ds
+      display_extenders: {  }
   page_3:
     display_plugin: page
     id: page_3
@@ -327,6 +336,7 @@ display:
           advanced_fieldset:
             advanced: 0
         provider: ds
+      display_extenders: {  }
   page_4:
     display_plugin: page
     id: page_4
@@ -369,6 +379,7 @@ display:
           advanced_fieldset:
             advanced: 1
         provider: ds
+      display_extenders: {  }
   page_5:
     display_plugin: page
     id: page_5
@@ -447,3 +458,4 @@ display:
           advanced_fieldset:
             advanced: 0
         provider: ds
+      display_extenders: {  }

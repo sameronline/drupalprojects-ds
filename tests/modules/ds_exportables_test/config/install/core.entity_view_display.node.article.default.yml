@@ -78,12 +78,12 @@ third_party_settings:
           'link text': 'Read more'
           wrapper: ''
           class: ''
-          ft:
-            id: default
-            settings:
-              lb: ''
-              lb-col: 0
-              classes: {  }
+        ft:
+          id: default
+          settings:
+            lb: ''
+            lb-col: 0
+            classes: {  }
       node_title:
         weight: '0'
         label: hidden
@@ -92,9 +92,9 @@ third_party_settings:
           link: 0
           wrapper: h3
           class: ''
-          ft:
-            id: default
-            settings:
-              lb: ''
-              lb-col: 0
-              classes: {  }
+        ft:
+          id: default
+          settings:
+            lb: ''
+            lb-col: 0
+            classes: {  }
