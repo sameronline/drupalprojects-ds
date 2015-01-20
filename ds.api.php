@@ -268,7 +268,9 @@ function hook_ds_vd_info() {
 }
 
 /**
- * Alter fields defined by Display Suite
+ * Alter fields defined by Display Suite.
+ *
+ * This function is called for each entity type.
  *
  * @param $fields
  *   An array with fields which can be altered just before they get cached.
