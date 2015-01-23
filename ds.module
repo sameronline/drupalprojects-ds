@@ -243,7 +243,7 @@ function ds_preprocess_ds_layout(&$variables) {
         }
 
         $variables[$region_name . '_classes'] = !empty($configuration['layout']['settings']['classes'][$region_name]) ? ' ' . implode(' ', $configuration['layout']['settings']['classes'][$region_name]) : '';
-        $variables[$region_name . '_wrapper'] = isset($configuration['layout']['settings']['wrappers'][$region_name]) ? $configuration['layout']['settings']['wrappers'][$region_name] : 'div';
+        $variables[$region_name . '_wrapper'] = !empty($configuration['layout']['settings']['wrappers'][$region_name]) ? $configuration['layout']['settings']['wrappers'][$region_name] : 'div';
       }
 
       // Let other modules know we have rendered.
