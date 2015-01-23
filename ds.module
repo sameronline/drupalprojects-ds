@@ -789,16 +789,17 @@ function ds_create_entity_context($entity_type, $entity, &$contexts, $context_ar
  */
 function ds_render_code_field($field) {
   if (isset($field['properties']['code'])) {
+    $value = $field['properties']['code']['value'];
+    // Token support - check on token property so we don't run every single field through token.
+    if (isset($field['properties']['use_token']) && $field['properties']['use_token']) {
+      $value = token_replace($value, array($field['entity_type'] => $field['entity']), array('clear' => TRUE));
+    }
     $format = (isset($field['properties']['code']['format'])) ? $field['properties']['code']['format'] : 'plain_text';
     if ($format == 'ds_code' && module_exists('ds_format')) {
-      $value = ds_format_php_eval($field['properties']['code']['value'], $field['entity'], isset($field['build']) ? $field['build'] : array());
+      $value = ds_format_php_eval($value, $field['entity'], isset($field['build']) ? $field['build'] : array());
     }
     else {
-      $value = check_markup($field['properties']['code']['value'], $format);
-    }
-    // Token support - check on token property so we don't run every single field through token.
-    if (isset($field['properties']['use_token']) && $field['properties']['use_token'] == TRUE) {
-      $value = token_replace($value, array($field['entity_type'] => $field['entity']), array('clear' => TRUE));
+      $value = check_markup($value, $format);
     }
     return $value;
   }
