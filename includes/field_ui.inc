@@ -304,6 +304,11 @@ function ds_field_ui_layouts_validate($form, FormStateInterface $form_state) {
  * Save the layout settings from the 'Manage display' screen.
  */
 function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
+  $key = array_search('ds_field_ui_change_layout_submit', $form['actions']['submit']['#submit']);
+  if ($key) {
+    return;
+  }
+
   $save_display = FALSE;
 
   // Get default values.
@@ -496,6 +501,11 @@ function ds_field_ui_fields_validate($form, FormStateInterface $form_state) {
  * Save the field settings from the 'Manage display' screen.
  */
 function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
+  $key = array_search('ds_field_ui_change_layout_submit', $form['actions']['submit']['#submit']);
+  if ($key) {
+    return;
+  }
+
   // Setup some variables.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
@@ -935,9 +945,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
   // Add validate and submit handlers. Layout needs be first so
   // we can reset the type key for Field API fields.
   $form['#validate'][] = 'ds_field_ui_layouts_validate';
-  $submit = $form['#submit'];
-  $form['#submit'] = array('ds_field_ui_layouts_save');
-  $form['#submit'] = array_merge($form['#submit'], $submit);
+  array_unshift($form['actions']['submit']['#submit'], 'ds_field_ui_layouts_save');
 }
 
 /**
@@ -1063,7 +1071,6 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
         $form['#validate'][] = 'ds_field_ui_change_layout_validate';
       }
 
-
       $form['layout_changed_url'] = array(
         '#type' => 'value',
         '#value' => array(
@@ -1074,7 +1081,7 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
         ),
       );
 
-      $form['#submit'][] = 'ds_field_ui_change_layout_submit';
+      $form['actions']['submit']['#submit'] = array('ds_field_ui_change_layout_submit');
     }
   }
 }
@@ -1090,6 +1097,12 @@ function ds_field_ui_table_layouts_preview_callback($form, FormStateInterface $f
  * Form validation handler for _ds_field_ui_table_layouts_preview().
  */
 function ds_field_ui_change_layout_validate(&$form, FormStateInterface $form_state) {
+  // @todo fix this
+  $key1 = array_search('ds_field_ui_layouts_save', $form['actions']['submit']['#submit']);
+  $key2 = array_search('ds_field_ui_fields_save', $form['actions']['submit']['#submit']);
+  unset($form['actions']['submit']['#submit'][$key1]);
+  unset($form['actions']['submit']['#submit'][$key2]);
+
   $key1 = array_search('ds_field_ui_layouts_save', $form['#submit']);
   $key2 = array_search('ds_field_ui_fields_save', $form['#submit']);
   unset($form['#submit'][$key1]);
@@ -1309,8 +1322,10 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
     }
   }
 
-  // Add fields submit handler.
-  $form['#submit'][] = 'ds_field_ui_fields_save';
+  // Add fields submit handler and remove the standard ones
+  unset($form['actions']['submit']['#submit'][2]);
+  unset($form['actions']['submit']['#submit'][3]);
+  $form['actions']['submit']['#submit'][] = 'ds_field_ui_fields_save';
 }
 
 /**
