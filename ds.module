@@ -705,7 +705,12 @@ function ds_entity_variables(&$vars) {
     // Add layout attributes if any.
     $vars['layout_attributes'] = '';
     if (!empty($layout['settings']['layout_attributes'])) {
-      $vars['layout_attributes'] .= ' ' . $layout['settings']['layout_attributes'];
+      if (isset($vars[$object])) {
+        $vars['layout_attributes'] .= ' ' . token_replace($layout['settings']['layout_attributes'], array($object => $vars[$object]), array('clear' => TRUE, 'sanitize' => TRUE));
+      }
+      else {
+        $vars['layout_attributes'] .= ' ' . $layout['settings']['layout_attributes'];
+      }
     }
     // Merge in other attributes which were passed to the template.
     if (!empty($layout['settings']['layout_attributes_merge'])) {
