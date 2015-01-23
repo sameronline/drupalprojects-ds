@@ -41,9 +41,9 @@ function ds_theme_registry_alter(&$theme_registry) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_form_alter().
  */
-function ds_form_field_ui_display_overview_form_alter(&$form, FormStateInterface $form_state) {
+function ds_form_entity_view_display_edit_form_alter(&$form, FormStateInterface $form_state) {
   $form_state->loadInclude('ds', 'inc', 'includes/field_ui');
   // Also load admin on behalf of DS extras when enabled.
   if (\Drupal::moduleHandler()->moduleExists('ds_extras')) {
@@ -357,22 +357,6 @@ function ds_local_tasks_alter(&$local_tasks) {
     unset($local_tasks['ds.manage_user_display']);
     unset($local_tasks['ds.manage_taxonomy_term_display']);
   }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function ds_form_field_ui_field_edit_form_alter(&$form, &$form_state, $form_id) {
-  $theme_functions = Ds::getFieldLayoutOptions();
-  $field = $form_state->get('field');
-  $form['field']['third_party_settings']['ds']['ds_field_template'] = array(
-    '#type' => 'select',
-    '#title' => t('Field Template'),
-    '#default_value' => $field->getThirdPartySetting('ds', 'ds_field_template', ''),
-    '#options' => $theme_functions,
-    '#description' => t('Choose the default HTML for this field.'),
-    '#empty_option' => t('Use sitewide default'),
-  );
 }
 
 /**

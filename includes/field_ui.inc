@@ -26,7 +26,7 @@ function  ds_field_ui_fields_layouts(&$form, FormStateInterface $form_state) {
   // Get the entity_type, bundle and view mode.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form['#mode'];
+  $view_mode = $form_state->getFormObject()->getEntity()->mode;
 
   // Create vertical tabs.
   ds_field_ui_create_vertical_tabs($form);
@@ -117,7 +117,7 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
   // Get the entity_type, bundle and view mode.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form['#mode'];
+  $view_mode = $form_state->getFormObject()->getEntity()->mode;
 
   // Ignore field_group options.
   if ($form_state->has('no_field_group')) {
@@ -309,7 +309,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   // Get default values.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form['#mode'];
+  $view_mode = $form_state->getFormObject()->getEntity()->mode;
 
   // Get the entity display.
   $display = entity_get_display($entity_type, $bundle, $view_mode);
@@ -499,7 +499,7 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
   // Setup some variables.
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form['#mode'];
+  $view_mode = $form_state->getFormObject()->getEntity()->mode;
 
   // Get the entity display.
   $display = entity_get_display($entity_type, $bundle, $view_mode);
@@ -586,7 +586,7 @@ function ds_field_ui_layout_clone($form, FormStateInterface $form_state) {
   list($ce, $cb, $cv) = explode('.', $clone);
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form['#mode'];
+  $view_mode = $form_state->getFormObject()->getEntity()->mode;
 
   $display = entity_get_display($entity_type, $bundle, $cv);
   $old_display = entity_get_display($entity_type, $bundle, $view_mode);
@@ -1324,7 +1324,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
 function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form['#mode'];
+  $view_mode = $form_state->getFormObject()->getEntity()->mode;
   $entity_display = entity_get_display($entity_type, $bundle, $view_mode);
 
   // Gather type information.
