@@ -771,6 +771,8 @@ function theme_ds_field_expert($variables) {
   }
 
   // Render items.
+  $item_count = count($variables['items']);
+  $item_index = 0;
   foreach ($variables['items'] as $delta => $item) {
     // Field item wrapper.
     if (isset($config['fi'])) {
@@ -780,6 +782,12 @@ function theme_ds_field_expert($variables) {
       }
       if (!empty($config['fi-cl'])) {
         $class[] = $config['fi-cl'];
+      }
+      if(!empty($config['fi-first-last']) && $item_index == 0) {
+        $class[] = "first";
+      }
+      if(!empty($config['fi-first-last']) && $item_index == $item_count - 1) {
+        $class[] = "last";
       }
       $class = !empty($class) ? ' class="'. token_replace(implode(' ', $class), array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE)) .'"' : '';
       $attributes = array();
@@ -800,6 +808,7 @@ function theme_ds_field_expert($variables) {
     if (isset($config['fi'])) {
       $output .= '</' . $config['fi-el'] . '>';
     }
+    ++$item_index;
   }
 
   // Closing field items wrapper.
@@ -934,6 +943,7 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
           // Odd even class.
           if ($wrapper_key == 'fi') {
             $field_settings[$key]['formatter_settings']['ft'][$wrapper_key . '-odd-even'] = !(empty($values[$wrapper_key . '-odd-even'])) ? TRUE : FALSE;
+            $field_settings[$key]['formatter_settings']['ft'][$wrapper_key . '-first-last'] = !(empty($values[$wrapper_key . '-first-last'])) ? TRUE : FALSE;
           }
         }
       }
