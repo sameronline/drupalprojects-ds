@@ -1038,11 +1038,11 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
       }
 
       if ($view_mode != 'form') {
-        $route_name = 'field_ui.display_overview_view_mode_' . $bundle_entity_type;
+        $route_name = 'entity.entity_view_display.' . $bundle_entity_type . '.view_mode';
 
       }
       else {
-        $route_name = 'field_ui.form_display_overview_form_mode_' . $bundle_entity_type;
+        $route_name = 'entity.entity_form_display.' . $bundle_entity_type . '.view_mode';
       }
 
       $admin_path = \Drupal::service('url_generator')->generateFromRoute($route_name, $route_parameters, $options);
