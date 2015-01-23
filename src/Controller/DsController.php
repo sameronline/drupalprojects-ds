@@ -75,14 +75,14 @@ class DsController extends ControllerBase {
             if ($route) {
               $operations['manage_display'] = array(
                 'title' => t('Manage display'),
-                'url' => new Url("entity.$bundle_entity_type.field_ui_display", $route->getRouteParameters()),
+                'url' => new Url("entity.entity_view_display.$bundle_entity_type.default", $route->getRouteParameters()),
               );
 
               // Add Manage Form link if Display Suite Forms is enabled.
               if ($this->moduleHandler()->moduleExists('ds_forms')) {
                 $operations['manage_form'] = array(
                   'title' => t('Manage form'),
-                  'url' => new Url("entity.$bundle_entity_type.field_ui_form_display", $route->getRouteParameters()),
+                  'url' => new Url("entity.entity_form_display.$bundle_entity_type.default", $route->getRouteParameters()),
                 );
               }
             }
@@ -179,15 +179,13 @@ class DsController extends ControllerBase {
     $route_parameters = $route->getRouteParameters();
     if ($entity_display->getThirdPartySetting('ds', 'layout')) {
       $route_parameters['view_mode_name'] = $view_mode;
-      $admin_route_name = 'field_ui.display_overview_view_mode_' . $bundle_entity_type;
+      $admin_route_name = "entity.entity_view_display.$bundle_entity_type.view_mode";
     }
     else {
-      $admin_route_name = "entity.$bundle_entity_type.field_ui_display";
+      $admin_route_name = "entity.entity_view_display.$bundle_entity_type.default";
     }
-
-    $options = $route->getOptions();
-    $options['query'] = array('destination' => $destination->toString());
-    $url = new Url($admin_route_name, $route_parameters, $options);
+    $route->setOption('destination', $destination->toString());
+    $url = new Url($admin_route_name, $route_parameters, $route->getOptions());
 
     return new RedirectResponse($url->toString());
   }
