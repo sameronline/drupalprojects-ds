@@ -200,7 +200,7 @@ function ds_extras_field_ui_alter(&$form, FormStateInterface $form_state) {
       );
     }
 
-    $form['#submit'][] = 'ds_extras_block_submit';
+    $form['actions']['submit']['#submit'][] = 'ds_extras_block_submit';
   }
 }
 
