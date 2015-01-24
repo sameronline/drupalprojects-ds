@@ -294,8 +294,8 @@ function ds_field_ui_row_region($row) {
 function ds_field_ui_layouts_validate($form, FormStateInterface $form_state) {
   if ($form_state->hasValue('modes')) {
     $modes = $form_state->getValue('modes');
-    if (isset($modes['view_modes_custom'])) {
-      $form_state->setValue('view_modes_custom', $modes['view_modes_custom']);
+    if (isset($modes['display_modes_custom'])) {
+      $form_state->setValue('display_modes_custom', $modes['display_modes_custom']);
     }
   }
 }
@@ -336,7 +336,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   $record['regions'] = array();
 
   // Remove old layout if necessary.
-  if ($new_layout && !empty($old_layout)) {
+  if ($new_layout && !empty($old_layout) || empty($layout)) {
     $display->unsetThirdPartySetting('ds', 'layout');
     $display->unsetThirdPartySetting('ds', 'regions');
     $display->save();
@@ -377,12 +377,6 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     if ($entity_type == 'node' && $view_mode == 'full' && \Drupal::moduleHandler()->moduleExists('comment')) {
       $record['regions'][$first_region][] = 'comments';
     }
-
-    // Save the configuration.
-    foreach (array_keys($record) as $key) {
-      $display->setThirdPartySetting('ds', $key, $record[$key]);
-    }
-    $display->save();
   }
   // Update existing layout.
   elseif (!empty($layout)) {
@@ -458,7 +452,6 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
   // Save the configuration.
   if ($save_display) {
-
     foreach (array_keys($record) as $key) {
       $display->setThirdPartySetting('ds', $key, $record[$key]);
     }
@@ -501,9 +494,7 @@ function ds_field_ui_fields_validate($form, FormStateInterface $form_state) {
  * Save the field settings from the 'Manage display' screen.
  */
 function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
-  $old_layout = $form_state->getValue('old_layout');
-  $key = array_search('ds_field_ui_change_layout_submit', $form['actions']['submit']['#submit']);
-  if ($key && !empty($old_layout)) {
+  if (empty($form['#ds_fields'])) {
     return;
   }
 
@@ -946,7 +937,12 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
   // Add validate and submit handlers. Layout needs be first so
   // we can reset the type key for Field API fields.
   $form['#validate'][] = 'ds_field_ui_layouts_validate';
+  array_unshift($form['actions']['submit']['#submit'], 'ds_field_ui_fields_save');
   array_unshift($form['actions']['submit']['#submit'], 'ds_field_ui_layouts_save');
+
+  // Remove the standard save action as it ignores all the assumptions we make in our DS run
+  $key = array_search('::save', $form['actions']['submit']['#submit']);
+  unset($form['actions']['submit']['#submit'][$key]);
 }
 
 /**
@@ -1068,8 +1064,6 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
         );
         $options = array();
         $destination_url = $admin_path;
-
-        $form['#validate'][] = 'ds_field_ui_change_layout_validate';
       }
 
       $form['layout_changed_url'] = array(
@@ -1082,7 +1076,7 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
         ),
       );
 
-      $form['actions']['submit']['#submit'] = array('ds_field_ui_change_layout_submit');
+      array_unshift($form['actions']['submit']['#submit'], 'ds_field_ui_change_layout_submit');
     }
   }
 }
@@ -1092,22 +1086,6 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
  */
 function ds_field_ui_table_layouts_preview_callback($form, FormStateInterface $form_state) {
   return $form['ds_layouts']['preview'];
-}
-
-/**
- * Form validation handler for _ds_field_ui_table_layouts_preview().
- */
-function ds_field_ui_change_layout_validate(&$form, FormStateInterface $form_state) {
-  // @todo fix this
-  $key1 = array_search('ds_field_ui_layouts_save', $form['actions']['submit']['#submit']);
-  $key2 = array_search('ds_field_ui_fields_save', $form['actions']['submit']['#submit']);
-  unset($form['actions']['submit']['#submit'][$key1]);
-  unset($form['actions']['submit']['#submit'][$key2]);
-
-  $key1 = array_search('ds_field_ui_layouts_save', $form['#submit']);
-  $key2 = array_search('ds_field_ui_fields_save', $form['#submit']);
-  unset($form['#submit'][$key1]);
-  unset($form['#submit'][$key2]);
 }
 
 /**
@@ -1322,11 +1300,6 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
       }
     }
   }
-
-  // Add fields submit handler and remove the standard ones
-  unset($form['actions']['submit']['#submit'][2]);
-  unset($form['actions']['submit']['#submit'][3]);
-  $form['actions']['submit']['#submit'][] = 'ds_field_ui_fields_save';
 }
 
 /**
