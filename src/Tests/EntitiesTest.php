@@ -289,15 +289,11 @@ class EntitiesTest extends BaseTest {
     // Default theming function.
     // -------------------------
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-hidden\" data-quickedit-field-id=\"node/1/body/en/full\">
-    <div class=\"field-items\">
-          <div property=\"schema:text\" class=\"field-item\">" . $body_field . "</div>
-      </div>");
-
+    $this->assertRaw("<div data-quickedit-field-id=\"node/1/body/en/full\" class=\"field field-node--body field-name-body field-type-text-with-summary field-label-hidden\">");
     $this->entitiesSetLabelClass('above', 'body');
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-          <div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-above\" data-quickedit-field-id=\"node/1/body/en/full\">
+          <div data-quickedit-field-id=\"node/1/body/en/full\" class=\"field field-node--body field-name-body field-type-text-with-summary field-label-hidden\">
       <div class=\"field-label\">Body</div>
     <div class=\"field-items\">
           <div property=\"schema:text\" class=\"field-item\">" . $body_field . "</div>");
@@ -305,7 +301,7 @@ class EntitiesTest extends BaseTest {
     $this->entitiesSetLabelClass('above', 'body', 'My body');
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-          <div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-above\" data-quickedit-field-id=\"node/1/body/en/full\">
+          <div data-quickedit-field-id=\"node/1/body/en/full\" class=\"field field-node--body field-name-body field-type-text-with-summary field-label-hidden\">
       <div class=\"field-label\">My body</div>
     <div class=\"field-items\">
           <div property=\"schema:text\" class=\"field-item\">" . $body_field . "</div>");
@@ -313,7 +309,7 @@ class EntitiesTest extends BaseTest {
     $this->entitiesSetLabelClass('hidden', 'body', '', 'test_field_class');
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
-          <div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-hidden\" data-quickedit-field-id=\"node/1/body/en/full\">
+          <div data-quickedit-field-id=\"node/1/body/en/full\" class=\"field field-node--body field-name-body field-type-text-with-summary field-label-hidden\">
     <div class=\"field-items\">
           <div property=\"schema:text\" class=\"field-item\">" . $body_field . "</div>");
   }
