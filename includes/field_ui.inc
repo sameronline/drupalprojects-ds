@@ -304,11 +304,6 @@ function ds_field_ui_layouts_validate($form, FormStateInterface $form_state) {
  * Save the layout settings from the 'Manage display' screen.
  */
 function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
-  $key = array_search('ds_field_ui_change_layout_submit', $form['actions']['submit']['#submit']);
-  if ($key) {
-    return;
-  }
-
   $save_display = FALSE;
 
   // Get default values.
@@ -323,6 +318,11 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   $layout = $form_state->getValue('layout');
   $old_layout = $form_state->getValue('old_layout');
   $new_layout = ($layout != $old_layout) || empty($old_layout);
+
+  $key = array_search('ds_field_ui_change_layout_submit', $form['actions']['submit']['#submit']);
+  if ($key && !empty($old_layout)) {
+    return;
+  }
 
   $ds_layouts = Ds::getLayouts();
 
@@ -501,8 +501,9 @@ function ds_field_ui_fields_validate($form, FormStateInterface $form_state) {
  * Save the field settings from the 'Manage display' screen.
  */
 function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
+  $old_layout = $form_state->getValue('old_layout');
   $key = array_search('ds_field_ui_change_layout_submit', $form['actions']['submit']['#submit']);
-  if ($key) {
+  if ($key && !empty($old_layout)) {
     return;
   }
 

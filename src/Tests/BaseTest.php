@@ -57,7 +57,6 @@ abstract class BaseTest extends WebTestBase {
    * Select a layout.
    */
   function dsSelectLayout($edit = array(), $assert = array(), $url = 'admin/structure/types/manage/article/display', $options = array()) {
-
     $edit += array(
       'layout' => 'ds_2col_stacked',
     );
