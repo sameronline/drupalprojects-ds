@@ -116,8 +116,8 @@ class ChangeLayoutForm extends FormBase {
       );
 
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
-      $old_image = (isset($old_layout_info['image']) &&  !empty($old_layout_info['image'])) ? drupal_get_path('module', $old_layout_info['provider']) . '/' . $old_layout_info['image'] : $fallback_image;
-      $new_image = (isset($new_layout['image']) &&  !empty($new_layout['image'])) ? drupal_get_path('module', $new_layout['provider']) . '/' . $new_layout['image'] : $fallback_image;
+      $old_image = (isset($old_layout_info['icon']) &&  !empty($old_layout_info['icon'])) ? drupal_get_path('module', $old_layout_info['provider']) . '/' . $old_layout_info['icon'] : $fallback_image;
+      $new_image = (isset($new_layout['icon']) &&  !empty($new_layout['icon'])) ? drupal_get_path('module', $new_layout['provider']) . '/' . $new_layout['icon'] : $fallback_image;
       $arrow = drupal_get_path('module', 'ds') . '/images/arrow.png';
 
       $form['preview']['old_layout'] = array(

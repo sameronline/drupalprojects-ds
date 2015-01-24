@@ -12,9 +12,9 @@ entity_view_display.third_party.ds:
         path:
           type: string
           label: 'The path of the module'
-        css:
+        library:
           type: string
-          label: 'The path to the css file'
+          label: 'The asset library name attached to this layout'
         settings:
           type: mapping
           label: 'Display Suite layout settings'

@@ -331,7 +331,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   $record['layout'] = array(
     'id' => $layout,
     'path' =>  !empty($layout) ? drupal_get_path('module', $ds_layouts[$layout]['provider']) : '',
-    'css' => isset($ds_layouts[$layout]['css']) ? $ds_layouts[$layout]['css'] : FALSE,
+    'library' => isset($ds_layouts[$layout]['library']) ? $ds_layouts[$layout]['library'] : FALSE,
   );
   $record['regions'] = array();
 
@@ -1015,7 +1015,7 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
     if ($form_state->hasValue('layout') || (!empty($layout) && isset($layout['regions']))) {
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
       $current_layout = $form_state->hasValue('layout') && (!isset($layout->layout) || $form_state->getValue('layout') != $layout->layout) ? t('Current layout (after save)') : t('Current layout');
-      $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? drupal_get_path('module', $chosen_layout['provider']) . '/' . $chosen_layout['image'] : $fallback_image;
+      $image = (isset($chosen_layout['icon']) && !empty($chosen_layout['icon'])) ? drupal_get_path('module', $chosen_layout['provider']) . '/' . $chosen_layout['icon'] : $fallback_image;
 
       $form['ds_layouts']['preview']['title'] = array(
         '#markup' => '<div class="ds-layout-preview-title">' . $current_layout . '</div>',

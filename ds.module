@@ -64,7 +64,6 @@ function ds_module_implements_alter(&$implementations, $hook) {
  * Implements hook_entity_view_alter().
  */
 function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInterface $display) {
-  static $loaded_css = array();
   static $field_permissions = FALSE;
   static $loaded = FALSE;
 
@@ -180,16 +179,10 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
     }
   }
 
-  //Add css file for this layout.
-  /*
-  if (!empty($configuration['layout']['css']) && !isset($loaded_css[$configuration['layout']['path'] . '/' . $configuration['layout']['id']])) {
-    // Register.
-    $loaded_css[$configuration['layout']['path'] . '/' . $configuration['layout']['id']] = TRUE;
-    // Add to #attached.
-    $build['#attached']['css'][] = $configuration['layout']['path'] . '/' . $configuration['layout']['css'];
+  // Add the asset library for this layout.
+  if (!empty($configuration['layout']['library'])) {
+    $build['#attached']['library'][] = $configuration['layout']['library'];
   }
-  */
-
 }
 
 /**

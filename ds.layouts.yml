@@ -3,7 +3,7 @@ ds_1col:
   category: Display Suite
   type: partial
   theme: ds_1col
-  image: images/ds-1col.png
+  icon: images/ds-1col.png
   regions:
     ds_content:
       label: Content
@@ -12,7 +12,7 @@ ds_1col_wrapper:
   category: Display Suite
   type: partial
   theme: ds_1col_wrapper
-  image: images/ds-1col-wrapper.png
+  icon: images/ds-1col-wrapper.png
   regions:
     ds_content:
       label: Content
@@ -21,8 +21,8 @@ ds_2col:
   category: Display Suite
   type: partial
   theme: ds_2col
-  css: css/ds-2col.css
-  image: images/ds-2col-stacked.png
+  library: ds/layout.2col
+  icon: images/ds-2col-stacked.png
   regions:
     left:
       label: Left
@@ -33,8 +33,8 @@ ds_2col_fluid:
   category: Display Suite
   type: partial
   theme: ds_2col_fluid
-  css: css/ds-2col-fluid.css
-  image: images/ds-2col-fluid.png
+  library: ds/layout.2col-fluid
+  icon: images/ds-2col-fluid.png
   regions:
     left:
       label: Left
@@ -45,8 +45,8 @@ ds_2col_stacked:
   category: Display Suite
   type: partial
   theme: ds_2col_stacked
-  css: css/ds-2col-stacked.css
-  image: images/ds-2col-stacked.png
+  library: ds/layout.2col-stacked
+  icon: images/ds-2col-stacked.png
   regions:
     header:
       label: Header
@@ -61,8 +61,8 @@ ds_2col_stacked_fluid:
   category: Display Suite
   type: partial
   theme: ds_2col_stacked_fluid
-  css: css/ds-2col-stacked-fluid.css
-  image: images/ds-2col-stacked-fluid.png
+  library: ds/layout.2col-stacked-fluid
+  icon: images/ds-2col-stacked-fluid.png
   regions:
     header:
       label: Header
@@ -77,8 +77,8 @@ ds_3col:
   category: Display Suite
   type: partial
   theme: ds_3col
-  css: css/ds-3col.css
-  image: images/ds-3col.png
+  library: ds/layout.3col
+  icon: images/ds-3col.png
   regions:
     left:
       label: Left
@@ -91,8 +91,8 @@ ds_3col_equal_width:
   category: Display Suite
   type: partial
   theme: ds_3col_equal_width
-  css: css/ds-3col-equal-width.css
-  image: images/ds-3col-equal-width.png
+  library: ds/layout.3col-equal-width
+  icon: images/ds-3col-equal-width.png
   regions:
     left:
       label: Left
@@ -105,8 +105,8 @@ ds_3col_stacked:
   category: Display Suite
   type: partial
   theme: ds_3col_stacked
-  css: css/ds-3col-stacked.css
-  image: images/ds-3col-stacked.png
+  library: ds/layout.3col-stacked
+  icon: images/ds-3col-stacked.png
   regions:
     header:
       label: Header
@@ -123,8 +123,8 @@ ds_3col_stacked_fluid:
   category: Display Suite
   type: partial
   theme: ds_3col_stacked_fluid
-  css: css/ds-3col-stacked-fluid.css
-  image: images/ds-3col-stacked-fluid.png
+  library: ds/layout.3col-stacked-fluid
+  icon: images/ds-3col-stacked-fluid.png
   regions:
     header:
       label: Header
@@ -141,8 +141,8 @@ ds_3col_stacked_equal_width:
   category: Display Suite
   type: partial
   theme: ds_3col_stacked_equal_width
-  css: css/ds-3col-stacked-equal-width.css
-  image: images/ds-3col-stacked-equal-width.png
+  library: ds/layout.3col-stacked-equal-width
+  icon: images/ds-3col-stacked-equal-width.png
   regions:
     header:
       label: Header
@@ -159,8 +159,8 @@ ds_4col:
   category: Display Suite
   type: partial
   theme: ds_4col
-  css: css/ds-4col.css
-  image: images/ds-4col-stacked.png
+  library: ds/layout.4col
+  icon: images/ds-4col-stacked.png
   regions:
     first:
       label: First

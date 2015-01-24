@@ -11,7 +11,7 @@ dstest_2col:
   category: Display Suite
   type: partial
   theme: dstest_2col
-  css: css/dstest-2col.css
+  library: ds_test/layout.2col
   regions:
     left:
       label: Left
