@@ -3,6 +3,6 @@
 /**
  * Implements hook_install().
  */
-function ds_install() {
+function ds_extras_install() {
   module_set_weight('ds_extras', 2);
 }
