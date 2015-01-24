@@ -53,7 +53,7 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function ds_extras_form_field_ui_display_overview_form_alter(&$form, FormStateInterface $form_state) {
+function ds_extras_form_entity_view_display_edit_form_alter(&$form, FormStateInterface $form_state) {
   $form_state->loadInclude('ds_extras', 'inc', 'includes/admin');
   ds_extras_field_ui_alter($form, $form_state);
 }

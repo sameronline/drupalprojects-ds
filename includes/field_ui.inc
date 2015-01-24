@@ -687,7 +687,6 @@ function _ds_field_group_field_ui_fix_notices($form, FormStateInterface $form_st
  *   The form_state
  */
 function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, FormStateInterface $form_state) {
-
   $ds_layouts = Ds::getLayouts();
   $layout_options = array('' => t('- None -'));
   $optgroup = '';

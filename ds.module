@@ -538,6 +538,10 @@ function ds_field_template_settings_form(array &$form, FormStateInterface &$form
     $field_function = isset($field_settings['id']) ? $field_settings['id'] : $default_field_function;
   }
 
+  if (!isset($functions[$field_function])) {
+    $field_function = $default_field_function;
+  }
+
   $form['ft'] = array(
     '#weight' => 20,
   );
@@ -624,7 +628,10 @@ function ds_field_formatter_settings_summary_alter(&$summary, $context) {
       $field_function = isset($plugin_settings['id']) ? $plugin_settings['id'] : $default_field_function;
     }
 
-    $summary[] = 'Field template: ' . String::checkPlain($functions[$field_function]);
+    if (!isset($functions[$field_function])) {
+      $field_function = $default_field_function;
+    }
+    $summary[] = 'Field template: ' . String::checkPlain($field_function);
   }
 }
 
