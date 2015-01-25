@@ -405,7 +405,9 @@ function ds_preprocess_field(&$variables) {
 
     // CSS classes
     if (isset($config['settings']['classes'])) {
-      $variables['classes_array'][] = $config['settings']['classes'];
+      foreach ($config['settings']['classes'] as $class_name) {
+        $variables['attributes']['class'][] = $class_name;
+      }
     }
 
     // Alter the label if configured.
