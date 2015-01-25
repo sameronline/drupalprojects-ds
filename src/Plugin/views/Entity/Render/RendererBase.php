@@ -9,6 +9,7 @@ namespace Drupal\ds\Plugin\views\Entity\Render;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\views\Entity\Render\RendererBase as ViewsRendererbase;
 
 /**

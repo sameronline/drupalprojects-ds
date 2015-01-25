@@ -187,8 +187,8 @@ class EntityRow extends ViewsEntityRow {
    */
   protected function getRenderer() {
     if (!isset($this->renderer)) {
-      $class = '\Drupal\ds\Plugin\views\Entity\Render\\' . Container::camelize($this->options['rendering_language']);
-      $this->renderer = new $class($this->view, $this->entityType);
+      $class = '\Drupal\ds\Plugin\views\Entity\Render\\' . Container::camelize($this->displayHandler->getOption('rendering_language'));
+      $this->renderer = new $class($this->view, $this->languageManager, $this->entityType);
     }
     return $this->renderer;
   }
