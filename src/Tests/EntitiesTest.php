@@ -176,7 +176,7 @@ class EntitiesTest extends BaseTest {
     );
     $this->dsConfigureUI($fields);
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw('Recent content');
+    $this->assertRaw('view-id-content_recent');
 
     /*
     $block = array(

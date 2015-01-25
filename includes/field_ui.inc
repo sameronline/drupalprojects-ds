@@ -312,7 +312,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   $view_mode = $form_state->getFormObject()->getEntity()->mode;
 
   // Get the entity display.
-  $display = entity_get_display($entity_type, $bundle, $view_mode);
+  $display = $form_state->getFormObject()->getEntity();
 
   // Determine layout variables.
   $layout = $form_state->getValue('layout');
@@ -498,13 +498,8 @@ function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
     return;
   }
 
-  // Setup some variables.
-  $entity_type = $form['#entity_type'];
-  $bundle = $form['#bundle'];
-  $view_mode = $form_state->getFormObject()->getEntity()->mode;
-
   // Get the entity display.
-  $display = entity_get_display($entity_type, $bundle, $view_mode);
+  $display = $form_state->getFormObject()->getEntity();
 
   $field_settings = array();
 
@@ -724,7 +719,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
 
   // @todo cleanup
   $layout = array();
-  $display = entity_get_display($entity_type, $bundle, $view_mode);
+  $display = $form_state->getFormObject()->getEntity();
   if ($display->getThirdPartySetting('ds', 'layout')) {
     $layout_configuration = $display->getThirdPartySetting('ds', 'layout');
     $layout = $ds_layouts[$layout_configuration['id']];
@@ -938,10 +933,6 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
   $form['#validate'][] = 'ds_field_ui_layouts_validate';
   array_unshift($form['actions']['submit']['#submit'], 'ds_field_ui_fields_save');
   array_unshift($form['actions']['submit']['#submit'], 'ds_field_ui_layouts_save');
-
-  // Remove the standard save action as it ignores all the assumptions we make in our DS run
-  $key = array_search('::save', $form['actions']['submit']['#submit']);
-  unset($form['actions']['submit']['#submit'][$key]);
 }
 
 /**
@@ -1313,7 +1304,7 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
   $view_mode = $form_state->getFormObject()->getEntity()->mode;
-  $entity_display = entity_get_display($entity_type, $bundle, $view_mode);
+  $entity_display = $form_state->getFormObject()->getEntity();
 
   // Gather type information.
   $instances = \Drupal::entityManager()->getFieldDefinitions($entity_type, $bundle);
@@ -1341,8 +1332,11 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
       }
 
       $field = FieldStorageConfig::loadByName($entity_type, $instance->getName());
-      $display = entity_get_display($entity_type, $bundle, $view_mode);
-      $component = $display->getComponent($key);
+      $settings = $entity_display->getComponent($key);
+
+      if (empty($settings)) {
+        continue;
+      }
 
       // Check the currently selected formatter, and merge persisted values for
       // formatter settings.
@@ -1350,12 +1344,7 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
         $formatter_type = $form_state_field_values[$key]['type'];
       }
       else {
-        $formatter_type = $component['type'];
-      }
-
-      $settings = $entity_display->getComponent($key);
-      if (empty($settings)) {
-        continue;
+        $formatter_type = $settings['type'];
       }
 
       if (isset($form_state_plugin_settings[$key])) {
