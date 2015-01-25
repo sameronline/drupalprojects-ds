@@ -328,8 +328,6 @@ function ds_contextual_links_view_alter(&$element, $items) {
       );
 
       $url = new Url($route_name, $route_params);
-      // Remove original destination
-      \Drupal::request()->query->remove('destination');
       $url->setOption('query', drupal_get_destination());
 
       // When there is no bundle defined, return

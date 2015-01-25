@@ -184,7 +184,8 @@ class DsController extends ControllerBase {
     else {
       $admin_route_name = "entity.entity_view_display.$bundle_entity_type.default";
     }
-    $route->setOption('query', array('destination', $destination->toString()));
+    $route->setOption('query', array('destination' => $destination->toString()));
+
     $url = new Url($admin_route_name, $route_parameters, $route->getOptions());
 
     return new RedirectResponse($url->toString());
