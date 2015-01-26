@@ -571,8 +571,13 @@ function ds_field_attach_view_alter(&$build, $context) {
     }
   }
 
+  $disable_css = FALSE;
+  if (!empty($layout['settings']['layout_disable_css'])) {
+    $disable_css = TRUE;
+  }
+
   // Add path to css file for this layout and disable block regions if necessary.
-  if (isset($layout['css']) && !isset($loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'])) {
+  if (!$disable_css && isset($layout['css']) && !isset($loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'])) {
     // Register css file.
     $loaded_css[$layout['path'] . '/' . $layout['layout'] . '.css'] = TRUE;
     // Add css file.
