@@ -651,11 +651,13 @@ function ds_extras_entity_view_alter(&$build, $entity_type) {
       $contexts = array();
       $id = (arg(0) == 'taxonomy') ? arg(2) : arg(1);
       $entity = entity_load($entity_type, array($id));
-      ds_create_entity_context($entity_type, $entity[$id], $contexts);
-      $title = $layout['settings']['page_option_title'];
-      $title = filter_xss_admin(ctools_context_keyword_substitute($title, array(), $contexts));
-      $page_title['title'] = $title;
-      $page_title['head_title'] = $title;
+      if (isset($entity[$id])) {
+        ds_create_entity_context($entity_type, $entity[$id], $contexts);
+        $title = $layout['settings']['page_option_title'];
+        $title = filter_xss_admin(ctools_context_keyword_substitute($title, array(), $contexts));
+        $page_title['title'] = $title;
+        $page_title['head_title'] = $title;
+      }
     }
   }
 
