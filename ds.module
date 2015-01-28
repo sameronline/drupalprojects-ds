@@ -889,7 +889,7 @@ function ds_render_ctools_field($field) {
       $content = '';
       if ($show_title) {
         if (empty($title_wrapper)) $title_wrapper = 'div';
-        $content .= '<' . check_plain($title_wrapper) . '>' . $data->title . '</' . check_plain($title_wrapper) . '>';
+        $content .= '<' . check_plain($title_wrapper) . ' class="title">' . $data->title . '</' . check_plain($title_wrapper) . '>';
       }
       if (is_array($data->content)) {
         $content .= drupal_render($data->content);
