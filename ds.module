@@ -657,11 +657,12 @@ function ds_entity_variables(&$vars) {
         $layout['layout'] = $layout['panels']['theme'];
       }
 
+      $bundle = strtr($vars['elements']['#bundle'], '-', '_');
       $vars['theme_hook_suggestions'][] = $layout['layout'];
       $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $vars['elements']['#entity_type'];
       $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $vars['elements']['#entity_type'] . '_' . $vars['elements']['#view_mode'];
-      $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $vars['elements']['#entity_type'] . '_' . $vars['elements']['#bundle'];
-      $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $vars['elements']['#entity_type'] . '_' . $vars['elements']['#bundle'] . '_' . $vars['elements']['#view_mode'];
+      $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $vars['elements']['#entity_type'] . '_' . $bundle;
+      $vars['theme_hook_suggestions'][] = $layout['layout'] . '__' . $vars['elements']['#entity_type'] . '_' . $bundle . '_' . $vars['elements']['#view_mode'];
     }
 
     // If the layout has wrapper class lets add it.
