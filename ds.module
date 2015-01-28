@@ -1294,7 +1294,7 @@ function ds_field_formatter_view($entity_type, $entity, $field, $instance, $lang
         $item_display = check_plain($term->name);
         if ($linked) {
           $uri = entity_uri('taxonomy_term', $term);
-          $item_display = l($term->name, $uri['path']);
+          $item_display = l($term->name, $uri['path'], $uri['options']);
         }
       }
       $terms[] = $item_display;
