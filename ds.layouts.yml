@@ -22,7 +22,7 @@ ds_2col:
   type: partial
   theme: ds_2col
   library: ds/layout.2col
-  icon: images/ds-2col-stacked.png
+  icon: images/ds-2col.png
   regions:
     left:
       label: Left
