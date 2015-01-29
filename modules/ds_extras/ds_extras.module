@@ -421,13 +421,18 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
         '#suffix' => '</div>',
       );
 
-      $mode = isset($form_state['input']['ds_switch']) ? $form_state['input']['ds_switch'] : (isset($node->ds_switch) ? $node->ds_switch : 'default');
-      $chosen_layout = $layouts[$mode];
-
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
-      $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $chosen_layout['layout'] . '.png' : $fallback_image;
-      if (isset($chosen_layout['panels']) && !empty($chosen_layout['panels']['icon'])) {
-        $image = $chosen_layout['panels']['path'] . '/' . $chosen_layout['panels']['icon'];
+      $mode = isset($form_state['input']['ds_switch']) ? $form_state['input']['ds_switch'] : (isset($node->ds_switch) ? $node->ds_switch : 'default');
+      if (isset($layouts[$mode])) {
+        $chosen_layout = $layouts[$mode];
+
+        $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $chosen_layout['layout'] . '.png' : $fallback_image;
+        if (isset($chosen_layout['panels']) && !empty($chosen_layout['panels']['icon'])) {
+          $image = $chosen_layout['panels']['path'] . '/' . $chosen_layout['panels']['icon'];
+        }
+      }
+      else {
+        $image = $fallback_image;
       }
 
       $form['ds_extras']['preview']['image'] = array(
