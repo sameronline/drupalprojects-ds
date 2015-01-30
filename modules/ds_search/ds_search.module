@@ -476,9 +476,7 @@ function node_ds_search_execute($keys = NULL, $conditions = NULL) {
   _node_rankings($query);
 
   $limit = variable_get('ds_search_node_limit', 10);
-  if (!empty($limit)) {
-    $query->limit($limit);
-  }
+  $query->limit($limit);
 
   // Load results.
   $find = $query->execute();
