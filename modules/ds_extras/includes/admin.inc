@@ -146,7 +146,7 @@ function ds_extras_settings_submit($form, FormStateInterface $form_state) {
 function ds_extras_field_ui_alter(&$form, FormStateInterface $form_state) {
   // Region to block only fires if there is a layout and we're working on the
   // a view mode which is not equal to default.
-  $mode = $form_state->getFormObject()->getEntity()->mode;
+  $mode = $form_state->getFormObject()->getEntity()->getMode();
   if (isset($form['#ds_layout']) && $mode != 'default' && \Drupal::config('ds.extras')->get('region_to_block')) {
 
     // Get the entity_type, bundle and view mode.
@@ -223,7 +223,7 @@ function ds_extras_block_submit($form, FormStateInterface $form_state) {
     // Get the entity_type, bundle and view mode.
     $entity_type = $form['#entity_type'];
     $bundle = $form['#bundle'];
-    $view_mode = $form_state->getFormObject()->getEntity()->mode;
+    $view_mode = $form_state->getFormObject()->getEntity()->getMode();
 
     $block = array(
       'title' => $new_block_region,

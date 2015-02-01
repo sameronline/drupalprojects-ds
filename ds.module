@@ -69,7 +69,7 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
 
   $entity_type = $entity->getEntityTypeId();
   $bundle = $entity->bundle();
-  $view_mode = $display->mode;
+  $view_mode = $display->getMode();
 
   // Add extra metadata needed for contextual links
   if (isset($build['#contextual_links'][$entity_type])) {
