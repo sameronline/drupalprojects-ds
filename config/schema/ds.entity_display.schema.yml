@@ -1,4 +1,4 @@
-entity_view_display.third_party.ds:
+core.entity_view_display.*.*.*.third_party.ds:
   type: mapping
   label: 'Entity View Display Suite settings'
   mapping:
