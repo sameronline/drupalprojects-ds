@@ -10,7 +10,7 @@ namespace Drupal\ds\Tests;
 /**
  * Tests for managing layouts on forms.
  *
- * @group display_suite
+ * @group ds
  */
 class FormsTest extends BaseTest {
 

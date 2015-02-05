@@ -6,12 +6,13 @@
  */
 
 namespace Drupal\ds\Tests;
+
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 
 /**
  * Tests for managing layouts and classes on Field UI screen.
  *
- * @group display_suite
+ * @group ds
  */
 class LayoutClassesTest extends BaseTest {
 

@@ -6,12 +6,11 @@
  */
 
 namespace Drupal\ds\Tests;
-use Drupal\user\UserInterface;
 
 /**
  * Tests for display of search results for nodes and users.
  *
- * @group display_suite
+ * @group ds
  */
 class SearchTest extends BaseTest {
 

@@ -10,7 +10,7 @@ namespace Drupal\ds\Tests;
 /**
  * Tests for exportables in Display Suite.
  *
- * @group display_suite
+ * @group ds
  */
 class ExportablesTest extends BaseTest {
 

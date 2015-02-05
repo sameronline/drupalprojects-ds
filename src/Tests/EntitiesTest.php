@@ -13,7 +13,7 @@ use Drupal\Core\Cache\Cache;
 /**
  * Tests for display of nodes and fields.
  *
- * @group display_suite
+ * @group ds
  */
 class EntitiesTest extends BaseTest {
 

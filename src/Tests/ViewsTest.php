@@ -6,13 +6,14 @@
  */
 
 namespace Drupal\ds\Tests;
+
 use Drupal\views\Tests\ViewTestData;
 use Drupal\views\ViewExecutable;
 
 /**
  * Tests for Display Suite Views integration.
  *
- * @group display_suite
+ * @group ds
  */
 class ViewsTest extends BaseTest {
 

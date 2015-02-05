@@ -10,7 +10,7 @@ namespace Drupal\ds\Tests;
 /**
  * Tests for testing field permissions.
  *
- * @group display_suite
+ * @group ds
  */
 class FieldPermissionsTest extends BaseTest {
 

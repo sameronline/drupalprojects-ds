@@ -10,7 +10,7 @@ namespace Drupal\ds\Tests;
 /**
  * Tests for hooks: ds_fields, ds_fields_alter, ds_layouts.
  *
- * @group display_suite
+ * @group ds
  */
 class HooksTest extends BaseTest {
 

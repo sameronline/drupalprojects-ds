@@ -10,7 +10,7 @@ namespace Drupal\ds\Tests;
 /**
  * Tests for managing custom code, and block fields.
  *
- * @group display_suite
+ * @group ds
  */
 class FieldsTest extends BaseTest {
 
