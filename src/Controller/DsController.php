@@ -57,10 +57,6 @@ class DsController extends ControllerBase {
 
     foreach ($entity_info as $entity_type => $info) {
       $base_table = $info->getBaseTable();
-      $bundle_entity_type = $info->getBundleEntityType();
-      if ($bundle_entity_type == 'bundle') {
-        $bundle_entity_type = $entity_type;
-      }
       if ($info->get('field_ui_base_route') && !empty($base_table)) {
         $rows = array();
         $bundles = $this->entityManager()->getBundleInfo($entity_type);
@@ -75,14 +71,14 @@ class DsController extends ControllerBase {
             if ($route) {
               $operations['manage_display'] = array(
                 'title' => t('Manage display'),
-                'url' => new Url("entity.entity_view_display.$bundle_entity_type.default", $route->getRouteParameters()),
+                'url' => new Url("entity.entity_view_display.$entity_type.default", $route->getRouteParameters()),
               );
 
               // Add Manage Form link if Display Suite Forms is enabled.
               if ($this->moduleHandler()->moduleExists('ds_forms')) {
                 $operations['manage_form'] = array(
                   'title' => t('Manage form'),
-                  'url' => new Url("entity.entity_form_display.$bundle_entity_type.default", $route->getRouteParameters()),
+                  'url' => new Url("entity.entity_form_display.$entity_type.default", $route->getRouteParameters()),
                 );
               }
             }
@@ -170,19 +166,13 @@ class DsController extends ControllerBase {
     /** @var $entity_display EntityDisplayBase */
     $entity_display = entity_get_display($entity_type, $entity->bundle(), $view_mode);
 
-    $entity_info = \Drupal::entityManager()->getDefinitions();
-    $bundle_entity_type = $entity_info[$entity_type]->getBundleEntityType();
-    if ($bundle_entity_type == 'bundle') {
-      $bundle_entity_type = $entity_type;
-    }
-
     $route_parameters = $route->getRouteParameters();
     if ($entity_display->getThirdPartySetting('ds', 'layout')) {
       $route_parameters['view_mode_name'] = $view_mode;
-      $admin_route_name = "entity.entity_view_display.$bundle_entity_type.view_mode";
+      $admin_route_name = "entity.entity_view_display.$entity_type.view_mode";
     }
     else {
-      $admin_route_name = "entity.entity_view_display.$bundle_entity_type.default";
+      $admin_route_name = "entity.entity_view_display.$entity_type.default";
     }
     $route->setOption('query', array('destination' => $destination->toString()));
 

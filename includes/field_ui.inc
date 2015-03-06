@@ -874,8 +874,9 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
     }
     else {
       if ($classes_access) {
-        $form['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any CSS classes which can be used on regions.') . '</p><p>' . _l(t('Manage region and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())) . '</p>');
-      }
+        $url = \Drupal\Core\Url::fromRoute('ds.classes');
+        $url->setOption('query', array('destination' => drupal_get_destination()));
+        $form['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any CSS classes which can be used on regions.') . '</p><p>' . Drupal::l(t('Manage region and field CSS classes'), $url) . '</p>');      }
       else {
         $form['ds_classes']['#access'] = FALSE;
       }
@@ -1026,18 +1027,12 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
       $route_parameters['view_mode_name'] = $view_mode;
       $options = $route->getOptions();
 
-      $entity_info = \Drupal::entityManager()->getDefinitions();
-      $bundle_entity_type = $entity_info[$entity_type]->getBundleEntityType();
-      if ($bundle_entity_type == 'bundle') {
-        $bundle_entity_type = $entity_type;
-      }
-
       if ($view_mode != 'form') {
-        $route_name = 'entity.entity_view_display.' . $bundle_entity_type . '.view_mode';
+        $route_name = 'entity.entity_view_display.' . $entity_type . '.view_mode';
 
       }
       else {
-        $route_name = 'entity.entity_form_display.' . $bundle_entity_type . '.view_mode';
+        $route_name = 'entity.entity_form_display.' . $entity_type . '.view_mode';
       }
 
       $admin_path = \Drupal::service('url_generator')->generateFromRoute($route_name, $route_parameters, $options);

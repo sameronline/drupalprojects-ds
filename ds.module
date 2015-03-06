@@ -314,13 +314,7 @@ function ds_contextual_links_view_alter(&$element, $items) {
       $bundle = $element['#contextual_links'][$entity_type]['metadata']['ds_bundle'];
       $view_mode = $element['#contextual_links'][$entity_type]['metadata']['ds_view_mode'];
 
-      $entity_info = \Drupal::entityManager()->getDefinitions();
-      $bundle_entity_type = $entity_info[$entity_type]->getBundleEntityType();
-      if ($bundle_entity_type == 'bundle') {
-        $bundle_entity_type = $entity_type;
-      }
-
-      $route_name = "entity.entity_view_display.$bundle_entity_type.view_mode";
+      $route_name = "entity.entity_view_display.$entity_type.view_mode";
       $type = $def[$entity_type]->getBundleEntityType();
       $route_params = array(
         $type => $bundle,
