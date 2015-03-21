@@ -20,7 +20,7 @@ class CurrentLanguageRenderer extends RendererBase {
    * @param \Drupal\views\ResultRow $row
    *   The result row.
    */
-  protected function getLangcode(ResultRow $row) {
+  public function getLangcode(ResultRow $row) {
   }
 
 }

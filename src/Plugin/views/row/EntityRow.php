@@ -9,8 +9,8 @@ namespace Drupal\ds\Plugin\views\row;
 
 use Drupal\Component\Utility\String;
 use Drupal\Component\Utility\Unicode;
-use Drupal\Core\DependencyInjection\Container;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\Plugin\views\PluginBase;
 use Drupal\views\Plugin\views\row\EntityRow as ViewsEntityRow;
 
 /**
@@ -185,12 +185,34 @@ class EntityRow extends ViewsEntityRow {
   /**
    * {@inheritdoc}
    */
-  protected function getRenderer() {
-    if (!isset($this->renderer)) {
-      $class = '\Drupal\ds\Plugin\views\Entity\Render\\' . Container::camelize($this->displayHandler->getOption('rendering_language'));
-      $this->renderer = new $class($this->view, $this->languageManager, $this->entityType);
+  protected function getEntityTranslationRenderer() {
+    if (!isset($this->entityLanguageRenderer)) {
+      $view = $this->getView();
+      $rendering_language = $view->display_handler->getOption('rendering_language');
+      $langcode = NULL;
+      $dynamic_renderers = array(
+        '***LANGUAGE_entity_translation***' => 'TranslationLanguageRenderer',
+        '***LANGUAGE_entity_default***' => 'DefaultLanguageRenderer',
+      );
+      if (isset($dynamic_renderers[$rendering_language])) {
+        // Dynamic language set based on result rows or instance defaults.
+        $renderer = $dynamic_renderers[$rendering_language];
+      }
+      else {
+        if (strpos($rendering_language, '***LANGUAGE_') !== FALSE) {
+          $langcode = PluginBase::queryLanguageSubstitutions()[$rendering_language];
+        }
+        else {
+          // Specific langcode set.
+          $langcode = $rendering_language;
+        }
+        $renderer = 'ConfigurableLanguageRenderer';
+      }
+      $class = '\Drupal\ds\Plugin\views\Entity\Render\\' . $renderer;
+      $entity_type = $this->getEntityManager()->getDefinition($this->getEntityTypeId());
+      $this->entityLanguageRenderer = new $class($view, $this->getLanguageManager(), $entity_type, $langcode);
     }
-    return $this->renderer;
+    return $this->entityLanguageRenderer;
   }
 
 }
