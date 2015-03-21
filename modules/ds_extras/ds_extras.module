@@ -231,7 +231,7 @@ function ds_extras_entity_base_field_info(EntityTypeInterface $entity_type) {
   // Add the switch field as a base field.
   $fields = array();
 
-  if ($entity_type->id() == 'node') {
+  if (\Drupal::config('ds.extras')->get('switch_view_mode') && $entity_type->id() == 'node') {
     $fields['ds_switch'] = BaseFieldDefinition::create('string')
       ->setLabel(t('DS switch'))
       ->setName('ds_switch')

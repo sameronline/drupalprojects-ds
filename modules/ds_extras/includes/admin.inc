@@ -48,7 +48,7 @@ function ds_extras_settings_alter(&$form, FormStateInterface $form_state) {
   $form['fs3']['switch_view_mode'] = array(
     '#type' => 'checkbox',
     '#title' => t('View mode per node'),
-    '#description' => t('Change view modes for individual nodes. A new tab \'Display settings\' will appear on the content create form.'),
+    '#description' => t('Change view modes for individual nodes. A new tab \'Display settings\' will appear on the content create form. You should always run update.php after enabling/disabling this feature.'),
     '#default_value' => $config->get('switch_view_mode'),
   );
 
