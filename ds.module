@@ -322,7 +322,9 @@ function ds_contextual_links_view_alter(&$element, $items) {
       );
 
       $url = new Url($route_name, $route_params);
-      $url->setOption('query', drupal_get_destination());
+
+      $destination = \Drupal::destination()->getAsArray();
+      $url->setOption('query', $destination);
 
       // When there is no bundle defined, return
       if (!empty($bundle)) {
