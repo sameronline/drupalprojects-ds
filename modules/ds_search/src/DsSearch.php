@@ -134,7 +134,7 @@ trait DsSearch {
     $build['search_results'] = array();
 
     // Pager.
-    $build['search_pager'] = array('#theme' => 'pager');
+    $build['search_pager'] = array('#type' => 'pager');
 
     // CSS and JS.
     if ($configuration['highlight']) {
