@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\ds\Tests;
+use Drupal\Core\Url;
 
 /**
  * Tests for exportables in Display Suite.
@@ -38,8 +39,8 @@ class ExportablesTest extends BaseTest {
     $this->assertRaw('group-right', 'Right region found');
     $this->assertNoRaw('group-header', 'No header region found');
     $this->assertNoRaw('group-footer', 'No footer region found');
-    $this->assertRaw('<h3><a href="'. _url('node/1') . '" class="active">Exportable</a></h3>', t('Default title with h3 found'));
-    $this->assertRaw('<a href="' . _url('node/1') . '" class="active">Read more</a>', t('Default read more found'));
+    $this->assertRaw('<h3><a href="'. Url::fromRoute('entity.node.canonical', ['node' => 1])->toString() . '" class="active">Exportable</a></h3>', t('Default title with h3 found'));
+    $this->assertRaw('<a href="' . Url::fromRoute('entity.node.canonical', ['node' => 1])->toString() . '" class="active">Read more</a>', t('Default read more found'));
 
     // Override default layout.
     $layout = array(

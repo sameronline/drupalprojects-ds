@@ -9,6 +9,7 @@ namespace Drupal\ds_search\Plugin\Search;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\ds_search\DsSearch;
 use Drupal\Core\Access\AccessibleInterface;
 use Drupal\Core\Database\Connection;
@@ -159,7 +160,7 @@ class DsUserSearch extends ConfigurableSearchPluginBase implements AccessibleInt
       $result = array(
         'user' => $account,
         'title' => $account->getUsername(),
-        'link' => _url('user/' . $account->id(), array('absolute' => TRUE)),
+        'link' => Url::fromRoute('entity.user.canonical', ['user' => 1], array('absolute' => TRUE))->toString(),
       );
       if ($this->currentUser->hasPermission('administer users')) {
         $result['title'] .= ' (' . $account->getEmail() . ')';
