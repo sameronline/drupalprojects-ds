@@ -7,7 +7,6 @@
 
 namespace Drupal\ds\Plugin\DsFieldLayout;
 
-use Drupal\Component\Utility\String;
 use Drupal\ds\Ds;
 
 /**

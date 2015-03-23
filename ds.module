@@ -5,7 +5,7 @@
  * Display Suite core functions.
  */
 
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldConfigInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -407,7 +407,7 @@ function ds_preprocess_field(&$variables) {
     // Alter the label if configured.
     if (!$variables['label_hidden']) {
       if (!empty($config['settings']['lb'])) {
-        $variables['label'] = t(String::checkPlain($config['settings']['lb']));
+        $variables['label'] = t(SafeMarkup::checkPlain($config['settings']['lb']));
       }
     }
   }
@@ -627,7 +627,7 @@ function ds_field_formatter_settings_summary_alter(&$summary, $context) {
     if (!isset($functions[$field_function])) {
       $field_function = $default_field_function;
     }
-    $summary[] = 'Field template: ' . String::checkPlain($field_function);
+    $summary[] = 'Field template: ' . SafeMarkup::checkPlain($field_function);
   }
 }
 

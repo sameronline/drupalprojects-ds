@@ -7,7 +7,7 @@
 
 namespace Drupal\ds_devel\Controller;
 
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 
@@ -49,9 +49,9 @@ class DsDevelController {
       '#prefix' => '<div>',
       '#suffix' => '</div><hr />',
     );
-    $build['markup'] = array(
-      '#markup' => '<code><pre>' . String::checkPlain($markup) . '</pre></code>',
-    );
+    $build['markup'] = [
+      '#markup' => '<code><pre>' . SafeMarkup::checkPlain($markup) . '</pre></code>',
+    ];
 
     return $build;
   }

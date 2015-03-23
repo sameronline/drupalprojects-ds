@@ -6,7 +6,7 @@
 
 namespace Drupal\ds_search;
 
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Form\FormStateInterface;
 
 trait DsSearch {
@@ -141,8 +141,8 @@ trait DsSearch {
       $build['#attached']['library'][] = 'ds_search/highlight';
 
       $build['#attached']['drupalSettings']['ds_search'] = array(
-        'selector' => String::checkPlain($configuration['highlight_selector']),
-        'search' => String::checkPlain(parent::getKeyWords()),
+        'selector' => SafeMarkup::checkPlain($configuration['highlight_selector']),
+        'search' => SafeMarkup::checkPlain(parent::getKeyWords()),
       );
     }
   }

@@ -7,7 +7,7 @@
 
 namespace Drupal\ds_extras\Plugin\DsField;
 
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds\Plugin\DsField\DsFieldBase;
 
@@ -41,10 +41,10 @@ class SwitchField extends DsFieldBase {
         if (!empty($value)) {
           $class = 'switch-' . $key;
           if ($key == $this->viewMode()) {
-            $switch[] = '<span class="' . $class . '">' . String::checkPlain(t($value)) . '</span>';
+            $switch[] = '<span class="' . $class . '">' . SafeMarkup::checkPlain(t($value)) . '</span>';
           }
           else {
-            $switch[] = '<span class="' . $class . '"><a href="" class="' . $url . $key . '">' . String::checkPlain(t($value)) . '</a></span>';
+            $switch[] = '<span class="' . $class . '"><a href="" class="' . $url . $key . '">' . SafeMarkup::checkPlain(t($value)) . '</a></span>';
           }
         }
       }
@@ -92,7 +92,7 @@ class SwitchField extends DsFieldBase {
           '#type' => 'textfield',
           '#default_value' => isset($config[$key]) ? $config[$key] : '',
           '#size' => 20,
-          '#title' => String::checkPlain($value['label']),
+          '#title' => SafeMarkup::checkPlain($value['label']),
         );
       }
     }

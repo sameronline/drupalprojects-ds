@@ -6,7 +6,8 @@
  */
 
 namespace Drupal\ds\Plugin\DsFieldLayout;
-use Drupal\Component\Utility\String;
+
+use Drupal\Component\Utility\SafeMarkup;
 
 /**
  * Plugin for the reset field template.
@@ -30,7 +31,7 @@ class Reset extends DsFieldLayoutBase {
       '#type' => 'textfield',
       '#title' => t('Label'),
       '#size' => '10',
-      '#default_value' => String::checkPlain($config['lb']),
+      '#default_value' => SafeMarkup::checkPlain($config['lb']),
     );
   }
 

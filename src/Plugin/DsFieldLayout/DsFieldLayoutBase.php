@@ -8,7 +8,7 @@
 namespace Drupal\ds\Plugin\DsFieldLayout;
 
 use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\ds\Ds;
 
 /**
@@ -34,7 +34,7 @@ abstract class DsFieldLayoutBase extends ComponentPluginBase implements DsFieldL
       '#type' => 'textfield',
       '#title' => t('Label'),
       '#size' => '10',
-      '#default_value' => String::checkPlain($config['lb']),
+      '#default_value' => SafeMarkup::checkPlain($config['lb']),
     );
     $form['lb-col'] = array(
       '#type' => 'checkbox',

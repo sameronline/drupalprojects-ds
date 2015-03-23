@@ -7,8 +7,6 @@
 
 namespace Drupal\ds\Plugin\DsFieldLayout;
 
-use Drupal\Component\Utility\String;
-
 /**
  * Plugin for the default field template.
  *
