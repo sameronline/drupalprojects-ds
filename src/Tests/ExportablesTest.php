@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\ds\Tests;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Url;
 
 /**
@@ -19,8 +20,10 @@ class ExportablesTest extends BaseTest {
    * Enables the exportables module.
    */
   function dsExportablesSetup() {
+    /** @var $display EntityViewDisplay */
+    $display = EntityViewDisplay::load('node.article.default');
+    $display->delete();
     \Drupal::service('module_installer')->install(array('ds_exportables_test'));
-    drupal_flush_all_caches();
   }
 
   // Test layout and field settings configuration.
