@@ -246,7 +246,7 @@ class EntitiesTest extends BaseTest {
     // Test formatter limit on article with tags.
     $edit = array(
       'ds_switch' => '',
-      'field_tags' => 'Tag 1, Tag 2'
+      'field_tags[target_id][target_id]' => 'Tag 1, Tag 2'
     );
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $edit = array(

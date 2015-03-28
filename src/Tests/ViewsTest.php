@@ -46,10 +46,10 @@ class ViewsTest extends BaseTest {
   function testDSViews() {
 
     $edit_tag_1 = array(
-      'field_tags' => 'Tag 1',
+      'field_tags[target_id]' => 'Tag 1',
     );
     $edit_tag_2 = array(
-      'field_tags' => 'Tag 2',
+      'field_tags[target_id]' => 'Tag 2',
     );
 
     // Create 3 nodes.
