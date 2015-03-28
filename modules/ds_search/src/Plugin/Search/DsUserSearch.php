@@ -104,7 +104,7 @@ class DsUserSearch extends ConfigurableSearchPluginBase implements AccessibleInt
    * {@inheritdoc}
    */
   public function access($operation = 'view', AccountInterface $account = NULL, $return_as_object = FALSE) {
-    $result = AccessResult::allowedIf(!empty($account) && $account->hasPermission('access user profiles'))->cachePerRole();
+    $result = AccessResult::allowedIf(!empty($account) && $account->hasPermission('access user profiles'))->cachePerPermissions();
     return $return_as_object ? $result : $result->isAllowed();
   }
 
