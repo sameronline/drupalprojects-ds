@@ -272,7 +272,7 @@ function ds_preprocess_ds_layout(&$variables) {
         }
 
         if (!empty($url)) {
-          $url = Url::fromUri('base://' . $url);
+          $url = Url::fromUri('internal:/' . $url);
           $variables['attributes']['onclick'] = 'location.href=\'' . $url->toString() . '\'';
 
         }
