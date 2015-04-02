@@ -150,11 +150,8 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
 
     $field_value = Ds::getFieldValue($key, $field, $entity, $view_mode, $display, $build);
 
-    // Render the value
-    $rendered_field_value = drupal_render($field_value);
-
     // Only allow non empty fields
-    if (!empty($field_value) && $rendered_field_value !== '') {
+    if (!empty($field_value)) {
       $build[$key] = array(
         '#theme' => 'field',
         '#field_type' => 'ds',
@@ -167,13 +164,8 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
         '#entity_type' => $entity_type,
         '#view_mode' => $view_mode,
         '#access' => ($field_permissions && function_exists('ds_extras_ds_field_access')) ? ds_extras_ds_field_access($key, $entity_type) : TRUE,
-        '#items' => array(
-          0 => array(
-            'value' => $rendered_field_value,
-          ),
-        ),
         0 => array(
-          '#markup' => $rendered_field_value,
+          $field_value,
         ),
       );
     }
