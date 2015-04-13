@@ -46,6 +46,9 @@ class NodeAuthor extends DsFieldBase {
     if ($field['formatter'] == 'author') {
       return array(
         '#markup' => $user->getUsername(),
+        '#cache' => array(
+          'tags' => $user->getCacheTags()
+        )
       );
     }
 
@@ -53,6 +56,9 @@ class NodeAuthor extends DsFieldBase {
       return array(
         '#theme' => 'username',
         '#account' => $user,
+        '#cache' => array(
+          'tags' => $user->getCacheTags()
+        )
       );
     }
 
