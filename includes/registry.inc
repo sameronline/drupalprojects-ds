@@ -31,6 +31,7 @@ function _ds_theme() {
           'render element' => 'elements',
           'function' => $plugin['theme'],
           'base hook' => 'field',
+          'path' => drupal_get_path('module', $plugin['provider']),
         );
 
         if (!empty($plugin['path'])) {
