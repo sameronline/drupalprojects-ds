@@ -7,6 +7,13 @@
   margin-bottom: 1em;
 }
 
+
+#field-display-overview .ft-settings .ft-group {
+  border-top: 1px solid #aaa;
+  padding: 5px 0;
+  overflow: auto;
+}
+
 #field-display-overview .field-formatter-settings-edit-form .ft-group .form-item {
   margin: 0;
 }

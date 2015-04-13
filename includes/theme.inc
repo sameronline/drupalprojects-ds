@@ -63,17 +63,24 @@ function theme_ds_field_expert($variables) {
   $output = '';
   $config = isset($variables['ds-config']['settings']) ? $variables['ds-config']['settings'] : array();
 
+  // Set prefix
+  if (!empty($config['prefix'])) {
+    $output .= $config['prefix'];
+  }
+
   // Render the label if it's not hidden.
   if (!$variables['label_hidden']) {
     $label_wrapper = !empty($config['lbw-el']) ? $config['lbw-el'] : 'div';
     $class = array('field-label-' . $variables['element']['#label_display']);
     if (!empty($config['lbw-cl'])) $class[] = $config['lbw-cl'];
     $class = !empty($class) ? ' class="' . implode(' ', $class) . '"' : '';
+
     $attributes = array();
     if (!empty($config['lbw-at'])) $attributes[] = $config['lbw-at'];
     if (!empty($config['lbw-def-at'])) $attributes[] = $variables['title_attributes'];
-    $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
-    $output .= '<' . $label_wrapper . $class . $attributes . '>' . $variables['label'];
+    $tag_attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
+
+    $output .= '<' . $label_wrapper . $class . $tag_attributes . '>' . $variables['label'];
     if (!empty($config['lb-col'])) $output .= ':';
     $output .= '</' . $label_wrapper . '>';
   }
@@ -150,6 +157,11 @@ function theme_ds_field_expert($variables) {
     }
     $attributes = (!empty($attributes)) ? ' ' . implode(' ', $attributes) : '';
     $output = '<' . $config['ow-el'] . $class . $attributes . '>' . $output . '</' . $config['ow-el'] . '>';
+  }
+
+  // Set suffix
+  if (!empty($config['suffix'])) {
+    $output .= $config['suffix'];
   }
 
   return $output;
