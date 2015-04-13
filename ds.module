@@ -430,7 +430,7 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
       // Get third party settings for Core fields.
       foreach ($entity_display->getComponents() as $key => $info) {
         if (!empty($info['third_party_settings']['ds']['ft'])) {
-          $f[$key]['settings']['ft'] = $info['third_party_settings']['ds']['ft'];
+          $f[$key]['ft'] = $info['third_party_settings']['ds']['ft'];
         }
       }
 
@@ -447,8 +447,8 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
 
     // Check if this field has custom output settings.
     $config = array();
-    if (isset($field_settings[$entity_type][$bundle][$view_mode][$field_name]['settings']['ft'])) {
-      $config = $field_settings[$entity_type][$bundle][$view_mode][$field_name]['settings']['ft'];
+    if (isset($field_settings[$entity_type][$bundle][$view_mode][$field_name]['ft'])) {
+      $config = $field_settings[$entity_type][$bundle][$view_mode][$field_name]['ft'];
     }
 
     // Initialize suggestion name
