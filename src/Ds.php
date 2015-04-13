@@ -121,17 +121,12 @@ class Ds {
     // @todo revise
 
     /** @var $entity_display EntityDisplayInterface */
-    if ($view_mode != 'form') {
-      $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $view_mode);
-      if ($entity_display) {
-        $overridden = $entity_display->status();
-      }
-      else {
-        $overridden = FALSE;
-      }
+    $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $view_mode);
+    if ($entity_display) {
+      $overridden = $entity_display->status();
     }
     else {
-      $entity_display = entity_load('entity_form_display', $entity_type . '.' . $bundle . '.' . $view_mode);
+      $overridden = FALSE;
     }
 
     if ($entity_display) {

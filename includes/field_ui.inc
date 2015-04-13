@@ -35,7 +35,7 @@ function  ds_field_ui_fields_layouts(&$form, FormStateInterface $form_state) {
   _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, $form, $form_state);
 
   // Add/alter fields on the table, but only if a layout is selected.
-  if ($view_mode != 'form' && !empty($form['#ds_layout'])) {
+  if (!empty($form['#ds_layout'])) {
     _ds_field_ui_fields($entity_type, $bundle, $view_mode, $form, $form_state);
 
     // Also alter core fields
@@ -142,33 +142,16 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
 
     $table = &$form['fields'];
 
-    if ($view_mode != 'form') {
-      $table['#header'] = array(
-        t('Field'),
-        t('Weight'),
-        t('Parent'),
-        t('Region'),
-        t('Label'),
-        array('data' => t('Format'), 'colspan' => 3),
-      );
-    }
-    else {
-      $table['#header'] = array(
-        t('Label'),
-        t('Weight'),
-        t('Parent'),
-        t('Region'),
-        t('Name'),
-        t('Field'),
-        t('Widget'),
-        array('data' => t('Operations'), 'colspan' => 2),
-      );
-    }
-
-    // Remove label and format for views.
-    if ($entity_type == 'ds_views') {
-      $table['#header'][4] = '';
-    }
+    $table['#header'] = array(
+      t('Label'),
+      t('Weight'),
+      t('Parent'),
+      t('Region'),
+      t('Name'),
+      t('Field'),
+      t('Widget'),
+      array('data' => t('Operations'), 'colspan' => 2),
+    );
 
     $table['#regions'] = array();
     $region_options = array();
@@ -192,9 +175,9 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
     );
     \Drupal::moduleHandler()->alter('ds_layout_region', $context, $region_info);
 
-    $region_options['hidden'] = $view_mode != 'form' ? t('Disabled') : t('Hidden');
+    $region_options['hidden'] = t('Disabled');
     $table['#regions']['hidden'] = array(
-      'title' => $view_mode != 'form' ? t('Disabled') : t('Hidden'),
+      'title' => t('Disabled'),
       'message' => t('No fields are hidden.')
     );
 
@@ -248,7 +231,7 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
 
       // Limit items.
       $field_info = FieldStorageConfig::loadByName($entity_type, $name);
-      if (!empty($field_info) && $field_info->getCardinality() != 1 && $view_mode != 'form') {
+      if (!empty($field_info) && $field_info->getCardinality() != 1) {
         $row['plugin']['type']['#prefix'] = '<div class="limit-float">';
         $row['plugin']['type']['#suffix'] = '</div>';
         $row['plugin']['limit'] = $limit_items;
@@ -261,10 +244,7 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
       }
 
       // Add region.
-      $split = ($view_mode != 'form') ? 7 : 6;
-      if ($row['#row_type'] == 'group' && $view_mode == 'form') {
-        $split = ($view_mode != 'form') ? 8 : 7;
-      }
+      $split = 7;
       $second = array_splice($row, $split);
       $row['region'] = $region;
       $row['region']['#default_value'] = (isset($field_regions[$name]) && isset($region_options[$field_regions[$name]])) ? $field_regions[$name] : 'hidden';
@@ -368,7 +348,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
       }
 
       // Can either be form or display.
-      if ((isset($field['type']) && $field['type'] != 'hidden') || $view_mode == 'form') {
+      if ((isset($field['type']) && $field['type'] != 'hidden')) {
         $record['regions'][$first_region][] = $field_key;
       }
     }
@@ -885,44 +865,41 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
     }
   }
   else {
-
-    if ($view_mode != 'form') {
-      // See if we can clone from another view mode.
-      $options = array();
-      $entity_displays = \Drupal::configFactory()->listAll('core.entity_view_display.' . $entity_type . '.' . $bundle);
-      foreach ($entity_displays as $name) {
-        $row = \Drupal::config($name)->get();
-        if ($row['mode'] == $view_mode) {
-          continue;
-        }
-        if ($row['targetEntityType'] == $entity_type && $row['bundle'] == $bundle) {
-          $options[$row['id']] = Unicode::ucfirst(str_replace('_', ' ', $row['targetEntityType'])) . ' > ' . Unicode::ucfirst(str_replace('_', ' ', $row['bundle'])) . ' > ' . Unicode::ucfirst(str_replace('_', ' ', $row['mode']));
-        }
+    // See if we can clone from another view mode.
+    $options = array();
+    $entity_displays = \Drupal::configFactory()->listAll('core.entity_view_display.' . $entity_type . '.' . $bundle);
+    foreach ($entity_displays as $name) {
+      $row = \Drupal::config($name)->get();
+      if ($row['mode'] == $view_mode) {
+        continue;
       }
-
-      if (!empty($options)) {
-
-        // Clone from another layout.
-        $form['ds_clone'] = array(
-          '#type' => 'details',
-          '#group' => 'additional_settings',
-          '#title' => t('Clone layout'),
-          '#collapsible' => TRUE,
-          '#collapsed' => TRUE,
-        );
-        $form['ds_clone']['clone'] = array(
-          '#title' => t('Select an existing layout to clone.'),
-          '#type' => 'select',
-          '#options' => $options,
-          '#weight' => 20,
-        );
-        $form['ds_clone']['clone_submit'] = array(
-          '#type' => 'submit',
-          '#value' => t('Clone layout'),
-          '#submit' => array('ds_field_ui_layout_clone'),
-          '#weight' => 21,
-        );
+      if ($row['targetEntityType'] == $entity_type && $row['bundle'] == $bundle) {
+        $options[$row['id']] = Unicode::ucfirst(str_replace('_', ' ', $row['targetEntityType'])) . ' > ' . Unicode::ucfirst(str_replace('_', ' ', $row['bundle'])) . ' > ' . Unicode::ucfirst(str_replace('_', ' ', $row['mode']));
       }
+    }
+
+    if (!empty($options)) {
+
+      // Clone from another layout.
+      $form['ds_clone'] = array(
+        '#type' => 'details',
+        '#group' => 'additional_settings',
+        '#title' => t('Clone layout'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      );
+      $form['ds_clone']['clone'] = array(
+        '#title' => t('Select an existing layout to clone.'),
+        '#type' => 'select',
+        '#options' => $options,
+        '#weight' => 20,
+      );
+      $form['ds_clone']['clone_submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Clone layout'),
+        '#submit' => array('ds_field_ui_layout_clone'),
+        '#weight' => 21,
+      );
     }
   }
 
@@ -1028,14 +1005,7 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
       $route_parameters = $route->getRouteParameters();
       $route_parameters['view_mode_name'] = $view_mode;
       $options = $route->getOptions();
-
-      if ($view_mode != 'form') {
-        $route_name = 'entity.entity_view_display.' . $entity_type . '.view_mode';
-
-      }
-      else {
-        $route_name = 'entity.entity_form_display.' . $entity_type . '.view_mode';
-      }
+      $route_name = 'entity.entity_view_display.' . $entity_type . '.view_mode';
 
       $admin_path = \Drupal::service('url_generator')->generateFromRoute($route_name, $route_parameters, $options);
       $destination_url = '';
@@ -1605,14 +1575,11 @@ function _ds_field_valid($key, $field, FormStateInterface $form_state, $view_mod
   // fired by Field API in the frontend.
   $form_state_field_values = $form_state->getValue('fields');
   if (isset($field['region']) && $field['region'] == 'hidden') {
-    if (isset($field['type']) && $view_mode != 'form') {
+    if (isset($field['type'])) {
       $form_state_field_values[$key]['type'] = 'hidden';
     }
 
-    // In case of a form, fields will be set with #access to FALSE.
-    if ($view_mode != 'form') {
-      $continue = TRUE;
-    }
+    $continue = TRUE;
   }
   $form_state->setValue('fields', $form_state_field_values);
 
