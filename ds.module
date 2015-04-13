@@ -363,7 +363,7 @@ function ds_preprocess_field(&$variables) {
       // Get third party settings for Core fields.
       foreach ($entity_display->getComponents() as $key => $info) {
         if (!empty($info['third_party_settings']['ds']['ft'])) {
-          $f[$key]['settings']['ft'] = $info['third_party_settings']['ds']['ft'];
+          $f[$key]['ft'] = $info['third_party_settings']['ds']['ft'];
         }
       }
 
