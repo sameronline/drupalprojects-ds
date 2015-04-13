@@ -378,8 +378,8 @@ function ds_preprocess_field(&$variables) {
 
     // Check if this field has custom output settings.
     $variables['ds-config'] = array();
-    if (isset($field_settings[$entity_type][$bundle][$view_mode][$field_name]['settings']['ft'])) {
-      $config = $field_settings[$entity_type][$bundle][$view_mode][$field_name]['settings']['ft'];
+    if (isset($field_settings[$entity_type][$bundle][$view_mode][$field_name]['ft'])) {
+      $config = $field_settings[$entity_type][$bundle][$view_mode][$field_name]['ft'];
       $variables['ds-config'] = $config;
 
       // When dealing with a field template we need to massage to values before printing to prevent layout issues.
