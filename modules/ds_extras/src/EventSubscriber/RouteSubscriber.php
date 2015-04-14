@@ -34,7 +34,7 @@ class RouteSubscriber implements EventSubscriberInterface {
     if (\Drupal::config('ds.extras')->get('override_node_revision')) {
       $route = $event->getRouteCollection()->get('node.revision_show');
       if (!empty($route)) {
-        $route->setDefault('_content', '\Drupal\ds_extras\Controller\DsExtrasController::revisionShow');
+        $route->setDefault('_controller', '\Drupal\ds_extras\Controller\DsExtrasController::revisionShow');
       }
     }
   }
