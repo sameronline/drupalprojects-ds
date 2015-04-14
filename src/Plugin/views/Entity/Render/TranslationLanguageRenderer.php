@@ -25,7 +25,7 @@ class TranslationLanguageRenderer extends DefaultLanguageRenderer {
   /**
    * {@inheritdoc}
    */
-  public function query(QueryPluginBase $query) {
+  public function query(QueryPluginBase $query, $relationship = NULL) {
     // There is no point in getting the language, in case the site is not
     // multilingual.
     if (!$this->languageManager->isMultilingual()) {
