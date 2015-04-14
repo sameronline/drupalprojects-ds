@@ -5,7 +5,9 @@
  * Definition of Drupal\ds\Tests\SearchTest.
  */
 
-namespace Drupal\ds\Tests;
+namespace Drupal\ds_search\Tests;
+
+use Drupal\ds\Tests\BaseTest;
 
 /**
  * Tests for display of search results for nodes and users.
