@@ -67,11 +67,10 @@ class HooksTest extends BaseTest {
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
 
-    // @todo float seems broken too.
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
     $this->assertText('Test code field on node ' . $node->id(), 'Test code field found');
-    $this->assertNoText('Test code field that returns an empty string', 'Test code field that returns an empty string is not visible.');
+    $this->assertText('Test code field that returns an empty string', 'Test code field that returns an empty string is visible.');
     $this->assertNoText('Test code field that returns FALSE', 'Test code field that returns FALSE is not visible.');
     $this->assertNoText('Test code field that returns NULL', 'Test code field that returns NULL is not visible.');
     $this->assertNoText('Test code field that returns nothing', 'Test code field that returns nothing is not visible.');
