@@ -86,12 +86,6 @@ class EntitiesTest extends BaseTest {
 
     // Save.
     $display->save();
-
-    // Clear entity info cache.
-    \Drupal::entityManager()->clearCachedFieldDefinitions();
-
-    // @todo can we remove this?
-    Cache::invalidateTags(array('ds_fields_info'));
   }
 
   /**
@@ -415,10 +409,6 @@ class EntitiesTest extends BaseTest {
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
           <span class=\"ow-class-2\">" . $body_field . "</span>");
-
-    // Clear field settings.
-    // $this->entitiesClearFieldSettings();
-
   }
 
   /**
@@ -496,9 +486,6 @@ class EntitiesTest extends BaseTest {
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw("<div class=\"group-right\">
           <span class=\"ow-class\"><span class=\"fi-class-2\">" . $body_field . "</span></span>");
-
-    // Clear field settings.
-    // $this->entitiesClearFieldSettings();
   }
 
   /**
