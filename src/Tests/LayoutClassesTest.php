@@ -144,7 +144,7 @@ class LayoutClassesTest extends BaseTest {
       'new_block_region_key' => 'block_region',
     );
     $this->drupalPostForm('admin/structure/types/manage/article/display/full', $edit, t('Save'));
-    $this->assertRaw('<td colspan="8">' . t('Block region') . '</td>', 'Block region found');
+    $this->assertRaw('<td colspan="9">' . t('Block region') . '</td>', 'Block region found');
 
     // Configure fields
     $fields = array(
@@ -187,9 +187,9 @@ class LayoutClassesTest extends BaseTest {
     $this->drupalGet('admin/structure/types/manage/article/display/full');
 
     // Verify new regions.
-    $this->assertRaw('<td colspan="8">' . t('Header') . '</td>', 'Header region found');
-    $this->assertRaw('<td colspan="8">' . t('Footer') . '</td>', 'Footer region found');
-    $this->assertRaw('<td colspan="8">' . t('Block region') . '</td>', 'Block region found');
+    $this->assertRaw('<td colspan="9">' . t('Header') . '</td>', 'Header region found');
+    $this->assertRaw('<td colspan="9">' . t('Footer') . '</td>', 'Footer region found');
+    $this->assertRaw('<td colspan="9">' . t('Block region') . '</td>', 'Block region found');
 
     // Verify settings.
     $entity_display = EntityViewDisplay::load('node.article.full', TRUE);
