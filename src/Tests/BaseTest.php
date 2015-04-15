@@ -130,6 +130,23 @@ abstract class BaseTest extends WebTestBase {
   }
 
   /**
+   * Edit limit.
+   */
+  function dsEditLimitSettings($edit, $field_name = 'body', $url = 'admin/structure/types/manage/article/display') {
+    $element_value = 'edit ' . $field_name;
+    $this->drupalPostForm($url, array(), $element_value);
+
+    if (isset($edit['fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ft][id]'])) {
+      $this->drupalPostForm(NULL, array('fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ds_limit]' => $edit['fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ds_limit]']), t('Update'));
+      $this->drupalPostForm(NULL, array(), $element_value);
+      unset($edit['fields[' . $field_name . '][settings_edit_form][third_party_settings][ds][ds_limit]']);
+    }
+
+    $this->drupalPostForm(NULL, $edit, t('Update'));
+    $this->drupalPostForm(NULL, array(), t('Save'));
+  }
+
+  /**
    * Create a token field.
    *
    * @param array $edit

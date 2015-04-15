@@ -9,8 +9,10 @@ use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldConfigInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\ds\Ds;
 use Drupal\field\Entity\FieldConfig;
@@ -102,26 +104,26 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
   $build['#bundle'] = $bundle;
   $build['#ds_configuration'] = $configuration;
 
-  // Check on field/delta limit.
-  if (isset($configuration['layout']['settings']['limit'])) {
-    foreach ($configuration['layout']['settings']['limit'] as $field => $limit) {
-      if (isset($build[$field])) {
+  // Implement UI limit
+  $components = $display->getComponents();
+  foreach ($components as $field => $component) {
+    if (isset($component['third_party_settings']['ds']) && !empty($component['third_party_settings']['ds']['ds_limit'])) {
+      $limit = $component['third_party_settings']['ds']['ds_limit'];
+      if (isset($build[$field]) && isset($build[$field]['#items'])) {
         if ($limit === 'delta' && isset($entity->ds_delta) && isset($entity->ds_delta[$field])) {
           $delta = $entity->ds_delta[$field];
-          foreach ($build[$field]['#items'] as $key => $item) {
-            if ($key != $delta) {
-              unset($build[$field][$key]);
+          $filtered_elements = Element::children($build['field']);
+          foreach ($filtered_elements as $filtered_element) {
+            if ($filtered_element != $delta) {
+              unset($build[$field][$filtered_element]);
             }
           }
         }
         else {
-          $count = $build[$field]['#items']->count();
-          if ($count > $limit) {
-            // @todo doesn't work, figure out why
-            $fields = $build[$field]['#items']->getValue();
-            $fields = array_slice($fields, 0, $limit);
-            $build[$field]['#items']->setValue($fields);
-            $build[$field]['#items']->update();
+          $filtered_elements = Element::children($build[$field]);
+          $filtered_elements = array_slice($filtered_elements, $limit);
+          foreach ($filtered_elements as $filtered_element) {
+            unset($build[$field][$filtered_element]);
           }
         }
       }
@@ -588,6 +590,20 @@ function ds_field_ui_display_overview_multistep_submit($form, &$form_state) {
  */
 function ds_field_formatter_third_party_settings_form(FormatterInterface $plugin, FieldDefinitionInterface $field_definition, $view_mode, $form, FormStateInterface $form_state) {
   $element = array();
+
+  $field_info = $field_definition->getFieldStorageDefinition();
+  if (!empty($field_info) && $field_info->getCardinality() != 1) {
+    $name = $field_info->getName();
+    $settings = $form_state->get('plugin_settings');
+
+    $element['ds_limit'] = array(
+      '#type' => 'textfield',
+      '#title' => t('UI limit'),
+      '#size' => 2,
+      '#description' => t('Enter a number to limit the number of items or \'delta\' to print a specific delta (usually configured in views or found in entity->ds_delta). Leave empty to display them all. Note that depending on the formatter settings, this option might not always work.'),
+      '#default_value' => !empty($settings[$name]['ds_limit']) ? $settings[$name]['ds_limit'] : '',
+    );
+  }
 
   if (\Drupal::config('ds.settings')->get('field_template')) {
 

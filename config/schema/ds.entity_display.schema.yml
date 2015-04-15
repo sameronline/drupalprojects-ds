@@ -80,6 +80,9 @@ field.formatter.third_party.ds:
   type: mapping
   label:  Display Suite field formatter settings
   mapping:
+    ds_limit:
+      type: string
+      label: Limit of the field
     ft:
       type: ds.field_template.settings
 

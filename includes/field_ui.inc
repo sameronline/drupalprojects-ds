@@ -190,24 +190,6 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
       )
     );
 
-    $limit_items = array(
-      '#type' => 'textfield',
-      '#size' => 2,
-      '#weight' => 10,
-      '#default_value' => '#',
-      '#prefix' => '<div class="limit-float">',
-      '#suffix' => '</div><div class="clearfix"></div>',
-      '#attributes' => array(
-        'alt' => t('Enter a number to limit the number of items or \'delta\' to print a specific delta (usually configured in views or found in entity->ds_delta). Leave empty to display them all. Note that depending on the formatter settings, this option might not always work.'),
-        'title' => t('Enter a number to limit the number of items or \'delta\' to print a specific delta (usually configured in views or found in entity->ds_delta). Leave empty to display them all. Note that depending on the formatter settings, this option might not always work.'),
-      ),
-    );
-
-    // Hide this if we plugin_settings_edit is not empty so it doesn't confuse users.
-    if ($form_state->has('plugin_settings_edit')) {
-      $limit_items['#access'] = FALSE;
-    }
-
     // Update existing rows by changing rowHandler and adding regions.
     foreach (Element::children($table) as $name) {
       $row = &$table[$name];
@@ -227,20 +209,6 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
             $row['human_name']['#markup'] = SafeMarkup::checkPlain($plugin_settings[$name]['ft']['settings']['lb']) . ' ' . t('(Original: !orig)', array('!orig' => $row['human_name']['#markup']));
           }
         }
-      }
-
-      // Limit items.
-      $field_info = FieldStorageConfig::loadByName($entity_type, $name);
-      if (!empty($field_info) && $field_info->getCardinality() != 1) {
-        $row['plugin']['type']['#prefix'] = '<div class="limit-float">';
-        $row['plugin']['type']['#suffix'] = '</div>';
-        $row['plugin']['limit'] = $limit_items;
-        $row['plugin']['limit']['#default_value'] = (isset($layout['settings']['limit']) && isset($layout['settings']['limit'][$name])) ? $layout['settings']['limit'][$name] : '#';
-      }
-
-      // Disable label and format for views.
-      if ($entity_type == 'ds_views') {
-        $row['label']['#access'] = FALSE;
       }
 
       // Add region.
@@ -449,22 +417,27 @@ function ds_field_ui_fields_validate($form, FormStateInterface $form_state) {
     // Welcome to the most freaky code. We need to move field template
     // settings in the form state depending on where the key is
     // found, for either core or display suite fields.
-
-    if (isset($fields[$key]['settings_edit_form']['settings']['ft'])) {
-      $settings = $fields[$key]['settings_edit_form']['settings'];
-      if (!empty($settings)) {
-        $plugin_settings = $form_state->get('plugin_settings');
-        $plugin_settings[$key] = $settings;
-        $form_state->set('plugin_settings', $plugin_settings);
+    $options = array(
+      'ft',
+      'ds_limit',
+    );
+    foreach ($options as $option) {
+      if (isset($fields[$key]['settings_edit_form']['settings'][$option])) {
+        $settings = $fields[$key]['settings_edit_form']['settings'];
+        if (!empty($settings)) {
+          $plugin_settings = $form_state->get('plugin_settings');
+          $plugin_settings[$key] = $settings;
+          $form_state->set('plugin_settings', $plugin_settings);
+        }
       }
-    }
 
-    if (isset($fields[$key]['settings_edit_form']['third_party_settings']['ds']['ft'])) {
-      $settings = $fields[$key]['settings_edit_form']['third_party_settings']['ds'];
-      if (!empty($settings)) {
-        $plugin_settings = $form_state->get('plugin_settings');
-        $plugin_settings[$key] = $settings;
-        $form_state->set('plugin_settings', $plugin_settings);
+      if (isset($fields[$key]['settings_edit_form']['third_party_settings']['ds'][$option])) {
+        $settings = $fields[$key]['settings_edit_form']['third_party_settings']['ds'];
+        if (!empty($settings)) {
+          $plugin_settings = $form_state->get('plugin_settings');
+          $plugin_settings[$key] = $settings;
+          $form_state->set('plugin_settings', $plugin_settings);
+        }
       }
     }
   }
@@ -1169,9 +1142,11 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
       if (isset($field_settings[$key]['ft'])) {
         $plugin_settings['ft'] = $field_settings[$key]['ft'];
       }
+      if (isset($field_settings[$key]['ds_limit'])) {
+        $plugin_settings['ds_limit'] = $field_settings[$key]['ds_limit'];
+      }
       $form_state_plugin_settings[$key] = $plugin_settings;
     }
-
     $plugin_instance->setConfiguration($plugin_settings);
 
     // Save fetched plugin settings

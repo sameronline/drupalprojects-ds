@@ -251,9 +251,9 @@ class EntitiesTest extends BaseTest {
     $this->assertText('Tag 1');
     $this->assertText('Tag 2');
     $edit = array(
-      'fields[field_tags][plugin][limit]' => '1',
+      'fields[field_tags][settings_edit_form][third_party_settings][ds][ds_limit]' => '1',
     );
-    $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display');
+    $this->dsEditLimitSettings($edit, 'field_tags');
     $this->drupalGet('node/' . $node->id());
     $this->assertText('Tag 1');
     $this->assertNoText('Tag 2');
