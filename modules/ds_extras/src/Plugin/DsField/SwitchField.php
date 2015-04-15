@@ -8,7 +8,9 @@
 namespace Drupal\ds_extras\Plugin\DsField;
 
 use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
@@ -26,44 +28,52 @@ class SwitchField extends DsFieldBase {
    * {@inheritdoc}
    */
   public function build() {
-    $output = '';
-    static $added = FALSE;
-
     $settings = $this->getConfiguration();
-    if (!empty($settings)) {
 
+    if (!empty($settings)) {
+      /** @var EntityInterface $entity */
       $entity = $this->entity();
-      $id = $entity->id();
-      $url = $this->getEntityTypeId() . '-' . $this->viewMode(). '-' . $id . '-';
-      $switch = array();
+
+      // Basic route parameters
+      $route_parameters = array(
+        'entityType' => $entity->getEntityTypeId(),
+        'entityId' => $entity->id(),
+      );
+
+      $selector = $this->viewMode() == 'default' ? 'full' : $this->viewMode();
+      // Basic route options
+      $route_options = array(
+        'query' => array(
+          'selector' => 'view-mode-' . $selector,
+        ),
+        'attributes' => array(
+          'class' => array(
+            'use-ajax',
+          ),
+        ),
+      );
 
       foreach ($settings['vms'] as $key => $value) {
+        // If the label is empty, do not create a link
         if (!empty($value)) {
-          $class = 'switch-' . $key;
-          if ($key == $this->viewMode()) {
-            $switch[] = '<span class="' . $class . '">' . SafeMarkup::checkPlain(t($value)) . '</span>';
-          }
-          else {
-            $switch[] = '<span class="' . $class . '"><a href="" class="' . $url . $key . '">' . SafeMarkup::checkPlain(t($value)) . '</a></span>';
-          }
+          $route_parameters['viewMode'] = $key == 'default' ? 'full' : $key;
+          $items[] = \Drupal::l($value, Url::fromRoute('ds_extras.switch_view_mode', $route_parameters, $route_options));
         }
       }
+    }
 
-      $output = array();
-
-      if (!empty($switch)) {
-        if (!$added) {
-          $added = TRUE;
-          $output['#attached'] = array(
-            'library' => array(
-              'ds_extras/switch_view_mode'
-            ),
-          );
-        }
-        $output['view_mode'] = array(
-          '#markup' => '<div class="switch-view-mode-field">' . implode(' ', $switch) . '</div>',
-        );
-      }
+    $output = array();
+    if (!empty($items)) {
+      $output = array(
+        '#theme' => 'item_list',
+        '#items' => $items,
+        // Add the AJAX library to the field for inline switching support.
+        '#attached' => array(
+          'library' => array(
+            'core/drupal.ajax',
+          ),
+        ),
+      );
     }
 
     return $output;
@@ -85,15 +95,15 @@ class SwitchField extends DsFieldBase {
     $config = isset($config['vms']) ? $config['vms'] : array();
     foreach ($view_modes as $key => $value) {
       $entity_display = entity_load('entity_view_display', $entity_type .  '.' . $bundle . '.' . $key);
-      $visible = $entity_display->status();
-
-      if ($visible) {
-        $form['vms'][$key] = array(
-          '#type' => 'textfield',
-          '#default_value' => isset($config[$key]) ? $config[$key] : '',
-          '#size' => 20,
-          '#title' => SafeMarkup::checkPlain($value['label']),
-        );
+      if (!empty($entity_display)) {
+        if ($entity_display->status()) {
+          $form['vms'][$key] = array(
+            '#type' => 'textfield',
+            '#default_value' => isset($config[$key]) ? $config[$key] : '',
+            '#size' => 20,
+            '#title' => SafeMarkup::checkPlain($value['label']),
+          );
+        }
       }
     }
 
@@ -113,11 +123,11 @@ class SwitchField extends DsFieldBase {
 
     foreach ($view_modes as $key => $value) {
       $entity_display = entity_load('entity_view_display', $entity_type .  '.' . $bundle . '.' . $key);
-      $visible = $entity_display->status();
-
-      if ($visible) {
-        $label = isset($settings[$key]) ? $settings[$key] : $key;
-        $summary[] = $key . ' : ' . $label;
+      if (!empty($entity_display)) {
+        if ($entity_display->status()) {
+          $label = isset($settings[$key]) ? $settings[$key] : $key;
+          $summary[] = $key . ' : ' . $label;
+        }
       }
     }
 

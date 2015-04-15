@@ -71,7 +71,7 @@ function ds_extras_settings_alter(&$form, FormStateInterface $form_state) {
   $form['fs3']['switch_field'] = array(
     '#type' => 'checkbox',
     '#title' => t('View mode switcher'),
-    '#description' => t('Adds a field with links to switch view modes inline with Ajax. Only works for nodes at this time.'),
+    '#description' => t('Adds a field with links to switch view modes inline with Ajax. Only works for nodes at this time. It does not work in combination with the reset layout.'),
     '#default_value' => $config->get('switch_field'),
   );
 

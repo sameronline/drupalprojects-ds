@@ -170,6 +170,7 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
    */
   public function calculateDependencies() {
     // By default there are no dependencies
+    return array();
   }
 
 }
