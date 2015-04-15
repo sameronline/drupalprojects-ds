@@ -822,15 +822,15 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
       if ($classes_access) {
         $url = \Drupal\Core\Url::fromRoute('ds.classes');
         $destination = \Drupal::destination()->getAsArray();
-        $url->setOption('query', array('destination' => $destination));
-        $form['ds_classes']['info'] = array('#markup' => Drupal::l(t('Manage region  and field CSS classes'), $url));
+        $url->setOption('query', $destination);
+        $form['ds_classes']['info'] = array('#markup' => Drupal::l(t('Manage region and field CSS classes'), $url));
       }
     }
     else {
       if ($classes_access) {
         $url = \Drupal\Core\Url::fromRoute('ds.classes');
         $destination  = \Drupal::destination()->getAsArray();
-        $url->setOption('query', array('destination' => $destination));
+        $url->setOption('query', $destination);
         $form['ds_classes']['info'] = array('#markup' => '<p>' . t('You have not defined any CSS classes which can be used on regions.') . '</p><p>' . Drupal::l(t('Manage region and field CSS classes'), $url) . '</p>');      }
       else {
         $form['ds_classes']['#access'] = FALSE;
