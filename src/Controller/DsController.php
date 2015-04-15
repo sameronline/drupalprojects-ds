@@ -73,16 +73,7 @@ class DsController extends ControllerBase {
                 'title' => t('Manage display'),
                 'url' => new Url("entity.entity_view_display.$entity_type.default", $route->getRouteParameters()),
               );
-
-              // Add Manage Form link if Display Suite Forms is enabled.
-              if ($this->moduleHandler()->moduleExists('ds_forms')) {
-                $operations['manage_form'] = array(
-                  'title' => t('Manage form'),
-                  'url' => new Url("entity.entity_form_display.$entity_type.default", $route->getRouteParameters()),
-                );
-              }
             }
-
           }
 
           // Add operation links.
