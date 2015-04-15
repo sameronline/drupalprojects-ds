@@ -9,6 +9,8 @@ namespace Drupal\ds\Plugin\DsFieldLayout;
 
 use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
 use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Utility\Xss;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\ds\Ds;
 
 /**
@@ -17,11 +19,39 @@ use Drupal\ds\Ds;
 abstract class DsFieldLayoutBase extends ComponentPluginBase implements DsFieldLayoutInterface {
 
   /**
+   * Enables default sanitizing on the output of the fields.
+   *
+   * @var bool
+   */
+  protected $sanitize = TRUE;
+
+  /**
+   * The entity used for token replacement.
+   *
+   * @var EntityInterface
+   */
+  protected $entity = NULL;
+
+  /**
    * Constructs a Display Suite field plugin.
    */
   public function __construct($configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configuration += $this->defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEntity() {
+    return $this->entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setEntity(EntityInterface $entity) {
+    $this->entity = $entity;
   }
 
   /**
@@ -79,6 +109,19 @@ abstract class DsFieldLayoutBase extends ComponentPluginBase implements DsFieldL
       $classes = is_array($values['classes']) ? implode(' ', $values['classes']) : $values['classes'];
       if (!empty($classes)) {
         $field_settings['classes'] = $classes;
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function sanitizeRenderValues(&$field_settings) {
+    if (isset($this->sanitize) && $this->sanitize) {
+      foreach ($field_settings as &$setting) {
+        if (is_string($setting)) {
+          $setting = Xss::filter($setting);
+        }
       }
     }
   }

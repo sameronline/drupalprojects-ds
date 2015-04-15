@@ -7,7 +7,7 @@
 
 namespace Drupal\ds\Plugin\DsFieldLayout;
 use Drupal\Component\Utility\SafeMarkup;
-use Drupal\Component\Utility\Xss;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Plugin for the expert field template.
@@ -154,9 +154,28 @@ class Expert extends DsFieldLayoutBase {
       '#size' => '100',
       '#description' => t('You can enter any html in here.'),
       '#default_value' => isset($config['suffix']) ? $config['suffix'] : '',
-      '#prefix' => '<div class="field-prefix">',
+      '#prefix' => '<div class="field-suffix">',
       '#suffix' => '</div>',
     );
+
+    // Token support.
+    if (\Drupal::moduleHandler()->moduleExists('token')) {
+      $form['tokens'] = array(
+        '#title' => t('Tokens'),
+        '#type' => 'container',
+        '#states' => array(
+          'invisible' => array(
+            'input[name="use_token"]' => array('checked' => FALSE),
+          ),
+        ),
+      );
+      $form['tokens']['help'] = array(
+        '#theme' => 'token_tree',
+        '#token_types' => 'all',
+        '#global_types' => FALSE,
+        '#dialog' => TRUE,
+      );
+    }
   }
 
   /**
@@ -218,9 +237,31 @@ class Expert extends DsFieldLayoutBase {
           $field_settings[$wrapper_key . '-def-cl'] = !(empty($values[$wrapper_key . '-def-cl'])) ? TRUE : FALSE;
         }
         // Attributes.
-        $field_settings[$wrapper_key . '-at'] = !(empty($values[$wrapper_key . '-at'])) ? Xss::filter($values[$wrapper_key . '-at']) : '';
+        $field_settings[$wrapper_key . '-at'] = !(empty($values[$wrapper_key . '-at'])) ? $values[$wrapper_key . '-at'] : '';
         // Default attributes.
         $field_settings[$wrapper_key . '-def-at'] = !(empty($values[$wrapper_key . '-def-at'])) ? TRUE : FALSE;
+        // Token replacement.
+        /** @var EntityInterface $entity */
+        if ($entity = $this->getEntity()) {
+          // Tokens
+          $apply_to = array(
+            'prefix',
+            $wrapper_key . '-el',
+            $wrapper_key . '-cl',
+            $wrapper_key . '-at',
+            'suffix',
+          );
+
+          foreach ($apply_to as $identifier) {
+            if (!empty($field_settings[$identifier])) {
+              $field_settings[$identifier] = \Drupal::token()->replace(
+                $field_settings[$identifier],
+                array($entity->getEntityTypeId() => $entity),
+                array('clear' => TRUE)
+              );
+            }
+          }
+        }
       }
     }
   }

@@ -7,37 +7,55 @@
 
 namespace Drupal\ds\Plugin\DsFieldLayout;
 
+use Drupal\Core\Entity\EntityInterface;
+
 /**
  * Base class for all the ds plugins.
  */
 interface DsFieldLayoutInterface {
 
   /**
-   * TODO
+   * Lets you add you add additional form element for your layout.
    */
   public function alterForm(&$form);
 
   /**
-   * TODO
+   * Gets the entity this layout belongs too.
+   */
+  public function getEntity();
+
+  /**
+   * Sets the entity this layout belong too.
+   */
+  public function setEntity(EntityInterface $entity);
+
+  /**
+   * Massages the values before they get rendered.
    */
   public function massageRenderValues(&$field_settings, $values);
+
   /**
-   * TODO
+   * Sanitizes the render values after massaging.
+   */
+  public function sanitizeRenderValues(&$field_settings);
+
+  /**
+   * Gets the chosen theme function.
    */
   public function getThemeFunction();
+
   /**
-   *
-   * TODO
+   * Creates default configuration for the layout.
    */
   public function defaultConfiguration();
 
   /**
-   * TODO
+   * Get the selected configuration.
    */
   public function getConfiguration();
 
   /**
-   * TODO
+   * Set the configuration for this layout.
    */
   public function setConfiguration(array $configuration);
 

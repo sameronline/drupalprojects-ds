@@ -67,6 +67,22 @@ class Minimal extends DsFieldLayoutBase {
         $field_settings['classes'] = $classes;
       }
     }
+
+    // Token replacement.
+    if ($entity = $this->getEntity()) {
+      // Tokens
+      $apply_to = array(
+        'classes',
+      );
+
+      foreach ($apply_to as $identifier) {
+        $field_settings[$identifier] = \Drupal::token()->replace(
+          $field_settings[$identifier],
+          array($entity->getEntityTypeId() => $entity),
+          array('clear' => TRUE)
+        );
+      }
+    }
     parent::massageRenderValues($field_settings, $values);
   }
 

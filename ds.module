@@ -15,6 +15,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\ds\Ds;
+use Drupal\ds\Plugin\DsFieldLayout\DsFieldLayoutInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\Core\Entity\Display\EntityDisplayInterface;
 
@@ -394,8 +395,13 @@ function ds_preprocess_field(&$variables) {
 
       // When dealing with a field template we need to massage to values before printing to prevent layout issues.
       if (isset($config['id']) && $config['id'] != 'default' && !empty($variables['ds-config']['settings'])) {
+        /** @var DsFieldLayoutInterface $layout_instance */
         $layout_instance = \Drupal::service('plugin.manager.ds.field.layout')->createInstance($config['id']);
+        if (isset($variables['element']['#object'])) {
+          $layout_instance->setEntity($variables['element']['#object']);
+        }
         $layout_instance->massageRenderValues($variables['ds-config']['settings'], $config['settings']);
+        $layout_instance->sanitizeRenderValues($variables['ds-config']['settings']);
       }
     }
 

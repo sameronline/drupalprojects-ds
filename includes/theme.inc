@@ -106,7 +106,7 @@ function theme_ds_field_expert($variables) {
       $class = !empty($class) ? ' class="'. implode(' ', $class)  .'"' : '';
       $attributes = array();
       if (!empty($config['fi-at'])) {
-        $attributes[] = \Drupal::service('token')->replace($config['fi-at'], array($variables['element']['#entity_type'] => $variables['element']['#object']), array('clear' => TRUE));
+        $attributes[] = $config['fi-at'];
       }
       if (!empty($config['fi-def-at'])) {
         if (!empty($variables['content_attributes'][$delta])) {
