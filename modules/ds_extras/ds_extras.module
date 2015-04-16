@@ -968,10 +968,10 @@ function ds_extras_ds_field_settings_alter(&$field_settings, $form, &$form_state
     }
 
     if (!(empty($values['prefix']))) {
-      $field_settings[$key]['formatter_settings']['ft']['prefix'] = filter_xss($values['prefix']);
+      $field_settings[$key]['formatter_settings']['ft']['prefix'] = $values['prefix'];
     }
     if (!(empty($values['suffix']))) {
-      $field_settings[$key]['formatter_settings']['ft']['suffix'] = filter_xss($values['suffix']);
+      $field_settings[$key]['formatter_settings']['ft']['suffix'] = $values['suffix'];
     }
 
     // Custom field configuration.
@@ -1098,7 +1098,7 @@ function ds_extras_preprocess_field(&$variables) {
 
   foreach ($fields as $field) {
     if (isset($variables['ds-config'][$field])) {
-      $variables['ds-config'][$field] = filter_xss($variables['ds-config'][$field]);
+      $variables['ds-config'][$field] = filter_xss_admin($variables['ds-config'][$field]);
     }
   }
 }
