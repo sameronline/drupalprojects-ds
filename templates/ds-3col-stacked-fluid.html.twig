@@ -26,7 +26,7 @@
 
 {% if (left and not right) or (right and not left) %}
   {% set layout_classes = attributes.class ~ ' group-one-sidebar' %}
-{% elseif (left and right %}
+{% elseif (left and right) %}
   {% set layout_classes = attributes.class ~ ' group-two-sidebars' %}
 {% elseif (left) %}
   {% set layout_classes = attributes.class ~ ' group-sidebar-left' %}
