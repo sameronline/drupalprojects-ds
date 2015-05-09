@@ -9,12 +9,12 @@ namespace Drupal\ds\Plugin\views\Entity\Render;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\views\Entity\Render\RendererBase as ViewsRendererbase;
+use Drupal\views\Entity\Render\EntityTranslationRendererBase;
 
 /**
  * Renders entities in the current language.
  */
-abstract class RendererBase extends ViewsRendererbase {
+abstract class RendererBase extends EntityTranslationRendererBase {
 
   /**
    * {@inheritdoc}
