@@ -425,6 +425,7 @@ function ds_extras_form_node_form_alter(&$form, $form_state, $form_id) {
       $mode = isset($form_state['input']['ds_switch']) ? $form_state['input']['ds_switch'] : (isset($node->ds_switch) ? $node->ds_switch : 'default');
       if (isset($layouts[$mode])) {
         $chosen_layout = $layouts[$mode];
+        $chosen_layout = (isset($layouts[$mode])) ? $layouts[$mode] : 'default';
 
         $image = (isset($chosen_layout['image']) && !empty($chosen_layout['image'])) ? $chosen_layout['path'] . '/' . $chosen_layout['layout'] . '.png' : $fallback_image;
         if (isset($chosen_layout['panels']) && !empty($chosen_layout['panels']['icon'])) {
