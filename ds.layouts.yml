@@ -21,7 +21,7 @@ ds_2col:
   category: Display Suite
   type: partial
   template: templates/ds-2col
-  library: ds/layout.2col
+  css: css/ds-2col.css
   icon: images/ds-2col.png
   regions:
     left:
@@ -33,7 +33,7 @@ ds_2col_fluid:
   category: Display Suite
   type: partial
   template: templates/ds-2col-fluid
-  library: ds/layout.2col-fluid
+  css: css/ds-2col-fluid.css
   icon: images/ds-2col-fluid.png
   regions:
     left:
@@ -45,7 +45,7 @@ ds_2col_stacked:
   category: Display Suite
   type: partial
   template: templates/ds-2col-stacked
-  library: ds/layout.2col-stacked
+  css: css/ds-2col-stacked.css
   icon: images/ds-2col-stacked.png
   regions:
     header:
@@ -61,7 +61,7 @@ ds_2col_stacked_fluid:
   category: Display Suite
   type: partial
   template: templates/ds-2col-stacked-fluid
-  library: ds/layout.2col-stacked-fluid
+  css: css/ds-2col-stacked-fluid.css
   icon: images/ds-2col-stacked-fluid.png
   regions:
     header:
@@ -77,7 +77,7 @@ ds_3col:
   category: Display Suite
   type: partial
   template: templates/ds-3col
-  library: ds/layout.3col
+  css: css/ds-3col.css
   icon: images/ds-3col.png
   regions:
     left:
@@ -91,7 +91,7 @@ ds_3col_equal_width:
   category: Display Suite
   type: partial
   template: templates/ds-3col-equal-width
-  library: ds/layout.3col-equal-width
+  css: templates/ds-3col-equal-width.css
   icon: images/ds-3col-equal-width.png
   regions:
     left:
@@ -105,7 +105,7 @@ ds_3col_stacked:
   category: Display Suite
   type: partial
   template: templates/ds-3col-stacked
-  library: ds/layout.3col-stacked
+  css: css/ds-3col-stacked.css
   icon: images/ds-3col-stacked.png
   regions:
     header:
@@ -123,7 +123,7 @@ ds_3col_stacked_fluid:
   category: Display Suite
   type: partial
   template: templates/ds-3col-stacked-fluid
-  library: ds/layout.3col-stacked-fluid
+  css: css/ds-3col-stacked-fluid.css
   icon: images/ds-3col-stacked-fluid.png
   regions:
     header:
@@ -141,7 +141,7 @@ ds_3col_stacked_equal_width:
   category: Display Suite
   type: partial
   template: templates/ds-3col-stacked-equal-width
-  library: ds/layout.3col-stacked-equal-width
+  css: css/ds-3col-stacked-equal-width.css
   icon: images/ds-3col-stacked-equal-width.png
   regions:
     header:
@@ -159,7 +159,7 @@ ds_4col:
   category: Display Suite
   type: partial
   template: templates/ds-4col
-  library: ds/layout.4col
+  css: css/ds-4col.css
   icon: images/ds-4col-stacked.png
   regions:
     first:
