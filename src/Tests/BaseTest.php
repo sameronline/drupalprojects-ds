@@ -9,6 +9,11 @@ namespace Drupal\ds\Tests;
 
 use Drupal\simpletest\WebTestBase;
 
+/**
+ * Base class for ds tests.
+ *
+ * @group ds
+ */
 abstract class BaseTest extends WebTestBase {
 
   /**
