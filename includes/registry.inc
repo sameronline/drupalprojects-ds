@@ -12,16 +12,6 @@ use Drupal\ds\Ds;
 function _ds_theme() {
   $theme_functions = array();
 
-  // Layouts
-  $layouts = Ds::getLayouts();
-  foreach ($layouts as $key => $layout) {
-    $theme_functions[$key] = array(
-      'render element' => 'elements',
-      'template' => strtr($key, '_', '-'),
-      'path' => drupal_get_path('module', $layout['provider']) . '/templates',
-    );
-  }
-
   // Field templates
   if (\Drupal::config('ds.settings')->get('field_template')) {
     $field_layouts = \Drupal::service('plugin.manager.ds.field.layout')->getDefinitions();
@@ -74,7 +64,8 @@ function _ds_module_implements_alter(&$implementations, $hook) {
  */
 function _ds_theme_registry_alter(&$theme_registry) {
   $layouts = Ds::getLayouts();
-  foreach ($layouts as $key => $info) {
+  foreach ($layouts as $info) {
+    $key = $info['theme'];
     // Only add preprocess functions if entity exposes theme function.
     if (isset($theme_registry[$key])) {
       $theme_registry[$key]['preprocess functions'][] = 'ds_preprocess_ds_layout';

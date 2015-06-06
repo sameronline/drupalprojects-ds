@@ -2,7 +2,7 @@ ds_1col:
   label: One column layout
   category: Display Suite
   type: partial
-  theme: ds_1col
+  template: templates/ds-1col
   icon: images/ds-1col.png
   regions:
     ds_content:
@@ -11,7 +11,7 @@ ds_1col_wrapper:
   label: One column layout + wrapper
   category: Display Suite
   type: partial
-  theme: ds_1col_wrapper
+  template: templates/ds-1col-wrapper
   icon: images/ds-1col-wrapper.png
   regions:
     ds_content:
@@ -20,7 +20,7 @@ ds_2col:
   label: Two column layout
   category: Display Suite
   type: partial
-  theme: ds_2col
+  template: templates/ds-2col
   library: ds/layout.2col
   icon: images/ds-2col.png
   regions:
@@ -32,7 +32,7 @@ ds_2col_fluid:
   label: Fluid two column layout
   category: Display Suite
   type: partial
-  theme: ds_2col_fluid
+  template: templates/ds-2col-fluid
   library: ds/layout.2col-fluid
   icon: images/ds-2col-fluid.png
   regions:
@@ -44,7 +44,7 @@ ds_2col_stacked:
   label: Two column stacked layout
   category: Display Suite
   type: partial
-  theme: ds_2col_stacked
+  template: templates/ds-2col-stacked
   library: ds/layout.2col-stacked
   icon: images/ds-2col-stacked.png
   regions:
@@ -60,7 +60,7 @@ ds_2col_stacked_fluid:
   label: Fluid two column stacked layout
   category: Display Suite
   type: partial
-  theme: ds_2col_stacked_fluid
+  template: templates/ds-2col-stacked-fluid
   library: ds/layout.2col-stacked-fluid
   icon: images/ds-2col-stacked-fluid.png
   regions:
@@ -76,7 +76,7 @@ ds_3col:
   label: Three column - 25/50/25
   category: Display Suite
   type: partial
-  theme: ds_3col
+  template: templates/ds-3col
   library: ds/layout.3col
   icon: images/ds-3col.png
   regions:
@@ -90,7 +90,7 @@ ds_3col_equal_width:
   label: Three column - equal width
   category: Display Suite
   type: partial
-  theme: ds_3col_equal_width
+  template: templates/ds-3col-equal-width
   library: ds/layout.3col-equal-width
   icon: images/ds-3col-equal-width.png
   regions:
@@ -104,7 +104,7 @@ ds_3col_stacked:
   label: Three column stacked - 25/50/25
   category: Display Suite
   type: partial
-  theme: ds_3col_stacked
+  template: templates/ds-3col-stacked
   library: ds/layout.3col-stacked
   icon: images/ds-3col-stacked.png
   regions:
@@ -122,7 +122,7 @@ ds_3col_stacked_fluid:
   label: Fluid three column stacked - 25/50/25
   category: Display Suite
   type: partial
-  theme: ds_3col_stacked_fluid
+  template: templates/ds-3col-stacked-fluid
   library: ds/layout.3col-stacked-fluid
   icon: images/ds-3col-stacked-fluid.png
   regions:
@@ -140,7 +140,7 @@ ds_3col_stacked_equal_width:
   label: Three column stacked - equal width
   category: Display Suite
   type: partial
-  theme: ds_3col_stacked_equal_width
+  template: templates/ds-3col-stacked-equal-width
   library: ds/layout.3col-stacked-equal-width
   icon: images/ds-3col-stacked-equal-width.png
   regions:
@@ -158,7 +158,7 @@ ds_4col:
   label: Four column - equal width
   category: Display Suite
   type: partial
-  theme: ds_4col
+  template: templates/ds-4col
   library: ds/layout.4col
   icon: images/ds-4col-stacked.png
   regions:
@@ -174,7 +174,7 @@ ds_reset:
   label: Reset layout
   category: Display Suite
   type: partial
-  theme: ds_reset
+  template: templates/ds-reset
   image: images/ds-reset.png
   regions:
     ds_content:

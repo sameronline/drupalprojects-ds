@@ -18,6 +18,7 @@ use Drupal\ds\Ds;
 use Drupal\ds\Plugin\DsFieldLayout\DsFieldLayoutInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\Core\Entity\Display\EntityDisplayInterface;
+use Drupal\layout_plugin\Layout;
 
 /**
  * Implements hook_theme().
@@ -174,10 +175,9 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
     }
   }
 
-  // Add the asset library for this layout.
-  if (!empty($configuration['layout']['library'])) {
-    $build['#attached']['library'][] = $configuration['layout']['library'];
-  }
+  // Render the layout.
+  $layout = Layout::layoutPluginManager()->createInstance($configuration['layout']['id'], array());
+  $build = $layout->build($build);
 }
 
 /**
@@ -186,13 +186,13 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
  * This function is added in ds_theme_registry_alter().
  */
 function ds_preprocess_ds_layout(&$variables) {
-  if (isset($variables['elements']['#entity_type'])) {
+  if (isset($variables['content']['#entity_type'])) {
     // Fetch the object
-    $object = $variables['elements']['#entity_type'];
+    $object = $variables['content']['#entity_type'];
 
-    if (isset($variables['elements']['#ds_configuration'])) {
-      $configuration = $variables['elements']['#ds_configuration'];
-      $render_container = 'elements';
+    if (isset($variables['content']['#ds_configuration'])) {
+      $configuration = $variables['content']['#ds_configuration'];
+      $render_container = 'content';
 
       // Template layout.
       if (!isset($variables['attributes']['class'])) {
@@ -200,8 +200,8 @@ function ds_preprocess_ds_layout(&$variables) {
       }
 
       // Add view-mode-{name} to classes.
-      if (!in_array('view-mode-' . $variables['elements']['#view_mode'], $variables['attributes']['class'])) {
-        $variables['attributes']['class'][] = 'view-mode-' . $variables['elements']['#view_mode'];
+      if (!in_array('view-mode-' . $variables['content']['#view_mode'], $variables['attributes']['class'])) {
+        $variables['attributes']['class'][] = 'view-mode-' . $variables['content']['#view_mode'];
       }
 
       // If the layout has wrapper class lets add it.
@@ -249,7 +249,7 @@ function ds_preprocess_ds_layout(&$variables) {
             if (isset($object)) {
               $replaced_attribute = \Drupal::service('token')->replace(
                 $layout_attribute,
-                array($variables['elements']['#entity_type'] => $variables['elements']['#' . $object]),
+                array($variables['content']['#entity_type'] => $variables['content']['#' . $object]),
                 array('clear' => TRUE)
               );
             }
@@ -264,13 +264,13 @@ function ds_preprocess_ds_layout(&$variables) {
         $url = '';
         switch ($configuration['layout']['settings']['link_attribute']) {
           case 'content':
-            $url = $variables['elements']['#' . $object]->urlInfo()->getInternalPath();
+            $url = $variables['content']['#' . $object]->urlInfo()->getInternalPath();
             break;
           case 'custom':
             $url = $configuration['layout']['settings']['link_custom'];
             break;
           case 'tokens':
-            $url = \Drupal::service('token')->replace($configuration['layout']['settings']['link_custom'], array($variables['elements']['#entity_type'] => $variables['elements']['#' . $object]), array('clear' => TRUE));
+            $url = \Drupal::service('token')->replace($configuration['layout']['settings']['link_custom'], array($variables['content']['#entity_type'] => $variables['content']['#' . $object]), array('clear' => TRUE));
             break;
         }
 
@@ -282,7 +282,7 @@ function ds_preprocess_ds_layout(&$variables) {
       }
 
       // Let other modules alter the ds array before creating the region variables.
-      $context = array('entity' => isset($variables[$object]) ? $variables[$object] : (isset($variables['elements']['#' . $object]) ? $variables['elements']['#' . $object] : ''), 'entity_type' => $variables['elements']['#entity_type'], 'bundle' => $variables['elements']['#bundle'], 'view_mode' => $variables['elements']['#view_mode']);
+      $context = array('entity' => isset($variables[$object]) ? $variables[$object] : (isset($variables['content']['#' . $object]) ? $variables['content']['#' . $object] : ''), 'entity_type' => $variables['content']['#entity_type'], 'bundle' => $variables['content']['#bundle'], 'view_mode' => $variables['content']['#view_mode']);
       \Drupal::moduleHandler()->alter('ds_pre_render', $layout_render_array, $context, $variables);
       foreach ($layout_render_array as $region_name => $content) {
         $variables[$region_name] = drupal_render($content);
@@ -295,13 +295,12 @@ function ds_preprocess_ds_layout(&$variables) {
  * Implements hook_theme_suggestions_alter()
  */
 function ds_theme_suggestions_alter(&$suggestions, $variables, $base_theme_hook) {
-  if (isset($variables['elements']['#ds_configuration'])) {
-    $layout_id = $variables['elements']['#ds_configuration']['layout']['id'];
-    $suggestions[] = $layout_id;
-    $suggestions[] = $layout_id . '__' . $variables['elements']['#entity_type'];
-    $suggestions[] = $layout_id . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#view_mode'];
-    $suggestions[] = $layout_id . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'];
-    $suggestions[] = $layout_id . '__' . $variables['elements']['#entity_type'] . '_' . $variables['elements']['#bundle'] . '_' . $variables['elements']['#view_mode'];
+  if (isset($variables['content']['#ds_configuration'])) {
+    $layout_id = $variables['content']['#ds_configuration']['layout']['id'];
+    $suggestions[] = $layout_id . '__' . $variables['content']['#entity_type'];
+    $suggestions[] = $layout_id . '__' . $variables['content']['#entity_type'] . '_' . $variables['content']['#view_mode'];
+    $suggestions[] = $layout_id . '__' . $variables['content']['#entity_type'] . '_' . $variables['content']['#bundle'];
+    $suggestions[] = $layout_id . '__' . $variables['content']['#entity_type'] . '_' . $variables['content']['#bundle'] . '_' . $variables['content']['#view_mode'];
   }
 }
 

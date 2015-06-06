@@ -9,6 +9,7 @@ namespace Drupal\ds;
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Entity\Display\EntityDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\layout_plugin\Layout;
 
 /**
  * Helper class that holds all the main Display Suite helper functions.
@@ -89,7 +90,7 @@ class Ds {
 
     if (!$layouts) {
       $layouts = array();
-      $layoutManager = \Drupal::service('plugin.manager.layout_plugin');
+      $layoutManager = Layout::layoutPluginManager();
       $all_layouts = $layoutManager->getDefinitions();
       foreach ($all_layouts as $key => $info) {
         if ($info['category'] == 'Display Suite') {
