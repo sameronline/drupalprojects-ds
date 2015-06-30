@@ -1031,6 +1031,9 @@ function ds_render_field($field) {
     else {
       $uri_info = entity_uri($field['entity_type'], $field['entity']);
     }
+    if (isset($settings['link class'])) {
+      $uri_info['options']['attributes']['class'][] = $settings['link class'];
+    }
     $output = l($output, $uri_info['path'], $uri_info['options']);
     if ($title_field) {
       $output = ds_edit_support('title', $output, $field);
