@@ -1759,6 +1759,9 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, $
       if ($classes_access) {
         $form['additional_settings']['ds_classes']['info'] = array('#markup' => l(t('Manage region  and field CSS classes'), 'admin/structure/ds/classes', array('query' => drupal_get_destination())));
       }
+      elseif (user_access('admin_classes')) {
+        $form['additional_settings']['ds_classes']['info'] = array('#markup' => l(t('To manage region and field CSS classes, the Display Suite UI module should be enabled.'), 'admin/modules', array('query' => drupal_get_destination(), 'fragment' => 'edit-modules-display-suite')));
+      }
     }
     else {
       if ($classes_access) {
