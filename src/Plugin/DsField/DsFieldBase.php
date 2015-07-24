@@ -137,8 +137,8 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
    *
    * This is a helper function for the dynamic plugins defined in the UI.
    *
-   * @param array $defintion
-   *   The defintion of the plugin
+   * @param array $definition
+   *   The definition of the plugin
    * @param string $bundle
    *   The bundle you're performing the check for.
    * @param string $view_mode
