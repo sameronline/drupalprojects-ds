@@ -256,7 +256,6 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
   // Get default values.
   $entity_type = $form['#entity_type'];
-  $bundle = $form['#bundle'];
   $view_mode = $form_state->getFormObject()->getEntity()->getMode();
 
   // Get the entity display.
@@ -411,33 +410,23 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
  * Form validation handler for _ds_field_ui_fields().
  */
 function ds_field_ui_fields_validate($form, FormStateInterface $form_state) {
+  $fields = $form_state->getValue('fields');
   foreach (Element::children($form['fields']) as $key) {
-    $fields = $form_state->getValue('fields');
-
-    // Welcome to the most freaky code. We need to move field template
-    // settings in the form state depending on where the key is
-    // found, for either core or display suite fields.
-    $options = array(
-      'ft',
-      'ds_limit',
-    );
-    foreach ($options as $option) {
-      if (isset($fields[$key]['settings_edit_form']['settings'][$option])) {
-        $settings = $fields[$key]['settings_edit_form']['settings'];
-        if (!empty($settings)) {
-          $plugin_settings = $form_state->get('plugin_settings');
-          $plugin_settings[$key] = $settings;
-          $form_state->set('plugin_settings', $plugin_settings);
-        }
+    if (isset($fields[$key]['settings_edit_form']['settings'])) {
+      $settings = $fields[$key]['settings_edit_form']['settings'];
+      if (!empty($settings)) {
+        $plugin_settings = $form_state->get('plugin_settings');
+        $plugin_settings[$key] = $settings;
+        $form_state->set('plugin_settings', $plugin_settings);
       }
+    }
 
-      if (isset($fields[$key]['settings_edit_form']['third_party_settings']['ds'][$option])) {
-        $settings = $fields[$key]['settings_edit_form']['third_party_settings']['ds'];
-        if (!empty($settings)) {
-          $plugin_settings = $form_state->get('plugin_settings');
-          $plugin_settings[$key] = $settings;
-          $form_state->set('plugin_settings', $plugin_settings);
-        }
+    if (isset($fields[$key]['settings_edit_form']['third_party_settings']['ds'])) {
+      $settings = $fields[$key]['settings_edit_form']['third_party_settings']['ds'];
+      if (!empty($settings)) {
+        $plugin_settings = $form_state->get('plugin_settings');
+        $plugin_settings[$key] = $settings;
+        $form_state->set('plugin_settings', $plugin_settings);
       }
     }
   }
@@ -1211,11 +1200,6 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
       'settings_edit' => array(),
     );
 
-    // Don't show summary or cogwheel in hidden region.
-    if (_ds_field_ui_check_hidden_region($key, $form_state, $field_regions)) {
-      continue;
-    }
-
     if ($form_state->get('plugin_settings_edit') == $key) {
       $table[$key]['settings_summary']['#attributes']['colspan'] = 2;
       $settings_form = ds_field_settings_form($plugin_instance, $form_state);
@@ -1245,213 +1229,47 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
 function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
   $entity_type = $form['#entity_type'];
   $bundle = $form['#bundle'];
-  $view_mode = $form_state->getFormObject()->getEntity()->getMode();
   $entity_display = $form_state->getFormObject()->getEntity();
 
   // Gather type information.
   $instances = \Drupal::entityManager()->getFieldDefinitions($entity_type, $bundle);
-
   $table = &$form['fields'];
 
-  // Regions for fields.
-  $field_regions = array();
-  if (isset($form['#ds_layout']['settings']['regions'])) {
-    $field_regions = $form['#ds_layout']['settings']['regions'];
-  }
-
   // Get all persisted values for fields and plugin settings
-  $form_state_field_values = $form_state->getValue('fields', array());
-  $form_state_plugin_settings = $form_state->get('plugin_settings', array());
+  $form_state_plugin_settings = $form_state->get('plugin_settings');
 
   // Field rows.
   foreach ($instances as $key => $instance) {
     if ($instance instanceof FieldConfigInterface) {
-      // Don't show summary or cogwheel in hidden region.
-      if (_ds_field_ui_check_hidden_region($key, $form_state, $field_regions)) {
-        $table[$key]['settings_summary']['#markup'] = '';
-        $table[$key]['settings_edit'] = array();
-        continue;
-      }
-
-      $field = FieldStorageConfig::loadByName($entity_type, $instance->getName());
       $settings = $entity_display->getComponent($key);
-
       if (empty($settings)) {
         continue;
-      }
-
-      // Check the currently selected formatter, and merge persisted values for
-      // formatter settings.
-      if (isset($form_state_field_values[$key]['type'])) {
-        $formatter_type = $form_state_field_values[$key]['type'];
-      }
-      else {
-        $formatter_type = $settings['type'];
       }
 
       if (isset($form_state_plugin_settings[$key])) {
         $settings = array_merge($settings, $form_state_plugin_settings[$key]);
       }
-      $settings = $settings + \Drupal::service('plugin.manager.field.formatter')->getDefaultSettings($formatter_type);
 
       // Import field settings and merge with Field API settings.
       if (!isset($form_state_plugin_settings[$key])) {
         $form_state_plugin_settings[$key] = isset($settings['third_party_settings']['ds']) ? $settings['third_party_settings']['ds'] : array();
-        $form_state->set('plugin_settings', $form_state_plugin_settings);
       }
-
-      // Change default value or Field API format, so we can change the right
-      // settings form when clicking on the cogwheel.
-      $form['fields'][$key]['plugin']['type']['#default_value'] = $formatter_type;
-
-      $instance->display[$view_mode]['type'] = $formatter_type;
-      $instance->display[$view_mode]['settings'] = $settings;
-
-      // Base button element for the various formatter settings actions.
-      $build_info = $form_state->getBuildInfo();
-      $base_button = array(
-        '#submit' => array(
-          array($build_info['callback_object'], 'multistepSubmit'),
-        ),
-        '#validate' => array(
-          'ds_field_ui_fields_validate',
-        ),
-        '#ajax' => array(
-          'callback' => array($build_info['callback_object'], 'multistepAjax'),
-          'wrapper' => 'field-display-overview-wrapper',
-          'effect' => 'fade',
-        ),
-        '#field_name' => $key,
-      );
 
       if ($form_state->get('plugin_settings_edit') == $key) {
-
-        // Get the corresponding formatter object.
-        if ($settings && $settings['type'] != 'hidden') {
-          $options = array(
-            'field_definition' => $instance,
-            'configuration' => array(
-              'type' => $settings['type'],
-              'settings' => $settings['settings'],
-              'label' => $settings['label'],
-              'weight' => $settings['weight'],
-            ),
-            'view_mode' => $view_mode,
-          );
-
-          $formatter = \Drupal::service('plugin.manager.field.formatter')->getInstance($options);
-        }
-        else {
-          $formatter = NULL;
-        }
-
-        // Add the default formatter settings if any.
-        $settings_form = array();
-        if (isset($formatter)) {
-          $settings_form = $formatter->settingsForm($form, $form_state);
-        }
-
-        // Add the field templates form when needed
-        /*if (\Drupal::config('ds.settings')->get('field_template')) {
-          $context = array(
-            'instance' => $instance,
-            'view_mode' => $view_mode,
-          );
-
-          ds_field_template_settings_form($settings_form, $form_state, $context);
-        }*/
-
-        // Allow other modules to alter the formatter settings form.
-        // @todo check whether we can't make this cleaner, because we're
-        // calling this twice now.
-        $context = array(
-          'formatter' => $formatter,
-          'field' => $field,
-          'instance' => $instance,
-          'view_mode' => $view_mode,
-          'form' => $form,
-        );
-        \Drupal::moduleHandler()->alter('field_formatter_settings_form', $settings_form, $form_state, $context);
-
-        // Generate the settings form and allow other modules to alter it.
-        $third_party_settings_form = array();
-        // Invoke hook_field_formatter_third_party_settings_form(), keying resulting
-        // subforms by module name.
-        foreach (\Drupal::moduleHandler()->getImplementations('field_formatter_third_party_settings_form') as $module) {
-          $third_party_settings_form[$module] = \Drupal::moduleHandler()->invoke($module, 'field_formatter_third_party_settings_form', array(
-            $formatter,
-            $instance,
-            $view_mode,
-            $form,
-            $form_state,
-          ));
-        }
-
-        if ($settings_form || $third_party_settings_form) {
-          $table[$key]['plugin']['#cell_attributes'] = array('colspan' => 3);
-          $table[$key]['plugin']['settings_edit_form'] = array(
-            '#type' => 'container',
-            '#attributes' => array('class' => array('field-plugin-settings-edit-form')),
-            '#parents' => array('fields', $key, 'settings_edit_form'),
-            'label' => array(
-              '#markup' => t('Format settings:'), //. ' <span class="formatter-name">' . $settings['label'] . '</span>',
-            ),
-            'settings' => $settings_form,
-            'third_party_settings' => $third_party_settings_form,
-            'actions' => array(
-              '#type' => 'actions',
-              'save_settings' => $base_button + array(
-                '#type' => 'submit',
-                '#button_type' => 'primary',
-                '#name' => $key . '_plugin_settings_update',
-                '#value' => t('Update'),
-                '#op' => 'update',
-              ),
-              'cancel_settings' => $base_button + array(
-                '#type' => 'submit',
-                '#name' => $key . '_plugin_settings_cancel',
-                '#value' => t('Cancel'),
-                '#op' => 'cancel',
-                // Do not check errors for the 'Cancel' button, but make sure we
-                // get the value of the 'formatter type' select.
-                '#limit_validation_errors' => array(array('fields', $key, 'type')),
-              ),
-            ),
-          );
-          $table[$key]['#attributes']['class'][] = 'field-plugin-settings-editing';
-          $table[$key]['plugin']['type']['#attributes']['class'] = array('visually-hidden');
-        }
+        $table[$key]['plugin']['settings_edit_form']['actions']['save_settings']['#validate'] = array('ds_field_ui_fields_validate');
+        $table[$key]['plugin']['settings_edit_form']['actions']['cancel_settings']['#validate'] = array('ds_field_ui_fields_validate');
       }
       else {
+        $table[$key]['settings_edit'] = array();
         if (!empty($table[$key]['settings_summary'])) {
-          $table[$key]['settings_edit'] = array();
-
           ds_field_row_form_format_summary_construct($table, $key, $form_state);
         }
       }
     }
   }
-}
 
-/**
- * Helper function to check if we are in a hidden region or not.
- */
-function _ds_field_ui_check_hidden_region($key, FormStateInterface $form_state, $field_regions) {
-  $continue = FALSE;
-  $input_elements = $form_state->get('input', array());
-  if (isset($input_elements['fields'][$key]['region'])) {
-    if ($input_elements['fields'][$key]['region'] == 'hidden') {
-      $continue = TRUE;
-    }
-  }
-  elseif (!isset($field_regions[$key]) || $field_regions[$key] == 'hidden') {
-
-    $continue = TRUE;
-  }
-
-  // TODO fix this
-  // Always continue for now untill we found a better solution
-  return FALSE;
+  // Set updated plugin settings
+  $form_state->set('plugin_settings', $form_state_plugin_settings);
 }
 
 /**
