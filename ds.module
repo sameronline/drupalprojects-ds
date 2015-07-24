@@ -177,6 +177,15 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
   // Render the layout.
   $layout = Layout::layoutPluginManager()->createInstance($configuration['layout']['id'], array());
   $build = $layout->build($build);
+
+  // Disable CSS files when needed
+  if ($build['#ds_configuration']['layout']['disable_css']) {
+    $library = $build['#ds_configuration']['layout']['library'];
+    $attached = $build['#attached']['library'];
+
+    $index = array_search($library, $attached);
+    unset($build['#attached']['library'][$index]);
+  }
 }
 
 /**

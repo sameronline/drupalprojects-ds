@@ -263,6 +263,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
   // Determine layout variables.
   $layout = $form_state->getValue('layout');
+  $disable_css = $form_state->getValue('disable_css');
   $old_layout = $form_state->getValue('old_layout');
   $new_layout = ($layout != $old_layout) || empty($old_layout);
 
@@ -279,6 +280,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     'id' => $layout,
     'path' =>  !empty($layout) ? drupal_get_path('module', $ds_layouts[$layout]['provider']) : '',
     'library' => isset($ds_layouts[$layout]['library']) ? $ds_layouts[$layout]['library'] : FALSE,
+    'disable_css' => $disable_css ? TRUE : FALSE,
   );
   $record['regions'] = array();
 
@@ -666,6 +668,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
     $layout_configuration = $display->getThirdPartySetting('ds', 'layout');
     $layout = $ds_layouts[$layout_configuration['id']];
     $layout['layout'] = $layout_configuration['id'];
+    $layout['disable_css'] = $layout_configuration['disable_css'];
     $layout['settings'] = $layout_configuration['settings'];
     $layout['regions'] = $display->getThirdPartySetting('ds', 'regions');
     $layout['fields'] = $display->getThirdPartySetting('ds', 'fields');
@@ -938,7 +941,7 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
     }
 
     ksort($suggestions_array);
-    $suggestions = t('Template suggestions') . ':<ul>';
+    $suggestions = t('Template suggestions') . ':';
     $suggestions .= '<ul><li>' . implode('.html.twig</li><li>', $suggestions_array) . '.html.twig</li></ul>';
 
     if ($form_state->hasValue('layout') || (!empty($layout) && isset($layout['regions']))) {
@@ -952,9 +955,32 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
       $form['ds_layouts']['preview']['image'] = array(
         '#markup' => '<div class="ds-layout-preview-image"><img src="' . base_path() . $image . '"/></div>',
       );
-      $form['ds_layouts']['preview']['suggestions'] = array(
-        '#markup' => '<div class="ds-layout-preview-suggestion"><p>' . $selected . '</p><p>' . t('!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p></div>',
+      $form['ds_layouts']['preview']['info'] = array(
+        '#type' => 'container',
+        '#attributes' => array(
+          'class' => array('ds-layout-preview-suggestion'),
+        ),
       );
+      $form['ds_layouts']['preview']['info']['suggestions'] = array(
+        '#markup' => '<p>' . $selected . '</p><p>' . t('!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p>',
+      );
+
+      if (!empty($chosen_layout['css'])) {
+        $disable_css = FALSE;
+
+        if (isset($layout['disable_css'])) {
+          $disable_css = $layout['disable_css'];
+        }
+        if ($form_state->hasValue('disable_css') && $disable_css !== $form_state->getValue('disable_css')) {
+          $disable_css = $form_state->getValue('disable_css');
+        }
+
+        $form['ds_layouts']['preview']['info']['settings']['disable_css'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Disable layout CSS styles'),
+          '#default_value' => $disable_css,
+        );
+      }
       $form['ds_layouts']['preview']['clear'] = array(
         '#markup' => '<div class="ds-after-suggestion"></div>',
       );
