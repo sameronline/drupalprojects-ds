@@ -1897,6 +1897,7 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
 
       $suggestions_array[0] = $layout_string . '--' . $entity_type;
       $suggestions_array[2] = $layout_string . '--' . $entity_type . '-' . $bundle;
+      $suggestions_array[4] = $layout_string . '--' . $entity_type . '--{id}';
       if (!isset($form_state['no_view_mode_suggestions']) && $view_mode != 'default') {
         $suggestions_array[1] = $layout_string . '--' . $entity_type . '-' . $view_mode;
         $suggestions_array[3] = $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode;
