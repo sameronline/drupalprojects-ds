@@ -2,61 +2,15 @@
 
 /**
  * @file
- * Definition of Drupal\ds\Tests\BaseTest.
+ * Contains \Drupal\ds\Tests\DsTestTrait.
  */
 
 namespace Drupal\ds\Tests;
 
-use Drupal\simpletest\WebTestBase;
-
 /**
- * Base class for ds tests.
- *
- * @group ds
+ * Provides common functionality for the Display Suite test classes.
  */
-abstract class BaseTest extends WebTestBase {
-
-  /**
-   * Modules to enable.
-   *
-   * @var array
-   */
-  public static $modules = array('field_ui', 'comment', 'block', 'ds', 'ds_extras', 'ds_test', 'views', 'views_ui', 'layout_plugin');
-
-  /**
-   * The chosen installation profile
-   *
-   * @var string
-   */
-  protected $profile = 'standard';
-
-  /**
-   * The admin user with Display Suite configuration permissions enabled
-   */
-  protected $admin_user;
-
-  /**
-   * Implementation of setUp().
-   */
-  protected function setUp() {
-    parent::setUp();
-
-    $this->admin_user = $this->drupalCreateUser(array('admin classes', 'admin fields', 'admin display suite', 'ds_switch article', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions', 'administer node fields', 'administer node display', 'administer node form display', 'administer user fields', 'administer user display', 'administer user form display', 'administer comment fields', 'administer comment display', 'administer comment form display', 'administer views', 'administer software updates', 'access site in maintenance mode', 'administer site configuration'));
-    //$this->admin_user = $this->drupalCreateUser(array('admin classes', 'admin fields', 'admin display suite', 'access administration pages', 'administer content types', 'administer users', 'administer comments', 'administer nodes', 'bypass node access', 'administer blocks', 'search content', 'use advanced search', 'administer search', 'access user profiles', 'administer permissions', 'administer node fields', 'administer node display', 'administer node form display', 'administer user fields', 'administer user display', 'administer user form display', 'administer comment fields', 'administer comment display', 'administer comment form display', 'administer views'));
-    $this->drupalLogin($this->admin_user);
-
-    // Run update.php to add the ds_switch field.
-    $url = $GLOBALS['base_url'] . '/update.php';
-    $this->drupalGet($url, array('external' => TRUE));
-    $this->clickLink(t('Continue'));
-    $this->clickLink(t('Apply pending updates'));
-
-    // Turn off maintenance mode.
-    $edit = array(
-      'maintenance_mode' => FALSE,
-    );
-    $this->drupalPostForm('admin/config/development/maintenance', $edit, t('Save configuration'));
-  }
+trait DsTestTrait {
 
   /**
    * Select a layout.
@@ -165,7 +119,6 @@ abstract class BaseTest extends WebTestBase {
       'id' => 'test_field',
       'entities[node]' => '1',
       'content[value]' => 'Test field',
-      'content[format]' => 'basic_html',
     );
 
     $this->drupalPostForm($url, $edit, t('Save'));
@@ -189,4 +142,5 @@ abstract class BaseTest extends WebTestBase {
     $this->drupalPostForm($url, $edit, t('Save'));
     $this->assertText(t('The field ' . $edit['name'] . ' has been saved'), t('!name field has been saved', array('!name' => $edit['name'])));
   }
+
 }

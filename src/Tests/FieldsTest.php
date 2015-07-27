@@ -73,8 +73,6 @@ class FieldsTest extends BaseTest {
     $this->drupalGet('admin/structure/types/manage/article/display/teaser');
     $this->assertRaw('fields[dynamic_token_field:node-test_field][weight]', t('Test field field found on node article, teaser.'));
 
-
-
     // Remove the field.
     $this->drupalPostForm('admin/structure/ds/fields/delete/test_field', array(), t('Confirm'));
     $this->assertText(t('The field Test field 2 has been deleted'), t('Test field removed'));
