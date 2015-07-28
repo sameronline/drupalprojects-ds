@@ -163,9 +163,6 @@ class ChangeLayoutForm extends FormBase {
     // Create new third party settings
     $third_party_settings = $old_layout;
     $third_party_settings['layout']['id'] = $new_layout_key;
-    if (!empty($new_layout['css'])) {
-      $third_party_settings['layout']['css'] = $new_layout['css'];
-    }
     if (!empty($new_layout['library'])) {
       $third_party_settings['layout']['library'] = $new_layout['library'];
     }

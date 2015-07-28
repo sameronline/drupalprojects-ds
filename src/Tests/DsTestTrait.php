@@ -136,7 +136,7 @@ trait DsTestTrait {
       'name' => 'Test block field',
       'id' => 'test_block_field',
       'entities[node]' => '1',
-      'block' => 'views_block:content_recent-block_1',
+      'block' => 'system_powered_by_block',
     );
 
     $this->drupalPostForm($url, $edit, t('Save'));
