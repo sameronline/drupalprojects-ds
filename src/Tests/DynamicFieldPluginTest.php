@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of Drupal\ds\Tests\FieldsTest.
+ * Definition of Drupal\ds\Tests\DynamicFieldPluginTest.
  */
 
 namespace Drupal\ds\Tests;
@@ -12,7 +12,7 @@ namespace Drupal\ds\Tests;
  *
  * @group ds
  */
-class FieldsTest extends BaseTest {
+class DynamicFieldPluginTest extends FastTestBase {
 
   /**
    * Test Display fields.
@@ -86,7 +86,7 @@ class FieldsTest extends BaseTest {
       'name' => 'Test block field',
       'id' => 'test_block_field',
       'entities[node]' => '1',
-      'block' => 'views_block:content_recent-block_1',
+      'block' => 'system_powered_by_block',
     );
 
     $this->dsCreateBlockField($edit);

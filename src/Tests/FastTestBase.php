@@ -96,6 +96,7 @@ abstract class FastTestBase extends WebTestBase {
 
     // Create Article node type.
     $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
+    $this->drupalCreateContentType(array('type' => 'page', 'name' => 'Page'));
 
     // Create a vocabulary named "Tags".
     $this->vocabulary = Vocabulary::create(array(

@@ -7,7 +7,6 @@
 
 namespace Drupal\ds\Tests;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
-use Drupal\Core\Url;
 
 /**
  * Tests for exportables in Display Suite.
