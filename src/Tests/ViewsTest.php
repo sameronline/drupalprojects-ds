@@ -19,11 +19,6 @@ use Drupal\views\ViewExecutable;
 class ViewsTest extends FastTestBase {
 
   /**
-   * Disabled config schema checking temporarily until all errors are resolved.
-   */
-  protected $strictConfigSchema = FALSE;
-
-  /**
    * Modules to install.
    *
    * @var array
