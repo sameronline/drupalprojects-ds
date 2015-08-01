@@ -85,6 +85,9 @@ abstract class FastTestBase extends WebTestBase {
       'administer permissions',
       'administer account settings',
       'administer user display',
+      'administer software updates',
+      'access site in maintenance mode',
+      'administer site configuration',
       'bypass node access'
     ));
     $this->drupalLogin($admin_user);

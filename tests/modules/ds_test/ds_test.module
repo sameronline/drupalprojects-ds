@@ -12,20 +12,6 @@ use Drupal\Core\Render\Element;
  * Implements hook_install().
  */
 function ds_test_install() {
-
-  /*
-  \Drupal::configFactory()->getEditable('ds.settings')
-    ->set('field_template', TRUE)
-    ->save();
-
-  \Drupal::configFactory()->getEditable('ds.extras')
-    ->set('region_to_block', TRUE)
-    ->set('switch_view_mode', TRUE)
-    ->set('fields_extra', TRUE)
-    ->set('fields_extra_list', array('node|article|ds_extras_extra_test_field', 'node|article|ds_extras_second_field'))
-    ->save();
-  */
-
   module_set_weight('ds_test', 3);
 }
 
