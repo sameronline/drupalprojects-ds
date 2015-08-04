@@ -1121,7 +1121,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
     /** @var $plugin_instance \Drupal\ds\Plugin\DsField\DsFieldInterface */
     $plugin_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id'], $configuration);
 
-    if (!$plugin_instance->isAllowed($bundle, $view_mode)) {
+    if (!$plugin_instance->isAllowed()) {
       continue;
     }
 
