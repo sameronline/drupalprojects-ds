@@ -165,7 +165,10 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
         '#bundle' => $bundle,
         '#object' => $entity,
         '#entity_type' => $entity_type,
-        '#view_mode' => $view_mode,
+        '#view_mode' => '_custom',
+        '#ds_view_mode' => $view_mode,
+        '#items' => array((object) array('_attributes' => array())),
+        '#is_multiple' => FALSE,
         '#access' => ($field_permissions && function_exists('ds_extras_ds_field_access')) ? ds_extras_ds_field_access($key, $entity_type) : TRUE,
         0 => array(
           $field_value,
@@ -364,7 +367,7 @@ function ds_local_tasks_alter(&$local_tasks) {
 function ds_preprocess_field(&$variables) {
   $entity_type = $variables['element']['#entity_type'];
   $bundle = $variables['element']['#bundle'];
-  $view_mode = $variables['element']['#view_mode'];
+  $view_mode = isset($variables['element']['#ds_view_mode']) ? $variables['element']['#ds_view_mode'] : $variables['element']['#view_mode'];
 
   /** @var $entity_display EntityDisplayInterface */
   $entity_display = Ds::getDisplay($entity_type, $bundle, $view_mode);
