@@ -1152,8 +1152,10 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
     if (isset($form_state_plugin_settings[$key])) {
       $plugin_settings = $form_state_plugin_settings[$key];
     }
-    elseif (isset($field_settings[$key]['settings'])) {
-      $plugin_settings = $field_settings[$key]['settings'];
+    elseif (isset($field_settings[$key]['settings']) || isset($field_settings[$key]['ft']) || isset($field_settings[$key]['ds_limit'])) {
+      if ($field_settings[$key]['settings']) {
+        $plugin_settings = $field_settings[$key]['settings'];
+      }
       if (isset($field_settings[$key]['ft'])) {
         $plugin_settings['ft'] = $field_settings[$key]['ft'];
       }
