@@ -1,7 +1,7 @@
 # Schema for the Display Suite field made in the UI.
 
 ds.field.*:
-  type: mapping
+  type: config_object
   label: 'Display Suite field'
   mapping:
     id:

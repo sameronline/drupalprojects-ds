@@ -1,7 +1,7 @@
 # Schema for the configuration files of the Display Suite module.
 
 ds.settings:
-  type: mapping
+  type: config_object
   label: 'Display Suite settings'
   mapping:
     disabled:

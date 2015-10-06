@@ -1,7 +1,7 @@
 # Schema for the configuration files of the Display Suite extras module.
 
 ds.extras:
-  type: mapping
+  type: config_object
   label: 'Display Suite extra settings'
   mapping:
     region_blocks:

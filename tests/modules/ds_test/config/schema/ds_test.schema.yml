@@ -1,5 +1,5 @@
 ds.field_template.ds_test_theming_function:
-  type: mapping
+  type: config_object
   label: 'The settings of the ds_test_theming_function field template'
   mapping:
     lb:
