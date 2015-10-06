@@ -17,7 +17,7 @@ function _ds_theme() {
     $field_layouts = \Drupal::service('plugin.manager.ds.field.layout')->getDefinitions();
     foreach ($field_layouts as $key => $plugin) {
       if ($key != 'default') {
-        $theme_functions[$plugin['theme']] = array(
+        $theme_functions['field__' . $plugin['theme']] = array(
           'render element' => 'elements',
           'function' => $plugin['theme'],
           'base hook' => 'field',
@@ -25,7 +25,7 @@ function _ds_theme() {
         );
 
         if (!empty($plugin['path'])) {
-          $theme_functions[$plugin['theme']]['file'] = $plugin['path'];
+          $theme_functions['field__' . $plugin['theme']]['file'] = $plugin['path'];
         }
       }
     }

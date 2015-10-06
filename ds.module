@@ -486,7 +486,7 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
 
       // Either it uses the function.
       $suggestions = array();
-      $suggestions[] = $layout_instance->getThemeFunction();
+      $suggestions[] = 'field__' . $layout_instance->getThemeFunction();
 
       // Or the template file(s).
       $suggestion = 'field__' . $config['id'];
@@ -495,14 +495,14 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
     elseif ($field instanceof FieldConfigInterface && ($theme_function = $field->getThirdPartySetting('ds', 'ds_field_template', '')) && !empty($theme_function)) {
       // Either it uses the function.
       $suggestions = array();
-      $suggestions[] = 'theme_ds_field_' . $theme_function;
+      $suggestions[] = 'field__theme_ds_field_' . $theme_function;
 
       // Or the template file(s).
       $suggestion = 'field__' . $theme_function;
     }
     elseif (!empty($field_theme_function)) {
       $suggestions = array();
-      $suggestions[] = 'theme_ds_field_' . $field_theme_function;
+      $suggestions[] = 'field__theme_ds_field_' . $field_theme_function;
 
       // Or the template file(s).
       $suggestion = 'field__' . $field_theme_function;
