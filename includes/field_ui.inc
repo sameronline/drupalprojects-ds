@@ -940,8 +940,12 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
     }
 
     ksort($suggestions_array);
-    $suggestions = t('Template suggestions') . ':';
-    $suggestions .= '<ul><li>' . implode('.html.twig</li><li>', $suggestions_array) . '.html.twig</li></ul>';
+
+    // Append correct extension.
+    foreach ($suggestions_array as $key => $value) {
+      $suggestion_replace = strtr($suggestions_array[$key], '_', '-');
+      $suggestions_array[$key] = $suggestion_replace . '.html.twig';
+    }
 
     if ($form_state->hasValue('layout') || (!empty($layout) && isset($layout['regions']))) {
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
@@ -961,7 +965,11 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
         ),
       );
       $form['ds_layouts']['preview']['info']['suggestions'] = array(
-        '#markup' => '<p>' . $selected . '</p><p>' . t('!suggestions', array('!suggestions' => strtr($suggestions, '_', '-'))) . '</p>',
+        '#markup' => '<p>' . $selected . '</p><p>' . t('Template suggestions') . ':' . '</p>',
+      );
+      $form['ds_layouts']['preview']['info']['suggestions_list'] = array(
+        '#theme' => 'item_list',
+        '#items' => $suggestions_array,
       );
 
       if (!empty($chosen_layout['css'])) {
