@@ -6,7 +6,7 @@
 
 namespace Drupal\ds;
 
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\Display\EntityDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\layout_plugin\Layout;
@@ -194,7 +194,7 @@ class Ds {
           $classes_splitted = explode("|", $value);
           $key = trim($classes_splitted[0]);
           $friendly_name = isset($classes_splitted[1]) ? trim($classes_splitted[1]) : $key;
-          $classes[$name][SafeMarkup::checkPlain($key)] = $friendly_name;
+          $classes[$name][Html::escape($key)] = $friendly_name;
         }
       }
       $name_clone = $name; // Prevent the name from being changed.

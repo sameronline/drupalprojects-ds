@@ -7,7 +7,6 @@
 
 namespace Drupal\ds\Controller;
 
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\Entity;
 use Drupal\Core\Entity\EntityDisplayBase;
@@ -63,7 +62,11 @@ class DsController extends ControllerBase {
         foreach ($bundles as $bundle_type => $bundle) {
           $row = array();
           $operations = array();
-          $row[] = SafeMarkup::checkPlain($bundle['label']);
+          $row[] = array(
+            'data' => array(
+              '#plain_text' => $bundle['label']
+            )
+          );
 
           if ($field_ui_enabled) {
             // Get the manage display URI.

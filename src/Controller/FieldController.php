@@ -7,7 +7,6 @@
 
 namespace Drupal\ds\Controller;
 
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
@@ -55,7 +54,11 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
       foreach ($custom_fields as $config) {
         $field_value = $this->config($config)->get();
         $row = array();
-        $row[] = SafeMarkup::checkPlain($field_value['label']);
+        $row[] = array(
+          'data' => array(
+            '#plain_text' => $field_value['label']
+          )
+        );
         $row[] = isset($field_value['type_label']) ? $field_value['type_label'] : $this->t('Unknown');
         $row[] = $field_value['id'];
         $row[] = ucwords(str_replace('_', ' ', implode(', ', $field_value['entities'])));

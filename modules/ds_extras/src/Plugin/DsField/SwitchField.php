@@ -7,7 +7,7 @@
 
 namespace Drupal\ds_extras\Plugin\DsField;
 
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -101,7 +101,7 @@ class SwitchField extends DsFieldBase {
             '#type' => 'textfield',
             '#default_value' => isset($config[$key]) ? $config[$key] : '',
             '#size' => 20,
-            '#title' => SafeMarkup::checkPlain($value['label']),
+            '#title' => Html::escape($value['label']),
           );
         }
       }

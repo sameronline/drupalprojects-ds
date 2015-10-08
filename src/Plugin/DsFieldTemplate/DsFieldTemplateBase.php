@@ -8,7 +8,7 @@
 namespace Drupal\ds\Plugin\DsFieldTemplate;
 
 use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\ds\Ds;
@@ -64,7 +64,7 @@ abstract class DsFieldTemplateBase extends ComponentPluginBase implements DsFiel
       '#type' => 'textfield',
       '#title' => t('Label'),
       '#size' => '10',
-      '#default_value' => SafeMarkup::checkPlain($config['lb']),
+      '#default_value' => Html::escape($config['lb']),
     );
     $form['lb-col'] = array(
       '#type' => 'checkbox',
@@ -120,7 +120,7 @@ abstract class DsFieldTemplateBase extends ComponentPluginBase implements DsFiel
     if (isset($this->sanitize) && $this->sanitize) {
       foreach ($field_settings as &$setting) {
         if (is_string($setting)) {
-          $setting = Xss::filter($setting);
+          $setting = Xss::filterAdmin($setting);
         }
       }
     }

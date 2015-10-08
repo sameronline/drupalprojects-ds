@@ -140,7 +140,7 @@ function hook_ds_pre_render_alter(&$layout_render_array, $context, &$vars) {
 function hook_ds_layout_region_alter($context, &$region_info) {
   $region_info['region_options']['my_region'] = 'New region';
   $region_info['table_regions']['my_region'] = array(
-    'title' => \Drupal\Component\Utility\SafeMarkup::checkPlain('New region'),
+    'title' => \Drupal\Component\Utility\Html::escape('New region'),
     'message' => t('No fields are displayed in this region'),
   );
 }

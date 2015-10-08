@@ -4,7 +4,7 @@
  * Display Suite extras main functions.
  */
 
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -265,7 +265,7 @@ function ds_extras_ds_layout_region_alter($context, &$region_info) {
       $region_info['region_options'][$block_key] = $block['title'];
       if (isset($region_info['table_regions'])) {
         $region_info['table_regions'][$block_key] = array(
-          'title' => SafeMarkup::checkPlain($block['title']),
+          'title' => Html::escape($block['title']),
           'message' => t('No fields are displayed in this region'),
         );
       }
@@ -288,9 +288,9 @@ function ds_extras_entity_extra_field_info() {
       $field = trim($field);
       if (!empty($field)) {
         list($entity, $bundle, $field_name) = explode('|', $field);
-        $extra[SafeMarkup::checkPlain($entity)][SafeMarkup::checkPlain($bundle)]['display'][$field_name] = array(
-          'label' => Unicode::ucfirst(str_replace('_', ' ', SafeMarkup::checkPlain($field_name))),
-          'description' => Unicode::ucfirst(str_replace('_', ' ', SafeMarkup::checkPlain($field_name))),
+        $extra[Html::escape($entity)][Html::escape($bundle)]['display'][$field_name] = array(
+          'label' => Unicode::ucfirst(str_replace('_', ' ', Html::escape($field_name))),
+          'description' => Unicode::ucfirst(str_replace('_', ' ', Html::escape($field_name))),
           'weight' => 0,
         );
       }

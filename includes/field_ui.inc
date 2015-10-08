@@ -5,7 +5,7 @@
  * Field UI functions for Display Suite.
  */
 
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Cache\Cache;
@@ -13,7 +13,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\ds\Ds;
-use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\FieldConfigInterface;
 use Drupal\field_ui\FieldUI;
 
@@ -206,7 +205,7 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
         if ($form_state->has('plugin_settings')) {
           $plugin_settings = $form_state->get('plugin_settings');
           if (isset($plugin_settings[$name]['ft']['settings']) && !empty($plugin_settings[$name]['ft']['settings']['lb'])) {
-            $row['human_name']['#markup'] = SafeMarkup::checkPlain($plugin_settings[$name]['ft']['settings']['lb']) . ' ' . t('(Original: !orig)', array('!orig' => $row['human_name']['#markup']));
+            $row['human_name']['#markup'] = Html::escape($plugin_settings[$name]['ft']['settings']['lb']) . ' ' . t('(Original: !orig)', array('!orig' => $row['human_name']['#markup']));
           }
         }
       }
@@ -1189,7 +1188,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
       '#region_callback' => 'field_ui_display_overview_row_region',
       '#attributes' => array('class' => array('draggable', 'tabledrag-leaf')),
       'human_name' => array(
-        '#markup' => SafeMarkup::checkPlain($field['title']),
+        '#plain_text' => $field['title'],
       ),
       'weight' => array(
         '#type' => 'textfield',

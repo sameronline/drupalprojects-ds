@@ -7,8 +7,7 @@
 
 namespace Drupal\ds\Tests;
 
-use Drupal\Component\Utility\SafeMarkup;
-use Drupal\Core\Cache\Cache;
+use Drupal\Component\Utility\Html;
 
 /**
  * Tests for display of nodes and fields.
@@ -62,7 +61,7 @@ class EntitiesTest extends FastTestBase {
     $this->assertRaw('group-footer', 'Template found (region footer)');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
-    $this->assertPattern('/<div[^>]*>Submitted[^<]*<a[^>]+href="' . preg_quote(base_path(), '/') . 'user\/' . $node->getOwnerId() . '"[^>]*>' . SafeMarkup::checkPlain($node->getOwner()->getUsername()) . '<\/a>.*<\/div>/', t('Submitted by line found'));
+    $this->assertPattern('/<div[^>]*>Submitted[^<]*<a[^>]+href="' . preg_quote(base_path(), '/') . 'user\/' . $node->getOwnerId() . '"[^>]*>' . Html::escape($node->getOwner()->getUsername()) . '<\/a>.*<\/div>/', t('Submitted by line found'));
 
     // Configure teaser layout.
     $teaser = array(
@@ -197,7 +196,7 @@ class EntitiesTest extends FastTestBase {
     $this->assertText('Tag 1');
     $this->assertNoText('Tag 2');
 
-    // Test \Drupal\Component\Utility\SafeMarkup::checkPlain() on ds_render_field() with the title field.
+    // Test \Drupal\Component\Utility\Html::escape() on ds_render_field() with the title field.
     $edit = array(
       'fields[node_title][region]' => 'right',
     );

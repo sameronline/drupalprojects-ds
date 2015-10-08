@@ -7,7 +7,7 @@
 
 namespace Drupal\ds_devel\Controller;
 
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 
@@ -50,7 +50,8 @@ class DsDevelController {
       '#suffix' => '</div><hr />',
     );
     $build['markup'] = [
-      '#markup' => '<code><pre>' . SafeMarkup::checkPlain($markup) . '</pre></code>',
+      '#markup' => '<code><pre>' . Html::escape($markup) . '</pre></code>',
+      '#allowed_tags' => ['code', 'pre'],
     ];
 
     return $build;

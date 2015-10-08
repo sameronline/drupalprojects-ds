@@ -7,7 +7,7 @@
 
 namespace Drupal\ds\Plugin\DsField;
 
-use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
@@ -54,13 +54,13 @@ abstract class Field extends DsFieldBase {
       $output = \Drupal::l($output, $url_info);
     }
     else {
-      $output = SafeMarkup::checkPlain($output);
+      $output = Html::escape($output);
     }
 
     // Wrapper and class.
     if (!empty($config['wrapper'])) {
-      $wrapper = SafeMarkup::checkPlain($config['wrapper']);
-      $class = (!empty($config['class'])) ? ' class="' . SafeMarkup::checkPlain($config['class']) . '"' : '';
+      $wrapper = Html::escape($config['wrapper']);
+      $class = (!empty($config['class'])) ? ' class="' . Html::escape($config['class']) . '"' : '';
       $output = '<' . $wrapper . $class . '>' . $output . '</' . $wrapper . '>';
     }
 
