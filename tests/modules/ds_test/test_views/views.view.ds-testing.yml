@@ -209,7 +209,7 @@ display:
         - node_view_grants
         - user
         - language
-      cacheable: false
+      max-age: 0
   page_1:
     display_plugin: page
     id: page_1
@@ -257,7 +257,7 @@ display:
         - node_view_grants
         - user
         - language
-      cacheable: false
+      max-age: 0
   page_2:
     display_plugin: page
     id: page_2
@@ -306,7 +306,7 @@ display:
         - node_view_grants
         - user
         - language
-      cacheable: false
+      max-age: 0
   page_3:
     display_plugin: page
     id: page_3
@@ -355,7 +355,7 @@ display:
         - node_view_grants
         - user
         - language
-      cacheable: false
+      max-age: 0
   page_4:
     display_plugin: page
     id: page_4
@@ -404,7 +404,7 @@ display:
         - node_view_grants
         - user
         - language
-      cacheable: false
+      max-age: 0
   page_5:
     display_plugin: page
     id: page_5
@@ -453,7 +453,7 @@ display:
         - node_view_grants
         - user
         - language
-      cacheable: false
+      max-age: 0
   page_6:
     display_plugin: page
     id: page_6
@@ -528,4 +528,4 @@ display:
         - node_view_grants
         - user
         - language
-      cacheable: false
+      max-age: 0
