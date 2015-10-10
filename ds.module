@@ -306,7 +306,7 @@ function ds_preprocess_ds_layout(&$variables) {
  * Implements hook_theme_suggestions_alter()
  */
 function ds_theme_suggestions_alter(&$suggestions, $variables, $base_theme_hook) {
-  if (is_array($variables['content']) && isset($variables['content']['#ds_configuration'])) {
+  if (isset($variables['content']) && is_array($variables['content']) && isset($variables['content']['#ds_configuration'])) {
     $layout_id = $variables['content']['#ds_configuration']['layout']['id'];
     $suggestions[] = $layout_id . '__' . $variables['content']['#entity_type'];
     $suggestions[] = $layout_id . '__' . $variables['content']['#entity_type'] . '_' . $variables['content']['#view_mode'];
