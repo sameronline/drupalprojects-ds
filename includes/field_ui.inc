@@ -205,7 +205,7 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
         if ($form_state->has('plugin_settings')) {
           $plugin_settings = $form_state->get('plugin_settings');
           if (isset($plugin_settings[$name]['ft']['settings']) && !empty($plugin_settings[$name]['ft']['settings']['lb'])) {
-            $row['human_name']['#markup'] = Html::escape($plugin_settings[$name]['ft']['settings']['lb']) . ' ' . t('(Original: !orig)', array('!orig' => $row['human_name']['#markup']));
+            $row['human_name']['#plain_text'] = $plugin_settings[$name]['ft']['settings']['lb'] . ' ' . t('(Original: @orig)', array('@orig' => $row['human_name']['#plain_text']));
           }
         }
       }
