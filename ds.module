@@ -435,10 +435,9 @@ function ds_preprocess_field(&$variables) {
  * Implements hook_theme_suggestions_HOOK_alter() for field templates.
  */
 function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
-
   $entity_type = $variables['element']['#entity_type'];
   $bundle = $variables['element']['#bundle'];
-  $view_mode = $variables['element']['#view_mode'];
+  $view_mode = isset($variables['element']['#ds_view_mode']) ? $variables['element']['#ds_view_mode'] : $variables['element']['#view_mode'];
 
   /** @var $entity_display EntityDisplayInterface */
   $entity_display = Ds::getDisplay($entity_type, $bundle, $view_mode);
