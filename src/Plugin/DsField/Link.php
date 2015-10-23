@@ -28,7 +28,7 @@ abstract class Link extends Field {
       '#type' => 'textfield',
       '#title' => 'Link class',
       '#default_value' => $config['link class'],
-      'description' => t('Put a class on the link. Eg: btn btn-default'),
+      '#description' => t('Put a class on the link. Eg: btn btn-default'),
     );
     $form['wrapper'] = array(
       '#type' => 'textfield',
