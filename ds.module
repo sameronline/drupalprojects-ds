@@ -484,7 +484,6 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
       $layout_instance = \Drupal::service('plugin.manager.ds.field.layout')->createInstance($config['id']);
 
       // Either it uses the function.
-      $suggestions = array();
       $suggestions[] = 'field__' . $layout_instance->getThemeFunction();
 
       // Or the template file(s).
@@ -493,14 +492,12 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
     // Check if we have a default field template on field level.
     elseif ($field instanceof FieldConfigInterface && ($theme_function = $field->getThirdPartySetting('ds', 'ds_field_template', '')) && !empty($theme_function)) {
       // Either it uses the function.
-      $suggestions = array();
       $suggestions[] = 'field__theme_ds_field_' . $theme_function;
 
       // Or the template file(s).
       $suggestion = 'field__' . $theme_function;
     }
     elseif (!empty($field_theme_function)) {
-      $suggestions = array();
       $suggestions[] = 'field__theme_ds_field_' . $field_theme_function;
 
       // Or the template file(s).
