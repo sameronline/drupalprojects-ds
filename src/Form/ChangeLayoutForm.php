@@ -166,7 +166,7 @@ class ChangeLayoutForm extends FormBase {
     if (!empty($new_layout['library'])) {
       $third_party_settings['layout']['library'] = $new_layout['library'];
     }
-    $third_party_settings['layout']['path'] = drupal_get_path('module', $new_layout['provider']);
+    $third_party_settings['layout']['path'] = $new_layout['path'];
     unset($third_party_settings['regions']);
 
     // map old regions to new ones

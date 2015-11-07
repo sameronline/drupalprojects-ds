@@ -277,7 +277,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   $record = array();
   $record['layout'] = array(
     'id' => $layout,
-    'path' =>  !empty($layout) ? drupal_get_path('module', $ds_layouts[$layout]['provider']) : '',
+    'path' =>  !empty($layout) ? $ds_layouts[$layout]['path'] : '',
     'library' => isset($ds_layouts[$layout]['library']) ? $ds_layouts[$layout]['library'] : FALSE,
     'disable_css' => $disable_css ? TRUE : FALSE,
   );
@@ -632,8 +632,8 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
     $optgroup = 'Display Suite';
 
     // Create new layout option group.
-    if (!empty($layout['module'])) {
-      $optgroup = Unicode::ucfirst($layout['module']);
+    if (!empty($layout['provider'])) {
+      $optgroup = Unicode::ucfirst($layout['provider']);
     }
 
     if (!isset($layout_options[$optgroup])) {
@@ -930,7 +930,7 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
   if (!empty($layout_string)) {
     $chosen_layout = $ds_layouts[$layout_string];
     $selected = '<strong>' . $chosen_layout['label'] . '</strong>';
-    $selected .= '<br/>' . t('The default template can be found in %path', array('%path' => drupal_get_path('module', $chosen_layout['provider']) . '/templates'));
+    $selected .= '<br/>' . t('The default template can be found in %path', array('%path' => $chosen_layout['template_path']));
     $suggestions_array = array();
     $suggestions_array[0] = $layout_string . '--' . $entity_type;
     $suggestions_array[2] = $layout_string . '--' . $entity_type . '-' . $bundle;
