@@ -186,7 +186,7 @@ class EmergencyForm extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return array(
-      'ds.extras'
+      'ds_extras.settings'
     );
   }
 
