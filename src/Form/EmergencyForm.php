@@ -93,7 +93,7 @@ class EmergencyForm extends ConfigFormBase {
     );
 
     if ($this->moduleHandler->moduleExists('ds_extras')) {
-      $region_blocks = $this->config('ds.extras')->get('region_blocks');
+      $region_blocks = $this->config('ds_extras.settings')->get('region_blocks');
       if (!empty($region_blocks)) {
 
         $region_blocks_options = array();
@@ -145,7 +145,7 @@ class EmergencyForm extends ConfigFormBase {
   public function submitRegionToBlock(array &$form, FormStateInterface $form_state) {
     if ($form_state->getValue('remove_block_region')) {
       $save = FALSE;
-      $region_blocks = $this->config('ds.extras')->get('region_blocks');
+      $region_blocks = $this->config('ds_extras.settings')->get('region_blocks');
       $remove = $form_state->getValue('remove_block_region');
       foreach ($remove as $key => $value) {
         if ($value !== 0 && $key == $value) {
@@ -173,7 +173,7 @@ class EmergencyForm extends ConfigFormBase {
         \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
         \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
-        $this->config('ds.extras')->set('region_blocks', $region_blocks)->save();
+        $this->config('ds_extras.settings')->set('region_blocks', $region_blocks)->save();
       }
     }
     else {

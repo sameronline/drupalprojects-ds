@@ -28,7 +28,7 @@ class EntitiesTest extends FastTestBase {
       ->save();
 
     // Enable switch view mode
-    \Drupal::configFactory()->getEditable('ds.extras')
+    \Drupal::configFactory()->getEditable('ds_extras.settings')
       ->set('switch_view_mode', TRUE)
       ->save();
 

@@ -18,7 +18,7 @@ use Drupal\Core\Entity\Display\EntityDisplayInterface;
  * Implements hook_ds_layout_info_alter().
  */
 function ds_extras_ds_layout_info_alter(&$layouts) {
-  if (\Drupal::config('ds.extras')->get('hidden_region')) {
+  if (\Drupal::config('ds_extras.settings')->get('hidden_region')) {
     foreach ($layouts as $key => $layout) {
       $layouts[$key]['regions']['ds_hidden'] = t('Hidden');
     }
@@ -37,7 +37,7 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
     'ds_layout_region_alter',
     'entity_view_alter',
   );
-  if (!\Drupal::config('ds.extras')->get('region_to_block') && in_array($hook, $region_hooks)) {
+  if (!\Drupal::config('ds_extras.settings')->get('region_to_block') && in_array($hook, $region_hooks)) {
     unset($implementations['ds_extras']);
   }
 
@@ -45,7 +45,7 @@ function ds_extras_module_implements_alter(&$implementations, $hook) {
   $extra_fields_hooks = array(
     'field_extra_fields',
   );
-  if (!\Drupal::config('ds.extras')->get('fields_extra') && in_array($hook, $extra_fields_hooks)) {
+  if (!\Drupal::config('ds_extras.settings')->get('fields_extra') && in_array($hook, $extra_fields_hooks)) {
     unset($implementations['ds_extras']);
   }
 }
@@ -93,7 +93,7 @@ function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityDis
   $view_mode = $display->getMode();
 
   $block_data = &drupal_static('ds_block_region');
-  $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
+  $region_blocks = \Drupal::config('ds_extras.settings')->get('region_blocks');
 
   if (empty($region_blocks) || empty($build)) {
     return;
@@ -126,7 +126,7 @@ function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityDis
  * Implements hook_entity_view_mode_alter().
  */
 function ds_extras_entity_view_mode_alter(&$view_mode, Drupal\Core\Entity\EntityInterface $entity, $context) {
-  if (\Drupal::config('ds.extras')->get('switch_view_mode') && $entity->getEntityTypeId() == 'node' && node_is_page($entity) && !empty($entity->ds_switch->value)) {
+  if (\Drupal::config('ds_extras.settings')->get('switch_view_mode') && $entity->getEntityTypeId() == 'node' && node_is_page($entity) && !empty($entity->ds_switch->value)) {
     $view_mode = $entity->ds_switch->value;
   }
 }
@@ -140,7 +140,7 @@ function ds_extras_form_node_form_alter(&$form, FormStateInterface $form_state) 
   // Switch full view mode.
   $node = $form_state->getFormObject()->getEntity();
 
-  if (\Drupal::config('ds.extras')->get('switch_view_mode') && \Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
+  if (\Drupal::config('ds_extras.settings')->get('switch_view_mode') && \Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
     // Get the view modes.
     $ds_vm = \Drupal::entityManager()->getViewModes('node');
     $layouts = array();
@@ -231,7 +231,7 @@ function ds_extras_entity_base_field_info(EntityTypeInterface $entity_type) {
   // Add the switch field as a base field.
   $fields = array();
 
-  if (\Drupal::config('ds.extras')->get('switch_view_mode') && $entity_type->id() == 'node') {
+  if ($entity_type->id() == 'node') {
     $fields['ds_switch'] = BaseFieldDefinition::create('string')
       ->setLabel(t('DS switch'))
       ->setName('ds_switch')
@@ -249,7 +249,7 @@ function ds_extras_entity_base_field_info(EntityTypeInterface $entity_type) {
  */
 function ds_extras_ds_layout_region_alter($context, &$region_info) {
 
-  $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
+  $region_blocks = \Drupal::config('ds_extras.settings')->get('region_blocks');
 
   // Bail out if region_blocks is empty or we are working on default view mode.
   if (empty($region_blocks) || $context['view_mode'] == 'default') {
@@ -279,8 +279,8 @@ function ds_extras_ds_layout_region_alter($context, &$region_info) {
 function ds_extras_entity_extra_field_info() {
   $extra = array();
 
-  if (\Drupal::config('ds.extras')->get('fields_extra')) {
-    $fields = \Drupal::config('ds.extras')->get('fields_extra_list');
+  if (\Drupal::config('ds_extras.settings')->get('fields_extra')) {
+    $fields = \Drupal::config('ds_extras.settings')->get('fields_extra_list');
     if (empty($fields)) {
       return $extra;
     }

@@ -23,7 +23,7 @@ class LayoutClassesTest extends FastTestBase {
     parent::setup();
 
     // Set extra fields
-    \Drupal::configFactory()->getEditable('ds.extras')
+    \Drupal::configFactory()->getEditable('ds_extras.settings')
       ->set('region_to_block', TRUE)
       ->set('fields_extra', TRUE)
       ->set('fields_extra_list', array('node|article|ds_extras_extra_test_field', 'node|article|ds_extras_second_field'))

@@ -4,6 +4,7 @@
  * Display Suite Extras administrative functions.
  */
 
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -11,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
  */
 function ds_extras_settings_alter(&$form, FormStateInterface $form_state) {
 
-  $config = \Drupal::configFactory()->getEditable('ds.extras');
+  $config = \Drupal::configFactory()->getEditable('ds_extras.settings');
 
   $form['fs2'] = array(
     '#type' => 'details',
@@ -122,7 +123,7 @@ function ds_extras_settings_submit($form, FormStateInterface $form_state) {
     $extra_fields = explode("\n", str_replace("\r", '', $values['fs2']['fields_extra_list']));
   }
 
-  $config = \Drupal::configFactory()->getEditable('ds.extras')
+  $config = \Drupal::configFactory()->getEditable('ds_extras.settings')
     ->set('fields_extra', $values['fs2']['fields_extra'])
     ->set('fields_extra_list', $extra_fields)
     ->set('switch_view_mode', $values['fs3']['switch_view_mode'])
@@ -147,7 +148,7 @@ function ds_extras_field_ui_alter(&$form, FormStateInterface $form_state) {
   // Region to block only fires if there is a layout and we're working on the
   // a view mode which is not equal to default.
   $mode = $form_state->getFormObject()->getEntity()->getMode();
-  if (isset($form['#ds_layout']) && $mode != 'default' && \Drupal::config('ds.extras')->get('region_to_block')) {
+  if (isset($form['#ds_layout']) && $mode != 'default' && \Drupal::config('ds_extras.settings')->get('region_to_block')) {
 
     // Get the entity_type, bundle and view mode.
     $entity_type = $form['#entity_type'];
@@ -155,7 +156,7 @@ function ds_extras_field_ui_alter(&$form, FormStateInterface $form_state) {
     $view_mode = $mode;
 
     $region_blocks_options = array();
-    $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
+    $region_blocks = \Drupal::config('ds_extras.settings')->get('region_blocks');
 
     if (!empty($region_blocks)) {
       foreach ($region_blocks as $key => $block) {
@@ -231,17 +232,17 @@ function ds_extras_block_submit($form, FormStateInterface $form_state) {
     );
 
     $block_key = $form_state->getValue('new_block_region_key');
-    $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
+    $region_blocks = \Drupal::config('ds_extras.settings')->get('region_blocks');
     if (empty($region_blocks)) {
       $region_blocks = array();
     }
     $region_blocks[$block_key] = $block;
-    \Drupal::configFactory()->getEditable('ds.extras')->set('region_blocks', $region_blocks)->save();
+    \Drupal::configFactory()->getEditable('ds_extras.settings')->set('region_blocks', $region_blocks)->save();
   }
 
   // Remove a region.
   if ($form_state->hasValue('remove_block_region')) {
-    $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
+    $region_blocks = \Drupal::config('ds_extras.settings')->get('region_blocks');
     $region_removal_status = $form_state->getValue('remove_block_region');
 
     foreach ($region_removal_status as $key => $value) {
@@ -266,7 +267,7 @@ function ds_extras_block_submit($form, FormStateInterface $form_state) {
     \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 
     // Remove the region from ds settings
-    \Drupal::configFactory()->getEditable('ds.extras')->set('region_blocks', $region_blocks)->save();
+    \Drupal::configFactory()->getEditable('ds_extras.settings')->set('region_blocks', $region_blocks)->save();
   }
 }
 
@@ -274,7 +275,7 @@ function ds_extras_block_submit($form, FormStateInterface $form_state) {
  * Return unique region to block.
  */
 function ds_extras_region_to_block_unique($name) {
-  $region_blocks = \Drupal::config('ds.extras')->get('region_blocks');
+  $region_blocks = \Drupal::config('ds_extras.settings')->get('region_blocks');
   if (empty($region_blocks)) {
     $region_blocks = array();
   }
