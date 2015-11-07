@@ -17,6 +17,13 @@ use Drupal\Component\Utility\Html;
 class EntitiesTest extends FastTestBase {
 
   /**
+   * Modules to install.
+   *
+   * @var array
+   */
+  public static $modules = array('node', 'field_ui', 'taxonomy', 'block', 'ds', 'ds_test', 'layout_plugin', 'ds_switch_view_mode');
+
+  /**
    * {@inheritdoc}
    */
   protected function setup() {
@@ -26,23 +33,6 @@ class EntitiesTest extends FastTestBase {
     \Drupal::configFactory()->getEditable('ds.settings')
       ->set('field_template', TRUE)
       ->save();
-
-    // Enable switch view mode
-    \Drupal::configFactory()->getEditable('ds_extras.settings')
-      ->set('switch_view_mode', TRUE)
-      ->save();
-
-    // Run update.php to add the ds_switch field.
-    $url = $GLOBALS['base_url'] . '/update.php';
-    $this->drupalGet($url, array('external' => TRUE));
-    $this->clickLink(t('Continue'));
-    $this->clickLink(t('Apply pending updates'));
-
-    // Turn off maintenance mode.
-    $edit = array(
-      'maintenance_mode' => FALSE,
-    );
-    $this->drupalPostForm('admin/config/development/maintenance', $edit, t('Save configuration'));
   }
 
   /**

@@ -26,9 +26,6 @@ ds_extras.settings:
       sequence:
         - type: string
           label: 'Extra field'
-    switch_view_mode:
-      type: boolean
-      label: 'Switch view mode on nodes'
     field_permissions:
       type: boolean
       label: 'Field permissions enabled'

@@ -46,13 +46,6 @@ function ds_extras_settings_alter(&$form, FormStateInterface $form_state) {
     '#tree' => TRUE,
   );
 
-  $form['fs3']['switch_view_mode'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('View mode per node'),
-    '#description' => t('Change view modes for individual nodes. A new tab \'Display settings\' will appear on the content create form. You should always run update.php after enabling/disabling this feature.'),
-    '#default_value' => $config->get('switch_view_mode'),
-  );
-
   $form['fs3']['field_permissions'] = array(
     '#type' => 'checkbox',
     '#title' => t('Field permissions'),
@@ -126,7 +119,6 @@ function ds_extras_settings_submit($form, FormStateInterface $form_state) {
   $config = \Drupal::configFactory()->getEditable('ds_extras.settings')
     ->set('fields_extra', $values['fs2']['fields_extra'])
     ->set('fields_extra_list', $extra_fields)
-    ->set('switch_view_mode', $values['fs3']['switch_view_mode'])
     ->set('field_permissions', $values['fs3']['field_permissions'])
     ->set('switch_field', $values['fs3']['switch_field'])
     ->set('hidden_region', $values['fs3']['hidden_region'])
