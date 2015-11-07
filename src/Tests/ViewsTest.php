@@ -119,7 +119,7 @@ class ViewsTest extends FastTestBase {
     // Get default teaser view.
     $this->drupalGet('ds-testing');
     foreach (array('group-left', 'group-right') as $region) {
-      $this->assertRaw($region, t('Region !region found', array('!region' => $region)));
+      $this->assertRaw($region, t('Region @region found', array('@region' => $region)));
     }
     $this->assertRaw('Article 1');
     $this->assertRaw('Article 2');
@@ -128,7 +128,7 @@ class ViewsTest extends FastTestBase {
     // Get alternating view.
     $this->drupalGet('ds-testing-2');
     foreach (array('group-left', 'group-right', 'first', 'second', 'third', 'fourth') as $region) {
-      $this->assertRaw($region, t('Region !region found', array('!region' => $region)));
+      $this->assertRaw($region, t('Region @region found', array('@region' => $region)));
     }
     $this->assertNoRaw('Article 1');
     $this->assertRaw('Article 2');
@@ -137,7 +137,7 @@ class ViewsTest extends FastTestBase {
     // Get grouping view (without changing header function).
     $this->drupalGet('ds-testing-3');
     foreach (array('group-left', 'group-right') as $region) {
-      $this->assertRaw($region, t('Region !region found', array('!region' => $region)));
+      $this->assertRaw($region, t('Region @region found', array('@region' => $region)));
     }
     $this->assertRaw('Article 1');
     $this->assertRaw('Article 2');
@@ -148,7 +148,7 @@ class ViewsTest extends FastTestBase {
     // Get grouping view (with changing header function).
     $this->drupalGet('ds-testing-4');
     foreach (array('group-left', 'group-right') as $region) {
-      $this->assertRaw($region, t('Region !region found', array('!region' => $region)));
+      $this->assertRaw($region, t('Region @region found', array('@region' => $region)));
     }
     $this->assertRaw('Article 1');
     $this->assertRaw('Article 2');

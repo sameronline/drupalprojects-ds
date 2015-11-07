@@ -56,7 +56,7 @@ class extrasPermissions implements ContainerInjectionInterface {
     if (\Drupal::config('ds.extras')->get('switch_view_mode')) {
       foreach (node_type_get_names() as $key => $name) {
         $permissions['ds_switch ' . $key] = array(
-          'title' => t('Switch view modes on :type', array(':type' => $name))
+          'title' => t('Switch view modes on @type', array('@type' => $name))
         );
       }
     }
@@ -69,7 +69,7 @@ class extrasPermissions implements ContainerInjectionInterface {
         $fields = Ds::getFields($entity_type);
         foreach ($fields as $key => $finfo) {
           $permissions['view ' . $key . ' on ' . $entity_type] = array(
-            'title' => t('View !field on !entity_type', array('!field' => $finfo['title'], '!entity_type' => $info->getLabel())),
+            'title' => t('View @field on @entity_type', array('@field' => $finfo['title'], '@entity_type' => $info->getLabel())),
           );
         }
       }

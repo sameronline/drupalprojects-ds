@@ -653,7 +653,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
   // Add layouts form.
   $form['ds_layouts'] = array(
     '#type' => 'details',
-    '#title' => t('Layout for !bundle in !view_mode', array('!bundle' => str_replace('_', ' ', $bundle), '!view_mode' => str_replace('_', ' ', $view_mode))),
+    '#title' => t('Layout for @bundle in @view_mode', array('@bundle' => str_replace('_', ' ', $bundle), '@view_mode' => str_replace('_', ' ', $view_mode))),
     '#collapsible' => TRUE,
     '#group' => 'additional_settings',
     '#collapsed' => FALSE,

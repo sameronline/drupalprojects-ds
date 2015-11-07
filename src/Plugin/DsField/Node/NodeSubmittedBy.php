@@ -43,7 +43,7 @@ class NodeSubmittedBy extends Date {
           '#account' => $account,
         );
         return array(
-          '#markup' => t('Submitted by !user on !date.', array('!user' => drupal_render($user_name), '!date' => format_date($this->entity()->created->value, $date_format))),
+          '#markup' => t('Submitted by @user on @date.', array('@user' => drupal_render($user_name), '@date' => format_date($this->entity()->created->value, $date_format))),
           '#cache' => array(
             'tags' => $account->getCacheTags()
           ),

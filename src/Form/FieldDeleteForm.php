@@ -61,7 +61,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return t('Are you sure you want to delete %field ?', array('%field' => $this->field['label']));
+    return t('Are you sure you want to delete @field ?', array('@field' => $this->field['label']));
   }
 
   /**
@@ -109,7 +109,7 @@ class FieldDeleteForm extends ConfirmFormBase implements ContainerInjectionInter
     // Redirect.
     $url = new Url('ds.fields_list');
     $form_state->setRedirectUrl($url);
-    drupal_set_message(t('The field %field has been deleted.', array('%field' => $field['label'])));
+    drupal_set_message(t('The field @field has been deleted.', array('@field' => $field['label'])));
   }
 
   /**
