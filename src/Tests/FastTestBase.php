@@ -137,4 +137,13 @@ abstract class FastTestBase extends WebTestBase {
       ->save();
   }
 
+  /**
+   * Check to see if two trimmed values are equal.
+   */
+  protected function assertTrimEqual($first, $second, $message = '', $group = 'Other') {
+    $first = (string) $first;
+    $second = (string) $second;
+
+    return $this->assertEqual(trim($first), trim($second), $message, $group);
+  }
 }

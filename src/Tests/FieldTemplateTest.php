@@ -82,45 +82,58 @@ class FieldTemplateTest extends FastTestBase {
       'fs1[ft-default]' => 'reset',
     );
     $this->drupalPostForm('admin/structure/ds/settings', $edit, t('Save configuration'));
+
+    // As long as we don't change anything in the UI, the default template will be used
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"group-right\">
-          <p>" . $body_field);
+    $xpath = $this->xpath('//div[@class="group-right"]');
+    $this->assertTrimEqual($xpath[0]->div->p, $body_field);
 
     $this->entitiesSetLabelClass('above', 'body');
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"group-right\">
-          <div class=\"field-label-above\">Body</div><p>" . $body_field);
+    $xpath = $this->xpath('//div[@class="group-right"]');
+    $this->assertTrimEqual($xpath[0]->p, $body_field);
+    $xpath = $this->xpath('//div[@class="group-right"]/div[@class="field-label-above"]');
+    $this->assertTrimEqual($xpath[0], 'Body');
 
     $this->entitiesSetLabelClass('inline', 'body');
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"group-right\">
-          <div class=\"field-label-inline\">Body</div><p>" . $body_field);
+    $xpath = $this->xpath('//div[@class="group-right"]');
+    $this->assertTrimEqual($xpath[0]->p, $body_field);
+    $xpath = $this->xpath('//div[@class="group-right"]/div[@class="field-label-inline"]');
+    $this->assertTrimEqual($xpath[0], 'Body');
 
     $this->entitiesSetLabelClass('above', 'body', 'My body');
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"group-right\">
-          <div class=\"field-label-above\">My body</div><p>" . $body_field);
+    $xpath = $this->xpath('//div[@class="group-right"]');
+    $this->assertTrimEqual($xpath[0]->p, $body_field);
+    $xpath = $this->xpath('//div[@class="group-right"]/div[@class="field-label-above"]');
+    $this->assertTrimEqual($xpath[0], 'My body');
 
     $this->entitiesSetLabelClass('inline', 'body', 'My body');
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"group-right\">
-          <div class=\"field-label-inline\">My body</div><p>" . $body_field);
+    $xpath = $this->xpath('//div[@class="group-right"]');
+    $this->assertTrimEqual($xpath[0]->p, $body_field);
+    $xpath = $this->xpath('//div[@class="group-right"]/div[@class="field-label-inline"]');
+    $this->assertTrimEqual($xpath[0], 'My body');
 
     $edit = array(
       'fs1[ft-show-colon]' => 'reset',
     );
     $this->drupalPostForm('admin/structure/ds/settings', $edit, t('Save configuration'));
+    // Clear node cache to get the colon
     $tags = $node->getCacheTags();
     Cache::invalidateTags($tags);
 
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"group-right\">
-          <div class=\"field-label-inline\">My body:</div><p>" . $body_field);
+    $xpath = $this->xpath('//div[@class="group-right"]');
+    $this->assertTrimEqual($xpath[0]->p, $body_field);
+    $xpath = $this->xpath('//div[@class="group-right"]/div[@class="field-label-inline"]');
+    $this->assertTrimEqual($xpath[0], 'My body:');
 
     $this->entitiesSetLabelClass('hidden', 'body');
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"group-right\">
-          <p>" . $body_field);
+    $xpath = $this->xpath('//div[@class="group-right"]');
+    $this->assertTrimEqual($xpath[0]->p, $body_field);
   }
 
   /**
