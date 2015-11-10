@@ -78,7 +78,7 @@ class EntitiesTest extends FastTestBase {
 
     // Switch view mode on full node page.
     $edit = array('ds_switch' => 'teaser');
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertRaw('view-mode-teaser', 'Switched to teaser mode');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
@@ -86,7 +86,7 @@ class EntitiesTest extends FastTestBase {
     $this->assertNoRaw('group-footer', 'Template found (no region footer)');
 
     $edit = array('ds_switch' => '');
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->assertRaw('view-mode-full', 'Switched to full mode again');
 
     // Test all options of a block field.
@@ -158,8 +158,11 @@ class EntitiesTest extends FastTestBase {
       'revision' => TRUE,
       'revision_log[0][value]' => 'Test revision',
     );
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
-    $this->assertText('Revisions');
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+
+    // Verify the revision is created
+    $this->drupalGet('node/' . $node->id() . '/revisions');
+    $this->assertText('Test revision');
 
     // Assert revision is using 2 col template.
     $this->drupalGet('node/' . $node->id() . '/revisions/1/view');
@@ -175,7 +178,7 @@ class EntitiesTest extends FastTestBase {
       'field_tags[0][target_id]' => 'Tag 1',
       'field_tags[1][target_id]' => 'Tag 2',
     );
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $edit = array(
       'fields[field_tags][region]' => 'right',
     );
@@ -199,7 +202,7 @@ class EntitiesTest extends FastTestBase {
     $edit = array(
       'title[0][value]' => 'Hi, I am an article <script>alert(\'with a javascript tag in the title\');</script>',
     );
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('<h2>Hi, I am an article &lt;script&gt;alert(&#039;with a javascript tag in the title&#039;);&lt;/script&gt;</h2>');
   }

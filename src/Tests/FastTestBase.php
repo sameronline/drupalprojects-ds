@@ -75,6 +75,8 @@ abstract class FastTestBase extends WebTestBase {
       'admin classes',
       'admin display suite',
       'admin fields',
+      'administer nodes',
+      'view all revisions',
       'administer content types',
       'administer node fields',
       'administer node form display',
@@ -100,8 +102,8 @@ abstract class FastTestBase extends WebTestBase {
     $this->fieldName = 'field_' . $this->fieldNameInput;
 
     // Create Article node type.
-    $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article'));
-    $this->drupalCreateContentType(array('type' => 'page', 'name' => 'Page'));
+    $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article', 'revision' => TRUE));
+    $this->drupalCreateContentType(array('type' => 'page', 'name' => 'Page', 'revision' => TRUE));
 
     // Create a vocabulary named "Tags".
     $this->vocabulary = Vocabulary::create(array(

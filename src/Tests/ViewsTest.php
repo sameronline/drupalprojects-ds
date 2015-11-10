@@ -64,21 +64,21 @@ class ViewsTest extends FastTestBase {
       'created' => REQUEST_TIME,
     );
     $node_1 = $this->drupalCreateNode($settings_1);
-    $this->drupalPostForm('node/' . $node_1->id() . '/edit', $edit_tag_1, t('Save'));
+    $this->drupalPostForm('node/' . $node_1->id() . '/edit', $edit_tag_1, t('Save and keep published'));
     $settings_2 = array(
       'type' => 'article',
       'title' => 'Article 2',
       'created' => REQUEST_TIME + 3600,
     );
     $node_2 = $this->drupalCreateNode($settings_2);
-    $this->drupalPostForm('node/' . $node_2->id() . '/edit', $edit_tag_1, t('Save'));
+    $this->drupalPostForm('node/' . $node_2->id() . '/edit', $edit_tag_1, t('Save and keep published'));
     $settings_3 = array(
       'type' => 'article',
       'title' => 'Article 3',
       'created' => REQUEST_TIME + 7200,
     );
     $node_3 = $this->drupalCreateNode($settings_3);
-    $this->drupalPostForm('node/' . $node_3->id() . '/edit', $edit_tag_2, t('Save'));
+    $this->drupalPostForm('node/' . $node_3->id() . '/edit', $edit_tag_2, t('Save and keep published'));
 
     // Configure teaser and full layout.
     $layout = array(
