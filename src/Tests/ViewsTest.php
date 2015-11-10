@@ -142,8 +142,8 @@ class ViewsTest extends FastTestBase {
     $this->assertRaw('Article 1');
     $this->assertRaw('Article 2');
     $this->assertRaw('Article 3');
-    $this->assertRaw('<h2 class="grouping-title">1</h2>');
-    $this->assertRaw('<h2 class="grouping-title">2</h2>');
+    $this->assertRaw('<h2 class="grouping-title">' . $tag1->id() . '</h2>');
+    $this->assertRaw('<h2 class="grouping-title">' . $tag2->id() . '</h2>');
 
     // Get grouping view (with changing header function).
     $this->drupalGet('ds-testing-4');
