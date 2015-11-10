@@ -170,6 +170,8 @@ class SettingsForm extends ConfigFormBase {
     $this->moduleHandler->resetImplementations();
     $this->themeRegistry->reset();
     $this->routeBuilder->setRebuildNeeded();
+
+    \Drupal::cache('render')->deleteAll();
   }
 
   /**

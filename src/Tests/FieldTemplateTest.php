@@ -204,10 +204,11 @@ class FieldTemplateTest extends FastTestBase {
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-el]' => 'div'
     );
     $this->dsEditFormatterSettings($edit);
+
     drupal_flush_all_caches();
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"group-right\">
-          <div><div><p>" . $body_field . "</p>");
+    $xpath = $this->xpath('//div[@class="group-right"]/div/div');
+    $this->assertTrimEqual($xpath[0]->p, $body_field);
 
     // With outer wrapper and field items div wrapper with class.
     $edit = array(
@@ -218,10 +219,9 @@ class FieldTemplateTest extends FastTestBase {
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-cl]' => 'fi-class'
     );
     $this->dsEditFormatterSettings($edit);
-    drupal_flush_all_caches();
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"group-right\">
-          <div><div class=\"fi-class\"><p>" . $body_field . "</p>");
+    $xpath = $this->xpath('//div[@class="group-right"]/div/div[@class="fi-class"]');
+    $this->assertTrimEqual($xpath[0]->p, $body_field);
 
     // With outer wrapper and field items span wrapper and class.
     $edit = array(
@@ -232,10 +232,9 @@ class FieldTemplateTest extends FastTestBase {
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-cl]' => 'fi-class'
     );
     $this->dsEditFormatterSettings($edit);
-    drupal_flush_all_caches();
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"group-right\">
-          <div><span class=\"fi-class\"><p>" . $body_field . "</p>");
+    $xpath = $this->xpath('//div[@class="group-right"]/div/span[@class="fi-class"]');
+    $this->assertTrimEqual($xpath[0]->p, $body_field);
 
     // With outer wrapper class and field items span wrapper and class.
     $edit = array(
@@ -247,10 +246,9 @@ class FieldTemplateTest extends FastTestBase {
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-cl]' => 'fi-class'
     );
     $this->dsEditFormatterSettings($edit);
-    drupal_flush_all_caches();
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"group-right\">
-          <div class=\"ow-class\"><span class=\"fi-class\"><p>" . $body_field . "</p>");
+    $xpath = $this->xpath('//div[@class="group-right"]/div[@class="ow-class"]/span[@class="fi-class"]');
+    $this->assertTrimEqual($xpath[0]->p, $body_field);
 
     // With outer wrapper span class and field items span wrapper and class.
     $edit = array(
