@@ -55,7 +55,7 @@ class EntitiesTest extends FastTestBase {
     $this->assertRaw('group-right', 'Template found (region right)');
     $this->assertRaw('<div class="field field--name-node-submitted-by field--type-ds field--label-hidden field__item">', 'Submitted by line found');
     $xpath = $this->xpath('//div[@class="field field--name-node-submitted-by field--type-ds field--label-hidden field__item"]');
-    $this->assertText('Submitted by ' . (string) $xpath[0]->a->span . ' on ' . \Drupal::service('date.formatter')->format($node->getCreatedTime(), 'custom', 'l, F d, Y - G:i') . '.', 'Submitted by line found');
+    $this->assertText('Submitted by ' . (string) $xpath[0]->a->span . ' on ' . \Drupal::service('date.formatter')->format($node->getCreatedTime(), 'custom', 'l, F d, Y - H:i') . '.', 'Submitted by line found');
 
     // Configure teaser layout.
     $teaser = array(
