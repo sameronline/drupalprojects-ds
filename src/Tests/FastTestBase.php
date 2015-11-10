@@ -11,6 +11,7 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\field\Tests\EntityReference\EntityReferenceTestTrait;
 use Drupal\field_ui\Tests\FieldUiTestTrait;
 use Drupal\simpletest\WebTestBase;
+use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\taxonomy\Tests\TaxonomyTestTrait;
 
@@ -31,7 +32,7 @@ abstract class FastTestBase extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('node', 'field_ui', 'taxonomy', 'block', 'ds', 'ds_test', 'layout_plugin');
+  public static $modules = array('node', 'field_ui', 'taxonomy', 'block', 'ds', 'ds_test', 'ds_switch_view_mode', 'layout_plugin');
 
   /**
    * The label for a random field to be created for testing.
@@ -88,7 +89,8 @@ abstract class FastTestBase extends WebTestBase {
       'administer software updates',
       'access site in maintenance mode',
       'administer site configuration',
-      'bypass node access'
+      'bypass node access',
+      'ds switch view mode'
     ));
     $this->drupalLogin($admin_user);
 
@@ -108,6 +110,20 @@ abstract class FastTestBase extends WebTestBase {
       'langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
     ));
     $this->vocabulary->save();
+
+    $term1 = Term::create(array(
+      'name' => 'Tag 1',
+      'vid' => 'tags',
+      'langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
+    ));
+    $term1->save();
+
+    $term2 = Term::create(array(
+      'name' => 'Tag 2',
+      'vid' => 'tags',
+      'langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
+    ));
+    $term2->save();
 
     $handler_settings = array(
       'target_bundles' => array(

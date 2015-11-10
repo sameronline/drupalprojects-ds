@@ -49,7 +49,7 @@ function ds_switch_view_mode_form_node_form_alter(&$form, FormStateInterface $fo
   /** @var Drupal\node\NodeInterface $node */
   $node = $form_state->getFormObject()->getEntity();
 
-  if (\Drupal::currentUser()->hasPermission('ds_switch ' . $node->bundle())) {
+  if (\Drupal::currentUser()->hasPermission('ds switch ' . $node->bundle()) || \Drupal::currentUser()->hasPermission('ds switch view mode')) {
     // Get the view modes.
     $ds_vm = \Drupal::entityManager()->getViewModes('node');
     $layouts = array();

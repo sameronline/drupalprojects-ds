@@ -46,12 +46,12 @@ class EntitiesTest extends FastTestBase {
     // Look at node and verify token and block field.
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('view-mode-full', 'Template file found (in full view mode)');
-    $this->assertRaw('<div class="field-item">' . $node->getTitle() . '</div>', t('Token field found'));
+    $this->assertPattern('/<div[^>]*>.*' . $node->getTitle() . '.*<\/div>/', t('Token field found'));
     $this->assertRaw('group-header', 'Template found (region header)');
     $this->assertRaw('group-footer', 'Template found (region footer)');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
-    $this->assertPattern('/<div[^>]*>Submitted[^<]*<a[^>]+href="' . preg_quote(base_path(), '/') . 'user\/' . $node->getOwnerId() . '"[^>]*>' . Html::escape($node->getOwner()->getUsername()) . '<\/a>.*<\/div>/', t('Submitted by line found'));
+    $this->assertPattern('/<div[^>]*>Submitted by.*' . Html::escape($node->getOwner()->getDisplayName()) . '.*<\/div>/', t('Submitted by line found'));
 
     // Configure teaser layout.
     $teaser = array(
@@ -74,7 +74,7 @@ class EntitiesTest extends FastTestBase {
 
     // Switch view mode on full node page.
     $edit = array('ds_switch' => 'teaser');
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
     $this->assertRaw('view-mode-teaser', 'Switched to teaser mode');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
@@ -82,7 +82,7 @@ class EntitiesTest extends FastTestBase {
     $this->assertNoRaw('group-footer', 'Template found (no region footer)');
 
     $edit = array('ds_switch' => '');
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
     $this->assertRaw('view-mode-full', 'Switched to full mode again');
 
     // Test all options of a block field.
@@ -154,7 +154,7 @@ class EntitiesTest extends FastTestBase {
       'revision' => TRUE,
       'revision_log[0][value]' => 'Test revision',
     );
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
     $this->assertText('Revisions');
 
     // Assert revision is using 2 col template.
@@ -168,9 +168,9 @@ class EntitiesTest extends FastTestBase {
     // Test formatter limit on article with tags.
     $edit = array(
       'ds_switch' => '',
-      'field_tags[target_id]' => 'Tag 1, Tag 2'
+      'field_tags[0][target_id]' => 'Tag 1, Tag 2'
     );
-    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save'));
     $edit = array(
       'fields[field_tags][region]' => 'right',
     );
