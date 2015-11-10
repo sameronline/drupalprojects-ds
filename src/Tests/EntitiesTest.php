@@ -46,12 +46,16 @@ class EntitiesTest extends FastTestBase {
     // Look at node and verify token and block field.
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('view-mode-full', 'Template file found (in full view mode)');
-    $this->assertPattern('/<div[^>]*>.*' . $node->getTitle() . '.*<\/div>/', t('Token field found'));
+    $this->assertRaw('<div class="field field--name-dynamic-token-fieldnode-token-field field--type-ds field--label-hidden field__item">', t('Token field found'));
+    $xpath = $this->xpath('//div[@class="field field--name-dynamic-token-fieldnode-token-field field--type-ds field--label-hidden field__item"]');
+    $this->assertEqual((string) $xpath[0]->p, $node->getTitle(), 'Token field content found');
     $this->assertRaw('group-header', 'Template found (region header)');
     $this->assertRaw('group-footer', 'Template found (region footer)');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
-    $this->assertPattern('/<div[^>]*>Submitted by.*' . Html::escape($node->getOwner()->getDisplayName()) . '.*<\/div>/', t('Submitted by line found'));
+    $this->assertRaw('<div class="field field--name-node-submitted-by field--type-ds field--label-hidden field__item">', 'Submitted by line found');
+    $xpath = $this->xpath('//div[@class="field field--name-node-submitted-by field--type-ds field--label-hidden field__item"]');
+    $this->assertText('Submitted by ' . (string) $xpath[0]->a->span . ' on ' . \Drupal::service('date.formatter')->format($node->getCreatedTime(), 'custom', 'l, F d, Y - G:i') . '.', 'Submitted by line found');
 
     // Configure teaser layout.
     $teaser = array(
@@ -98,7 +102,7 @@ class EntitiesTest extends FastTestBase {
     );
     $this->dsConfigureUI($fields);
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw('view-id-content_recent');
+    $this->assertRaw('field--name-dynamic-block-fieldnode-test-block-field');
 
     /*
     $block = array(
