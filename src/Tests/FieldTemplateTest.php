@@ -40,14 +40,12 @@ class FieldTemplateTest extends FastTestBase {
     // Default theming function.
     // -------------------------
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-hidden\">");
+    $this->assertRaw("<div class=\"clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item\">");
     $this->entitiesSetLabelClass('above', 'body');
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw("<div class=\"group-right\">
-          <div class=\"field field-node--body field-name-body field-type-text-with-summary field-label-above\">
-      <div class=\"field-label\">Body</div>
-    <div class=\"field-items\">
-          <div class=\"field-item\"><p>" . $body_field . "</p>");
+    $this->assertRaw("<div class=\"clearfix text-formatted field field--name-body field--type-text-with-summary field--label-above\">
+    <div class=\"field__label\">Body</div>
+              <div class=\"field__item\"><p>" . $body_field . "</p>");
 
     $this->entitiesSetLabelClass('above', 'body', 'My body');
     // @todo ==> WTF WHY DO WE NEED TO CLEAR THE CACHES HERE, AND WHY NOT FOR THE NEXT entitiesSetLabelClass()
