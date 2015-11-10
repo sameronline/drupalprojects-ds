@@ -67,8 +67,13 @@ function _ds_theme_registry_alter(&$theme_registry) {
   foreach ($layouts as $info) {
     $key = $info['theme'];
     // Only add preprocess functions if entity exposes theme function.
-    if (isset($theme_registry[$key])) {
-      $theme_registry[$key]['preprocess functions'][] = 'ds_preprocess_ds_layout';
+    foreach ($theme_registry as $theme_registry_item_key => $theme_registry_item) {
+      if (substr($theme_registry_item_key, 0, strlen($key)) == $key) {
+        if (function_exists('field_group_build_entity_groups')) {
+          $theme_registry[$theme_registry_item_key]['preprocess functions'][] = 'field_group_build_entity_groups';
+        }
+        $theme_registry[$theme_registry_item_key]['preprocess functions'][] = 'ds_preprocess_ds_layout';
+      }
     }
   }
 

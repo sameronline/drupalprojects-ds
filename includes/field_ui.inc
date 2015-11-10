@@ -1115,6 +1115,18 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
     $field_regions = $form['#ds_layout']['settings']['regions'];
   }
 
+  $callback_object = $form_state->getBuildInfo()['callback_object'];
+  $display = $callback_object->getEntity();
+  $parent_options = array();
+
+  if (function_exists('field_group_field_ui_form_params')) {
+    $field_group_params = field_group_field_ui_form_params($form, $display);
+    foreach ($field_group_params->groups as $name => $group) {
+      $parent_options[$name] = $group->label;
+    }
+    $parent_options['_add_new_group'] = t('Add new group');
+  }
+
   foreach ($fields as $key => $field) {
     $configuration = array(
       'field' => $field,
@@ -1208,7 +1220,8 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
         'parent' => array(
           '#type' => 'select',
           '#empty_value' => '',
-          '#options' => array(),
+          '#options' => $parent_options,
+          '#default_value' => isset($field_group_params->parents[$key]) ? $field_group_params->parents[$key] : '',
           '#attributes' => array('class' => array('field-parent')),
           '#parents' => array('fields', $key, 'parent'),
         ),
