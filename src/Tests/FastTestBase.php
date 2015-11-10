@@ -129,8 +129,10 @@ abstract class FastTestBase extends WebTestBase {
       'target_bundles' => array(
         $this->vocabulary->id() => $this->vocabulary->id(),
       ),
+      // Enable auto-create.
+      'auto_create' => TRUE,
     );
-    $this->createEntityReferenceField('node', 'article', 'field_' . $this->vocabulary->id(), 'Tags', 'taxonomy_term', 'default', $handler_settings);
+    $this->createEntityReferenceField('node', 'article', 'field_' . $this->vocabulary->id(), 'Tags', 'taxonomy_term', 'default', $handler_settings, 10);
 
     entity_get_form_display('node', 'article', 'default')
       ->setComponent('field_' . $this->vocabulary->id())
