@@ -15,8 +15,7 @@ use Drupal\Component\Utility\Html;
  * @DsFieldTemplate(
  *   id = "reset",
  *   title = @Translation("Full reset"),
- *   theme = "theme_ds_field_reset",
- *   path = "includes/theme.inc"
+ *   theme = "ds_field_reset",
  * )
  */
 class Reset extends DsFieldTemplateBase {

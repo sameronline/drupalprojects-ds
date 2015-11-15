@@ -16,8 +16,7 @@ use Drupal\Core\Entity\EntityInterface;
  * @DsFieldTemplate(
  *   id = "expert",
  *   title = @Translation("Expert"),
- *   theme = "theme_ds_field_expert",
- *   path = "includes/theme.inc"
+ *   theme = "ds_field_expert",
  * )
  */
 class Expert extends DsFieldTemplateBase {

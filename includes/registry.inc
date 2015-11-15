@@ -19,9 +19,9 @@ function _ds_theme() {
       if ($key != 'default') {
         $theme_functions['field__' . $plugin['theme']] = array(
           'render element' => 'elements',
-          'function' => $plugin['theme'],
+          'template' => strtr($plugin['theme'], '_', '-'),
           'base hook' => 'field',
-          'path' => drupal_get_path('module', $plugin['provider']),
+          'path' => drupal_get_path('module', $plugin['provider']) . '/templates',
         );
 
         if (!empty($plugin['path'])) {

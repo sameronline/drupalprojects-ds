@@ -13,6 +13,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FormatterInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\ds\Ds;
 use Drupal\ds\Plugin\DsFieldTemplate\DsFieldTemplateInterface;
@@ -671,4 +672,53 @@ function ds_hook_info() {
     'group' => 'ds',
   );
   return $hooks;
+}
+
+/**
+ * Implements template_preprocess_ds_field_reset().
+ */
+function template_preprocess_field__ds_field_reset(&$variables) {
+  $variables['show_colon'] = \Drupal::config('ds.settings')->get('ft-show-colon');
+}
+
+/**
+ * Implements template_preprocess_ds_field_minimal().
+ */
+function template_preprocess_field__ds_field_minimal(&$variables) {
+  $variables['settings'] = isset($variables['ds-config']['settings']) ? $variables['ds-config']['settings'] : [];
+}
+
+/**
+ * Implements template_preprocess_ds_field_expert().
+ */
+function template_preprocess_field__ds_field_expert(&$variables) {
+  $variables['settings'] = isset($variables['ds-config']['settings']) ? $variables['ds-config']['settings'] : [];
+
+  $vars = array(
+    'lbw' => 'label_attributes',
+    'ow' => 'wrapper_attributes',
+    'fis' => 'field_wrapper_attributes',
+    'fi' => 'field_item_wrapper_attributes',
+  );
+
+  foreach ($vars as $key => $variable_name) {
+    $var_attributes = array();
+
+    // Add classes
+    if (!empty($variables['settings'][$key . '-cl'])) {
+      $var_attributes['class'] = explode(' ', $variables['settings'][$key . '-cl']);
+    }
+    // Add attributes
+    if (!empty($variables['settings'][$key . '-at'])) {
+      $attributes = explode(' ', $variables['settings'][$key . '-at']);
+      foreach ($attributes as $key => $attribute) {
+        if (strpos($attribute, '=') !== FALSE) {
+          $attribute_parts = explode('=', $attribute);
+          $var_attributes[$attribute_parts[0]] = trim($attribute_parts[1], '\"');
+        }
+      }
+    }
+
+    $variables[$variable_name] = new Attribute($var_attributes);
+  }
 }
