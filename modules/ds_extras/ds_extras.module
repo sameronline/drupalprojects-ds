@@ -123,26 +123,6 @@ function ds_extras_entity_view_alter(&$build, EntityInterface $entity, EntityDis
 }
 
 /**
- * Implements hook_entity_base_field_info().
- */
-function ds_extras_entity_base_field_info(EntityTypeInterface $entity_type) {
-  // Add the switch field as a base field.
-  $fields = array();
-
-  if ($entity_type->id() == 'node') {
-    $fields['ds_switch'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('DS switch'))
-      ->setName('ds_switch')
-      ->setRevisionable(TRUE)
-      ->setDescription(t('Holds the DS view mode of the node.'))
-      ->setSetting('default_value', '')
-      ->setPropertyConstraints('value', array('Length' => array('max' => 60)));
-  }
-
-  return $fields;
-}
-
-/**
  * Implements hook_ds_layout_region_alter().
  */
 function ds_extras_ds_layout_region_alter($context, &$region_info) {
