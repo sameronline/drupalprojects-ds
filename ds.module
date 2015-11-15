@@ -289,7 +289,7 @@ function ds_preprocess_ds_layout(&$variables) {
       $context = array('entity' => isset($variables[$object]) ? $variables[$object] : (isset($variables['content']['#' . $object]) ? $variables['content']['#' . $object] : ''), 'entity_type' => $variables['content']['#entity_type'], 'bundle' => $variables['content']['#bundle'], 'view_mode' => $variables['content']['#view_mode']);
       \Drupal::moduleHandler()->alter('ds_pre_render', $layout_render_array, $context, $variables);
       foreach ($layout_render_array as $region_name => $content) {
-        $variables[$region_name] = drupal_render($content);
+        $variables[$region_name] = $content;
       }
     }
   }
