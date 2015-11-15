@@ -29,14 +29,6 @@ function ds_theme() {
 }
 
 /**
- * Implements hook_ds_layout_info().
- */
-function ds_ds_layout_info() {
-  module_load_include('inc', 'ds', 'includes/registry');
-  return _ds_ds_layout_info();
-}
-
-/**
  * Implements hook_theme_registry_alter().
  */
 function ds_theme_registry_alter(&$theme_registry) {
