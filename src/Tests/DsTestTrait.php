@@ -57,8 +57,8 @@ trait DsTestTrait {
   function dsSelectClasses($edit = array(), $url = 'admin/structure/types/manage/article/display') {
 
     $edit += array(
-      "header[]" => 'class_name_1',
-      "footer[]" => 'class_name_2',
+      "layout_configuration[ds_classes][header][]" => 'class_name_1',
+      "layout_configuration[ds_classes][footer][]" => 'class_name_2',
     );
 
     $this->drupalPostForm($url, $edit, t('Save'));

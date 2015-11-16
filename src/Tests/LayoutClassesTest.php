@@ -125,9 +125,9 @@ class LayoutClassesTest extends FastTestBase {
     $this->assertNoRaw('<footer class="group-right', 'Footer not found.');
     $this->assertNoRaw('<article', 'Article not found.');
     $wrappers = array(
-      'region_wrapper[header]' => 'header',
-      'region_wrapper[right]' => 'footer',
-      'region_wrapper[outer_wrapper]' => 'article',
+      'layout_configuration[region_wrapper][header]' => 'header',
+      'layout_configuration[region_wrapper][right]' => 'footer',
+      'layout_configuration[region_wrapper][outer_wrapper]' => 'article',
     );
     $this->dsConfigureUI($wrappers);
     $this->drupalGet('node/' . $node->id());
