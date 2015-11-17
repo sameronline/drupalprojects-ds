@@ -606,8 +606,8 @@ function ds_field_template_settings_form(array &$form, FormStateInterface &$form
     '#type' => 'select',
     '#options' => $functions,
     '#default_value' => $field_function,
-    '#ajax' => array(
     '#submit' => array('ds_field_ui_display_overview_multistep_submit'),
+    '#ajax' => array(
       'callback' => 'ds_field_ui_display_overview_multistep_js',
       'wrapper' => 'field-display-overview-wrapper',
     ),
