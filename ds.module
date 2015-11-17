@@ -766,3 +766,15 @@ function template_preprocess_field__ds_field_expert(&$variables) {
     $variables[$variable_name] = new Attribute($var_attributes);
   }
 }
+
+/**
+ * Implements hook_ds_field_operations_alter().
+ */
+function ds_ds_field_operations_alter(&$operations, $field) {
+  if ($field['type'] == 'block') {
+    $operations['config'] = array(
+      'title' => t('Configure block'),
+      'url' => new Url('ds.manage_block_field_config', array('field_key' => $field['id'])),
+    );
+  }
+}

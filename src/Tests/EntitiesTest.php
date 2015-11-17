@@ -7,8 +7,6 @@
 
 namespace Drupal\ds\Tests;
 
-use Drupal\Component\Utility\Html;
-
 /**
  * Tests for display of nodes and fields.
  *
@@ -103,24 +101,6 @@ class EntitiesTest extends FastTestBase {
     $this->dsConfigureUI($fields);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('field--name-dynamic-block-fieldnode-test-block-field');
-
-    /*
-    $block = array(
-      'block_render' => DS_BLOCK_TITLE_CONTENT,
-    );
-    $this->dsCreateBlockField($block, 'admin/structure/ds/fields/manage_block/test_block_field', FALSE);
-    $this->drupalGet('node/' . $node->id());
-    $this->assertNoRaw('<h2>Recent content</h2>');
-    $this->assertRaw('Recent content');
-
-    $block = array(
-      'block_render' => DS_BLOCK_CONTENT,
-    );
-    $this->dsCreateBlockField($block, 'admin/structure/ds/fields/manage_block/test_block_field', FALSE);
-    $this->drupalGet('node/' . $node->id());
-    $this->assertNoRaw('<h2>Recent content</h2>');
-    $this->assertNoRaw('Recent content');
-    */
 
     // Test revisions. Enable the revision view mode
     $edit = array(
