@@ -30,7 +30,7 @@ class Reset extends DsFieldTemplateBase {
       '#type' => 'textfield',
       '#title' => t('Label'),
       '#size' => '10',
-      '#default_value' => Html::escape($config['lb']),
+      '#default_value' => $config['lb'],
     );
   }
 
