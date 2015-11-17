@@ -13,7 +13,7 @@
  */
 #}
 
-{{ prefix }}
+{{ settings['prefix'] }}
 {% if settings.ow %}
   {% if settings['ow-def-at'] %}
     <{{ settings['ow-el'] }} {{ attributes }} {{ wrapper_attributes }}>
@@ -27,7 +27,7 @@
 {% else %}
   {{ _self.field(items, settings, label, content_attributes, field_item_wrapper_attributes, field_wrapper_attributes, label_attributes, label_hidden, element) }}
 {% endif %}
-{{ suffix }}
+{{ settings['suffix'] }}
 
 {% macro field(items, settings, label, content_attributes, field_item_wrapper_attributes, field_wrapper_attributes, label_attributes, label_hidden, element) %}
   {% if not label_hidden %}

@@ -469,4 +469,41 @@ class FieldTemplateTest extends FastTestBase {
     $xpath = $this->xpath('//div[@class="group-right"]');
     $this->assertTrimEqual($xpath[0], 'Testing field output through custom function');
   }
+
+  /**
+   * Tests XSS on field templates.
+   */
+  function testDSFieldTemplateXSS() {
+    // Get a node.
+    $node = $this->entitiesTestSetup('hidden');
+
+    $edit = array(
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][id]' => 'expert',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi]' => '1',
+    );
+    $this->dsEditFormatterSettings($edit);
+
+    // Inject XSS everywhere and see if it brakes
+    $edit = array(
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][prefix]' => '<script>alert("XSS")</script>',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][suffix]' => '<script>alert("XSS")</script>',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-el]' => '<script>alert("XSS")</script>',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-cl]' => '<script>alert("XSS")</script>',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-at]' => "name=\"<script>alert('XSS')</script>\"",
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-el]' => '<script>alert("XSS")</script>',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-cl]' => '<script>alert("XSS")</script>',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fis-at]' => "name=\"<script>alert('XSS')</script>\"",
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi]' => '1',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-el]' => '<script>alert("XSS")</script>',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-cl]' => '<script>alert("XSS")</script>',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][fi-at]' => "name=\"<script>alert('XSS')</script>\"",
+    );
+    $this->dsEditFormatterSettings($edit);
+    drupal_flush_all_caches();
+
+    $this->drupalGet('node/' . $node->id());
+    $this->assertNoRaw('<script>alert("XSS")</script>', 'Harmful tags are escaped when viewing a ds field template.');
+  }
 }

@@ -9,7 +9,6 @@ namespace Drupal\ds\Plugin\DsFieldTemplate;
 
 use Drupal\Component\Plugin\PluginBase as ComponentPluginBase;
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\Xss;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\ds\Ds;
 
@@ -17,13 +16,6 @@ use Drupal\ds\Ds;
  * Base class for all the ds plugins.
  */
 abstract class DsFieldTemplateBase extends ComponentPluginBase implements DsFieldTemplateInterface {
-
-  /**
-   * Enables default sanitizing on the output of the fields.
-   *
-   * @var bool
-   */
-  protected $sanitize = TRUE;
 
   /**
    * The entity used for token replacement.
@@ -109,19 +101,6 @@ abstract class DsFieldTemplateBase extends ComponentPluginBase implements DsFiel
       $classes = is_array($values['classes']) ? implode(' ', $values['classes']) : $values['classes'];
       if (!empty($classes)) {
         $field_settings['classes'] = $classes;
-      }
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function sanitizeRenderValues(&$field_settings) {
-    if (isset($this->sanitize) && $this->sanitize) {
-      foreach ($field_settings as &$setting) {
-        if (is_string($setting)) {
-          $setting = Xss::filterAdmin($setting);
-        }
       }
     }
   }

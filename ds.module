@@ -456,7 +456,6 @@ function ds_preprocess_field(&$variables) {
           $layout_instance->setEntity($variables['element']['#object']);
         }
         $layout_instance->massageRenderValues($variables['ds-config']['settings'], $config['settings']);
-        $layout_instance->sanitizeRenderValues($variables['ds-config']['settings']);
       }
     }
 
