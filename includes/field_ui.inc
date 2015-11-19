@@ -355,9 +355,8 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     $fields = _ds_sort_fields($form_state->getValue('fields'), 'weight');
 
     foreach ($fields as $key => $field) {
-
       // Make sure we need to save anything for this field.
-      if (_ds_field_valid($key, $field, $form_state, $view_mode)) {
+      if ($field['region'] == 'hidden') {
         continue;
       }
 
@@ -1274,34 +1273,6 @@ function ds_field_row_form_format_summary_construct(&$table, $key, FormStateInte
     '#prefix' => '<div class="field-plugin-settings-edit-wrapper">',
     '#suffix' => '</div>',
   );
-}
-
-/**
- * Utility function to check if we need to save anything for this field.
- */
-function _ds_field_valid($key, $field, FormStateInterface $form_state, $view_mode = 'default') {
-  $continue = FALSE;
-
-  // Ignore the Field group module and the region to block plugin.
-  if ($key == '_add_new_group' || $key == '_add_new_field' || $key == '_add_new_block_region') {
-    $continue = TRUE;
-  }
-
-  // If the field is in hidden region, do not save. Check if the
-  // field has a type key which means it's from Field API and
-  // we need to reset that type to 'hidden' so it doesn't get
-  // fired by Field API in the frontend.
-  $form_state_field_values = $form_state->getValue('fields');
-  if (isset($field['region']) && $field['region'] == 'hidden') {
-    if (isset($field['type'])) {
-      $form_state_field_values[$key]['type'] = 'hidden';
-    }
-
-    $continue = TRUE;
-  }
-  $form_state->setValue('fields', $form_state_field_values);
-
-  return $continue;
 }
 
 /**

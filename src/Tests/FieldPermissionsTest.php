@@ -39,7 +39,7 @@ class FieldPermissionsTest extends FastTestBase {
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('group-right', 'Template found (region right)');
-    $this->assertNoText('Test code field on node ' . $node->id(), 'Test code field not found');
+    $this->assertNoText('Test field plugin on node ' . $node->id(), 'Test code field not found');
 
     // Give permissions.
     $edit = array(
