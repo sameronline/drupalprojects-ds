@@ -105,11 +105,11 @@ class LayoutClassesTest extends FastTestBase {
 
     // Assert regions.
     $this->assertRaw('group-header', 'Template found (region header)');
-    $this->assertRaw('group-header class_name_1', 'Class found (class_name_1)');
+    $this->assertRaw('class_name_1 group-header', 'Class found (class_name_1)');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
     $this->assertRaw('group-footer', 'Template found (region footer)');
-    $this->assertRaw('group-footer class_name_2', 'Class found (class_name_2)');
+    $this->assertRaw('class_name_2 group-footer', 'Class found (class_name_2)');
 
     // Assert custom fields.
     $this->assertRaw('field--name-dynamic-token-fieldnode-test-field', t('Custom field found'));
@@ -121,7 +121,7 @@ class LayoutClassesTest extends FastTestBase {
     $this->assertText('This is an extra field made available through "Extra fields" functionality.');
 
     // Test HTML5 wrappers
-    $this->assertNoRaw('<header class="group-header', 'Header not found.');
+    $this->assertNoRaw('<header class="class_name_1 group-header', 'Header not found.');
     $this->assertNoRaw('<footer class="group-right', 'Footer not found.');
     $this->assertNoRaw('<article', 'Article not found.');
     $wrappers = array(
@@ -131,7 +131,7 @@ class LayoutClassesTest extends FastTestBase {
     );
     $this->dsConfigureUI($wrappers);
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw('<header class="group-header', 'Header found.');
+    $this->assertRaw('<header class="class_name_1 group-header', 'Header found.');
     $this->assertRaw('<footer class="group-right', 'Footer found.');
     $this->assertRaw('<article', 'Article found.');
 

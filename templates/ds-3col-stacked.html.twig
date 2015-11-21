@@ -4,56 +4,56 @@
  * Display Suite 3 column stacked template.
  *
  * Available variables:
- * - layout_wrapper: @todo
- * - header_wrapper: @todo
- * - left_wrapper: @todo
- * - middle_wrapper: @todo
- * - right_wrapper: @todo
- * - footer_Wrapper: @todo
- * - attributes: @todo
- * - header_classes: @todo
- * - left_classes: @todo
- * - middle_classes: @todo
- * - right_classes: @todo
- * - footer_classes: @todo
- * - header: @todo
- * - left: @todo
- * - middle: @todo
- * - right: @todo
- * - footer: @todo
+ * - outer_wrapper: outer wrapper element
+ * - header_wrapper: wrapper element around header region
+ * - left_wrapper: wrapper element around left region
+ * - middle_wrapper: wrapper element around middle region
+ * - right_wrapper: wrapper element around right region
+ * - footer_wrapper: wrapper element around footer region
+ * - attributes: layout attributes
+ * - header_attributes: attributes for header region
+ * - left_attributes: attributes for left region
+ * - middle_attributes: attributes for middle region
+ * - right_attributes: attributes for right region
+ * - footer_attributes: attributes for footer region
+ * - header: content of header region
+ * - left: content of left region
+ * - middle: content of middle region
+ * - right: content of right region
+ * - footer: content of footer region
  */
 #}
-<{{ outer_wrapper }} class="ds-3col-stacked {{ attributes.class }} clearfix" {{ attributes }}>
+<{{ outer_wrapper }}{{ attributes.addClass('ds-3col-stacked', 'clearfix') }}>
 
   {% if title_suffix.contextual_links is not null %}
     {{ title_suffix.contextual_links }}
   {% endif %}
 
-  <{{ header_wrapper }} class="group-header{{ header_classes }}">
+  <{{ header_wrapper }}{{ header_attributes.addClass('group-header') }}>
     {% if header is not null %}
       {{ header }}
     {% endif %}
   </{{ header_wrapper }}>
 
-  <{{ left_wrapper }} class="group-left{{ left_classes }}">
+  <{{ left_wrapper }}{{ left_attributes.addClass('group-left') }}>
     {% if left is not null %}
       {{ left }}
     {% endif %}
   </{{ left_wrapper }}>
 
-  <{{ middle_wrapper }} class="group-middle{{ middle_classes }}">
+  <{{ middle_wrapper }}{{ middle_attributes.addClass('group-middle') }}>
     {% if middle is not null %}
       {{ middle }}
     {% endif %}
   </{{ middle_wrapper }}>
 
-  <{{ right_wrapper }} class="group-right{{ right_classes }}">
+  <{{ right_wrapper }}{{ right_attributes.addClass('group-right') }}>
     {% if right is not null %}
       {{ right }}
     {% endif %}
   </{{ right_wrapper }}>
 
-  <{{ footer_wrapper }} class="group-footer{{ footer_classes }}">
+  <{{ footer_wrapper }}{{ footer_attributes.addClass('group-footer') }}>
     {% if footer is not null %}
       {{ footer }}
     {% endif %}

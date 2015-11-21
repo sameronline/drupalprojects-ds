@@ -4,12 +4,12 @@
  * Display Suite 1 column template.
  *
  * Available variables:
- * - ds_content_wrapper: @todo
- * - attributes: @todo
- * - ds_content: @todo
+ * - ds_content_wrapper: wrapper around content
+ * - attributes: content region attributes
+ * - ds_content: content region
  */
 #}
-<{{ ds_content_wrapper }} class="ds-1col {{ attributes.class }} clearfix" {{ attributes }} >
+<{{ ds_content_wrapper }}{{ attributes.addClass('ds-1col', 'clearfix') }}>
 
   {% if title_suffix.contextual_links is not null %}
     {{ title_suffix.contextual_links }}

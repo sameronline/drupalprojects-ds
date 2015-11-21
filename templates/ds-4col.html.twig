@@ -4,47 +4,47 @@
  * Display Suite 4 column template.
  *
  * Available variables:
- * - layout_wrapper: @todo
- * - first_wrapper: @todo
- * - second_wrapper: @todo
- * - third_wrapper: @todo
- * - fourth_wrapper: @todo
- * - attributes: @todo
- * - first_classes: @todo
- * - second_classes: @todo
- * - third_classes: @todo
- * - fourth_classes: @todo
- * - first: @todo
- * - second: @todo
- * - third: @todo
- * - fourth: @todo
+ * - outer_wrapper: outer wrapper element
+ * - first_wrapper: wrapper element around first region
+ * - second_wrapper: wrapper element around second region
+ * - third_wrapper: wrapper element around third region
+ * - fourth_wrapper: wrapper element around fourth region
+ * - attributes: layout attributes
+ * - first_attributes: attributes for first region
+ * - second_attributes: attributes for second region
+ * - third_attributes: attributes for third region
+ * - fourth_attributes: attributes for fourth region
+ * - first: content of first region
+ * - second: content of second region
+ * - third: content of third region
+ * - fourth: content of fourth region
  */
 #}
-<{{ outer_wrapper }} class="ds-4col {{ attributes.class }} clearfix" {{ attributes }}>
+<{{ outer_wrapper }} attributes.addClass('ds-4col', 'clearfix') }}>
 
   {% if title_suffix.contextual_links is not null %}
     {{ title_suffix.contextual_links }}
   {% endif %}
 
-  <{{ first_wrapper }} class="group-first{{ first_classes }}">
+  <{{ first_wrapper }}{{ first_attributes.addClass('group-first') }}>
     {% if first is not null %}
       {{ first }}
     {% endif %}
   </{{ first_wrapper }}>
 
-  <{{ second_wrapper }} class="group-second{{ second_classes }}">
+  <{{ second_wrapper }}{{ second_attributes.addClass('group-second') }}>
     {% if second is not null %}
       {{ second }}
     {% endif %}
   </{{ second_wrapper }}>
 
-  <{{ third_wrapper }} class="group-third{{ third_classes }}">
+  <{{ third_wrapper }}{{ third_attributes.addClass('group-third') }}>
     {% if third is not null %}
       {{ third }}
     {% endif %}
   </{{ third_wrapper }}>
 
-  <{{ fourth_wrapper }} class="group-fourth{{ fourth_classes }}">
+  <{{ fourth_wrapper }}{{ fourth_attributes.addClass('group-fourth') }}>
     {% if fourth is not null %}
       {{ fourth }}
     {% endif %}

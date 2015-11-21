@@ -4,38 +4,38 @@
  * Display Suite 3 column template.
  *
  * Available variables:
- * - layout_wrapper: @todo
- * - left_wrapper: @todo
- * - middle_wrapper: @todo
- * - right_wrapper: @todo
- * - attributes: @todo
- * - left_classes: @todo
- * - middle_classes: @todo
- * - right_classes: @todo
- * - left: @todo
- * - middle: @todo
- * - right: @todo
+ * - outer_wrapper: outer wrapper element
+ * - left_wrapper: wrapper element around left region
+ * - middle_wrapper: wrapper element around middle region
+ * - right_wrapper: wrapper element around right region
+ * - attributes: layout attributes
+ * - left_attributes: attributes for left region
+ * - middle_attributes: attributes for middle region
+ * - right_attributes: attributes for right region
+ * - left: content of left region
+ * - middle: content of middle region
+ * - right: content of right region
  */
 #}
-<{{ outer_wrapper }} class="ds-3col {{ attributes.class }} clearfix" {{ attributes }}>
+<{{ outer_wrapper }}{{ attributes.addClass('ds-3col', 'clearfix') }}>
 
   {% if title_suffix.contextual_links is not null %}
     {{ title_suffix.contextual_links }}
   {% endif %}
 
-  <{{ left_wrapper }} class="group-left{{ left_classes }}">
+  <{{ left_wrapper }}{{ left_attributes.addClass('group-left') }}>
     {% if left is not null %}
       {{ left }}
     {% endif %}
   </{{ left_wrapper }}>
 
-  <{{ middle_wrapper }} class="group-middle{{ middle_classes }}">
+  <{{ middle_wrapper }}{{ middle_attributes.addClass('group-middle') }}>
     {% if middle is not null %}
       {{ middle }}
     {% endif %}
   </{{ middle_wrapper }}>
 
-  <{{ right_wrapper }} class="group-right{{ right_classes }}">
+  <{{ right_wrapper }}{{ right_attributes.addClass('group-right') }}>
     {% if right is not null %}
       {{ right }}
     {% endif %}

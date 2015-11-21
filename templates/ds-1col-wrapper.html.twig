@@ -4,20 +4,20 @@
  * Display Suite 1 column wrapper template.
  *
  * Available variables:
- * - layout_wrapper: @todo
- * - ds_content_wrapper: @todo
- * - attributes: @todo
- * - ds_content_classes: @todo
- * - ds_content: @todo
+ * - outer_wrapper: outer wrapper element
+ * - ds_content_wrapper: wrapper around content
+ * - attributes: outer wrapper attributes
+ * - ds_content_attributes: attributes for ds_content region
+ * - ds_content: content of ds_content region
  */
 #}
-<{{ outer_wrapper }} class="ds-1col {{ attributes.class }} clearfix" {{ attributes }}>
+<{{ outer_wrapper }}{{ attributes.addClass('ds-1col', 'clearfix') }}>
 
   {% if title_suffix.contextual_links is not null %}
     {{ title_suffix.contextual_links }}
   {% endif %}
 
-  <{{ ds_content_wrapper }} class="{{ ds_content_classes }}">
+  <{{ ds_content_wrapper }}{{ ds_content_attributes }}">
     {% if ds_content is not null %}
       {{ ds_content }}
     {% endif %}
