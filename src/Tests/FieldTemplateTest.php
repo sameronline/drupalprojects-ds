@@ -506,4 +506,40 @@ class FieldTemplateTest extends FastTestBase {
     $this->drupalGet('node/' . $node->id());
     $this->assertNoRaw('<script>alert("XSS")</script>', 'Harmful tags are escaped when viewing a ds field template.');
   }
+
+  /**
+   * Tests multiple field items.
+   */
+  function testDSMultipleFieldItems() {
+    // Get a node.
+    $node = $this->entitiesTestSetup('hidden');
+
+    $edit = array(
+      'fields[field_tags][region]' => 'right',
+    );
+    $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display');
+
+    // Set expert field on
+    $edit = array(
+      'fields[field_tags][settings_edit_form][third_party_settings][ds][ft][id]' => 'expert',
+      'fields[field_tags][settings_edit_form][third_party_settings][ds][ft][settings][fis]' => '1',
+      'fields[field_tags][settings_edit_form][third_party_settings][ds][ft][settings][fis-cl]' => 'tags',
+      'fields[field_tags][settings_edit_form][third_party_settings][ds][ft][settings][fi]' => '1',
+      'fields[field_tags][settings_edit_form][third_party_settings][ds][ft][settings][fi-cl]' => 'tag',
+    );
+    $this->dsEditFormatterSettings($edit, 'field_tags');
+    drupal_flush_all_caches();
+
+    // Add multiple tags
+    $edit = array(
+      'field_tags[0][target_id]' => 'Tag 1',
+      'field_tags[1][target_id]' => 'Tag 2',
+    );
+    $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
+
+    // Count the found tags
+    $this->drupalGet('node/' . $node->id());
+    $xpath = $this->xpath('//div[@class="group-right"]/div[@class="tags"]/div[@class="tag"]');
+    $this->assertEqual(count($xpath), 2, '2 tags found');
+  }
 }
