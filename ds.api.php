@@ -89,7 +89,7 @@ function hook_ds_field_format_summary($field) {
  *   The form_state values.
  */
 function hook_ds_layout_settings_alter($record, $form_state) {
-  $record['settings']['hide_page_title'] = TRUE;
+  $record['layout']['settings']['classes'] = array('layout-class');
 }
 
 /**

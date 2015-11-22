@@ -315,9 +315,6 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   if ($new_layout && !empty($layout)) {
     $save_display = TRUE;
 
-    // Let other modules alter the layout settings.
-    \Drupal::moduleHandler()->alter('ds_layout_settings', $record, $form_state);
-
     // Move current visible fields into a default region, so
     // we keep their current settings.
     $layouts = Ds::getLayouts();
@@ -364,12 +361,6 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
         $record['regions'][$field['region']] = array();
       }
       $record['regions'][$field['region']][] = $key;
-
-      // Save limit.
-      $limit = isset($field['plugin']['limit']) ? trim($field['plugin']['limit']) : '';
-      if (is_numeric($limit) || $limit === 'delta') {
-        $record['settings']['limit'][$key] = $limit;
-      }
     }
 
     /** @var \Drupal\layout_plugin\Plugin\Layout\LayoutInterface $layout_plugin */
@@ -392,6 +383,9 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
 
   // Save the configuration.
   if ($save_display) {
+    // Let other modules alter the layout settings.
+    \Drupal::moduleHandler()->alter('ds_layout_settings', $record, $form_state);
+
     foreach (array_keys($record) as $key) {
       $display->setThirdPartySetting('ds', $key, $record[$key]);
     }
