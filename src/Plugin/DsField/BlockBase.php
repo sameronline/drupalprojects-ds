@@ -15,15 +15,18 @@ use Drupal\Core\Block\BlockPluginInterface;
 abstract class BlockBase extends DsFieldBase {
 
   /**
+   * The block.
+   *
+   * @var \Drupal\Core\Block\BlockPluginInterface
+   */
+  protected $block;
+
+  /**
    * {@inheritdoc}
    */
   public function build() {
-    $manager = \Drupal::service('plugin.manager.block');
-
-    // Create an instance of the block.
-    /** @var $block BlockPluginInterface */
-    $block_id = $this->blockPluginId();
-    $block = $manager->createInstance($block_id);
+    // Get block
+    $block = $this->getBlock();
 
     // Apply block config.
     $block_config = $this->blockConfig();
@@ -47,5 +50,23 @@ abstract class BlockBase extends DsFieldBase {
    */
   protected function blockConfig() {
     return array();
+  }
+
+  /**
+   * Return the block entity.
+   */
+  protected function getBlock() {
+    if (!$this->block) {
+      $manager = \Drupal::service('plugin.manager.block');
+
+      // Create an instance of the block.
+      /** @var $block BlockPluginInterface */
+      $block_id = $this->blockPluginId();
+      $block = $manager->createInstance($block_id);
+
+      $this->block = $block;
+    }
+
+    return $this->block;
   }
 }

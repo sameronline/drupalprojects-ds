@@ -52,10 +52,10 @@ class Ds {
    *   The name of the view mode.
    * @param $build
    *   The current built of the entity.
-   * @return $markup
-   *   The markup of the field used for output.
+   * @return \Drupal\ds\Plugin\DsField\DsFieldInterface
+   *   Field instance.
    */
-  public static function getFieldValue($key, $field, EntityInterface $entity, $view_mode, $display, $build = array()) {
+  public static function getFieldInstance($key, $field, EntityInterface $entity, $view_mode, $display, $build = array()) {
     $configuration = array(
       'field' => $field,
       'field_name' => $key,
@@ -65,6 +65,7 @@ class Ds {
     );
 
     // Load the plugin.
+    /** @var $field_instance \Drupal\ds\Plugin\DsField\DsFieldInterface */
     $field_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id'], $configuration);
 
     /** @var $display EntityDisplayInterface */
@@ -78,8 +79,7 @@ class Ds {
       $field_instance->setConfiguration($settings);
     }
 
-    // Render the field.
-    return $field_instance->build();
+    return $field_instance;
   }
 
   /**

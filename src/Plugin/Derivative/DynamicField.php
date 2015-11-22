@@ -28,7 +28,7 @@ abstract class DynamicField extends DeriverBase {
           $key = $this->getKey($entity_type, $field);
           $this->derivatives[$key] = $base_plugin_definition;
           $this->derivatives[$key] += array(
-            'title' => $field['label'],
+            'title' => \Drupal::translation()->translate($field['label']),
             'properties' => $field['properties'],
             'entity_type' => $entity_type,
           );

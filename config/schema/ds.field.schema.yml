@@ -50,6 +50,9 @@ ds.field.properties.block:
     block:
       type: string
       label: 'Block plugin ID'
+    use_block_title:
+      type: boolean
+      label: 'Use block title as label'
     config:
       type: block.settings.[%parent.block]
 

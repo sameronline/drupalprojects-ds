@@ -151,6 +151,13 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
   }
 
   /**
+   * Gets the title of the field.
+   */
+  public function getTitle() {
+    return $this->configuration['field']['title'];
+  }
+
+  /**
    * @inheritdoc
    */
   public function calculateDependencies() {

@@ -45,4 +45,9 @@ interface DsFieldInterface extends ConfigurablePluginInterface {
    */
   public function isAllowed();
 
+  /**
+   * Returns the title of the field.
+   */
+  public function getTitle();
+
 }
