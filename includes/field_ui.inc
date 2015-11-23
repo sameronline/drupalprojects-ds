@@ -804,7 +804,8 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
     $suggestions_array = array();
     $suggestions_array[0] = $layout_string . '--' . $entity_type;
     $suggestions_array[2] = $layout_string . '--' . $entity_type . '-' . $bundle;
-    if ($form_state->has('no_view_mode_suggestions') && $view_mode != 'default') {
+    $suggestions_array[4] = $layout_string . '--' . $entity_type . '--{id}';
+    if ($view_mode != 'default') {
       $suggestions_array[1] = $layout_string . '--' . $entity_type . '-' . $view_mode;
       $suggestions_array[3] = $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode;
     }
