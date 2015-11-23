@@ -21,24 +21,18 @@
 
 <{{ outer_wrapper }}{{ attributes.addClass(layout_class, 'ds-2col-fluid', 'clearfix') }}>
 
-  {% if title_suffix.contextual_links is not null %}
   {{ title_suffix.contextual_links }}
+
+  {% if left %}
+    <{{ left_wrapper }}{{ left_attributes.addClass('group-left') }}>
+      {{ left }}
+    </{{ left_wrapper }}>
   {% endif %}
 
-  <{{ left_wrapper }}{{ left_attributes.addClass('group-left') }}>
-  {% if left is not null %}
-  {{ left }}
+  {% if right %}
+    <{{ right_wrapper }}{{ right_attributes.addClass('group-right') }}>
+      {{ right }}
+    </{{ right_wrapper }}>
   {% endif %}
-  </{{ left_wrapper }}>
-
-  <{{ right_wrapper }}{{ right_attributes.addClass('group-right') }}>
-  {% if right is not null %}
-  {{ right }}
-  {% endif %}
-  </{{ right_wrapper }}>
 
 </{{ outer_wrapper }}>
-
-{% if drupal_render_children is not null %}
-{{ drupal_render_children }}
-{% endif %}

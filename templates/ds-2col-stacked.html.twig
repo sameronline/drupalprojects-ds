@@ -22,37 +22,22 @@
 #}
 <{{ outer_wrapper }}{{ attributes.addClass('ds-2col-stacked', 'clearfix') }}>
 
-  {% if title_suffix.contextual_links is not null %}
-    {{ title_suffix.contextual_links }}
-  {% endif %}
+  {{ title_suffix.contextual_links }}
 
   <{{ header_wrapper }}{{ header_attributes.addClass('group-header') }}>
-    {% if header is not null %}
-      {{ header }}
-    {% endif %}
+    {{ header }}
   </{{ header_wrapper }}>
 
   <{{ left_wrapper }}{{ left_attributes.addClass('group-left') }}>
-    {% if left is not null %}
-      {{ left }}
-    {% endif %}
+    {{ left }}
   </{{ left_wrapper }}>
 
   <{{ right_wrapper }}{{ right_attributes.addClass('group-right') }}>
-    {% if right is not null %}
-      {{ right }}
-    {% endif %}
+    {{ right }}
   </{{ right_wrapper }}>
 
   <{{ footer_wrapper }}{{ footer_attributes.addClass('group-footer') }}>
-    {% if footer is not null %}
-      {{ footer }}
-    {% endif %}
+    {{ footer }}
   </{{ footer_wrapper }}>
 
 </{{ outer_wrapper }}>
-
-{% if drupal_render_children is not null %}
-  {{ drupal_render_children }}
-{% endif %}
-

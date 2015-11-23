@@ -13,19 +13,10 @@
 #}
 <{{ outer_wrapper }}{{ attributes.addClass('ds-1col', 'clearfix') }}>
 
-  {% if title_suffix.contextual_links is not null %}
-    {{ title_suffix.contextual_links }}
-  {% endif %}
+  {{ title_suffix.contextual_links }}
 
   <{{ ds_content_wrapper }}{{ ds_content_attributes }}">
-    {% if ds_content is not null %}
-      {{ ds_content }}
-    {% endif %}
+    {{ ds_content }}
   </{{ ds_content_wrapper }}>
 
-
 </{{ outer_wrapper }}>
-
-{% if drupal_render_children is not null %}
-  {{ drupal_render_children }}
-{% endif %}
