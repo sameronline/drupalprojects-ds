@@ -115,8 +115,6 @@ class LayoutClassesTest extends FastTestBase {
     $this->assertRaw('field--name-dynamic-token-fieldnode-test-field', t('Custom field found'));
     $this->assertRaw('field--name-dynamic-block-fieldnode-test-block-field', t('Custom block field found'));
 
-    // @todo title isn't set, cause we are dealing with the block itself not the instance
-    //$this->assertRaw('Recent content</h2>', t('Custom block field found'));
     $this->assertRaw('Submitted by', t('Submitted field found'));
     $this->assertText('This is an extra field made available through "Extra fields" functionality.');
 

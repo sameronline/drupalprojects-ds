@@ -110,10 +110,6 @@ class Ds {
    * @return array|bool $layout
    */
   public static function getDisplay($entity_type, $bundle, $view_mode, $fallback = TRUE) {
-    $overridden = TRUE;
-
-    // @todo revise
-
     /** @var $entity_display EntityDisplayInterface */
     $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $view_mode);
     if ($entity_display) {
