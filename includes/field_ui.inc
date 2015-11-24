@@ -957,15 +957,6 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
   // Get the fields and put them on the form.
   $fields = Ds::getFields($entity_type);
 
-  // Ultimate alter on Field UI fields, only used for edge cases.
-  $context = array(
-    'entity_type' => $entity_type,
-    'bundle' => $bundle,
-    'view_mode' => $view_mode,
-  );
-
-  \Drupal::moduleHandler()->alter('ds_fields_ui', $fields, $context);
-
   // Get field settings.
   $field_settings = $form['#ds_layout']['fields'];
   $form['#field_settings'] = $field_settings;
@@ -979,12 +970,6 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
     'hidden' => t('- Hidden -'),
   );
   \Drupal::moduleHandler()->alter('ds_label_options', $field_label_options);
-
-  // Regions for fields.
-  $field_regions = array();
-  if (isset($form['#ds_layout']['settings']['regions'])) {
-    $field_regions = $form['#ds_layout']['settings']['regions'];
-  }
 
   $callback_object = $form_state->getBuildInfo()['callback_object'];
   $display = $callback_object->getEntity();

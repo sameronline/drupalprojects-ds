@@ -30,8 +30,8 @@ class DsFieldTemplatePluginManager extends DefaultPluginManager {
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
     parent::__construct('Plugin/DsFieldTemplate', $namespaces, $module_handler, 'Drupal\ds\Plugin\DsFieldTemplate\DsFieldTemplateInterface', 'Drupal\ds\Annotation\DsFieldTemplate');
 
-    $this->alterInfo('ds_field_layouts_info');
-    $this->setCacheBackend($cache_backend, 'ds_field_layouts_info');
+    $this->alterInfo('ds_field_templates_info');
+    $this->setCacheBackend($cache_backend, 'ds_field_templates_info');
   }
 
 }

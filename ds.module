@@ -103,7 +103,6 @@ function ds_module_implements_alter(&$implementations, $hook) {
   // Because it's possible to turn on/off field templates,
   // we'll unset hooks here so ds_preprocess_field() doesn't run.
   $ft_hooks = array(
-    'ds_field_settings_alter',
     'form_ds_classes_form_alter',
     'form_field_ui_field_edit_form_alter',
   );

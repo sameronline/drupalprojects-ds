@@ -22,46 +22,22 @@
  * @see \Drupal\views\Plugin\DsPluginManager
  */
 function hook_ds_fields_info_alter(&$plugins) {
-  if (isset($plugins['title'])) {
-    $plugins['title']['description'] = t('My title');
-  }
+  $plugins['node_title']['title'] = t('My title');
 }
 
 /**
- * Alter fields defined by Display Suite just before they get
- * rendered on the Field UI. Use this hook to inject fields
- * which you can't alter with hook_ds_fields_info_alter().
+ * Modify the list of available ds field template plugins.
  *
- * Use this in edge cases, see ds_extras_ds_fields_ui_alter()
- * which adds fields chosen in Views UI. This also runs
- * when a layout has been chosen.
+ * This hook may be used to modify plugin properties after they have been
+ * specified by other modules.
  *
- * @param $fields
- *   An array with fields which can be altered just before they get cached.
- * @param $entity_type
- *   The name of the entity type.
+ * @param array $plugins
+ *   An array of all the existing plugin definitions, passed by reference.
+ *
+ * @see \Drupal\views\Plugin\DsFieldTemplatePluginManager
  */
-function hook_ds_fields_ui_alter(&$fields, $context) {
-  $fields['title'] = t('Extra title');
-}
-
-/**
- * Define theme functions for fields.
- *
- * This only is necessary when you're using the field settings
- * plugin which comes with the DS extras module and you want to
- * expose a special field theming function to the interface.
- *
- * The theme function gets $variables as the only parameter.
- * The optional configuration through the UI is in $variables['ds-config'].
- *
- * Note that 'theme_ds_field_' is always needed, so the suggestions can work.
- *
- * @return $field_theme_functions
- *   A collection of field theming functions.
- */
-function hook_ds_field_theme_functions_info() {
-  return array('theme_ds_field_mine' => t('Theme field'));
+function hook_ds_field_templates_info_alter(&$plugins) {
+  $plugins['expert']['title'] = t('My template');
 }
 
 /**
@@ -90,20 +66,6 @@ function hook_ds_field_format_summary($field) {
  */
 function hook_ds_layout_settings_alter($record, $form_state) {
   $record['layout']['settings']['classes'] = array('layout-class');
-}
-
-/**
- * Modify the field settings before they get saved.
- *
- * @param $field_settings
- *   A collection of field settings which keys are fields.
- * @param $form
- *   The current form which is submitted.
- * @param $form_state
- *   The form state with all its values.
- */
-function hook_ds_field_settings_alter(&$field_settings, $form, $form_state) {
-  $field_settings['title']['region'] = 'left';
 }
 
 /**
