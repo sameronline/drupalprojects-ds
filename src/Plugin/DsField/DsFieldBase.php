@@ -100,14 +100,14 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
   }
 
   /**
-   * Gets the current entity.
+   * {@inheritdoc}
    */
   public function entity() {
     return $this->configuration['entity'];
   }
 
   /**
-   * Gets the current entity type.
+   * {@inheritdoc}
    */
   public function getEntityTypeId() {
     if (isset($this->configuration['entity_type'])) {
@@ -123,35 +123,35 @@ abstract class DsFieldBase extends ComponentPluginBase implements DsFieldInterfa
   }
 
   /**
-   * Gets the current bundle.
+   * {@inheritdoc}
    */
   public function bundle() {
     return $this->configuration['bundle'];
   }
 
   /**
-   * Gets the view mode
+   * {@inheritdoc}
    */
   public function viewMode() {
     return $this->configuration['view_mode'];
   }
 
   /**
-   * Gets the field configuration
+   * {@inheritdoc}
    */
   public function getFieldConfiguration() {
     return $this->configuration['field'];
   }
 
   /**
-   * Gets the field name
+   * {@inheritdoc}
    */
   public function getName() {
     return $this->configuration['field_name'];
   }
 
   /**
-   * Gets the title of the field.
+   * {@inheritdoc}
    */
   public function getTitle() {
     return $this->configuration['field']['title'];
