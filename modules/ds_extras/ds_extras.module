@@ -6,11 +6,11 @@
 
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Entity\Display\EntityDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\ds\Ds;
-use Drupal\Core\Entity\Display\EntityDisplayInterface;
 
 /**
  * Implements hook_layout_alter().
@@ -163,7 +163,7 @@ function ds_extras_block_submit($form, FormStateInterface $form_state) {
           $ids = \Drupal::entityQuery('block')
             ->condition('plugin', 'ds_region_block:' . $key)
             ->execute();
-          $block_storage = \Drupal::entityManager()->getStorage('block');
+          $block_storage = \Drupal::service('entity_type.manager')->getStorage('block');
           foreach ($block_storage->loadMultiple($ids) as $block) {
             $block->delete();
           }
@@ -268,7 +268,7 @@ function ds_extras_form_ds_admin_form_alter(&$form, FormStateInterface $form_sta
   );
 
   $options = array();
-  $view_modes = \Drupal::entityManager()->getViewModes('node');
+  $view_modes = \Drupal::service('entity_display.repository')->getViewModes('node');
   foreach ($view_modes as $key => $view_mode) {
     $options[$key] = $view_mode['label'];
   }

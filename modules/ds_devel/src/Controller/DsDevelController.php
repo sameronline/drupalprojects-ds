@@ -10,7 +10,6 @@ namespace Drupal\ds_devel\Controller;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
-use Drupal\node\Entity\Node;
 
 /**
  * Returns responses for Views UI routes.
@@ -38,7 +37,7 @@ class DsDevelController {
     $markup = \Drupal::service('renderer')->render($builded_entity);
 
     $links = array();
-    $active_view_modes = \Drupal::entityManager()->getViewModeOptionsByBundle($entity_type_id, $entity->bundle());
+    $active_view_modes = \Drupal::service('entity_display.repository')->getViewModeOptionsByBundle($entity_type_id, $entity->bundle());
     foreach ($active_view_modes as $id => $label) {
       $links[] = array(
         'title' => $label,

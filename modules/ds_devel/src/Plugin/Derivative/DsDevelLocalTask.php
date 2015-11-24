@@ -8,7 +8,7 @@
 namespace Drupal\ds_devel\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -24,20 +24,20 @@ class DsDevelLocalTask extends DeriverBase implements ContainerDeriverInterface 
   /**
    * The entity manager
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * Creates an DevelLocalTask object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The translation manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, TranslationInterface $string_translation) {
+    $this->entityTypeManager = $entity_type_manager;
     $this->stringTranslation = $string_translation;
   }
 
@@ -46,7 +46,7 @@ class DsDevelLocalTask extends DeriverBase implements ContainerDeriverInterface 
    */
   public static function create(ContainerInterface $container, $base_plugin_id) {
     return new static(
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('string_translation')
     );
   }
@@ -57,7 +57,7 @@ class DsDevelLocalTask extends DeriverBase implements ContainerDeriverInterface 
   public function getDerivativeDefinitions($base_plugin_definition) {
     $this->derivatives = array();
 
-    foreach ($this->entityManager->getDefinitions() as $entity_type_id => $entity_type) {
+    foreach ($this->entityTypeManager->getDefinitions() as $entity_type_id => $entity_type) {
       $has_markup_path = $entity_type->hasLinkTemplate('devel-markup');
       if ($has_markup_path) {
         $this->derivatives["$entity_type_id.devel_markup_tab"] = array(

@@ -85,7 +85,7 @@ class SwitchField extends DsFieldBase {
   public function settingsForm($form, FormStateInterface $form_state) {
     $entity_type = $this->getEntityTypeId();
     $bundle = $this->bundle();
-    $view_modes = \Drupal::entityManager()->getViewModes($entity_type);
+    $view_modes = \Drupal::service('entity_display.repository')->getViewModes($entity_type);
 
     $form['info'] = array(
       '#markup' => t('Enter a label for the link for the view modes you want to switch to.<br />Leave empty to hide link. They will be localized.'),
@@ -117,7 +117,7 @@ class SwitchField extends DsFieldBase {
     $entity_type = $this->getEntityTypeId();
     $bundle = $this->bundle();
     $settings = isset($settings['vms']) ? $settings['vms'] : array();
-    $view_modes = \Drupal::entityManager()->getViewModes($entity_type);
+    $view_modes = \Drupal::service('entity_display.repository')->getViewModes($entity_type);
 
     $summary[] = 'View mode labels';
 

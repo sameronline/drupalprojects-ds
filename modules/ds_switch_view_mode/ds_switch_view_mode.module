@@ -51,7 +51,7 @@ function ds_switch_view_mode_form_node_form_alter(&$form, FormStateInterface $fo
 
   if (\Drupal::currentUser()->hasPermission('ds switch ' . $node->bundle()) || \Drupal::currentUser()->hasPermission('ds switch view mode')) {
     // Get the view modes.
-    $ds_vm = \Drupal::entityManager()->getViewModes('node');
+    $ds_vm = \Drupal::service('entity_display.repository')->getViewModes('node');
     $layouts = array();
     $options = array('' => t('Default'));
     foreach ($ds_vm as $key => $item) {

@@ -31,7 +31,7 @@ class DsController extends ControllerBase {
     $build = array();
 
     // All entities.
-    $entity_info = $this->entityManager()->getDefinitions();
+    $entity_info = $this->entityTypeManager()->getDefinitions();
 
     // Move node to the top.
     if (isset($entity_info['node'])) {
@@ -58,7 +58,7 @@ class DsController extends ControllerBase {
       $base_table = $info->getBaseTable();
       if ($info->get('field_ui_base_route') && !empty($base_table)) {
         $rows = array();
-        $bundles = $this->entityManager()->getBundleInfo($entity_type);
+        $bundles = \Drupal::service('entity_type.bundle.info')->getBundleInfo($entity_type);
         foreach ($bundles as $bundle_type => $bundle) {
           $row = array();
           $operations = array();

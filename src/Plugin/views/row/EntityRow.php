@@ -121,7 +121,7 @@ class EntityRow extends ViewsEntityRow {
           '#title' => t('Item @nr', array('@nr' => $i)),
           '#type' => 'select',
           '#default_value' => (isset($this->options['alternating_fieldset']['item_' . $a])) ? $this->options['alternating_fieldset']['item_' . $a] : 'teaser',
-          '#options' => \Drupal::entityManager()->getViewModeOptions($this->entityTypeId),
+          '#options' => \Drupal::service('entity_display.repository')->getViewModeOptions($this->entityTypeId),
         ];
         $limit--;
         $a++;
@@ -209,7 +209,7 @@ class EntityRow extends ViewsEntityRow {
         $renderer = 'ConfigurableLanguageRenderer';
       }
       $class = '\Drupal\ds\Plugin\views\Entity\Render\\' . $renderer;
-      $entity_type = $this->getEntityManager()->getDefinition($this->getEntityTypeId());
+      $entity_type = \Drupal::service('entity_type.manager')->getDefinition($this->getEntityTypeId());
       $this->entityLanguageRenderer = new $class($view, $this->getLanguageManager(), $entity_type, $langcode);
     }
     return $this->entityLanguageRenderer;

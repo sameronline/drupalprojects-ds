@@ -29,7 +29,7 @@ class LayoutClassesTest extends FastTestBase {
       ->set('fields_extra_list', array('node|article|ds_extras_extra_test_field', 'node|article|ds_extras_second_field'))
       ->save();
 
-    \Drupal::entityManager()->clearCachedFieldDefinitions();
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
   }
 
   /**

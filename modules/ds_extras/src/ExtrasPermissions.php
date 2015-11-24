@@ -8,10 +8,10 @@
 namespace Drupal\ds_extras;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\ds\Ds;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides dynamic permissions of the ds extras module.
@@ -23,25 +23,25 @@ class extrasPermissions implements ContainerInjectionInterface {
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * Constructs a new FieldUiPermissions instance.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity.manager'));
+    return new static($container->get('entity_type.manager'));
   }
 
   /**
@@ -53,7 +53,7 @@ class extrasPermissions implements ContainerInjectionInterface {
     $permissions = [];
 
     if (\Drupal::config('ds_extras.settings')->get('field_permissions')) {
-      $entities = $this->entityManager->getDefinitions();
+      $entities = $this->entityTypeManager->getDefinitions();
       foreach ($entities as $entity_type => $info) {
         // @todo do this on all fields ?
         // @todo hide switch field if enabled

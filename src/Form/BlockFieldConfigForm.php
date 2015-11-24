@@ -7,10 +7,9 @@
 
 namespace Drupal\ds\Form;
 
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Block\BlockPluginInterface;
-use Drupal\Core\Url;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Configure block fields.

@@ -7,8 +7,6 @@
 
 namespace Drupal\ds\Plugin\DsFieldTemplate;
 
-use Drupal\Component\Utility\Html;
-
 /**
  * Plugin for the reset field template.
  *

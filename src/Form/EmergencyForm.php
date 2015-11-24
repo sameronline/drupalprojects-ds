@@ -7,9 +7,10 @@
 
 namespace Drupal\ds\Form;
 
-use Drupal\Core\Form\ConfigFormBase;
+use Drupal\block\BlockInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\State\State;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -154,7 +155,8 @@ class EmergencyForm extends ConfigFormBase {
             $ids = \Drupal::entityQuery('block')
               ->condition('plugin', 'ds_region_block:' . $key)
               ->execute();
-            $block_storage = \Drupal::entityManager()->getStorage('block');
+            /** @var BlockInterface $block_storage */
+            $block_storage = \Drupal::service('entity_type.manager')->getStorage('block');
             foreach ($block_storage->loadMultiple($ids) as $block) {
               $block->delete();
             }
@@ -167,7 +169,7 @@ class EmergencyForm extends ConfigFormBase {
       if ($save) {
         drupal_set_message(t('Block regions were removed.'));
 
-        // Clear cached block and ds plugin defintions
+        // Clear cached block and ds plugin definitions
         \Drupal::service('plugin.manager.block')->clearCachedDefinitions();
         \Drupal::service('plugin.manager.ds')->clearCachedDefinitions();
 

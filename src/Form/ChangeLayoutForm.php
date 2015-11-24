@@ -190,7 +190,7 @@ class ChangeLayoutForm extends FormBase {
     $entity_display->save();
 
     // Clear entity info cache.
-    \Drupal::entityManager()->clearCachedFieldDefinitions();
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
 
     // Show message.
     drupal_set_message(t('The layout change has been saved.'));

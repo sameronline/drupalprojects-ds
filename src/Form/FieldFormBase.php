@@ -9,11 +9,11 @@ namespace Drupal\ds\Form;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
-use Drupal\Core\Form\ConfigFormBase;
-use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
-use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -24,11 +24,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterface {
 
   /**
-   * Holds the entity manager
+   * Holds the entity type manager
    *
-   * @var \Drupal\Core\Entity\EntityManager
+   * @var \Drupal\Core\Entity\EntityTypeManager
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * Holds the cache invalidator
@@ -56,16 +56,16 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
    *
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
    *   The factory for configuration objects.
-   * @param \Drupal\Core\Entity\EntityManager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManager
+   *   The entity type manager.
    * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    *   The cache invalidator.
    * @param \Drupal\Core\Extension\ModuleHandler
    *   The module handler.
    */
-  public function __construct(ConfigFactory $config_factory, EntityManager $entity_manager, CacheTagsInvalidatorInterface $cache_invalidator, ModuleHandler $module_handler) {
+  public function __construct(ConfigFactory $config_factory, EntityTypeManagerInterface $entity_type_manager, CacheTagsInvalidatorInterface $cache_invalidator, ModuleHandler $module_handler) {
     parent::__construct($config_factory);
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
     $this->cacheInvalidator = $cache_invalidator;
     $this->moduleHandler = $module_handler;
   }
@@ -76,7 +76,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('cache_tags.invalidator'),
       $container->get('module_handler')
     );
@@ -128,7 +128,7 @@ class FieldFormBase extends ConfigFormBase implements ContainerInjectionInterfac
     );
 
     $entity_options = array();
-    $entities = $this->entityManager->getDefinitions();
+    $entities = $this->entityTypeManager->getDefinitions();
     foreach ($entities as $entity_type => $entity_info) {
       if ($entity_info->get('field_ui_base_route') || $entity_type == 'ds_views') {
         $entity_options[$entity_type] = Unicode::ucfirst(str_replace('_', ' ', $entity_type));

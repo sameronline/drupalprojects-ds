@@ -7,9 +7,9 @@
 
 namespace Drupal\ds_extras\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Drupal\Core\Routing\RoutingEvents;
 use Drupal\Core\Routing\RouteBuildEvent;
+use Drupal\Core\Routing\RoutingEvents;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Alter the node view route

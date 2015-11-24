@@ -6,10 +6,9 @@
  */
 
 use Drupal\Component\Utility\Unicode;
-use Drupal\Component\Utility\Xss;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\ds\Ds;
@@ -1127,7 +1126,7 @@ function _ds_field_ui_fields($entity_type, $bundle, $view_mode, &$form, FormStat
  *
  * @param $form
  *   A collection of form properties.
- * @param FormStateInterface form_state
+ * @param FormStateInterface $form_state
  *   A collection of form_state properties.
  */
 function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
@@ -1136,7 +1135,7 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
   $entity_display = $form_state->getFormObject()->getEntity();
 
   // Gather type information.
-  $instances = \Drupal::entityManager()->getFieldDefinitions($entity_type, $bundle);
+  $instances = \Drupal::service('entity_field.manager')->getFieldDefinitions($entity_type, $bundle);
   $table = &$form['fields'];
 
   // Get all persisted values for fields and plugin settings

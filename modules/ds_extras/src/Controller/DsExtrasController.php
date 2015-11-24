@@ -12,7 +12,7 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\Entity;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -59,7 +59,8 @@ class DsExtrasController extends ControllerBase {
    *   An array suitable for drupal_render().
    */
   public function revisionShow($node_revision) {
-    $node = $this->entityManager()->getStorage('node')->loadRevision($node_revision);
+    /** @var NodeInterface $node */
+    $node = $this->entityTypeManager()->getStorage('node')->loadRevision($node_revision);
 
     // Determine view mode.
     $view_mode = \Drupal::config('ds_extras.settings')->get('override_node_revision_view_mode');
