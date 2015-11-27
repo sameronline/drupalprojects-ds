@@ -774,6 +774,9 @@ function ds_field_ui_layouts_save($form, &$form_state) {
     if (isset($form_state['values']['additional_settings']['preview']['info']['settings']['disable_css'])) {
       $record->settings['layout_disable_css'] = $form_state['values']['additional_settings']['preview']['info']['settings']['disable_css'];
     }
+    else {
+      $record->settings['layout_disable_css'] = FALSE;
+    }
 
     $record->settings = $record->settings;
 
@@ -1939,9 +1942,6 @@ function _ds_field_ui_table_layouts_preview(&$form, &$form_state, $ds_layouts, $
         $disable_css = FALSE;
         if (isset($layout->settings['layout_disable_css'])) {
           $disable_css = $layout->settings['layout_disable_css'];
-        }
-        if (isset($form_state['values']) && $disable_css !== $form_state['values']['additional_settings']['ds_layouts']['preview']['info']['settings']['disable_css']) {
-          $disable_css = $form_state['values']['additional_settings']['ds_layouts']['preview']['info']['settings']['disable_css'];
         }
 
         $form['additional_settings']['ds_layouts']['preview']['info']['settings']['disable_css'] = array(
