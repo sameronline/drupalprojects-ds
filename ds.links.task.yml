@@ -23,21 +23,9 @@ ds.fields_task:
   title: Fields
   base_route: ds.display_task
   weight: 2
-entity.node.contextual_tab:
-  route_name: entity.node.contextual_tab
-  base_route: entity.node.canonical
-  title: 'Manage display'
-  weight: 10
-entity.taxonomy_term.contextual_tab:
-  route_name: entity.taxonomy_term.contextual_tab
-  base_route: entity.taxonomy_term.canonical
-  title: 'Manage display'
-  weight: 10
-entity.user.contextual_tab:
-  route_name: entity.user.contextual_tab
-  base_route: entity.user.canonical
-  title: 'Manage display'
-  weight: 10
+ds.entities:
+  class: \Drupal\Core\Menu\LocalTaskDefault
+  deriver: \Drupal\ds\Plugin\Derivative\DsLocalTask
 ds.manage_block_field_task:
   route_name: ds.manage_block_field
   title: Edit

@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\ds_devel\Routing\RouteSubscriber.
+ * Contains \Drupal\ds\Routing\RouteSubscriber.
  */
 
-namespace Drupal\ds_devel\Routing;
+namespace Drupal\ds\Routing;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteSubscriberBase;
@@ -40,29 +40,32 @@ class RouteSubscriber extends RouteSubscriberBase {
    */
   protected function alterRoutes(RouteCollection $collection) {
     foreach ($this->entityTypeManager->getDefinitions() as $entity_type_id => $entity_type) {
-      if ($entity_type->hasLinkTemplate('devel-markup')) {
-        $options = array(
-          '_admin_route' => TRUE,
-          '_devel_entity_type_id' => $entity_type_id,
-          'parameters' => array(
-            $entity_type_id => array(
-              'type' => 'entity:' . $entity_type_id,
-            ),
-          ),
-        );
+      $base_table = $entity_type->getBaseTable();
+      if ($entity_type->get('field_ui_base_route') && !empty($base_table)) {
 
-        if ($devel_render = $entity_type->getLinkTemplate('devel-markup')) {
+        if ($display = $entity_type->getLinkTemplate('display')) {
           $route = new Route(
-            $devel_render,
+            $display,
             array(
-              '_controller' => '\Drupal\ds_devel\Controller\DsDevelController::entityMarkup',
-              '_title' => 'Devel Render',
+              '_controller' => '\Drupal\ds\Controller\DsController::contextualTab',
+              '_title' => 'Manage display',
+              'entity_type_id' => $entity_type_id,
             ),
-            array('_permission' => 'access devel information'),
-            $options
+            array(
+              '_field_ui_view_mode_access' => 'administer ' . $entity_type_id . ' display'
+            ),
+            array(
+              '_admin_route' => TRUE,
+              '_ds_entity_type_id' => $entity_type_id,
+              'parameters' => array(
+                $entity_type_id => array(
+                  'type' => 'entity:' . $entity_type_id,
+                ),
+              ),
+            )
           );
 
-          $collection->add("entity.$entity_type_id.devel_markup", $route);
+          $collection->add("entity.$entity_type_id.display", $route);
         }
       }
     }

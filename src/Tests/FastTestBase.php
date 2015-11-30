@@ -14,6 +14,7 @@ use Drupal\simpletest\WebTestBase;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\taxonomy\Tests\TaxonomyTestTrait;
+use Drupal\user\Entity\User;
 
 /**
  * Base test for Display Suite.
@@ -32,7 +33,7 @@ abstract class FastTestBase extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('node', 'field_ui', 'rdf', 'quickedit', 'taxonomy', 'block', 'ds', 'ds_extras', 'ds_test', 'ds_switch_view_mode', 'layout_plugin');
+  public static $modules = array('node', 'user', 'field_ui', 'rdf', 'quickedit', 'taxonomy', 'block', 'ds', 'ds_extras', 'ds_test', 'ds_switch_view_mode', 'layout_plugin');
 
   /**
    * The label for a random field to be created for testing.
@@ -63,14 +64,22 @@ abstract class FastTestBase extends WebTestBase {
   protected $vocabulary;
 
   /**
+   * The created user
+   *
+   * @var User
+   */
+  protected $adminUser;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
     $this->drupalPlaceBlock('system_breadcrumb_block');
+    $this->drupalPlaceBlock('local_tasks_block');
 
     // Create a test user.
-    $admin_user = $this->drupalCreateUser(array(
+    $this->adminUser = $this->drupalCreateUser(array(
       'access content',
       'admin classes',
       'admin display suite',
@@ -94,7 +103,7 @@ abstract class FastTestBase extends WebTestBase {
       'bypass node access',
       'ds switch view mode'
     ));
-    $this->drupalLogin($admin_user);
+    $this->drupalLogin($this->adminUser);
 
     // Create random field name.
     $this->fieldLabel = $this->randomMachineName(8);

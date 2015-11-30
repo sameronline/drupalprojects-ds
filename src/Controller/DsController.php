@@ -9,8 +9,9 @@ namespace Drupal\ds\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\Entity;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\EntityDisplayBase;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\ds\Ds;
 use Drupal\field_ui\FieldUI;
@@ -119,33 +120,18 @@ class DsController extends ControllerBase {
   }
 
   /**
-   * Adds a contextual tabs to users
-   */
-  public function contextualUserTab(EntityInterface $user) {
-    return $this->contextualTab($user->getEntityTypeId(), $user->id());
-  }
-
-  /**
-   * Adds a contextual tabs to taxonomy terms
-   */
-  public function contextualTaxonomyTermTab(EntityInterface $taxonomy_term) {
-    return $this->contextualTab($taxonomy_term->getEntityTypeId(), $taxonomy_term->id());
-  }
-
-  /**
-   * Adds a contextual tabs to nodes
-   */
-  public function contextualNodeTab(EntityInterface $node) {
-    return $this->contextualTab($node->getEntityTypeId(), $node->id());
-  }
-
-  /**
    * Adds a contextual tab to entities.
+   *
+   * @param RouteMatchInterface $route_match
+   *
+   * @return RedirectResponse
    */
-  public function contextualTab($entity_type, $entity_id) {
-    /** @var $entity EntityInterface */
-    $entity = entity_load($entity_type, $entity_id);
-    $destination = $entity->urlInfo();
+  public function contextualTab(RouteMatchInterface $route_match) {
+    $parameter_name = $route_match->getRouteObject()->getOption('_ds_entity_type_id');
+    $entity = $route_match->getParameter($parameter_name);
+    $entity_type_id = $entity->getEntityTypeId();
+
+    $destination = $entity->toUrl();
 
     if (!empty($entity->ds_switch->value)) {
       $view_mode = $entity->ds_switch->value;
@@ -155,18 +141,18 @@ class DsController extends ControllerBase {
     }
 
     // Get the manage display URI.
-    $route = FieldUI::getOverviewRouteInfo($entity_type, $entity->bundle());
+    $route = FieldUI::getOverviewRouteInfo($entity_type_id, $entity->bundle());
 
     /** @var $entity_display EntityDisplayBase */
-    $entity_display = entity_get_display($entity_type, $entity->bundle(), $view_mode);
+    $entity_display = EntityViewDisplay::load($entity_type_id . '.' . $entity->bundle() . '.' . $view_mode);
 
     $route_parameters = $route->getRouteParameters();
-    if ($entity_display->getThirdPartySetting('ds', 'layout')) {
+    if ($entity_display && $entity_display->getThirdPartySetting('ds', 'layout')) {
       $route_parameters['view_mode_name'] = $view_mode;
-      $admin_route_name = "entity.entity_view_display.$entity_type.view_mode";
+      $admin_route_name = "entity.entity_view_display.$entity_type_id.view_mode";
     }
     else {
-      $admin_route_name = "entity.entity_view_display.$entity_type.default";
+      $admin_route_name = "entity.entity_view_display.$entity_type_id.default";
     }
     $route->setOption('query', array('destination' => $destination->toString()));
 

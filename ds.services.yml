@@ -5,7 +5,8 @@ services:
   plugin.manager.ds.field.layout:
     class: Drupal\ds\Plugin\DsFieldTemplatePluginManager
     parent: default_plugin_manager
-  access_check.ds.contextual_tab:
-    class: Drupal\ds\Access\ContextualTabAccessCheck
+  ds.route_subscriber:
+    class: Drupal\ds\Routing\RouteSubscriber
+    arguments: ['@entity.manager']
     tags:
-      - { name: access_check, applies_to: _access_ds_contextual_tab }
+      - { name: event_subscriber }

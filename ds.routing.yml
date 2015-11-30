@@ -108,25 +108,3 @@ ds.add_copy_field:
     _title: 'Add a copy of a Display Suite field'
   requirements:
     _permission: 'admin fields'
-
-entity.node.contextual_tab:
-  path: '/node/{node}/display'
-  defaults:
-    _controller: '\Drupal\ds\Controller\DsController::contextualNodeTab'
-  requirements:
-    _permission: 'administer content'
-    _access_ds_contextual_tab: 'TRUE'
-entity.user.contextual_tab:
-  path: '/user/{user}/display'
-  defaults:
-    _controller: '\Drupal\ds\Controller\DsController::contextualUserTab'
-  requirements:
-    _permission: 'administer users'
-    _access_ds_contextual_tab: 'TRUE'
-entity.taxonomy_term.contextual_tab:
-  path: '/taxonomy/term/{taxonomy_term}/display'
-  defaults:
-    _controller: '\Drupal\ds\Controller\DsController::contextualTaxonomyTermTab'
-  requirements:
-    _permission: 'administer taxonomy'
-    _access_ds_contextual_tab: 'TRUE'
