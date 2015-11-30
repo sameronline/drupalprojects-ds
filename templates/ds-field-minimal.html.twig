@@ -16,7 +16,7 @@
   set classes = [
     'field',
     'field-name-' ~ element['#field_name']|clean_class,
-  ]|merge(settings.classes|split(' '))
+  ]
 %}
 <div{{ attributes.addClass(classes) }}>
   {% if not label_hidden %}

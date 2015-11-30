@@ -81,7 +81,7 @@ abstract class DsFieldTemplateBase extends ComponentPluginBase implements DsFiel
     else {
       $form['classes'] = array(
         '#type' => 'value',
-        '#value' => array(''),
+        '#value' => array(),
       );
     }
   }
@@ -97,10 +97,7 @@ abstract class DsFieldTemplateBase extends ComponentPluginBase implements DsFiel
       $field_settings['lb-col'] = TRUE;
     }
     if (isset($values['classes'])) {
-      $classes = is_array($values['classes']) ? implode(' ', $values['classes']) : $values['classes'];
-      if (!empty($classes)) {
-        $field_settings['classes'] = $classes;
-      }
+      $field_settings['classes'] = $values['classes'];
     }
   }
 

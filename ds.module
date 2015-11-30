@@ -474,6 +474,13 @@ function ds_preprocess_field(&$variables) {
     // CSS classes
     if (isset($config['settings']['classes'])) {
       foreach ($config['settings']['classes'] as $class_name) {
+        if (isset($variables['element']['#object'])) {
+          $class_name = \Drupal::token()->replace(
+            $class_name,
+            array($entity_type => $variables['element']['#object']),
+            array('clear' => TRUE)
+          );
+        }
         $variables['attributes']['class'][] = $class_name;
       }
     }

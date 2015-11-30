@@ -542,4 +542,45 @@ class FieldTemplateTest extends FastTestBase {
     $xpath = $this->xpath('//div[@class="group-right"]/div[@class="tags"]/div[@class="tag"]');
     $this->assertEqual(count($xpath), 2, '2 tags found');
   }
+
+  /**
+   * Tests minimal template functionality
+   */
+  function testFieldTemplateMinimal() {
+    // Get a node.
+    $node = $this->entitiesTestSetup('hidden');
+    $body_field = $node->body->value;
+
+    $edit = array(
+      'fields[body][region]' => 'right',
+    );
+    $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display');
+
+    // Set minimal template on.
+    $edit = array(
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][id]' => 'minimal',
+    );
+    $this->dsEditFormatterSettings($edit, 'body');
+    drupal_flush_all_caches();
+
+    $this->drupalGet('node/' . $node->id());
+    $xpath = $this->xpath('//div[@class="group-right"]/div[@class="field field-name-body"]');
+    $this->assertTrimEqual($xpath[0]->p, $body_field);
+
+    // Choose field classes
+    $classes = array(
+      'test_field_class',
+      '[node:nid]'
+    );
+    $edit = array(
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][classes][]' => $classes,
+    );
+    $this->dsEditFormatterSettings($edit, 'body');
+    drupal_flush_all_caches();
+
+    $this->drupalGet('node/' . $node->id());
+    $classes = 'test_field_class ' . $node->id() . ' field field-name-body';
+    $xpath = $this->xpath('//div[@class="group-right"]/div[@class="' . $classes . '"]');
+    $this->assertTrimEqual($xpath[0]->p, $body_field);
+  }
 }

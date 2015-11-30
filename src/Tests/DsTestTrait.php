@@ -156,7 +156,7 @@ trait DsTestTrait {
     $node = $this->drupalCreateNode($settings);
 
     // Create field CSS classes.
-    $edit = array('fields' => "test_field_class\ntest_field_class_2|Field class 2");
+    $edit = array('fields' => "test_field_class\ntest_field_class_2|Field class 2\n[node:nid]");
     $this->drupalPostForm('admin/structure/ds/classes', $edit, t('Save configuration'));
 
     // Create a token field.
