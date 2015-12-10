@@ -164,7 +164,7 @@ class DsLayout extends LayoutBase {
         );
       }
       if ($classes_access) {
-        $url = \Drupal\Core\Url::fromRoute('ds.classes');
+        $url = Url::fromRoute('ds.classes');
         $destination = \Drupal::destination()->getAsArray();
         $url->setOption('query', $destination);
         $form['ds_classes']['info'] = array('#markup' => \Drupal::l(t('Manage region and field CSS classes'), $url));

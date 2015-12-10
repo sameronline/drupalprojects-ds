@@ -8,7 +8,6 @@
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Block\BlockPluginInterface;
-use Drupal\ds\Plugin\DsField\DsFieldBase;
 
 /**
  * Defines a generic dynamic block field.

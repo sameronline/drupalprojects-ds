@@ -7,8 +7,6 @@
 
 namespace Drupal\ds\Plugin\DsFieldTemplate;
 
-use Drupal\ds\Ds;
-
 /**
  * Plugin for the minimal field template.
  *

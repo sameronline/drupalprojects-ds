@@ -7,8 +7,6 @@
 
 namespace Drupal\ds\Plugin\DsField;
 
-use Drupal\ds\Plugin\DsField\DsFieldBase;
-
 /**
  * Defines a generic dynamic code field.
  *

@@ -8,7 +8,6 @@
 namespace Drupal\ds\Form;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\ds\Form\FieldFormBase;
 
 /**
  * Configure block fields.
