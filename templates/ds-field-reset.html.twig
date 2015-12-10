@@ -14,7 +14,7 @@
 #}
 {% if not label_hidden %}
   <div class="field-label-{{ element['#label_display']|clean_class }}">
-    {{ label }}{% if show_colon %}:{% endif %}
+    {{- label }}{% if show_colon %}:{% endif -%}
   </div>
 {% endif %}
 

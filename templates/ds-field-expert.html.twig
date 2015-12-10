@@ -13,7 +13,7 @@
  */
 #}
 
-{{ settings['prefix'] }}
+{{- settings['prefix'] -}}
 {% if settings.ow %}
   {% if settings['ow-def-at'] %}
     <{{ settings['ow-el'] }} {{ attributes }} {{ wrapper_attributes }}>
@@ -27,7 +27,7 @@
 {% else %}
   {{ _self.field(items, settings, label, content_attributes, field_item_wrapper_attributes, field_wrapper_attributes, label_attributes, label_hidden, element) }}
 {% endif %}
-{{ settings['suffix'] }}
+{{- settings['suffix'] -}}
 
 {% macro field(items, settings, label, content_attributes, field_item_wrapper_attributes, field_wrapper_attributes, label_attributes, label_hidden, element) %}
   {% if not label_hidden %}
@@ -36,12 +36,12 @@
         'field-label-' ~ element['#label_display']|clean_class,
       ]
     %}
-    {% if settings['lbw-def-at'] %}
+    {%- if settings['lbw-def-at'] -%}
       <{{ settings['lbw-el']|default('div') }} {{ title_attributes }} {{ label_attributes.addClass(title_classes) }}>
-    {% else %}
+    {%- else -%}
       <{{ settings['lbw-el']|default('div') }} {{ label_attributes.addClass(title_classes) }}>
-    {% endif %}
-        {{ label }}{% if settings['lb-col'] %}:{% endif %}
+    {%- endif -%}
+        {{- label -}}{%- if settings['lb-col'] -%}:{%- endif -%}
       </{{ settings['lbw-el']|default('div') }}>
   {% endif %}
 
@@ -66,7 +66,7 @@
       {% else %}
         <{{ settings['fi-el'] }} {{ field_item_wrapper_attributes }} >
       {% endif %}
-          {{ item.content }}
+          {{- item.content -}}
         </{{ settings['fi-el'] }}>
     {% else %}
       {{ item.content }}
