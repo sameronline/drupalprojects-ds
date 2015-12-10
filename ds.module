@@ -26,6 +26,10 @@ use Drupal\layout_plugin\Layout;
 function ds_theme() {
   $theme_functions = array();
 
+  $theme_functions['ds_entity_view'] = [
+    'render element' => 'content',
+  ];
+
   // Field templates
   if (\Drupal::config('ds.settings')->get('field_template')) {
     $field_layouts = \Drupal::service('plugin.manager.ds.field.layout')->getDefinitions();
@@ -53,18 +57,24 @@ function ds_theme() {
  */
 function ds_theme_registry_alter(&$theme_registry) {
   $layouts = Ds::getLayouts();
+  $layout_theme_hooks = [];
   foreach ($layouts as $info) {
-    $key = $info['theme'];
-    // Only add preprocess functions if entity exposes theme function, and this
-    // layout is using the Display Suite layout class.
-    foreach ($theme_registry as $theme_registry_item_key => $theme_registry_item) {
-      if (substr($theme_registry_item_key, 0, strlen($key)) == $key && $info['class'] == '\Drupal\ds\Plugin\DsLayout') {
-        if (function_exists('field_group_build_entity_groups')) {
-          $theme_registry[$theme_registry_item_key]['preprocess functions'][] = 'field_group_build_entity_groups';
-        }
-        $theme_registry[$theme_registry_item_key]['preprocess functions'][] = 'ds_preprocess_ds_layout';
-      }
+    if ($info['class'] == '\Drupal\ds\Plugin\DsLayout') {
+      $layout_theme_hooks[] = $info['theme'];
     }
+  }
+
+  // Only add preprocess functions if entity exposes theme function, and this
+  // layout is using the Display Suite layout class.
+  foreach ($theme_registry as $theme_hook => $info) {
+    if (in_array($theme_hook, $layout_theme_hooks) || (!empty($info['base hook']) && in_array($info['base hook'], $layout_theme_hooks))) {
+      $theme_registry[$theme_hook]['preprocess functions'][] = 'ds_preprocess_ds_layout';
+    }
+  }
+
+  // Run field group preprocess before ds_entity_view.
+  if (function_exists('field_group_build_entity_groups')) {
+    array_unshift($theme_registry['ds_entity_view']['preprocess functions'], 'field_group_build_entity_groups');
   }
 
   // Remove ds_preprocess_field in case field templates is not enabled.
@@ -187,9 +197,6 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
     foreach ($region as $weight => $key) {
       // Ignore if this field is not a DS field, just pull it in from the entity.
       if (!isset($fields[$key])) {
-        if (isset($build[$key])) {
-          $build[$region_name][$key] = $build[$key];
-        }
         continue;
       }
 
@@ -209,7 +216,7 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
 
       // Only allow non empty fields
       if (!empty($field_value)) {
-        $build[$region_name][$key] = array(
+        $build[$key] = array(
           '#theme' => 'field',
           '#field_type' => 'ds',
           '#title' => $field_title,
@@ -232,7 +239,43 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
     }
   }
 
-  // Render the layout.
+  // Defer to ds_entity_view theme hook to actually render the layout.
+  $build['#theme'] = 'ds_entity_view';
+}
+
+/**
+ * Process entity view.
+ */
+function template_preprocess_ds_entity_view(&$variables) {
+  $build = $variables['content'];
+  $configuration = $build['#ds_configuration'];
+
+  // Process the render array so we can reuse it.
+  $build['#cache']['keys'][0] = 'ds_entity_view';
+  unset($build['#pre_render']);
+  unset($build['#sorted']);
+  unset($build['#children']);
+  unset($build['#render_children']);
+
+  // Create region variables based on the layout settings.
+  foreach (array_keys($configuration['regions']) as $region_name) {
+    $build[$region_name] = array();
+
+    // Create the region content.
+    if (!empty($configuration['regions'][$region_name])) {
+      foreach ($configuration['regions'][$region_name] as $key => $field) {
+        // Make sure the field exists.
+        if (!isset($build[$field])) {
+          continue;
+        }
+        if (!isset($build[$field]['#weight'])) {
+          $build[$field]['#weight'] = $key;
+        }
+        $build[$region_name][$key] = $build[$field];
+      }
+    }
+  }
+
   $layout = Layout::layoutPluginManager()->createInstance($configuration['layout']['id'], $configuration['layout']['settings']);
   $build = $layout->build($build);
 
@@ -244,6 +287,8 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
     $index = array_search($library, $attached);
     unset($build['#attached']['library'][$index]);
   }
+
+  $variables['content'] = $build;
 }
 
 /**
@@ -361,7 +406,7 @@ function ds_preprocess_ds_layout(&$variables) {
  * Implements hook_theme_suggestions_alter()
  */
 function ds_theme_suggestions_alter(&$suggestions, $variables, $base_theme_hook) {
-  if (isset($variables['content']) && is_array($variables['content']) && isset($variables['content']['#ds_configuration'])) {
+  if (isset($variables['content']) && is_array($variables['content']) && isset($variables['content']['#ds_configuration']) && $base_theme_hook != 'ds_entity_view') {
     $layout_id = $variables['content']['#ds_configuration']['layout']['id'];
     $entity_id = $variables['content']['#' . $variables['content']['#entity_type']]->id();
     $suggestions[] = $layout_id . '__' . $variables['content']['#entity_type'];

@@ -33,7 +33,7 @@ abstract class FastTestBase extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('node', 'user', 'field_ui', 'rdf', 'quickedit', 'taxonomy', 'block', 'ds', 'ds_extras', 'ds_test', 'ds_switch_view_mode', 'layout_plugin');
+  public static $modules = array('node', 'user', 'field_ui', 'rdf', 'quickedit', 'taxonomy', 'block', 'ds', 'ds_extras', 'ds_test', 'ds_switch_view_mode', 'layout_plugin', 'field_group');
 
   /**
    * The label for a random field to be created for testing.
