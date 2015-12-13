@@ -94,6 +94,10 @@ class CommentTest extends CommentTestBase {
     // Post comment
     $comment2 = $this->postComment($node, $this->randomMachineName(), $this->randomMachineName());
     $this->assertRaw($comment2->comment_body->value, 'Comment2 found.');
+
+    // Verify there are no double ID's
+    $xpath = $this->xpath('//a[@id="comment-1"]');
+    $this->assertEqual(count($xpath), 1, '1 ID found named comment-1');
   }
 
 }

@@ -259,6 +259,8 @@ function template_preprocess_ds_entity_view(&$variables) {
   unset($build['#sorted']);
   unset($build['#children']);
   unset($build['#render_children']);
+  unset($build['#prefix']);
+  unset($build['#suffix']);
 
   // Create region variables based on the layout settings.
   foreach (array_keys($configuration['regions']) as $region_name) {
