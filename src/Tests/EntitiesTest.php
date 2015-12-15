@@ -161,6 +161,7 @@ class EntitiesTest extends FastTestBase {
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
     $edit = array(
       'fields[field_tags][region]' => 'right',
+      'fields[field_tags][type]' => 'entity_reference_label',
     );
     $this->dsConfigureUI($edit, 'admin/structure/types/manage/article/display');
     $this->drupalGet('node/' . $node->id());
