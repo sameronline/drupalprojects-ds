@@ -485,8 +485,8 @@ class FieldTemplateTest extends FastTestBase {
 
     // Inject XSS everywhere and see if it brakes
     $edit = array(
-      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][prefix]' => '<script>alert("XSS")</script>',
-      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][suffix]' => '<script>alert("XSS")</script>',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][prefix]' => '<div class="not-stripped"><script>alert("XSS")</script>',
+      'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][suffix]' => '</div><script>alert("XSS")</script>',
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow]' => '1',
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-el]' => '<script>alert("XSS")</script>',
       'fields[body][settings_edit_form][third_party_settings][ds][ft][settings][ow-cl]' => '<script>alert("XSS")</script>',
@@ -505,6 +505,10 @@ class FieldTemplateTest extends FastTestBase {
 
     $this->drupalGet('node/' . $node->id());
     $this->assertNoRaw('<script>alert("XSS")</script>', 'Harmful tags are escaped when viewing a ds field template.');
+
+    // Verify the prefix/suffix is filtered but not escaped
+    $xpath = $this->xpath('//div[@class="not-stripped"]');
+    $this->assertEqual(count($xpath), 1, 'Stripped but not escaped');
   }
 
   /**
