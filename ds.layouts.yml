@@ -172,7 +172,7 @@ ds_4col:
   type: partial
   template: templates/ds-4col
   css: css/ds-4col.css
-  icon: images/ds-4col-stacked.png
+  icon: images/ds-4col.png
   regions:
     first:
       label: First
