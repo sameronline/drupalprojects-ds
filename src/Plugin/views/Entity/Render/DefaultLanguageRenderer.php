@@ -24,7 +24,7 @@ class DefaultLanguageRenderer extends RendererBase {
    *   A language code.
    */
   public function getLangcode(ResultRow $row, $relationship = NULL) {
-    return $row->_entity->getUntranslated()->language()->id;
+    return $row->_entity->getUntranslated()->language()->getId();
   }
 
 }
