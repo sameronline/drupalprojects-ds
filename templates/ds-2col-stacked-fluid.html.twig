@@ -21,6 +21,9 @@
  */
 #}
 
+{% set left = left|render %}
+{% set right = right|render %}
+
 {% if (left and not right) or (right and not left) %}
   {% set layout_class = 'group-one-column' %}
 {% endif %}

@@ -8,6 +8,7 @@
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Render\Element;
 
 /**
  * The base plugin to create DS block fields.
@@ -35,7 +36,8 @@ abstract class BlockBase extends DsFieldBase {
     // Get render array.
     $block_elements = $block->build();
 
-    return $block_elements;
+    // Return an empty array if there is nothing to render.
+    return Element::isEmpty($block_elements) ? [] : $block_elements;
   }
 
   /**

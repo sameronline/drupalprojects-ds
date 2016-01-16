@@ -19,3 +19,15 @@ dstest_2col:
       label: Left
     right:
       label: Right
+dstest_2col_fluid:
+  label: Test Fluid two column
+  category: Display Suite
+  class: '\Drupal\ds\Plugin\DsLayout'
+  type: partial
+  template: templates/dstest-2col-fluid
+  css: css/dstest-2col-fluid.css
+  regions:
+    left:
+      label: Left
+    right:
+      label: Right
