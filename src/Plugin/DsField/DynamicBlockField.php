@@ -8,6 +8,7 @@
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\views\Plugin\Block\ViewsBlock;
 
 /**
  * Defines a generic dynamic block field.
@@ -51,7 +52,12 @@ class DynamicBlockField extends BlockBase {
     if (isset($field['properties']['use_block_title']) && $field['properties']['use_block_title'] == TRUE) {
       /** @var $block BlockPluginInterface */
       $block = $this->getBlock();
-      $title = $block->label();
+
+      if ($block instanceof ViewsBlock) {
+        $title = $block->build()['#title'];
+      } else {
+        $title = $block->label();
+      }
     }
 
     return $title;

@@ -96,11 +96,11 @@ display:
             item_8: teaser
             item_9: teaser
           grouping_fieldset:
-            group: 1
+            group: true
             group_field: node__field_tags|field_tags_target_id
             group_field_function: ''
           advanced_fieldset:
-            advanced: 0
+            advanced: false
       fields:
         title:
           id: title
@@ -206,10 +206,33 @@ display:
       display_extenders: {  }
     cache_metadata:
       contexts:
-        - node_view_grants
-        - user
-        - language
-      max-age: 0
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      max-age: -1
+      tags: {  }
+  block_1:
+    display_plugin: block
+    id: block_1
+    display_title: Block
+    position: 7
+    display_options:
+      display_extenders: {  }
+      block_description: 'Administrative block name'
+      title: 'Block title from view'
+      defaults:
+        title: false
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
   page_1:
     display_plugin: page
     id: page_1
@@ -247,17 +270,20 @@ display:
             item_8: teaser
             item_9: teaser
           grouping_fieldset:
-            group: 0
+            group: false
             group_field: node_field_data|created
             group_field_function: ''
           advanced_fieldset:
-            advanced: 0
+            advanced: false
     cache_metadata:
       contexts:
-        - node_view_grants
-        - user
-        - language
-      max-age: 0
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      max-age: -1
+      tags: {  }
   page_2:
     display_plugin: page
     id: page_2
@@ -296,17 +322,20 @@ display:
             item_8: teaser
             item_9: teaser
           grouping_fieldset:
-            group: 0
+            group: false
             group_field: node_field_data|created
             group_field_function: ''
           advanced_fieldset:
-            advanced: 0
+            advanced: false
     cache_metadata:
       contexts:
-        - node_view_grants
-        - user
-        - language
-      max-age: 0
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      max-age: -1
+      tags: {  }
   page_3:
     display_plugin: page
     id: page_3
@@ -345,17 +374,20 @@ display:
             item_8: teaser
             item_9: teaser
           grouping_fieldset:
-            group: 1
+            group: true
             group_field: node__field_tags|field_tags_target_id
             group_field_function: ''
           advanced_fieldset:
-            advanced: 0
+            advanced: false
     cache_metadata:
       contexts:
-        - node_view_grants
-        - user
-        - language
-      max-age: 0
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      max-age: -1
+      tags: {  }
   page_4:
     display_plugin: page
     id: page_4
@@ -393,18 +425,21 @@ display:
             item_8: teaser
             item_9: teaser
           grouping_fieldset:
-            group: 1
+            group: true
             group_field: node__field_tags|field_tags_target_id
             group_field_function: ds_test_get_tag_name
           advanced_fieldset:
-            advanced: 0
+            advanced: false
       display_description: ''
     cache_metadata:
       contexts:
-        - node_view_grants
-        - user
-        - language
-      max-age: 0
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      max-age: -1
+      tags: {  }
   page_5:
     display_plugin: page
     id: page_5
@@ -441,19 +476,22 @@ display:
             item_8: teaser
             item_9: teaser
           grouping_fieldset:
-            group: 0
+            group: false
             group_field: node_field_data|created
             group_field_function: ''
           advanced_fieldset:
-            advanced: 1
+            advanced: true
       path: ds-testing-5
       display_description: ''
     cache_metadata:
       contexts:
-        - node_view_grants
-        - user
-        - language
-      max-age: 0
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      max-age: -1
+      tags: {  }
   page_6:
     display_plugin: page
     id: page_6
@@ -492,11 +530,11 @@ display:
             item_8: teaser
             item_9: teaser
           grouping_fieldset:
-            group: 0
+            group: false
             group_field: node_field_data|created
             group_field_function: ''
           advanced_fieldset:
-            advanced: 0
+            advanced: false
       path: ds-testing-6
       display_description: ''
       header:
@@ -525,7 +563,10 @@ display:
           plugin_id: text_custom
     cache_metadata:
       contexts:
-        - node_view_grants
-        - user
-        - language
-      max-age: 0
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      max-age: -1
+      tags: {  }
