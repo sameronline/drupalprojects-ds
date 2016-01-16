@@ -615,7 +615,7 @@ function ds_entity_variables(&$vars) {
     }
 
     // Get entity id and bundle
-    list($id,, $bundle) = entity_extract_ids($object, $vars[$object]);
+    list($id,, $bundle) = entity_extract_ids($vars['elements']['#entity_type'], $vars[$object]);
 
     if (isset($vars[$object]->preprocess_fields)) {
       foreach ($vars[$object]->preprocess_fields as $field) {
