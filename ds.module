@@ -17,6 +17,7 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\ds\Ds;
+use Drupal\ds\DsAttribute;
 use Drupal\ds\Plugin\DsFieldTemplate\DsFieldTemplateInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\layout_plugin\Layout;
@@ -832,7 +833,7 @@ function template_preprocess_field__ds_field_expert(&$variables) {
       }
     }
 
-    $variables[$variable_name] = new Attribute($var_attributes);
+    $variables[$variable_name] = new DsAttribute($var_attributes);
   }
 
   // In order to allow HTML we need to filter XSS the output of the prefix/suffix.

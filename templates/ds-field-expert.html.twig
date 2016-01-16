@@ -16,9 +16,9 @@
 {{- settings['prefix']|raw -}}
 {% if settings.ow %}
   {% if settings['ow-def-at'] %}
-    <{{ settings['ow-el'] }} {{ attributes }} {{ wrapper_attributes }}>
+    <{{ settings['ow-el'] }} {{ wrapper_attributes.mergeAttributes(attributes) }}>
   {% elseif settings['ow-def-cl'] %}
-    <{{ settings['ow-el'] }} {{ attribute_classes.offsetGet('class') }} {{ wrapper_attributes }}>
+    <{{ settings['ow-el'] }} {{ wrapper_attributes.mergeAttributes(attribute_classes.offsetGet('class')) }}>
   {% else %}
     <{{ settings['ow-el'] }} {{ wrapper_attributes }}>
   {% endif %}
@@ -37,7 +37,7 @@
       ]
     %}
     {%- if settings['lbw-def-at'] -%}
-      <{{ settings['lbw-el']|default('div') }} {{ title_attributes }} {{ label_attributes.addClass(title_classes) }}>
+      <{{ settings['lbw-el']|default('div') }} {{ label_attributes.addClass(title_classes).mergeAttributes(title_attributes) }}>
     {%- else -%}
       <{{ settings['lbw-el']|default('div') }} {{ label_attributes.addClass(title_classes) }}>
     {%- endif -%}
@@ -47,7 +47,7 @@
 
   {% if settings.fis %}
     {% if settings['fis-def-at'] %}
-      <{{ settings['fis-el'] }} {{ content_attributes }} {{ field_wrapper_attributes }}>
+      <{{ settings['fis-el'] }} {{ field_wrapper_attributes.mergeAttributes(content_attributes) }}>
     {% else %}
       <{{ settings['fis-el'] }} {{ field_wrapper_attributes }}>
     {% endif %}
@@ -62,7 +62,7 @@
   {% for item in items %}
     {% if settings.fi %}
       {% if settings['fi-def-at'] %}
-        <{{ settings['fi-el'] }} {{ item.attributes }} {{ field_item_wrapper_attributes }} >
+        <{{ settings['fi-el'] }} {{ field_item_wrapper_attributes.mergeAttributes(item.attributes) }} >
       {% else %}
         <{{ settings['fi-el'] }} {{ field_item_wrapper_attributes }} >
       {% endif %}
