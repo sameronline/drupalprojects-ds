@@ -628,6 +628,9 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
       $suggestions[] = $suggestion . '__' . $field_name;
       $suggestions[] = $suggestion . '__' . $variables['element']['#bundle'];
       $suggestions[] = $suggestion . '__' . $field_name . '__' . $variables['element']['#bundle'];
+      $suggestions[] = $suggestion . '__' . $variables['element']['#entity_type'] . '__' . $field_name;
+      $suggestions[] = $suggestion . '__' . $variables['element']['#entity_type'] . '__' . $variables['element']['#bundle'];
+      $suggestions[] = $suggestion . '__' . $variables['element']['#entity_type'] . '__' . $field_name . '__' . $variables['element']['#bundle'];
     }
   }
 }
