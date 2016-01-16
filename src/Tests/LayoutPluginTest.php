@@ -62,4 +62,32 @@ class LayoutPluginTest extends FastTestBase {
     $this->assertRaw('cool!', 'Region altered');
   }
 
+  /**
+   * Test reset layout
+   */
+  function testResetLayout() {
+    $layout = array(
+      'layout' => 'ds_reset',
+    );
+
+    $assert = array(
+      'regions' => array(
+        'ds_content' => '<td colspan="8">' . t('Content') . '</td>',
+      ),
+    );
+
+    $fields = array(
+      'fields[node_author][region]' => 'ds_content',
+    );
+
+    $this->dsSelectLayout($layout, $assert);
+    $this->dsConfigureUI($fields);
+
+    // Create a node.
+    $settings = array('type' => 'article');
+    $node = $this->drupalCreateNode($settings);
+
+    $this->drupalGet('node/' . $node->id());
+  }
+
 }
