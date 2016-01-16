@@ -12,7 +12,7 @@ use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\State\State;
+use Drupal\Core\State\StateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -44,7 +44,7 @@ class EmergencyForm extends ConfigFormBase {
    * @param \Drupal\Core\State\State
    *   The state key value store
    */
-  public function __construct(ConfigFactory $config_factory, ModuleHandlerInterface $module_handler, State $state) {
+  public function __construct(ConfigFactory $config_factory, ModuleHandlerInterface $module_handler, StateInterface $state) {
     parent::__construct($config_factory);
     $this->moduleHandler = $module_handler;
     $this->state = $state;
