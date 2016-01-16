@@ -164,6 +164,7 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
   $build['#entity_type'] = $entity_type;
   $build['#bundle'] = $bundle;
   $build['#ds_configuration'] = $configuration;
+  $build['#entity'] = $entity;
 
   // Implement UI limit
   $components = $display->getComponents();
@@ -407,6 +408,9 @@ function ds_preprocess_ds_layout(&$variables) {
   foreach(Element::children($variables['content']) as $name) {
     $variables[$name] = $variables['content'][$name];
   }
+
+  // Copy entity to top level to improve theme experience
+  $variables[$variables['content']['#entity_type']] = $variables['content']['#entity'];
 }
 
 /**
