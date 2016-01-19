@@ -41,6 +41,19 @@ class EntitiesTest extends FastTestBase {
     /** @var \Drupal\node\NodeInterface $node */
     $node = $this->entitiesTestSetup();
 
+    // Test theme_hook_suggestions in ds_entity_variables().
+    $this->drupalGet('node/' . $node->id(), array('query' => array('store_suggestions' => 1)));
+    $cache = $this->container->get('cache.default')->get('ds_test_suggestions');
+    $hook_suggestions = $cache->data;
+    $expected_hook_suggestions = array(
+      'ds_2col_stacked__node',
+      'ds_2col_stacked__node_full',
+      'ds_2col_stacked__node_article',
+      'ds_2col_stacked__node_article_full',
+      'ds_2col_stacked__node__1'
+    );
+    $this->assertEqual($hook_suggestions, $expected_hook_suggestions);
+
     // Look at node and verify token and block field.
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('view-mode-full', 'Template file found (in full view mode)');
