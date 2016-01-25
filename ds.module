@@ -410,7 +410,9 @@ function ds_preprocess_ds_layout(&$variables) {
   }
 
   // Copy entity to top level to improve theme experience
-  $variables[$variables['content']['#entity_type']] = $variables['content']['#entity'];
+  if (isset($variables['content']['#entity'])) {
+    $variables[$variables['content']['#entity_type']] = $variables['content']['#entity'];
+  }
 }
 
 /**
