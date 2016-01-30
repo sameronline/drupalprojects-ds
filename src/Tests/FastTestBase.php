@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\field_ui\Tests\ManageFieldsTest.
+ * Contains \Drupal\ds\Tests\FastTestBase.
  */
 
 namespace Drupal\ds\Tests;
