@@ -6,3 +6,5 @@ package: 'Display Suite'
 configure: ds.structure
 dependencies:
   - layout_plugin
+test_dependencies:
+  - field_group
