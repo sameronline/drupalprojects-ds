@@ -81,6 +81,7 @@ abstract class FastTestBase extends WebTestBase {
     // Create a test user.
     $this->adminUser = $this->drupalCreateUser(array(
       'access content',
+      'access in-place editing',
       'admin classes',
       'admin display suite',
       'admin fields',
