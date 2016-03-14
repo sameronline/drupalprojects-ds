@@ -439,6 +439,12 @@ function ds_contextual_links_view_alter(&$element, $items) {
 
   if (isset($def[$entity_type]) && $def[$entity_type]->get('field_ui_base_route')) {
     if (!empty($entity_type) && \Drupal::moduleHandler()->moduleExists('field_ui') && \Drupal::currentUser()->hasPermission('administer node display')) {
+
+      // This might not exist (especially in panels environments).
+      if (!isset($element['#contextual_links'][$entity_type]['metadata']['ds_bundle'])) {
+        return;
+      }
+
       $bundle = $element['#contextual_links'][$entity_type]['metadata']['ds_bundle'];
       $view_mode = $element['#contextual_links'][$entity_type]['metadata']['ds_view_mode'];
 
