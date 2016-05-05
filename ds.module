@@ -369,7 +369,7 @@ function ds_preprocess_ds_layout(&$variables) {
     switch ($layout_settings['link_attribute']) {
       case 'content':
         if ($entity_type) {
-          $url = $variables['content']['#' . $entity_type]->urlInfo()->getInternalPath();
+          $url = $variables['content']['#' . $entity_type]->toUrl()->getInternalPath();
         }
         break;
       case 'custom':
