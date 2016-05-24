@@ -877,7 +877,7 @@ function ds_entity_type_alter(array &$entity_types) {
     $base_table = $entity_type->getBaseTable();
     if ($entity_type->get('field_ui_base_route') && !empty($base_table)) {
       if ($entity_type->hasLinkTemplate('canonical')) {
-        $entity_type->setLinkTemplate('display', $entity_type->getLinkTemplate('canonical') . '/display');
+        $entity_type->setLinkTemplate('display', $entity_type->getLinkTemplate('canonical') . '/manage_display');
       }
     }
   }
