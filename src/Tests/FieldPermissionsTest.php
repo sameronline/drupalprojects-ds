@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\FieldPermissionsTest.
- */
-
 namespace Drupal\ds\Tests;
 
 /**

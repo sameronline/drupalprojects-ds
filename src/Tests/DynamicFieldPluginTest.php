@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\DynamicFieldPluginTest.
- */
-
 namespace Drupal\ds\Tests;
 
 /**

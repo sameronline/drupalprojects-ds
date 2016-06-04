@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\DsField\Node\NodeSubmittedBy.
- */
-
 namespace Drupal\ds\Plugin\DsField\Node;
 
 use Drupal\Core\Url;

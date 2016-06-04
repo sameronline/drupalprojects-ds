@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Form\EmergencyForm.
- */
-
 namespace Drupal\ds\Form;
 
 use Drupal\block\BlockInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\FieldGroupTest.
- */
-
 namespace Drupal\ds\Tests;
 
 use Drupal\field_group\Tests\FieldGroupTestTrait;

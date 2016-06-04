@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Controller\FieldController.
- */
-
 namespace Drupal\ds\Controller;
 
 use Drupal\Core\Config\StorageInterface;

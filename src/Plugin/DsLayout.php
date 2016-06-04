@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\DsLayout.
- */
-
 namespace Drupal\ds\Plugin;
 
 use Drupal\Component\Utility\Xss;

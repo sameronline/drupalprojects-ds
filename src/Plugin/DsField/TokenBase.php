@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\DsField\TokenBase.
- */
-
 namespace Drupal\ds\Plugin\DsField;
 
 /**

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\ds\Annotation\DsField.
- */
-
 namespace Drupal\ds\Annotation;
 
 use Drupal\Component\Annotation\Plugin;

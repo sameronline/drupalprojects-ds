@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\LayoutFluidTest.
- */
-
 namespace Drupal\ds\Tests;
 
 /**

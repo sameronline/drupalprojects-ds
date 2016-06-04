@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\DsField\BookNavigation.
- */
-
 namespace Drupal\ds\Plugin\DsField\Book;
 
 use Drupal\ds\Plugin\DsField\DsFieldBase;

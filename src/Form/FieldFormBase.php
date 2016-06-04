@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Form\FieldFormBase.
- */
-
 namespace Drupal\ds\Form;
 
 use Drupal\Component\Utility\Unicode;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\ManageDisplayTabTest.
- */
-
 namespace Drupal\ds\Tests;
 
 /**

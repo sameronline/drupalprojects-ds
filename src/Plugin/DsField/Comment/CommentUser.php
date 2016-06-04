@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\DsField\Comment\CommentUser.
- */
-
 namespace Drupal\ds\Plugin\DsField\Comment;
 
 use Drupal\ds\Plugin\DsField\Entity;

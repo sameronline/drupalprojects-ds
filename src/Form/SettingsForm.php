@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Form\SettingsForm.
- */
-
 namespace Drupal\ds\Form;
 
 use Drupal\Core\Config\ConfigFactory;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\HiddenRegionTest.
- */
-
 namespace Drupal\ds\Tests;
 
 /**

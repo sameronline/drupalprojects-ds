@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Display Suite helper class
- */
 
 namespace Drupal\ds;
 

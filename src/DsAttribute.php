@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\DsAttribute.
- */
-
 namespace Drupal\ds;
 
 use Drupal\Core\Template\Attribute;

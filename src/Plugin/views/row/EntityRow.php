@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\views\row\EntityRow.
- */
-
 namespace Drupal\ds\Plugin\views\row;
 
 use Drupal\Component\Utility\Html;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\DsFieldTemplate\Expert.
- */
-
 namespace Drupal\ds\Plugin\DsFieldTemplate;
 
 use Drupal\Core\Entity\EntityInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\DsField\Field.
- */
-
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Component\Utility\Html;

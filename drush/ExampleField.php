@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\example_field\Plugin\DsField\ExampleField.
- */
 
 namespace Drupal\example_field\Plugin\DsField;
 

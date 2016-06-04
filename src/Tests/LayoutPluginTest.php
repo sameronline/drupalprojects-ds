@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\LayoutPluginTest.
- */
-
 namespace Drupal\ds\Tests;
 
 /**

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\FieldPluginTest.
- */
-
 namespace Drupal\ds\Tests;
 
 /**

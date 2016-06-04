@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Form\TokenFieldForm.
- */
-
 namespace Drupal\ds\Form;
 
 use Drupal\Core\Form\FormStateInterface;

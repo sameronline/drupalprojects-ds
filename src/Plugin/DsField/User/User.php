@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\DsField\User\User.
- */
-
 namespace Drupal\ds\Plugin\DsField\User;
 
 use Drupal\ds\Plugin\DsField\Entity;

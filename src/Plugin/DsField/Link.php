@@ -1,11 +1,7 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\DsField\Link.
- */
-
 namespace Drupal\ds\Plugin\DsField;
+
 use Drupal\Core\Form\FormStateInterface;
 
 /**

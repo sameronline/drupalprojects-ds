@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Form\ClassesForm.
- */
-
 namespace Drupal\ds\Form;
 
 use Drupal\Core\Form\ConfigFormBase;

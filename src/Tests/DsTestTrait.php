@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\DsTestTrait.
- */
-
 namespace Drupal\ds\Tests;
 
 /**

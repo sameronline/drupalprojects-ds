@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Form\ChangeLayoutForm.
- */
-
 namespace Drupal\ds\Form;
 
 use Drupal\Core\Entity\Display\EntityDisplayInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\DsField\DsFieldBase.
- */
-
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Plugin\PluginBase;

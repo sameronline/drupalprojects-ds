@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\views\Entity\Render\RenderBase.
- */
-
 namespace Drupal\ds\Plugin\views\Entity\Render;
 
 use Drupal\Component\Utility\Unicode;

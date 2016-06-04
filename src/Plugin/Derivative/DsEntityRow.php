@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\Derivative\DsEntityRow.
- */
-
 namespace Drupal\ds\Plugin\Derivative;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;

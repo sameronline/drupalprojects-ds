@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\BlockFieldPluginTest.
- */
-
 namespace Drupal\ds\Tests;
 
 use Drupal\views\Tests\ViewTestData;

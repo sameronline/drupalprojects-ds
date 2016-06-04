@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Form\BlockFieldConfigForm.
- */
-
 namespace Drupal\ds\Form;
 
 use Drupal\Core\Block\BlockPluginInterface;

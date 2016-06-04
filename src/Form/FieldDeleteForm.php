@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Form\FieldDeleteForm.
- */
-
 namespace Drupal\ds\Form;
 
 use Drupal\Core\Cache\CacheTagsInvalidator;

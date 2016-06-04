@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\FastTestBase.
- */
-
 namespace Drupal\ds\Tests;
 
 use Drupal\Core\Language\LanguageInterface;

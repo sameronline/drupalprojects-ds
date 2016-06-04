@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\FieldTemplateTest.
- */
-
 namespace Drupal\ds\Tests;
 
 use Drupal\Core\Cache\Cache;

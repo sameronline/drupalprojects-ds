@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\DsField\DsFieldInterface.
- */
-
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;

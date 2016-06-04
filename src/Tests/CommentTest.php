@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\CommentTest.
- */
-
 namespace Drupal\ds\Tests;
 
 use Drupal\comment\Tests\CommentTestBase;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\ExportablesTest.
- */
-
 namespace Drupal\ds\Tests;
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
