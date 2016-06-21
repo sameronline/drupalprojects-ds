@@ -1,17 +1,14 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds_extras\Plugin\DsField\SwitchField.
- */
-
 namespace Drupal\ds_extras\Plugin\DsField;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\ds\Plugin\DsField\DsFieldBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin that generates a link to switch view mode with via ajax.
@@ -23,6 +20,35 @@ use Drupal\ds\Plugin\DsField\DsFieldBase;
  * )
  */
 class SwitchField extends DsFieldBase {
+
+  /**
+   * The EntityDisplayRepository service
+   *
+   * @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface
+   */
+  protected $entityDisplayRepository;
+
+  /**
+   * Constructs a Display Suite field plugin.
+   */
+  public function __construct($configuration, $plugin_id, $plugin_definition, EntityDisplayRepositoryInterface $entity_display_repository) {
+    $this->entityDisplayRepository = $entity_display_repository;
+
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity_display.repository')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -85,7 +111,7 @@ class SwitchField extends DsFieldBase {
   public function settingsForm($form, FormStateInterface $form_state) {
     $entity_type = $this->getEntityTypeId();
     $bundle = $this->bundle();
-    $view_modes = \Drupal::service('entity_display.repository')->getViewModes($entity_type);
+    $view_modes = $this->entityDisplayRepository->getViewModes($entity_type);
 
     $form['info'] = array(
       '#markup' => t('Enter a label for the link for the view modes you want to switch to.<br />Leave empty to hide link. They will be localized.'),
@@ -117,7 +143,7 @@ class SwitchField extends DsFieldBase {
     $entity_type = $this->getEntityTypeId();
     $bundle = $this->bundle();
     $settings = isset($settings['vms']) ? $settings['vms'] : array();
-    $view_modes = \Drupal::service('entity_display.repository')->getViewModes($entity_type);
+    $view_modes = $this->entityDisplayRepository->getViewModes($entity_type);
 
     $summary[] = 'View mode labels';
 

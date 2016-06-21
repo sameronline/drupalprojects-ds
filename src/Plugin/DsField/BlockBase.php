@@ -3,6 +3,8 @@
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Render\Element;
+use Drupal\Core\Block\BlockManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * The base plugin to create DS block fields.
@@ -15,6 +17,34 @@ abstract class BlockBase extends DsFieldBase {
    * @var \Drupal\Core\Block\BlockPluginInterface
    */
   protected $block;
+
+  /**
+   * The BlockManager service
+   *
+   * @var \Drupal\Core\Block\BlockManagerInterface
+   */
+  protected $blockManager;
+
+  /**
+   * Constructs a Display Suite field plugin.
+   */
+  public function __construct($configuration, $plugin_id, $plugin_definition, BlockManagerInterface $block_manager) {
+    $this->blockManager = $block_manager;
+
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('plugin.manager.block')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -53,12 +83,10 @@ abstract class BlockBase extends DsFieldBase {
    */
   protected function getBlock() {
     if (!$this->block) {
-      $manager = \Drupal::service('plugin.manager.block');
-
       // Create an instance of the block.
       /** @var $block BlockPluginInterface */
       $block_id = $this->blockPluginId();
-      $block = $manager->createInstance($block_id);
+      $block = $this->blockManager->createInstance($block_id);
 
       $this->block = $block;
     }

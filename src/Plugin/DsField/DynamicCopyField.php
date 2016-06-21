@@ -3,6 +3,8 @@
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\ds\Plugin\DsPluginManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines a generic dynamic field that holds a copy of an exisitng ds field.
@@ -24,11 +26,22 @@ class DynamicCopyField extends DsFieldBase {
   /**
    * Constructs a Display Suite field plugin.
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, DsPluginManager $plugin_Manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $manager = \Drupal::service('plugin.manager.ds');
-    $this->field_instance = $manager->createInstance($plugin_definition['properties']['ds_plugin'], $configuration);
+    $this->field_instance = $plugin_Manager->createInstance($plugin_definition['properties']['ds_plugin'], $configuration);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('plugin.manager.ds')
+    );
   }
 
   /**
