@@ -373,8 +373,9 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     $fields = _ds_sort_fields($form_state->getValue('fields'), 'weight');
 
     foreach ($fields as $key => $field) {
-      // Make sure we need to save anything for this field.
+      // Make sure to hide hidden fields
       if ($field['region'] == 'hidden') {
+        $form_state->setValue(['fields', $key, 'type'], 'hidden');
         continue;
       }
 

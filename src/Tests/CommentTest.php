@@ -94,6 +94,21 @@ class CommentTest extends CommentTestBase {
     // Verify there are no double ID's
     $xpath = $this->xpath('//a[@id="comment-1"]');
     $this->assertEqual(count($xpath), 1, '1 ID found named comment-1');
+
+    // Test that hidden fields aren't exposed in the config
+    $this->dsSelectLayout();
+
+    $fields = array(
+      'fields[comment][region]' => 'hidden',
+    );
+    $this->dsConfigureUI($fields);
+
+    $display = entity_get_display('node', 'article', 'default');
+    $content = $display->get('content');
+    $hidden = $display->get('hidden');
+
+    $this->assertFalse(isset($content['comment']), 'Comment is not part of the content region');
+    $this->assertTrue(isset($hidden['comment']), 'Comment is part of the hidden region');
   }
 
   /**
