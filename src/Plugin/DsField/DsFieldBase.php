@@ -3,7 +3,6 @@
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**

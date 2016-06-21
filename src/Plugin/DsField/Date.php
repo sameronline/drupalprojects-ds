@@ -2,7 +2,6 @@
 
 namespace Drupal\ds\Plugin\DsField;
 
-use Drupal\Core\Datetime\DateFormatInterface;
 
 /**
  * The base plugin to create DS post date plugins.

@@ -3,7 +3,6 @@
 namespace Drupal\ds\Plugin\DsField;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Entity\EntityInterface;
 
 /**
  * The base plugin to create DS fields.

@@ -2,7 +2,6 @@
 
 namespace Drupal\ds\Plugin\DsField;
 
-use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Render\Element;
 
 /**

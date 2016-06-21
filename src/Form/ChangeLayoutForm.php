@@ -2,7 +2,7 @@
 
 namespace Drupal\ds\Form;
 
-use Drupal\Core\Entity\Display\EntityDisplayInterface;
+
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\ds\Ds;

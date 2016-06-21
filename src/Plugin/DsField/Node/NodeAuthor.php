@@ -3,8 +3,6 @@
 namespace Drupal\ds\Plugin\DsField\Node;
 
 use Drupal\ds\Plugin\DsField\DsFieldBase;
-use Drupal\node\NodeInterface;
-use Drupal\user\UserInterface;
 
 /**
  * Plugin that renders the author of a node.

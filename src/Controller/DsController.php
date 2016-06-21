@@ -3,9 +3,7 @@
 namespace Drupal\ds\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\Entity;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
-use Drupal\Core\Entity\EntityDisplayBase;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\field_ui\FieldUI;
