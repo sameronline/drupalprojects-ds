@@ -343,6 +343,10 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     $first_region = key($sl['regions']);
     $record['layout']['settings']['classes'] = array();
     $record['layout']['settings']['wrappers'] = array();
+    // Set default region values
+    foreach ($sl['regions'] as $region_name => $content) {
+      $record['layout']['settings']['wrappers'][$region_name] = 'div';
+    }
     $record['layout']['settings']['outer_wrapper'] = 'div';
     $record['layout']['settings']['attributes'] = '';
     $record['layout']['settings']['link_attribute'] = FALSE;

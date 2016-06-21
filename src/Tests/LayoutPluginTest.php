@@ -85,4 +85,22 @@ class LayoutPluginTest extends FastTestBase {
     $this->drupalGet('node/' . $node->id());
   }
 
+  /**
+   * Tests settings default wrappers
+   */
+  function testDefaultWrappers() {
+    // Create a node.
+    $settings = array('type' => 'article');
+    $node = $this->drupalCreateNode($settings);
+
+    // Select a layout
+    $this->dsSelectLayout();
+
+    // Go to the node
+    $this->drupalGet('node/' . $node->id());
+
+    // Check we don't have empty wrappers
+    $this->assertNoRaw('<>', 'No empty wrappers found');
+  }
+
 }
