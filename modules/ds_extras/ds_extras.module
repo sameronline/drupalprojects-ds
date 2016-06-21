@@ -201,6 +201,7 @@ function ds_extras_form_ds_admin_form_alter(&$form, FormStateInterface $form_sta
     '#type' => 'details',
     '#title' => t('Extra fields'),
     '#group' => 'additional_settings',
+    '#weight' => 2,
     '#tree' => TRUE,
   );
 
@@ -220,13 +221,6 @@ function ds_extras_form_ds_admin_form_alter(&$form, FormStateInterface $form_sta
         'input[name="fs2[fields_extra]"]' => array('checked' => TRUE),
       ),
     ),
-  );
-
-  $form['fs3'] = array(
-    '#type' => 'details',
-    '#title' => t('Other'),
-    '#group' => 'additional_settings',
-    '#tree' => TRUE,
   );
 
   $form['fs3']['field_permissions'] = array(

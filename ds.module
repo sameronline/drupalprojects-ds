@@ -266,6 +266,7 @@ function template_preprocess_ds_entity_view(&$variables) {
   unset($build['#suffix']);
 
   // Create region variables based on the layout settings.
+  $use_field_names = \Drupal::config('ds.settings')->get('use_field_names');
   foreach (array_keys($configuration['regions']) as $region_name) {
     $build[$region_name] = array();
 
@@ -279,7 +280,13 @@ function template_preprocess_ds_entity_view(&$variables) {
         if (!isset($build[$field]['#weight'])) {
           $build[$field]['#weight'] = $key;
         }
-        $build[$region_name][$key] = $build[$field];
+
+        if ($use_field_names) {
+          $build[$region_name][$field] = $build[$field];
+        }
+        else {
+          $build[$region_name][$key] = $build[$field];
+        }
       }
     }
   }
