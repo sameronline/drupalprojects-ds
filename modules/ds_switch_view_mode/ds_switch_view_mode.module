@@ -106,6 +106,14 @@ function ds_switch_view_mode_form_node_form_alter(&$form, FormStateInterface $fo
         $mode = $node->get('ds_switch')->value;
       }
       $chosen_layout = $layouts[$mode];
+      if (empty($chosen_layout)) {
+        if (isset($layouts['full'])) {
+          $chosen_layout = $layouts['full'];
+        }
+        else {
+          $chosen_layout = $layouts[''];
+        }
+      }
       $layout_settings = $chosen_layout->getThirdPartySettings('ds');
 
       $ds_layouts = Ds::getLayouts();
