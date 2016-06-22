@@ -2,14 +2,18 @@
 
 namespace Drupal\ds\Plugin\DsField;
 
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Plugin\Context\ContextHandlerInterface;
+use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
+use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Block\BlockManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Block\BlockManagerInterface;
 
 /**
  * The base plugin to create DS block fields.
  */
-abstract class BlockBase extends DsFieldBase {
+abstract class BlockBase extends DsFieldBase implements ContainerFactoryPluginInterface {
 
   /**
    * The block.
@@ -26,10 +30,22 @@ abstract class BlockBase extends DsFieldBase {
   protected $blockManager;
 
   /**
+   * @var \Drupal\Core\Plugin\Context\ContextHandlerInterface
+   */
+  protected $contextHandler;
+
+  /**
+   * @var \Drupal\Core\Plugin\Context\ContextRepositoryInterface
+   */
+  protected $contextRepository;
+
+  /**
    * Constructs a Display Suite field plugin.
    */
-  public function __construct($configuration, $plugin_id, $plugin_definition, BlockManagerInterface $block_manager) {
+  public function __construct($configuration, $plugin_id, $plugin_definition, ContextHandlerInterface $contextHandler, ContextRepositoryInterface $contextRepository, BlockManagerInterface $block_manager) {
     $this->blockManager = $block_manager;
+    $this->contextHandler = $contextHandler;
+    $this->contextRepository = $contextRepository;
 
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -42,6 +58,8 @@ abstract class BlockBase extends DsFieldBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
+      $container->get('context.handler'),
+      $container->get('context.repository'),
       $container->get('plugin.manager.block')
     );
   }
@@ -56,6 +74,12 @@ abstract class BlockBase extends DsFieldBase {
     // Apply block config.
     $block_config = $this->blockConfig();
     $block->setConfiguration($block_config);
+
+    // Inject context values.
+    if ($block instanceof ContextAwarePluginInterface) {
+      $contexts = $this->contextRepository->getRuntimeContexts(array_values($block->getContextMapping()));
+      $this->contextHandler->applyContextMapping($block, $contexts);
+    }
 
     // Get render array.
     $block_elements = $block->build();

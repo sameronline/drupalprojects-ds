@@ -2,14 +2,50 @@
 
 namespace Drupal\ds\Form;
 
-
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
+use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandler;
+use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
+use Drupal\Core\Plugin\ContextAwarePluginAssignmentTrait;
+use Drupal\Core\Plugin\ContextAwarePluginInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 
 /**
  * Configure block fields.
  */
 class BlockFieldConfigForm extends FieldFormBase implements ContainerInjectionInterface {
+
+  use ContextAwarePluginAssignmentTrait;
+
+  /**
+   * @var \Drupal\Core\Plugin\Context\ContextRepositoryInterface
+   */
+  protected $contextRepository;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(ConfigFactory $config_factory, EntityTypeManagerInterface $entity_type_manager, CacheTagsInvalidatorInterface $cache_invalidator, ModuleHandler $module_handler, ContextRepositoryInterface $context_repository) {
+     parent::__construct($config_factory, $entity_type_manager, $cache_invalidator, $module_handler);
+     $this->contextRepository = $context_repository;
+   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('entity_type.manager'),
+      $container->get('cache_tags.invalidator'),
+      $container->get('module_handler'),
+      $container->get('context.repository')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -34,6 +70,11 @@ class BlockFieldConfigForm extends FieldFormBase implements ContainerInjectionIn
 
     // Get block config form.
     $form = $block->blockForm($form, $form_state);
+
+    // If the block is context aware, attach the mapping widget.
+    if ($block instanceof ContextAwarePluginInterface) {
+      $form['context_mapping'] = $this->addContextAssignmentElement($block, $this->contextRepository->getAvailableContexts());
+    }
 
     if (!$form) {
       return array('#markup' => $this->t("This block has no configuration options."));
@@ -81,6 +122,13 @@ class BlockFieldConfigForm extends FieldFormBase implements ContainerInjectionIn
 
     // Process block config data using the block's submit handler.
     $block->blockSubmit($form, $form_state);
+
+    // If the block is context aware, store the context mapping.
+    if ($block instanceof ContextAwarePluginInterface && $block->getContextDefinitions()) {
+      $context_mapping = $form_state->getValue('context_mapping', []);
+      $block->setContextMapping($context_mapping);
+    }
+
     $block_config = $block->getConfiguration();
 
     // Clear cache tags
