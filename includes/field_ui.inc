@@ -305,6 +305,10 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   // Determine layout variables.
   $layout = $form_state->getValue('layout');
   $disable_css = $form_state->getValue('disable_css');
+  $entity_classes = $form_state->getValue('entity_classes');
+  if (empty($entity_classes)) {
+    $entity_classes = 'all_classes';
+  }
   $old_layout = $form_state->getValue('old_layout');
   $new_layout = ($layout != $old_layout) || empty($old_layout);
 
@@ -323,6 +327,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     'path' =>  !empty($layout) ? $ds_layouts[$layout]['path'] : '',
     'library' => isset($ds_layouts[$layout]['library']) ? $ds_layouts[$layout]['library'] : FALSE,
     'disable_css' => $disable_css ? TRUE : FALSE,
+    'entity_classes' => $entity_classes,
   );
   $record['regions'] = array();
 
@@ -693,6 +698,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
     $layout = $ds_layouts[$layout_configuration['id']];
     $layout['layout'] = $layout_configuration['id'];
     $layout['disable_css'] = $layout_configuration['disable_css'];
+    $layout['entity_classes'] = $layout_configuration['entity_classes'];
     $layout['settings'] = $layout_configuration['settings'] ?: [];
     $layout['regions'] = $display->getThirdPartySetting('ds', 'regions');
     $layout['fields'] = $display->getThirdPartySetting('ds', 'fields');
@@ -705,7 +711,7 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
 
   // Load the layout preview form
   $layout['layout_options'] = $layout_options;
-  _ds_field_ui_table_layouts_preview($form, $form_state, $ds_layouts, $layout, $entity_type, $bundle, $view_mode);
+  _ds_field_ui_table_layouts_preview($form, $form_state, $ds_layouts, $layout, $display);
 
   if (!empty($layout) && !empty($layout['settings'])) {
     /** @var LayoutInterface $layout_plugin */
@@ -803,14 +809,9 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
  *   Collection of all the layouts
  * @param $layout
  *   Current selected layout
- * @param $entity_type
- *   The name of the entity type.
- * @param $bundle
- *   The name of the bundle
- * @param $view_mode
- *   The name of the view_mode
+ * @param \Drupal\Core\Entity\Display\EntityDisplayInterface $display
  */
-function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_state, $ds_layouts, $layout, $entity_type, $bundle, $view_mode) {
+function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_state, $ds_layouts, $layout, EntityDisplayInterface $display) {
   $layout_string = '';
 
   $form['ds_layouts']['layout'] = array(
@@ -845,12 +846,12 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
     $selected = '<strong>' . $chosen_layout['label'] . '</strong>';
     $selected .= '<br/>' . t('The default template can be found in %path', array('%path' => $chosen_layout['template_path']));
     $suggestions_array = array();
-    $suggestions_array[0] = $layout_string . '--' . $entity_type;
-    $suggestions_array[2] = $layout_string . '--' . $entity_type . '-' . $bundle;
-    $suggestions_array[4] = $layout_string . '--' . $entity_type . '--{id}';
-    if ($view_mode != 'default') {
-      $suggestions_array[1] = $layout_string . '--' . $entity_type . '-' . $view_mode;
-      $suggestions_array[3] = $layout_string . '--' . $entity_type . '-' . $bundle . '-' . $view_mode;
+    $suggestions_array[0] = $layout_string . '--' . $display->getTargetEntityTypeId();
+    $suggestions_array[2] = $layout_string . '--' . $display->getTargetBundle() . '-' . $display->getTargetBundle();
+    $suggestions_array[4] = $layout_string . '--' . $display->getTargetEntityTypeId() . '--{id}';
+    if ($display->getMode() != 'default') {
+      $suggestions_array[1] = $layout_string . '--' . $display->getTargetEntityTypeId() . '-' . $display->getMode();
+      $suggestions_array[3] = $layout_string . '--' . $display->getTargetEntityTypeId() . '-' . $display->getTargetBundle() . '-' . $display->getMode();
     }
 
     ksort($suggestions_array);
@@ -901,7 +902,29 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
           '#title' => t('Disable layout CSS styles'),
           '#default_value' => $disable_css,
         );
+
       }
+
+      $entity_classes = 'all_classes';
+      if (isset($layout['entity_classes'])) {
+        $entity_classes = $layout['entity_classes'];
+      }
+      if ($form_state->hasValue('entity_classes') && $entity_classes !== $form_state->getValue('entity_classes')) {
+        $entity_classes = $form_state->getValue('entity_classes');
+      }
+
+      // Default classes.
+      $form['ds_layouts']['preview']['info']['settings']['entity_classes'] = array(
+        '#type' => 'select',
+        '#title' => t('Entity classes'),
+        '#options' => array(
+          'all_classes' => t('Entity, bundle and view mode'),
+          'no_classes' => t('No classes'),
+          'old_view_mode' => t('View mode (deprecated)'),
+        ),
+        '#default_value' => $entity_classes,
+      );
+
       $form['ds_layouts']['preview']['clear'] = array(
         '#markup' => '<div class="ds-after-suggestion"></div>',
       );
@@ -910,11 +933,11 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
     if (!isset($layout['layout']) || $layout_string != $layout['layout']) {
 
       // Get admin path.
-      $route = FieldUI::getOverviewRouteInfo($entity_type, $bundle);
+      $route = FieldUI::getOverviewRouteInfo($display->getTargetEntityTypeId(), $display->getTargetBundle());
       $route_parameters = $route->getRouteParameters();
-      $route_parameters['view_mode_name'] = $view_mode;
+      $route_parameters['view_mode_name'] = $display->getMode();
       $options = $route->getOptions();
-      $route_name = 'entity.entity_view_display.' . $entity_type . '.view_mode';
+      $route_name = 'entity.entity_view_display.' . $display->getTargetEntityTypeId() . '.view_mode';
 
       $admin_path = \Drupal::service('url_generator')->generateFromRoute($route_name, $route_parameters, $options);
       $destination_url = '';
@@ -923,9 +946,9 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
       if (isset($layout['regions'])) {
         $route_name = 'ds.change_layout';
         $route_parameters = array(
-          'entity_type' => $entity_type,
-          'bundle' => $bundle,
-          'display_mode' => $view_mode,
+          'entity_type' => $display->getTargetEntityTypeId(),
+          'bundle' => $display->getTargetBundle(),
+          'display_mode' => $display->getMode(),
           'new_layout' => $layout_string,
         );
         $options = array();

@@ -51,7 +51,7 @@ class EntitiesTest extends FastTestBase {
 
     // Look at node and verify token and block field.
     $this->drupalGet('node/' . $node->id());
-    $this->assertRaw('view-mode-full', 'Template file found (in full view mode)');
+    $this->assertRaw('node--view-mode-full', 'Template file found (in full view mode)');
     $this->assertRaw('<div class="field field--name-dynamic-token-fieldnode-token-field field--type-ds field--label-hidden field__item">', t('Token field found'));
     $xpath = $this->xpath('//div[@class="field field--name-dynamic-token-fieldnode-token-field field--type-ds field--label-hidden field__item"]');
     $this->assertEqual((string) $xpath[0]->p, $node->getTitle(), 'Token field content found');
@@ -85,7 +85,7 @@ class EntitiesTest extends FastTestBase {
     // Switch view mode on full node page.
     $edit = array('ds_switch' => 'teaser');
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
-    $this->assertRaw('view-mode-teaser', 'Switched to teaser mode');
+    $this->assertRaw('node--view-mode-teaser', 'Switched to teaser mode');
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
     $this->assertNoRaw('group-header', 'Template found (no region header)');
@@ -93,7 +93,7 @@ class EntitiesTest extends FastTestBase {
 
     $edit = array('ds_switch' => '');
     $this->drupalPostForm('node/' . $node->id() . '/edit', $edit, t('Save and keep published'));
-    $this->assertRaw('view-mode-full', 'Switched to full mode again');
+    $this->assertRaw('node--view-mode-full', 'Switched to full mode again');
 
     // Test all options of a block field.
     $block = array(

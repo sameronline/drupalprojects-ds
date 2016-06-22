@@ -315,11 +315,11 @@ function ds_preprocess_ds_layout(&$variables) {
   $layout_settings = $variables['settings'];
 
   // Fetch the entity type.
+  $bundle = FALSE;
+  $entity_type = FALSE;
   if (isset($variables['content']['#entity_type'])) {
     $entity_type = $variables['content']['#entity_type'];
-  }
-  else {
-    $entity_type = FALSE;
+    $bundle = $variables['content']['#bundle'];
   }
 
   // Template layout.
@@ -397,9 +397,21 @@ function ds_preprocess_ds_layout(&$variables) {
 
   if ($entity_type) {
     if (isset($variables['content']['#ds_configuration'])) {
-      // Add view-mode-{name} to classes.
-      if (!in_array('view-mode-' . $variables['content']['#view_mode'], $variables['attributes']['class'])) {
-        $variables['attributes']['class'][] = 'view-mode-' . $variables['content']['#view_mode'];
+
+      // Add theming-classes to template.
+      $entity_classes = !empty($variables['content']['#ds_configuration']['layout']['entity_classes']) ? $variables['content']['#ds_configuration']['layout']['entity_classes'] : 'old_view_mode';
+      if ($entity_classes != 'no_classes') {
+        if ($entity_classes == 'all_classes') {
+          $variables['attributes']['class'][] = Html::cleanCssIdentifier($entity_type);
+          $variables['attributes']['class'][] = Html::cleanCssIdentifier($entity_type) . '--type-' . Html::cleanCssIdentifier($bundle);
+          $variables['attributes']['class'][] =  Html::cleanCssIdentifier($entity_type) . '--view-mode-' . Html::cleanCssIdentifier($variables['content']['#view_mode']);
+        }
+        elseif ($entity_classes == 'old_view_mode') {
+          // Add (old style, non cleaned) view-mode-{name} to classes.
+          if (!in_array('view-mode-' . $variables['content']['#view_mode'], $variables['attributes']['class'])) {
+            $variables['attributes']['class'][] = 'view-mode-' . $variables['content']['#view_mode'];
+          }
+        }
       }
 
       // Let other modules know we have rendered.

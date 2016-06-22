@@ -94,9 +94,9 @@ class BlockTest extends FastTestBase {
     // View the block
     $this->drupalGet('<front>');
     $this->assertText('Test Block', 'Test block found');
-    $xpath = $this->xpath('//div[@class="region region-sidebar-first"]/div/div[@class="view-mode-full ds-2col clearfix"]/div[@class="group-left"]/div[@class="field field--name-block-description field--type-ds field--label-hidden field__item"]/h2');
+    $xpath = $this->xpath('//div[@class="region region-sidebar-first"]/div/div[@class="block-content block-content--type-basic block-content--view-mode-full ds-2col clearfix"]/div[@class="group-left"]/div[@class="field field--name-block-description field--type-ds field--label-hidden field__item"]/h2');
     $this->assertEqual(count($xpath), 1, 'Description in group-left');
-    $xpath = $this->xpath('//div[@class="region region-sidebar-first"]/div/div[@class="view-mode-full ds-2col clearfix"]/div[@class="group-right"]/div[@class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"]/p');
+    $xpath = $this->xpath('//div[@class="region region-sidebar-first"]/div/div[@class="block-content block-content--type-basic block-content--view-mode-full ds-2col clearfix"]/div[@class="group-right"]/div[@class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"]/p');
     $this->assertEqual(count($xpath), 1, 'Body in group-right');
 
   }

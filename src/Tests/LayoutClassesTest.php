@@ -98,6 +98,9 @@ class LayoutClassesTest extends FastTestBase {
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
 
+    // Assert default classes
+    $this->assertRaw('node node--type-article node--view-mode-full', 'Default node classes are added');
+
     // Assert regions.
     $this->assertRaw('group-header', 'Template found (region header)');
     $this->assertRaw('class_name_1 group-header', 'Class found (class_name_1)');
@@ -127,6 +130,22 @@ class LayoutClassesTest extends FastTestBase {
     $this->assertRaw('<header class="class_name_1 group-header', 'Header found.');
     $this->assertRaw('<footer class="group-right', 'Footer found.');
     $this->assertRaw('<article', 'Article found.');
+
+    // Remove all the node classes
+    $edit = array('entity_classes' => 'no_classes');
+    $this->drupalPostForm('admin/structure/types/manage/article/display', $edit, t('Save'));
+    $this->drupalGet('node/' . $node->id());
+
+    // Assert that there are no entity classes
+    $this->assertNoRaw('node node--type-article node--view-mode-full', 'Default node classes are not added');
+
+    // Only show view mode (deprecated)
+    $edit = array('entity_classes' => 'old_view_mode');
+    $this->drupalPostForm('admin/structure/types/manage/article/display', $edit, t('Save'));
+    $this->drupalGet('node/' . $node->id());
+
+    // Assert that the old view mode class name is added (deprecated)
+    $this->assertRaw('view-mode-full', 'Only view mode is printed');
 
     // Let's create a block field, enable the full mode first.
     $edit = array('display_modes_custom[full]' => '1');
