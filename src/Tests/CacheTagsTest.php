@@ -9,6 +9,9 @@ namespace Drupal\ds\Tests;
  */
 class CacheTagsTest extends FastTestBase {
 
+  /**
+   * Tests setting the correct cache tags.
+   */
   public function testUserCacheTags() {
     // Create a node.
     $settings = array('type' => 'article', 'promote' => 1);
@@ -38,13 +41,14 @@ class CacheTagsTest extends FastTestBase {
       'fields[body][label]' => 'above',
       'fields[node_submitted_by][region]' => 'header',
     );
-    $this->dsConfigureUI($fields);
+    $this->dsConfigureUi($fields);
 
     $this->drupalGet('node/' . $node->id());
     $headers = $this->drupalGetHeader('X-Drupal-Cache-Tags');
     $this->assertTrue(
-      strpos($headers,'user:' . $node->getRevisionAuthor()->getOriginalId()),
+      strpos($headers, 'user:' . $node->getRevisionAuthor()->getOriginalId()),
       'User cache tag found'
     );
   }
+
 }

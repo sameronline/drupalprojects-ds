@@ -1,14 +1,8 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\ds\Tests\BlockTest.
- */
-
 namespace Drupal\ds\Tests;
-use Drupal\ds\Tests\FastTestBase;
+
 use Drupal\block_content\Entity\BlockContent;
-use Drupal\Component\Utility\Unicode;
 
 /**
  * Tests for the manage display tab in Display Suite.
@@ -24,10 +18,19 @@ class BlockTest extends FastTestBase {
    *
    * @var array
    */
-  public static $modules = array('node', 'user', 'comment', 'field_ui', 'block', 'block_content', 'ds', 'layout_plugin');
+  public static $modules = array(
+    'node',
+    'user',
+    'comment',
+    'field_ui',
+    'block',
+    'block_content',
+    'ds',
+    'layout_plugin',
+  );
 
   /**
-   * The created user
+   * The created user.
    *
    * @var User
    */
@@ -51,14 +54,14 @@ class BlockTest extends FastTestBase {
   }
 
   /**
-   * Test adding a block, modifying output
+   * Test adding a block, modifying output.
    */
   public function testBlock() {
 
     // Create basic block type.
     $edit = array(
       'label' => 'Basic Block',
-      'id' => 'basic'
+      'id' => 'basic',
     );
     $this->drupalPostForm('admin/structure/block/block-content/types/add', $edit, t('Save'), array());
     $this->assertText('Custom block type Basic Block has been added.', 'Basic block type added');
@@ -82,23 +85,22 @@ class BlockTest extends FastTestBase {
 
     // Change to a DS layout.
     $url = 'admin/structure/block/block-content/manage/basic/display';
-    $edit = array('layout' => 'ds_2col',);
+    $edit = array('layout' => 'ds_2col');
     $this->drupalPostForm($url, $edit, t('Save'), array());
 
     $fields = array(
       'fields[block_description][region]' => 'left',
       'fields[body][region]' => 'right',
     );
-    $this->dsConfigureUI($fields, 'admin/structure/block/block-content/manage/basic/display');
+    $this->dsConfigureUi($fields, 'admin/structure/block/block-content/manage/basic/display');
 
-    // View the block
+    // View the block.
     $this->drupalGet('<front>');
     $this->assertText('Test Block', 'Test block found');
     $xpath = $this->xpath('//div[@class="region region-sidebar-first"]/div/div[@class="block-content block-content--type-basic block-content--view-mode-full ds-2col clearfix"]/div[@class="group-left"]/div[@class="field field--name-block-description field--type-ds field--label-hidden field__item"]/h2');
     $this->assertEqual(count($xpath), 1, 'Description in group-left');
     $xpath = $this->xpath('//div[@class="region region-sidebar-first"]/div/div[@class="block-content block-content--type-basic block-content--view-mode-full ds-2col clearfix"]/div[@class="group-right"]/div[@class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"]/p');
     $this->assertEqual(count($xpath), 1, 'Body in group-right');
-
   }
 
 }

@@ -9,7 +9,6 @@ use Drupal\simpletest\WebTestBase;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\taxonomy\Tests\TaxonomyTestTrait;
-use Drupal\user\Entity\User;
 
 /**
  * Base test for Display Suite.
@@ -28,7 +27,21 @@ abstract class FastTestBase extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('node', 'user', 'field_ui', 'rdf', 'quickedit', 'taxonomy', 'block', 'ds', 'ds_extras', 'ds_test', 'ds_switch_view_mode', 'layout_plugin', 'field_group');
+  public static $modules = array(
+    'node',
+    'user',
+    'field_ui',
+    'rdf',
+    'quickedit',
+    'taxonomy',
+    'block',
+    'ds',
+    'ds_extras',
+    'ds_test',
+    'ds_switch_view_mode',
+    'layout_plugin',
+    'field_group',
+  );
 
   /**
    * The label for a random field to be created for testing.
@@ -59,7 +72,7 @@ abstract class FastTestBase extends WebTestBase {
   protected $vocabulary;
 
   /**
-   * The created user
+   * The created user.
    *
    * @var User
    */
@@ -97,7 +110,7 @@ abstract class FastTestBase extends WebTestBase {
       'access site in maintenance mode',
       'administer site configuration',
       'bypass node access',
-      'ds switch view mode'
+      'ds switch view mode',
     ));
     $this->drupalLogin($this->adminUser);
 
@@ -107,8 +120,16 @@ abstract class FastTestBase extends WebTestBase {
     $this->fieldName = 'field_' . $this->fieldNameInput;
 
     // Create Article node type.
-    $this->drupalCreateContentType(array('type' => 'article', 'name' => 'Article', 'revision' => TRUE));
-    $this->drupalCreateContentType(array('type' => 'page', 'name' => 'Page', 'revision' => TRUE));
+    $this->drupalCreateContentType(array(
+      'type' => 'article',
+      'name' => 'Article',
+      'revision' => TRUE,
+    ));
+    $this->drupalCreateContentType(array(
+      'type' => 'page',
+      'name' => 'Page',
+      'revision' => TRUE,
+    ));
 
     // Create a vocabulary named "Tags".
     $this->vocabulary = Vocabulary::create(array(
@@ -155,4 +176,5 @@ abstract class FastTestBase extends WebTestBase {
 
     return $this->assertEqual(trim($first), trim($second), $message, $group);
   }
+
 }

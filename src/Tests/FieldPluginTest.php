@@ -3,7 +3,7 @@
 namespace Drupal\ds\Tests;
 
 /**
- * Tests DS field plugins
+ * Tests DS field plugins.
  *
  * @group ds
  */
@@ -12,7 +12,7 @@ class FieldPluginTest extends FastTestBase {
   /**
    * Test basic Display Suite fields plugins.
    */
-  function testFieldPlugin() {
+  public function testFieldPlugin() {
 
     $this->dsSelectLayout();
 
@@ -57,7 +57,7 @@ class FieldPluginTest extends FastTestBase {
     );
 
     $this->dsSelectLayout();
-    $this->dsConfigureUI($fields);
+    $this->dsConfigureUi($fields);
 
     // Create a node.
     $settings = array('type' => 'article');

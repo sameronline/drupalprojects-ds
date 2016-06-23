@@ -3,7 +3,7 @@
 namespace Drupal\ds\Tests;
 
 /**
- * Tests DS layout plugins
+ * Tests DS layout plugins.
  *
  * @group ds
  */
@@ -12,7 +12,7 @@ class LayoutFluidTest extends FastTestBase {
   /**
    * Test fluid Display Suite layouts.
    */
-  function testFluidLayout() {
+  public function testFluidLayout() {
     // Assert our 2 tests layouts are found.
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertRaw('Test Fluid two column', 'Test Fluid two column layout found');
@@ -35,7 +35,7 @@ class LayoutFluidTest extends FastTestBase {
     );
 
     $this->dsSelectLayout($layout, $assert);
-    $this->dsConfigureUI($fields);
+    $this->dsConfigureUi($fields);
 
     // Create a node.
     $settings = array('type' => 'article');
@@ -47,7 +47,7 @@ class LayoutFluidTest extends FastTestBase {
     $this->assertRaw('group-one-column', 'Group one column class set');
     $this->assertRaw('dstest-2col-fluid.css', 'Css file included');
 
-    // Add fields to the right column
+    // Add fields to the right column.
     $fields = array(
       'fields[node_author][region]' => 'left',
       'fields[node_links][region]' => 'left',
@@ -55,14 +55,14 @@ class LayoutFluidTest extends FastTestBase {
     );
 
     $this->dsSelectLayout($layout, $assert);
-    $this->dsConfigureUI($fields);
+    $this->dsConfigureUi($fields);
 
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('group-left', 'Template found (region left)');
     $this->assertRaw('group-right', 'Template found (region right)');
     $this->assertNoRaw('group-one-column', 'Group one column class not set');
 
-    // Move all fields to the right column
+    // Move all fields to the right column.
     $fields = array(
       'fields[node_author][region]' => 'right',
       'fields[node_links][region]' => 'right',
@@ -71,7 +71,7 @@ class LayoutFluidTest extends FastTestBase {
     );
 
     $this->dsSelectLayout($layout, $assert);
-    $this->dsConfigureUI($fields);
+    $this->dsConfigureUi($fields);
 
     $this->drupalGet('node/' . $node->id());
     $this->assertNoRaw('group-left', 'Empty region left hidden');

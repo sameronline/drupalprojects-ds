@@ -21,11 +21,11 @@ class TestMultipleField extends DsFieldBase {
   public function build() {
     return array(
       0 => array(
-        '#markup' => 'Test row one of multiple field plugin on node ' . $this->entity()->id()
+        '#markup' => 'Test row one of multiple field plugin on node ' . $this->entity()->id(),
       ),
       1 => array(
-        '#markup' => 'Test row two of multiple field plugin on node ' . $this->entity()->id()
-      )
+        '#markup' => 'Test row two of multiple field plugin on node ' . $this->entity()->id(),
+      ),
     );
   }
 
@@ -33,7 +33,7 @@ class TestMultipleField extends DsFieldBase {
    * {@inheritdoc}
    */
   public function isMultiple() {
-   return TRUE;
+    return TRUE;
   }
 
 }

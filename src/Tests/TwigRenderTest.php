@@ -1,19 +1,17 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Tests\TwigRenderTest.
- */
-
 namespace Drupal\ds\Tests;
 
 /**
- * Tests for twig specific functionality
+ * Tests for twig specific functionality.
  *
  * @group ds
  */
 class TwigRenderTest extends FastTestBase {
 
+  /**
+   * Tests targeting the field in a twig template.
+   */
   public function testFieldNameTargeting() {
     // Create a node.
     $settings = array('type' => 'article', 'promote' => 1);
@@ -34,11 +32,11 @@ class TwigRenderTest extends FastTestBase {
     $fields = array(
       'fields[node_title][region]' => 'ds_content',
     );
-    $this->dsConfigureUI($fields);
+    $this->dsConfigureUi($fields);
 
     $this->drupalGet('node/' . $node->id());
 
-    // Assert that the title is visible
+    // Assert that the title is visible.
     $this->assertText($node->getTitle());
 
     $edit = array(
@@ -48,7 +46,7 @@ class TwigRenderTest extends FastTestBase {
 
     $this->drupalGet('node/' . $node->id());
 
-    // Assert that the title is not visible anymore
+    // Assert that the title is not visible anymore.
     $this->assertNoText($node->getTitle());
   }
 

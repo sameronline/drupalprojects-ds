@@ -19,7 +19,6 @@ class TestFieldNothing extends DsFieldBase {
    * {@inheritdoc}
    */
   public function build() {
-    return;
   }
 
 }

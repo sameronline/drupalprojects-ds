@@ -17,7 +17,7 @@ class LayoutClassesTest extends FastTestBase {
   protected function setup() {
     parent::setup();
 
-    // Set extra fields
+    // Set extra fields.
     \Drupal::configFactory()->getEditable('ds_extras.settings')
       ->set('region_to_block', TRUE)
       ->set('fields_extra', TRUE)
@@ -30,8 +30,9 @@ class LayoutClassesTest extends FastTestBase {
   /**
    * Test selecting layouts, classes, region to block and fields.
    */
-  function testDStestLayouts() {
-    // Check that the ds_3col_equal_width layout is not available (through the alter).
+  public function testDsTestLayouts() {
+    // Check that the ds_3col_equal_width layout is not available (through the
+    // alter).
     $this->drupalGet('admin/structure/types/manage/article/display');
     $this->assertNoRaw('ds_3col_stacked_equal_width', 'ds_3col_stacked_equal_width not available');
 
@@ -67,7 +68,7 @@ class LayoutClassesTest extends FastTestBase {
     $this->dsSelectLayout($layout, $assert);
     $this->dsConfigureClasses();
     $this->dsSelectClasses();
-    $this->dsConfigureUI($fields);
+    $this->dsConfigureUi($fields);
 
     // Assert the two extra fields are found.
     $this->drupalGet('admin/structure/types/manage/article/display');
@@ -98,7 +99,7 @@ class LayoutClassesTest extends FastTestBase {
     $node = $this->drupalCreateNode($settings);
     $this->drupalGet('node/' . $node->id());
 
-    // Assert default classes
+    // Assert default classes.
     $this->assertRaw('node node--type-article node--view-mode-full', 'Default node classes are added');
 
     // Assert regions.
@@ -116,7 +117,7 @@ class LayoutClassesTest extends FastTestBase {
     $this->assertRaw('Submitted by', t('Submitted field found'));
     $this->assertText('This is an extra field made available through "Extra fields" functionality.');
 
-    // Test HTML5 wrappers
+    // Test HTML5 wrappers.
     $this->assertNoRaw('<header class="class_name_1 group-header', 'Header not found.');
     $this->assertNoRaw('<footer class="group-right', 'Footer not found.');
     $this->assertNoRaw('<article', 'Article not found.');
@@ -125,26 +126,26 @@ class LayoutClassesTest extends FastTestBase {
       'layout_configuration[region_wrapper][right]' => 'footer',
       'layout_configuration[region_wrapper][outer_wrapper]' => 'article',
     );
-    $this->dsConfigureUI($wrappers);
+    $this->dsConfigureUi($wrappers);
     $this->drupalGet('node/' . $node->id());
     $this->assertRaw('<header class="class_name_1 group-header', 'Header found.');
     $this->assertRaw('<footer class="group-right', 'Footer found.');
     $this->assertRaw('<article', 'Article found.');
 
-    // Remove all the node classes
+    // Remove all the node classes.
     $edit = array('entity_classes' => 'no_classes');
     $this->drupalPostForm('admin/structure/types/manage/article/display', $edit, t('Save'));
     $this->drupalGet('node/' . $node->id());
 
-    // Assert that there are no entity classes
+    // Assert that there are no entity classes.
     $this->assertNoRaw('node node--type-article node--view-mode-full', 'Default node classes are not added');
 
-    // Only show view mode (deprecated)
+    // Only show view mode (deprecated).
     $edit = array('entity_classes' => 'old_view_mode');
     $this->drupalPostForm('admin/structure/types/manage/article/display', $edit, t('Save'));
     $this->drupalGet('node/' . $node->id());
 
-    // Assert that the old view mode class name is added (deprecated)
+    // Assert that the old view mode class name is added (deprecated).
     $this->assertRaw('view-mode-full', 'Only view mode is printed');
 
     // Let's create a block field, enable the full mode first.
@@ -172,30 +173,14 @@ class LayoutClassesTest extends FastTestBase {
     $this->drupalPostForm('admin/structure/types/manage/article/display/full', $edit, t('Save'));
     $this->assertRaw('<td colspan="9">' . t('Block region') . '</td>', 'Block region found');
 
-    // Configure fields
+    // Configure fields.
     $fields = array(
       'fields[node_author][region]' => 'left',
       'fields[node_links][region]' => 'left',
       'fields[body][region]' => 'right',
       'fields[dynamic_token_field:node-test_field][region]' => 'block_region',
     );
-    $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/display/full');
-
-    // Set block in sidebar
-
-    // @todo fix this
-
-    /*
-    $edit = array(
-      'blocks[ds_extras_block_region][region]' => 'sidebar_first',
-    );
-    $this->drupalPostForm('admin/structure/block', $edit, t('Save blocks'));
-
-    // Assert the block is on the node page.
-    $this->drupalGet('node/' . $node->id());
-    $this->assertRaw('Block region</h2>', 'Block region found');
-    $this->assertText('Test code field on node ' . $node->id(), 'Post date in block');
-    */
+    $this->dsConfigureUi($fields, 'admin/structure/types/manage/article/display/full');
 
     // Change layout via admin/structure/ds/layout-change.
     // First verify that header and footer are not here.
@@ -225,7 +210,8 @@ class LayoutClassesTest extends FastTestBase {
     $this->assertTrue(in_array('body', $data['regions']['footer']), t('Body field is in footer'));
     $this->assertTrue(in_array('dynamic_token_field:node-test_field', $data['regions']['footer']), t('Test field is in footer'));
 
-    // Test that a default view mode with no layout is not affected by a disabled view mode.
+    // Test that a default view mode with no layout is not affected by a
+    // disabled view mode.
     $edit = array(
       'layout' => '',
       'display_modes_custom[full]' => FALSE,
@@ -234,4 +220,5 @@ class LayoutClassesTest extends FastTestBase {
     $this->drupalGet('node/' . $node->id());
     $this->assertNoText('Test code field on node 1', 'No ds field from full view mode layout');
   }
+
 }
