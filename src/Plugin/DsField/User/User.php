@@ -23,7 +23,7 @@ class User extends Entity {
   public function build() {
     $view_mode = $this->getEntityViewMode();
 
-    /** @var $node NodeInterface */
+    /* @var $node NodeInterface */
     $node = $this->entity();
     $uid = $node->getOwnerId();
 

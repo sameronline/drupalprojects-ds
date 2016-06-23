@@ -100,7 +100,7 @@ class BlockFieldForm extends FieldFormBase implements ContainerInjectionInterfac
 
     // Create an instance of the block to find out if it has a config form.
     // Redirect to the block config form if there is one.
-    /** @var $block BlockPluginInterface */
+    /* @var $block BlockPluginInterface */
     $manager = \Drupal::service('plugin.manager.block');
     $block_id = $this->field['properties']['block'];
     $block = $manager->createInstance($block_id);

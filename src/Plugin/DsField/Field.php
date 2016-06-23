@@ -39,7 +39,7 @@ abstract class Field extends DsFieldBase {
 
     // Link.
     if (!empty($config['link'])) {
-      /** @var $entity EntityInterface */
+      /* @var $entity EntityInterface */
       $entity = $this->entity();
       $url_info = $entity->toUrl();
       if (!empty($config['link class'])) {

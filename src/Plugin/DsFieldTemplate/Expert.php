@@ -235,7 +235,7 @@ class Expert extends DsFieldTemplateBase {
         // Default attributes.
         $field_settings[$wrapper_key . '-def-at'] = !(empty($values[$wrapper_key . '-def-at'])) ? TRUE : FALSE;
         // Token replacement.
-        /** @var EntityInterface $entity */
+        /* @var EntityInterface $entity */
         if ($entity = $this->getEntity()) {
           // Tokens
           $apply_to = array(

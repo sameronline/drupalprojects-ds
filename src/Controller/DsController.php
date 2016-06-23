@@ -135,7 +135,7 @@ class DsController extends ControllerBase {
     // Get the manage display URI.
     $route = FieldUI::getOverviewRouteInfo($entity_type_id, $entity->bundle());
 
-    /** @var $entity_display EntityDisplayBase */
+    /* @var $entity_display EntityDisplayBase */
     $entity_display = EntityViewDisplay::load($entity_type_id . '.' . $entity->bundle() . '.' . $view_mode);
 
     $route_parameters = $route->getRouteParameters();

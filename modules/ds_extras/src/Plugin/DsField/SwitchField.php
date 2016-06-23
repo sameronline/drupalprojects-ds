@@ -3,7 +3,6 @@
 namespace Drupal\ds_extras\Plugin\DsField;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -57,17 +56,17 @@ class SwitchField extends DsFieldBase {
     $settings = $this->getConfiguration();
 
     if (!empty($settings)) {
-      /** @var EntityInterface $entity */
+      /* @var \Drupal\Core\Entity\EntityInterface $entity */
       $entity = $this->entity();
 
-      // Basic route parameters
+      // Basic route parameters.
       $route_parameters = array(
         'entityType' => $entity->getEntityTypeId(),
         'entityId' => $entity->id(),
       );
 
       $selector = $this->viewMode() == 'default' ? 'full' : $this->viewMode();
-      // Basic route options
+      // Basic route options.
       $route_options = array(
         'query' => array(
           'selector' => 'view-mode-' . $selector,
@@ -80,7 +79,7 @@ class SwitchField extends DsFieldBase {
       );
 
       foreach ($settings['vms'] as $key => $value) {
-        // If the label is empty, do not create a link
+        // If the label is empty, do not create a link.
         if (!empty($value)) {
           $route_parameters['viewMode'] = $key == 'default' ? 'full' : $key;
           $items[] = \Drupal::l($value, Url::fromRoute('ds_extras.switch_view_mode', $route_parameters, $route_options));
@@ -120,7 +119,7 @@ class SwitchField extends DsFieldBase {
     $config = $this->getConfiguration();
     $config = isset($config['vms']) ? $config['vms'] : array();
     foreach ($view_modes as $key => $value) {
-      $entity_display = entity_load('entity_view_display', $entity_type .  '.' . $bundle . '.' . $key);
+      $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $key);
       if (!empty($entity_display)) {
         if ($entity_display->status()) {
           $form['vms'][$key] = array(
@@ -148,7 +147,7 @@ class SwitchField extends DsFieldBase {
     $summary[] = 'View mode labels';
 
     foreach ($view_modes as $key => $value) {
-      $entity_display = entity_load('entity_view_display', $entity_type .  '.' . $bundle . '.' . $key);
+      $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $key);
       if (!empty($entity_display)) {
         if ($entity_display->status()) {
           $label = isset($settings[$key]) ? $settings[$key] : $key;

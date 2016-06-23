@@ -145,7 +145,7 @@ class DynamicFieldPluginTest extends FastTestBase {
     );
     $this->dsConfigureUI($fields, 'admin/structure/types/manage/article/display');
 
-    /** @var \Drupal\node\NodeInterface $node */
+    /* @var \Drupal\node\NodeInterface $node */
     $node = $this->entitiesTestSetup();
 
     // Look at node and verify the menu is visible

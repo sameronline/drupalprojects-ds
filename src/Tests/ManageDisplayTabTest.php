@@ -13,7 +13,7 @@ class ManageDisplayTabTest extends FastTestBase {
    * Test tabs
    */
   function testFieldPlugin() {
-    /** @var \Drupal\node\NodeInterface $node */
+    /* @var \Drupal\node\NodeInterface $node */
     $node = $this->entitiesTestSetup();
 
     // Verify we can see the manage display tab on a node and can click on it

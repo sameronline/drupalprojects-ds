@@ -108,7 +108,7 @@ abstract class BlockBase extends DsFieldBase implements ContainerFactoryPluginIn
   protected function getBlock() {
     if (!$this->block) {
       // Create an instance of the block.
-      /** @var $block BlockPluginInterface */
+      /* @var $block BlockPluginInterface */
       $block_id = $this->blockPluginId();
       $block = $this->blockManager->createInstance($block_id);
 

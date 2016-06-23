@@ -177,7 +177,7 @@ class ChangeLayoutForm extends FormBase {
     }
 
     // Save configuration.
-    /** @var $entity_display EntityDisplayInterface*/
+    /* @var $entity_display EntityDisplayInterface*/
     $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $display_mode);
     foreach (array_keys($third_party_settings) as $key) {
       $entity_display->setThirdPartySetting('ds', $key, $third_party_settings[$key]);

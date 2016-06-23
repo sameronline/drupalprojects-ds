@@ -67,10 +67,10 @@ class NodeSubmittedBy extends Date {
   public function build() {
     $field = $this->getFieldConfiguration();
 
-    /** @var $node NodeInterface */
+    /* @var $node NodeInterface */
     $node = $this->entity();
 
-    /** @var $account UserInterface */
+    /* @var $account UserInterface */
     $account = $node->getOwner();
 
     switch ($field['formatter']) {

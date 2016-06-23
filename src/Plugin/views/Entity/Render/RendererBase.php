@@ -35,7 +35,7 @@ abstract class RendererBase extends EntityTranslationRendererBase {
         $group_value_content = '';
         $entity = $row->_entity;
         $entity->view = $this->view;
-        /** @var $entity EntityInterface */
+        /* @var $entity EntityInterface */
         $entity_id = $entity->id();
         $langcode = $this->getLangcode($row);
 

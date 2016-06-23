@@ -61,10 +61,10 @@ class Ds {
     );
 
     // Load the plugin.
-    /** @var $field_instance \Drupal\ds\Plugin\DsField\DsFieldInterface */
+    /* @var $field_instance \Drupal\ds\Plugin\DsField\DsFieldInterface */
     $field_instance = \Drupal::service('plugin.manager.ds')->createInstance($field['plugin_id'], $configuration);
 
-    /** @var $display EntityDisplayInterface */
+    /* @var $display EntityDisplayInterface */
     if ($field_settings = $display->getThirdPartySetting('ds', 'fields')) {
       $settings = isset($field_settings[$key]['settings']) ? $field_settings[$key]['settings'] : array();
       // Unset field template settings.
@@ -106,7 +106,7 @@ class Ds {
    * @return array|bool $layout
    */
   public static function getDisplay($entity_type, $bundle, $view_mode, $fallback = TRUE) {
-    /** @var $entity_display EntityDisplayInterface */
+    /* @var $entity_display EntityDisplayInterface */
     $entity_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.' . $view_mode);
     if ($entity_display) {
       $overridden = $entity_display->status();
@@ -122,7 +122,7 @@ class Ds {
     // In case $view_mode is not found, check if we have a default layout,
     // but only if the view mode settings aren't overridden for this view mode.
     if ($view_mode != 'default' && !$overridden && $fallback) {
-      /** @var $entity_default_display EntityDisplayInterface */
+      /* @var $entity_default_display EntityDisplayInterface */
       $entity_default_display = entity_load('entity_view_display', $entity_type . '.' . $bundle . '.default');
       if ($entity_default_display) {
         return $entity_default_display;

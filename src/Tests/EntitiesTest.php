@@ -33,7 +33,7 @@ class EntitiesTest extends FastTestBase {
    */
   function testDSNodeEntity() {
 
-    /** @var \Drupal\node\NodeInterface $node */
+    /* @var \Drupal\node\NodeInterface $node */
     $node = $this->entitiesTestSetup();
 
     // Test theme_hook_suggestions in ds_entity_variables().

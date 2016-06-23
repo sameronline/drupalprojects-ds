@@ -121,7 +121,7 @@ abstract class DsFieldBase extends PluginBase implements DsFieldInterface {
       return $this->configuration['entity_type'];
     }
     elseif ($entity = $this->entity()) {
-      /** @var $entity EntityInterface */
+      /* @var $entity EntityInterface */
       return $entity->getEntityTypeId();
     }
     else {

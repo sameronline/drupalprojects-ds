@@ -15,7 +15,7 @@ class ExportablesTest extends FastTestBase {
    * Enables the exportables module.
    */
   function dsExportablesSetup() {
-    /** @var $display EntityViewDisplay */
+    /* @var $display EntityViewDisplay */
     $display = EntityViewDisplay::load('node.article.default');
     $display->delete();
     \Drupal::service('module_installer')->install(array('ds_exportables_test'));

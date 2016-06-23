@@ -17,7 +17,7 @@ class TwigRenderTest extends FastTestBase {
   public function testFieldNameTargeting() {
     // Create a node.
     $settings = array('type' => 'article', 'promote' => 1);
-    /** @var \Drupal\node\NodeInterface $node */
+    /* @var \Drupal\node\NodeInterface $node */
     $node = $this->drupalCreateNode($settings);
 
     // Configure layout.
