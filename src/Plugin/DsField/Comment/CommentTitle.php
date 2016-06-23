@@ -17,7 +17,7 @@ use Drupal\ds\Plugin\DsField\Field;
 class CommentTitle extends Field {
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   protected function entityRenderKey() {
     return 'subject';

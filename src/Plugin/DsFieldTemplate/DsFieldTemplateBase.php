@@ -50,7 +50,7 @@ abstract class DsFieldTemplateBase extends PluginBase implements DsFieldTemplate
       '#type' => 'textfield',
       '#title' => t('Label'),
       '#size' => '10',
-      '#default_value' =>$config['lb'],
+      '#default_value' => $config['lb'],
     );
     $form['lb-col'] = array(
       '#type' => 'checkbox',

@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class Entity extends DsFieldBase {
 
   /**
-   * The EntityDisplayRepository service
+   * The EntityDisplayRepository service.
    *
    * @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface
    */
@@ -29,7 +29,6 @@ abstract class Entity extends DsFieldBase {
 
   /**
    * {@inheritdoc}
-   *
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
@@ -70,12 +69,12 @@ abstract class Entity extends DsFieldBase {
     $entity = $this->linkedEntity();
     $view_modes = $this->entityDisplayRepository->getViewModes($entity);
 
-    // When no view modes are found no summary is displayed
+    // When no view modes are found no summary is displayed.
     if (empty($view_modes)) {
       return '';
     }
 
-    // Print the chosen view mode or the default one
+    // Print the chosen view mode or the default one.
     $config = $this->getConfiguration();
     $entity_view_mode = $config['entity_view_mode'];
     $summary[] = 'View mode: ' . $view_modes[$entity_view_mode]['label'];
@@ -100,14 +99,14 @@ abstract class Entity extends DsFieldBase {
   }
 
   /**
-   * Gets the wanted entity
+   * Gets the wanted entity.
    */
   public function linkedEntity() {
     return '';
   }
 
   /**
-   * Gets the view mode
+   * Gets the view mode.
    */
   public function getEntityViewMode() {
     $config = $this->getConfiguration();
@@ -115,4 +114,3 @@ abstract class Entity extends DsFieldBase {
   }
 
 }
-

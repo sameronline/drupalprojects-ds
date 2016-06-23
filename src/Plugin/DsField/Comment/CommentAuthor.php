@@ -17,7 +17,7 @@ use Drupal\ds\Plugin\DsField\Field;
 class CommentAuthor extends Field {
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   protected function entityRenderKey() {
     return 'name';

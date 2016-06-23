@@ -23,18 +23,22 @@ abstract class BlockBase extends DsFieldBase implements ContainerFactoryPluginIn
   protected $block;
 
   /**
-   * The BlockManager service
+   * The BlockManager service.
    *
    * @var \Drupal\Core\Block\BlockManagerInterface
    */
   protected $blockManager;
 
   /**
+   * The context handler.
+   *
    * @var \Drupal\Core\Plugin\Context\ContextHandlerInterface
    */
   protected $contextHandler;
 
   /**
+   * The context repository interface.
+   *
    * @var \Drupal\Core\Plugin\Context\ContextRepositoryInterface
    */
   protected $contextRepository;
@@ -117,4 +121,5 @@ abstract class BlockBase extends DsFieldBase implements ContainerFactoryPluginIn
 
     return $this->block;
   }
+
 }

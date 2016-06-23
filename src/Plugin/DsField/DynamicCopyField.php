@@ -21,7 +21,7 @@ class DynamicCopyField extends DsFieldBase {
    *
    * @var \Drupal\ds\Plugin\DsField\DsFieldInterface;
    */
-  private $field_instance;
+  private $fieldInstance;
 
   /**
    * Constructs a Display Suite field plugin.
@@ -29,7 +29,7 @@ class DynamicCopyField extends DsFieldBase {
   public function __construct($configuration, $plugin_id, $plugin_definition, DsPluginManager $plugin_Manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->field_instance = $plugin_Manager->createInstance($plugin_definition['properties']['ds_plugin'], $configuration);
+    $this->fieldInstance = $plugin_Manager->createInstance($plugin_definition['properties']['ds_plugin'], $configuration);
   }
 
   /**
@@ -48,35 +48,35 @@ class DynamicCopyField extends DsFieldBase {
    * {@inheritdoc}
    */
   public function build() {
-    return $this->field_instance->build();
+    return $this->fieldInstance->build();
   }
 
   /**
    * {@inheritdoc}
    */
   public function settingsForm($form, FormStateInterface $form_state) {
-    return $this->field_instance->settingsForm($form, $form_state);
+    return $this->fieldInstance->settingsForm($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
   public function settingsSummary($settings) {
-    return $this->field_instance->settingsSummary($settings);
+    return $this->fieldInstance->settingsSummary($settings);
   }
 
   /**
    * {@inheritdoc}
    */
   public function getConfiguration() {
-    return $this->field_instance->getConfiguration();
+    return $this->fieldInstance->getConfiguration();
   }
 
   /**
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
-    return $this->field_instance->setConfiguration($configuration);
+    return $this->fieldInstance->setConfiguration($configuration);
   }
 
   /**
@@ -90,7 +90,7 @@ class DynamicCopyField extends DsFieldBase {
    * {@inheritdoc}
    */
   public function formatters() {
-    return $this->field_instance->formatters();
+    return $this->fieldInstance->formatters();
   }
 
 }

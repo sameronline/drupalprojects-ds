@@ -8,7 +8,7 @@ use Drupal\views\ViewsData;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides Display Suite views row plugin definitions for all non-special entity types.
+ * Provides DS views row plugin definitions for all non-special entity types.
  *
  * @ingroup views_row_plugins
  *
@@ -104,4 +104,5 @@ class DsEntityRow implements ContainerDeriverInterface {
 
     return $this->derivatives;
   }
+
 }

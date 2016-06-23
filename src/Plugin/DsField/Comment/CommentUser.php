@@ -3,7 +3,6 @@
 namespace Drupal\ds\Plugin\DsField\Comment;
 
 use Drupal\ds\Plugin\DsField\Entity;
-use Drupal\node\NodeInterface;
 
 /**
  * Plugin that renders a view mode.
@@ -23,7 +22,7 @@ class CommentUser extends Entity {
   public function build() {
     $view_mode = $this->getEntityViewMode();
 
-    /* @var $comment CommentInterface */
+    /* @var $comment \Drupal\comment\CommentInterface */
     $comment = $this->entity();
     $uid = $comment->getOwnerId();
 

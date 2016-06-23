@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds\Plugin\Block\DsField\BlockDescription.
- */
-
 namespace Drupal\ds\Plugin\DsField\Block;
 
 use Drupal\ds\Plugin\DsField\DsFieldBase;
@@ -50,7 +45,7 @@ class BlockDescription extends DsFieldBase {
   }
 
 
- /**
+  /**
    * {@inheritdoc}
    */
   public function settingsForm($form, FormStateInterface $form_state) {
@@ -60,13 +55,13 @@ class BlockDescription extends DsFieldBase {
       '#type' => 'textfield',
       '#title' => 'Wrapper',
       '#default_value' => $config['wrapper'],
-      '#description' => t('Eg: h1, h2, p')
+      '#description' => t('Eg: h1, h2, p'),
     );
     $settings['class'] = array(
       '#type' => 'textfield',
       '#title' => 'Class',
       '#default_value' => $config['class'],
-      '#description' => t('Put a class on the wrapper. Eg: block-title')
+      '#description' => t('Put a class on the wrapper. Eg: block-title'),
     );
 
     return $settings;
@@ -95,12 +90,15 @@ class BlockDescription extends DsFieldBase {
 
     $configuration = array(
       'wrapper' => 'h2',
-      'class' => ''
+      'class' => '',
     );
 
     return $configuration;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function entityRenderKey() {
     return 'label';
   }

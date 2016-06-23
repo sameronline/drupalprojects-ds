@@ -8,7 +8,7 @@ use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a derivative for bundle fields
+ * Provides a derivative for bundle fields.
  */
 class BundleField extends DeriverBase implements ContainerDeriverInterface {
 
@@ -32,7 +32,6 @@ class BundleField extends DeriverBase implements ContainerDeriverInterface {
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
-
 
   /**
    * Constructs a DsEntityRow object.
@@ -75,4 +74,5 @@ class BundleField extends DeriverBase implements ContainerDeriverInterface {
 
     return $this->derivatives;
   }
+
 }

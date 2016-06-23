@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class Date extends DsFieldBase {
 
   /**
-   * The EntityDisplayRepository service
+   * The EntityDisplayRepository service.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */

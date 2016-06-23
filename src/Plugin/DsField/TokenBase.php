@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class TokenBase extends DsFieldBase {
 
   /**
-   * The Token service
+   * The Token service.
    *
    * @var \Drupal\Core\Utility\Token
    */

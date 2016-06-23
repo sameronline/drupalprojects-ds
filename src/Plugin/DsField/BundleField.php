@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class BundleField extends DsFieldBase {
 
   /**
-   * The EntityDisplayRepository service
+   * The EntityDisplayRepository service.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */

@@ -55,4 +55,5 @@ abstract class DynamicField extends DeriverBase {
   protected function getKey($entity_type, $field) {
     return $entity_type . '-' . $field['id'];
   }
+
 }

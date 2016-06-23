@@ -7,8 +7,6 @@ use Drupal\ds\Plugin\DsField\Date;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Render\Renderer;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\node\NodeInterface;
-use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -24,13 +22,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class NodeSubmittedBy extends Date {
 
   /**
-   * Drupal core Render service
+   * Drupal core Render service.
    *
    * @var \Drupal\Core\Render\Renderer
    */
   protected $renderer;
   /**
-   * The DateFormatter service
+   * The DateFormatter service.
    *
    * @var \Drupal\Core\Datetime\DateFormatter
    */
@@ -67,30 +65,29 @@ class NodeSubmittedBy extends Date {
   public function build() {
     $field = $this->getFieldConfiguration();
 
-    /* @var $node NodeInterface */
+    /* @var $node \Drupal\node\NodeInterface */
     $node = $this->entity();
 
-    /* @var $account UserInterface */
+    /* @var $account \Drupal\user\UserInterface */
     $account = $node->getOwner();
 
-    switch ($field['formatter']) {
-      default:
-        $date_format = str_replace('ds_post_date_', '', $field['formatter']);
-        $user_name = array(
-          '#theme' => 'username',
-          '#account' => $account,
-        );
-        return array(
-          '#markup' => t('Submitted by <a href=":user_link">@user</a> on @date.', array(
-            '@user' => $this->renderer->render($user_name),
-            '@date' => $this->date->format($this->entity()->created->value, $date_format),
-            ':user_link' => Url::fromUri('entity:user/' . $account->id())->toString())
-          ),
-          '#cache' => array(
-            'tags' => $account->getCacheTags()
-          ),
-        );
-    }
+    $date_format = str_replace('ds_post_date_', '', $field['formatter']);
+    $user_name = array(
+      '#theme' => 'username',
+      '#account' => $account,
+    );
+    return array(
+      '#markup' => t('Submitted by <a href=":user_link">@user</a> on @date.',
+        array(
+          '@user' => $this->renderer->render($user_name),
+          '@date' => $this->date->format($this->entity()->created->value, $date_format),
+          ':user_link' => Url::fromUri('entity:user/' . $account->id())->toString(),
+        )
+      ),
+      '#cache' => array(
+        'tags' => $account->getCacheTags(),
+      ),
+    );
   }
 
 }

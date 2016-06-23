@@ -15,7 +15,7 @@ abstract class Field extends DsFieldBase {
   public function build() {
     $config = $this->getConfiguration();
 
-    // Initialize output
+    // Initialize output.
     $output = '';
 
     // Basic string.

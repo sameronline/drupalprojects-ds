@@ -19,7 +19,7 @@ interface DsFieldInterface extends ConfigurablePluginInterface, ContainerFactory
   /**
    * Returns the summary of the chosen settings.
    *
-   * @param $settings
+   * @param array $settings
    *   Contains the settings of the field.
    *
    * @return array
@@ -36,7 +36,7 @@ interface DsFieldInterface extends ConfigurablePluginInterface, ContainerFactory
    * Returns a list of possible formatters for this field.
    *
    * @return array
-   *   A list of possible formatters
+   *   A list of possible formatters.
    */
   public function formatters();
 
@@ -61,17 +61,17 @@ interface DsFieldInterface extends ConfigurablePluginInterface, ContainerFactory
   public function bundle();
 
   /**
-   * Gets the view mode
+   * Gets the view mode.
    */
   public function viewMode();
 
   /**
-   * Gets the field configuration
+   * Gets the field configuration.
    */
   public function getFieldConfiguration();
 
   /**
-   * Gets the field name
+   * Gets the field name.
    */
   public function getName();
 
@@ -81,7 +81,7 @@ interface DsFieldInterface extends ConfigurablePluginInterface, ContainerFactory
   public function getTitle();
 
   /**
-   * Defines if we are dealing with a multivalue field
+   * Defines if we are dealing with a multivalue field.
    */
   public function isMultiple();
 

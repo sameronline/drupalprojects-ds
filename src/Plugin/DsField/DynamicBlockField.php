@@ -52,7 +52,8 @@ class DynamicBlockField extends BlockBase {
         if (!empty($block_build['#title'])) {
           $title = $block_build['#title'];
         }
-      } else {
+      }
+      else {
         $title = $block->label();
       }
     }

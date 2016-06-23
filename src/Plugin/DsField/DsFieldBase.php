@@ -53,21 +53,20 @@ abstract class DsFieldBase extends PluginBase implements DsFieldInterface {
   }
 
   /**
-   *
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
    return array();
   }
 
-   /**
+  /**
    * {@inheritdoc}
-    */
+   */
   public function getConfiguration() {
     return $this->configuration;
   }
 
-   /**
+  /**
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
@@ -165,15 +164,15 @@ abstract class DsFieldBase extends PluginBase implements DsFieldInterface {
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function calculateDependencies() {
-    // By default there are no dependencies
+    // By default there are no dependencies.
     return array();
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function isMultiple() {
     return FALSE;

@@ -38,8 +38,8 @@ class NodeAuthor extends DsFieldBase {
       return array(
         '#markup' => $user->getUsername(),
         '#cache' => array(
-          'tags' => $user->getCacheTags()
-        )
+          'tags' => $user->getCacheTags(),
+        ),
       );
     }
 
@@ -48,12 +48,12 @@ class NodeAuthor extends DsFieldBase {
         '#theme' => 'username',
         '#account' => $user,
         '#cache' => array(
-          'tags' => $user->getCacheTags()
-        )
+          'tags' => $user->getCacheTags(),
+        ),
       );
     }
 
-    // Otherwise return an empty array
+    // Otherwise return an empty array.
     return array();
   }
 
@@ -64,7 +64,7 @@ class NodeAuthor extends DsFieldBase {
 
     $formatters = array(
       'author' => t('Author'),
-      'author_linked' => t('Author linked to profile')
+      'author_linked' => t('Author linked to profile'),
     );
 
     return $formatters;
