@@ -117,6 +117,11 @@ class EntityRow extends ViewsEntityRow {
           '#type' => 'select',
           '#default_value' => (isset($this->options['alternating_fieldset']['item_' . $a])) ? $this->options['alternating_fieldset']['item_' . $a] : 'teaser',
           '#options' => \Drupal::service('entity_display.repository')->getViewModeOptions($this->entityTypeId),
+          '#states' => array(
+            'visible' => array(
+              ':input[name="row_options[alternating_fieldset][alternating]"]' => array('checked' => TRUE),
+            ),
+          ),
         ];
         $limit--;
         $a++;
