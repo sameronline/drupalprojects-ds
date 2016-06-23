@@ -80,4 +80,9 @@ interface DsFieldInterface extends ConfigurablePluginInterface, ContainerFactory
    */
   public function getTitle();
 
+  /**
+   * Defines if we are dealing with a multivalue field
+   */
+  public function isMultiple();
+
 }

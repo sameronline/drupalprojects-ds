@@ -172,4 +172,11 @@ abstract class DsFieldBase extends PluginBase implements DsFieldInterface {
     return array();
   }
 
+  /**
+   * @inheritdoc
+   */
+  public function isMultiple() {
+    return FALSE;
+  }
+
 }

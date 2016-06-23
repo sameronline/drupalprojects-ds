@@ -249,12 +249,16 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
           '#view_mode' => '_custom',
           '#ds_view_mode' => $view_mode,
           '#items' => array((object) array('_attributes' => array())),
-          '#is_multiple' => FALSE,
+          '#is_multiple' => $field_instance->isMultiple(),
           '#access' => ($field_permissions && function_exists('ds_extras_ds_field_access')) ? ds_extras_ds_field_access($key, $entity_type) : TRUE,
-          0 => array(
-            $field_value,
-          ),
         );
+
+        if ($field_instance->isMultiple()) {
+          $build[$key] += $field_value;
+        }
+        else {
+          $build[$key][0] = array($field_value);
+        }
       }
     }
   }
