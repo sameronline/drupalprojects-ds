@@ -139,7 +139,7 @@ class DsController extends ControllerBase {
     $entity_display = EntityViewDisplay::load($entity_type_id . '.' . $entity->bundle() . '.' . $view_mode);
 
     $route_parameters = $route->getRouteParameters();
-    if ($entity_display && $entity_display->getThirdPartySetting('ds', 'layout')) {
+    if ($entity_display && $entity_display->status() && $entity_display->getThirdPartySetting('ds', 'layout')) {
       $route_parameters['view_mode_name'] = $view_mode;
       $admin_route_name = "entity.entity_view_display.$entity_type_id.view_mode";
     }
@@ -150,7 +150,7 @@ class DsController extends ControllerBase {
 
     $url = new Url($admin_route_name, $route_parameters, $route->getOptions());
 
-    return new RedirectResponse($url->toString());
+    return new RedirectResponse($url->setAbsolute(TRUE)->toString());
   }
 
 }
