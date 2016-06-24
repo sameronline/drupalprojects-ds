@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ds_test\Plugin\Block\DsTestBlock.
- */
-
 namespace Drupal\ds_test\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
