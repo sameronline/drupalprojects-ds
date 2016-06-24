@@ -72,7 +72,7 @@ abstract class BlockBase extends DsFieldBase implements ContainerFactoryPluginIn
    * {@inheritdoc}
    */
   public function build() {
-    // Get block
+    // Get block.
     $block = $this->getBlock();
 
     // Apply block config.

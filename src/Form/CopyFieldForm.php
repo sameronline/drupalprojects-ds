@@ -7,10 +7,10 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Configure block fields.
  */
-class CopyFieldForm extends FieldFormBase{
+class CopyFieldForm extends FieldFormBase {
 
   /**
-   * The type of the dynamic ds field
+   * The type of the dynamic ds field.
    */
   const TYPE = 'copy';
 

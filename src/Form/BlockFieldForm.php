@@ -14,7 +14,7 @@ use Drupal\Core\Url;
 class BlockFieldForm extends FieldFormBase implements ContainerInjectionInterface {
 
   /**
-   * The type of the dynamic ds field
+   * The type of the dynamic ds field.
    */
   const TYPE = 'block';
 
@@ -72,7 +72,7 @@ class BlockFieldForm extends FieldFormBase implements ContainerInjectionInterfac
       $properties = $field['properties'];
     }
 
-    // Save title checkbox
+    // Save title checkbox.
     $properties['use_block_title'] = $form_state->getValue('use_block_title');
 
     return $properties;

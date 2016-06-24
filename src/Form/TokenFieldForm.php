@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 class TokenFieldForm extends FieldFormBase {
 
   /**
-   * The type of the dynamic ds field
+   * The type of the dynamic ds field.
    */
   const TYPE = 'token';
 

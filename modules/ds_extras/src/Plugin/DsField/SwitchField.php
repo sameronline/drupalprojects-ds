@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SwitchField extends DsFieldBase {
 
   /**
-   * The EntityDisplayRepository service
+   * The EntityDisplayRepository service.
    *
    * @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface
    */

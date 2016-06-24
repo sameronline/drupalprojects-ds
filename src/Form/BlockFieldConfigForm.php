@@ -13,7 +13,6 @@ use Drupal\Core\Plugin\ContextAwarePluginAssignmentTrait;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
 /**
  * Configure block fields.
  */
@@ -22,6 +21,8 @@ class BlockFieldConfigForm extends FieldFormBase implements ContainerInjectionIn
   use ContextAwarePluginAssignmentTrait;
 
   /**
+   * The context repository.
+   *
    * @var \Drupal\Core\Plugin\Context\ContextRepositoryInterface
    */
   protected $contextRepository;
@@ -30,9 +31,9 @@ class BlockFieldConfigForm extends FieldFormBase implements ContainerInjectionIn
    * {@inheritdoc}
    */
   public function __construct(ConfigFactory $config_factory, EntityTypeManagerInterface $entity_type_manager, CacheTagsInvalidatorInterface $cache_invalidator, ModuleHandler $module_handler, ContextRepositoryInterface $context_repository) {
-     parent::__construct($config_factory, $entity_type_manager, $cache_invalidator, $module_handler);
-     $this->contextRepository = $context_repository;
-   }
+    parent::__construct($config_factory, $entity_type_manager, $cache_invalidator, $module_handler);
+    $this->contextRepository = $context_repository;
+  }
 
   /**
    * {@inheritdoc}
@@ -131,13 +132,13 @@ class BlockFieldConfigForm extends FieldFormBase implements ContainerInjectionIn
 
     $block_config = $block->getConfiguration();
 
-    // Clear cache tags
+    // Clear cache tags.
     $this->cacheInvalidator->invalidateTags($block->getCacheTags());
 
-    // Save block config
+    // Save block config.
     $this->config('ds.field.' . $field['id'])->set('properties.config', $block_config)->save();
 
-    // Clear caches and redirect
+    // Clear caches and redirect.
     $this->finishSubmitForm($form, $form_state);
   }
 

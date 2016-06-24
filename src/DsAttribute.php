@@ -12,10 +12,8 @@ class DsAttribute extends Attribute {
   /**
    * Merges Attributes objects into another one.
    *
-   * @param Attributes[]
-   *   An array of Attribute objects
-   *
-   * @return $this;
+   * @return \Drupal\ds\DsAttribute;
+   *   Merged attributes.
    */
   public function mergeAttributes() {
     $args = func_get_args();

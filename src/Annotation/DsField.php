@@ -36,6 +36,7 @@ class DsField extends Plugin {
 
   /**
    * An array of limits for showing this field.
+   *
    * In the format: "bundle|view_mode".
    *
    * @var array

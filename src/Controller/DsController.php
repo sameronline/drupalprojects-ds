@@ -57,8 +57,8 @@ class DsController extends ControllerBase {
           $operations = array();
           $row[] = array(
             'data' => array(
-              '#plain_text' => $bundle['label']
-            )
+              '#plain_text' => $bundle['label'],
+            ),
           );
 
           if ($field_ui_enabled) {
@@ -94,7 +94,7 @@ class DsController extends ControllerBase {
             array('data' => $info->getLabel()),
             array(
               'data' => $field_ui_enabled ? t('operations') : '',
-              'class' => 'ds-display-list-options'
+              'class' => 'ds-display-list-options',
             ),
           );
           $build['list_' . $entity_type] = array(
@@ -115,8 +115,10 @@ class DsController extends ControllerBase {
    * Adds a contextual tab to entities.
    *
    * @param RouteMatchInterface $route_match
+   *   The route information.
    *
    * @return RedirectResponse
+   *   A redirect response pointing to the corresponding display.
    */
   public function contextualTab(RouteMatchInterface $route_match) {
     $parameter_name = $route_match->getRouteObject()->getOption('_ds_entity_type_id');

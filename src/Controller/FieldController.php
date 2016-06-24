@@ -23,7 +23,7 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
   protected $storage;
 
   /**
-   * The module handler
+   * The module handler.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface;
    */
@@ -51,7 +51,7 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
   }
 
   /**
-   * Builds a list of fields
+   * Builds a list of fields.
    */
   public function fieldList() {
     $custom_fields = $this->storage->listAll('ds.field.');
@@ -63,8 +63,8 @@ class FieldController extends ControllerBase implements ContainerInjectionInterf
         $row = array();
         $row[] = array(
           'data' => array(
-            '#plain_text' => $field_value['label']
-          )
+            '#plain_text' => $field_value['label'],
+          ),
         );
         $row[] = isset($field_value['type_label']) ? $field_value['type_label'] : $this->t('Unknown');
         $row[] = $field_value['id'];

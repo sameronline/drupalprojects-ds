@@ -44,7 +44,6 @@ class BlockDescription extends DsFieldBase {
     );
   }
 
-
   /**
    * {@inheritdoc}
    */

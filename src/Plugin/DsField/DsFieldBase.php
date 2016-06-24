@@ -56,7 +56,7 @@ abstract class DsFieldBase extends PluginBase implements DsFieldInterface {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-   return array();
+    return array();
   }
 
   /**

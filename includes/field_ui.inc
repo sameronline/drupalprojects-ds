@@ -349,7 +349,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     $first_region = key($sl['regions']);
     $record['layout']['settings']['classes'] = array();
     $record['layout']['settings']['wrappers'] = array();
-    // Set default region values
+    // Set default region values.
     foreach ($sl['regions'] as $region_name => $content) {
       $record['layout']['settings']['wrappers'][$region_name] = 'div';
     }
@@ -387,7 +387,7 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
     $fields = _ds_sort_fields($form_state->getValue('fields'), 'weight');
 
     foreach ($fields as $key => $field) {
-      // Make sure to hide hidden fields
+      // Make sure to hide hidden fields.
       if ($field['region'] == 'hidden') {
         $form_state->setValue(['fields', $key, 'type'], 'hidden');
         continue;
@@ -824,13 +824,13 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, &$form, F
  * @param array $form
  *   A collection of form properties.
  * @param FormStateInterface $form_state
- *   The state of the form
+ *   The state of the form.
  * @param array $ds_layouts
- *   Collection of all the layouts
+ *   Collection of all the layouts.
  * @param array $layout
- *   Current selected layout
+ *   Current selected layout.
  * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
- *   The entity display object
+ *   The entity display object.
  */
 function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_state, $ds_layouts, $layout, EntityViewDisplayInterface $display) {
   $layout_string = '';

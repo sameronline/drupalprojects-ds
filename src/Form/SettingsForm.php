@@ -203,7 +203,7 @@ class SettingsForm extends ConfigFormBase {
    */
   protected function getEditableConfigNames() {
     return array(
-      'ds.settings'
+      'ds.settings',
     );
   }
 
