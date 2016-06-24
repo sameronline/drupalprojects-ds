@@ -34,7 +34,7 @@ function ds_switch_view_mode_entity_base_field_info(EntityTypeInterface $entity_
  * Implements hook_entity_view_mode_alter().
  */
 function ds_switch_view_mode_entity_view_mode_alter(&$view_mode, EntityInterface $entity, $context) {
-  if ($entity->getEntityTypeId() == 'node' && node_is_page($entity) && !empty($entity->ds_switch->value)) {
+  if ($entity->getEntityTypeId() == 'node' && node_is_page($entity) && !empty($entity->ds_switch->value) && $view_mode == 'full') {
     $view_mode = $entity->ds_switch->value;
   }
 }
