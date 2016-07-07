@@ -65,7 +65,7 @@ abstract class Date extends DsFieldBase {
       if ($value->isLocked()) {
         continue;
       }
-      $date_formatters['ds_post_date_' . $machine_name] = t($value->id());
+      $date_formatters['ds_post_date_' . $machine_name] = $this->t($value->id());
     }
 
     return $date_formatters;

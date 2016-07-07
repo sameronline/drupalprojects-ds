@@ -77,7 +77,7 @@ class NodeSubmittedBy extends Date {
       '#account' => $account,
     );
     return array(
-      '#markup' => t('Submitted by <a href=":user_link">@user</a> on @date.',
+      '#markup' => $this->t('Submitted by <a href=":user_link">@user</a> on @date.',
         array(
           '@user' => $this->renderer->render($user_name),
           '@date' => $this->date->format($this->entity()->created->value, $date_format),
