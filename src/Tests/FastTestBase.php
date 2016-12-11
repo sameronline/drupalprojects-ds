@@ -36,7 +36,6 @@ abstract class FastTestBase extends WebTestBase {
     'taxonomy',
     'block',
     'ds',
-    'ds_extras',
     'ds_test',
     'ds_switch_view_mode',
     'layout_plugin',
@@ -74,7 +73,7 @@ abstract class FastTestBase extends WebTestBase {
   /**
    * The created user.
    *
-   * @var User
+   * @var \Drupal\user\UserInterface
    */
   protected $adminUser;
 
@@ -85,6 +84,8 @@ abstract class FastTestBase extends WebTestBase {
     parent::setUp();
     $this->drupalPlaceBlock('system_breadcrumb_block');
     $this->drupalPlaceBlock('local_tasks_block');
+
+    $this->container->get('module_installer')->install(['ds_extras']);
 
     // Create a test user.
     $this->adminUser = $this->drupalCreateUser(array(
