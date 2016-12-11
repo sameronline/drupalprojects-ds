@@ -5,13 +5,14 @@ namespace Drupal\ds\Plugin;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Layout\LayoutDefault;
+use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Url;
 use Drupal\ds\Ds;
 
 /**
  * Layout class for all Display Suite layouts.
  */
-class DsLayout extends LayoutDefault {
+class DsLayout extends LayoutDefault implements PluginFormInterface {
 
   /**
    * {@inheritdoc}
@@ -33,7 +34,6 @@ class DsLayout extends LayoutDefault {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    //$form = parent::buildConfigurationForm($form, $form_state);
     $configuration = $this->getConfiguration();
     $regions = $this->getPluginDefinition()->getRegions();
 
@@ -207,6 +207,12 @@ class DsLayout extends LayoutDefault {
         }
       }
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
   }
 
 }

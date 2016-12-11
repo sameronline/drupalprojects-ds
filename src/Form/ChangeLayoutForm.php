@@ -61,7 +61,7 @@ class ChangeLayoutForm extends FormBase {
 
       // Old region options.
       $regions = array();
-      foreach ($old_layout_info['regions'] as $key => $info) {
+      foreach ($old_layout_info->getRegions() as $key => $info) {
         $regions[$key] = $info['label'];
       }
 
@@ -77,22 +77,21 @@ class ChangeLayoutForm extends FormBase {
       );
       \Drupal::moduleHandler()->alter('ds_layout_region', $context, $region_info);
       $regions = $region_info['region_options'];
-      $form['#old_layout_info']['layout']['regions'] = $regions;
+      $form['#old_layout_info']->setRegions($regions);
 
       // For new regions.
       $new_regions = array();
-      foreach ($new_layout['regions'] as $key => $info) {
+      foreach ($new_layout->getRegions() as $key => $info) {
         $new_regions[$key] = $info['label'];
       }
       $region_info = array(
         'region_options' => $new_regions,
       );
       \Drupal::moduleHandler()->alter('ds_layout_region', $context, $region_info);
-      $new_layout['regions'] = $region_info['region_options'];
-      $form['#new_layout']['regions'] = $new_layout['regions'];
+      $new_layout->setRegions($region_info['region_options']);
 
       // Display the region options.
-      $selectable_regions = array('' => $this->t('- None -')) + $new_layout['regions'];
+      $selectable_regions = array('' => $this->t('- None -')) + $new_layout->getRegions();
       $form['regions_pre']['#markup'] = '<div class="ds-layout-regions">';
       foreach ($regions as $region => $region_title) {
         $form['region_' . $region] = array(
@@ -117,8 +116,8 @@ class ChangeLayoutForm extends FormBase {
       );
 
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
-      $old_image = (isset($old_layout_info['icon']) && !empty($old_layout_info['icon'])) ? $old_layout_info['icon'] : $fallback_image;
-      $new_image = (isset($new_layout['icon']) &&  !empty($new_layout['icon'])) ? $new_layout['icon'] : $fallback_image;
+      $old_image = $old_layout_info->getIconPath() ?: $fallback_image;
+      $new_image = $new_layout->getIconPath() ?: $fallback_image;
       $arrow = drupal_get_path('module', 'ds') . '/images/arrow.png';
 
       $form['preview']['old_layout'] = array(
@@ -164,14 +163,14 @@ class ChangeLayoutForm extends FormBase {
     // Create new third party settings.
     $third_party_settings = $old_layout;
     $third_party_settings['layout']['id'] = $new_layout_key;
-    if (!empty($new_layout['library'])) {
-      $third_party_settings['layout']['library'] = $new_layout['library'];
+    if ($library = $new_layout->getLibrary()) {
+      $third_party_settings['layout']['library'] = $library;
     }
-    $third_party_settings['layout']['path'] = $new_layout['path'];
+    $third_party_settings['layout']['path'] = $new_layout->getPath();
     unset($third_party_settings['regions']);
 
     // Map old regions to new ones.
-    foreach ($old_layout_info['layout']['regions'] as $region => $region_title) {
+    foreach ($old_layout_info->getRegions() as $region => $region_title) {
       $new_region = $form_state->getValue('ds_' . $region);
       if ($new_region != '' && isset($old_layout['regions'][$region])) {
         foreach ($old_layout['regions'][$region] as $field) {

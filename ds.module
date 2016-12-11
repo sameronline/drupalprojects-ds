@@ -19,8 +19,8 @@ use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\ds\Ds;
 use Drupal\ds\DsAttribute;
+use Drupal\ds\Plugin\DsLayout;
 use Drupal\field\Entity\FieldConfig;
-use Drupal\layout_plugin\Layout;
 
 /**
  * Implements hook_help().
@@ -78,7 +78,7 @@ function ds_theme_registry_alter(&$theme_registry) {
   $layout_theme_hooks = [];
   /** @var \Drupal\Core\Layout\LayoutDefinition $info */
   foreach ($layouts as $info) {
-    if ($info->getClass() == 'Drupal\ds\Plugin\DsLayout') {
+    if ($info->getClass() == DsLayout::class) {
       $layout_theme_hooks[] = $info->getThemeHook();
     }
   }

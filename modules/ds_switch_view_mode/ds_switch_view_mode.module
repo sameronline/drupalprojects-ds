@@ -120,6 +120,7 @@ function ds_switch_view_mode_form_node_form_alter(&$form, FormStateInterface $fo
       $fallback_image = drupal_get_path('module', 'ds') . '/images/preview.png';
 
       if (isset($layout_settings['layout'])) {
+        /** @var \Drupal\Core\Layout\LayoutDefinition $chosen_layout */
         $chosen_layout = $ds_layouts[$layout_settings['layout']['id']];
         $image = $chosen_layout->getIconPath();
         if (empty($image)) {

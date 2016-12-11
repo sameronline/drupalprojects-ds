@@ -80,7 +80,7 @@ class Ds {
   /**
    * Gets Display Suite layouts.
    *
-   * @return array $layouts
+   * @return \Drupal\Core\Layout\LayoutDefinition[]
    */
   public static function getLayouts() {
     static $layouts = FALSE;
