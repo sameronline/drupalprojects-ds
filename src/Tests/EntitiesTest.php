@@ -49,6 +49,7 @@ class EntitiesTest extends FastTestBase {
     $cache = $this->container->get('cache.default')->get('ds_test_suggestions');
     $hook_suggestions = $cache->data;
     $expected_hook_suggestions = array(
+      'ds_2col_stacked',
       'ds_2col_stacked__node',
       'ds_2col_stacked__node_full',
       'ds_2col_stacked__node_article',
