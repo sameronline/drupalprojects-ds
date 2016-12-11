@@ -76,9 +76,10 @@ function ds_theme() {
 function ds_theme_registry_alter(&$theme_registry) {
   $layouts = Ds::getLayouts();
   $layout_theme_hooks = [];
+  /** @var \Drupal\Core\Layout\LayoutDefinition $info */
   foreach ($layouts as $info) {
-    if ($info['class'] == '\Drupal\ds\Plugin\DsLayout') {
-      $layout_theme_hooks[] = $info['theme'];
+    if ($info->getClass() == 'Drupal\ds\Plugin\DsLayout') {
+      $layout_theme_hooks[] = $info->getThemeHook();
     }
   }
 
@@ -315,7 +316,8 @@ function template_preprocess_ds_entity_view(&$variables) {
     }
   }
 
-  $layout = Layout::layoutPluginManager()->createInstance($configuration['layout']['id'], $configuration['layout']['settings']);
+  /* @var \Drupal\layout_plugin\Plugin\Layout\LayoutInterface $layout */
+  $layout = \Drupal::service('plugin.manager.core.layout')->createInstance($configuration['layout']['id'], $configuration['layout']['settings']);
   $build = array_merge($build, $layout->build($regions));
 
   // Disable CSS files when needed.

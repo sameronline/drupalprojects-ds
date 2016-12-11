@@ -4,14 +4,14 @@ namespace Drupal\ds\Plugin;
 
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Layout\LayoutDefault;
 use Drupal\Core\Url;
 use Drupal\ds\Ds;
-use Drupal\layout_plugin\Plugin\Layout\LayoutBase;
 
 /**
  * Layout class for all Display Suite layouts.
  */
-class DsLayout extends LayoutBase {
+class DsLayout extends LayoutDefault {
 
   /**
    * {@inheritdoc}
@@ -33,9 +33,9 @@ class DsLayout extends LayoutBase {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $form = parent::buildConfigurationForm($form, $form_state);
+    //$form = parent::buildConfigurationForm($form, $form_state);
     $configuration = $this->getConfiguration();
-    $regions = $this->getRegionDefinitions();
+    $regions = $this->getPluginDefinition()->getRegions();
 
     // Add wrappers.
     $wrapper_options = array(

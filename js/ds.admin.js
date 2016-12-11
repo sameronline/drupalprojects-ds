@@ -26,9 +26,9 @@
   /**
    * Row handlers for the 'Manage display' screen.
    */
-  Drupal.fieldUIDisplayOverview = Drupal.fieldUIDisplayOverview || {};
+  //Drupal.fieldUIDisplayOverview = Drupal.fieldUIDisplayOverview || {};
 
-  Drupal.fieldUIDisplayOverview.ds = function (row, data) {
+  /*Drupal.fieldUIDisplayOverview.ds = function (row, data) {
 
     this.row = row;
     this.name = data.name;
@@ -44,16 +44,16 @@
     this.$formatSelect.change(Drupal.fieldUIOverview.onChange);
 
     return this;
-  };
+  };*/
 
-  Drupal.fieldUIDisplayOverview.ds.prototype = {
+  //Drupal.fieldUIDisplayOverview.ds.prototype = {
 
     /**
      * Returns the region corresponding to the current form values of the row.
      */
-    getRegion: function () {
+    /*getRegion: function () {
       return this.$regionSelect.val();
-    },
+    },*/
 
     /**
      * Reacts to a row being changed regions.
@@ -67,7 +67,7 @@
      * @param region
      *   The name of the new region for the row.
      */
-    regionChange: function (region) {
+    /*regionChange: function (region) {
 
       // Replace dashes with underscores.
       region = region.replace(/-/g, '_');
@@ -75,6 +75,6 @@
       // Set the region of the select list.
       this.$regionSelect.val(region);
     }
-  };
+  };*/
 
 })(jQuery, Drupal);

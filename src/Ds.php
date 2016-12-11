@@ -4,7 +4,6 @@ namespace Drupal\ds;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\layout_plugin\Layout;
 
 /**
  * Helper class that holds all the main Display Suite helper functions.
@@ -80,12 +79,14 @@ class Ds {
 
   /**
    * Gets Display Suite layouts.
+   *
+   * @return array $layouts
    */
   public static function getLayouts() {
     static $layouts = FALSE;
 
     if (!$layouts) {
-      $layouts = Layout::layoutPluginManager()->getDefinitions();
+      $layouts = \Drupal::service('plugin.manager.core.layout')->getDefinitions();
     }
 
     return $layouts;
