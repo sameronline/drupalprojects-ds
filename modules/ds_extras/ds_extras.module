@@ -17,8 +17,11 @@ use Drupal\Core\Url;
  */
 function ds_extras_layout_alter(&$definitions) {
   if (\Drupal::config('ds_extras.settings')->get('hidden_region')) {
+    /** @var \Drupal\Core\Layout\LayoutDefinition $layout */
     foreach ($definitions as $key => $layout) {
-      $definitions[$key]['regions']['ds_hidden']['label'] = t('Hidden');
+      $regions = $layout->getRegions();
+      $regions['ds_hidden'] = ['label' => t('Hidden')];
+      $layout->setRegions($regions);
     }
   }
 }
