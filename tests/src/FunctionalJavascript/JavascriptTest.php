@@ -20,7 +20,6 @@ class JavascriptTest extends JavascriptTestBase {
     'user',
     'field_ui',
     'ds',
-    'layout_plugin',
   );
 
   /**

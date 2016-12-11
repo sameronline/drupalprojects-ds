@@ -317,7 +317,7 @@ function ds_extras_settings_submit($form, FormStateInterface $form_state) {
   \Drupal::service('router.builder')->setRebuildNeeded();
 
   // Clear layout plugin caches
-  \Drupal::service('plugin.manager.layout_plugin')->clearCachedDefinitions();
+  \Drupal::service('plugin.manager.core.layout')->clearCachedDefinitions();
 
 }
 
