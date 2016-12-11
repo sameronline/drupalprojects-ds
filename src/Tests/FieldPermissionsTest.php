@@ -22,7 +22,6 @@ class FieldPermissionsTest extends FastTestBase {
     'ds',
     'ds_extras',
     'ds_test',
-    'layout_plugin',
     'views',
     'views_ui',
   );

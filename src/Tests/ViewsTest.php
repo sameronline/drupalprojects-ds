@@ -24,7 +24,6 @@ class ViewsTest extends FastTestBase {
     'block',
     'ds',
     'ds_test',
-    'layout_plugin',
     'views',
     'views_ui',
   );

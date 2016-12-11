@@ -25,7 +25,6 @@ class CommentTest extends CommentTestBase {
     'field_ui',
     'block',
     'ds',
-    'layout_plugin',
   );
 
   /**

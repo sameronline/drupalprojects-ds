@@ -21,7 +21,6 @@ class EntitiesTest extends FastTestBase {
     'block',
     'ds',
     'ds_test',
-    'layout_plugin',
     'ds_switch_view_mode',
   );
 

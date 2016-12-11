@@ -39,7 +39,7 @@ abstract class FastTestBase extends WebTestBase {
     'ds_extras',
     'ds_test',
     'ds_switch_view_mode',
-    'layout_plugin',
+    'layout_discovery',
     'field_group',
   );
 

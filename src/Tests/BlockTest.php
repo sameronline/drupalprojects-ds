@@ -26,7 +26,6 @@ class BlockTest extends FastTestBase {
     'block',
     'block_content',
     'ds',
-    'layout_plugin',
   );
 
   /**

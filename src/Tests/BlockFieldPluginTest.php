@@ -24,7 +24,6 @@ class BlockFieldPluginTest extends FastTestBase {
     'block',
     'ds',
     'ds_test',
-    'layout_plugin',
     'views',
   );
 
