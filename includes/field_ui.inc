@@ -342,10 +342,8 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   $record = array();
   $record['layout'] = array(
     'id' => $layout,
-    // TODO library can go right ?
-    // TODO forgot what path was .. :)
-//    'path' => !empty($layout) ? $ds_layouts[$layout]['path'] : '',
-//    'library' => isset($ds_layouts[$layout]['library']) ? $ds_layouts[$layout]['library'] : FALSE,
+    'path' => !empty($layout) ? $ds_layouts[$layout]->getPath() : '',
+    'library' => $ds_layouts[$layout]->getLibrary() ?: FALSE,
     'disable_css' => $disable_css ? TRUE : FALSE,
     'entity_classes' => $entity_classes,
   );
