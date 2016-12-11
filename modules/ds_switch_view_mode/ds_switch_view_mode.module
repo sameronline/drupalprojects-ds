@@ -121,7 +121,10 @@ function ds_switch_view_mode_form_node_form_alter(&$form, FormStateInterface $fo
 
       if (isset($layout_settings['layout'])) {
         $chosen_layout = $ds_layouts[$layout_settings['layout']['id']];
-        $image = (isset($chosen_layout['icon']) && !empty($chosen_layout['icon'])) ? $chosen_layout['icon'] : $fallback_image;
+        $image = $chosen_layout->getIconPath();
+        if (empty($image)) {
+          $image = $fallback_image;
+        }
       }
       else {
         $image = $fallback_image;

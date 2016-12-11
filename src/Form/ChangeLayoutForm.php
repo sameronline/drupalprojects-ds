@@ -49,8 +49,8 @@ class ChangeLayoutForm extends FormBase {
       $form['info'] = array(
         '#markup' => $this->t('You are changing from @old to @new layout for @bundle in @view_mode view mode.',
           array(
-            '@old' => $old_layout_info['label'],
-            '@new' => $new_layout['label'],
+            '@old' => $old_layout_info->getLabel(),
+            '@new' => $new_layout->getLabel(),
             '@bundle' => $bundle,
             '@view_mode' => $display_mode,
           )
