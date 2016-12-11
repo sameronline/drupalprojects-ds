@@ -77,7 +77,14 @@ class ChangeLayoutForm extends FormBase {
       );
       \Drupal::moduleHandler()->alter('ds_layout_region', $context, $region_info);
       $regions = $region_info['region_options'];
-      $form['#old_layout_info']->setRegions($regions);
+
+      $save_regions = array();
+      foreach ($regions as $key => $info) {
+        $save_regions[$key] = array(
+          'label' => $info['label']
+        );
+      }
+      $form['#old_layout_info']->setRegions($save_regions);
 
       // For new regions.
       $new_regions = array();
