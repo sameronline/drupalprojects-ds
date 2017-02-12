@@ -16,18 +16,20 @@ use Drupal\ds\Ds;
  * Implements hook_entity_base_field_info().
  */
 function ds_switch_view_mode_entity_base_field_info(EntityTypeInterface $entity_type) {
-  // Add the switch field as a base field.
-  $fields = array();
+  if ($entity_type->id() == 'node') {
+    // Add the switch field as a base field.
+    $fields = array();
 
-  $fields['ds_switch'] = BaseFieldDefinition::create('string')
-    ->setLabel(t('DS switch'))
-    ->setName('ds_switch')
-    ->setRevisionable(TRUE)
-    ->setDescription(t('Holds the DS view mode of the node.'))
-    ->setSetting('default_value', '')
-    ->setPropertyConstraints('value', array('Length' => array('max' => 60)));
+    $fields['ds_switch'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('DS switch'))
+      ->setName('ds_switch')
+      ->setRevisionable(TRUE)
+      ->setDescription(t('Holds the DS view mode of the node.'))
+      ->setSetting('default_value', '')
+      ->setPropertyConstraints('value', array('Length' => array('max' => 60)));
 
-  return $fields;
+    return $fields;
+  }
 }
 
 /**
