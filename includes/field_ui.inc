@@ -889,7 +889,7 @@ function _ds_field_ui_table_layouts_preview(&$form, FormStateInterface $form_sta
 //    $selected .= '<br/>' . t('The default template can be found in %path', array('%path' => $chosen_layout['template_path']));
     $suggestions_array = array();
     $suggestions_array[0] = $layout_string . '--' . $display->getTargetEntityTypeId();
-    $suggestions_array[2] = $layout_string . '--' . $display->getTargetBundle() . '-' . $display->getTargetBundle();
+    $suggestions_array[2] = $layout_string . '--' . $display->getTargetEntityTypeId() . '-' . $display->getTargetBundle();
     $suggestions_array[4] = $layout_string . '--' . $display->getTargetEntityTypeId() . '--{id}';
     if ($display->getMode() != 'default') {
       $suggestions_array[1] = $layout_string . '--' . $display->getTargetEntityTypeId() . '-' . $display->getMode();
