@@ -211,7 +211,7 @@ function ds_field_ui_regions($form, FormStateInterface $form_state) {
     // Update existing rows by changing rowHandler and adding regions.
     foreach (Element::children($table) as $name) {
       $row = &$table[$name];
-      $row['#js_settings'] = array('rowHandler' => 'ds');
+      $row['#js_settings'] = array('rowHandler' => 'field');
       $row['#region_callback'] = 'ds_field_ui_row_region';
 
       // Remove hidden format.
