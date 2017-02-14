@@ -736,7 +736,7 @@ function ds_entity_variables(&$vars) {
     if (!empty($layout['settings']['layout_attributes_merge'])) {
       // Handle classes separately.
       if (isset($vars['attributes_array']['class'])) {
-        $vars['classes_array'] += $vars['attributes_array']['class'];
+        $vars['classes_array'] = array_unique(array_merge($vars['classes_array'], $vars['attributes_array']['class']));
         unset($vars['attributes_array']['class']);
       }
       $vars['layout_attributes'] .= ' ' . drupal_attributes($vars['attributes_array']);
