@@ -398,7 +398,9 @@ function ds_extras_ds_layout_region_alter($context, &$region_info) {
 
   foreach ($region_blocks as $block_key => $block) {
     if ($block['info'] == "{$entity_type}_{$bundle}_{$view_mode}") {
-      $region_info['region_options'][$block_key] = $block['title'];
+      $region_info['region_options'][$block_key] = array(
+        'label' => $block['title']
+      );
       if (isset($region_info['table_regions'])) {
         $region_info['table_regions'][$block_key] = array(
           'title' => Html::escape($block['title']),
