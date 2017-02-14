@@ -62,7 +62,7 @@ class ChangeLayoutForm extends FormBase {
       // Old region options.
       $regions = array();
       foreach ($old_layout_info->getRegions() as $key => $info) {
-        $regions[$key] = $info['label'];
+        $regions[$key] = $info;
       }
 
       // Let other modules alter the regions.
@@ -100,12 +100,12 @@ class ChangeLayoutForm extends FormBase {
       // Display the region options.
       $selectable_regions = array('' => $this->t('- None -')) + $new_layout->getRegions();
       $form['regions_pre']['#markup'] = '<div class="ds-layout-regions">';
-      foreach ($regions as $region => $region_title) {
+      foreach ($regions as $region => $region_info) {
         $form['region_' . $region] = array(
           '#type' => 'container',
         );
         $form['region_' . $region]['ds_label_' . $region] = array(
-          '#markup' => 'Fields in <span class="change-ds-layout-old-region"> ' . $region_title . '</span> go into',
+          '#markup' => 'Fields in <span class="change-ds-layout-old-region"> ' . $region_info['label'] . '</span> go into',
         );
         $form['region_' . $region]['ds_' . $region] = array(
           '#type' => 'select',
