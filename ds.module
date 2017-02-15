@@ -212,7 +212,7 @@ function ds_entity_view_alter(&$build, EntityInterface $entity, EntityDisplayInt
   $fields = Ds::getFields($entity_type);
   $field_values = !empty($configuration['fields']) ? $configuration['fields'] : array();
 
-  foreach ($configuration['regions'] as $region_name => $region) {
+  foreach ($configuration['regions'] as $region) {
     foreach ($region as $weight => $key) {
       // Ignore if this field is not a DS field, just pull it in from the
       // entity.
@@ -931,7 +931,7 @@ function ds_ds_field_operations_alter(&$operations, $field) {
  */
 function ds_entity_type_alter(array &$entity_types) {
   /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
-  foreach ($entity_types as $entity_type_id => $entity_type) {
+  foreach ($entity_types as $entity_type) {
     $base_table = $entity_type->getBaseTable();
     if ($entity_type->get('field_ui_base_route') && !empty($base_table)) {
       if ($entity_type->hasLinkTemplate('canonical')) {
