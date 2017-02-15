@@ -1282,7 +1282,6 @@ function _ds_field_ui_core_fields(&$form, FormStateInterface $form_state) {
         $table[$key]['plugin']['settings_edit_form']['actions']['cancel_settings']['#validate'] = array('ds_field_ui_fields_validate');
       }
       else {
-        $table[$key]['settings_edit'] = array();
         if (!empty($table[$key]['settings_summary'])) {
           ds_field_row_form_format_summary_construct($table, $key, $form_state);
         }
