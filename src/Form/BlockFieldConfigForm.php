@@ -2,7 +2,6 @@
 
 namespace Drupal\ds\Form;
 
-use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
