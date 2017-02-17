@@ -444,6 +444,17 @@ function ds_preprocess_ds_layout(&$variables) {
         }
       }
 
+      // RDF support
+      if ($entity_type == 'node' && function_exists('rdf_preprocess_node')) {
+        $entity = isset($variables[$entity_type]) ? $variables[$entity_type] : (isset($variables['content']['#' . $entity_type]) ? $variables['content']['#' . $entity_type] : '');
+        if ($entity) {
+          $variables['node'] = $entity;
+          // We disable the date feature for now as it throws notices
+          $variables['display_submitted'] = FALSE;
+          rdf_preprocess_node($variables);
+        }
+      }
+
       // Let other modules know we have rendered.
       $variables['rendered_by_ds'] = TRUE;
 
