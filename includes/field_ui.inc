@@ -158,12 +158,12 @@ function ds_field_ui_regions(array $form, FormStateInterface $form_state) {
     $table = &$form['fields'];
 
     $table['#header'] = array(
-      t('Label'),
+      t('Field'),
       t('Weight'),
       t('Parent'),
       t('Region'),
-      t('Name'),
-      t('Field'),
+      t('Label'),
+      t('Formatter'),
       t('Widget'),
       array(
         'data' => t('Operations'),
