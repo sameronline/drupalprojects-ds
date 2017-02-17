@@ -33,7 +33,7 @@ function ds_update_8001() {
 }
 
 /**
- * Fix ds_switch being added to each content entity
+ * Fix ds_switch being added to each content entity.
  */
 function ds_update_8002() {
   $entity_definition_update_manager = \Drupal::entityDefinitionUpdateManager();

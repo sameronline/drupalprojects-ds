@@ -25,7 +25,7 @@ interface DsFieldInterface extends ConfigurablePluginInterface, ContainerFactory
    * @return array
    *   A render array containing the summary.
    */
-  public function settingsSummary($settings);
+  public function settingsSummary(array $settings);
 
   /**
    * The form that holds the settings for this plugin.
@@ -49,6 +49,7 @@ interface DsFieldInterface extends ConfigurablePluginInterface, ContainerFactory
    * Gets the current entity.
    *
    * @return \Drupal\Core\Entity\EntityInterface
+   *   The current entity.
    */
   public function entity();
 

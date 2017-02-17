@@ -101,7 +101,7 @@ class BlockFieldPluginTest extends FastTestBase {
   /**
    * Ensure block is not rendered if block disallows access.
    */
-  function testBlockAccess() {
+  public function testBlockAccess() {
     $block_field_id = Unicode::strtolower($this->randomMachineName());
     $entity_type = 'node';
 

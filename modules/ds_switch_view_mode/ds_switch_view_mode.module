@@ -69,7 +69,7 @@ function ds_switch_view_mode_form_node_form_alter(&$form, FormStateInterface $fo
       }
     }
 
-    // Add default layout settings
+    // Add default layout settings.
     $layouts[''] = Ds::getDisplay('node', $node->bundle(), 'default', FALSE);
 
     // Only fire if we have more than 1 option.
