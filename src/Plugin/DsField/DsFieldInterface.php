@@ -25,7 +25,7 @@ interface DsFieldInterface extends ConfigurablePluginInterface, ContainerFactory
    * @return array
    *   A render array containing the summary.
    */
-  public function settingsSummary(array $settings);
+  public function settingsSummary($settings);
 
   /**
    * The form that holds the settings for this plugin.
