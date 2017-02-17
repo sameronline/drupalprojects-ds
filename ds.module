@@ -697,6 +697,13 @@ function ds_theme_suggestions_field_alter(&$suggestions, $variables) {
       $suggestions[] = $suggestion . '__' . $variables['element']['#entity_type'] . '__' . $variables['element']['#bundle'];
       $suggestions[] = $suggestion . '__' . $variables['element']['#entity_type'] . '__' . $field_name . '__' . $variables['element']['#bundle'];
     }
+
+    // Custom DS fields name may contain colon separators or dashes; replace it
+    // with "__" or "_" to ensure suggestions are compatible with file names on
+    // all systems.
+    foreach ($suggestions as $key => $suggestion) {
+      $suggestions[$key] = str_replace([':', '-'], ['__', '_'], $suggestion);
+    }
   }
 }
 
