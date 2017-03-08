@@ -204,7 +204,7 @@ function ds_field_ui_regions(array $form, FormStateInterface $form_state) {
       '#options' => $region_options,
       '#default_value' => 'hidden',
       '#attributes' => array(
-        'class' => array('ds-field-region'),
+        'class' => array('field-region'),
       ),
     );
 
