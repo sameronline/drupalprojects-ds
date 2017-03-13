@@ -213,10 +213,11 @@ class LayoutClassesTest extends FastTestBase {
     // Test that a default view mode with no layout is not affected by a
     // disabled view mode.
     $edit = array(
-      'layout' => '',
+      'layout' => '_none',
       'display_modes_custom[full]' => FALSE,
     );
     $this->drupalPostForm('admin/structure/types/manage/article/display', $edit, t('Save'));
+    $this->assertFieldsByValue($this->xpath('//*[@id="edit-fields-body-region"]'), 'content', 'Body field is in the content region');
     $this->drupalGet('node/' . $node->id());
     $this->assertNoText('Test code field on node 1', 'No ds field from full view mode layout');
   }

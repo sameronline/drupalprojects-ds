@@ -275,6 +275,10 @@ function ds_field_ui_row_region(array $row) {
 function ds_field_ui_layouts_validate($form, FormStateInterface $form_state) {
   // Determine layout variables.
   $layout = $form_state->getValue('layout');
+  if ($layout === '_none') {
+    $layout = '';
+    $form_state->setValue('layout', '');
+  }
   $old_layout = $form_state->getValue('old_layout');
   $new_layout = ($layout != $old_layout) || empty($old_layout);
 
@@ -353,6 +357,23 @@ function ds_field_ui_layouts_save($form, FormStateInterface $form_state) {
   if ($new_layout && !empty($old_layout) || empty($layout)) {
     $display->unsetThirdPartySetting('ds', 'layout');
     $display->unsetThirdPartySetting('ds', 'regions');
+
+    // If layout is empty, unset all regions of the core fields, forcing the
+    // display to set the default region. Because we are earlier than core,
+    // change the values in $form_state instead of manipulating the display.
+    // Also notify ds_field_ui_fields_save() that it shouldn't save the
+    // third party settings anymore for fields.
+    if (empty($layout)) {
+      $form_state->set('ignore_ds_fields', FALSE);
+      $display->unsetThirdPartySetting('ds', 'fields');
+
+      $fields = $form_state->getValue('fields');
+      foreach (array_keys($display->getComponents()) as $name) {
+        $fields[$name]['region'] = NULL;
+      }
+      $form_state->setValue('fields', $fields);
+    }
+
     $display->save();
   }
 
@@ -478,7 +499,7 @@ function ds_field_ui_fields_validate($form, FormStateInterface $form_state) {
  * Save the field settings from the 'Manage display' screen.
  */
 function ds_field_ui_fields_save($form, FormStateInterface $form_state) {
-  if (empty($form['#ds_fields'])) {
+  if (empty($form['#ds_fields']) || $form_state->has('ignore_ds_fields')) {
     return;
   }
 
@@ -689,17 +710,11 @@ function _ds_field_group_field_ui_fix_notices(array $form, FormStateInterface $f
  */
 function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, array &$form, FormStateInterface $form_state) {
   $ds_layouts = Ds::getLayouts();
-  $layout_options = array('' => t('- None -'));
-  $optgroup = '';
+  $layout_options = [];
   /** @var \Drupal\Core\Layout\LayoutDefinition $layout_definition */
   foreach ($ds_layouts as $key => $layout_definition) {
-    $optgroup = t('Other');
-
     // Create new layout option group.
-    if (!empty($layout_definition->getCategory())) {
-      $optgroup = $layout_definition->getCategory();
-    }
-
+    $optgroup = $layout_definition->getCategory() ?: t('Other');
     if (!isset($layout_options[$optgroup])) {
       $layout_options[$optgroup] = array();
     }
@@ -709,9 +724,8 @@ function _ds_field_ui_table_layouts($entity_type, $bundle, $view_mode, array &$f
   }
 
   // If there is only one $optgroup, move it to the root.
-  if (count($layout_options) == 2) {
-    $options = $layout_options[$optgroup];
-    $layout_options = array_merge(array('' => t('- None -')), $options);
+  if (count($layout_options) == 1) {
+    $layout_options = reset($layout_options);
   }
 
   // Add layouts form.
@@ -859,7 +873,8 @@ function _ds_field_ui_table_layouts_preview(array &$form, FormStateInterface $fo
     '#type' => 'select',
     '#title' => t('Select a layout'),
     '#options' => $layout['layout_options'],
-    '#default_value' => isset($layout['layout']) ? $layout['layout'] : '',
+    '#default_value' => isset($layout['layout']) ? $layout['layout'] : NULL,
+    '#empty_value' => '_none',
     '#weight' => -1,
     '#ajax' => array(
       'callback' => 'ds_field_ui_table_layouts_preview_callback',
