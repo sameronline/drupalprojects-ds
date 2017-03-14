@@ -338,7 +338,7 @@ function template_preprocess_ds_entity_view(&$variables) {
  * This function is added in ds_theme_registry_alter().
  */
 function ds_preprocess_ds_layout(&$variables) {
-  $layout_settings = $variables['settings'];
+  $layout_settings = $variables['content']['#settings'];
 
   // Fetch the entity type.
   $bundle = FALSE;
